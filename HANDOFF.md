@@ -7,21 +7,27 @@ context. All statements below were verified against the repository.
 ## Current state
 
 - Branch: `rebrand/mars` (never push to or merge into `main`)
-- HEAD at time of writing: `b39ea0a2e0`
-- Commits on branch: 5 (this handoff commit is the newest; verify with
-  `git log --oneline origin/main..HEAD` after pushing, since new work will
-  move HEAD again)
+- HEAD at time of writing: see `git log --oneline origin/main..HEAD`
+- **Phase 2 is DONE and pushed.** Phases 3–6 remain.
+
+Phase-2 commit chain (in order, each on top of the previous):
 
 ```
+e28e7ffed2   test(rebrand): align fixtures and assertions with the Mars config dir
+247a1f7b0d   test(rebrand): align fixtures and assertions with the Mars config dir
+abf1c0e71d   docs(rebrand): record the Phase 2 outcome and flag the undecided APP_URL host
+53ffe2731c   fix(rebrand): correct user-facing config-dir paths to ~/.mars
+1870b36f6c   test(natives): match the Mars XDG app-segment in the loader fixtures
+d956107f3a   test(mnemopi): match the Mars embeddings User-Agent and title
+27e6c435f1   test(ai): match the Mars gateway attribution and User-Agent constants
+80f491e24f   feat(rebrand): move config dir to ~/.mars with one-time migration
+c37818338c   feat(rebrand): rename runtime env vars OMP_* to MARS_*
+6a166cd3b0   docs: add handoff notes
 b39ea0a2e0   test(rebrand): match the npm-registry fixture scope
 297de88eb2   style(rebrand): reflow pi-shell bun-output test fixtures
 9d321993db * chore(rebrand): rename package scope, bins, and binaries to Mars
 fb11c699a9   chore(rebrand): phase 0 audit of oh-my-pi -> Mars identifiers
 ```
-
-(*) `297de88eb2` and `b39ea0a2e0` were follow-up fixes discovered while
-running the full suite after the main rename landed; `9d321993db` and
-`fb11c699a9` are the Phase 0 audit and the Phase 1 rename.
 
 ### What is done
 
@@ -149,27 +155,42 @@ the repository.
 
 ## What remains (Phases 2–6)
 
-**Phase 2 — Runtime paths and env vars.**
+**Phase 2 — Runtime paths and env vars. DONE.**
 
-- Rename config/data directories and env vars to the Mars names.
-- Add a one-time migration: if the old config dir exists and the new one
-  does not, copy it — never delete the old one.
-- Rename `OMP_*` → `MARS_*`. Remaining locations (identified but not yet
-  touched):
-  - `python/robomp/src/config.py` (65 refs)
-  - `python/robomp/docker-compose.yml` (46 refs)
-  - `python/robomp/.env.example` (43 refs)
-  - `packages/metaharness/src/runner.ts` (34 refs)
-  - `packages/metaharness/agent/omp_local.py` (34 refs)
-  - `python/robomp/tests/conftest.py` (25 refs)
-  - `packages/metaharness/agent/pi_upstream.py` (16 refs)
-  - `packages/utils/src/dirs.ts` (21 refs)
-  - `docs/environment-variables.md` (18 refs)
-  - ~273 tracked files carry `OMP_*` identifiers in total; the list above
-    is the largest concentration, not the whole set. Run
-    `git grep -c "OMP_[A-Z]"` for the full list.
-- Keep `PI_*` untouched.
-- Build and test. Commit separately from the rename.
+What landed (all verified against the tree, not assumed):
+
+- Env vars: `OMP_*` → `MARS_*` via a word-boundary codemod
+  (`scripts/env-codemod.py`, dry-run report in `ENV_CODEMOD_DRYRUN.md`,
+  inventory in `ENV_RENAME_MAP.md`). 172 distinct names / 918 edits /
+  221 files. No `OMP_*` fallback aliases — Mars has no existing users.
+- Config dir: `~/.omp` → `~/.mars`, including the user root, `agent/`,
+  `profiles/<name>/`, the XDG segment (`$XDG_*_HOME/mars/`), and the
+  repo-local project config (`.omp/` → `.mars/`, a deliberate behavioral
+  change — the agent reads it). `APP_NAME` and `CONFIG_DIR_NAME` in
+  `packages/utils/src/dirs.ts` are the single source of truth.
+- Migration: `maybeMigrateLegacyConfigDir()` in `packages/utils/src/dirs.ts`
+  copies `~/.omp` to `~/.mars` once, only when the old dir exists and the new
+  one does not. The old directory is never deleted or modified. One short
+  English notice, drained in `runRootCommand` (`packages/coding-agent/src/main.ts`)
+  via `takeLegacyConfigMigrationNotice()`. Guarded by `isBunTestRuntime()` so
+  test processes never migrate a real home. Covered by
+  `packages/utils/test/dirs-migration.test.ts` (4 cases: old only, new only,
+  both, neither).
+- `PI_*` is untouched. `MARS_PROFILE` is primary, `PI_PROFILE` stays as the
+  legacy fallback (`resolveProfileEnv`). `PI_CONFIG_DIR` /
+  `PI_CODING_AGENT_DIR` keep their names and semantics; only the default
+  value moved.
+- Deliberate leftovers, do NOT "finish" these: `APP_URL` (still `omp.sh`, no
+  Mars domain decided — TODO in `packages/utils/src/dirs.ts`), `my.omp.sh` and
+  friends, the codex `originator` wire contract (`ORIGINATOR_CODEX`), the
+  gitlab `serverName: "omp"` wire value, every `CHANGELOG.md` history entry.
+
+Residual `OMP_*` after Phase 2 (verified with
+`git grep -l -w "OMP_[A-Z0-9_]*"`) is 10 files, all intentional:
+`HANDOFF.md`, `REBRAND_AUDIT.md`, `ENV_RENAME_MAP.md`,
+`ENV_CODEMOD_DRYRUN.md` (audit records), `scripts/config-dir-codemod.py`
+(docstring documents the rename rule), and the 5
+`packages/*/CHANGELOG.md` (released history is immutable).
 
 **Phase 3 — UI text.**
 
@@ -201,8 +222,10 @@ the repository.
 
 ## Open TODOs and uncertainties
 
-1. **`REBRAND_AUDIT.md` is a snapshot.** It was produced before Phase 1
-   landed. Phase 6 must re-run the search rather than trust it.
+1. **`REBRAND_AUDIT.md` gained a §10 "Phase 2 status" section** recording
+   what moved and the exact identifiers left alone. It is still an audit
+   record, not a live index — Phase 6 must re-run the search rather than
+   trust any historical file.
 2. **Upstream-hosted service URLs.** `my.omp.sh`, `live.omp.sh`,
    `qa.omp.sh`, `omp.sh/install` are still unreplaced. The policy is to
    leave TODOs and gate dependent features behind config. Which config
