@@ -519,10 +519,10 @@ mod tests {
 			"$ bun run check:tools && bun run --workspaces --if-present check\n$ biome check . \
 			 --no-errors-on-unmatched\nChecked 1690 files in 371ms. No fixes \
 			 applied.\n@marsai-org/utils check: Checked 40 files in 11ms. No fixes \
-			 applied.\n@marsai-org/utils check: $ tsgo -p tsconfig.json \
-			 --noEmit\n@marsai-org/utils check: Exited with code 0\n@marsai-org/coding-agent \
-			 check: Checked 1178 files in 287ms. No fixes applied.\n@marsai-org/coding-agent check: \
-			 $ tsgo -p tsconfig.json --noEmit\n@marsai-org/coding-agent check: Exited with code 0\n",
+			 applied.\n@marsai-org/utils check: $ tsgo -p tsconfig.json --noEmit\n@marsai-org/utils \
+			 check: Exited with code 0\n@marsai-org/coding-agent check: Checked 1178 files in 287ms. \
+			 No fixes applied.\n@marsai-org/coding-agent check: $ tsgo -p tsconfig.json \
+			 --noEmit\n@marsai-org/coding-agent check: Exited with code 0\n",
 			0,
 		);
 
@@ -541,9 +541,8 @@ mod tests {
 		let ctx = ctx("bun", Some("run"), "bun run check:ts", &cfg);
 		let out = filter(
 			&ctx,
-			"@marsai-org/utils check: Checked 40 files in 11ms. No fixes \
-			 applied.\n@marsai-org/utils check: Exited with code 0\n[Command timed out after 300 \
-			 seconds]\n",
+			"@marsai-org/utils check: Checked 40 files in 11ms. No fixes applied.\n@marsai-org/utils \
+			 check: Exited with code 0\n[Command timed out after 300 seconds]\n",
 			1,
 		);
 
