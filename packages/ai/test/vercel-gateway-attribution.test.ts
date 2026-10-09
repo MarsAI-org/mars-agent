@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
+import { APP_NAME, APP_URL } from "@marsai-org/utils";
 import { streamSimple } from "@marsai-org/ai";
 import type { Api, Context, FetchImpl, Model, ModelSpec } from "@marsai-org/ai/types";
 import { buildModel } from "@marsai-org/catalog/build";
@@ -38,7 +39,7 @@ async function firstRequestHeaders(model: Model<Api>, headers?: Record<string, s
 }
 
 describe("Vercel AI Gateway app attribution", () => {
-	it("credits omp on the Anthropic and OpenAI-compatible routes", async () => {
+	it("credits Mars on the Anthropic and OpenAI-compatible routes", async () => {
 		for (const model of [
 			vercelModel("anthropic-messages", "https://ai-gateway.vercel.sh"),
 			vercelModel("openai-completions", "https://ai-gateway.vercel.sh/v1"),
@@ -46,8 +47,8 @@ describe("Vercel AI Gateway app attribution", () => {
 			const headers = await firstRequestHeaders(model);
 			expect([model.api, headers.get("http-referer"), headers.get("x-title")]).toEqual([
 				model.api,
-				"https://omp.sh/",
-				"omp",
+				APP_URL,
+				APP_NAME,
 			]);
 		}
 	});
