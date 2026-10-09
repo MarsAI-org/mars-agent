@@ -126,7 +126,7 @@ find:
   enabled: ${agent.tools.includes("find")}
 `;
 	const writeConfig = await vm.exec(
-		`mkdir -p "$HOME/.omp/agent"\ncat > "$HOME/.omp/agent/models.yml" <<'MARS_MODELS_EOF'\n${modelsYaml}MARS_MODELS_EOF\ncat > "$HOME/.omp/agent/config.yml" <<'MARS_CONFIG_EOF'\n${configYaml}MARS_CONFIG_EOF`,
+		`mkdir -p "$HOME/.mars/agent"\ncat > "$HOME/.mars/agent/models.yml" <<'MARS_MODELS_EOF'\n${modelsYaml}MARS_MODELS_EOF\ncat > "$HOME/.mars/agent/config.yml" <<'MARS_CONFIG_EOF'\n${configYaml}MARS_CONFIG_EOF`,
 	);
 	if (writeConfig.exitCode !== 0) throw new Error(`Could not install omp configuration: ${writeConfig.stderr.trim()}`);
 	return entrypoint;

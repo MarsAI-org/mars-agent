@@ -106,8 +106,8 @@ describe("custom session-file registry", () => {
 		try {
 			// A relative extensionless --session path resolves against cwd and
 			// lands in the registry as the exact file, not its parent directory.
-			writeTerminalBreadcrumb(cwd, path.join(".omp-sessions", "work"));
-			const expectedFile = path.join(cwd, ".omp-sessions", "work");
+			writeTerminalBreadcrumb(cwd, path.join(".mars-sessions", "work"));
+			const expectedFile = path.join(cwd, ".mars-sessions", "work");
 			const marker = path.join(getCustomSessionFilesDir(agentDir), hashPath(expectedFile));
 			expect(fs.readFileSync(marker, "utf8")).toBe(expectedFile);
 

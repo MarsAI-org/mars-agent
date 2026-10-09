@@ -560,11 +560,11 @@ export async function legacyProviderAllowed(rootPath: string, surface: "skills" 
  * The dialect is decided by the plugin's declared manifest, not by which
  * registry supplied the root — an omp-installed or `--plugin-dir` root can hold
  * a `.claude-plugin` package. Precedence mirrors {@link resolvePluginMCPConfig}:
- * a `.omp-plugin/plugin.json` (OMP-native) or an Agent Plugins standard root
+ * a `.mars-plugin/plugin.json` (OMP-native) or an Agent Plugins standard root
  * `plugin.json` wins over a sibling `.claude-plugin/plugin.json`.
  */
 export async function pluginUsesClaudeModelDialect(rootPath: string): Promise<boolean> {
-	if ((await readFile(path.join(rootPath, ".omp-plugin", "plugin.json"))) !== null) return false;
+	if ((await readFile(path.join(rootPath, ".mars-plugin", "plugin.json"))) !== null) return false;
 	const status = await classifyAgentPluginRoot(rootPath);
 	if (status.kind === "standard") return false;
 	return (await readFile(path.join(rootPath, ".claude-plugin", "plugin.json"))) !== null;

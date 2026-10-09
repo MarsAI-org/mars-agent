@@ -12,7 +12,7 @@ Enable prewalk persistently in the global config:
 omp config set prewalk.enabled true
 ```
 
-The equivalent YAML in `~/.omp/agent/config.yml` or a project `.omp/config.yml` is:
+The equivalent YAML in `~/.mars/agent/config.yml` or a project `.mars/config.yml` is:
 
 ```yaml
 prewalk:

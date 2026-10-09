@@ -23,7 +23,7 @@ describe.skipIf(process.platform !== "linux" && process.platform !== "darwin")(
 			originalEnv = {};
 			for (const key of ENV_KEYS) originalEnv[key] = process.env[key];
 			tempRoot = path.join(os.tmpdir(), "omp-skill-descriptions-xdg", Snowflake.next());
-			configDir = `.omp-skill-xdg-${Snowflake.next()}`;
+			configDir = `.mars-skill-xdg-${Snowflake.next()}`;
 			agentDir = path.join(os.homedir(), configDir, "agent");
 			xdgData = path.join(tempRoot, "data");
 			await fs.promises.mkdir(path.join(xdgData, "omp"), { recursive: true });
