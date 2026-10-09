@@ -214,3 +214,26 @@ URI schemes or core internal APIs") may protect them. Flagging for your call:
 Biggest risk: the 4.5k-file `@oh-my-pi` import rename and the 8k-file word
 `omp` sweep — must be driven by word-boundary codemods with per-category
 review, never blind substring replace.
+
+## 10. Phase 2 status (recorded at completion)
+
+- Env vars: every `OMP_*` became `MARS_*` (word-boundary codemod, no `OMP_*`
+  fallback aliases). `PI_*` untouched. `MARS_PROFILE` is the primary profile
+  selector with `PI_PROFILE` kept as the legacy fallback (`resolveProfileEnv`);
+  the `.env` mirror still maps `MARS_*` to the matching `PI_*` alias.
+- Config dir: `~/.omp` → `~/.mars` (user root, `agent/`, `profiles/<name>/`, and
+  the XDG segment `$XDG_*_HOME/mars/`). `APP_NAME = "mars"`,
+  `CONFIG_DIR_NAME = ".mars"`, `USER_AGENT = "mars/<version>"`.
+- Migration: a one-time copy-once move from `~/.omp` to `~/.mars` when the old
+  dir exists and the new one does not. The old directory is never deleted or
+  modified. One short English notice is emitted by the process that performs it.
+- `PI_CONFIG_DIR` / `PI_CODING_AGENT_DIR` keep their names and semantics; only
+  the default value moved. No `.pi` directory probe was added — the `.pi`
+  support that exists is env-var based plus `pi.extensions` manifest keys.
+- Repo-local `.omp/` project config was renamed to `.mars/` (see §8: this is a
+  deliberate behavioral change).
+- Still pre-rebrand on purpose: `APP_URL` (no Mars domain decided yet — see the
+  TODO in `packages/utils/src/dirs.ts`), `my.omp.sh` and friends, the codex
+  `originator` wire contract, `omp://`, role `omp.*` tokens,
+  `__omp_worker_*` argv selectors, `crates/pi-*` names, package folder names,
+  and every CHANGELOG history entry.
