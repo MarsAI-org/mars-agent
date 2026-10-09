@@ -539,7 +539,7 @@ async function resolvePluginMCPConfig(root: ClaudePluginRoot): Promise<ResolvedM
  * Split a marketplace stdio env map into final values and legacy values.
  *
  * `${VAR}`/`${VAR:-default}` placeholders (and `${CLAUDE_PLUGIN_ROOT}` /
- * `${OMP_PLUGIN_ROOT}`) are expanded here and recorded as literal keys: the
+ * `${MARS_PLUGIN_ROOT}`) are expanded here and recorded as literal keys: the
  * result is final package data and must never be reinterpreted later as a
  * bare env name or `!command` (a second resolution would execute expanded
  * values or substitute ambient variables). Values that contained no
@@ -557,12 +557,12 @@ async function resolveMarketplaceEnv(
 	const literalKeys: string[] = [];
 	for (const [key, rawValue] of Object.entries(env)) {
 		// Feed the reserved plugin-root names through extraEnv: expansion then
-		// cannot consume an ambient CLAUDE_PLUGIN_ROOT/OMP_PLUGIN_ROOT, and
+		// cannot consume an ambient CLAUDE_PLUGIN_ROOT/MARS_PLUGIN_ROOT, and
 		// the registered root inserted as the value is never re-scanned
 		// for `${...}`.
 		const final = expandEnvVarsDeep(rawValue, {
 			CLAUDE_PLUGIN_ROOT: rootPath,
-			OMP_PLUGIN_ROOT: rootPath,
+			MARS_PLUGIN_ROOT: rootPath,
 		}) as string;
 		if (final !== rawValue) literalKeys.push(key);
 		resolved[key] = final;

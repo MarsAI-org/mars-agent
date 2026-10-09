@@ -29,7 +29,7 @@ use crate::desktop::{
 };
 
 const CAPTURE_TIMEOUT: Duration = Duration::from_secs(5);
-const HELPER: &[u8] = include_bytes!(env!("OMP_CAPTURE_DARWIN_HELPER"));
+const HELPER: &[u8] = include_bytes!(env!("MARS_CAPTURE_DARWIN_HELPER"));
 static MODERN_CAPTURE: LazyLock<bool> = LazyLock::new(|| {
 	NSProcessInfo::processInfo()
 		.operatingSystemVersion()

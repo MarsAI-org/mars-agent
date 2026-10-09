@@ -56,7 +56,7 @@ async function runScenario(
 				// this the default-file scenario logs into the real profile.
 				USERPROFILE: primaryDir,
 				PI_CONFIG_DIR: ".omp",
-				OMP_PROFILE: "",
+				MARS_PROFILE: "",
 				PI_PROFILE: "",
 				XDG_DATA_HOME: "",
 				XDG_STATE_HOME: "",
@@ -64,8 +64,8 @@ async function runScenario(
 				// Empty XDG_CACHE_HOME makes Bun's transpiler cache path relative,
 				// spewing bun/@t@/*.pile into the repo root (the child's cwd) — disable it.
 				BUN_RUNTIME_TRANSPILER_CACHE_PATH: "0",
-				OMP_LOGGER_TEST_NOW: fixedNow,
-				OMP_LOG_LEVEL: options.logLevel ?? "",
+				MARS_LOGGER_TEST_NOW: fixedNow,
+				MARS_LOG_LEVEL: options.logLevel ?? "",
 				TZ: "Etc/GMT+5",
 			},
 			stdout: Bun.file(stdoutPath),
@@ -208,7 +208,7 @@ describe("central logger file level and batching", () => {
 		);
 	});
 
-	test("OMP_LOG_LEVEL=warn gates info and debug while warn and error stay on disk", async () => {
+	test("MARS_LOG_LEVEL=warn gates info and debug while warn and error stay on disk", async () => {
 		const result = await runScenario("matrix", { logLevel: "WARN" });
 		expect((await readLogEntries(result.primaryDir)).map(entry => entry.message)).toEqual([
 			"level-error",

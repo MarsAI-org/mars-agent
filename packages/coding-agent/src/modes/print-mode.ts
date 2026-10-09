@@ -262,7 +262,7 @@ async function runPrintModeCore(
 				`Warning: MCP server "${server}" failed to connect: ${singleLine(error)}; its tools are unavailable for this run.`,
 			);
 		}
-		if ($flag("OMP_MCP_REQUIRE_READY") && unavailable.length > 0) {
+		if ($flag("MARS_MCP_REQUIRE_READY") && unavailable.length > 0) {
 			writeStderrLine(`Error: MCP servers not ready: ${unavailable.join(", ")}`);
 			strictMCPFailure = true;
 		}

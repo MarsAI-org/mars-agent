@@ -162,7 +162,7 @@ sleep 30
 			env: {
 				...Bun.env,
 				BUN_BE_BUN: "1",
-				OMP_PTREE_SUBREAPER_COMMAND: JSON.stringify([
+				MARS_PTREE_SUBREAPER_COMMAND: JSON.stringify([
 					process.execPath,
 					"-e",
 					'process.stdout.write("libc-fallback-ok")',
@@ -225,7 +225,7 @@ ${createLinuxSubreaperScript()}
 				env: {
 					...Bun.env,
 					BUN_BE_BUN: "1",
-					OMP_PTREE_SUBREAPER_COMMAND: JSON.stringify(["/bin/sh", "-c", "printf procfs-free-ok"]),
+					MARS_PTREE_SUBREAPER_COMMAND: JSON.stringify(["/bin/sh", "-c", "printf procfs-free-ok"]),
 				},
 				stdin: "ignore",
 				stdout: "pipe",

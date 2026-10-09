@@ -19,7 +19,7 @@ import (
 
 // The smoke tests drive real servers from the repository checkout:
 //
-//	OMP_RPC_SMOKE=1 go test -run TestSmoke -v ./...
+//	MARS_RPC_SMOKE=1 go test -run TestSmoke -v ./...
 //
 // PI_CODING_AGENT_DIR points at a fresh directory so no user configuration
 // applies. TestSmoke has no model and never prompts; TestSmokeModel prompts a
@@ -27,8 +27,8 @@ import (
 
 func repoRoot(t *testing.T) string {
 	t.Helper()
-	if os.Getenv("OMP_RPC_SMOKE") != "1" {
-		t.Skip("set OMP_RPC_SMOKE=1 to run against a real server (needs bun)")
+	if os.Getenv("MARS_RPC_SMOKE") != "1" {
+		t.Skip("set MARS_RPC_SMOKE=1 to run against a real server (needs bun)")
 	}
 	root, err := filepath.Abs("../../..")
 	if err != nil {

@@ -7,7 +7,7 @@ rebrand. NOT blind sed:
   - every rule is an explicit (pattern, replacement, category) triple, so a hit
     inside `pipeline` or `api` can never be rewritten as `mars-peline`;
   - patterns are word-boundary aware (regex lookarounds; `_` and alphanumerics
-    count as word characters, so `OMP_` inside a longer token is not matched);
+    count as word characters, so `MARS_` inside a longer token is not matched);
   - each rule carries file-selection guards (path substring / extension);
   - protected content (LICENSE, THIRD-PARTY-NOTICES, .git, vendor trees) is
     excluded by rule, never rewritten;

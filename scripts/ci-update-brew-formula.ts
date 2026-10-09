@@ -11,7 +11,7 @@
 
 import { $ } from "bun";
 
-const REPO = process.env.OMP_REPO ?? "MarsAI-org/mars-agent";
+const REPO = process.env.MARS_REPO ?? "MarsAI-org/mars-agent";
 const HOMEPAGE = "https://omp.sh";
 const DESC = "Coding agent with the IDE wired in";
 

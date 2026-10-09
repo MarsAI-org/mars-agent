@@ -2,7 +2,7 @@
  * Project-local `tui` tool: run and debug pi-tui apps headlessly. Each session
  * spawns a TypeScript/JavaScript entry or executable on a Bun-native PTY — a
  * real controlling terminal, so capability probes, SIGWINCH resizes, and
- * immediate-mode hosts all behave as in production — with `OMP_TUI_DEBUG`
+ * immediate-mode hosts all behave as in production — with `MARS_TUI_DEBUG`
  * pointed at the unix socket served by an omp/pi-tui host. Injected input
  * rides the app's own input path, while renderer and component queries inspect
  * the last painted frame.
@@ -996,7 +996,7 @@ const factory = (omp: ToolHost) => {
 				cwd: omp.cwd,
 				env: {
 					...process.env,
-					OMP_TUI_DEBUG: sockPath,
+					MARS_TUI_DEBUG: sockPath,
 					TERM: "xterm-256color",
 					COLORTERM: "truecolor",
 				},
@@ -1091,10 +1091,10 @@ const factory = (omp: ToolHost) => {
 		label: "TUI Debug",
 		description:
 			"Run and debug omp/pi-tui apps headlessly on a real PTY plus the " +
-			"OMP_TUI_DEBUG socket. Start defaults to omp itself " +
+			"MARS_TUI_DEBUG socket. Start defaults to omp itself " +
 			"(packages/coding-agent/src/cli.ts); override with file (a TS/JS entry, e.g. " +
 			"file: \"packages/tui/examples/debug-demo.ts\") or bin (an executable name/path), plus optional rows/cols and args. Any omp/pi-tui app serves " +
-			"OMP_TUI_DEBUG. Ops: text (viewport screenshot as plain text), screen " +
+			"MARS_TUI_DEBUG. Ops: text (viewport screenshot as plain text), screen " +
 			"(plain-text screen from kitty's real terminal core — works for any app, no " +
 			"debug socket needed; peek=N prepends N scrollback lines), frame (full " +
 			"document), tree (component tree with ids/rects/focus), values (widget " +

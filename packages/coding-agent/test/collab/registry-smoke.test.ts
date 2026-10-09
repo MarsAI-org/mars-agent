@@ -133,12 +133,12 @@ describe("collab host registry (two-process smoke)", () => {
 			HOME: home,
 			USERPROFILE: home,
 			NO_COLOR: "1",
-			OMP_SMOKE_MARKER: marker,
-			OMP_SMOKE_INSTANCE_ID: instanceId,
+			MARS_SMOKE_MARKER: marker,
+			MARS_SMOKE_INSTANCE_ID: instanceId,
 		};
 		delete env.PI_CONFIG_DIR;
 		delete env.PI_PROFILE;
-		delete env.OMP_PROFILE;
+		delete env.MARS_PROFILE;
 		delete env.PI_CODING_AGENT_DIR;
 
 		const { child, stderr } = spawnHelper([], env);

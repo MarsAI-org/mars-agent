@@ -92,7 +92,7 @@ describe("browser relay daemon", () => {
 				process.execPath,
 				"-e",
 				`import { probeRelayServer } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/tools/browser/relay/daemon.ts"))};
-const url = Bun.env.OMP_TEST_RELAY_URL;
+const url = Bun.env.MARS_TEST_RELAY_URL;
 if (!url) throw new Error("missing relay URL");
 process.stdout.write(String(await probeRelayServer(url)));`,
 			],
@@ -103,7 +103,7 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 					http_proxy: `http://127.0.0.1:${proxy.port}`,
 					NO_PROXY: "",
 					no_proxy: "",
-					OMP_TEST_RELAY_URL: `http://127.0.0.1:${relay.port}`,
+					MARS_TEST_RELAY_URL: `http://127.0.0.1:${relay.port}`,
 				},
 				stdout: "pipe",
 				stderr: "pipe",
@@ -144,8 +144,8 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 import { closeDaemonClients } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/launch/client.ts"))};
 import { ensureRelayDaemon } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/tools/browser/relay/daemon.ts"))};
 
-const cdpUrl = process.env.OMP_TEST_RELAY_URL;
-const marker = process.env.OMP_TEST_READY_MARKER;
+const cdpUrl = process.env.MARS_TEST_RELAY_URL;
+const marker = process.env.MARS_TEST_READY_MARKER;
 if (!cdpUrl || !marker) throw new Error("relay consumer environment is incomplete");
 try {
 	if (!(await ensureRelayDaemon({ cdpUrl }))) throw new Error("relay did not start");
@@ -169,10 +169,10 @@ try {
 						HOME: home,
 						USERPROFILE: home,
 						PI_CONFIG_DIR: ".omp",
-						OMP_PROFILE: profile,
-						OMP_DAEMON_IDLE_GRACE_MS: "200",
-						OMP_TEST_RELAY_URL: cdpUrl,
-						OMP_TEST_READY_MARKER: marker,
+						MARS_PROFILE: profile,
+						MARS_DAEMON_IDLE_GRACE_MS: "200",
+						MARS_TEST_RELAY_URL: cdpUrl,
+						MARS_TEST_READY_MARKER: marker,
 					},
 					stdin: "pipe",
 					stdout: "ignore",
@@ -235,7 +235,7 @@ try {
 				"-e",
 				`import { closeDaemonClients } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/launch/client.ts"))};
 import { ensureRelayDaemon, probeRelayServer } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/tools/browser/relay/daemon.ts"))};
-const [first, second] = [Bun.env.OMP_TEST_FIRST_RELAY_URL!, Bun.env.OMP_TEST_SECOND_RELAY_URL!];
+const [first, second] = [Bun.env.MARS_TEST_FIRST_RELAY_URL!, Bun.env.MARS_TEST_SECOND_RELAY_URL!];
 try {
 	const started = [await ensureRelayDaemon({ cdpUrl: first }), await ensureRelayDaemon({ cdpUrl: second })];
 	const serving = [await probeRelayServer(first), await probeRelayServer(second)];
@@ -251,9 +251,9 @@ try {
 					HOME: home,
 					USERPROFILE: home,
 					PI_CONFIG_DIR: ".omp",
-					OMP_DAEMON_IDLE_GRACE_MS: "200",
-					OMP_TEST_FIRST_RELAY_URL: firstUrl,
-					OMP_TEST_SECOND_RELAY_URL: secondUrl,
+					MARS_DAEMON_IDLE_GRACE_MS: "200",
+					MARS_TEST_FIRST_RELAY_URL: firstUrl,
+					MARS_TEST_SECOND_RELAY_URL: secondUrl,
 				},
 				stdout: "pipe",
 				stderr: "pipe",

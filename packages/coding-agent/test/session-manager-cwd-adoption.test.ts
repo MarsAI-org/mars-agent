@@ -14,7 +14,7 @@ function makeTempDir(prefix: string): string {
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalPiProfile = process.env.PI_PROFILE;
-const originalOmpProfile = process.env.OMP_PROFILE;
+const originalOmpProfile = process.env.MARS_PROFILE;
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(async () => {
 	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
 	restoreEnv("PI_PROFILE", originalPiProfile);
-	restoreEnv("OMP_PROFILE", originalOmpProfile);
+	restoreEnv("MARS_PROFILE", originalOmpProfile);
 	__resetDirsFromEnvForTests();
 	await Promise.all(tempDirs.splice(0).map(dir => dir.remove()));
 });

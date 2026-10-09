@@ -7,7 +7,7 @@
  * (including `!command` config indirection) from coding-agent's config layer.
  *
  * Precedence (highest first):
- *   1. `OMP_AUTH_BROKER_URL` / `OMP_AUTH_BROKER_TOKEN` env vars.
+ *   1. `MARS_AUTH_BROKER_URL` / `MARS_AUTH_BROKER_TOKEN` env vars.
  *   2. `auth.broker.url` / `auth.broker.token` in `~/.omp/agent/config.yml`
  *      (hidden from the settings UI; `!command` resolution supported).
  *   3. Token file `~/.omp/auth-broker.token` (paired with URL from env or config).
@@ -85,7 +85,7 @@ export async function loadEffectiveAuthAccountPolicyConfig(
 /**
  * Process-lifetime memo for {@link resolveAuthBrokerConfig}. Keyed on the env
  * inputs (plus agent dir, which decides which config.yml is read) so tests
- * that flip `OMP_AUTH_BROKER_*` between cases still observe the change, while
+ * that flip `MARS_AUTH_BROKER_*` between cases still observe the change, while
  * repeated resolution within one CLI invocation (startup, subagent sessions)
  * skips the config.yml read and any `!command` token resolution.
  */
@@ -103,7 +103,7 @@ let cachedConfigPromise: Promise<AuthBrokerClientConfig | null> | null = null;
  * retried. Concurrent callers share one in-flight resolution.
  */
 export function resolveAuthBrokerConfig(): Promise<AuthBrokerClientConfig | null> {
-	const key = `${process.env.OMP_AUTH_BROKER_URL ?? ""}\u0000${process.env.OMP_AUTH_BROKER_TOKEN ?? ""}\u0000${getAgentDir()}`;
+	const key = `${process.env.MARS_AUTH_BROKER_URL ?? ""}\u0000${process.env.MARS_AUTH_BROKER_TOKEN ?? ""}\u0000${getAgentDir()}`;
 	if (cachedConfigPromise && cachedConfigKey === key) return cachedConfigPromise;
 	const promise = resolveAuthBrokerConfigShared({
 		agentDir: getAgentDir(),
@@ -251,6 +251,6 @@ export async function describeAuthBrokerStartupError(error: unknown): Promise<st
 		"omp is configured to use this broker for credentials and will not fall back to local credentials automatically.\n" +
 		"Start the broker with `omp auth-broker serve`, or disable it with " +
 		"`omp config reset auth.broker.url` and `omp config reset auth.broker.token` " +
-		"(or unset OMP_AUTH_BROKER_URL / OMP_AUTH_BROKER_TOKEN)."
+		"(or unset MARS_AUTH_BROKER_URL / MARS_AUTH_BROKER_TOKEN)."
 	);
 }

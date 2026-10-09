@@ -480,9 +480,9 @@ function buildChildEnv(): Record<string, string | undefined> {
 // parallel path awaits the child's stdout/stderr pipes, which stay open as
 // long as the wedged process — or any grandchild that inherited them — lives.
 // After this many seconds the child is SIGKILLed and reported as a failure.
-// Override with OMP_TEST_CHUNK_TIMEOUT (seconds).
+// Override with MARS_TEST_CHUNK_TIMEOUT (seconds).
 function chunkTimeoutMs(): number {
-	const raw = Number(Bun.env.OMP_TEST_CHUNK_TIMEOUT?.trim());
+	const raw = Number(Bun.env.MARS_TEST_CHUNK_TIMEOUT?.trim());
 	if (Number.isFinite(raw) && raw >= 1) return raw * 1000;
 	return 600_000;
 }
@@ -513,10 +513,10 @@ const MAX_CHUNK_ATTEMPTS = 3;
 // two very different ways -- the per-chunk watchdog firing, or the kernel OOM
 // killer reaping a chunk that outgrew the runner -- and the bare exit code
 // cannot tell them apart. Which one it was is the difference between "raise
-// OMP_TEST_CHUNK_TIMEOUT" and "lower this bucket's chunkSize", so say it.
+// MARS_TEST_CHUNK_TIMEOUT" and "lower this bucket's chunkSize", so say it.
 export function describeChunkFailure(exitCode: number, timedOut: boolean): string {
 	if (timedOut) {
-		return `exceeded the ${Math.round(chunkTimeoutMs() / 1000)}s chunk watchdog and was killed (exit ${exitCode}; OMP_TEST_CHUNK_TIMEOUT to change)`;
+		return `exceeded the ${Math.round(chunkTimeoutMs() / 1000)}s chunk watchdog and was killed (exit ${exitCode}; MARS_TEST_CHUNK_TIMEOUT to change)`;
 	}
 	if (exitCode === 137) {
 		return "was SIGKILLed (exit 137) without reaching the chunk watchdog, which on a CI runner means the OOM killer; lower this bucket's chunkSize";
@@ -536,11 +536,11 @@ function isCI(): boolean {
 }
 
 // Fan-out width for the local parallel path, clamped to the command count.
-// Defaults to the machine's available parallelism; `OMP_TEST_CONCURRENCY`
+// Defaults to the machine's available parallelism; `MARS_TEST_CONCURRENCY`
 // overrides it — a positive integer to pick an exact width (dial down on a
 // memory-constrained laptop), or `all`/`max` to launch every chunk at once.
 function testConcurrency(total: number): number {
-	const raw = Bun.env.OMP_TEST_CONCURRENCY?.trim().toLowerCase();
+	const raw = Bun.env.MARS_TEST_CONCURRENCY?.trim().toLowerCase();
 	if (!raw) return Math.min(Math.max(1, os.availableParallelism()), total);
 	if (raw === "all" || raw === "max") {
 		return total;
@@ -549,7 +549,7 @@ function testConcurrency(total: number): number {
 	if (Number.isFinite(override) && override >= 1) {
 		return Math.min(Math.floor(override), total);
 	}
-	throw new Error(`Invalid OMP_TEST_CONCURRENCY=${JSON.stringify(raw)}; expected a positive integer, all, or max`);
+	throw new Error(`Invalid MARS_TEST_CONCURRENCY=${JSON.stringify(raw)}; expected a positive integer, all, or max`);
 }
 
 // Test files interleave real IO — sqlite writes, temp dirs, spawned CLIs — with
@@ -579,9 +579,9 @@ function budgetedParallel(requested: number, poolWidth: number): number {
 // timeout that says nothing about the code. Timing out is still worth catching,
 // so keep a ceiling — just one loose enough to only fire on a real hang. The
 // per-chunk watchdog (chunkTimeoutMs) remains the backstop for a wedged process.
-// Override with OMP_TEST_TIMEOUT (seconds); per-test `it(name, fn, ms)` still wins.
+// Override with MARS_TEST_TIMEOUT (seconds); per-test `it(name, fn, ms)` still wins.
 function testTimeoutMs(): number {
-	const raw = Number(Bun.env.OMP_TEST_TIMEOUT?.trim());
+	const raw = Number(Bun.env.MARS_TEST_TIMEOUT?.trim());
 	if (Number.isFinite(raw) && raw >= 1) return raw * 1000;
 	return 30_000;
 }
@@ -773,7 +773,7 @@ export async function runTestCommandsInParallel(commands: TestCommand[], concurr
 	const fileWidths = [...new Set(commands.map(c => c.parallel).filter(p => p !== undefined))].sort((a, b) => a - b);
 	console.log(
 		`Running ${commands.length} test command(s), up to ${concurrency} in parallel ` +
-			`(OMP_TEST_CONCURRENCY=<n>|all to change); ${os.availableParallelism()} cores, ` +
+			`(MARS_TEST_CONCURRENCY=<n>|all to change); ${os.availableParallelism()} cores, ` +
 			`--parallel=${fileWidths.join("/") || "n/a"} per chunk.`,
 	);
 
@@ -850,7 +850,7 @@ export async function runTestCommandsInParallel(commands: TestCommand[], concurr
 		return {
 			exitCode,
 			timedOut,
-			output: `${stdout.text}${stderr.text}${timedOut ? `\n[watchdog] chunk exceeded ${Math.round(chunkTimeoutMs() / 1000)}s; killed with SIGKILL (OMP_TEST_CHUNK_TIMEOUT to change)\n` : ""}`,
+			output: `${stdout.text}${stderr.text}${timedOut ? `\n[watchdog] chunk exceeded ${Math.round(chunkTimeoutMs() / 1000)}s; killed with SIGKILL (MARS_TEST_CHUNK_TIMEOUT to change)\n` : ""}`,
 		};
 	}
 
@@ -916,7 +916,7 @@ export async function runTestCommandsInParallel(commands: TestCommand[], concurr
 	}
 }
 
-// `OMP_TEST_SHARD=i/n` splits a mode's chunk commands across n CI jobs; job i
+// `MARS_TEST_SHARD=i/n` splits a mode's chunk commands across n CI jobs; job i
 // runs every chunk whose index ≡ i-1 (mod n). Round-robin rather than
 // contiguous ranges because the chunk list follows sorted file order, so slow
 // neighbouring suites spread evenly instead of piling into one shard. Every
@@ -928,11 +928,11 @@ export function selectShard<T>(commands: T[], spec: string | undefined): T[] {
 	const index = match ? Number(match[1]) : 0;
 	const count = match ? Number(match[2]) : 0;
 	if (!match || count < 1 || index < 1 || index > count) {
-		throw new Error(`Invalid OMP_TEST_SHARD=${JSON.stringify(trimmed)}; expected i/n with 1 <= i <= n`);
+		throw new Error(`Invalid MARS_TEST_SHARD=${JSON.stringify(trimmed)}; expected i/n with 1 <= i <= n`);
 	}
 	const selected = commands.filter((_, i) => i % count === index - 1);
 	if (selected.length === 0) {
-		throw new Error(`OMP_TEST_SHARD=${trimmed} selects no chunks (${commands.length} available)`);
+		throw new Error(`MARS_TEST_SHARD=${trimmed} selects no chunks (${commands.length} available)`);
 	}
 	return selected;
 }
@@ -946,8 +946,8 @@ if (import.meta.main) {
 		);
 	}
 
-	const requestedCommands = selectShard(await commandsForMode(requestedMode as Mode), Bun.env.OMP_TEST_SHARD);
-	const explicitConcurrency = Boolean(Bun.env.OMP_TEST_CONCURRENCY?.trim());
+	const requestedCommands = selectShard(await commandsForMode(requestedMode as Mode), Bun.env.MARS_TEST_SHARD);
+	const explicitConcurrency = Boolean(Bun.env.MARS_TEST_CONCURRENCY?.trim());
 	// CI defaults to one process at a time, but memory-sized workflow buckets
 	// explicitly opt into bounded process concurrency. Local runs fan out by
 	// default and may use the same override. Resolved before the dry-run check so

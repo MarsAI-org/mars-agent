@@ -62,7 +62,7 @@ export function getExtraHelpText(): string {
   TYPESAFE_API_KEY           - TypeSafe System One judgments (auto thinking, unexpected-stop, AI staging, eval judge())
 
   ${chalk.dim("# Configuration")}
-  OMP_PROFILE                 - Named profile for isolated agent state (same as --profile)
+  MARS_PROFILE                 - Named profile for isolated agent state (same as --profile)
   Use \`omp --profile <name> --alias <command>\` to create a shell shortcut for a profile
   PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
   PI_PACKAGE_DIR             - Override package directory (for Nix/Guix store paths)

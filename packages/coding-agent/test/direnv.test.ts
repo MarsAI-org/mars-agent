@@ -71,7 +71,7 @@ describe("findEnvrc", () => {
 
 describe("cleanSpawnEnv versioning", () => {
 	it("picks up Bun.env mutations after the first cached call", () => {
-		const marker = `OMP_DIRENV_TEST_${process.pid}`;
+		const marker = `MARS_DIRENV_TEST_${process.pid}`;
 		delete Bun.env[marker];
 		clearDirenvCachesForTests();
 		expect(cleanSpawnEnvForTests()[marker]).toBeUndefined();

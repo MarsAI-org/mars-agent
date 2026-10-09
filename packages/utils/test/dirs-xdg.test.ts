@@ -14,7 +14,7 @@ import {
 import { Snowflake } from "@marsai-org/utils/snowflake";
 
 const ENV_KEYS = [
-	"OMP_PROFILE",
+	"MARS_PROFILE",
 	"PI_PROFILE",
 	"PI_CONFIG_DIR",
 	"PI_CODING_AGENT_DIR",
@@ -34,7 +34,7 @@ describe("XDG-aware runtime paths", () => {
 
 	beforeEach(async () => {
 		originalAgentDir = getAgentDir();
-		originalProfile = process.env.OMP_PROFILE ?? process.env.PI_PROFILE;
+		originalProfile = process.env.MARS_PROFILE ?? process.env.PI_PROFILE;
 		originalEnv = {};
 		for (const key of ENV_KEYS) originalEnv[key] = process.env[key];
 		tempRoot = path.join(os.tmpdir(), "pi-utils-dirs-xdg", Snowflake.next());

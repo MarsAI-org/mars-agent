@@ -49,7 +49,7 @@ process.stdout.write(JSON.stringify({ url: "http://" + server.hostname + ":" + s
 			TEMP: tmpDir,
 			PI_CONFIG_DIR: ".omp",
 			PI_CODING_AGENT_DIR: path.join(root, ".omp", "agent"),
-			OMP_PROFILE: "",
+			MARS_PROFILE: "",
 			PI_PROFILE: "",
 			XDG_DATA_HOME: path.join(root, "data"),
 			XDG_STATE_HOME: path.join(root, "state"),

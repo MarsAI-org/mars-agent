@@ -57,7 +57,7 @@ const isolatedEnvKeys = [
 	"USERPROFILE",
 	"CLAUDE_CONFIG_DIR",
 	"PI_CODING_AGENT_DIR",
-	"OMP_PROFILE",
+	"MARS_PROFILE",
 	"PI_PROFILE",
 ] as const;
 const originalEnv: Record<string, string | undefined> = Object.fromEntries(

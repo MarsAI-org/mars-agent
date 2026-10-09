@@ -97,8 +97,8 @@ test("token refreshes and persists a rotating local MCP OAuth grant", async () =
 			env: {
 				...process.env,
 				NO_COLOR: "1",
-				OMP_AUTH_BROKER_TOKEN: undefined,
-				OMP_AUTH_BROKER_URL: undefined,
+				MARS_AUTH_BROKER_TOKEN: undefined,
+				MARS_AUTH_BROKER_URL: undefined,
 				PI_CODING_AGENT_DIR: tempDir.path(),
 			},
 			stdout: "pipe",
@@ -155,9 +155,9 @@ test("token refuses a managed MCP id scoped to another profile", async () => {
 		env: {
 			...process.env,
 			NO_COLOR: "1",
-			OMP_AUTH_BROKER_TOKEN: undefined,
-			OMP_AUTH_BROKER_URL: undefined,
-			OMP_PROFILE: undefined,
+			MARS_AUTH_BROKER_TOKEN: undefined,
+			MARS_AUTH_BROKER_URL: undefined,
+			MARS_PROFILE: undefined,
 			PI_PROFILE: undefined,
 			PI_CODING_AGENT_DIR: tempDir.path(),
 		},

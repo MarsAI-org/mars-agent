@@ -13,7 +13,7 @@ fn main() {
 		build_darwin_native_helper(
 			"src/desktop/macos/capture/helper.m",
 			"omp-capture-helper",
-			"OMP_CAPTURE_DARWIN_HELPER",
+			"MARS_CAPTURE_DARWIN_HELPER",
 			&["AppKit", "ScreenCaptureKit", "CoreGraphics"],
 			"14.0",
 		);
@@ -33,12 +33,12 @@ fn build_syntax_set() {
 		.join("syntaxes.packdump");
 	syntect::dumps::dump_to_uncompressed_file(&syntax_set_builder::build_syntax_set(), &output)
 		.unwrap_or_else(|error| panic!("failed to write {}: {error}", output.display()));
-	println!("cargo:rustc-env=OMP_SYNTAX_SET={}", output.display());
+	println!("cargo:rustc-env=MARS_SYNTAX_SET={}", output.display());
 }
 
 /// Builds the Apple Foundation Models bridge dylib through
 /// `src/applefm/build-bridge.sh` (shared with Bazel) and exposes it to the
-/// crate as `OMP_APPLEFM_BRIDGE` for embedding: `bridge.swift` when a Swift
+/// crate as `MARS_APPLEFM_BRIDGE` for embedding: `bridge.swift` when a Swift
 /// 6.4+ / macOS 27 SDK toolchain exists and the target is Apple silicon,
 /// otherwise an empty file (bridge not built).
 ///
@@ -54,7 +54,8 @@ fn build_applefm_bridge() {
 	for file in ["build-bridge.sh", "bridge.swift"] {
 		println!("cargo:rerun-if-changed={}", sources.join(file).display());
 	}
-	for variable in ["OMP_APPLEFM_SWIFTC", "OMP_APPLEFM_MODULE_CACHE", "SDKROOT", "DEVELOPER_DIR"] {
+	for variable in ["MARS_APPLEFM_SWIFTC", "MARS_APPLEFM_MODULE_CACHE", "SDKROOT", "DEVELOPER_DIR"]
+	{
 		println!("cargo:rerun-if-env-changed={variable}");
 	}
 	// SDK installs and upgrades change which toolchain is detected. Watch files,
@@ -113,7 +114,7 @@ fn build_applefm_bridge() {
 		String::from_utf8_lossy(&result.stderr)
 	);
 
-	println!("cargo:rustc-env=OMP_APPLEFM_BRIDGE={}", library.display());
+	println!("cargo:rustc-env=MARS_APPLEFM_BRIDGE={}", library.display());
 }
 
 /// Returns `(swiftc, sdk)` for the first toolchain `build-bridge.sh detect`
@@ -205,7 +206,7 @@ fn build_oauth_callback_relay(target_os: &str) {
 		String::from_utf8_lossy(&result.stdout),
 		String::from_utf8_lossy(&result.stderr)
 	);
-	println!("cargo:rustc-env=OMP_OAUTH_RELAY_BINARY={}", output.display());
+	println!("cargo:rustc-env=MARS_OAUTH_RELAY_BINARY={}", output.display());
 }
 
 #[path = "src/oauth_callback/darwin_compiler.rs"]
@@ -215,7 +216,7 @@ fn build_darwin_oauth_callback_helper() {
 	build_darwin_native_helper(
 		"src/oauth_callback/darwin-helper.m",
 		"omp-oauth-callback-darwin-helper",
-		"OMP_OAUTH_DARWIN_HELPER",
+		"MARS_OAUTH_DARWIN_HELPER",
 		&["AppKit"],
 		"12.0",
 	);

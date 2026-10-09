@@ -87,7 +87,7 @@ env:
    # the SQLite/subprocess-heavy coding-agent suites 1.5-2x slower, which put
    # several cases (model-registry refresh, session fork, credential bridge)
    # over the 30 s default; 120 s still catches a real hang.
-   OMP_TEST_TIMEOUT: "120"
+   MARS_TEST_TIMEOUT: "120"
 
 permissions:
    contents: read
@@ -596,8 +596,8 @@ jobs:
               stash: ${{ needs.native_addons.outputs.stash }}
          - name: Test coding-agent native/unit bucket
            env:
-              OMP_TEST_CONCURRENCY: "4"
-              OMP_TEST_SHARD: ${{ matrix.shard }}
+              MARS_TEST_CONCURRENCY: "4"
+              MARS_TEST_SHARD: ${{ matrix.shard }}
            run: bun run ci:test:coding-agent:native
 
    test_workspace:
@@ -615,7 +615,7 @@ jobs:
               stash: ${{ needs.native_addons.outputs.stash }}
          - name: Test workspace packages and repo scripts (TS)
            env:
-              OMP_TEST_CONCURRENCY: "4"
+              MARS_TEST_CONCURRENCY: "4"
            run: |
               bun run ci:test:ts:workspace
               # Not `test:scripts`: scripts/musl-release.test.ts fails on main
@@ -656,7 +656,7 @@ jobs:
               stash: ${{ needs.native_addons.outputs.stash }}
          - name: Test native/TUI/browser-ish packages (TS)
            env:
-              OMP_TEST_CONCURRENCY: "4"
+              MARS_TEST_CONCURRENCY: "4"
            run: bun run ci:test:ts:native
 
    test_coding_agent_ui:
@@ -674,7 +674,7 @@ jobs:
               stash: ${{ needs.native_addons.outputs.stash }}
          - name: Test coding-agent UI/TUI bucket
            env:
-              OMP_TEST_CONCURRENCY: "2"
+              MARS_TEST_CONCURRENCY: "2"
            run: bun run ci:test:coding-agent:ui
 
    test_coding_agent_runtime:
@@ -694,7 +694,7 @@ jobs:
            # Runtime/session tests import native-backed barrels too; keep this
            # separate for concurrency, not as a native-free guardrail.
            env:
-              OMP_TEST_CONCURRENCY: "4"
+              MARS_TEST_CONCURRENCY: "4"
            run: bun run ci:test:coding-agent:runtime
 
    test_smoke:
@@ -727,7 +727,7 @@ jobs:
               stash: ${{ needs.native_addons.outputs.stash }}
          - name: Install method smoke tests
            env:
-              OMP_INSTALL_TEST_SKIP_NATIVE_BUILD: "1"
+              MARS_INSTALL_TEST_SKIP_NATIVE_BUILD: "1"
            run: bun run ci:test:install-methods
 
    # Aggregates every validation job so publish-side release jobs gate on one
