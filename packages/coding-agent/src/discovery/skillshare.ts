@@ -47,7 +47,7 @@ async function loadLockedSkill(
 		return null;
 	}
 	// Canonical so `skill://` containment (checked against the realpathed root) holds when the store
-	// sits behind a symlink, e.g. a dotfiles-managed ~/.omp.
+	// sits behind a symlink, e.g. a dotfiles-managed ~/.mars.
 	const realStoreDir = await fs.realpath(storeDir);
 	const skillPath = path.join(realStoreDir, "SKILL.md");
 	let text: string;
