@@ -24,7 +24,7 @@ describe("plugin extension discovery", () => {
 		//    XDG_DATA_HOME redirect was a no-op on Windows, where these tests then wrote
 		//    into and rm'd the developer's real `~/.mars/plugins`);
 		//  - clear the XDG_* vars, because on Linux/macOS the resolver prefers
-		//    `$XDG_DATA_HOME/omp` over the home config root when that dir exists, so an
+		//    `$XDG_DATA_HOME/mars` over the home config root when that dir exists, so an
 		//    XDG-migrated environment would otherwise still resolve the real plugins dir.
 		tempHome = fs.mkdtempSync(path.join(os.tmpdir(), "pi-plugin-home-"));
 		for (const key of xdgVars) {
