@@ -32,9 +32,9 @@ describe("PI_CONFIG_DIR", () => {
 	});
 
 	test("getConfigDirs respects PI_CONFIG_DIR for user base", () => {
-		process.env.PI_CONFIG_DIR = ".config/omp";
+		process.env.PI_CONFIG_DIR = ".config/mars";
 		const result = getConfigDirs("commands", { project: false });
-		const expected = path.resolve(path.join(os.homedir(), ".config/omp", "agent", "commands"));
+		const expected = path.resolve(path.join(os.homedir(), ".config/mars", "agent", "commands"));
 		expect(result[0]).toEqual({ path: expected, source: ".mars", level: "user" });
 	});
 });
