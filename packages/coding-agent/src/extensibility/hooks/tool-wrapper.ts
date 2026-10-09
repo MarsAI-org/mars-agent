@@ -6,8 +6,8 @@ import {
 	type AgentToolContext,
 	type AgentToolUpdateCallback,
 	isNonBlankContext,
-} from "@oh-my-pi/pi-agent-core";
-import type { Static, TSchema } from "@oh-my-pi/pi-ai";
+} from "@marsai-org/agent-core";
+import type { Static, TSchema } from "@marsai-org/ai";
 import { normalizeToolEventInput, resolveToolEventInput } from "../tool-event-input";
 import { applyToolProxy } from "../tool-proxy";
 import type { HookRunner } from "./runner";

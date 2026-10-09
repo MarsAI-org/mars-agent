@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { AssistantMessage, Context, Model, Tool } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type } from "@marsai-org/omptype";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import type { AssistantMessage, Context, Model, Tool } from "@marsai-org/ai/types";
+import { Effort } from "@marsai-org/catalog/effort";
 import { bedrockHappyPathFrames, bedrockTestModel, withSkippedBedrockAuth } from "./helpers/bedrock-stream";
 
 const PREFIX_BINDING_ERROR =

@@ -1,12 +1,12 @@
-import { type NestedRepoPatch } from "@oh-my-pi/pi-tui/tools/task";
+import { type NestedRepoPatch } from "@marsai-org/tui/tools/task";
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { VcsCommitAuthor, VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as natives from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { formatBytes, getWorktreeDir, logger, Snowflake } from "@oh-my-pi/pi-utils";
+import type { VcsCommitAuthor, VcsGitRepo } from "@marsai-org/natives";
+import * as natives from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { formatBytes, getWorktreeDir, logger, Snowflake } from "@marsai-org/utils";
 import type { SettingValueOf } from "../config/registry";
 
 import { withRepoLock } from "../utils/repo-lock";

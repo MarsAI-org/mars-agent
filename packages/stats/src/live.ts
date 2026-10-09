@@ -12,7 +12,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getSessionsDir, logger } from "@oh-my-pi/pi-utils";
+import { getSessionsDir, logger } from "@marsai-org/utils";
 import { syncAllSessions } from "./aggregator";
 import { getDataVersion, initDb } from "./db";
 import { getRollupStatus, refreshRollups } from "./rollup";

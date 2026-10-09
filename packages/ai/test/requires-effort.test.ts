@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec, ThinkingConfig } from "@oh-my-pi/pi-catalog/types";
+import { Effort, type FetchImpl } from "@marsai-org/ai";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec, ThinkingConfig } from "@marsai-org/catalog/types";
 
 interface CapturedBody {
 	model?: string;

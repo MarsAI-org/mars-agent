@@ -1,5 +1,5 @@
-import { isFastembedModelCached } from "@oh-my-pi/pi-mnemopi/core/fastembed-model-cache";
-import { getFastembedCacheDir, logger } from "@oh-my-pi/pi-utils";
+import { isFastembedModelCached } from "@marsai-org/mnemopi/core/fastembed-model-cache";
+import { getFastembedCacheDir, logger } from "@marsai-org/utils";
 import { trackDownload } from "../downloads/activity";
 import {
 	createUnavailableWorker,

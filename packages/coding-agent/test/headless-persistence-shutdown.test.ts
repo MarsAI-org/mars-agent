@@ -11,12 +11,12 @@
  */
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs";
-import { parseArgs, type Args } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir, postmortem } from "@oh-my-pi/pi-utils";
+import { parseArgs, type Args } from "@marsai-org/coding-agent/cli/args";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir, postmortem } from "@marsai-org/utils";
 import type { AgentSession } from "../src/session/agent-session";
 import { SessionManager } from "../src/session/session-manager";
 

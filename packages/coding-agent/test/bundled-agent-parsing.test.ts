@@ -1,15 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { Effort } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	resolveAgentModelPatterns,
 	resolveAgentModelSelection,
 	resolveModelOverride,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { buildOutputValidator } from "@oh-my-pi/pi-coding-agent/tools/output-schema-validator";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { getBundledAgent } from "@marsai-org/coding-agent/task/agents";
+import { buildOutputValidator } from "@marsai-org/coding-agent/tools/output-schema-validator";
+import { AUTO_THINKING } from "@marsai-org/tui/thinking";
 
 describe("bundled agent parsing", () => {
 	it("defaults the task agent to the auto thinking selector", () => {

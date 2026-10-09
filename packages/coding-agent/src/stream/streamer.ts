@@ -10,7 +10,7 @@ import {
 	type StreamChatMessage,
 	type StreamPaneFrame,
 	type StreamServerToHost,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import {
 	applyScreenFrame,
 	encodeStreamFrame,

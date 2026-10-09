@@ -5,7 +5,7 @@ import {
 	isReadOnlyComputerCall,
 	renderComputerCall,
 	WINDOW_METHODS,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/call";
+} from "@marsai-org/coding-agent/tools/computer/call";
 
 function errorMessage(run: () => unknown): string {
 	try {

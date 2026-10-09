@@ -12,9 +12,9 @@ import {
 	type BeforeToolCallContext,
 	type BeforeToolCallResult,
 	createToolScopedAbortReason,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Judge, ToolCall } from "@oh-my-pi/pi-ai";
-import { logger, prompt, relativePathWithinRoot, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import type { AssistantMessage, Judge, ToolCall } from "@marsai-org/ai";
+import { logger, prompt, relativePathWithinRoot, withTimeout } from "@marsai-org/utils";
 import type { Rule } from "../capability/rule";
 import type { Settings } from "../config/settings";
 import {

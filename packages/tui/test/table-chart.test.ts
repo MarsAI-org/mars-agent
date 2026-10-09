@@ -1,27 +1,27 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
 import {
 	buildChart,
 	type ChartKind,
 	type ChartPlan,
 	planChart,
 	worthCharting,
-} from "@oh-my-pi/pi-tui/charts/chart-plan";
-import { renderChartSvg } from "@oh-my-pi/pi-tui/charts/chart-svg";
-import { analyzeTable, parseCell } from "@oh-my-pi/pi-tui/charts/table-data";
-import { svgFigurePalette } from "@oh-my-pi/pi-tui/chat/svg-figure";
-import { prepareSvg } from "@oh-my-pi/pi-tui/chat/svg-source";
+} from "@marsai-org/tui/charts/chart-plan";
+import { renderChartSvg } from "@marsai-org/tui/charts/chart-svg";
+import { analyzeTable, parseCell } from "@marsai-org/tui/charts/table-data";
+import { svgFigurePalette } from "@marsai-org/tui/chat/svg-figure";
+import { prepareSvg } from "@marsai-org/tui/chat/svg-source";
 import {
 	lookupTableChart,
 	setTableCharts,
 	splitTableCharts,
 	type TableChartPlanner,
-} from "@oh-my-pi/pi-tui/chat/table-chart";
-import { lexDocument } from "@oh-my-pi/pi-tui/components/markdown";
-import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { Tokens } from "@oh-my-pi/pi-utils/marked";
+} from "@marsai-org/tui/chat/table-chart";
+import { lexDocument } from "@marsai-org/tui/components/markdown";
+import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { Tokens } from "@marsai-org/utils/marked";
 
 function table(markdown: string): Tokens.Table {
 	const token = lexDocument(markdown).find((entry): entry is Tokens.Table => entry.type === "table");

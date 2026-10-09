@@ -7,9 +7,9 @@
 import type { Database, Statement } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { parseAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
-import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
+import { authPolicyFor } from "@marsai-org/catalog/compat/auth";
+import { parseAlibabaTokenPlanCredential } from "@marsai-org/catalog/wire/alibaba-token-plan";
+import { parseCloudflareAiGatewayCredential } from "@marsai-org/catalog/wire/cloudflare-ai-gateway";
 import {
 	getAgentDbPath,
 	getDbBusyTimeoutMs,
@@ -17,7 +17,7 @@ import {
 	isSqliteCorruptionError,
 	logger,
 	openSqliteDatabase,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { AuthCredentialStore, CredentialRefreshLeaseFence } from "./store";
 import type {
 	AuthCredential,
@@ -119,7 +119,7 @@ const CREDENTIAL_BLOCK_SWEEP_INTERVAL_MS = 60_000;
 
 // SQLite error classifiers live in pi-utils so the credential store and the
 // model cache share one implementation; re-exported here to preserve the
-// pre-existing `@oh-my-pi/pi-ai/auth-storage` surface.
+// pre-existing `@marsai-org/ai/auth-storage` surface.
 export { isSqliteBusyError, isSqliteCorruptionError };
 
 function normalizeStoredAccountId(accountId: string | null | undefined): string | null {

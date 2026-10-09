@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { SessionSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import { SessionSelectorComponent } from "@marsai-org/tui/overlays/session-selector";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import type { SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
 
 beforeAll(async () => {
 	await initTheme();

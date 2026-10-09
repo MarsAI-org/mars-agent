@@ -2,16 +2,16 @@ import * as fs from "node:fs/promises";
 import * as net from "node:net";
 import * as os from "node:os";
 import * as path from "node:path";
-import { FileLock, Process, type PtyRunResult, PtySession } from "@oh-my-pi/pi-natives";
-import { isEnoent, isRecord, logger, postmortem, procmgr, sanitizeText, setProcessName } from "@oh-my-pi/pi-utils";
-import { TerminalQueryResponder } from "@oh-my-pi/pi-utils/vterm";
+import { FileLock, Process, type PtyRunResult, PtySession } from "@marsai-org/natives";
+import { isEnoent, isRecord, logger, postmortem, procmgr, sanitizeText, setProcessName } from "@marsai-org/utils";
+import { TerminalQueryResponder } from "@marsai-org/utils/vterm";
 import { hostHasInheritableConsole } from "../eval/py/spawn-options";
 import {
 	truncateHead,
 	truncateHeadBytes,
 	truncateTail,
 	truncateTailBytes,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@marsai-org/tui/tools/streaming-output";
 import { workerEnvFromParent } from "../subprocess/worker-client";
 import {
 	DAEMON_META_FILE,
@@ -20,7 +20,7 @@ import {
 	readStoredDaemonRecord,
 	writeDaemonScopeMeta,
 } from "./paths";
-import type { DaemonReadySpec, DaemonSnapshot, DaemonSpec } from "@oh-my-pi/pi-tui/tools/daemon";
+import type { DaemonReadySpec, DaemonSnapshot, DaemonSpec } from "@marsai-org/tui/tools/daemon";
 import { hasLiveDaemonProjectPresence, pruneDeadDaemonRuntimeDirs } from "./presence";
 import {
 	DAEMON_IDLE_GRACE_ENV,

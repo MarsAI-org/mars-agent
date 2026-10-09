@@ -10,11 +10,11 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { logger, withTimeout } from "@oh-my-pi/pi-utils";
+import { logger, withTimeout } from "@marsai-org/utils";
 import { type DaemonBrokerClient, daemonClientForProject } from "../../launch/client";
 import { describeQuietly, stopQuietly, waitReady } from "../../launch/ensure";
 import { daemonRuntimeDir } from "../../launch/paths";
-import type { DaemonSnapshot } from "@oh-my-pi/pi-tui/tools/daemon";
+import type { DaemonSnapshot } from "@marsai-org/tui/tools/daemon";
 import { throwIfAborted } from "../tool-errors";
 import { probeCdpStatus } from "./attach";
 import { resolveSharedBrowserLaunchSpec } from "./launch";

@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { resolveOpenAIRequestSetup } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import type { OAuthController } from "@oh-my-pi/pi-ai/oauth/types";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { resolveOpenAIRequestSetup } from "@marsai-org/ai/providers/openai-shared";
+import { getOAuthProviders } from "@marsai-org/ai/registry/oauth";
+import type { OAuthController } from "@marsai-org/ai/oauth/types";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function registeredLogin(options: OAuthController) {
 	const login = getProviderDefinition("alibaba-token-plan")?.login;

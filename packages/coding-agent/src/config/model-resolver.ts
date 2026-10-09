@@ -4,7 +4,7 @@ import {
 	splitThinkingSuffix,
 	parseModelString,
 	splitUpstreamRouting,
-} from "@oh-my-pi/pi-tui/overlays/model-selector";
+} from "@marsai-org/tui/overlays/model-selector";
 /**
  * Model resolution, scoping, and initial selection.
  *
@@ -22,22 +22,22 @@ import {
  *   CLI flags, scope globs — onto that pipeline.
  */
 
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { ModelRoleLookup } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveBareVariantSelector, resolveVariantSelector } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { collapseVariantId, stripThinkingVariantSuffix } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { modelMatchesHost } from "@oh-my-pi/pi-catalog/hosts";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { fuzzyMatch } from "@oh-my-pi/pi-tui";
-import { logger } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { ModelRoleLookup } from "@marsai-org/tui/overlays/model-browser";
+import type { Api, Effort, KnownProvider, Model, ModelSpec } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveBareVariantSelector, resolveVariantSelector } from "@marsai-org/catalog/compat/collapse";
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import { collapseVariantId, stripThinkingVariantSuffix } from "@marsai-org/catalog/compat/taxonomy";
+import { modelMatchesHost } from "@marsai-org/catalog/hosts";
+import { buildModelProviderPriorityRank } from "@marsai-org/catalog/identity";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import { type GeneratedProvider, getBundledModels, modelsAreEqual } from "@marsai-org/catalog/models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models";
+import { fuzzyMatch } from "@marsai-org/tui";
+import { logger } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import {
 	AUTO_THINKING,
@@ -45,7 +45,7 @@ import {
 	concreteThinkingLevel,
 	parseConfiguredThinkingLevel,
 	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import { isAuthenticated, kNoAuth, type ModelRegistry } from "./model-registry";
 import {
 	DEFAULT_MODEL_ROLE_ALIAS,

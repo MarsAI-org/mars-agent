@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseArgs, validateGoalLaunch, validateGoalStartup } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { CliUsageError } from "@oh-my-pi/pi-coding-agent/cli/usage-error";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSessionManager, runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { setInteractiveHost, TempDir } from "@oh-my-pi/pi-utils";
+import { parseArgs, validateGoalLaunch, validateGoalStartup } from "@marsai-org/coding-agent/cli/args";
+import { CliUsageError } from "@marsai-org/coding-agent/cli/usage-error";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createSessionManager, runRootCommand } from "@marsai-org/coding-agent/main";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { setInteractiveHost, TempDir } from "@marsai-org/utils";
 
 const cliEntry = path.resolve(import.meta.dir, "../src/cli.ts");
 

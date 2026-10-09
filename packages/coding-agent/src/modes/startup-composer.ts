@@ -1,17 +1,17 @@
-import type { Terminal } from "@oh-my-pi/pi-tui";
+import type { Terminal } from "@marsai-org/tui";
 import {
 	COMPOSER_DEFAULTS,
 	Composer,
 	type ComposerPreferences,
 	type ComposerWelcomeUpdate,
-} from "@oh-my-pi/pi-tui/prompt/composer";
+} from "@marsai-org/tui/prompt/composer";
 import {
 	type ComposerCache,
 	type ComposerThemePreferences,
 	sharedComposerCache,
-} from "@oh-my-pi/pi-tui/prompt/composer-cache";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { initThemeSync } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/prompt/composer-cache";
+import { setMagicKeywords } from "@marsai-org/tui/prompt/magic-keywords";
+import { initThemeSync } from "@marsai-org/tui/theme";
 import { MAGIC_KEYWORDS } from "./magic-keywords";
 
 /** Inputs available at the CLI prepaint boundary before command modules load. */

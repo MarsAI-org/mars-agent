@@ -1,22 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@oh-my-pi/pi-coding-agent/autoresearch";
+import { createAutoresearchExtension } from "@marsai-org/coding-agent/autoresearch";
 import {
 	buildExperimentState,
 	computeConfidence,
 	findBestKeptMetric,
 	reconstructControlState,
-} from "@oh-my-pi/pi-coding-agent/autoresearch/state";
-import { AutoresearchStorage, closeAllAutoresearchStorages } from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
-import type { ExperimentResult } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { findBaselineMetric, findBaselineRunNumber } from "@oh-my-pi/pi-tui/apps/autoresearch-data";
+} from "@marsai-org/coding-agent/autoresearch/state";
+import { AutoresearchStorage, closeAllAutoresearchStorages } from "@marsai-org/coding-agent/autoresearch/storage";
+import type { ExperimentResult } from "@marsai-org/tui/tools/autoresearch";
+import { findBaselineMetric, findBaselineRunNumber } from "@marsai-org/tui/apps/autoresearch-data";
 import type {
 	ExtensionAPI,
 	ExtensionCommandContext,
 	RegisteredCommand,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { VcsGitRepo, VcsGitRepoInfo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import type { VcsGitRepo, VcsGitRepoInfo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { TempDir } from "@marsai-org/utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();

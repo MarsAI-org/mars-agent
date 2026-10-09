@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { globToolRenderer } from "@oh-my-pi/pi-tui/tools/glob";
+import { getThemeByName } from "@marsai-org/tui/theme";
+import { sanitizeText } from "@marsai-org/utils";
+import { globToolRenderer } from "@marsai-org/tui/tools/glob";
 
 describe("globToolRenderer", () => {
 	it("indents inline glob output and avoids accent-colored success headers", async () => {

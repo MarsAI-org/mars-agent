@@ -1,12 +1,12 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
+import type { AuthStorage } from "@marsai-org/ai";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import {
 	buildRequestBody,
 	searchTavily,
 	type TavilySearchParams,
-} from "@oh-my-pi/pi-coding-agent/web/search/providers/tavily";
+} from "@marsai-org/coding-agent/web/search/providers/tavily";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const catalogAuthStorage = createInMemoryAuthStorage();

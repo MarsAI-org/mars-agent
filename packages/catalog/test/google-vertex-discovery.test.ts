@@ -2,20 +2,17 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import {
-	googleModelManagerOptions,
-	googleVertexModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/google";
+import { Effort } from "@marsai-org/catalog/effort";
+import { buildModel } from "@marsai-org/catalog/build";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { googleModelManagerOptions, googleVertexModelManagerOptions } from "@marsai-org/catalog/provider-models/google";
 import {
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models/openai-compat";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 
 const googleVertexModelsDevPayload = {
 	"google-vertex": {

@@ -1,9 +1,9 @@
 import type { BodyInit } from "bun";
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { fetchExaTools } from "@oh-my-pi/pi-coding-agent/exa/mcp-client";
-import { callMCP, redactUrlForLog } from "@oh-my-pi/pi-coding-agent/mcp/json-rpc";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/ai";
+import { fetchExaTools } from "@marsai-org/coding-agent/exa/mcp-client";
+import { callMCP, redactUrlForLog } from "@marsai-org/coding-agent/mcp/json-rpc";
+import { isRecord } from "@marsai-org/utils";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 
 interface PostedJsonRpcRequest {

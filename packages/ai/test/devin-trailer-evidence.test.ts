@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { streamDevin } from "@oh-my-pi/pi-ai/providers/devin";
-import type { Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { GetUserJwtResponseSchema } from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { logger } from "@oh-my-pi/pi-utils";
+import { streamDevin } from "@marsai-org/ai/providers/devin";
+import type { Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { GetUserJwtResponseSchema } from "@marsai-org/catalog/discovery/devin-proto";
+import { create, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { logger } from "@marsai-org/utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();

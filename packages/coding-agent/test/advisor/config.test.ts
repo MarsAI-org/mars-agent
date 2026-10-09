@@ -13,7 +13,7 @@ import {
 	serializeWatchdogConfig,
 	slugifyAdvisorName,
 } from "../../src/advisor/config";
-import type { WatchdogConfigDoc } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+import type { WatchdogConfigDoc } from "@marsai-org/tui/overlays/advisor-config";
 
 describe("discoverAdvisorConfigs", () => {
 	let tmp: string;

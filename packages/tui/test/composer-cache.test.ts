@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { Database, Statement } from "bun:sqlite";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import { ThinkingLevel } from "@marsai-org/agent-core";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { COMPOSER_DEFAULTS, type ComposerStatusCache } from "@oh-my-pi/pi-tui/prompt/composer";
-import { ComposerCache } from "@oh-my-pi/pi-tui/prompt/composer-cache";
+import { COMPOSER_DEFAULTS, type ComposerStatusCache } from "@marsai-org/tui/prompt/composer";
+import { ComposerCache } from "@marsai-org/tui/prompt/composer-cache";
 
 function statusFor(thinkingLevel: ThinkingLevel): ComposerStatusCache {
 	return {
@@ -138,7 +138,7 @@ describe("composer startup cache", () => {
 		]);
 		await Bun.write(path.join(home, ".env"), `XDG_CACHE_HOME=${xdgCache}\n`);
 
-		const composerCacheModule = Bun.resolveSync("@oh-my-pi/pi-tui/prompt/composer-cache", import.meta.dir);
+		const composerCacheModule = Bun.resolveSync("@marsai-org/tui/prompt/composer-cache", import.meta.dir);
 		const script = [
 			'import * as path from "node:path";',
 			`import { ComposerCache } from ${JSON.stringify(composerCacheModule)};`,

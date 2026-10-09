@@ -1,19 +1,19 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { BtwHistoryStore } from "@oh-my-pi/pi-coding-agent/session/btw-history";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { BtwPanelComponent } from "@oh-my-pi/pi-tui/overlays/btw-panel";
-import { BtwController } from "@oh-my-pi/pi-coding-agent/modes/controllers/btw-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { Container, replaceTabs, type TUI } from "@oh-my-pi/pi-tui";
-import type { NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
+import { BtwHistoryPanel } from "@marsai-org/tui/overlays/btw-history-panel";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { BtwHistoryStore } from "@marsai-org/coding-agent/session/btw-history";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { BtwPanelComponent } from "@marsai-org/tui/overlays/btw-panel";
+import { BtwController } from "@marsai-org/coding-agent/modes/controllers/btw-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import * as clipboard from "@marsai-org/coding-agent/utils/clipboard";
+import { Container, replaceTabs, type TUI } from "@marsai-org/tui";
+import type { NativeChild, NativeNode } from "@marsai-org/tui/native/node";
 
 const usage: Usage = {
 	input: 0,

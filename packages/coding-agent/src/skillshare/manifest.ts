@@ -7,8 +7,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { OmpErrors, type } from "@oh-my-pi/omptype";
-import { getAgentDir, hasFsCode, isEnoent } from "@oh-my-pi/pi-utils";
+import { OmpErrors, type } from "@marsai-org/omptype";
+import { getAgentDir, hasFsCode, isEnoent } from "@marsai-org/utils";
 import { resolveOrDefaultProjectRegistryPath } from "../discovery/helpers";
 import { replaceFileAtomically } from "../utils/atomic-file";
 

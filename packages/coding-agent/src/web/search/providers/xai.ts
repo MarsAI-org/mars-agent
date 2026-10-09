@@ -1,6 +1,6 @@
-import { type Api, type AuthStorage, type Model, withAuth } from "@oh-my-pi/pi-ai";
-import { resolveXaiBaseUrl, XAI_DEFAULT_BASE_URL } from "@oh-my-pi/pi-ai/providers/xai-base-url";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
+import { type Api, type AuthStorage, type Model, withAuth } from "@marsai-org/ai";
+import { resolveXaiBaseUrl, XAI_DEFAULT_BASE_URL } from "@marsai-org/ai/providers/xai-base-url";
+import { buildModelProviderPriorityRank } from "@marsai-org/catalog/identity";
 import type { ModelRegistry } from "../../../config/model-registry";
 import { pickDefaultAvailableModel, resolveRoleChain } from "../../../config/model-resolver";
 import { roleCandidatePool } from "../../../config/model-roles";

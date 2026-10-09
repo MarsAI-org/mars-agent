@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { EvalStatusEvent, EvalToolDetails } from "@oh-my-pi/pi-tui/tools/eval";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { evalToolRenderer } from "@oh-my-pi/pi-tui/tools/eval";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { EvalStatusEvent, EvalToolDetails } from "@marsai-org/tui/tools/eval";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
+import { evalToolRenderer } from "@marsai-org/tui/tools/eval";
 import {
 	isFeedModelBadgeEnabled,
 	setFeedModelBadgeEnabled,
 	thinkingLevelGlyph,
-} from "@oh-my-pi/pi-tui/render/render-utils";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+} from "@marsai-org/tui/render/render-utils";
+import { visibleWidth } from "@marsai-org/tui";
 
 /**
  * Defends the contract that `agent()` calls inside an eval cell surface as a

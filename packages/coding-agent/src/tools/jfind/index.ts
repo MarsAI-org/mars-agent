@@ -5,11 +5,11 @@
  * contract and the model-facing report.
  */
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { FindToolDetails } from "@oh-my-pi/pi-tui/tools/find";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { formatBytes, formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import type { FindToolDetails } from "@marsai-org/tui/tools/find";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { formatBytes, formatDuration, formatNumber } from "@marsai-org/utils";
 import { sessionResolveContext } from "../../internal-urls/context";
 import { InternalUrlFilesystem } from "../../internal-urls/url-filesystem";
 import { hasNativeJudge, journalJudgmentUsage, resolveJudge, sharedJudgmentCache } from "../../judgment";

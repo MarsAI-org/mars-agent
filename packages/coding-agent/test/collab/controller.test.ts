@@ -14,47 +14,47 @@ import { afterEach, beforeEach, describe, expect, it, type Mock, spyOn, vi } fro
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { CollabController } from "@oh-my-pi/pi-coding-agent/collab/controller";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost, CollabHostStoppedError } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { beginStartupComposer, stopPendingStartupComposer } from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { resetSessionIndexForTests } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
-import * as utils from "@oh-my-pi/pi-utils";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { CollabController } from "@marsai-org/coding-agent/collab/controller";
+import { importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { CollabHost, CollabHostStoppedError } from "@marsai-org/coding-agent/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import * as registry from "@marsai-org/coding-agent/collab/registry";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import * as pluginHelpers from "@marsai-org/coding-agent/discovery/helpers";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import { Composer } from "@marsai-org/tui/prompt/composer";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { beginStartupComposer, stopPendingStartupComposer } from "@marsai-org/coding-agent/modes/startup-composer";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { resetSessionIndexForTests } from "@marsai-org/coding-agent/session/session-index";
+import { executeBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import { getProjectDir, setProjectDir } from "@marsai-org/utils";
+import * as utils from "@marsai-org/utils";
 import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
 import { createTestSession, type TestSessionContext } from "../utilities";
 import { FakeWebSocket, installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
-import { cfgCollabAutoStart } from "@oh-my-pi/pi-coding-agent/collab/settings";
-import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
-import { CfgProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/cfg-protocol";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { cfgCollabAutoStart } from "@marsai-org/coding-agent/collab/settings";
+import { cfgAdvisorEnabled } from "@marsai-org/coding-agent/advisor/settings";
+import { CfgProtocolHandler } from "@marsai-org/coding-agent/internal-urls/cfg-protocol";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import {
 	cfgMarketplaceAutoUpdate,
 	cfgStartupChangelogMode,
 	cfgStartupCheckUpdate,
 	cfgStartupSetupWizard,
 	cfgStartupShowSplash,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
+} from "@marsai-org/coding-agent/modes/settings";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalPiProfile = process.env.PI_PROFILE;

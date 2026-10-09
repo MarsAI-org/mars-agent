@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { all } from "@oh-my-pi/pi-coding-agent/config/registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { all } from "@marsai-org/coding-agent/config/registry";
 
-import { getSettingsForTab, SETTING_TABS, TAB_GROUPS } from "@oh-my-pi/pi-tui/overlays/settings-defs";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { initTheme, setTheme } from "@oh-my-pi/pi-tui/theme";
-import { cfgRetryUsageAwareFallback } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
+import { getSettingsForTab, SETTING_TABS, TAB_GROUPS } from "@marsai-org/tui/overlays/settings-defs";
+import { createSettingsHost } from "@marsai-org/coding-agent/config/settings-ui";
+import { createPluginSettingsHost } from "@marsai-org/coding-agent/extensibility/plugins/settings-host";
+import { SettingsSelectorComponent } from "@marsai-org/tui/overlays/settings-selector";
+import { initTheme, setTheme } from "@marsai-org/tui/theme";
+import { cfgRetryUsageAwareFallback } from "@marsai-org/coding-agent/session/settings";
+import { cfgAdvisorEnabled } from "@marsai-org/coding-agent/advisor/settings";
 
 beforeAll(async () => {
 	await initTheme();

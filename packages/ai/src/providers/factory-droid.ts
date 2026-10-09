@@ -1,20 +1,20 @@
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	type FactoryDroidModelPolicy,
 	factoryDroidRegionalLimits,
 	resolveFactoryDroidPolicy,
 	resolveFactoryDroidRotation,
-} from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import type { RequestPolicy } from "@oh-my-pi/pi-catalog/compat/types";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+} from "@marsai-org/catalog/compat/factory-droid";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import type { RequestPolicy } from "@marsai-org/catalog/compat/types";
+import type { Effort } from "@marsai-org/catalog/effort";
 import {
 	FACTORY_DROID_CLIENT_VERSION,
 	type FactoryDroidWire,
 	factoryDroidClientHeaders,
 	factoryDroidWireBaseUrl,
 	resolveFactoryDroidInferenceRegion,
-} from "@oh-my-pi/pi-catalog/wire/factory-droid";
+} from "@marsai-org/catalog/wire/factory-droid";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import type { OAuthRequestIdentity } from "../auth/types";
 import * as AIError from "../error";

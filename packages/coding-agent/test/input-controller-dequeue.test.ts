@@ -3,10 +3,10 @@
  * must leave the main session's steering and compaction queues untouched.
  */
 import { beforeAll, describe, expect, mock, test } from "bun:test";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { RestoredQueuedMessage } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { RestoredQueuedMessage } from "@marsai-org/coding-agent/session/agent-session";
 
 beforeAll(() => {
 	initTheme();

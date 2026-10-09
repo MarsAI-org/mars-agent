@@ -6,9 +6,9 @@ import {
 	type Questions,
 	type ScoreAnswer,
 	tokenUsage,
-} from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { initDb, insertUserMessageStats, upsertFrustrationVerdicts } from "@oh-my-pi/omp-stats/db";
+} from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { initDb, insertUserMessageStats, upsertFrustrationVerdicts } from "@marsai-org/stats/db";
 import {
 	cancelFrustrationRun,
 	estimateFrustrationRun,
@@ -17,8 +17,8 @@ import {
 	type StatsJudge,
 	setStatsJudgeProvider,
 	startFrustrationRun,
-} from "@oh-my-pi/omp-stats/frustration";
-import type { UserMessageStats } from "@oh-my-pi/omp-stats/types";
+} from "@marsai-org/stats/frustration";
+import type { UserMessageStats } from "@marsai-org/stats/types";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-frustration-");

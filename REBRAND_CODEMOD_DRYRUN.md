@@ -1,0 +1,18025 @@
+# REBRAND_CODEMOD — dry run
+
+Generated: 2026-10-09T06:13:25+00:00
+Mode: apply
+
+## Values
+
+| Key | Value |
+| --- | ----- |
+| OLD_SCOPE | @oh-my-pi |
+| NEW_SCOPE | @marsai-org |
+| OLD_REPO | can1357/oh-my-pi |
+| NEW_REPO | MarsAI-org/mars-agent |
+| OLD_APP | omp |
+| NEW_APP | mars |
+
+## Summary
+
+- files scanned: 8071
+- files touched: 4441
+- total edits: 18252
+- protected files skipped: 232
+- errors: 0
+
+### Edits by category
+
+| Category | Edits |
+| -------- | ----- |
+| bazel | 2 |
+| binary-asset | 75 |
+| docker | 1 |
+| installer-script | 32 |
+| nix | 11 |
+| repo-url | 42 |
+| scope | 18089 |
+
+### Excluded on purpose
+
+- `omp://` internal URI scheme (`src/internal-urls/omp-protocol.ts`)
+- TUI `role: "omp.*"` render roles
+- `__omp_worker_*` argv selectors
+- `crates/pi-*` Rust crate names
+- LICENSE / THIRD-PARTY-NOTICES / SECURITY.md / lockfiles
+- `can1357/oh-my-pi` links that name the upstream project in prose (attribution)
+
+### Per-file detail
+
+#### .github/ISSUE_TEMPLATE
+
+- `.github/ISSUE_TEMPLATE/config.yml`
+  - repo-url: 3 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×3
+
+#### .github/workflows
+
+- `.github/workflows/ci.yml`
+  - binary-asset: 25 edit(s)
+    - `omp-darwin-arm64 → mars-darwin-arm64` ×11
+    - `omp-darwin-x64 → mars-darwin-x64` ×2
+    - `omp-linux-arm64 → mars-linux-arm64` ×2
+    - `omp-linux-musl-arm64 → mars-linux-musl-arm64` ×2
+    - `omp-linux-musl-x64 → mars-linux-musl-x64` ×2
+    - `omp-linux-x64 → mars-linux-x64` ×2
+    - `omp-windows-arm64 → mars-windows-arm64` ×2
+    - `omp-windows-x64 → mars-windows-x64` ×2
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+
+#### .gitignore
+
+- `.gitignore`
+  - bazel-symlink: 1 edit(s)
+    - `bazel-oh-my-pi → bazel-mars`
+
+#### .omp/skills
+
+- `.omp/skills/tool-prompt-optimization/SKILL.md`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `.omp/skills/tool-prompt-optimization/scripts/probe-builtin.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `.omp/skills/tool-prompt-optimization/scripts/probe.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+
+#### Cargo.toml
+
+- `Cargo.toml`
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+
+#### Dockerfile.dockerignore
+
+- `Dockerfile.dockerignore`
+  - docker-image-repo: 1 edit(s)
+    - `oh-my-pi/pi → mars/agent`
+
+#### bunfig.toml
+
+- `bunfig.toml`
+  - bazel-symlink: 1 edit(s)
+    - `bazel-oh-my-pi → bazel-mars`
+
+#### crates/pi-natives
+
+- `crates/pi-natives/src/utok/claude/testdata/fixtures.json`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+
+#### crates/pi-shell
+
+- `crates/pi-shell/src/minimizer/filters/bun.rs`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×11
+
+#### flake.nix
+
+- `flake.nix`
+  - nix-attr: 6 edit(s)
+    - `omp → mars` ×6
+
+#### nix/bun.nix
+
+- `nix/bun.nix`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/browser-relay → @marsai-org/browser-relay`
+    - `@oh-my-pi/collab-web → @marsai-org/collab-web`
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-metaharness → @marsai-org/metaharness`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+
+#### nix/package.nix
+
+- `nix/package.nix`
+  - nix-attr: 5 edit(s)
+    - `omp → mars` ×5
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+
+#### package.json
+
+- `package.json`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+
+#### packages/agent
+
+- `packages/agent/bench/normalize-tools.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/agent/bench/proxy-partial-json.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/bench/stable-prefix.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/agent/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/src/agent-loop.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/agent/src/agent.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/src/append-only-context.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/src/compaction/anthropic.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/azure-openai-endpoint.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/bedrock.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/branch-summarization.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/compaction-v2-streaming.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/compaction.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/src/compaction/entries.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/compaction/message-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/compaction/messages.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/openai.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×10
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/pruning.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/compaction/shake.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/compaction/tool-protection.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/compaction/transcript-tokens.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/compaction/utils.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/image-tokens.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/live-steering.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/output-budget.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/proxy.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/src/replay-policy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/run-collector.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/sent-tool-definitions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/speculative-execution.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/telemetry.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/src/thinking.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/src/tokenizer.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/src/tool-arguments.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/tool-context.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/src/types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/agent-loop-trailing-finalize.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/agent-loop.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×6
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/agent/test/agent-side-request-context.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/agent.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/agent/test/anthropic-native-compaction.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/test/append-only-context.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/agent/test/arg-stream.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/branch-summarization.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compact-reset-boundary.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/agent/test/compaction-boundary.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compaction-cut-point.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+- `packages/agent/test/compaction-error-status.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compaction-oneshot-retry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/compaction-oversized-input.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compaction-reserve-provenance.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+- `packages/agent/test/compaction-summary-cap.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compaction-telemetry.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/compaction-thinking-level.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/context-tokens-orchestration.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/continue-empty-transcript.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/handoff.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/helpers.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/image-tokens.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/instrumented-oneshot-retry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/live-steering.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/message-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/normalize-tools-prune.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/agent/test/otel.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/output-budget.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/pause-gate.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/prompt-tools-loop.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/proxy-stream-disconnect.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/proxy-toolcall-partial-json.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/queued-message-preparation.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/remote-compaction.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/agent/test/run-summary.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/sent-tool-definitions.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/agent/test/serialize-conversation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/shake.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/snapcompact-frames.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/agent/test/soft-tool-requirement.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/speculative-commit-gate.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/speculative-transform-once.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/agent/test/supersede-prune.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/agent/test/tokenizer.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/agent/test/tool-protection.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/transcript-tokens.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/agent/test/utils/calculate.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/agent/test/utils/get-current-time.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/agent/test/yield.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+
+#### packages/ai
+
+- `packages/ai/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/ai/src/auth-broker/client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/discover.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/refresher.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/remote-store.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/server.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/snapshot-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-broker/wire-schemas.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/auth-gateway/dispatch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/http.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/embeddings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/images.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/rerank.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/speech.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/systemone.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/transcriptions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/routes/video.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/server.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/session-state.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/stdio.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-gateway/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/auth-retry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth-storage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/affinity.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/ai/src/auth/blocks.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/cascade.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/oauth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/pool.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/refresh.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/resets.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/select.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/sqlite-credential-store.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/auth/usage-report.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/auth/usage.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/anthropic.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/deepseek.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/demotion.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/dialect/hermes.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/minimax.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/qwen3.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/rendering.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/dialect/types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/embeddings/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/embeddings/openai-embeddings.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/embeddings/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/env-api-key.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/error/auth-classify.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/error/flags.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/error/rate-limit.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/error/retryable.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/images/google-antigravity.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/images/google-generative-ai.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/images/index.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/images/openai-hosted.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/images/openai-images.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/images/openrouter-images.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/images/shared.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/images/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/judgment/chat.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/judgment/text.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/judgment/typesafe.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/amazon-bedrock.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/anthropic-compaction.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/anthropic-identity.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/anthropic-messages-server-schema.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/anthropic-messages-server.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/anthropic-state.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/anthropic-user-profiles.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/anthropic.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/apple-foundation-models.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/aws-credentials.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/azure-openai-responses.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/bedrock-anthropic.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/connect-error-detail.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/cowork-fetch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/cursor.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/ai/src/providers/cursor/exec-modern.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/providers/cursor/interaction-query.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/devin.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/embeddings-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/factory-droid.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/ai/src/providers/factory-droid/gemini.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/github-copilot-headers.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/ai/src/providers/gitlab-duo-workflow.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/gitlab-duo.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/src/providers/google-auth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/google-gemini-cli.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/google-shared.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/google-vertex.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/images-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/inference-headers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/mock.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/ollama.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-anthropic-shim.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/openai-chat-server-schema.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/openai-chat-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/openai-codex-responses.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-codex-transport.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-codex/access-programs.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-codex/live-steering.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-codex/request-transformer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-codex/response-handler.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/openai-completions.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-reasoning-fallback.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-responses-server-schema.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/openai-responses-server.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-responses.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/openai-shared.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/pi-native-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/register-builtins.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/providers/rerank-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/speech-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/systemone-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/transcriptions-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/video-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/providers/vision-guard.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/providers/xai-base-url.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/aws.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/build.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/cloudflare-ai-gateway.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/engine/api-key.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/engine/common.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/engine/device-code.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/engine/oauth-code.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/engine/refresh.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/hooks/api-key.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/hooks/env.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/alibaba-token-plan.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/callback-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/cloudflare-ai-gateway.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/coreweave.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/factory-droid.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/github-copilot.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/registry/oauth/google-antigravity.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/google-gemini-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/kimi.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/muse-code.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/registry/oauth/native-scheme-callback.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/ai/src/registry/oauth/openai-codex.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/registry/oauth/perplexity.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/oauth/snowflake.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/registry.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/src/registry/snowflake.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/registry/types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/rerank/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/rerank/openrouter-rerank.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/rerank/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/speech/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/speech/openai-speech.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/speech/transport.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/speech/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/speech/xai-tts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/stream.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/transcription/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/transcription/openai-transcriptions.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/transcription/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/types.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/ai/src/usage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/src/usage/alibaba-token-plan.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/usage/charm-hyper.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/claude-reset.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/claude.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/usage/cline-pass.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/cursor.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/src/usage/devin.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/src/usage/factory-droid.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/src/usage/gemini.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/usage/github-copilot.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/usage/google-antigravity.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/src/usage/kimi.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/minimax-code.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/openai-codex-base-url.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/openai-codex-reset.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/openai-codex.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/opencode-go.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/shared.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/synthetic.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/usage/xai-oauth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/usage/zai.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/ai/src/utils/anthropic-auth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/aws-profile.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/foundry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/http-inspector.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/idle-iterator.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/openai-http.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/openrouter-headers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/proxy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/retry-after.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/schema/adapt.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/schema/json-schema-validator.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/schema/meta-validator.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/schema/normalize.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/schema/wire.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/sse-debug.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/thinking-loop.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/tool-call-arguments.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/tool-call-loop-guard.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/ai/src/utils/transport-fetch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/utils/validation.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/src/video/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/video/openrouter-video.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/src/video/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/abliteration-effort-aliases.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/abliteration-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/abort-source-tracker.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/abort.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/alibaba-token-plan-usage.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/alibaba-token-plan.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-abandoned-tooluse-replay.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-alignment.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/anthropic-client.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/anthropic-context-management-compat.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-control-state-stability.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/anthropic-empty-error-tool-result.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-error-tool-result-image.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-fable-request-shaping.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/anthropic-fast-mode.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-haiku-thinking-off.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/anthropic-head-caching.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-many-image-resize.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-mid-conversation-system.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-oauth.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/anthropic-ping-keepalive.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-prefill.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-prefix-drop-replay.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/anthropic-prior-turn-thinking.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-retry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/anthropic-server-compaction.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-server-side-fallback.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-signature-auto-mark.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-signature-drop-all-escalation.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-signature-hint.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-signature.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-slow-mode.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-stream-envelope.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/anthropic-stream-timeout.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-thinking-immutability.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-thinking-max-tokens.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/anthropic-thinking-only-length-truncated.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-tool-schema.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/anthropic-unsigned-thinking-replay.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-user-profiles.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/anthropic-zenmux-checkpoint-thinking-signature.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/api-registry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/apply-patch-freeform.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-broker-config-discovery.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/auth-broker-disabled-credentials.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-broker-nested-config.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-broker-oauth-extra-fields.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-broker-refresh-backoff.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+- `packages/ai/test/auth-broker-refresher.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-broker-remote-store.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/auth-broker-snapshot-cache.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-broker-wire-schema-contract.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-broker-wire.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/auth-gateway-anthropic-messages.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-cache-key.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-gateway-classify-error.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-gateway-embeddings.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/auth-gateway-images.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-model-list.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-gateway-openai-chat.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-gateway-openai-prompt-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-gateway-openai-responses.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-pi-native.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-gateway-provider-session-state.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-gateway-rerank.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-response-headers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-gateway-speech.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-stdio.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-gateway-systemone.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-thinking-loop.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+- `packages/ai/test/auth-gateway-transcriptions.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-gateway-usage.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-gateway-video.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/auth-hooks-registry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-retry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-account-identity.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-antigravity-selection.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-storage-api-key-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-storage-block-persistence.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-broker-no-sentinel.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-check-credentials.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-storage-claude-fable-fallback.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-storage-claude-reset.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-close-releases-handles.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-codex-selection.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+- `packages/ai/test/auth-storage-codex-workspace-identity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-config-override.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-credential-disabled-event.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/auth-storage-credential-origin.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-email-dedupe.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-force-refresh-rotate.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+- `packages/ai/test/auth-storage-manual-code-gate.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-model-usage-health.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/auth-storage-noop-persistence.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-oauth-account-select.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-oauth-refresh-race.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-org-scoped-identity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-refresh-skew.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-session-restriction.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-sqlite-busy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/auth-storage-transient-refresh.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/auth-storage-usage-cache.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/auth-storage-usage-history.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/auth-storage-xai-oauth-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/auth-storage-zai-api-key-selection.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/aws-credentials.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/aws-eventstream.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/aws-registry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/aws-sigv4.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/azure-openai-responses-stream.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-anthropic-routes.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-caller-headers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/bedrock-disable-reasoning.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-haiku-thinking-off.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-inference-profile.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-mantle-auth.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-nova-unsigned-reasoning.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-on-payload.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-openai-reasoning.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-prefix-binding-retry.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-prompt-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-request-metadata.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/bedrock-stream-exception-status.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-system-prompt.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-tool-choice.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/bedrock-tool-descriptions.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/bedrock-tool-result-image.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/callback-server-dual-stack.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/callback-server-launch-route.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/callback-server-manual-input.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/callback-server-port-fallback.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/callback-server-security.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/charm-hyper-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/claude-block-healing.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/claude-ratelimit-headers.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/claude-reset.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/claude-usage-endpoint.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/claude-usage-headers.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/claude-usage-retry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/cline-pass-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/cline-pass-transport.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cline-pass-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/cloudflare-ai-gateway.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/codex-code-mode-metadata.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/commandcode-usage.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/connect-error-detail.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/context-overflow.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/coreweave-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/coreweave-project-header.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/cowork-fetch-cancellation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/cowork-fetch-proxy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/credential-external-reload.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/cursor-caller-headers.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-checkpoint-retry.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-conversation-rotate.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-edit-tool-call.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/cursor-effort-routing.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/cursor-exec-handlers.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/cursor-exec-modern.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/cursor-h2-transport-error.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/cursor-http1-transport.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-interaction-query.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/cursor-login.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/cursor-mcp-tool-catalog.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/cursor-on-payload.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-pi-args.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/test/cursor-requested-model.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/cursor-streaming-args.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/cursor-terminal-error.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-todo-bridge.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/cursor-turn-usage.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/cursor-webfetch-interaction-query.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/cursor-wire-model-fallback.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/deepinfra-reasoning-contract.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/deepseek-reasoning-content.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/devin-account-usage.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/devin-frame-cap.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/devin-history.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/devin-large-request-recovery.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/devin-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/devin-router.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/devin-streaming-args.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/devin-trailer-evidence.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/devin-usage.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/dialect-thinking.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/duplicate-tool-results.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/empty-completion-retry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/error-aierr.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/error-body-rate-limit.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/error-id.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/error-transient-status-boundary.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/eval-language-whitespace.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/event-stream.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/exa-login.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/factory-droid-anthropic.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/factory-droid-completions-reasoning.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/factory-droid-gemini.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/test/factory-droid-native-parity.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/factory-droid-provider.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/factory-droid-responses.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/factory-droid-stream.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/factory-droid-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/firepass.live.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/firepass.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/fireworks-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/fixtures/cursor-proxy-env.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/fixtures/cursor-tls-reset.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/fixtures/harmony-leak-corpus.json`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/ai/test/fixtures/oauth-barrel-import.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/flattened-array-properties.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/gemini-gemma-dialect.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/github-copilot-anthropic-auth.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/github-copilot-anthropic-model-rejection.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/github-copilot-error.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/github-copilot-headers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/github-copilot-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/github-copilot-long-context-wire.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/github-copilot-openai-base-url.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/github-copilot-reasoning.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/gitlab-duo-cache-key.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/gitlab-duo-workflow-oauth.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/gitlab-duo-workflow-provider.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/glm-5.2-reasoning-effort.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/glm-5.3-reasoning-effort.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/glyph-codec.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/google-antigravity-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/google-cached-content.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-empty-response-retry.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-error-body-classification.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-function-calling-matching.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-gemini-cli-3x-thinking.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-gemini-cli-429.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/google-gemini-cli-alignment.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-gemini-cli-first-event-timeout.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-gemini-cli-variant-routing.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/google-gemini3-unsigned-tool-call.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/google-oauth-hostname.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-oauth-validation-url.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/google-reasoning-off.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-sampling-penalty-strip.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-service-tier.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-system-prompt.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-thinking-fence-strip.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-thinking-signature.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/google-tool-choice.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/google-tool-schema.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/handoff.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/harmony-leak.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/helpers/bedrock-stream.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/helpers/factory-droid.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/helpers/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/http-inspector.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/image-tool-result.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/image-url-parts.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/inband-tools.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/issue-10690-repro.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/issue-10966-synthetic-reasoning-filter.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-10994-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/issue-11473-orphan-output-wedge.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-1203-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/issue-1207-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/issue-1227-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-12562-custom-api-compat.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-1270-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-1373-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-1417-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-1701-repro.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/issue-1776-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/issue-1838-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-2080-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/issue-2123-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-2315-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/issue-2424-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/issue-2883-moonshot-base-url.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/issue-2996-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-3124-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-3434-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-3528-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-3555-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/issue-3593-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-4085-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/issue-4593-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-4679-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-5983-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/issue-6276-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-6510-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-6913-harmony-marker-escaping.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-814-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-8248-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-826-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-827-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-8789-responses-interleaved-message.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-883-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-911-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-912-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-931-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-9433-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-945-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-955-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/issue-957-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/issue-959-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/issue-967-vision-guard.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/issue-969-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/issue-976-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/json-schema-typescript.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/judgment.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/kagi-login.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/kilo-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/kimi-multi-account.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/kimi-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/leaked-thinking-stream.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/litellm-login.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/max-effort-wire.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/meta-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/minimax-code-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/minimax-token-plan-usage.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/mock-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/model-cache.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/models-cost.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/models-json-no-local-endpoints.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/muse-code-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/muse-code-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/nanogpt-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/null-max-tokens-fallback.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/oauth-deepseek.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/oauth-definitive-failure.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/oauth-device-code.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/oauth.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/ollama-cache-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/ollama-cloud-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/ollama-no-user-turn.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/ollama-reasoning-effort-backfill.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/ollama-thinking-disable.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/ollama-tool-call-json-parse-error.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/oneshot-retry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-byok-reported-cost.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-codex-access-programs.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-codex-call-id-length.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/openai-codex-include.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/openai-codex-live-steering.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-codex-reset.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-codex-responses-lite.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-codex-stream.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-codex-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-codex-zstd.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-codex.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-compat-policy.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/openai-compat-user-agent.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-completions-cache-affinity.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-completions-compat.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/ai/test/openai-completions-disable-reasoning.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/openai-completions-error-finish-reason.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-generation-nan.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-litellm-thinking-blocks.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-on-payload.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-progress-chunk.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-completions-reasoning-disable-dialects.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-completions-thought-signature.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-tool-result-images.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/openai-completions-ttft.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-upstream-provider.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-completions-xai-root-union.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-computer-contract.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-configuration-update.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-daybreak-effort.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-disable-reasoning.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-first-event-timeout.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-max-output-tokens-cap.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-output-token-policy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/openai-reasoning-effort-fallback.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-responses-cache-affinity.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/ai/test/openai-responses-delta-input.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-responses-developer-role.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-empty-tool-result.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-history-payload.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-responses-malformed-function-call-replay.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-omit-max-output-tokens.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-openrouter.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-responses-orphan-repair.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/openai-responses-parallel-tool-calls.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-parallel-tool-result-images.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-repaired-function-call-replay.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-resume.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-sampling-params.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-stateful.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openai-responses-stream-retry.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-stream-terminal.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-responses-system-prompt.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/openai-responses-tool-quarantine.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-stream-socket-retry.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-stream-terminal-close.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/openai-tool-strict-mode.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/opencode-go-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/opencode-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/opencode-session-header.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/openrouter-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/openrouter-oauth.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/overflow-utils.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/perplexity-login.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/pi-native-client.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/pre-response-timeout.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/provider-fetch-override.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/provider-inflight.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/provider-registry.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/ai/test/provider-response.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/provider-session-release.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/providers/kimi-code-thinking.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/ai/test/proxy.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/rate-limit-utils.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/raw-sse-sdk-capture.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/register-builtins.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/registry/oauth/openai-codex.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/remote-auth-store.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+- `packages/ai/test/request-debug.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/requires-effort.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/resolve-used-fraction.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/sakana-provider.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/sampling-params-model-wide.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/ai/test/schema-arktype.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/schema-compatibility.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/schema-dereference.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/schema-helpers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/schema-immutability.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/schema-normalization.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/schema-strict-mode.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/schema-wire.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/service-tier-cost.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/service-tier-premium-requests.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/snowflake-provider.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/sse-debug.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/stencil-oauth-callback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/stream-auth-retry.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+- `packages/ai/test/stream-markup-healing.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/ai/test/stream-timeout-defaults.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/stream.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/synthetic-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/synthetic-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/thinking-loop.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×7
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/ai/test/todo-op-whitespace.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/tokens.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/tool-argument-coercion.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/tool-call-finalization.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/ai/test/tool-call-loop-guard.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/ai/test/tool-call-without-result.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/tool-examples.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/ai/test/tool-inventory.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/ai/test/total-tokens.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/transcript-render.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/transform-messages-anthropic-tool-call-id.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/transform-messages-dedup.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/transform-messages-malformed-tool-calls.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/transform-messages-redact-sensitive.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/transform-messages-thinking-dialect.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/umans-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/umans-usage.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/unicode-surrogate.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/usage-attribution.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/usage-report-notes-schema.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/utils-responses-id.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/vercel-gateway-attribution.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/vercel-gateway-cache-controls.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/wafer.live.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/xai-base-url-env.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/xai-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/xai-oauth-effort-strip.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/ai/test/xai-oauth-usage.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/ai/test/xhigh.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/xiaomi-oauth.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/xiaomi-tp-login-integration.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/ai/test/yolo-auto-login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/yolo-auto-thinking.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/ai/test/zai-block-healing.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/zai-oauth.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+- `packages/ai/test/zai-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/ai/test/zenmux-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/ai/test/zhipu-coding-plan-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+
+#### packages/browser-relay
+
+- `packages/browser-relay/package.json`
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/browser-relay → @marsai-org/browser-relay`
+
+#### packages/catalog
+
+- `packages/catalog/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/scripts/compat-compiler/compile-auth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/scripts/compat-compiler/compile-providers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/scripts/compat-compiler/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/scripts/generate-models.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/scripts/proto-parser.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/src/compat/auth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/src/compat/cascade.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/catalog/src/compat/factory-droid.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/compat/image-tokenization.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/compat/taxonomy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/compat/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/src/discovery/antigravity.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/discovery/codex.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/catalog/src/discovery/cursor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/catalog/src/discovery/devin.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/discovery/factory-droid.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/discovery/gemini-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/discovery/gemini.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/catalog/src/discovery/gitlab-duo-workflow.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/catalog/src/discovery/openai-compatible.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/catalog/src/discovery/protobuf.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/model-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/model-manager.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/provider-models/google.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/provider-models/ollama.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/provider-models/openai-compat.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/catalog/src/provider-models/special.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/catalog/src/utils.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/catalog/src/wire/gemini-headers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/src/wire/github-copilot.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/catalog/test/abliteration-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/aiand-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/alibaba-token-plan.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/amazon-bedrock-openai.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/amazon-bedrock-opus-5.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/amazon-bedrock-us-gov.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/anthropic-fable-5-1-cache-read.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/antigravity-version-lookup.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/azure-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/baseten-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/bedrock-prompt-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/bedrock-qwen-output-limits.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/bedrock-stream-idle-timeout.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/build.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×10
+- `packages/catalog/test/canonical-limit-fallback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/catalog-metrics-index.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/cerebras-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/charm-hyper-provider.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/cline-pass-compat.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×8
+- `packages/catalog/test/cloudflare-ai-gateway-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/codex-discovery.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×8
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/catalog/test/codex-wire.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/commandcode-provider.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/compat-capability-axes.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/compat-collapse.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×10
+- `packages/catalog/test/coreweave-provider.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/deepinfra-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/delegation-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/descriptors.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/devin-discovery.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/discovery-null-limits.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/embedding-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/fireworks-serverless-discovery.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/gemini-cli-discovery.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/generated-policies.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/github-copilot-wire.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/gitlab-duo-workflow-discovery.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/gmi-cloud-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/google-aistudio-compat.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/google-vertex-discovery.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×8
+- `packages/catalog/test/gpt-oss-antigravity-compat.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/helmcode-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/hosts.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/image-fetchers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/image-tokenization.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/issue-13912-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/issue-1617-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-1846-repro.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/issue-1849-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-2105-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/issue-2113-repro.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/issue-2299-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/issue-2558-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-2883-moonshot-china.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/issue-5572-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-5598-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/issue-5756-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/issue-6563-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/issue-6664-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/issue-772-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-830-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/catalog/test/issue-847-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/issue-8867-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/issue-9345-repro.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/kimi-code-provider.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/litellm-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/lm-studio-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/long-context-pricing.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/meta-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×7
+- `packages/catalog/test/model-cache-rewrites.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/model-id-affixes.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/model-manager-always-refetch.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/model-manager-unbuildable-rows.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/model-thinking.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/model-tokenizer.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/models-dev-kind.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/models-dev-metrics.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/nanogpt-model-limits.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/novita-provider.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/ollama-cloud-output-caps.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/ollama-cloud-provider.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/ollama-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/ollama-reasoning-disable.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/openai-daybreak.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/opencode-provider.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/catalog/test/openrouter-discovery.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/prompt-cache-lookback.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/provider-cache-id.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/published-effort-ladders.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/rerank-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/sakana-provider.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×7
+- `packages/catalog/test/siliconflow-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/singularityapi-dev-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/singularityapi-tech-provider.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/snowflake-provider.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/catalog/test/stepfun-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/synthetic-provider.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/time-based-pricing.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/transcription-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/venice-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/vercel-ai-gateway-provider.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/catalog/test/video-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/vllm-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/wafer.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/catalog/test/web-search-lineage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/xai-api-key-responses.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×7
+- `packages/catalog/test/xai-oauth-bundle.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/xai-oauth-discovery.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+- `packages/catalog/test/xai-responses-thinking-policy.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/yolo-auto-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+- `packages/catalog/test/zenmux-provider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/catalog/test/zhipu-compat.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+
+#### packages/coding-agent
+
+- `packages/coding-agent/bench/event-fanout.bench.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/bench/llm-assembly.bench.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/bench/muse-hashline.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/bench/persist-truncate.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/bench/rendering.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/bench/secrets-history.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/bench/speculative-eval-integration.bench.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/coding-agent/bench/streaming-throughput.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/bench/thinking-retention.bench.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/bench/transcript-compose.bench.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/examples/custom-tools/hello/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/extensions/api-demo.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/extensions/chalk-logger.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/examples/extensions/hello.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/extensions/pirate.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/extensions/plan-mode.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/examples/extensions/reload-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/extensions/thinking-note.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/examples/extensions/tools.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/examples/extensions/with-deps/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/auto-commit-on-exit.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/confirm-destructive.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/examples/hooks/custom-compaction.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/examples/hooks/dirty-repo-guard.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/file-trigger.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/git-checkpoint.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/handoff.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/examples/hooks/permission-gate.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/protected-paths.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/hooks/qna.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/examples/hooks/status-line.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/01-minimal.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/02-custom-model.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/03-custom-prompt.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/04-skills.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/06-extensions.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/examples/sdk/06-hooks.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/07-context-files.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/08-prompt-templates.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/08-slash-commands.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/09-api-keys-and-oauth.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/11-sessions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/12-redis-sessions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/examples/sdk/13-sql-sessions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/scripts/bench-title-fork.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/bench-title-models.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/bundle-dist.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/compile-binary.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/format-prompts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/legacy-pi-virtual-module.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/measure-prompt-tokens.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/scripts/omp.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/scripts/security-compare.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/activity/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/advisor/advise-tool.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/advisor/config.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/advisor/delta-split.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/advisor/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/advisor/loop-guard.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/advisor/message-fingerprint.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/advisor/runtime.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/advisor/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/advisor/tool-result-eviction.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/advisor/transcript-recorder.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/advisor/watchdog.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/archive/archive.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/archive/prelude-definition.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/async/job-control.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/src/async/job-manager.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/auto-graph/planner.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/auto-thinking/classifier.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autolearn/controller.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autolearn/managed-skills.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autoresearch/git.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/coding-agent/src/autoresearch/helpers.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/autoresearch/index.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autoresearch/state.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/autoresearch/storage.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autoresearch/tools/init-experiment.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/autoresearch/tools/log-experiment.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/autoresearch/tools/run-experiment.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/autoresearch/tools/update-notes.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/autoresearch/types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/blob-broker/broker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/context-images.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/blob-broker/daemon.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/exposure.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/provider-file-types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/provider-files-anthropic.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/blob-broker/provider-files-gemini.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/blob-broker/provider-files-openai.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/blob-broker/provider-files.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/savings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/service.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/blob-broker/store.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/stream-fallback.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/uploaders-object-storage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/blob-broker/uploaders-self-hosted.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/blob-broker/uploaders.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/capability/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cleanse/agent.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cleanse/checkers.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cleanse/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cleanse/parsers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cleanse/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/cli-commands.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×12
+- `packages/coding-agent/src/cli/agents-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/args.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/cli/auth-broker-cli.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/cli/auth-gateway-cli.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/auth-gateway-stdio.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/bench-cli.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/bench-runtime.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/browser-relay-cli.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/claude-trace-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/collab-cli.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/command-help.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/completion-gen.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/config-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/dry-balance-cli.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/file-processor.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/find-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/flag-tables.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/gallery-cli.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/gallery-fixtures/agentic.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/cli/gallery-fixtures/composer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/cli/gallery-fixtures/fs.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/cli/gallery-fixtures/segments.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/src/cli/gallery-fixtures/shell.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/cli/gallery-fixtures/status-line.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/cli/gallery-fixtures/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/cli/gallery-screenshot.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/gc-cli.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/git-tui.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/cli/git-tui/ai-stage.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/git-tui/avatar.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/git-tui/state.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/grep-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/grievances-cli.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/help-extra.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/cli/images-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/initial-message.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/cli/login-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/models-cli.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/npm-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/oauth-terminal.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/cli/plugin-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/predict-cli.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/cli/profile-alias.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/profile-bootstrap.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/ps-cli.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/ps-data.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/read-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/render-cli.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/setup-cli.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/shell-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/skill-cli.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/cli/skill-list.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/ssh-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/startup-cwd.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/stats-cli.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/tiny-models-cli.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/token-file.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/cli/ttsr-cli.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/update-cli.ts`
+  - repo-owner-slash: 2 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent` ×2
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/cli/usage-cli.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/web-search-cli.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/cli/worktree-cli.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/collab/controller.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/collab/crypto.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/collab/guest.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/collab/host.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/collab/protocol.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire` ×4
+- `packages/coding-agent/src/collab/registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/collab/relay-client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/collab/replication-shrink.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commands/acp.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/agents.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/auth-broker.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/auth-gateway.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/browser-relay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/cleanse.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/clip.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commands/collab.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/commit.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/complete.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/completions.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/compress.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/config.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/dry-balance.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/find.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/gallery.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/gc.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/git.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/grep.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/grievances.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/if-bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/images.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/install.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/join.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/launch-help.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/launch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/login.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/models.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/play.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/plugin.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/predict.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/ps.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/read.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/render.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/say.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/commands/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commands/setup.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/share.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commands/shell.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/skill.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commands/ssh.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/stats.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/stream.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commands/tiny-models.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/token.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/commands/toks.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/commands/ttsr.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/update.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/usage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/web-search.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commands/worktree.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/commit/agentic/agent.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/commit/agentic/index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/agentic/state.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/analyze-file.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/agentic/tools/git-file-diff.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/git-hunk.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/git-overview.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/propose-changelog.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/commit/agentic/tools/propose-commit.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/recent-commits.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/agentic/tools/schemas.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/commit/agentic/tools/split-commit.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/changelog/generate.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/changelog/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/cli.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/conventional/cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/commit/conventional/commit-types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/conventional/inference.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/commit/conventional/markdown.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/conventional/prompts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/conventional/repo-context.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/conventional/service.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/execute.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/commit/model-selection.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/commit/pipeline.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/commit/utils.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/compress/index.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/compress/protocol.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/compress/session.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/account-pools.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/api-key-resolver.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+- `packages/coding-agent/src/config/append-only-context-mode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/config/compaction-threshold.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/config-file.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/custom-models.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/inline-tool-descriptors-mode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/config/model-discovery.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/model-patch.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/model-presets.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/model-provider-discovery.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/coding-agent/src/config/model-registry.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×12
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/model-resolver.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/config/model-roles.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/config/model-settings.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/src/config/models-config-schema-bundle.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/models-config.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/prompt-templates.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/registry.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/resolve-config-value.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/config/service-tier.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/config/settings-ui.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/config/settings.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/cursor-bridge-tools.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/cursor.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/dap/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/dap/config.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/dap/session.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/dap/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/debug/index.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/debug/report-bundle.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/debug/system-info.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/agent-plugin-format.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/agent-plugins.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/agents.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/at-imports.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/builtin-rules/ts-no-inline-cast-access.md`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/discovery/builtin.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/claude-plugins.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/claude.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/codex.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/cursor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/gemini.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/github.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/helpers.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/mcp-json.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/omp-extension-roots.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/omp-plugins.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/opencode.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/skillshare.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/ssh.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/vscode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/discovery/windsurf.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/edit/auto-repair.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/edit/auto-repair.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/edit/blackbox.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/edit/index.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/edit/schemas.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/edit/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/edit/store.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/eval/agent-bridge.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/eval/backend-helpers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/backend.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/eval/completion-bridge.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/executor-base.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/handle-bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/input.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/js/context-manager.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/js/executor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/js/package-installer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/js/shared/helpers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/js/shared/runtime.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/eval/js/shared/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/eval/js/tool-bridge.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/eval/js/worker-core.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/js/worker-entry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/judgment-batch-bridge.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/judgment-batch-events.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/judgment-bridge.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/kernel-base.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/kernel-session-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/package-requirements.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/preludes.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/py/display.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/py/executor.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/py/kernel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/py/runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/py/tool-bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/runner-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/speculation/cell-session.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/eval/startup-warning.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/eval/state.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/eval/workpool-bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/exa/mcp-client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/exa/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/exec/bash-executor.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/exec/direnv.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/exec/exec.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/exec/non-interactive-env.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/export/custom-share.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/export/html/index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/export/share.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/export/ttsr.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/direct-source.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/fullscreen.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/text-review.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/text-source.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/annotate/text-summary.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/ci-green/index.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/review/diff.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/review/index.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/review/prompt.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/bundled/review/target.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/extensibility/custom-commands/loader.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-commands/types.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/custom-tools/loader.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×2
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-tools/types.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/custom-tools/wrapper.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/extensions/compact-handler.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/extensibility/extensions/directory-resolution.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/extensions/lifecycle-mirror.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/extensions/load-errors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/extensions/loader.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×2
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/extensions/managed-timers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/extensions/model-api.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/extensibility/extensions/runner.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/extensibility/extensions/types.ts`
+  - scope+package: 27 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×19
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/extensions/wrapper.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/hooks/loader.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/hooks/runner.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/src/extensibility/hooks/tool-wrapper.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/extensibility/hooks/types.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/legacy-pi-ai-shim.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/extensibility/legacy-pi-coding-agent-shim.ts`
+  - scope+package: 22 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×7
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/coding-agent/src/extensibility/legacy-pi-tui-shim.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/extensibility/legacy-typebox.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/extensibility/plugins/bun-git-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/doctor.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/installer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/legacy-pi-compat.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/loader.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/manager.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/marketplace-auto-update.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/marketplace/cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/marketplace/fetcher.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/marketplace/manager.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/marketplace/registry.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/extensibility/plugins/marketplace/source-resolver.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/plugins/settings-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/extensibility/shared-events.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/extensibility/skill-descriptions.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/skills.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/slash-commands.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/extensibility/tool-event-input.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/extensibility/tool-proxy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/extensibility/utils.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/goals/runtime.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/goals/state.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/goals/tools/goal-tool.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/backend.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/bank.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/mental-models.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/state.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/hindsight/transcript.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/ida/client.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ida/host.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ida/install.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ida/protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/ida/runtime.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ida/store.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ida/supervisor.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/if-bench/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/if-bench/protocol.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/if-bench/runner.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/index.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/agent-protocol.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/artifact-protocol.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/internal-urls/attachment-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/internal-urls/cfg-protocol.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/docs-index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/filesystem-resource.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/history-protocol.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/hyperlink-targets.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/internal-urls/local-protocol.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/internal-urls/memory-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/proc-protocol.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/registry-helpers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/router.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/internal-urls/rule-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/security-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/skill-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/ssh-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/types.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/internal-urls/url-filesystem.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/vault-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/internal-urls/xd-protocol.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/irc/bus.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/irc/messaging.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/judgment/cache.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/judgment/index.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/broker.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/launch/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/ensure.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/paths.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/presence.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/launch/services.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/terminal-output-worker-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/terminal-output-worker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/launch/terminal-output.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/lib/xai-http.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/live/attestation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/live/controller.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/live/transport.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/lsp/batch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/lsp/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/clients/biome-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/clients/lsp-linter-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/config.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/deferred-diagnostics.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/lsp/diagnostics-ledger.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/lsp/diagnostics.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/edits.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/format-options.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/lsp/lspmux.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/mux/daemon.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/mux/server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/servers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/tool.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/lsp/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/lsp/utils.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/lsp/writethrough.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/main.ts`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×6
+- `packages/coding-agent/src/markit/converters/docx.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/markit/converters/epub.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/markit/converters/pdf/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/markit/converters/pptx.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/markit/converters/xlsx.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/mcp/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/config-writer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/mcp/config.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/errors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/mcp/json-rpc.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/loader.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/manager.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/oauth-credentials.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/oauth-discovery.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/src/mcp/oauth-flow.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/request-id.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/mcp/smithery-auth.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/mcp/smithery-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/startup-events.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/timeout.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/tool-bridge.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/mcp/tool-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/transports/http.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/transports/sse.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/transports/stdio.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mcp/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/memories/index.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/memory-backend/tool-names.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/memory-backend/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/mnemopi/backend.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mnemopi/config.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mnemopi/embed-client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/mnemopi/embed-worker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/coding-agent/src/mnemopi/state.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/acp/acp-agent.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/modes/acp/acp-client-bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/acp/acp-event-mapper.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/acp/acp-mode.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/modes/agent-hub-runtime.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/modes/agents-hub-deps.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/components/extensions/dashboard-runtime.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/components/extensions/inspector-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/components/extensions/state-manager.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/components/index.ts`
+  - scope+package: 39 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×39
+- `packages/coding-agent/src/modes/controllers/btw-controller.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/cleanse-command-controller.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/modes/controllers/command-controller-shared.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/modes/controllers/command-controller.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×19
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/controllers/event-controller.ts`
+  - scope+package: 24 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×19
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/controllers/extension-ui-controller.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×11
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/controllers/input-controller.ts`
+  - scope+package: 26 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×23
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/live-command-controller.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/mcp-command-controller.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/omfg-controller.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/omfg-rule.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/modes/controllers/selector-controller.ts`
+  - scope+package: 52 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×42
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/session-focus-controller.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/modes/controllers/ssh-command-controller.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/streaming-reveal.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/tan-command-controller.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/controllers/todo-command-controller.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/controllers/tool-args-reveal.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/interactive-mode.ts`
+  - scope+package: 79 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×71
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/loop-condition.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/loop-limit.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/magic-keywords.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/model-browser-source.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/move-directory-source.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/persistence-failure.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/print-mode.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/progress-hud.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/rpc/host-tools.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/host-uris.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-btw.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-client.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-frame.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-goal.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-input.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-live.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/modes/rpc/rpc-messages.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-mode.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-output.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-prompt-results.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/coding-agent/src/modes/rpc/rpc-session-events.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/modes/rpc/rpc-session-settle.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-subagents.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/rpc/rpc-types.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/modes/rpc/wire/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/modes/session-teardown.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/settings.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×11
+- `packages/coding-agent/src/modes/setup.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/src/modes/skill-command.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/modes/startup-composer.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/src/modes/status-line-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/modes/types.ts`
+  - scope+package: 25 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×21
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/modes/utils/ui-helpers.ts`
+  - scope+package: 34 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×30
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/modes/warp-events.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/plan-mode/approved-plan.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/plan-mode/model-transition.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/plan-mode/plan-autosave.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/plan-mode/plan-files.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/plan-mode/plan-handoff.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/plan-mode/plan-protection.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/predict/blend.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/predict/client.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/predict/daemon.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/predict/foreign-history.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/predict/protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/predict/smollm-weights.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ratchet/prelude-definition.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ratchet/ratchet.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/registry/agent-lifecycle.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/registry/agent-registry.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/registry/persisted-agents.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sdk.ts`
+  - scope+package: 25 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×6
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/secrets/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/secrets/message-transform.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/secrets/patterns.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/secrets/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/security/auth.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/coding-agent/src/security/cloud.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/security/contracts/schemas.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/security/contracts/validation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/security/coordinator.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/security/preflight.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/security/publication.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/src/security/remediation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/security/resource-output.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/security/store.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/session/acp-permission-gate.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/agent-session-events.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/session/agent-session-types.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/agent-session.ts`
+  - scope+package: 32 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×17
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/session/agent-storage.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/anthropic-slow-mode.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/async-job-delivery.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/attachment-source-notice.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/auth-broker-config.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/auth-storage.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+- `packages/coding-agent/src/session/bash-runner.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/blob-store.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/btw-history.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/btw-turn.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/cache-warmer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/coding-agent/src/session/checkpoint-entries.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/claude-auto-reset.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/src/session/claude-session-store.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/code-mode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/codex-auto-reset.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/session/codex-session-store.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/compaction-methods.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/session/context-notes.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/context-settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/context-usage-runtime.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/session/credential-disabled-notice.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/date-cwd-reminder.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/eval-runner.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/exit-diagnostics.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/session/foreign-session-import.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/foreign-session-jsonl.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/history-storage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/indexed-session-storage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/inline-edit-recovery.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/session/irc-bridge.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/launch-completion.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/messages.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/session/model-compaction-threshold.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/model-controls.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/model-mentions.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/prewalk.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/provider-image-budget.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/queued-messages.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/session/redis-session-storage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/retry-fallback-chains.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/session/retry-fallback-reason.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/role-models.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/session/session-advisors.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-context.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/session-dump-format.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/session/session-entries.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/session/session-handoff.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-history-format.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/session/session-index.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/session/session-listing.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/coding-agent/src/session/session-loader.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/session-maintenance.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/session-manager.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-memory.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-metadata.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-migrations.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-paths.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/session/session-persistence.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-pins.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/session/session-provider-boundary.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/src/session/session-stats.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-storage.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×9
+- `packages/coding-agent/src/session/session-tools.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/session-worktree.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/settings-stream-fn.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/session/settings.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/session/snapcompact-inline.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact` ×2
+- `packages/coding-agent/src/session/snapcompact-savings-journal.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/stream-guards.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/sub-sessions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/todo-tracker.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/tool-call-loop-redirect.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/tool-choice-queue.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/session/ttsr-coordinator.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/ttsr-outputs.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/turn-persistence.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/session/turn-recovery.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/unexpected-stop-classifier.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/session/yield-queue.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/backend.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/consolidate.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/extract.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/paths.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/queue.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/sharpshooter/scheduler.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/skillshare/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/skillshare/installer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/skillshare/manifest.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/skillshare/pack.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire` ×2
+- `packages/coding-agent/src/slash-commands/acp-builtins.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/available-commands.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/builtin-collaboration.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/builtin-completions.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/builtin-control.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/builtin-lifecycle.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/builtin-modes.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/builtin-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/builtin-session.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/helpers/active-oauth-account.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/helpers/context-report.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/helpers/draft.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/slash-commands/helpers/effort.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/helpers/logout.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/helpers/mcp.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/helpers/reset-usage.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/slash-commands/helpers/security.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/helpers/session-pin.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/helpers/ssh.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/helpers/stats-dashboard.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+- `packages/coding-agent/src/slash-commands/helpers/todo.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/slash-commands/helpers/usage-accounts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/slash-commands/helpers/usage-report.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/slash-commands/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/speculation/host.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ssh/config-writer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ssh/connection-manager.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ssh/file-transfer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/ssh/sshfs-mount.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stats/activity-client.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+- `packages/coding-agent/src/stats/activity-protocol.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+- `packages/coding-agent/src/stats/activity-worker.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+- `packages/coding-agent/src/stencil/credential.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/clip-upload.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/console-tui.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/paint-encoder.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/paths.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stream/player.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/publisher.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/recording.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stream/redactor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stream/server-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/settings.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stream/streamer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/stt/asr-worker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stt/downloader.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stt/push-to-talk.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stt/sherpa-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/stt/stt-controller.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/subprocess/model-worker-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/subprocess/parent-watchdog-worker.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/subprocess/parent-watchdog.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/subprocess/worker-client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/subprocess/worker-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/system-prompt.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/agents.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/commands.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/completion-probe.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/discovery.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/eval-tools.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/task/executor.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/index.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/isolation-ownership.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/task/isolation-runner.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/label.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/output-manager.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/task/persisted-revive.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/prompt-policy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/task/provider-concurrency.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/task/result-summary.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/settings.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/spawn-run.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/task/speculative-launch.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/task/structured-subagent.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/subprocess-tool-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/task/types.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/workpool.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/worktree.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/task/yield-assembly.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/telemetry-export-otlp.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/telemetry-export.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/device.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/dtype.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/local-inference-api.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+- `packages/coding-agent/src/tiny/mlx-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/online-candidates.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/tiny/title-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/worker-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tiny/worker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/acp-bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/approval.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+- `packages/coding-agent/src/tools/ask.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/ast-edit.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/ast-grep.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/auto-generated-guard.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/bash-interactive.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/tools/bash-pty-selection.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/bash.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/browser.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/aria/aria-snapshot.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/attach.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/cmux/cmux-tab.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/cmux/rpc.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/cmux/socket-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/dialogs.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/downloads.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/emulation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/frames.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/in-process-run.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/init-scripts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/interactions.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/launch.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/tools/browser/navigation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/network.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/orphan-registry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/queries.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/react/devtools-hook.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/react/renders.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/react/suspense.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/react/tree.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/react/vitals.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/readable.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+- `packages/coding-agent/src/tools/browser/recording.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/tools/browser/registry.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/relay/bridge.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/relay/daemon.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/relay/kind.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/relay/probe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/relay/server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/run-output.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/tools/browser/screenshot.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/shared-daemon.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/storage-state.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/tab-arguments.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tab-call.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tab-protocol.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/tools/browser/tab-supervisor.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/tab-worker-entry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/tab-worker.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/browser/tern/keys.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tern/kind.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/tern/network-log.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tern/selectors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tern/tern-tab.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/tern/wire.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/browser/tracing.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/browser/webmcp.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/checkpoint.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/computer.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/computer/call.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/computer/protocol.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/tools/computer/supervisor.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/coding-agent/src/tools/computer/worker-entry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/computer/worker.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/conflict-detect.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/tools/conflict-uri.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/tools/context-notes.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/context.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+- `packages/coding-agent/src/tools/debug.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/essential-tools.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/tools/eval.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/fetch.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/tools/file-write-fallback.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/fs-cache-invalidation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/tools/gh-common.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/gh-pr-checkout.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/gh-pr-diff.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/gh-run-watch.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/src/tools/gh-search.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/tools/gh-view.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/tools/gh.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/github-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/glob.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/grep.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/tools/ida.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/image-gen.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/index.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×13
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/jfind/cascade.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/jfind/index.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/jfind/lexical.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/tools/jfind/passages.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/jfind/questions.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/jfind/tree.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/jtd-to-json-schema.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/learn.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/manage-skill.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/src/tools/memory-edit.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/memory-recall.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/memory-reflect.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/memory-retain.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/output-meta.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/output-schema-validator.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/path-utils.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/plan-mode-guard.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-archive.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/read-binary.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/tools/read-format.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-json.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-path-resolution.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-pdf.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-selector.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/tools/read-sqlite.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/src/tools/read-summary.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/read-supersede.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/read.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/report-tool-issue.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/resolve.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/run-code.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/run-scope.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/security-scan.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/sqlite-reader.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/tools/think.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/tools/todo.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/tool-errors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/tool-result.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/tools/tts.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/vibe.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/wait.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tools/write-content.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/tools/write.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/tools/xdev.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/src/tools/yield.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/downloader.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/speech-enhancer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/streaming-player.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/tts/tts-client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/tts-worker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/tts/vocalizer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/active-repo-context.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/utils/atomic-file.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/block-context.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/browser-session.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/utils/changelog.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/utils/clipboard.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/utils/commit-message-generator.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/edit-mode.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/enhanced-paste.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/utils/event-bus.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/external-editor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/file-mentions.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/github.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/image-loading.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/utils/image-question.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/image-resize.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/utils/image-vision-fallback.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/ipc.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/late-cleanup.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/markit-cache.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/markit.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/open.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/owner-private-dir.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/repo-lock.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/src/utils/resume-command.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/shell-snapshot.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/terminal-graphics.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/utils/title-generator.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/tool-choice.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/utils/tool-schema.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/src/utils/tools-manager.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/utils/turndown.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/usage-counter.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/utils/video.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/vibe/lifecycle.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/vibe/runtime.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/firecrawl.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/kagi.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/parallel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/scrapers/artifacthub.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/arxiv.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/aur.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/biorxiv.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/bluesky.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/chocolatey.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/choosealicense.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/cisa-kev.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/clojars.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/coingecko.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/crates-io.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/crossref.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/discogs.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/discourse.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/dockerhub.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/docs-rs.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/fdroid.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/firefox-addons.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/flathub.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/github.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/gitlab.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/go-pkg.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/web/scrapers/hackage.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/hackernews.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/hex.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/huggingface.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/iacr.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/jetbrains-marketplace.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/lemmy.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/lobsters.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/mastodon.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/maven.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/mdn.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/metacpan.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/musicbrainz.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/npm.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/nuget.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/nvd.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/ollama.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/open-vsx.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/opencorporates.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/openlibrary.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/orcid.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/osv.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/packagist.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/pub-dev.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/pubmed.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/pypi.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/rawg.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/readthedocs.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/web/scrapers/reddit.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/repology.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/rfc.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/rubygems.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/searchcode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/sec-edgar.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/semantic-scholar.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/snapcraft.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/sourcegraph.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/spdx.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/stackoverflow.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/terraform.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/twitter.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/src/web/scrapers/utils.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/web/scrapers/vimeo.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/vscode-marketplace.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/w3c.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/wikidata.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/wikipedia.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/scrapers/youtube.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/index.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/provider.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/web/search/providers/anthropic.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/base.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/src/web/search/providers/brave.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/browser-headers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/browser-page.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/codex.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/duckduckgo.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/ecosia.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/exa.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/firecrawl.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/gemini.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/google.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/jina.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/kagi.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/kimi.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/mojeek.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/src/web/search/providers/ollama.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/openai.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/openrouter.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/parallel.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/perplexity-auth.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/perplexity.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/public.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/searxng.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/startpage.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/providers/synthetic.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/tavily.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/tinyfish.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/src/web/search/providers/xai.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/src/web/search/providers/zai.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/src/web/search/types.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/src/workspace-tree.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/acp-agent.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/acp-builtins.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/acp-client-bridge.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/acp-event-mapper.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/acp-initialize-conformance.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/acp-lazy-startup.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/acp-mcp-isolation.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/acp-session-effects.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/active-oauth-account.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/activity-index.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-advise-terminal.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-auto-thinking.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/advisor-context-maintenance.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-devin-thinking.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/advisor-headless-fallback-drain.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-memory.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-provider-options-parity.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-toggle.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-tool-call-loop-guard.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-tool-result-eviction.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor-usage-limit-wait.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/advisor-watchdog.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor/advisor-visibility.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/advisor/advisor.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/advisor/config.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/advisor/delta-split-obfuscation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/advisor/delta-split.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/advisor/fingerprint-multi-message.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/advisor/replay-observability.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/advisor/tool-result-eviction.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/advisor/transcript-recorder.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-hub-activate.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-hub-advisor-scroll.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-hub-ordering.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/agent-session-account-pool-dispose.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-acp-permission.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-active-tool-updates.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/agent-session-advisor-suppression.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-advisor-terminal-unwind.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-anthropic-native-compaction.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-anthropic-wrap-up.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-aside-delivery.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-async-delivery.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-auto-compaction-progress-guard.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-auto-compaction-queue.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/agent-session-bash-detach.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-bash-session-ownership.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-before-agent-start-attribution.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/agent-session-before-agent-start-prompt-override.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/agent-session-branching.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-btw-branch.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-checkpoint-rewind-branch.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-compaction-cancellation.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-compaction.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-concurrent.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-configured-extensions.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-consumed-completion-peek.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-context-file-reload.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-dispose-concurrent.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-dispose-releases-memory.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-eager-compaction.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-eager-task.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-eager-todo.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-empty-stop-guard.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-event-order.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-extension-command-admission.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-force-tool-choice.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-fork-at-entry.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-fresh.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-gemini-header-interrupt.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-goal-midrun-compaction.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-handoff.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/agent-session-idle-compaction-async-wake.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-idle-custom-message-render.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-interrupted-thinking.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-magic-keywords.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-manual-retry.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-manual-snapcompact-fallback.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-memory-backend.test.ts`
+  - scope+package: 27 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×18
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-message-pipeline.test.ts`
+  - scope+package: 24 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-message-update-queue.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/agent-session-mid-turn-compaction-dead-end.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-model-persistence.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-model-switch-auth.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-new-session-boundary.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-new-session-queued-steer.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-openai-completions-model-switch.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-openai-responses-replay.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-payload-rejection-413.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×4
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/agent-session-persisted-keys-cache.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-plan-compact-hook-instructions.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-plan-mode-convergence.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-plan-reference-compaction.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-plan-reference-setup-bail.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-prewalk-off.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-prewalk.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-prompt-abort-race.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-prompt-dispatch-race.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+- `packages/coding-agent/test/agent-session-prune-persistence.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-python-cleanup.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-queue-update-events.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-queued-policy.test.ts`
+  - scope+package: 24 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×18
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-queued-steer-delivery.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-resolve-reminder.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-responses-body-read-timeout.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-retry-cap.test.ts`
+  - scope+package: 21 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×9
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-retry-fallback.test.ts`
+  - scope+package: 27 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-retry-recovery.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-role-thinking.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-rules-reload.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-session-stop-will-continue.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-side-state.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/agent-session-silent-abort.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-skill-image.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-skill-keywords.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-snapcompact-auto-fallback.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/agent-session-snapcompact-budget.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/agent-session-snapcompact-encrypted-reasoning.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/agent-session-snapcompact-frame-dead-end.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/agent-session-snapcompact-no-reduction.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/agent-session-stats.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-steer-idle-drain.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-switch-prev-context.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-terminal-error-persistence.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-text-stall-continue.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-thinking-loop-retry.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/agent-session-title-fork.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/agent-session-title-generation-dispose.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/agent-session-todo-blocker-clone.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/agent-session-todo-mid-run-nudge.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-todo-reminder-async-jobs.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-todo-reminder-loop.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-tool-call-loop-guard.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-tool-rebuild-skip.test.ts`
+  - scope+package: 19 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-tree-ask-reanswer.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/agent-session-tree-navigation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/agent-session-tree-skill-injection.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/agent-session-unexpected-stop-guard.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-user-shortcut-hooks.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-session-video-attachment.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/agent-session-yield-empty-stop-suppression.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-storage-model-perf.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/agent-storage-sqlite-compat.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/agent-storage-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/anthropic-slow-mode.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/append-only-context-mode.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/append-prompt-provenance.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/archive-prelude.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/artifacts-concurrency.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/artifacts-integrity.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/artifacts-sanitization.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ask-timeout.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/async-job-manager.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/async-yield-queue.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/auth-broker-import.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auth-broker-live-settings.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auth-broker-migrate.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auth-broker-snapshot-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auth-gateway-account-pool.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auth-gateway-stdio.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/auth-storage-minimax-login.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/auth-storage-rotation.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/auto-thinking-classifier.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/autocomplete-max-visible.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/autolearn-controller.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/autolearn-discovery.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/autolearn-learn-local.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/autolearn-managed-skills.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/autolearn-tools-gating.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/autoresearch-before-agent-start.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/autoresearch-git.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/autoresearch-state.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/autoresearch-tools.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/available-commands.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/bash-acp-terminal.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/bash-executor.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/bash-failure-result.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/bench-auth-fallback.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/bench-cache.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/bench-profiles.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/blob-broker-live-settings.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/blob-broker.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/blob-provider-fallback.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/blob-resilience.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/block-images.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/btw-follow-up.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/btw-history.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/btw-session-lifecycle.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/bundled-agent-parsing.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/cache-warmer-providers.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cache-warmer.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+- `packages/coding-agent/test/capability/fs-special-files.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/capability/rule-agents.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/capability/rule-buckets.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/claude-auto-reset-integration.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/claude-auto-reset.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cleanse-parsers.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/cleanse.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/cli-advisor-flag.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cli-argv-routing.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cli-command-metadata.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-completions-exit.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-computer-lazy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-cwd-flag.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-explicit-extension-isolation.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-extension-path.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cli-extension-providers.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-goal-flag.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-hide-thinking-flag.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/cli-max-time-flag.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-model-role-thinking.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-non-tty-launch.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-print-thoughts-flag.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cli-resume-model-fallback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-service-tier-flag.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli-unknown-flag.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/cli-unsettled-command.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/auth-gateway-catalog.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/collab-cli.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/completions.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/file-processor.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/npm-registry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/cli/skill-list.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/cli/ttsr-cli.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/update-cli.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/cli/update-rename-migration.integration.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cli/worktree-clear-isolation.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/client-prompts.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/client-resources.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/codex-auto-reset.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/collab/chunked-welcome.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/collab/controller.test.ts`
+  - scope+package: 31 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×26
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/collab/crypto.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/collab/discarded-entry-marker.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/collab/guest-bus-mirror.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/collab/guest-extension-turn-guard.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/collab/guest-idle-reconciler.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/collab/guest-lifecycle-mirror.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+- `packages/coding-agent/test/collab/guest-subagent-badge.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/collab/guest-ui-request.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/collab/helpers/in-memory-relay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/collab/helpers/throttled-host.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/collab/host-bus-fallback.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+- `packages/coding-agent/test/collab/host-compaction-guest-sync.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/collab/host-no-peer-gate.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/collab/host-peer-left-queue.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/collab/host-registry.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+- `packages/coding-agent/test/collab/read-only.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/collab/registry-smoke.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/collab/registry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/collab/replication-shrink.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+- `packages/coding-agent/test/collab/session-replication.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/collab/steer-queue.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/command-controller-new-session.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/command-report-text-mode.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/commit-agent-model-routing.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/coding-agent/test/commit-agentic-attribution.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/commit-command-exit.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/commit-conventional.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/commit-execute.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/commit-extension-providers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/commit-fallback-exit.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/coding-agent/test/commit-model-selection-role-thinking.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/commit-split-hunk-validation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/coding-agent/test/compact-modes.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/compaction-flush-loop.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/compaction-hooks.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/compaction-lifecycle.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/compaction-prefer-current-model.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/compaction-serialization.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/compaction-speculation.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/compaction-transcript-reuse.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/compaction.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/compress.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/config-cli-credentials.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config-cli.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config-value-fd-inheritance.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/config/account-pools.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/compaction-threshold.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/model-registry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/test/config/models-config-validation.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/config/settings-entry-writes.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/settings-noop-saves.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/settings-panel-clear.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/settings-registry.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/config/settings-reload.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/context-consolidation.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/context-notes.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/eval-workflow-helpers.integration.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/helpers.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/core/js-static-import-rewrite.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/core/js-tool-bridge.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/core/js-workflow-helpers.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-display.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/core/python-executor-display.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/core/python-executor-lifecycle.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-executor-owner-cleanup.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/core/python-executor-per-call.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-executor-streaming.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/core/python-executor.lifecycle.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/core/python-executor.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-kernel-display.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/core/python-kernel-env.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-kernel-session.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-runner.integration.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/core/python-tool-bridge.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/core/turn-budget.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/cpuprofile.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/credential-pin.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cursor-exec.test.ts`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/cursor-todo-persistence.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/date-cwd-reminder.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/dap-config.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/dap-launch-failures.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/dap-multi-session.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/profiler.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/debug/raw-sse-report-bundle.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/report-bundle-logs.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/debug/report-bundle-sessions.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/default-model-ambient-bedrock.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/direnv.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/agent-discovery-disabled-providers.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/agent-fields.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/discovery/agent-plugins.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/agents-monorepo-skills.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/at-imports.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/builtin-defaults.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/builtin-home-walkup.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/builtin-rules-md.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/builtin-tools.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/claude-commands.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/claude-md.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/claude-plugins.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/claude-tools.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/codex-opencode-commands.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/context-file-dedup.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/discovery/disabled-extensions.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/github-copilot.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/github-skills.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/helpers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/mcp-enabled-import.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/mcp-json.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/mcp-profile.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/opencode.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/pi-config-dir.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/discovery/profile-isolation.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/downloads/model-downloads.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/dry-balance-config.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/dry-balance-model-role.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/dry-balance-runtime.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-acp-bridge.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-auto-generated-regressions.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-auto-repair-region.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/edit-blackbox.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-input-paths.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/edit-internal-url-targets.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-mode.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/edit-patch-unchanged-error.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/edit-prompt-variant.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/edit-tool-details.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/editor-max-height.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/error-line.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/eval-code-mode-declarations.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/eval-preludes.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/eval/agent-bridge-policy.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/agent-bridge.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/eval/bridge-timeout.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/eval/browser-prelude-facade.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/eval/completion-bridge.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/console-table.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/eval/context-manager-startup.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/eval/display-image-coerce.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/eval/helpers-local-roots.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/input.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/js-package-environment.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/judgment-batch-bridge.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/judgment-bridge.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/test/eval/prelude-runtime.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/eval/process-entry-import.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/process-stdio-capture.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/eval/py/prelude.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/py/runner-request-dispatch.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/py/runner-shell-output.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/py/runner-source-transform.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/eval/reserved-global-reassignment.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/eval/runtime-global-dispose.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/eval/startup-warning.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/eval/tool-bridge-image-display.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/eval/worker-core.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/event-controller-abort-render.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/event-controller-cursor-todo.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/event-controller-error-banner.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/event-controller-message-update-coalesce.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/event-controller-mixed-assistant-render.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/event-controller-todo-reminder.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/executable-fallback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/experimental-context-management.test.ts`
+  - scope+package: 24 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×17
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/export-html-assistant-ordering.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/export-html-markdown.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/export-html-template.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/export-html-themes.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/export-subsessions.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/custom-commands/annotate.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/test/extensibility/custom-commands/ci-green.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/coding-agent/test/extensibility/custom-commands/loader.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/test/extensibility/custom-commands/review-diff.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/extensibility/custom-commands/review.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/custom-tool-loader.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/coding-agent/test/extensibility/ext-model-query.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/extensibility/extension-load-notifications.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/extension-setting-override.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-ai-root-exports.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-ai-type-remap.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×10
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/extensibility/legacy-pi-bundled-subpath-overrides.test.ts`
+  - scope+package: 35 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×11
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-bundled-virtual.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/extensibility/legacy-pi-bunfs-root.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/extensibility/legacy-pi-canonical-require.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-cjs-classification.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-cli-exports.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/extensibility/legacy-pi-compaction-helpers.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/legacy-pi-default-resource-loader.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-edit-write-tools.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/legacy-pi-grep-tool.test.js`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/legacy-pi-image-convert.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/legacy-pi-inplace-load.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-override-fallback.test.ts`
+  - scope+package: 28 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×8
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+- `packages/coding-agent/test/extensibility/legacy-pi-path-helpers.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-settings-manager.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/legacy-pi-tool-result-guards.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/slash-command-argument-hint.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extensibility/tool-proxy.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/extensibility/typebox-remap.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensibility/typebox-shim.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/extension-context-agent-identity.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-context-async-jobs.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/extension-dashboard-mcp-parity.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-flag-initial-message.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/extension-loader-concurrency.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-loader-graph-read-dedup.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-loader-process-exit.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+- `packages/coding-agent/test/extension-loader-self-import.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-prepared-rebind.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/extension-provider-registration-rollback.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-registered-tool-source-info.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extension-session-shell-env.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/extension-workspace-package-resolution.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensions-discovery.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/extensions-runner.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/external-editor.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fast-mode-scope.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fatal-stderr-pty.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/file-mentions.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fixtures/bash-autobg-exit-probe.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/fixtures/browser-executable-probe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/fixtures/btw-rpc-agent.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/fixtures/clipboard-worker-copy.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/fixtures/compiled-worker-selector-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fixtures/computer-worker-bundled-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fixtures/fatal-tui.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fixtures/fork-rpc-agent.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/fixtures/goal-rpc-agent.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/fixtures/input-hook-rpc-agent.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/fixtures/live-rpc-agent.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/fixtures/mcp-idle-wait-probe.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/fixtures/mcp-refresh-retention-probe.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/fixtures/model-registry-construction-build-probe.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fixtures/models-config-validator-construction-probe.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/fixtures/queued-message-rpc-agent.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/fixtures/sdk-artifact-retention-probe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/fixtures/skill-image-rpc-agent.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/fixtures/truncated-string-retention-probe.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/fixtures/xterm-cache-positive-control.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/footer-jj-label-sanitize.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/fuzzy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/gallery-cli.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/gc-cli.test.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/getalltools-toolinfo.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/git-active-context.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/git-linked-worktree.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/git-reftable.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/git-tui-sidebar.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/git-tui-stream.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/git-url.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/goal-tool-runtime-enable.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/goals/goal-mode-integration.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/goals/goal-runtime.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/goals/goal-tool.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/goals/guided-goal.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/headless-persistence-shutdown.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/helpers/acp-schema.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/test/helpers/active-terminal.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/helpers/agent-session-setup.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/helpers/fetch-mock.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/helpers/interactive-mode-context.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/helpers/model-fixtures.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/coding-agent/test/helpers/session-defaults.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/helpers/settings-test-state.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/helpers/temp-home-cleanup.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/hindsight-backend.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/hindsight-bank.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/hindsight-client.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/hindsight-content.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/hindsight-conversation-timestamps.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/hindsight-mental-models.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/hindsight-mm-cache-stability.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/hindsight-retention-cache.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/hindsight/config.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/hindsight/transcript.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/history-storage-search.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/history-storage-session.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/history-storage-sqlite-compat.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/hook-editor.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/hook-tool-wrapper-input.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/idle-custom-message-initial-render.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/if-bench.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/image-b64poly.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/image-input-normalization.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/image-input.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/image-paste-source-path.test.ts`
+  - scope+package: 24 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/image-webp-exclusion.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/images-cli.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/initial-message.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/inline-tool-descriptors-mode.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/inline-tool-descriptors-model-switch.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-click-routing.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/input-controller-compaction-image.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/input-controller-dequeue.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/input-controller-escape.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-focused-commands.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/input-controller-focused-submit-restore.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-followup-image.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-followup-paste-expansion.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-input-events.test.ts`
+  - scope+package: 19 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-internal-url-caller.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/input-controller-keybindings.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-large-paste.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-loop.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-orphan-submit.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-python-prefix.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-skill-queue.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/input-controller-slash-history.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/input-controller-smart-paste.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/input-controller-suspend.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/input-controller-thinking-visibility.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/install-command.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/installed-source-resolution.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-click-focus.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-activity-line.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/interactive-mode-default-plan-mode.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-deferred-command-notice.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-editor-component.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-loop-teardown.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-loop.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-lsp-startup.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-mcp-connecting.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-model-cycle.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-optimistic-skill-reconcile.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-plan-mode-exit.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-plan-paused-guard.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-plan-review.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-prompt-template-autocomplete.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-shutdown-store-failure.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-startup-header-theme.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-status.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/interactive-mode-still-closing.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-title-prewarm.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-todo-clear.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-vibe-toggle.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-mode-working-accent.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/interactive-terminal-e2e.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/agent-protocol-live.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/agent-protocol-nested.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/artifact-path-only.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/internal-urls/caller-root-ab.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/internal-urls/cfg-protocol.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/internal-urls/docs-index.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/internal-urls/docs-tool-coverage.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/internal-urls/history-protocol.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/hyperlink-targets.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/internal-urls/issue-pr-protocol.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/local-protocol.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/mcp-protocol.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/internal-urls/memory-protocol.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/omp-protocol.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/internal-urls/registry-helpers.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/router-spec-contracts.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/internal-urls/rule-protocol.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/internal-urls/session-files-from-disk.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/internal-urls/url-filesystem.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/internal-urls/vault-protocol.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ipc-safe-send.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/issue-10510-repro.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-12067-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-12281-lm-studio-placeholder-auth.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-13081-extension-renderer-theme-slot.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/issue-1401-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-14518-malformed-plugin-overrides.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/issue-1528-discovery-default-max-tokens.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-1606-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/issue-1940-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/issue-2372-repro.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-2375-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-2510-repro.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-2750-subagent-runtime-fallback.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/issue-2761-hidden-local-providers.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/issue-3031-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/issue-3506-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/issue-3601-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/issue-3656-shake-during-stream.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-4197-plugin-resolution-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-4324-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/issue-4348-repro.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/issue-4806-command-output.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-4919-extension-autocomplete-provider.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-5764-registertool-loadmode.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/issue-5780-repro.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-5879-legacy-event-stream-factory.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-6334-code-fence-border-contrast.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-6449-legacy-pi-cjs-double-instance.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/issue-6767-usage-command-streaming.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-7352-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-775-repro.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-7955-extension-project-trusted.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-8096-broker-unreachable-startup.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-8137-repro.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-816-repro.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-8223-repro.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-825-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/issue-845-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-846-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-849-repro.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-851-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-8769-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/issue-8800-custom-provider-slash-id.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/issue-899-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/issue-905-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-9158-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-927-repro.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-956-repro.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-9597-cold-launch-double-clear.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/issue-966-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/issue-970-custom-provider-discovery.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-9712-obsidian-muted-contrast.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-973-legacy-pi-plugin.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-980-bedrock-priority.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/issue-9816-inflight-wait-focus-rebuild.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/issue-983-multi-file-extension.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-985-subagent-auth-fallback.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/issue-986-compaction-auth-fallback.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/issue-interrupt-and-flush-empty-messages.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/issue-portkey-gateway-wire-model.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/job-model-badge-renderer.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/job-poll-displacement.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/join-command.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/join-patch.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/judgment-chain.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/keybindings-display.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/keybindings-escape-components.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/keybindings-selector-navigation.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-idle-shutdown.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-list-order.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-metadata-writes.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-output-snapshot.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-pty-startup-input.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-restarting-settle.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-unknown-operation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/broker-wait-generation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/daemon-prune.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/launch/service-completion-ownership.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/legacy-pi-ast-behavior.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/legacy-pi-extension-cache.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/lm-studio-fix.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/local-inference-api.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/loop-condition.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/loop-limit.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/lsp-format-options.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/lsp/edits.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/lsp/idle.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/lsp/issue-4910-diagnostics-bounded.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/lsp/lspmux.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/lsp/mux-server-key.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/lsp/reload-configuration-params.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/main-credential-scoped-model-selection.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×6
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-cross-project-resume.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-headless-timing.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-host-classification.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-initial-message-title.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-interactive-input.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-model-scope-notification.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/main-no-session-resume-picker.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-rebuild-scoped-models.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-resume-cancel-exit.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-resume-missing-path.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/main-session-resolution-error.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/main-startup-watchdog.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/marketplace/cache.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/marketplace/cli.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/marketplace/fetcher.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/marketplace/manager.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/marketplace/parse-internal-url.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/marketplace/project-scope.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/marketplace/registry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/marketplace/slash-install-parser.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/marketplace/source-resolver.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/marketplace/substitute-plugin-root.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp-broker-oauth-refresh.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-catalog-change.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-command-reauth.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-command-reload-status.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/mcp-command-toggle.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-config-scope-dedup.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-connection-status-events.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-discovered-server-reauth.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-env-policy.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/mcp-exa-filter.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/mcp-header-policy.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/mcp-http-transport.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-incremental-connect.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-json-rpc.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-legacy-sse-transport.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/mcp-long-wait.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/mcp-lost-remote-retry.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-manager-initial-connection-cleanup.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-manager-notification-listeners.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-manager-oauth-refresh.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-manager-subscription-action.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp-name-autocomplete.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-print-readiness.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-profile-auth-binding.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-reconnect-storm.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-reconnect.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-reload-fs-cache.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-render-status.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+- `packages/coding-agent/test/mcp-resource-templates-missing.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-roots-list.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp-server-tool-ownership.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-startup-events.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp-startup-no-block.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-stdio-transport.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-test-utils.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp-timeout.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp-toggle-runtime.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/mcp-tool-args.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/mcp-tool-name-canonicalization.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/mcp-tool-ordering.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/mcp/config-request-id-format.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mcp/tool-bridge-structured-content.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memories-runtime.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memories-storage.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memories/collect-threads.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/memories/instructions.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memories/isolation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/memories/stage1-input.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memory-backend-resolve.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/memory-redaction.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/memory-session-storage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/memory-tools.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×15
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/mid-turn-rebuild-pending-tool.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/mnemopi-bank-derivation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mnemopi-config.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/mnemopi-recall-features.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-availability-live-settings.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-browser.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/model-config-live-headers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/model-discovery.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×7
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-hub.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/model-merge-reuse.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-picker.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/model-presets.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-cache-headers.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-command-values.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/model-registry-create.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-default-config.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-lazy-loading.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-runtime-cleanup.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry-runtime-provider.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-registry.test.ts`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×8
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/model-resolver.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/models-cli-image-support.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/models-config-lazy-validator.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/components/assistant-message-error.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/assistant-message-mermaid.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/components/assistant-message-streaming-fastpath.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/assistant-message-svg.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/components/codex-reset-fireworks.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/compaction-summary-message.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/copy-selector.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/components/custom-editor-draft.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/history-search.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/login-dialog.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/logout-account-selector.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/move-overlay.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/oauth-selector.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/pause-screen.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/plan-save-overlay.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/plugin-list-marketplace.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/reaction.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/components/session-account-selector.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-info-overlay.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/components/session-selector-current.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-selector-mouse.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-selector-scope.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-selector-scroll-stability.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/session-selector-scrollbar.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-selector-status.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/session-selector-viewport.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/settings-layout.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/settings-multiselect.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/settings-selector-memory-refresh.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/skill-message.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/status-line/component.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/components/tool-activity-visibility.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/test/modes/components/tool-execution-background-task.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/components/tool-execution-spinner.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/components/tool-execution.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/components/tree-selector-advisor.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-chain-gutter-2298.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-clamp-frame.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-developer.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-empty-state-1909.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-entry-labels.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-last-branch-gutter-2325.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-overflow.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-shift-enter-8821.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/tree-selector-system-wrapper.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/components/user-message-keywords.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+- `packages/coding-agent/test/modes/context-usage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/bash-command.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/btw-controller.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/test/modes/controllers/event-controller-abort-guard.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/event-controller-args-reveal.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/controllers/event-controller-compaction-scrollback.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/event-controller-idle-compaction.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/controllers/event-controller-interrupt.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/event-controller-loader-recovery.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/event-controller-message-start.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/event-controller-plan-approval-dispatch.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/event-controller-read-grouping.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/controllers/event-controller-streamed-tool-id-reconcile.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/controllers/event-controller-superseded-agent-end.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/event-controller-task-async-updates.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/modes/controllers/event-controller-toolcall-finalize.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/controllers/event-controller-xdev-queue.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/controllers/extension-ui-controller.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/coding-agent/test/modes/controllers/handoff-command.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/input-controller-tool-expansion.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/jobs-command.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/live-command-controller.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/mcp-authorization-link.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/memory-command.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/modes/controllers/move-command.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/omfg-controller.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/omfg-rule.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/modes/controllers/resume-outer-preflight.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/resume-preflight.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/selector-controller-model-writes.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/selector-controller-overlay-focus.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/controllers/selector-controller-tree-ask-reanswer.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/controllers/session-selector-delete.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/controllers/tan-command-controller.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/todo-command-controller.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/controllers/usage-command.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/modes/interactive-mode-live-settings.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/internal-url-autocomplete.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/magic-keywords.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/modes/noninteractive-dispose.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/print-mode.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/modes/print-persistence-failure.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/rpc-shutdown-persistence.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/session-teardown.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/subagent-tree-cost.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/theme/birch-contrast.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/modes/theme/highlight-stream.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/theme/mermaid-rendering.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/modes/utils/render-initial-messages.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/modes/utils/transcript-rewind-truncation.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/modes/warp-events.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/non-interactive-env.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/oauth-discovery.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/oauth-flow.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/oauth-manual-input.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/online-tiny-candidates.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/otel-export-probe.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/otel-non-otlp-probe.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/otel-resource-probe.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/otel-signals-probe.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/output-sink-fd-lifecycle.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/parent-watchdog.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/pdf-converter.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/pi-scope-aliases.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/plan-autosave.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plan-mode-thinking-level.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/plan-mode/approved-plan.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/plan-mode/model-transition.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/plan-mode/plan-handoff.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plan-mode/plan-protection.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×5
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/plan-mode/reentry-prompt.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-command.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-config-validate.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/plugin-config.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/plugin-doctor-version-drift.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/plugin-extensions-discovery.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-install-git.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/plugin-install-local.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/plugin-install-npm-dedupe.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/plugin-install-validation.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/plugin-manifest-paths.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-stale-lockfile-entry.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-uninstall-dry-run.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/plugin-unreadable-root.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/plugin-verb-launch-leak.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/pr-3318-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/prefix-binding-prune-gate.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/prefix-binding-tool-roster.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/prewalk-discovery-provider.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/prewalk-startup-degradation.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/print-mode-json-flush.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/print-mode-plan-startup-hang.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/print-mode-working-indicator.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/profile-cli.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/progress-hud.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/prompt-format.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/prompt-templates.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/provider-default-selection.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/provider-files.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/provider-image-integrity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/ratchet.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/read-acp-fs.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-cli-image-question.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-cli-mcp-resource.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-cli-mcp-slow-connect.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-cli-skill.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-column-truncation-snapshot.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-edit-out-of-cwd.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-edit-seen-lines.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-multi-range.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-single-pass.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-speculation.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-summary.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-supersede-prune.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/read-tool-group-freeze.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/read-tool-group.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/read-tool.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/registry/agent-lifecycle.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/registry/agent-result-acceptance.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/registry/persisted-agent-artifacts.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/registry/persisted-agent-attribution.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/registry/persisted-mid-spawn-stub.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/registry/persisted-roster-latch.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/reload-plugins-mcp.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/repro-issue-1020-ctx-shutdown.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/repro-issue-1022-disabled-default-model.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/repro-issue-1955-sendmessage-double-render.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/repro-issue-2600-shutdown-timeout.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/repro-issue-6516-tool-double-render.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/repro-issue-6879-tool-double-render-retry.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/retry-fallback-reason.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/retry-fallback.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/rewind-selector.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/role-info.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/role-thinking-helper-propagation.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/rpc-btw.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-cancel-subagent.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-client.restart.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-client.start.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/rpc-compatible-primitives.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-event-filter.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-extension-ui.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-fork.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-goal.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-host-tools.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-host-uris.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/rpc-input-frame.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/rpc-input-hooks.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-live.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-malformed-input.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/rpc-messages.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/coding-agent/test/rpc-open-session.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-output.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-prompt-result.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/rpc-queued-message.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-session-events.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/rpc-session-settle.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/rpc-skill-command.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-skill-image-order.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-stdin-lock.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-steer-subagent.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-subagents.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/rpc-user-input-order.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/rpc-wire/conformance.types.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/rpc-wire/fake-openai-server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/coding-agent/test/rpc.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/runtime-provider-login-key-precedence.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sample-profile.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-agent-dir-rules.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-async-job-manager-singleton.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-autolearn-active-tools.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-computer-prelude-toggle.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-context-file-refresh.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-credential-disabled-bridge.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-custom-tools-per-session-binding.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-default-role-discovery-config-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-default-role-discovery-local-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-default-role-extension-provider.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-deferred-role-discovery.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-dialect.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/sdk-edit-store-reset.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-extensions-per-session-binding.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-file-write-fallback-extension.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-generate-image-tool-gating.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-live-provider-settings.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-mcp-defer.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-mcp-instructions.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/sdk-model-selection.test.ts`
+  - scope+package: 21 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×5
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-move-cwd.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-preloaded-extensions-isolation.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-provider-toggle-binding.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-restricted-extension-provider.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-service-tier-resolver.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-session-isolation.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/sdk-shared-lsp-binding.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-skills.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/sdk-startup-effects-release.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-subagent-auth-inheritance.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-system-prompt-template.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-tiny-client-dispose.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-tool-activation.test.ts`
+  - scope+package: 22 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-visuals-prompt.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-workpool-yield-schema.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sdk-yield-report.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/secrets-fast-paths.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/secrets-obfuscator.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/secrets-prefilter.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/security/auth.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/security/coordinator.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/coding-agent/test/security/remediation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/security/slash-command.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/selector-controller-settings-single.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/selector-controller-tree-summary.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/service-tier-migration.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-bare-custom-message.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/session-code-mode.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-exit-diagnostics.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-focus-controller.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/session-fork-prompt-cache-key.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-listing-cache.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-loader-blob-dedup.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-loader-stream.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session-manager-atomic-rewrite-race.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager-branch-order.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session-manager-close-drain-latch.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-manager-close-race.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session-manager-cwd-adoption.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager-immediate-persist.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager-internal-details.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session-manager-on-disk-8860.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-manager/artifact-release.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/build-context.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/session-manager/close-drop-empty.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/continue-relocation.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/create-empty-session-file.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/draft.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/file-operations.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/fixtures/draft-gc-lock-appender.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/labels.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-manager/large-session-memory.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/session-manager/migration.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-manager/missing-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/move-session-cleanup.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/move-to.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/new-session-boundary.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/rewrite-rename-eperm.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session-manager/save-entry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-manager/session-id.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/signature-persistence.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/snapcompact-frame-lazy-resolution.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/session-manager/subagent-breadcrumb.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/title-source-persistence.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/tree-traversal.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session-manager/usage-statistics.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session-manager/workspace-directories.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-manager/workspace-prompt-refresh.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-messages.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/session-paths.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-persistence-images.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact` ×2
+- `packages/coding-agent/test/session-persistence-reasoning-dedup.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-pins.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session-ranking.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-read-only-hydration.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/session-selector-search.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/session-stop-continuation-recap.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session-storage-fd-inheritance.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/session-storage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session/agent-session-error-log.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/agent-session-live-settings.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/blob-store.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/default-thinking-level-live.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/dump-all-archive.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/session/emit-listener-isolation.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/empty-error-turn.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session/file-session-storage-delete.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session/harness-envelope-escape.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/session/indexed-late-atomic-rollback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session/inline-edit-recovery.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/session/interrupted-thinking-demote.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/session/irc-bridge-relay.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/messages.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/coding-agent/test/session/model-mentions.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/session/peek-session-init.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/picker-worktrees.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/provider-image-budget.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/publish-lock-os-gate.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/session/recent-sessions-title-index.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/redis-session-storage-manager.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session/redis-session-storage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/rpc-auto-maintenance-scope.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/rpc-queue-mode-scope.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-context.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/session/session-dump-format.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/session/session-history-format.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/session/session-loader-source-size.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-manager-dispose-recovers-write-race.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session/session-manager-flush-atomic-lock-reentry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/session-manager-fork.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-manager-indexed-durability.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session/session-manager-shared-session-file.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-manager-throw-if-missing.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-provider-boundary-image.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/session-status.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/session/session-worktree.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/session/skill-title-input.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/session/sql-session-storage-manager.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/session/sql-session-storage-mysql-noop.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/sql-session-storage.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/session/yield-queue.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/settings-gated-tools-live.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/settings-group-shadowing.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/settings-live-routing.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/settings-manager.test.ts`
+  - scope+package: 26 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×19
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/settings-reload-cwd.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/settings-stream-fn.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/setup-cli.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/setup-wizard.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/coding-agent/test/shake.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/share.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sharpshooter-backend.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/sharpshooter-consolidate.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/sharpshooter-extract.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/shell-snapshot.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/silent-abort-overlay-render.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/silent-abort-print-mode.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/skill-descriptions-xdg.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/skill-prompt-message.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/skill-protocol-customdirs.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/skill-url-containment.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/skillful-toggle.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/skills.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/skillshare/discovery.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/skillshare/installer.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/skillshare/pack.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/slash-command-format.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/slash-commands/branch.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/btw.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/changelog.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/slash-commands/clear-alias.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/slash-commands/collab-list.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/slash-commands/collab-qrcode.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/slash-commands/compact.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/slash-commands/computer.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/copy.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/slash-commands/debug.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/detached-draft.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/effort.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/slash-commands/force.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/fresh.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/guided-goal.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/handoff.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/history-security.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/slash-commands/login.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/memory.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/mode-attachments.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/move-completion.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/slash-commands/move.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/omfg.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/pin.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/slash-commands/ratchet.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/rename.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+- `packages/coding-agent/test/slash-commands/resume.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/slash-commands/retry.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/slash-commands/session.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/setup.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slash-commands/shake.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/slash-commands/switch.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/slash-commands/tan.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/slow-command.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/snapcompact-inline.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/coding-agent/test/snapcompact-savings-journal.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/speculative-eval-integration.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×4
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/speculative-host.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/speculative-live-config.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/speculative-read-integration.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ssh/connection-manager-args.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ssh/connection-manager.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ssh/sshfs-mount.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/startup-composer.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/startup-splash.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/stats-cli-summary.test.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/stats-cli.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/status-line-background-jobs.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/status-line-brand-fade.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/status-line-colocated-jj.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-context-cache.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-dispose-async-leak.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-overflow.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-pr-lookup-timeout.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-pricing-timer.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/status-line-segment-padding.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/status-line-settings-cache.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-time-spent.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/status-line-token-rate.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/status-line-transparent.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-line-usage-refresh.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/status-line-usage.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/status-line-vcs-refresh.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/status-text-sanitization.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/steering-skip-render.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/storage-errors.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/storage-exit-lifecycle.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/coding-agent/test/stream/paint-encoder.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/stream/protocol.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/stream/publisher.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/stream/redactor.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/stream/streamer.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/streaming-edit-abort.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/streaming-output.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/streaming-preview-height.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/streaming-reveal.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/strip-images-from-message.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/stt-cloud.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/stt-preflight.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/stt-sherpa-runtime.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/stt-submit-trigger.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/subagent-advisor.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/subagent-hud-render.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/subagent-mcp-follow.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/system-prompt-context-dedup.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/system-prompt-dedup.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/system-prompt-inventory.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/system-prompt-kernel.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/system-prompt-model.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/system-prompt-personality.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/system-prompt-template.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tan-extension-auth.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task-executor-mcp-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/coding-agent/test/task-label.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/task/autoload-skills.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+- `packages/coding-agent/test/task/commands.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/task/coordination-advisory.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/create-memo.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/task/discovery.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/error-attribution.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/task/executor-async-quiescence.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/task/executor-deferred-cleanup.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/task/executor-irc-wake-yield-reset.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/task/executor-launch-startup.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/executor-pass-through.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×17
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/executor-prewalk.test.ts`
+  - scope+package: 19 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/executor-recent-output.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/task/executor-result-acceptance.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+- `packages/coding-agent/test/task/executor-soft-budget.test.ts`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×19
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/executor-structured-sidecar.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/task/executor-subagent-reminders.test.ts`
+  - scope+package: 21 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×18
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/executor-wall-clock.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+- `packages/coding-agent/test/task/executor-warnings.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/task/executor-yield-loop.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/failed-child-artifact.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/focused-subagent-manual-yield.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/isolation-ownership.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/task/isolation-release.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/output-manager.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/parallel.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/task/parked-subagent-session-release.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/parked-subagent-shell-release.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/persisted-revive.test.ts`
+  - scope+package: 37 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×28
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/result-summary.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/session-agent-description.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/task/spawn-advisory.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/spawn-run.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/speculative-launch.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/structured-subagent.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/subagent-fallback-context-window.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/subagent-lsp.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×15
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/task-batch.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/task/task-blocking-split.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/task-guards.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+- `packages/coding-agent/test/task/task-preflight.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/task-schema.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/task/task-spawn.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/wire-schema.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/workpool.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/task/worktree.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/telemetry-export.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/terminal-title-state.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/theme-islight.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/theme-lazy-status-color.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/tiny-device.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tiny-dtype.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tiny-model-settings-live.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tiny-models-cli.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tiny-text.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tiny-worker-env.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/title-card.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/title-generator.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/token-mcp-oauth-refresh.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tool-args-reveal.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tool-choice-queue.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools-manager-download.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools.test.ts`
+  - scope+package: 16 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/tools/agent-message.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/apply-patch-renderer.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/approval-mode.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/approval.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/ask-tool-renderer-export.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/tools/ask.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/ast-edit.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/ast-grep.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/auto-generated-guard.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/bash-interactive.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/bash-interceptor.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/bash-pty-selection.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/bash-url-filesystem.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/bash-worktree-rewrite.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-a11y.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/browser-aria-snapshot.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-attach.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/tools/browser-cmux-element-click.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/browser-cmux-eval-envelope.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-cmux-guest-rejection.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/browser-cmux-kind.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-cmux-observation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-cmux-release-mid-run.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-cmux-socket.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/browser-console.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/browser-dispose-timeout.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-emulation.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-freeze-settle.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/tools/browser-interactions.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/tools/browser-launch.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/coding-agent/test/tools/browser-lifecycle-leak.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-nav-frames-dialogs.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/browser-network.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-observe.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/browser-op-tracking.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-open-download.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/browser-open-lease.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/browser-open-options.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/tools/browser-orphan-registry.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-profile-cleanup.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-queries.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-react-vitals.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-readable.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-recording.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-relay-bridge.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-relay-kind.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-relay-probe.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-relay-server.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-run-cancellation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-run-output.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-schema.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/browser-screenshot-plus.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/browser-shared-wedge.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/browser-snapshot-plus.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-storage-state.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-tab-call.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-tab-press-guard.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-tab-timeouts.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/browser-tab-worker-startup.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/browser-tern-kind.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/browser-tern-tab.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/browser-tern-wire.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/browser-webmcp.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/capture-background.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/chromium-probe.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/computer-call.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/computer.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/tools/conflict-detect.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/tools/conflict-integration.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/context-tools-registration.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/edit-handler-url-targets.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/edit-renderer.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/tools/eval-auto-background.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/eval-clone-error.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/eval-commit-stability.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/tools/eval-description.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/tools/eval-display-format.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/tools/eval-display-text.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/eval-fallback.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+- `packages/coding-agent/test/tools/eval-streaming-output.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/eval-timeout.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/fetch-binary-dispatch.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/tools/fetch-data-uri-images.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/fetch-jina-stall.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/fetch-kagi-toggle.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/fetch-raw-mode.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/fetch-url-selectors.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/file-write-fallback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/gh-cache-invalidation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/gh.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/github-cache.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/glob-validate-paths.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/glob.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/tools/grep-internal-urls.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/grep-pagination.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/grep-path-lists.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/grep-snapshot-tags.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/ida-binary.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/ida-worker.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/image-gen.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/index.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/irc-roster-activity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/irc.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/jfind.test.ts`
+  - scope+package: 14 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/jtd-to-json-schema.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/local-url-path-prefix.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/lsp-batching.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/lsp-diagnostics-dedup.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/lsp-diagnostics-freshness.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×10
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/lsp-regressions.test.ts`
+  - scope+package: 22 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/tools/multi-grep-path.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/multi-path-missing.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/output-caps.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/output-schema-validator.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/path-literal-colon-selector.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/path-utils-dotdot-selector.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/tools/plan-mode-guard-local.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/proc-service.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/provider-schema-compatibility.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/read-artifact-large.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/read-directory-range.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-fs-not-abortable.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-image-question.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-local-image.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-mixed-path-list.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-pdf-line-range.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-pdf-rendering.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-raw-range.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/read-renderer.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/coding-agent/test/tools/read-special-files.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-tail-seek-race.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/read-truncation-metadata.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/read-url-query.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/read-video.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/report-tool-issue-consent.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/report-tool-issue.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/resolve.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/review.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/root-path-alias.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/schema-validation.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/search-url-paths.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/shell-tokenize.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/split-internal-url-sel.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/sqlite.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/ssh-url-approval-gate.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/ssh-url-approval.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/ssh-url-localhost-e2e.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+- `packages/coding-agent/test/tools/ssh-url-ungated-tools.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/strip-output-notice.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/tools/task-agent-capabilities.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/task-async-fallback.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/task-repair-args.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/tools/todo.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/tools/tool-errors.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/tool-output-hyperlinks.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/tool-timeouts.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/wait-structured.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tools/wait.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+- `packages/coding-agent/test/tools/web-scrapers/academic.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/web-scrapers/business.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/dev-platforms.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-scrapers/documentation.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/finance-media.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-scrapers/git-hosting.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/media.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-scrapers/ollama.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/package-managers-2.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/web-scrapers/package-managers.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/tools/web-scrapers/package-registries.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/tools/web-scrapers/research.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-scrapers/security.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/social-extended.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-scrapers/social.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/web-scrapers/stackexchange.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/web-scrapers/standards.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-scrapers/wikipedia.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/web-scrapers/youtube-parallel.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-scrapers/youtube.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/web-search-browser-headers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/web-search-codex.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-search-duckduckgo.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-search-exa.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/web-search-firecrawl.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-search-gemini.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/web-search-kagi.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-search-kimi.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/web-search-mojeek.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-search-parallel.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/web-search-public.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tools/web-search-searxng.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/web-search-tavily.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-search-tinyfish.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/tools/web-search-xai.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/tools/windows-drive-alias.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tools/write-file-url-targets.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/write-special-files.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tools/yield-extraction.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/tools/yield.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×5
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/truncate-to-width.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/tts/speakable.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/tts/speech-enhancer.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/tts/tts-backend.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/ttsr-bridged-passive-context.test.ts`
+  - scope+package: 17 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×14
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ttsr-coordinator-buffer.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/ttsr-eval-bridge.test.ts`
+  - scope+package: 19 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×16
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ttsr-eval-near-miss.test.ts`
+  - scope+package: 18 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×15
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/ttsr-incremental-match.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/ttsr-inline-flags-scope.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/ttsr-judged-rules.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/ttsr-live-settings.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/tui-tree-list-collapsed-lines.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/turn-persistence.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/turn-recovery-replay-unsafe.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/unexpected-stop-classifier.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/update-cli.test.ts`
+  - binary-asset: 6 edit(s)
+    - `omp-linux-x64 → mars-linux-x64` ×5
+    - `omp-windows-x64 → mars-windows-x64`
+  - scope+package: 30 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×11
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/coding-agent/test/usage-cli-extension-usage.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/coding-agent/test/usage-cli-history.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/usage-cli-provider-scope.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/usage-cli.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/usage-report-column-align.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/usage-report-tui-notes.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/usage-row-placement.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/usage-row-turn-time.test.ts`
+  - scope+package: 23 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×13
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utilities.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/browser-session.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/utils/changelog-static-import.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/changelog.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/clipboard-copy-order.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/utils/clipboard-osc52.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/utils/clipboard.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/utils/enhanced-paste.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/utils/filter-user-extensions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/git-clone.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/git-eisdir-fallback.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/git-show-stream.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/utils/image-question.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/utils/image-resize.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/utils/image-vision-fallback.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/jj.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/markit-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/open.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/resume-command.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/utils/terminal-graphics.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/utils/vcs-adapter.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/coding-agent/test/utils/video.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/coding-agent/test/vibe/send-attribution.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×8
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/vibe/spawn-model-role.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/coding-agent/test/vibe/wall.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/coding-agent/test/web-scrapers/mastodon-probe.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/abort-and-timeout.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×12
+- `packages/coding-agent/test/web/search/anthropic.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/cli-provider-settings.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/web/search/codex-broker.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/web/search/default-chain.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/web/search/duckduckgo.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/web/search/ollama.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/web/search/openai.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×4
+- `packages/coding-agent/test/web/search/openrouter.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/perplexity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/provider-chain.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+- `packages/coding-agent/test/web/search/query-pipeline.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+- `packages/coding-agent/test/web/search/query.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/tavily.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/search/xai.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+- `packages/coding-agent/test/web/search/zai.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/coding-agent/test/web/x-reader.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×5
+- `packages/coding-agent/test/welcome-history-resize.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+- `packages/coding-agent/test/worker-selector.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/workspace-tree.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-acp-fs.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-hashline-header.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-read-projection.test.ts`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-read-selector-misfire.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-shebang-chmod.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/write-streaming-preview-expand.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/coding-agent/test/write-xdev-dispatch.test.ts`
+  - scope+package: 15 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×7
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/coding-agent/test/xiaomi-tp-discovery-merge.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+
+#### packages/collab-web
+
+- `packages/collab-web/bench/client-frames.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/collab-web → @marsai-org/collab-web`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/scripts/fixture.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/scripts/mock-host.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/agents/AgentDrawer.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/agents/AgentsPanel.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/shell/Composer.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/shell/HeaderBar.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/transcript/Markdown.tsx`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/collab-web/src/components/transcript/ToolCard.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/transcript/Transcript.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/components/transcript/math.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/collab-web/src/lib/client.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/lib/codec.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/lib/link.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire` ×3
+- `packages/collab-web/src/lib/socket.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/lib/transcript-poll.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/src/tool-render/ToolView.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/test/client.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/test/codec.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/test/transcript-polling.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/collab-web/test/transcript.test.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+
+#### packages/metaharness
+
+- `packages/metaharness/adapters/edit/cli.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+- `packages/metaharness/adapters/edit/report.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/metaharness/adapters/edit/runner.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+- `packages/metaharness/adapters/edit/runner.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark` ×4
+- `packages/metaharness/agent/omp_local.py`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+- `packages/metaharness/package.json`
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-metaharness → @marsai-org/metaharness`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+- `packages/metaharness/scripts/trace-report.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/metaharness/src/launch-args.ts`
+  - binary-asset: 3 edit(s)
+    - `omp-linux → mars-linux`
+    - `omp-linux-arm64 → mars-linux-arm64`
+    - `omp-linux-x64 → mars-linux-x64`
+- `packages/metaharness/src/runner.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/metaharness/src/tb/agent.ts`
+  - binary-asset: 2 edit(s)
+    - `omp-linux → mars-linux` ×2
+- `packages/metaharness/src/tb/dataset.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/metaharness/src/tb/trial.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+- `packages/metaharness/src/tb/vmon.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+
+#### packages/mnemopi
+
+- `packages/mnemopi/bench/native-vectors.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/mnemopi/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/config.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/mnemopi/src/core/beam/consolidate.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/beam/helpers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/beam/store.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/embeddings.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/mnemopi/src/core/extraction/client.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/mnemopi/src/core/fastembed-runtime.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/llm-backends.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/mnemopi/src/core/local-llm.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/memory.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/mnemopi/src/core/mmr.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/mnemopi/src/core/polyphonic-recall.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/runtime-options.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/mnemopi/src/core/shmr.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/src/core/vector-index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/mnemopi/test/annotations.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/beam-consolidate-unit.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×5
+- `packages/mnemopi/test/beam-e3-e4-e6.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/beam-helpers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/beam-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/beam-recall-unit.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/beam-store.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×6
+- `packages/mnemopi/test/binary-vectors.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/c25-deltasync-allowlist.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/cli-errors-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/cli-stats-parity.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/cli.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/configurable-scoring.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/consolidate-fact-concurrency.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/consolidate-fact-id-collision.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/consolidate-fact-sibling-races.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/content-sanitizer.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/corrupt-model-retry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/test/degrade-vector.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/diagnose.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/e5a-vector-voice-dense-rewire.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/embedding-cache-invalidation.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×5
+- `packages/mnemopi/test/embedding-failure-logging.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/test/embedding-input-cap.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/embedding-model-reconcile.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/embeddings-multilingual.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/entities.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/extraction-integration.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/extraction-wiring.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/extraction.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/fts-superseded.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/graph-tools.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/identity-memory-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/invalidate-clears-caches.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/issue-1832-embedding-population.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/llm-backends.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/local-llm.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/test/mcp-server.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/memory-banks.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/memory-facade.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/migrate-triplestore-split.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/native-vector-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/mnemopi/test/optional-embeddings.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/test/orchestrator.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/orphan-vec-episodes-cleanup.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/patterns.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/plugins.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/polyphonic-recall.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/pre-experiment-fidelity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/proactive-linking.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×4
+- `packages/mnemopi/test/provider-all-15-tools-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/provider-all-15-tools.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/query-cache-synonyms.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/recall-diagnostics.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/recall-feature-flags.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/recall-feature-wiring.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/mnemopi/test/recall-precision-regressions.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/recovery.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/setup.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/shmr.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/statement-lifetime.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/streaming.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/telemetry-env-followups.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/temporal-parser.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/temporal-recall.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/text-utilities.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+- `packages/mnemopi/test/triples-data-dir.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/typed-memory-aaak.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×2
+- `packages/mnemopi/test/veracity-consolidation.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+- `packages/mnemopi/test/weibull-mmr-intent.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi` ×3
+
+#### packages/natives
+
+- `packages/natives/native/loader-state.js`
+  - scope+package: 11 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×11
+- `packages/natives/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/natives/scripts/embed-native.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+- `packages/natives/scripts/gen-enums.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/natives/scripts/gen-npm-packages.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/natives/test/diff.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/natives/test/embed-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/natives/test/issue-4812-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/natives/test/issue-823-repro.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×4
+- `packages/natives/test/npm-packages.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/natives/test/windows-staging.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×5
+
+#### packages/omptype
+
+- `packages/omptype/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/src/ark.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×3
+- `packages/omptype/test/ark/arrays/array.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/arrays/base.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/arrays/defaults.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/arrays/intersection.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/arrays/nonVariadicTuple.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/arrays/variadicTuple.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/badDefinitionType.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/basis.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/brand.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/cast.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/clone.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/config.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/dateLiteral.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/declared.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/define.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/discrimination.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/divisor.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/enclosed.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/expressions.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/filter.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/fn.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/generic.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/get.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/group.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/imports.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/instanceOf.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/intersection.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keyof.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/date.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/exclude.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/extract.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/formData.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/format.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/ip.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/json.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/merge.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/number.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/numericStrings.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/object.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/omit.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/parse.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/partial.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/pick.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/record.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/required.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/string.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/tsPrimitives.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/url.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/keywords/uuid.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/literal.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/match.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/narrow.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/nary.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/defaults.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/indexSignatures.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/mapped.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/namedKeys.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/onUndeclaredKey.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/props.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/objects/spread.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/optional.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/pipe.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/range.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/realWorld.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/regex.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/scope.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/select.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/serialization.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/standardSchema.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/string.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/submodule.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/this.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/thunk.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/toJsonSchema.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/traverse.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/type.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/typeReference.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/unenclosed.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/omptype/test/ark/union.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+
+#### packages/snapcompact
+
+- `packages/snapcompact/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/snapcompact/src/snapcompact.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/snapcompact/test/snapcompact.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+
+#### packages/stats
+
+- `packages/stats/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/aggregator.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/stats/src/client/data/formatters.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/client/data/range.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/client/routes/ProvidersRoute.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/client/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/stats/src/db.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/frustration.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/gain-aggregator.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/index.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/stats/src/live.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/parser.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/port-conflict.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/server.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/shared-types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/stats/src/trace.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/src/types.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/stats/src/usage-windows.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/agent-type.test.ts`
+  - scope+omp-stats: 5 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×5
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/behavior-backfill.test.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/client-query.test.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/db-cost.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/db-range.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+- `packages/stats/test/errors-route-range.test.tsx`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/fork-dedup.test.ts`
+  - scope+omp-stats: 5 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×5
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/frustration.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/stats/test/gain-aggregator.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/helpers/temp-agent.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/incremental-tail.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/live-external-writes.test.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/parser-large-session.test.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/parser-malformed-entries.test.ts`
+  - scope+omp-stats: 4 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×4
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/parser-model-usage.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/priority-premium-requests.test.ts`
+  - scope+omp-stats: 4 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×4
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/provider-stats.test.ts`
+  - scope+omp-stats: 4 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×4
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/rollup.test.ts`
+  - scope+omp-stats: 3 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×3
+- `packages/stats/test/smoke-worker-darwin.test.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+- `packages/stats/test/sync-serial.test.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/tool-stats.test.ts`
+  - scope+omp-stats: 5 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×5
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/trace-builder.test.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/stats/test/trace-scale.test.ts`
+  - scope+omp-stats: 2 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats` ×2
+- `packages/stats/test/user-metrics.test.ts`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+
+#### packages/tui
+
+- `packages/tui/bench/edit-preview.bench.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/bench/kitty-sequence.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/bench/parse-key.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/bench/sanitize.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/tui/src/app-keybindings.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/tui/src/apps/autoresearch-dashboard.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/cleanse-board.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/debug/log-viewer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/debug/protocol-probe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/debug/raw-sse-buffer.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/debug/raw-sse.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/git/avatar.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/git/colors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/git/diff-pane.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/git/git-tui.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/git/sidebar.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/git/state.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/src/apps/if-bench-board.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/apps/live-visualizer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/ps-data.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/apps/ps-top.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/apps/session-picker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/autocomplete.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/advisor-message.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/assistant-message.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/tui/src/chat/bash-execution.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/chat/cache-invalidation-marker.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/chat-transcript-builder.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/chat/collab-prompt-message.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/chat/compaction-summary-message.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/eval-execution.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/execution-shared.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/figure-markdown.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/image-loading.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/messages.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire` ×2
+- `packages/tui/src/chat/read-tool-group.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/served-model-marker.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/tui/src/chat/skill-message.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/svg-figure.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/table-chart.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/chat/thinking-display.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/tui/src/chat/tool-execution.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chat/transcript-entry.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/chat/transcript-render-helpers.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chat/user-message.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chrome/context-thresholds.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chrome/diff.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chrome/error-block.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/chrome/message-frame.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/chrome/message-notice.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/chrome/transcript-container.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/chrome/transcript-status.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/editor.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/image.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/src/components/input.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/layout/geometry.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/layout/split-pane.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/loader.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/markdown.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×5
+- `packages/tui/src/components/select-list.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/settings-list.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/table.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/components/tree-view.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/desktop-notify.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/hotkeys-markdown.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/key-hint-format.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/src/keys.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+- `packages/tui/src/latex-to-unicode.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/loop-watchdog.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/native/apply.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/backend.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/blobs.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/describe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/encode.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/icons.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/node.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/overlay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/picker.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/reconcile.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/spans.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/native/tone.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/advisor-config.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/agent-hub-renderer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/agent-hub-types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/overlays/agent-hub.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/agent-transcript-viewer.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/agents-hub.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/annotation-overlay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/ask-dialog.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/overlays/btw-history-panel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/cleanse-panel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/codex-reset-fireworks.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/copy-selector.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/copy-targets.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/overlays/extensions/display-text.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/extensions/extension-dashboard.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/extensions/extension-list.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/extensions/inspector-model.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/extensions/inspector-panel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/history-search.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/hook-editor.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/overlays/hook-selector.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/hub-frame.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/jobs-panel.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/login-dialog.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/tui/src/overlays/logout-account-selector.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/mcp-add-wizard.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/model-browser.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/model-hub.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/model-picker.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/model-selector.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/tui/src/overlays/oauth-selector.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/pause-screen.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/tui/src/overlays/plan-review-overlay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/plugin-settings.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/report-panel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/reset-usage-selector.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/overlays/rewind-selector.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/session-info-overlay.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/session-selector.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/settings-selector.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/tui/src/overlays/snapcompact-shape-preview.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `packages/tui/src/overlays/tree-selector.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/usage-dashboard.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/overlays/usage-display.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/overlays/usage-row.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/prompt/attachment-chips.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/composer-cache.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×6
+- `packages/tui/src/prompt/composer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/prompt/custom-editor.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/prompt/image-references.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/prompt/image-source.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/prompt/interactive-context-helpers.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/macos-spelling.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/prompt/model-mention-autocomplete.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/model-mention-syntax.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/usage-amounts.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/video.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/prompt/welcome.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/prompt/word-completion.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/render/code-cell.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/render/hyperlink.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/render/output-block.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/render/render-utils.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/render/sixel.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/render/tool-card.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/render/tree-list.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/setup/scenes/model.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/setup/scenes/sign-in.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/setup/scenes/types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+- `packages/tui/src/setup/wizard-overlay.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/status-line/component.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/status-line/context-usage.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×3
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/status-line/footer.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/status-line/host.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/tui/src/status-line/metrics.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/status-line/segments.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/status-line/startup.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/status-line/types.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/terminal-capabilities.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/terminal.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/theme/active-symbols.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/src/theme/color.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/theme/loader.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/tui/src/theme/mermaid-cache.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/theme/schema-validation.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+- `packages/tui/src/theme/session-color.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/theme/shimmer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/theme/theme-class.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/tui/src/theme/theme.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/tui/src/theme/tui-adapters.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/thinking.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×4
+- `packages/tui/src/tmux.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/src/tools/ask.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/autoresearch.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/bash-interactive.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/bash.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/default-renderer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/edit.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/eval-format/code-mode-declarations.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/src/tools/eval-format/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/eval.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/fetch.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/find.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/github.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/goal.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/grouped-file-output.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/hashline-format.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/tui/src/tools/json-tree.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/lsp.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/mcp.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/native-view.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/proc-render.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/read.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/renderer.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/resolve.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/streaming-output.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tools/task.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/terminal-output.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+- `packages/tui/src/tools/todo.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/vibe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/wait.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/write.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/tools/xdev.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/src/tui.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×4
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/src/utils.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/test/adaptive-render-backpressure.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/agent-hub-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/agent-hub-projection.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/agents-hub.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/alt-frame-row-diff.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/annotation-editor-boundary.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/annotation-editor-fullscreen.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/annotation-filename-reveal.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/annotation-overlay.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/apply-patch-preview-render.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/apps-native.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/ask-dialog.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/assistant-message-link-targets.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/attachment-chips.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+- `packages/tui/test/autocomplete.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/background-tan-message.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/bash-execution-clamp.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/bash-execution-pty.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/bash-execution-sixel.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/bash-render.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/box-border.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/bracketed-paste.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/cache-invalidation-marker.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/chat-block.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/chat-simple.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/test/compaction-divider.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/composer-cache.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/composer-click.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/composer-inline-shrink.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/composer-native.test.ts`
+  - scope+package: 10 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/composer-welcome-scrollback.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/container-dispose.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/container-memo.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/context-usage.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+- `packages/tui/test/copy-targets.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/countdown-timer.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/cursor-visibility-dedupe.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/custom-editor-buffered-double-esc.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/custom-editor-keybindings.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/custom-editor-plugin-ctor.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/custom-editor-vim.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/custom-editor.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×8
+- `packages/tui/test/deccara.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/desktop-notify.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/destructive-reset-clear-order.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/dialogs-native.test.ts`
+  - scope+package: 9 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×9
+- `packages/tui/test/dynamic-border.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/editor-atoms.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/editor-autocomplete-actions.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/editor-text-assist.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/editor-top-border-provider.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/editor-vim.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/editor.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/emergency-restore-altscreen.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/emoji-autocomplete.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/eval-agent-progress-render.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/eval-code-preview-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/eval-format-javascript-render.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/eval-format-python-render.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/extension-dashboard-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/find-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/fixtures/tmux-resize-composer.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/focus-menu-regression.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/fuzzy-cache.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/fuzzy-shadowed-occurrence.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/fuzzy.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/github-ref-autocomplete.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/glob-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/glyph-protocol.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/grep-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/grouped-file-output-render.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/handle-input-or-escape.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/herdr-sync-output.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/history-frame-plan.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/hook-input-timeout.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/hook-selector-overflow.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/hook-selector-slider.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/hotkeys-markdown.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/hyperlink.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/image-budget.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/image-clip.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/image-references.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/image-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/image-test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/input-priority.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+- `packages/tui/test/input-render-scheduling.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/input.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/interactive-native.test.ts`
+  - scope+package: 13 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×12
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/issue-2034-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/issue-2045-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/issue-8318-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/issue-848-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/issue-8542-repro.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/issue-879-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/json-tree-render.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/key-tester.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/keybindings-display.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/keybindings-migration.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/keybindings.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/keys.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/kitty-graphics.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/kitty-image-conversion.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/kitty-keyboard-da1-ordering.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/lang-from-path.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/late-diagnostics-message.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/latex-block.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/latex-to-unicode.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/line-width-sidecar.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/live-visualizer.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/loader.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/log-formatting.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/log-viewer.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/login-dialog-manual-code.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/loop-watchdog-wiring.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/loop-watchdog.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/macos-spelling.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/markdown-bplus-fast-path.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/markdown-incremental-lex.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/markdown-prose.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/markdown-tree-wrap.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/markdown.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/tui/test/memory-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/mermaid-cache.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/model-hub-assign-scope.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+- `packages/tui/test/model-hub-roles-search.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/model-picker-native.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/mouse-tracking.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/mouse.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/native-content.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/backend.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/blobs.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/native/encode.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/fixtures/pending-blob-delivery.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/native/host-edit.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/native/host-focus.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/native/host-send.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/native/icons.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/optimistic.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/native/palette.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/native/probe.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/native/reconcile.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/table-chart-native.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/native/transcript-native.test.ts`
+  - scope+package: 22 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core` ×2
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×18
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/transcript-redesign-native.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/native/tsp-harness.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/notifications.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/output-backpressure-gate.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/output-block.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/overlay-focus.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/overlay-native-select.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/overlay-scroll.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/paint-listener.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/path-renderer-invalid-args-render.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/plan-review-overlay.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/plan-toc.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/process-terminal-headless.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/process-terminal-render-harness.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/process-terminal-render.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/prompt-action-autocomplete.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/prose-only-thinking.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/protocol-probe.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/provider-error-expand.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/raw-sse-buffer.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/raw-sse-pretty.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/read-pending-path-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/read-render.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/render-stress-scheduler.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/render-utils.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/report-panel.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/resize-alt-toggle-echo.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/resize-conpty-warp.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/resize-multiplexer-anchor.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/resize-preserved-clear.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/resize-settle-fused-exit.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/resize-tmux-sync.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/review-overlays-native.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+- `packages/tui/test/scroll-view.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/segment-track.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/select-filter-breadcrumb.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/select-list.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/selector-picker-native.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/served-model-marker.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/session-color.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/session-picker-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/settings-list-theme.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/settings-list.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/settings-prefs-native.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/setup-native.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/setup-wizard-sign-in.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/sgr-coalesce.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/shimmer.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/show-images-selector-mouse.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/sixel-probe.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/start-listener.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/startup-probe-leak.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/status-line-cost-segment.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog` ×2
+- `packages/tui/test/status-line-model.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+- `packages/tui/test/status-line-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/status-line-newline-guard.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/status-line-path.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/stdin-buffer.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/stdout-stall-watchdog.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/strip-terminal-sequences.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/svg-figure.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/tab-bar.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/table-chart.test.ts`
+  - scope+package: 12 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×10
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/task-artifact-rows-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/task-call-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/task-nested-live-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/task-progress-render.test.ts`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/task-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/task-yield-shape-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/terminal-appearance.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/terminal-capabilities.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/terminal-disconnect-raw-mode-throw.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/terminal-info.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/terminal-jamo-width-probe.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/terminal-oversized-frame.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/terminal-write-log.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/test-theme-colors.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/test-themes.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/text-utils.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/text.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/theme-auto-detection.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/theme-color-mode.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/theme-epoch-fallback.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/theme-highlight-diff-parity.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/theme-nerd-symbols.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/theme-spinner-frames.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/think-render.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/thinking-display.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/timeline-picker-native.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/tool-execution-custom-repaint.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/tool-execution-memoization.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/tool-execution-preview-coalesce.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/tool-execution-write-repaint.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/tool-execution-xdev-render.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/tools-core-native.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/tools-native-extra.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/tools-native-search.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/tools-native-shell.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/tui/test/transcript-container.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/transcript-outline-row-cache.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+- `packages/tui/test/transcript-render-helpers.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/truncate-to-width.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/truncated-text.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/ttyid.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/usage-dashboard.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/usage-native-describe.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/vibe-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/virtual-render-scheduler.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/virtual-terminal.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/visible-width.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/visual-truncate.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/wait-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/web-search-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/tui/test/welcome-tip.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/welcome.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×3
+- `packages/tui/test/width-replay-provider.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/windows-altgr.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/windows-input-mode.test.ts`
+  - scope+package: 6 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×6
+- `packages/tui/test/word-completion.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/wrap-ansi.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/tui/test/wrapper-selector-mouse-offset.test.ts`
+  - scope+package: 8 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×7
+- `packages/tui/test/write-figure.test.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×5
+- `packages/tui/test/write-pending-path-render.test.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×4
+- `packages/tui/test/write-streaming-incremental-render.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui` ×2
+
+#### packages/typescript-edit-benchmark
+
+- `packages/typescript-edit-benchmark/package.json`
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+  - scope+package: 7 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+- `packages/typescript-edit-benchmark/src/edit-shape-stats.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/typescript-edit-benchmark/src/generate.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/typescript-edit-benchmark/src/in-process-client.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+- `packages/typescript-edit-benchmark/test/hunks.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+- `packages/typescript-edit-benchmark/test/verify.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/typescript-edit-benchmark → @marsai-org/typescript-edit-benchmark`
+
+#### packages/utils
+
+- `packages/utils/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/color.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/dirs.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/env.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/file-lock.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/utils/src/format.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+- `packages/utils/src/fs-error.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/marked-list.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/src/mermaid-ascii.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/utils/src/procmgr.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/utils/src/ptree.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+- `packages/utils/test/ar/checksums.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/ar/source.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/async.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/binary.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/color.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/dirs-python-gateway.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/dirs-xdg.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/dirs.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/docx.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/env.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/fetch-retry.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/fixtures/test-runtime-probe.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/format.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/frontmatter.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/headers.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/incoming-json.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/install-id.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/issue-935-repro.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/json-parse.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/json.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/logger-no-transports.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/logger-startup.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/loop-phase.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/natives-dir-override.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/parse-streaming-json-throttled.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/peek-file.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/postmortem-cleanup-error.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/postmortem-epipe.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/postmortem-guard-exit.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/profiles.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/utils/test/prompt.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/ptree-bytes.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/ptree-stderr.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/ptree-timeout.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/ring.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/sanitize-text.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/snowflake.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/spacing.test.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×3
+- `packages/utils/test/stream.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/temp-remove.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/template.test.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils` ×2
+- `packages/utils/test/tls-fetch.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/turndown.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+- `packages/utils/test/zip-package.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+
+#### packages/wire
+
+- `packages/wire/package.json`
+  - repo-url: 2 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-wire → @marsai-org/wire`
+- `packages/wire/src/index.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+
+#### python/robomp
+
+- `python/robomp/tests/test_github_client.py`
+  - binary-asset: 2 edit(s)
+    - `omp-darwin-arm64 → mars-darwin-arm64` ×2
+- `python/robomp/tests/test_natives_cache.py`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+
+#### scripts/check-spoofed-versions.ts
+
+- `scripts/check-spoofed-versions.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+
+#### scripts/ci-macos-sign.sh
+
+- `scripts/ci-macos-sign.sh`
+  - binary-asset: 1 edit(s)
+    - `omp-darwin → mars-darwin`
+
+#### scripts/ci-release-build-binaries.test.ts
+
+- `scripts/ci-release-build-binaries.test.ts`
+  - binary-asset: 4 edit(s)
+    - `omp-windows-arm64 → mars-windows-arm64` ×2
+    - `omp-windows-x64 → mars-windows-x64` ×2
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+
+#### scripts/ci-release-build-binaries.ts
+
+- `scripts/ci-release-build-binaries.ts`
+  - binary-asset: 8 edit(s)
+    - `omp-darwin-arm64 → mars-darwin-arm64`
+    - `omp-darwin-x64 → mars-darwin-x64`
+    - `omp-linux-arm64 → mars-linux-arm64`
+    - `omp-linux-musl-arm64 → mars-linux-musl-arm64`
+    - `omp-linux-musl-x64 → mars-linux-musl-x64`
+    - `omp-linux-x64 → mars-linux-x64`
+    - `omp-windows-arm64 → mars-windows-arm64`
+    - `omp-windows-x64 → mars-windows-x64`
+
+#### scripts/ci-release-notes.ts
+
+- `scripts/ci-release-notes.ts`
+  - repo-owner-slash: 1 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent`
+
+#### scripts/ci-release-publish.test.ts
+
+- `scripts/ci-release-publish.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+
+#### scripts/ci-release-publish.ts
+
+- `scripts/ci-release-publish.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×2
+
+#### scripts/ci-test-ts.test.ts
+
+- `scripts/ci-test-ts.test.ts`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+
+#### scripts/ci-test-ts.ts
+
+- `scripts/ci-test-ts.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+
+#### scripts/ci-update-brew-formula.test.ts
+
+- `scripts/ci-update-brew-formula.test.ts`
+  - binary-asset: 8 edit(s)
+    - `omp-darwin-arm64 → mars-darwin-arm64` ×2
+    - `omp-darwin-x64 → mars-darwin-x64` ×2
+    - `omp-linux-arm64 → mars-linux-arm64` ×2
+    - `omp-linux-x64 → mars-linux-x64` ×2
+
+#### scripts/ci-update-brew-formula.ts
+
+- `scripts/ci-update-brew-formula.ts`
+  - binary-asset: 12 edit(s)
+    - `omp-darwin-arm64 → mars-darwin-arm64` ×3
+    - `omp-darwin-x64 → mars-darwin-x64` ×3
+    - `omp-linux-arm64 → mars-linux-arm64` ×3
+    - `omp-linux-x64 → mars-linux-x64` ×3
+  - repo-owner-slash: 1 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent`
+
+#### scripts/install-tests
+
+- `scripts/install-tests/run-ci.sh`
+  - scope+omp-stats: 1 edit(s)
+    - `@oh-my-pi/omp-stats → @marsai-org/stats`
+  - scope+package: 20 edit(s)
+    - `@oh-my-pi/collab-web → @marsai-org/collab-web` ×2
+    - `@oh-my-pi/omptype → @marsai-org/omptype` ×4
+    - `@oh-my-pi/pi-agent-core → @marsai-org/agent-core`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai`
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+    - `@oh-my-pi/pi-mnemopi → @marsai-org/mnemopi`
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×3
+    - `@oh-my-pi/pi-tui → @marsai-org/tui`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+    - `@oh-my-pi/pi-wire → @marsai-org/wire` ×3
+    - `@oh-my-pi/snapcompact → @marsai-org/snapcompact`
+- `scripts/install-tests/settings-session.ts`
+  - scope+package: 3 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×2
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+
+#### scripts/install.ps1
+
+- `scripts/install.ps1`
+  - binary-asset: 1 edit(s)
+    - `omp-windows → mars-windows`
+  - installer-cmd: 6 edit(s)
+    - `omp → mars` ×6
+  - repo-owner-slash: 1 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+
+#### scripts/install.sh
+
+- `scripts/install.sh`
+  - installer-bin-path: 5 edit(s)
+    - `omp → mars` ×5
+  - installer-cmd: 7 edit(s)
+    - `omp → mars` ×7
+  - repo-owner-slash: 1 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent`
+  - scope+package: 1 edit(s)
+    - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent`
+
+#### scripts/link-omp.sh
+
+- `scripts/link-omp.sh`
+  - installer-bin-path: 6 edit(s)
+    - `omp → mars` ×6
+  - installer-cmd: 1 edit(s)
+    - `omp → mars`
+  - repo-url: 1 edit(s)
+    - `github.com/can1357/oh-my-pi → github.com/MarsAI-org/mars-agent`
+
+#### scripts/musl-release.test.ts
+
+- `scripts/musl-release.test.ts`
+  - binary-asset: 3 edit(s)
+    - `omp-linux-musl-arm64 → mars-linux-musl-arm64`
+    - `omp-linux-musl-x64 → mars-linux-musl-x64` ×2
+
+#### scripts/rewrite-changelog.ts
+
+- `scripts/rewrite-changelog.ts`
+  - scope+package: 5 edit(s)
+    - `@oh-my-pi/omptype → @marsai-org/omptype`
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×3
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+
+#### scripts/session-stats
+
+- `scripts/session-stats/audit.ts`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
+    - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`
+
+#### scripts/setup-npm-trust.ts
+
+- `scripts/setup-npm-trust.ts`
+  - repo-owner-slash: 1 edit(s)
+    - `can1357/oh-my-pi → MarsAI-org/mars-agent`
+  - scope+package: 4 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives` ×4
+
+#### scripts/setup.ts
+
+- `scripts/setup.ts`
+  - installer-cmd: 7 edit(s)
+    - `omp → mars` ×7
+
+#### scripts/tool-prompt-usage.ts
+
+- `scripts/tool-prompt-usage.ts`
+  - scope+package: 2 edit(s)
+    - `@oh-my-pi/pi-natives → @marsai-org/natives`
+    - `@oh-my-pi/pi-utils → @marsai-org/utils`

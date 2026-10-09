@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentEvent } from "@oh-my-pi/pi-agent-core";
-import { defineRpcClientTool, RpcClient } from "@oh-my-pi/pi-coding-agent/modes";
-import { RpcHostToolBridge } from "@oh-my-pi/pi-coding-agent/modes/rpc/host-tools";
+import type { AgentEvent } from "@marsai-org/agent-core";
+import { defineRpcClientTool, RpcClient } from "@marsai-org/coding-agent/modes";
+import { RpcHostToolBridge } from "@marsai-org/coding-agent/modes/rpc/host-tools";
 import type {
 	RpcHostToolCallRequest,
 	RpcHostToolCancelRequest,
 	RpcHostToolUpdate,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { toolReadsSkillUris } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { toolReadsSkillUris } from "@marsai-org/coding-agent/system-prompt";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempPaths: string[] = [];
 

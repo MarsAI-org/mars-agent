@@ -11,24 +11,24 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type Args, parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import * as modelResolverModule from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { createSessionManager, runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { SessionHeader } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import * as sessionListingModule from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { type Args, parseArgs } from "@marsai-org/coding-agent/cli/args";
+import * as modelResolverModule from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as pluginHelpers from "@marsai-org/coding-agent/discovery/helpers";
+import { createSessionManager, runRootCommand } from "@marsai-org/coding-agent/main";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import type { SessionHeader } from "@marsai-org/coding-agent/session/session-entries";
+import type { SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
+import * as sessionListingModule from "@marsai-org/coding-agent/session/session-listing";
+import { loadEntriesFromFile } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	__resetDirsFromEnvForTests,
 	getProjectDir,
 	normalizePathForComparison,
 	setAgentDir,
 	setProjectDir,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalPiProfile = process.env.PI_PROFILE;

@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { renderSegmentTrack, resolveSegmentPalette, type TrackSegment } from "@oh-my-pi/pi-tui/chrome/segment-track";
-import { initTheme, type ThemeColor, theme } from "@oh-my-pi/pi-tui/theme";
+import { renderSegmentTrack, resolveSegmentPalette, type TrackSegment } from "@marsai-org/tui/chrome/segment-track";
+import { initTheme, type ThemeColor, theme } from "@marsai-org/tui/theme";
 
 beforeAll(async () => {
 	await initTheme();

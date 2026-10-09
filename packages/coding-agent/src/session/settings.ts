@@ -22,12 +22,12 @@ import {
 	TINY_MODEL_DTYPE_SETTING_VALUES,
 } from "../tiny/dtype";
 import { DEFAULT_WEB_SEARCH_TIMEOUT_SECONDS, MAX_WEB_SEARCH_TIMEOUT_SECONDS } from "../web/search/types";
-import { DEFAULT_USAGE_RESERVE_PCT } from "@oh-my-pi/pi-ai/auth-storage";
-import { configureProviderStoreResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { configureProviderMaxInFlightRequests } from "@oh-my-pi/pi-ai/stream";
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { AUTO_THINKING, getConfiguredThinkingLevelMetadata, getThinkingLevelMetadata } from "@oh-my-pi/pi-tui/thinking";
+import { DEFAULT_USAGE_RESERVE_PCT } from "@marsai-org/ai/auth-storage";
+import { configureProviderStoreResponses } from "@marsai-org/ai/providers/openai-responses";
+import { configureProviderMaxInFlightRequests } from "@marsai-org/ai/stream";
+import { THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import { AUTO_THINKING, getConfiguredThinkingLevelMetadata, getThinkingLevelMetadata } from "@marsai-org/tui/thinking";
 
 const EMPTY_STRING_ARRAY: string[] = [];
 const EMPTY_NUMBER_RECORD: Record<string, number> = {};

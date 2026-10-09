@@ -3,15 +3,15 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { shadowSnapshotDigest } from "@oh-my-pi/pi-coding-agent/eval/js/shared/runtime";
-import { WorkerCore } from "@oh-my-pi/pi-coding-agent/eval/js/worker-core";
+import { shadowSnapshotDigest } from "@marsai-org/coding-agent/eval/js/shared/runtime";
+import { WorkerCore } from "@marsai-org/coding-agent/eval/js/worker-core";
 import type {
 	SessionSnapshot,
 	Transport,
 	WorkerInbound,
 	WorkerOutbound,
-} from "@oh-my-pi/pi-coding-agent/eval/js/worker-protocol";
-import { postmortem } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/eval/js/worker-protocol";
+import { postmortem } from "@marsai-org/utils";
 
 interface WorkerHarness {
 	send(message: WorkerInbound): void;

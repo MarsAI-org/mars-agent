@@ -4,10 +4,10 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { formatBytes, pluralize } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import * as natives from "@marsai-org/natives";
+import { formatBytes, pluralize } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { Args, CliUsageError, Command, Flags } from "@marsai-org/utils/cli";
 import { toksHelp as commandHelp } from "../cli/command-help";
 
 /** Display name and served model lines per native encoding; `Record` keeps it exhaustive. */

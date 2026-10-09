@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { __resetProfileSnapshotForTests, getAgentDir, Snowflake, setAgentDir } from "@oh-my-pi/pi-utils";
+import { __resetProfileSnapshotForTests, getAgentDir, Snowflake, setAgentDir } from "@marsai-org/utils";
 import { SkillDescriptionStore } from "../src/extensibility/skill-descriptions";
 
 const ENV_KEYS = ["PI_CONFIG_DIR", "PI_CODING_AGENT_DIR", "XDG_DATA_HOME"] as const;

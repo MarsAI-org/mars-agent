@@ -13,18 +13,18 @@
  * they applied.
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import type { MappedExtensionEvent } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/lifecycle-mirror";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { generateRoomKey, importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import type { MappedExtensionEvent } from "@marsai-org/coding-agent/extensibility/extensions/lifecycle-mirror";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import { createInteractiveModeContext } from "../helpers/interactive-mode-context";
 import * as fsp from "node:fs/promises";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";

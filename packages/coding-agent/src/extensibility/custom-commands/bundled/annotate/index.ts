@@ -3,9 +3,9 @@ import type {
 	CustomCommandAPI,
 	CustomCommandContext,
 } from "../../../../extensibility/custom-commands/types";
-import type { AutocompleteItem } from "@oh-my-pi/pi-tui";
-import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
-import type { CodeReviewOverlayResult, TextReviewSource } from "@oh-my-pi/pi-tui/overlays/annotation-types";
+import type { AutocompleteItem } from "@marsai-org/tui";
+import { CombinedAutocompleteProvider } from "@marsai-org/tui/autocomplete";
+import type { CodeReviewOverlayResult, TextReviewSource } from "@marsai-org/tui/overlays/annotation-types";
 import {
 	extractReviewPrRefFromArgs,
 	liveCommandCwd,

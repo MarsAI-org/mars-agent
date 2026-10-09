@@ -1,4 +1,4 @@
-import type { ResolvedThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import type { ResolvedThinkingLevel } from "@marsai-org/agent-core";
 import type {
 	Api,
 	ApiKeyResolver,
@@ -10,8 +10,8 @@ import type {
 	ProviderSessionState,
 	ServiceTier,
 	ServiceTierByFamily,
-} from "@oh-my-pi/pi-ai";
-import { resolveModelServiceTier, streamSimple } from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
+import { resolveModelServiceTier, streamSimple } from "@marsai-org/ai";
 import {
 	renderTableRow,
 	replaceTabs,
@@ -19,10 +19,10 @@ import {
 	type TableColumn,
 	truncateToWidth,
 	visibleWidth,
-} from "@oh-my-pi/pi-tui";
-import { formatDuration, formatNumber, prompt } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { formatModelSelectorValue } from "@oh-my-pi/pi-tui/overlays/model-selector";
+} from "@marsai-org/tui";
+import { formatDuration, formatNumber, prompt } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { formatModelSelectorValue } from "@marsai-org/tui/overlays/model-selector";
 import { formatModelStringWithRouting } from "../config/model-resolver";
 import { buildServiceTierByFamily, serviceTierForAllFamilies, serviceTierSettingToTier } from "../config/service-tier";
 import cachePrefixTemplate from "../prompts/bench/cache-prefix.md" with { type: "text" };
@@ -31,7 +31,7 @@ import cacheSuffixTemplate from "../prompts/bench/cache-suffix.md" with { type: 
 import chatTemplate from "../prompts/bench/chat.md" with { type: "text" };
 import generationTemplate from "../prompts/bench/generation.md" with { type: "text" };
 import prefillInstruction from "../prompts/bench/prefill-instruction.md" with { type: "text" };
-import { shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { shouldDisableReasoning, toReasoningEffort } from "@marsai-org/tui/thinking";
 import {
 	type BenchRuntime,
 	type BenchTarget,
@@ -39,8 +39,8 @@ import {
 	resolveBenchTargets,
 	type StreamSimpleFn,
 } from "./bench-runtime";
-import { createLiveBoard, type LiveBoardOutput } from "@oh-my-pi/pi-tui/chrome/live-board";
-import { formatCost } from "@oh-my-pi/pi-tui/overlays/agent-hub-renderer";
+import { createLiveBoard, type LiveBoardOutput } from "@marsai-org/tui/chrome/live-board";
+import { formatCost } from "@marsai-org/tui/overlays/agent-hub-renderer";
 
 import { cfgTierAnthropic, cfgTierGoogle, cfgTierOpenai } from "../session/settings";
 

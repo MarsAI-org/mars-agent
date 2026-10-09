@@ -1,8 +1,8 @@
-import type { ASIData, NumericMetricMap, ExperimentState } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
+import type { ASIData, NumericMetricMap, ExperimentState } from "@marsai-org/tui/tools/autoresearch";
+import type { AgentToolResult } from "@marsai-org/agent-core";
 import type { ExtensionAPI, ExtensionContext } from "../extensibility/extensions";
 import type { SessionEntry } from "../session/session-entries";
-import type { DashboardController } from "@oh-my-pi/pi-tui/apps/autoresearch-dashboard";
+import type { DashboardController } from "@marsai-org/tui/apps/autoresearch-dashboard";
 
 export interface PendingRunSummary {
 	command: string;

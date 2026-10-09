@@ -1,7 +1,7 @@
 import { describe, expect, it, mock } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { buildModel } from "@marsai-org/catalog/build";
+import { buildFactoryDroidModel } from "@marsai-org/catalog/discovery";
+import { Effort } from "@marsai-org/catalog/effort";
 import { streamFactoryDroid } from "../src/providers/factory-droid";
 import { streamSimple } from "../src/stream";
 import {

@@ -1,5 +1,5 @@
-import { $env, logger } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { $env, logger } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { $ } from "bun";
 import { Settings } from "../config/settings";
 import {

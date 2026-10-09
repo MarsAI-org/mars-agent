@@ -8,16 +8,16 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	hindsightBackend,
 	rebindMemoryBackendForCwd,
 	reloadMentalModelsForSession,
-} from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import { HindsightRetainQueue, type HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import type { AgentSessionEventListener } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+} from "@marsai-org/coding-agent/hindsight/backend";
+import { HindsightApi } from "@marsai-org/coding-agent/hindsight/client";
+import { HindsightRetainQueue, type HindsightSessionState } from "@marsai-org/coding-agent/hindsight/state";
+import type { AgentSessionEventListener } from "@marsai-org/coding-agent/session/agent-session";
 
 import {
 	cfgHindsightBankId,
@@ -26,7 +26,7 @@ import {
 	cfgHindsightRecallBudget,
 	cfgHindsightRetainMission,
 	cfgHindsightScoping,
-} from "@oh-my-pi/pi-coding-agent/hindsight/settings";
+} from "@marsai-org/coding-agent/hindsight/settings";
 
 interface FakeSessionDeps {
 	sessionId: string | null;

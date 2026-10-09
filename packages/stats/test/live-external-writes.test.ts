@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { StatsLive } from "@oh-my-pi/omp-stats/live";
-import type { LiveStatus } from "@oh-my-pi/omp-stats/shared-types";
-import { getStatsDbPath } from "@oh-my-pi/pi-utils";
+import { StatsLive } from "@marsai-org/stats/live";
+import type { LiveStatus } from "@marsai-org/stats/shared-types";
+import { getStatsDbPath } from "@marsai-org/utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-live-external-");

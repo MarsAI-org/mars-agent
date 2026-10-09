@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type ContextFile, contextFileCapability } from "@oh-my-pi/pi-coding-agent/capability/context-file";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { isShadowedExtension } from "@oh-my-pi/pi-tui/overlays/extensions/types";
-import { loadAllExtensions } from "@oh-my-pi/pi-coding-agent/modes/components/extensions/state-manager";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { type ContextFile, contextFileCapability } from "@marsai-org/coding-agent/capability/context-file";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeWithSettings, loadCapability } from "@marsai-org/coding-agent/discovery";
+import { isShadowedExtension } from "@marsai-org/tui/overlays/extensions/types";
+import { loadAllExtensions } from "@marsai-org/coding-agent/modes/components/extensions/state-manager";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 function restoreEnvValue(key: string, value: string | undefined): void {
 	if (value === undefined) {

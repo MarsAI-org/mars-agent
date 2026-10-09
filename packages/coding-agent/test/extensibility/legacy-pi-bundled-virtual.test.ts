@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ptree, TempDir } from "@oh-my-pi/pi-utils";
+import { ptree, TempDir } from "@marsai-org/utils";
 
 describe("bundled extension modules", () => {
 	it("observes active host theme changes and native default/named exports", async () => {
@@ -8,8 +8,8 @@ describe("bundled extension modules", () => {
 		await Bun.write(
 			entry,
 			[
-				'import { theme } from "@oh-my-pi/pi-tui/theme";',
-				'import format, { double } from "@oh-my-pi/pi-utils/virtual-fixture";',
+				'import { theme } from "@marsai-org/tui/theme";',
+				'import format, { double } from "@marsai-org/utils/virtual-fixture";',
 				"export { theme };",
 				'export function render() { return theme.fg("accent", "extension"); }',
 				"export function describe(value) { return format(double(value)); }",
@@ -33,8 +33,8 @@ Bun.plugin({
 			loader: "object",
 			exports: {
 				BUNDLED_PI_MODULE_LOADERS: {
-					"@oh-my-pi/pi-tui/theme": async () => host,
-					"@oh-my-pi/pi-utils/virtual-fixture": async () => ({
+					"@marsai-org/tui/theme": async () => host,
+					"@marsai-org/utils/virtual-fixture": async () => ({
 						default: value => "value=" + value,
 						double: value => value * 2,
 					}),

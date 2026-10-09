@@ -1,6 +1,6 @@
-import { quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { CURSOR_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/wire/cursor";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
+import { quotaTierFor } from "@marsai-org/catalog/compat/behavior";
+import { CURSOR_DEFAULT_BASE_URL } from "@marsai-org/catalog/wire/cursor";
+import { toNumber } from "@marsai-org/catalog/utils";
 import {
 	cursorSessionHeaders,
 	extractCursorAccessTokenUserId,

@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
 import {
 	__providerInFlightForTesting,
 	configureProviderMaxInFlightRequests,
 	stream,
 	streamSimple,
-} from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, RawSseEvent } from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/stream";
+import type { Context, Model, RawSseEvent } from "@marsai-org/ai/types";
 
 function context(): Context {
 	return {

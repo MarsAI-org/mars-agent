@@ -6,12 +6,12 @@ import {
 	ImageInputTooLargeError,
 	InvalidImageDataError,
 	imageDecodeFailureReason,
-} from "@oh-my-pi/pi-tui/chat/image-loading";
+} from "@marsai-org/tui/chat/image-loading";
 import * as path from "node:path";
-import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@oh-my-pi/pi-ai";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { isRecord, logger, readImageMetadata } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import type { Context, ImageContent, Message, Model, ProviderPayload, TextContent } from "@marsai-org/ai";
+import { rasterizeSvg } from "@marsai-org/natives";
+import { isRecord, logger, readImageMetadata } from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
 import { resolveReadPath } from "../tools/path-utils";
 import { formatDimensionNote, type ImageResizeOptions, resizeImage } from "./image-resize";
 

@@ -4,8 +4,8 @@
  * Lives outside `stream.ts` so auth code (AuthStorage, credential cascade,
  * usage) can resolve env keys without importing the whole provider stack.
  */
-import { providerEntries } from "@oh-my-pi/pi-catalog/compat/providers";
-import { $env, $pickenv } from "@oh-my-pi/pi-utils";
+import { providerEntries } from "@marsai-org/catalog/compat/providers";
+import { $env, $pickenv } from "@marsai-org/utils";
 import { PROVIDER_REGISTRY } from "./registry";
 
 type KeyResolver = string | (() => string | undefined);

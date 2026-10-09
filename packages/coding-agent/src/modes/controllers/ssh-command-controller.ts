@@ -3,14 +3,14 @@
  *
  * Handles /ssh subcommands for managing SSH host configurations.
  */
-import { getProjectDir, getSSHConfigPath } from "@oh-my-pi/pi-utils";
-import { Text } from "@oh-my-pi/pi-tui";
+import { getProjectDir, getSSHConfigPath } from "@marsai-org/utils";
+import { Text } from "@marsai-org/tui";
 import { reset as resetCapabilities } from "../../capability";
 import { type SSHHost, sshCapability } from "../../capability/ssh";
 import { loadCapability } from "../../discovery";
 import { addSSHHost, readSSHConfigFile, removeSSHHost, type SSHHostConfig } from "../../ssh/config-writer";
 import { parseCommandArgs } from "../../utils/command-args";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@marsai-org/tui/theme";
 import type { InteractiveModeContext } from "../types";
 import {
 	groupBySource,

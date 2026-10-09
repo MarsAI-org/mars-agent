@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { card, md, node } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { nativeComponentId } from "@oh-my-pi/pi-tui/native/reconcile";
-import { settleNative } from "@oh-my-pi/pi-tui/native/settle";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
-import { type Component, Container } from "@oh-my-pi/pi-tui/tui";
-import type { TspOp } from "@oh-my-pi/pi-wire";
+import { card, md, node } from "@marsai-org/tui/native/describe";
+import type { NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { nativeComponentId } from "@marsai-org/tui/native/reconcile";
+import { settleNative } from "@marsai-org/tui/native/settle";
+import { isNativeRendering, onNativeRenderingChange } from "@marsai-org/tui/native/state";
+import { type Component, Container } from "@marsai-org/tui/tui";
+import type { TspOp } from "@marsai-org/wire";
 import { ManualScheduler, TspHarness, TspTestTerminal } from "./tsp-harness";
 
 class Probe implements Component {

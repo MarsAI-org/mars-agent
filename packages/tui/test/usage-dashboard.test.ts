@@ -1,15 +1,15 @@
 import * as os from "node:os";
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { DailyActivityPoint, UnavailableUsageAccount } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
+import type { DailyActivityPoint, UnavailableUsageAccount } from "@marsai-org/tui/overlays/usage-dashboard";
+import type { UsageReport } from "@marsai-org/ai";
 import {
 	buildHeatmapLayout,
 	buildProviderCards,
 	formatActivityErrorDetail,
 	UsageDashboardComponent,
-} from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+} from "@marsai-org/tui/overlays/usage-dashboard";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { visibleWidth } from "@marsai-org/tui/utils";
 
 function day(day: string, cost: number, requests = 1): DailyActivityPoint {
 	return { day, cost, requests };

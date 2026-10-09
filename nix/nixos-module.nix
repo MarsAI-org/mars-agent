@@ -6,16 +6,16 @@
   ...
 }:
 let
-  cfg = config.programs.omp;
+  cfg = config.programs.mars;
 in
 {
-  options.programs.omp = {
+  options.programs.mars = {
     enable = lib.mkEnableOption "OMP coding agent";
 
     package = lib.mkOption {
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      defaultText = lib.literalExpression "inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.default";
+      defaultText = lib.literalExpression "inputs.mars.packages.${pkgs.stdenv.hostPlatform.system}.default";
       description = "OMP package to install system-wide.";
     };
   };

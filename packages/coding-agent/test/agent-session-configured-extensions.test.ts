@@ -11,21 +11,21 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import "@oh-my-pi/pi-coding-agent/discovery";
-import { setActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { discoverAgents } from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { EffectiveExtensionRoots } from "@marsai-org/coding-agent/capability/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import "@marsai-org/coding-agent/discovery";
+import { setActiveSkills } from "@marsai-org/coding-agent/extensibility/skills";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { discoverAgents } from "@marsai-org/coding-agent/task/discovery";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
-import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
+import { cfgExtensions } from "@marsai-org/coding-agent/extensibility/settings";
 
 interface SessionInputs {
 	additionalExtensionPaths?: readonly string[];

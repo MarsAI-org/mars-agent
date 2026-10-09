@@ -1,7 +1,7 @@
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import type { OutputSummary, TruncationResult } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import type { OutputSummary, TruncationResult } from "@marsai-org/tui/tools/streaming-output";
+import type { OutputMeta } from "@marsai-org/tui/tools/output-meta";
 import type { LimitsInput, TruncationMetaInput, TruncationSummaryOptions, TruncationTextOptions } from "./output-meta";
 import { outputMeta } from "./output-meta";
 

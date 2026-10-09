@@ -1,15 +1,15 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getWorktreeDir, hashPath, isEnoent, logger } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import type { IsoBackendKind, VcsGitRepo, VcsWorktreeEntry } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getWorktreeDir, hashPath, isEnoent, logger } from "@marsai-org/utils";
 import { github } from "../utils/github";
 import { formatIsolationBackend, parseIsolationBackend } from "../task/worktree";
 import { withRepoLock } from "../utils/repo-lock";
 import type { ToolSession } from ".";
-import type { GhPrCheckoutSummary, GhToolDetails } from "@oh-my-pi/pi-tui/tools/github";
+import type { GhPrCheckoutSummary, GhToolDetails } from "@marsai-org/tui/tools/github";
 import {
 	appendRepoFlag,
 	buildTextResult,
@@ -24,13 +24,13 @@ import {
 	requireCurrentGitBranch,
 	requireNonEmpty,
 } from "./gh-common";
-import { pushLine } from "@oh-my-pi/pi-tui/tools/gh-format";
-import { formatShortSha } from "@oh-my-pi/pi-tui/tools/gh-format";
+import { pushLine } from "@marsai-org/tui/tools/gh-format";
+import { formatShortSha } from "@marsai-org/tui/tools/gh-format";
 import type { GhPrViewData, GhRepoViewData, GithubInput } from "./gh-types";
 import { GH_PR_FIELDS_NO_COMMENTS } from "./gh-view";
 import { invalidateAllForNumber } from "./github-cache";
 import { throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 import { cfgIsolationBackend, cfgWorktreeClone } from "../task/settings";
 

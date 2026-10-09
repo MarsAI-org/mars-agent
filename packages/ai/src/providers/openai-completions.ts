@@ -1,16 +1,10 @@
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import type { ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { clinePassClientHeaders } from "@oh-my-pi/pi-catalog/wire/cline-pass";
-import {
-	$env,
-	logger,
-	parseStreamingJson,
-	parseStreamingJsonThrottled,
-	type ServerSentEvent,
-} from "@oh-my-pi/pi-utils";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { resolveWireModelId } from "@marsai-org/catalog/model-thinking";
+import { calculateCost } from "@marsai-org/catalog/models";
+import type { ResolvedOpenAICompat } from "@marsai-org/catalog/types";
+import { clinePassClientHeaders } from "@marsai-org/catalog/wire/cline-pass";
+import { $env, logger, parseStreamingJson, parseStreamingJsonThrottled, type ServerSentEvent } from "@marsai-org/utils";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";

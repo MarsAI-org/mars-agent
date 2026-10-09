@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { SkillshareClient } from "@oh-my-pi/pi-coding-agent/skillshare/client";
+import { SkillshareClient } from "@marsai-org/coding-agent/skillshare/client";
 import {
 	computeIntegrity,
 	installSkillPackages,
@@ -10,7 +10,7 @@ import {
 	type SkillInstallHooks,
 	uninstallSkillPackages,
 	updateSkillPackages,
-} from "@oh-my-pi/pi-coding-agent/skillshare/installer";
+} from "@marsai-org/coding-agent/skillshare/installer";
 import {
 	getSkillStorePath,
 	getSkillshareStoreDir,
@@ -19,11 +19,11 @@ import {
 	type SkillsLock,
 	writeSkillsLock,
 	writeSkillsManifest,
-} from "@oh-my-pi/pi-coding-agent/skillshare/manifest";
-import { writeTar } from "@oh-my-pi/pi-coding-agent/skillshare/tar";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
-import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@oh-my-pi/pi-wire/skillshare";
+} from "@marsai-org/coding-agent/skillshare/manifest";
+import { writeTar } from "@marsai-org/coding-agent/skillshare/tar";
+import { removeWithRetries } from "@marsai-org/utils";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
+import type { SkillPackument, SkillVersionManifest, SkillVersionSummary } from "@marsai-org/wire/skillshare";
 
 const SCOPE = "alice";
 const NAME = "pdf-tools";

@@ -1,7 +1,7 @@
-import type { RequestPolicy } from "@oh-my-pi/pi-catalog/compat/types";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { readSseJson } from "@oh-my-pi/pi-utils";
+import type { RequestPolicy } from "@marsai-org/catalog/compat/types";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { readSseJson } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { AssistantMessage, Context, Message, Model, StreamOptions, Tool, ToolCall } from "../../types";
 import { createAbortSourceTracker } from "../../utils/abort";

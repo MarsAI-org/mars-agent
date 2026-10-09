@@ -1,6 +1,6 @@
-import type { CredentialsApi, KeysApi } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthProviderInfo } from "@oh-my-pi/pi-ai/oauth/types";
+import type { CredentialsApi, KeysApi } from "@marsai-org/ai";
+import { getOAuthProviders } from "@marsai-org/ai/oauth";
+import type { OAuthProviderInfo } from "@marsai-org/ai/oauth/types";
 import {
 	Container,
 	extractPrintableText,
@@ -17,7 +17,7 @@ import { OverlayPanel } from "../chrome/overlay-box";
 import { Input } from "../components/input";
 import { MenuSelection } from "../components/menu-selection";
 import { centeredViewportRange } from "../components/scroll-viewport";
-import type { TspPickerItem, TspSpan, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspPickerItem, TspSpan, TspTone } from "@marsai-org/wire";
 import { node, span, text } from "../native/describe";
 import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";
 import { CLOSE_ACTION, dockedPicker, PICKER_KEY, pickerAction, pickerEvent, pickerQuery } from "../native/picker";

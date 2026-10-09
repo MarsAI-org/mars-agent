@@ -23,7 +23,7 @@ import {
 	type TSchema,
 	toolWireSchema,
 	type UserMessage,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	type Dialect,
 	encodeInbandToolHistory,
@@ -31,17 +31,17 @@ import {
 	renderInbandToolPrompt,
 	renderToolExamples,
 	wrapInbandToolStream,
-} from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { appendDuplicateSuffix, MAX_TOOL_CALL_ID_LENGTH } from "@oh-my-pi/pi-ai/providers/transform-messages";
+} from "@marsai-org/ai/dialect";
+import * as AIError from "@marsai-org/ai/error";
+import { appendDuplicateSuffix, MAX_TOOL_CALL_ID_LENGTH } from "@marsai-org/ai/providers/transform-messages";
 import {
 	type CursorExecResolvedCarrier,
 	copyCursorExecResolved,
 	getStreamingPartialJson,
 	kCursorExecResolved,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { schemaDefinesProperty } from "@oh-my-pi/pi-ai/utils/schema/json-schema-validator";
-import { stamp } from "@oh-my-pi/pi-ai/utils/schema/stamps";
+} from "@marsai-org/ai/utils/block-symbols";
+import { schemaDefinesProperty } from "@marsai-org/ai/utils/schema/json-schema-validator";
+import { stamp } from "@marsai-org/ai/utils/schema/stamps";
 import {
 	createHarmonyAuditEvent,
 	detectHarmonyLeakInAssistantMessage,
@@ -51,10 +51,10 @@ import {
 	isHarmonyLeakMitigationTarget,
 	recoverHarmonyToolCall,
 	signalListLabel,
-} from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { isDsmlLeakRecoveryTarget, removeDsmlToolMarkupLeak } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { cloneJsonTree, logger, sanitizeText, structuredCloneJSON } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/ai/utils/harmony-leak";
+import { isDsmlLeakRecoveryTarget, removeDsmlToolMarkupLeak } from "@marsai-org/ai/utils/dsml-leak";
+import { cloneJsonTree, logger, sanitizeText, structuredCloneJSON } from "@marsai-org/utils";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import { LiveSteeringChannel } from "./live-steering";
 import { agentPauseGate } from "./pause";
 import { type AgentRunCoverage, type AgentRunSummary, ToolCallBlockedError } from "./run-collector";

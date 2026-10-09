@@ -1,5 +1,5 @@
-import type { AssistantMessage, ToolCall } from "@oh-my-pi/pi-ai";
-import type { VcsNumstatEntry } from "@oh-my-pi/pi-natives";
+import type { AssistantMessage, ToolCall } from "@marsai-org/ai";
+import type { VcsNumstatEntry } from "@marsai-org/natives";
 import type { ChangelogCategory, ConventionalAnalysis, ConventionalDetail } from "./types";
 
 export function extractToolCall(message: AssistantMessage, name: string): ToolCall | undefined {

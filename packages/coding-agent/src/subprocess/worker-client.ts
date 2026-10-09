@@ -14,8 +14,8 @@ import {
 	stripWindowsExtendedLengthPathPrefix,
 	WhichCachePolicy,
 	workerHostEntry,
-} from "@oh-my-pi/pi-utils";
-import { stripGitRepoLocationEnv } from "@oh-my-pi/pi-utils/env";
+} from "@marsai-org/utils";
+import { stripGitRepoLocationEnv } from "@marsai-org/utils/env";
 import type { Subprocess } from "bun";
 
 /**

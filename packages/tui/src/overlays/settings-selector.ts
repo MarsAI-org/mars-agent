@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Effort } from "@oh-my-pi/pi-ai";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Effort } from "@marsai-org/ai";
 import {
 	type Component,
 	Container,
@@ -22,7 +22,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import type { ShapeTarget } from "@oh-my-pi/snapcompact";
+import type { ShapeTarget } from "@marsai-org/snapcompact";
 import type {
 	ContextLineMode,
 	StatusLinePreset,
@@ -40,7 +40,7 @@ import {
 	type SettingsHost,
 	type SettingsDisplayEntry,
 } from "./settings-defs";
-import type { TspPrefsControl, TspPrefsProps } from "@oh-my-pi/pi-wire";
+import type { TspPrefsControl, TspPrefsProps } from "@marsai-org/wire";
 import { prefsSectionId } from "../components/settings-list";
 import { getCurrentThemeName, getSelectListTheme, getSettingsListTheme, theme } from "../theme/theme";
 import { AUTO_THINKING, type ConfiguredThinkingLevel } from "../thinking";

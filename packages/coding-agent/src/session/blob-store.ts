@@ -1,9 +1,9 @@
-import { blobExtensionForImageMimeType, normalizeBlobExtension } from "@oh-my-pi/pi-tui/prompt/image-format";
+import { blobExtensionForImageMimeType, normalizeBlobExtension } from "@marsai-org/tui/prompt/image-format";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { isEexist, isEnoent, logger, Snowflake } from "@oh-my-pi/pi-utils";
-import type { LazyFrameData } from "@oh-my-pi/snapcompact";
+import { isEexist, isEnoent, logger, Snowflake } from "@marsai-org/utils";
+import type { LazyFrameData } from "@marsai-org/snapcompact";
 
 const BLOB_PREFIX = "blob:sha256:";
 

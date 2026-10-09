@@ -10,8 +10,8 @@ import {
 	isCached,
 	isValidVersionForCache,
 	removeCachedPlugin,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/plugins/marketplace";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 

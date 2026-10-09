@@ -9,15 +9,15 @@ import type {
 	AssistantMessageEventStream,
 	Model,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { type BenchSummary, runBenchCommand } from "@oh-my-pi/pi-coding-agent/cli/bench-cli";
-import { type BenchModelRegistry, resolveBenchTargets } from "@oh-my-pi/pi-coding-agent/cli/bench-runtime";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getModelDbPath, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { type BenchSummary, runBenchCommand } from "@marsai-org/coding-agent/cli/bench-cli";
+import { type BenchModelRegistry, resolveBenchTargets } from "@marsai-org/coding-agent/cli/bench-runtime";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { getModelDbPath, TempDir } from "@marsai-org/utils";
 
 function fakeModel(provider: string, id: string): Model<Api> {
 	return buildModel({

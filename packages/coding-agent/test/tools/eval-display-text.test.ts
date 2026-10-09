@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import * as pyKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { TempDir } from "@marsai-org/utils";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import * as evalIndex from "@marsai-org/coding-agent/eval";
+import * as pyKernel from "@marsai-org/coding-agent/eval/py/kernel";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
 
 function makeSession(): ToolSession {
 	return {

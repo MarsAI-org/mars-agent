@@ -2,10 +2,10 @@ import { describe, expect, it } from "bun:test";
 import { renderFormula } from "./ci-update-brew-formula";
 
 const SUMS = {
-	"omp-darwin-arm64": "darwin_arm64_sha",
-	"omp-darwin-x64": "darwin_x64_sha",
-	"omp-linux-arm64": "linux_arm64_sha",
-	"omp-linux-x64": "linux_x64_sha",
+	"mars-darwin-arm64": "darwin_arm64_sha",
+	"mars-darwin-x64": "darwin_x64_sha",
+	"mars-linux-arm64": "linux_arm64_sha",
+	"mars-linux-x64": "linux_x64_sha",
 };
 
 describe("renderFormula", () => {
@@ -18,7 +18,7 @@ describe("renderFormula", () => {
 	it("attaches `using: :nounzip` to every per-platform url stanza", () => {
 		const matches = formula.match(/using: :nounzip/g) ?? [];
 		expect(matches).toHaveLength(4);
-		for (const arch of ["omp-darwin-arm64", "omp-darwin-x64", "omp-linux-arm64", "omp-linux-x64"]) {
+		for (const arch of ["mars-darwin-arm64", "mars-darwin-x64", "mars-linux-arm64", "mars-linux-x64"]) {
 			expect(formula).toMatch(
 				new RegExp(
 					`url "https://github\\.com/[^"]+/${arch}",\\s+using: :nounzip\\s+sha256 "${SUMS[arch as keyof typeof SUMS]}"`,

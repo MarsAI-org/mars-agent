@@ -1,4 +1,4 @@
-import type { TspPickerGroup, TspPickerItem, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspPickerGroup, TspPickerItem, TspTone } from "@marsai-org/wire";
 import { formatKeyHint, formatKeyHints } from "../../app-keybindings";
 import type { Component } from "../../tui";
 import { code } from "../../native/describe";
@@ -9,7 +9,7 @@ import { matchesKey } from "../../keys";
 import { Input } from "../../components/input";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../../mouse";
 import { padding, truncateToWidth, visibleWidth } from "../../utils";
-import { isRecord, sanitizeText } from "@oh-my-pi/pi-utils";
+import { isRecord, sanitizeText } from "@marsai-org/utils";
 import { getThemeEpoch, theme } from "../../theme/theme";
 import { sanitizeDisplayText } from "../../overlays/extensions/display-text";
 import { DebugViewerFrame, type DebugViewerFrameContent, type DebugViewerFrameContext } from "./viewer-frame";

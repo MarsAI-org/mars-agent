@@ -15,9 +15,9 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-import { getPluginsDir, isEnoent, logger, tryParseJson } from "@oh-my-pi/pi-utils";
+import { getPluginsDir, isEnoent, logger, tryParseJson } from "@marsai-org/utils";
 
-export { getMarketplacesRegistryPath } from "@oh-my-pi/pi-utils";
+export { getMarketplacesRegistryPath } from "@marsai-org/utils";
 
 import type {
 	InstalledPluginEntry,

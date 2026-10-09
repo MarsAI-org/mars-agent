@@ -1,4 +1,4 @@
-import type { DailyActivityPoint } from "@oh-my-pi/omp-stats/shared-types";
+import type { DailyActivityPoint } from "@marsai-org/stats/shared-types";
 import {
 	createUnavailableWorker,
 	createWorkerHandle,

@@ -2,11 +2,11 @@ import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
 import type { RenderResultOptions } from "../src/tools/renderer";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { bashToolRenderer, formatBackgroundNotice } from "@oh-my-pi/pi-tui/tools/bash";
-import { previewWindowRows } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
+import { bashToolRenderer, formatBackgroundNotice } from "@marsai-org/tui/tools/bash";
+import { previewWindowRows } from "@marsai-org/tui/render/render-utils";
+import { ImageProtocol, TERMINAL } from "@marsai-org/tui";
+import { sanitizeText } from "@marsai-org/utils";
 
 type MutableTerminalInfo = {
 	imageProtocol: ImageProtocol | null;

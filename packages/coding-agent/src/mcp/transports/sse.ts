@@ -1,5 +1,5 @@
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { logger, postmortem, readSseEvents } from "@oh-my-pi/pi-utils";
+import * as AIError from "@marsai-org/ai/error";
+import { logger, postmortem, readSseEvents } from "@marsai-org/utils";
 import type {
 	JsonRpcError,
 	JsonRpcMessage,

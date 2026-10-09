@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
-import { OmpErrors } from "@oh-my-pi/omptype";
-import { getModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema-bundle";
+import { OmpErrors } from "@marsai-org/omptype";
+import { getModelsConfigSchema } from "@marsai-org/coding-agent/config/models-config-schema-bundle";
 import {
 	type ProviderValidationConfig,
 	validateProviderConfiguration,
-} from "@oh-my-pi/pi-coding-agent/config/models-config";
-import { type ModelsConfig, ModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
+} from "@marsai-org/coding-agent/config/models-config";
+import { type ModelsConfig, ModelsConfigSchema } from "@marsai-org/coding-agent/config/models-config-schema";
 
 const models = [{ id: "grok-4", api: "openai-completions" as const }];
 const baseUrl = "https://api.example.invalid/v1";

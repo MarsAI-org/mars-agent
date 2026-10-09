@@ -1,9 +1,9 @@
-import type { ApiKeyResolver } from "@oh-my-pi/pi-ai";
-import { transcribeAudio } from "@oh-my-pi/pi-ai/transcription";
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
-import { AudioCapture } from "@oh-my-pi/pi-natives";
-import type { ModelBrowserRegistry } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ApiKeyResolver } from "@marsai-org/ai";
+import { transcribeAudio } from "@marsai-org/ai/transcription";
+import type { Api, Model } from "@marsai-org/catalog/types";
+import { AudioCapture } from "@marsai-org/natives";
+import type { ModelBrowserRegistry } from "@marsai-org/tui/overlays/model-browser";
+import { logger } from "@marsai-org/utils";
 import { resolveRoleChain } from "../config/model-resolver";
 import { roleCandidatePool } from "../config/model-roles";
 import { type Settings, settings } from "../config/settings";

@@ -11,13 +11,13 @@
  * `ls`/`find` use the cache when fresh (`online-if-uncached`); only `refresh`
  * forces the network (`online`).
  */
-import type { Api, Effort, Model } from "@oh-my-pi/pi-ai";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type ModelKind, type ModelPricingStatus, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { formatNumber, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import type { Api, Effort, Model } from "@marsai-org/ai";
+import { sendsImageInputOnWire } from "@marsai-org/ai/providers/vision-guard";
+import { getModelPricingStatus } from "@marsai-org/catalog/models";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { type ModelKind, type ModelPricingStatus, modelKind } from "@marsai-org/catalog/types";
+import { formatNumber, getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import type { ConfigError } from "../config/config-file";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";

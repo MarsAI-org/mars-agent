@@ -2,11 +2,11 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import * as sessionWorktree from "@oh-my-pi/pi-coding-agent/session/session-worktree";
-import { Container } from "@oh-my-pi/pi-tui";
+import { CommandController } from "@marsai-org/coding-agent/modes/controllers/command-controller";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import * as sessionWorktree from "@marsai-org/coding-agent/session/session-worktree";
+import { Container } from "@marsai-org/tui";
 
 function createMoveContext(sourceDir: string, settingsFlush?: () => Promise<void>) {
 	const state = { cwd: sourceDir, movedTo: undefined as string | undefined, completedBtwVisible: true };

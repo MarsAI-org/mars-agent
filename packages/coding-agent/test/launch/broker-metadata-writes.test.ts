@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { PsScope } from "@oh-my-pi/pi-tui/apps/ps-data";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { PsScope } from "@marsai-org/tui/apps/ps-data";
+import { TempDir } from "@marsai-org/utils";
 import { collectScope } from "../../src/cli/ps-data";
 import { startDaemonBrokerFromEnvironment } from "../../src/launch/broker";
 import { createDaemonBrokerClient } from "../../src/launch/client";

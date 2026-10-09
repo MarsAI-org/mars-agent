@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { validateAgentAccountPools } from "@oh-my-pi/pi-coding-agent/config/account-pools";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgTaskAgentAccountPools } from "@oh-my-pi/pi-coding-agent/task/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { validateAgentAccountPools } from "@marsai-org/coding-agent/config/account-pools";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgTaskAgentAccountPools } from "@marsai-org/coding-agent/task/settings";
+import { TempDir } from "@marsai-org/utils";
 
 describe("task.agentAccountPools", () => {
 	it("keeps an empty provider list as a deny-all pool and lets null clear an agent", () => {

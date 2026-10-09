@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { setWorktreesDir } from "@oh-my-pi/pi-utils";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { setWorktreesDir } from "@marsai-org/utils";
 import { Settings } from "../../src/config/settings";
 import {
 	canAutoCreateWorktree,

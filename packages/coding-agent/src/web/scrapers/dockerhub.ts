@@ -1,5 +1,5 @@
-import { tryParseJson } from "@oh-my-pi/pi-utils";
-import { formatBytes } from "@oh-my-pi/pi-tui/render/render-utils";
+import { tryParseJson } from "@marsai-org/utils";
+import { formatBytes } from "@marsai-org/tui/render/render-utils";
 import type { RenderResult, SpecialHandler } from "./types";
 import { buildResult, formatIsoDate, formatNumber, loadPage } from "./types";
 

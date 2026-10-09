@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createLspWritethrough } from "@oh-my-pi/pi-coding-agent/lsp";
-import { type FileDiagnosticsResult, FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
-import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { EquivalentUriMap, fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { type ptree, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createLspWritethrough } from "@marsai-org/coding-agent/lsp";
+import { type FileDiagnosticsResult, FileFormatResult } from "@marsai-org/tui/tools/lsp";
+import * as lspClient from "@marsai-org/coding-agent/lsp/client";
+import * as lspConfig from "@marsai-org/coding-agent/lsp/config";
+import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@marsai-org/coding-agent/lsp/diagnostics";
+import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@marsai-org/coding-agent/lsp/types";
+import { EquivalentUriMap, fileToUri } from "@marsai-org/coding-agent/lsp/utils";
+import type { DeferredDiagnosticsEntry, ToolSession } from "@marsai-org/coding-agent/tools";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { type ptree, TempDir } from "@marsai-org/utils";
 
 const TEST_SERVER: ServerConfig = {
 	command: "test-lsp",

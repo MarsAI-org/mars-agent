@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { Text } from "@oh-my-pi/pi-tui";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { XdevMountedRenderer, XdevMountedState } from "@oh-my-pi/pi-tui/tools/xdev";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { Text } from "@marsai-org/tui";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { XdevMountedRenderer, XdevMountedState } from "@marsai-org/tui/tools/xdev";
 
 /**
  * A `write xd://<tool>` card renders with the dispatched tool's own renderer,

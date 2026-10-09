@@ -3,29 +3,29 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult, RenderResultOptions } from "@oh-my-pi/pi-agent-core";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { preloadPluginRoots } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
+import type { AgentToolResult, RenderResultOptions } from "@marsai-org/agent-core";
+import { arkToWireSchema } from "@marsai-org/ai/utils/schema";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { preloadPluginRoots } from "@marsai-org/coding-agent/discovery/helpers";
 import { restoreEnvValue } from "../helpers/settings-test-state";
-import { createLspWritethrough, LspTool } from "@oh-my-pi/pi-coding-agent/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
+import { createLspWritethrough, LspTool } from "@marsai-org/coding-agent/lsp";
+import * as lspClient from "@marsai-org/coding-agent/lsp/client";
+import * as lspConfig from "@marsai-org/coding-agent/lsp/config";
 import {
 	configCache,
 	getConfig,
 	getServersForFile,
 	type LspConfig,
 	loadConfig,
-} from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { waitForDiagnostics } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
+} from "@marsai-org/coding-agent/lsp/config";
+import { waitForDiagnostics } from "@marsai-org/coding-agent/lsp/diagnostics";
 import {
 	applyTextEditsToString,
 	applyWorkspaceEdit,
 	type ExecutedWorkspaceChange,
 	sortAndValidateTextEdits,
-} from "@oh-my-pi/pi-coding-agent/lsp/edits";
-import { renderCall, renderResult } from "@oh-my-pi/pi-tui/tools/lsp";
+} from "@marsai-org/coding-agent/lsp/edits";
+import { renderCall, renderResult } from "@marsai-org/tui/tools/lsp";
 import {
 	type CodeAction,
 	type CreateFile,
@@ -38,8 +38,8 @@ import {
 	type SymbolInformation,
 	type TextDocumentEdit,
 	type WorkspaceEdit,
-} from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { type LspToolDetails } from "@oh-my-pi/pi-tui/tools/lsp";
+} from "@marsai-org/coding-agent/lsp/types";
+import { type LspToolDetails } from "@marsai-org/tui/tools/lsp";
 import {
 	applyCodeAction,
 	collectGlobMatches,
@@ -52,17 +52,17 @@ import {
 	resolveDiagnosticTargets,
 	resolveSymbolColumn,
 	uriToFile,
-} from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { clampTimeout } from "@oh-my-pi/pi-coding-agent/tools/tool-timeouts";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { sanitizeText, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/lsp/utils";
+import { getThemeByName, initTheme } from "@marsai-org/tui/theme";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { clampTimeout } from "@marsai-org/coding-agent/tools/tool-timeouts";
+import * as piUtils from "@marsai-org/utils";
+import { sanitizeText, TempDir } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import DEFAULTS from "../../src/lsp/defaults.json" with { type: "json" };
-import { renderResult as renderLocalResult } from "@oh-my-pi/pi-tui/tools/lsp";
-import { getLanguageFromPath } from "@oh-my-pi/pi-tui/lang-from-path";
+import { renderResult as renderLocalResult } from "@marsai-org/tui/tools/lsp";
+import { getLanguageFromPath } from "@marsai-org/tui/lang-from-path";
 
 const lspTestSettings = Settings.isolated();
 

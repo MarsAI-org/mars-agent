@@ -9,9 +9,9 @@ import {
 	sanitizeSkillName,
 	toSkillFrontmatter,
 	writeManagedSkill,
-} from "@oh-my-pi/pi-coding-agent/autolearn/managed-skills";
-import { parseFrontmatter, removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/autolearn/managed-skills";
+import { parseFrontmatter, removeWithRetries } from "@marsai-org/utils";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
 
 describe("managed-skills primitives", () => {
 	let tempHome: string;

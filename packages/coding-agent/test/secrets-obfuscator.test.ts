@@ -7,20 +7,20 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { buildOpenAiNativeHistory } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Context, Message, TextContent } from "@oh-my-pi/pi-ai";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
+import { type } from "@marsai-org/omptype";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { buildOpenAiNativeHistory } from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Context, Message, TextContent } from "@marsai-org/ai";
+import { buildParams } from "@marsai-org/ai/providers/openai-responses";
 import type {
 	ResponseFileSearchToolCall,
 	ResponseFunctionWebSearch,
 	ResponseInputItem,
 	ResponseToolSearchOutputItemParam,
-} from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { isJsonSchemaValueValid } from "@oh-my-pi/pi-ai/utils/schema/json-schema-validator";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai/providers/openai-responses-wire";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import { isJsonSchemaValueValid } from "@marsai-org/ai/utils/schema/json-schema-validator";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	builtinCredentialSecretEntries,
 	collectEnvSecrets,
@@ -28,7 +28,7 @@ import {
 	getSecretPlaceholderKey,
 	getSecretPlaceholderKeySync,
 	loadSecrets,
-} from "@oh-my-pi/pi-coding-agent/secrets";
+} from "@marsai-org/coding-agent/secrets";
 import {
 	collectNativeReplayRegexSecretValues,
 	deobfuscateAgentMessages,
@@ -37,16 +37,16 @@ import {
 	obfuscateNativeReplay,
 	obfuscateProviderContext,
 	obfuscateToolArguments,
-} from "@oh-my-pi/pi-coding-agent/secrets/message-transform";
-import { type SecretEntry, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets/obfuscator";
+} from "@marsai-org/coding-agent/secrets/message-transform";
+import { type SecretEntry, SecretObfuscator } from "@marsai-org/coding-agent/secrets/obfuscator";
 import {
 	sanitizeSecretFriendlyName,
 	secretEntriesNeedPlaceholderKey,
 	secretEntryNeedsPlaceholderKey,
 	stripPendingSecretPlaceholderSuffix,
-} from "@oh-my-pi/pi-coding-agent/secrets/placeholder";
-import { compileSecretRegex } from "@oh-my-pi/pi-coding-agent/secrets/regex";
-import { getActiveProfile, getAgentDir, setProfile } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/secrets/placeholder";
+import { compileSecretRegex } from "@marsai-org/coding-agent/secrets/regex";
+import { getActiveProfile, getAgentDir, setProfile } from "@marsai-org/utils/dirs";
 
 describe("compileSecretRegex", () => {
 	it("adds global flag when not provided", () => {

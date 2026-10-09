@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { consumeClaudeResetCredit, listClaudeResetCredits, type UsageResetCredit } from "@oh-my-pi/pi-ai";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import type { UsageFetchContext } from "@oh-my-pi/pi-ai/usage";
-import { claudeUsageProvider } from "@oh-my-pi/pi-ai/usage/claude";
+import { consumeClaudeResetCredit, listClaudeResetCredits, type UsageResetCredit } from "@marsai-org/ai";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import type { UsageFetchContext } from "@marsai-org/ai/usage";
+import { claudeUsageProvider } from "@marsai-org/ai/usage/claude";
 
 interface CapturedCall {
 	url: string;

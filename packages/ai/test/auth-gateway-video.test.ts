@@ -2,12 +2,12 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import type { AuthGatewayServerHandle } from "@oh-my-pi/pi-ai/auth-gateway/types";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { decodeGatewayJobId, encodeGatewayJobId } from "@oh-my-pi/pi-ai/providers/video-server";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Api, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import type { AuthGatewayServerHandle } from "@marsai-org/ai/auth-gateway/types";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { decodeGatewayJobId, encodeGatewayJobId } from "@marsai-org/ai/providers/video-server";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { Api, FetchImpl, Model, ModelSpec } from "@marsai-org/catalog/types";
 
 const VIDEO_BYTES = new Uint8Array([0, 0, 0, 24, 0x66, 0x74, 0x79, 0x70]);
 

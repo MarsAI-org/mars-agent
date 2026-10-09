@@ -1,7 +1,7 @@
 import { Buffer } from "node:buffer";
-import { planRequirementFor, quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
+import { planRequirementFor, quotaTierFor } from "@marsai-org/catalog/compat/behavior";
+import { toNumber } from "@marsai-org/catalog/utils";
+import { USER_AGENT } from "@marsai-org/utils";
 import type {
 	CredentialRankingContext,
 	CredentialRankingStrategy,

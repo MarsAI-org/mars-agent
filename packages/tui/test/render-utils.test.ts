@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as natives from "@oh-my-pi/pi-natives/path";
-import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getThemeByName, initTheme, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import * as natives from "@marsai-org/natives/path";
+import { KeybindingsManager, setKeyHintPlatform } from "@marsai-org/tui/app-keybindings";
+import { getThemeByName, initTheme, type Theme, theme } from "@marsai-org/tui/theme";
 import {
 	dedupeParseErrors,
 	expandKeyHint,
@@ -26,13 +26,13 @@ import {
 	shortenToolArgumentPaths,
 	TRUNCATE_LENGTHS,
 	truncateDiffByHunk,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@marsai-org/tui/render/render-utils";
 import {
 	DEFAULT_TAB_WIDTH,
 	getKeybindings,
 	setKeybindings,
 	type KeybindingsManager as TuiKeybindingsManager,
-} from "@oh-my-pi/pi-tui";
+} from "@marsai-org/tui";
 
 describe("embedded home path normalization", () => {
 	it("shortens every adjacent home path in path lists", () => {

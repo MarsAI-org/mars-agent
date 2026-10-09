@@ -3,24 +3,24 @@ import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { __providerInFlightForTesting, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context } from "@oh-my-pi/pi-ai/types";
+import { Effort } from "@marsai-org/ai";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { __providerInFlightForTesting, streamSimple } from "@marsai-org/ai/stream";
+import type { Context } from "@marsai-org/ai/types";
 import {
 	__physicalTargetSegmentsForTesting,
 	resetSettingsForTest,
 	Settings,
-} from "@oh-my-pi/pi-coding-agent/config/settings";
-import { bindEffects } from "@oh-my-pi/pi-coding-agent/config/registry";
+} from "@marsai-org/coding-agent/config/settings";
+import { bindEffects } from "@marsai-org/coding-agent/config/registry";
 
-import * as discovery from "@oh-my-pi/pi-coding-agent/discovery";
-import { editVariantForModel } from "@oh-my-pi/pi-coding-agent/utils/edit-mode";
+import * as discovery from "@marsai-org/coding-agent/discovery";
+import { editVariantForModel } from "@marsai-org/coding-agent/utils/edit-mode";
 import MODEL_PRIO from "../src/priority.json" with { type: "json" };
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
-import * as fileLock from "@oh-my-pi/pi-utils/file-lock";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { getAgentDbPath, getProjectAgentDir, logger, TempDir } from "@marsai-org/utils";
+import * as fileLock from "@marsai-org/utils/file-lock";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 import {
@@ -32,8 +32,8 @@ import {
 	cfgSetupVersion,
 	cfgStatusLineLeftSegments,
 	cfgSpellingAutocomplete,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
+} from "@marsai-org/coding-agent/modes/settings";
+import { cfgExtensions } from "@marsai-org/coding-agent/extensibility/settings";
 import {
 	cfgProvidersMaxInFlightRequests,
 	cfgPowerSleepPrevention,
@@ -46,7 +46,7 @@ import {
 	cfgProvidersOpenaiCodexCodeMode,
 	cfgProvidersOpenaiCodexCodeModeDirectTools,
 	cfgRetryModelFallback,
-} from "@oh-my-pi/pi-coding-agent/session/settings";
+} from "@marsai-org/coding-agent/session/settings";
 import {
 	cfgToolsXdev,
 	cfgTodoReminders,
@@ -61,7 +61,7 @@ import {
 	cfgTodoEager,
 	cfgComputerEnabled,
 	cfgImagesQuestionTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/tools/settings";
+} from "@marsai-org/coding-agent/tools/settings";
 import {
 	cfgTaskEager,
 	cfgIsolationBackend,
@@ -69,19 +69,19 @@ import {
 	cfgTaskMaxConcurrency,
 	cfgTaskEnableEffort,
 	cfgTaskAgentModelOverrides,
-} from "@oh-my-pi/pi-coding-agent/task/settings";
-import { cfgMnemopiDbPath, cfgMnemopiScoping } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
-import { cfgHindsightBankId, cfgHindsightScoping } from "@oh-my-pi/pi-coding-agent/hindsight/settings";
-import { cfgEditMode } from "@oh-my-pi/pi-coding-agent/edit/settings";
-import { cfgExaEnabled } from "@oh-my-pi/pi-coding-agent/web/settings";
+} from "@marsai-org/coding-agent/task/settings";
+import { cfgMnemopiDbPath, cfgMnemopiScoping } from "@marsai-org/coding-agent/mnemopi/settings";
+import { cfgMemoryBackend } from "@marsai-org/coding-agent/memory-backend/settings";
+import { cfgHindsightBankId, cfgHindsightScoping } from "@marsai-org/coding-agent/hindsight/settings";
+import { cfgEditMode } from "@marsai-org/coding-agent/edit/settings";
+import { cfgExaEnabled } from "@marsai-org/coding-agent/web/settings";
 import {
 	cfgCompactionMethodOrder,
 	cfgSnapcompactSystemPrompt,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { cfgModelRoles, cfgDisabledProviders, cfgEnabledModels } from "@oh-my-pi/pi-coding-agent/config/model-settings";
-import { cfgShellPath } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import { cfgEvalJs } from "@oh-my-pi/pi-coding-agent/eval/settings";
+} from "@marsai-org/coding-agent/session/context-settings";
+import { cfgModelRoles, cfgDisabledProviders, cfgEnabledModels } from "@marsai-org/coding-agent/config/model-settings";
+import { cfgShellPath } from "@marsai-org/coding-agent/exec/settings";
+import { cfgEvalJs } from "@marsai-org/coding-agent/eval/settings";
 
 /** Lets microtask-coalesced setting listeners run. */
 const tick = () => Promise.resolve();

@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isEnoent, logger } from "@marsai-org/utils";
 import { YAML } from "bun";
 import { expandAtImports } from "../discovery/at-imports";
 import { BUILTIN_TOOL_NAMES, normalizeToolNames } from "../tools/builtin-names";
@@ -13,10 +13,10 @@ import {
 	type AdvisorConfigScope,
 	type AdvisorSyncBacklog,
 	type WatchdogConfigDoc,
-} from "@oh-my-pi/pi-tui/overlays/advisor-config";
+} from "@marsai-org/tui/overlays/advisor-config";
 
-export { ADVISOR_REVIEW_MODES, ADVISOR_SYNC_BACKLOG_MODES } from "@oh-my-pi/pi-tui/overlays/advisor-config";
-export type { AdvisorReviewMode, AdvisorSyncBacklog } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+export { ADVISOR_REVIEW_MODES, ADVISOR_SYNC_BACKLOG_MODES } from "@marsai-org/tui/overlays/advisor-config";
+export type { AdvisorReviewMode, AdvisorSyncBacklog } from "@marsai-org/tui/overlays/advisor-config";
 
 /**
  * Runtime health of a single advisor, surfaced in stats and the status line.

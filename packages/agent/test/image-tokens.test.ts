@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { trimRemoteCompactionInputToContextWindow } from "@oh-my-pi/pi-agent-core/compaction/openai";
-import { estimateImageTokens } from "@oh-my-pi/pi-agent-core/image-tokens";
-import type { UserMessage } from "@oh-my-pi/pi-ai/types";
+import { Tokenizer } from "@marsai-org/agent-core";
+import { trimRemoteCompactionInputToContextWindow } from "@marsai-org/agent-core/compaction/openai";
+import { estimateImageTokens } from "@marsai-org/agent-core/image-tokens";
+import type { UserMessage } from "@marsai-org/ai/types";
 
 /** Base64 PNG whose IHDR declares `width`x`height`; the pixel data is irrelevant to sizing. */
 function pngWithSize(width: number, height: number): string {

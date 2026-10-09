@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { IsoBackendKind } from "@oh-my-pi/pi-natives";
+import { IsoBackendKind } from "@marsai-org/natives";
 import {
 	assertSecurityRemediationBaselineClean,
 	prepareSecurityRemediationWorkspace,

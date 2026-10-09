@@ -1,8 +1,8 @@
-import { toClinePassWireModelId } from "@oh-my-pi/pi-catalog/cline-pass-model-id";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { toFirepassWireModelId, toFireworksWireModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
+import { toClinePassWireModelId } from "@marsai-org/catalog/cline-pass-model-id";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { toFirepassWireModelId, toFireworksWireModelId } from "@marsai-org/catalog/fireworks-model-id";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { calculateCost } from "@marsai-org/catalog/models";
 import type {
 	OpenAICompat,
 	OpenAIReasoningDisableMode,
@@ -12,15 +12,15 @@ import type {
 	ResolvedOpenAIResponsesCompat,
 	ResolvedOpenAISharedCompat,
 	VercelGatewayRouting,
-} from "@oh-my-pi/pi-catalog/types";
-import { parseAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
+} from "@marsai-org/catalog/types";
+import { parseAlibabaTokenPlanCredential } from "@marsai-org/catalog/wire/alibaba-token-plan";
 import {
 	COREWEAVE_PROJECT_HEADER,
 	coreWeaveProjectHeaders,
 	hasCoreWeaveProjectHeader,
 	removeBlankCoreWeaveProjectHeaders,
-} from "@oh-my-pi/pi-catalog/wire/coreweave";
-import { parseGitHubCopilotApiKey } from "@oh-my-pi/pi-catalog/wire/github-copilot";
+} from "@marsai-org/catalog/wire/coreweave";
+import { parseGitHubCopilotApiKey } from "@marsai-org/catalog/wire/github-copilot";
 import {
 	$env,
 	classifyJsonPrefix,
@@ -32,7 +32,7 @@ import {
 	parseStreamingJsonThrottled,
 	stringifyJson,
 	USER_AGENT,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import * as AIError from "../error";
 import { parseToolCallArguments, replayableToolCallArguments } from "../utils/tool-call-arguments";

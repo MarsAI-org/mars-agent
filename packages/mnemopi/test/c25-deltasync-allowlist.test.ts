@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
-import { DeltaSync, SyncCheckpoint } from "@oh-my-pi/pi-mnemopi/core/streaming";
+import { Mnemopi } from "@marsai-org/mnemopi/core/memory";
+import { DeltaSync, SyncCheckpoint } from "@marsai-org/mnemopi/core/streaming";
 
 const roots: string[] = [];
 

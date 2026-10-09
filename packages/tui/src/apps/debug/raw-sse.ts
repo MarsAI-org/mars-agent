@@ -1,4 +1,4 @@
-import type { TspScrollBy } from "@oh-my-pi/pi-wire";
+import type { TspScrollBy } from "@marsai-org/wire";
 import { formatKeyHint } from "../../app-keybindings";
 import type { Component } from "../../tui";
 import { matchesKey } from "../../keys";

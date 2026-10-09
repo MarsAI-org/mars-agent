@@ -1,4 +1,4 @@
-import { logger, readLines, Snowflake } from "@oh-my-pi/pi-utils";
+import { logger, readLines, Snowflake } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import { type KernelDisplayOutput, renderKernelDisplay } from "./py/display";
 import type { ShadowBarrier, ShadowControlNode, ShadowOperation } from "./speculation/types";

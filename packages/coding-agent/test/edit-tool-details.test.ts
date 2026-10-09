@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool, getEditStore } from "@oh-my-pi/pi-coding-agent/edit";
-import { type EditToolDetails } from "@oh-my-pi/pi-tui/tools/edit";
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool, getEditStore } from "@marsai-org/coding-agent/edit";
+import { type EditToolDetails } from "@marsai-org/tui/tools/edit";
+import type { EditMode } from "@marsai-org/tui/tools/edit";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { removeWithRetries } from "@marsai-org/utils";
 
 function makeSession(cwd: string, settings: Record<string, unknown> = {}): ToolSession {
 	return {

@@ -10,8 +10,8 @@ import {
 	getSkillDescriptionsDbPath,
 	setAgentDir,
 	setProfile,
-} from "@oh-my-pi/pi-utils/dirs";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
+} from "@marsai-org/utils/dirs";
+import { Snowflake } from "@marsai-org/utils/snowflake";
 
 const ENV_KEYS = [
 	"OMP_PROFILE",

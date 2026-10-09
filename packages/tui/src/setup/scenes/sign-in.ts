@@ -1,6 +1,6 @@
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import { PASTE_CODE_LOGIN_PROVIDERS } from "@oh-my-pi/pi-ai";
-import type { OAuthPrompt, OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
+import type { AuthStorage } from "@marsai-org/ai";
+import { PASTE_CODE_LOGIN_PROVIDERS } from "@marsai-org/ai";
+import type { OAuthPrompt, OAuthProvider } from "@marsai-org/ai/oauth/types";
 import { type Component, type Focusable, Container } from "../../tui";
 import { Spacer } from "../../components/spacer";
 import { Text } from "../../components/text";
@@ -11,7 +11,7 @@ import { editorKey } from "../../chrome/keybinding-hints";
 import { matchesKey } from "../../keys";
 import { type SgrMouseEvent } from "../../mouse";
 import { wrapTextWithAnsi } from "../../utils";
-import { getAgentDbPath } from "@oh-my-pi/pi-utils";
+import { getAgentDbPath } from "@marsai-org/utils";
 import { OAuthSelectorComponent } from "../../overlays/oauth-selector";
 import { theme } from "../../theme/theme";
 import { col, node, span, text } from "../../native/describe";

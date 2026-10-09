@@ -10,7 +10,7 @@
  * never where the next chunk would lead with a `key=value;` segment the
  * receiver would read as a parameter (Tern's `tsp_chunks`).
  */
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import {
 	TSP_APC_ID,
 	TSP_DEFAULT_APC_LIMIT,
@@ -18,7 +18,7 @@ import {
 	type TspEvent,
 	type TspReply,
 	type TspVerb,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 
 const APC = "\x1b_";
 const ST = "\x1b\\";

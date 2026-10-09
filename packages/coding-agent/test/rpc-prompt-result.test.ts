@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import {
 	RpcExtensionUserMessageTracker,
 	RpcPromptResults,
 	reportPromptResult,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-prompt-results";
 import type { ExtensionActions } from "../src/extensibility/extensions/types";
 import { initializeExtensions } from "../src/modes/runtime-init";
 import type { AgentSession, AgentSessionEvent } from "../src/session/agent-session";

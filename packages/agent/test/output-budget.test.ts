@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { AssistantMessage, Context, Message, Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import type { AssistantMessage, Context, Message, Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	fitOutputTokensToContextWindow,
 	MIN_FITTED_OUTPUT_TOKENS,

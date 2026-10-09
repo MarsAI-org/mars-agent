@@ -1,13 +1,13 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Component, Text } from "@oh-my-pi/pi-tui";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { type Component, Text } from "@marsai-org/tui";
 import { Settings, settings } from "../../../src/config/settings";
-import { renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPToolDetails } from "@oh-my-pi/pi-tui/tools/mcp";
-import { ToolExecutionComponent, type ToolExecutionUi } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
+import { renderMCPResult } from "@marsai-org/tui/tools/mcp";
+import type { MCPToolDetails } from "@marsai-org/tui/tools/mcp";
+import { ToolExecutionComponent, type ToolExecutionUi } from "@marsai-org/tui/chat/tool-execution";
+import { getThemeByName, setThemeInstance, theme } from "@marsai-org/tui/theme";
 
-import { cfgMcpRenderMarkdownResults } from "@oh-my-pi/pi-coding-agent/mcp/settings";
+import { cfgMcpRenderMarkdownResults } from "@marsai-org/coding-agent/mcp/settings";
 
 class BoldTypeErrorComponent implements Component {
 	render(_width: number): readonly string[] {

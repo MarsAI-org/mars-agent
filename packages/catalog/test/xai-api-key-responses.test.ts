@@ -2,13 +2,13 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { calculateCost, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { xaiModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { type ModelSpec, type Usage } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { calculateCost, getBundledModels } from "@marsai-org/catalog/models";
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models/descriptors";
+import { xaiModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import { type ModelSpec, type Usage } from "@marsai-org/catalog/types";
 import { applyPricingPeerFallback } from "../scripts/generated-policies";
 
 const XAI_RESPONSES_SPEC: ModelSpec<"openai-responses"> = {

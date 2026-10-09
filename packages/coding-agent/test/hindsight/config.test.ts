@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadHindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { loadHindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
 
 const TOUCHED = [
 	"HINDSIGHT_AUTO_RECALL",

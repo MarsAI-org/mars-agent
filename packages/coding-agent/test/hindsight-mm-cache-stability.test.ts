@@ -9,13 +9,13 @@ import type {
 	HindsightApi,
 	MentalModelListResponse,
 	MentalModelSummary,
-} from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { renderMentalModelsBlock } from "@oh-my-pi/pi-coding-agent/hindsight/mental-models";
-import type { AgentSessionEventListener } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import { SessionMemory, type SessionMemoryHost } from "@oh-my-pi/pi-coding-agent/session/session-memory";
+} from "@marsai-org/coding-agent/hindsight/client";
+import type { HindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { renderMentalModelsBlock } from "@marsai-org/coding-agent/hindsight/mental-models";
+import type { AgentSessionEventListener } from "@marsai-org/coding-agent/session/agent-session";
+import { HindsightSessionState } from "@marsai-org/coding-agent/hindsight/state";
+import { SessionMemory, type SessionMemoryHost } from "@marsai-org/coding-agent/session/session-memory";
 
 function makeConfig(overrides: Partial<HindsightConfig> = {}): HindsightConfig {
 	return {

@@ -23,22 +23,22 @@ import {
 	type Tool,
 	type Usage,
 	withAuth,
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
+} from "@marsai-org/ai";
+import type { Dialect } from "@marsai-org/ai/dialect";
+import * as AIError from "@marsai-org/ai/error";
+import { createOpenAICodexCompactionRequestContext } from "@marsai-org/ai/providers/openai-codex-compaction";
 import {
 	buildTransformedCodexRequestBody,
 	type OpenAICodexCompactionBody,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { InputItem as CodexInputItem } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { convertTools } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { buildResponsesInput, resolveOpenAICompatPolicy } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@oh-my-pi/pi-ai/utils";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { isRecord, logger, prompt } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai/providers/openai-codex-responses";
+import type { InputItem as CodexInputItem } from "@marsai-org/ai/providers/openai-codex/request-transformer";
+import { convertTools } from "@marsai-org/ai/providers/openai-responses";
+import { buildResponsesInput, resolveOpenAICompatPolicy } from "@marsai-org/ai/providers/openai-shared";
+import { stripOpenAIResponsesOutputOnlyStatusesForReplay } from "@marsai-org/ai/utils";
+import { preferredDialect } from "@marsai-org/catalog/identity";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import { isRecord, logger, prompt } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { type AgentTelemetry, instrumentedCompleteSimple } from "../telemetry";
 import { ThinkingLevel } from "../thinking";
 import { Tokenizer } from "../tokenizer";

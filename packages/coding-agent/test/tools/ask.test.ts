@@ -1,24 +1,24 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { type } from "@marsai-org/omptype";
+import type { AgentToolContext } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResult,
 	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { getThemeByName, initTheme, theme, type Theme } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AskTool } from "@oh-my-pi/pi-coding-agent/tools/ask";
-import { askToolRenderer } from "@oh-my-pi/pi-tui/tools/ask";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { tagImageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import { getThemeByName, initTheme, theme, type Theme } from "@marsai-org/tui/theme";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { AskTool } from "@marsai-org/coding-agent/tools/ask";
+import { askToolRenderer } from "@marsai-org/tui/tools/ask";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { TERMINAL } from "@marsai-org/tui";
+import { tagImageAttachmentSource } from "@marsai-org/tui/prompt/image-source";
+import * as ai from "@marsai-org/ai";
+import type { Api, AssistantMessage, Model } from "@marsai-org/ai";
+import { TempDir } from "@marsai-org/utils";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // 1x1 transparent PNG.
 const TINY_PNG_BASE64 =

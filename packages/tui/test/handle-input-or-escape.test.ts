@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { handleInputOrEscape } from "@oh-my-pi/pi-tui/overlays/plugin-settings";
-import { setKittyProtocolActive } from "@oh-my-pi/pi-tui";
+import { handleInputOrEscape } from "@marsai-org/tui/overlays/plugin-settings";
+import { setKittyProtocolActive } from "@marsai-org/tui";
 
 afterEach(() => {
 	setKittyProtocolActive(false);

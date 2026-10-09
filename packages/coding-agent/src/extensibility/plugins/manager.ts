@@ -11,7 +11,7 @@ import {
 	isEnoent,
 	logger,
 	normalizePathForComparison,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { JSONC } from "bun";
 import { resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { loadExtensions } from "../extensions/loader";

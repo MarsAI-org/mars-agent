@@ -17,19 +17,19 @@ import {
 	replaceTabs,
 	truncateToWidth,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { col, compact, keyed, node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
-import { Memo } from "@oh-my-pi/pi-tui/native/memo";
-import type { NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { actionBar, actionButton } from "@oh-my-pi/pi-tui/native/overlay";
+} from "@marsai-org/tui";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import { col, compact, keyed, node, row, span, text } from "@marsai-org/tui/native/describe";
+import { Memo } from "@marsai-org/tui/native/memo";
+import type { NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { actionBar, actionButton } from "@marsai-org/tui/native/overlay";
 import {
 	type WordCompletionEngine,
 	WordCompletionProvider,
 	type WordPredictionBackend,
-} from "@oh-my-pi/pi-tui/prompt/word-completion";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/prompt/word-completion";
+import chalk from "@marsai-org/utils/chalk";
+import type { TspSpan } from "@marsai-org/wire";
 import { closeDaemonClients } from "../launch/client";
 import type { TextPredictMethod } from "../predict/protocol";
 import { closeTextPrediction, requestTextPrediction } from "../predict/client";

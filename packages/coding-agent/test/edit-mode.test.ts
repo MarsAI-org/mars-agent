@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgEditFuzzyMatch } from "@oh-my-pi/pi-coding-agent/edit/settings";
-import { type EditMode } from "@oh-my-pi/pi-tui/tools/edit";
-import { type EditModeSessionLike, resolveEditMode } from "@oh-my-pi/pi-coding-agent/utils/edit-mode";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgEditFuzzyMatch } from "@marsai-org/coding-agent/edit/settings";
+import { type EditMode } from "@marsai-org/tui/tools/edit";
+import { type EditModeSessionLike, resolveEditMode } from "@marsai-org/coding-agent/utils/edit-mode";
 
 const originalEditVariant = Bun.env.PI_EDIT_VARIANT;
 const originalStrictEditMode = Bun.env.PI_STRICT_EDIT_MODE;

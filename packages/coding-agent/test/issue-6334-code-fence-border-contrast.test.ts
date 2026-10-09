@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { relativeLuminance } from "@oh-my-pi/pi-utils";
-import { resolveVarRefs } from "@oh-my-pi/pi-tui/theme/color";
-import { loadTheme, loadThemeJson } from "@oh-my-pi/pi-tui/theme/loader";
+import { relativeLuminance } from "@marsai-org/utils";
+import { resolveVarRefs } from "@marsai-org/tui/theme/color";
+import { loadTheme, loadThemeJson } from "@marsai-org/tui/theme/loader";
 
 /**
  * Regression test for #6334: markdown code fence header lines (mdCodeBlockBorder)

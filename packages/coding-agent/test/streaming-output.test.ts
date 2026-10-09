@@ -15,11 +15,11 @@ import {
 	truncateMiddle,
 	truncateTail,
 	truncateTailBytes,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { stripOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { outputMeta } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/tools/streaming-output";
+import { stripOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { outputMeta } from "@marsai-org/coding-agent/tools/output-meta";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const createdTempDirs: string[] = [];
 const originalForceProtocol = Bun.env.PI_FORCE_IMAGE_PROTOCOL;

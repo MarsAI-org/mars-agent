@@ -1,11 +1,11 @@
 import type { Mock } from "bun:test";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import * as nativeSchemeCallback from "@oh-my-pi/pi-ai/registry/oauth/native-scheme-callback";
-import type { NativeSchemeCallbackReceiver } from "@oh-my-pi/pi-ai/registry/oauth/native-scheme-callback";
-import type { OAuthCredentials, OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import * as AIError from "@marsai-org/ai/error";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import * as nativeSchemeCallback from "@marsai-org/ai/registry/oauth/native-scheme-callback";
+import type { NativeSchemeCallbackReceiver } from "@marsai-org/ai/registry/oauth/native-scheme-callback";
+import type { OAuthCredentials, OAuthController } from "@marsai-org/ai/registry/oauth/types";
+import type { FetchImpl } from "@marsai-org/ai/types";
 
 const CLIENT_ID = "client_P8X5CMWmlaRO9gyO-KSqtg";
 const AUTHORIZE_URL = "https://chat.z.ai/api/oauth/authorize";

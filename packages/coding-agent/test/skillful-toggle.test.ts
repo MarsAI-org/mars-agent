@@ -2,20 +2,20 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { UserMessage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { BUILTIN_MODE_SLASH_COMMANDS } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-modes";
-import type { SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import type { UserMessage } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { BUILTIN_MODE_SLASH_COMMANDS } from "@marsai-org/coding-agent/slash-commands/builtin-modes";
+import type { SlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import { cleanupTempHome } from "./helpers/temp-home-cleanup";
 
-import { cfgSkillful } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgSkillful } from "@marsai-org/coding-agent/session/settings";
 
 function createUserMessage(content: string): UserMessage {
 	return { role: "user", content, timestamp: Date.now() };

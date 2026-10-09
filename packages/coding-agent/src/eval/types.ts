@@ -1,6 +1,6 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { EvalLanguage, EvalStatusEvent } from "@oh-my-pi/pi-tui/tools/eval";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import type { ImageContent } from "@marsai-org/ai";
+import type { EvalLanguage, EvalStatusEvent } from "@marsai-org/tui/tools/eval";
+import { isRecord } from "@marsai-org/utils/type-guards";
 
 /** Kernel-defined tool metadata exposed to task subagents. */
 export interface EvalToolDescriptor {

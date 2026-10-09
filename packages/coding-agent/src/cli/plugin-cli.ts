@@ -5,8 +5,8 @@
  */
 
 import * as path from "node:path";
-import { APP_NAME, getPluginsNodeModules, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { APP_NAME, getPluginsNodeModules, getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { resolveOrDefaultProjectRegistryPath } from "../discovery/helpers";
 import { PluginManager, parseSettingValue, validateSetting } from "../extensibility/plugins";
 import {
@@ -18,7 +18,7 @@ import {
 	parsePluginId,
 } from "../extensibility/plugins/marketplace/index.js";
 import type { InstalledPlugin } from "../extensibility/plugins/types";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@marsai-org/tui/theme";
 
 // =============================================================================
 // Types

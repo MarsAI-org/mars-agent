@@ -2,16 +2,16 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { FileLock as NativeFileLock } from "@oh-my-pi/pi-natives";
-import { getSessionOwnersDir } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import { type FileLockHandle, tryAcquireFileLock, withFileLockSync } from "@oh-my-pi/pi-utils/file-lock";
-import { type FsError, hasFsCode, isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import { openCloexecSync } from "@oh-my-pi/pi-utils/fs-open";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { peekFileEnds } from "@oh-my-pi/pi-utils/peek-file";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
+import { FileLock as NativeFileLock } from "@marsai-org/natives";
+import { getSessionOwnersDir } from "@marsai-org/utils/dirs";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
+import { type FileLockHandle, tryAcquireFileLock, withFileLockSync } from "@marsai-org/utils/file-lock";
+import { type FsError, hasFsCode, isEnoent } from "@marsai-org/utils/fs-error";
+import { openCloexecSync } from "@marsai-org/utils/fs-open";
+import * as logger from "@marsai-org/utils/logger";
+import { peekFileEnds } from "@marsai-org/utils/peek-file";
+import { Snowflake } from "@marsai-org/utils/snowflake";
+import { toError } from "@marsai-org/utils/type-guards";
 import { isAssistantMessageLine } from "./session-entries";
 import {
 	overlayTitleSlotContent,

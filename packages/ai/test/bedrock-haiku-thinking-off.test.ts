@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { type } from "@oh-my-pi/omptype";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, SimpleStreamOptions } from "@marsai-org/ai/types";
+import { Effort } from "@marsai-org/catalog/effort";
+import { type } from "@marsai-org/omptype";
 import {
 	BEDROCK_TEST_CONTEXT,
 	type BedrockCapture,

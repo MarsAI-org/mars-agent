@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { clearAwsCredentialCache } from "@oh-my-pi/pi-ai/providers/aws-credentials";
-import type { AnthropicOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, ModelSpec, TJsonSchema } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { clearAwsCredentialCache } from "@marsai-org/ai/providers/aws-credentials";
+import type { AnthropicOptions } from "@marsai-org/ai/providers/anthropic";
+import { stream } from "@marsai-org/ai/stream";
+import type { Context, Model, ModelSpec, TJsonSchema } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 const RUNTIME_URL = "https://bedrock-runtime.us-east-1.amazonaws.com/anthropic";
