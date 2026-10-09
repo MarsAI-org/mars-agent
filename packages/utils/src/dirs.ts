@@ -21,7 +21,11 @@ import { isEnoent, isEnotdir } from "./fs-error";
 /** App name (e.g. "mars"). Also names the XDG subdirectory under $XDG_*_HOME. */
 export const APP_NAME: string = "mars";
 
-/** Public homepage that inference gateways (OpenRouter, Vercel AI Gateway) credit omp traffic to. */
+/**
+ * Public homepage that inference gateways (OpenRouter, Vercel AI Gateway) credit Mars traffic to.
+ * TODO(rebrand): still the pre-rebrand `omp.sh` host — no Mars domain has been decided, and
+ * repointing at an unowned domain would silently misattribute gateway traffic. Do not invent one.
+ */
 export const APP_URL: string = "https://omp.sh/";
 
 /** Config directory name (e.g. ".mars") */
