@@ -5,8 +5,8 @@ import type {
 	ProviderPayload,
 	TextContent,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { prompt } from "@marsai-org/utils";
 import type { AgentMessage } from "../types";
 import type { SessionEntry } from "./entries";
 import branchSummaryContextPrompt from "./prompts/branch-summary-context.md" with { type: "text" };

@@ -6,9 +6,9 @@ import {
 	resolvePluginExtensionPaths,
 	resolvePluginManifestEntries,
 	resolvePluginToolPaths,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import type { InstalledPlugin, PluginManifest } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/types";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import type { InstalledPlugin, PluginManifest } from "@marsai-org/coding-agent/extensibility/plugins/types";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 function makePlugin(pluginPath: string, manifest: PluginManifest): InstalledPlugin {
 	return {

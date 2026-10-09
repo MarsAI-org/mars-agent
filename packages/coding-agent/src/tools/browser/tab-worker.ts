@@ -2,8 +2,8 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { postmortem, Snowflake, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
-import type { HTMLElement } from "@oh-my-pi/pi-utils/dom";
+import { postmortem, Snowflake, untilAborted, withTimeout } from "@marsai-org/utils";
+import type { HTMLElement } from "@marsai-org/utils/dom";
 import type {
 	Accessibility,
 	Browser,
@@ -36,7 +36,7 @@ import {
 	withBrowserPromiseCombinatorTracking,
 } from "../run-scope";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import {
 	type AriaSnapshotOptions,
 	assertSelectorString,

@@ -5,26 +5,26 @@
  * and on an autonomous IRC wake turn.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import type { LoadExtensionsResult } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
 import {
 	attachIrcWakeTurnMonitor,
 	runSubagentFollowUpTurn,
 	runSubprocess,
-} from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+} from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { WaitTool } from "@marsai-org/coding-agent/tools/wait";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 
 const AGENT_ID = "accepted-result";
 

@@ -9,16 +9,16 @@
  * daemons before acting on them.
  */
 
-import { truncateToWidth } from "@oh-my-pi/pi-tui";
-import { formatDuration, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { truncateToWidth } from "@marsai-org/tui";
+import { formatDuration, getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import {
 	closeDaemonClients,
 	type DaemonBrokerClient,
 	daemonClientForGlobal,
 	daemonClientForProject,
 } from "../launch/client";
-import type { DaemonSnapshot } from "@oh-my-pi/pi-tui/tools/daemon";
+import type { DaemonSnapshot } from "@marsai-org/tui/tools/daemon";
 import {
 	daemonLabel,
 	formatCommand,
@@ -28,8 +28,8 @@ import {
 	TABLE_HEADER,
 	TERMINAL_STATES,
 	tableCells,
-} from "@oh-my-pi/pi-tui/apps/ps-data";
-import { runPsTop, type PsTopHost } from "@oh-my-pi/pi-tui/apps/ps-top";
+} from "@marsai-org/tui/apps/ps-data";
+import { runPsTop, type PsTopHost } from "@marsai-org/tui/apps/ps-top";
 import { collectReports, KILL_GRACE_MS, scopeClient } from "./ps-data";
 
 export type PsAction = "list" | "info" | "logs" | "stop" | "kill" | "restart";

@@ -6,18 +6,18 @@
   ...
 }:
 let
-  cfg = config.programs.omp;
+  cfg = config.programs.mars;
   yaml = pkgs.formats.yaml { };
   configFile = yaml.generate "omp-config.yml" cfg.settings;
 in
 {
-  options.programs.omp = {
+  options.programs.mars = {
     enable = lib.mkEnableOption "OMP coding agent";
 
     package = lib.mkOption {
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      defaultText = lib.literalExpression "inputs.omp.packages.${pkgs.stdenv.hostPlatform.system}.default";
+      defaultText = lib.literalExpression "inputs.mars.packages.${pkgs.stdenv.hostPlatform.system}.default";
       description = "OMP package to install.";
     };
 
@@ -50,7 +50,7 @@ in
     # break every launch. Copy a writable regular file instead. The DAG entry
     # is written literally (rather than via `lib.hm.dag.entryAfter`) so the
     # home-manager-free module evaluation in `flake.nix` keeps working.
-    home.activation.ompConfig = lib.mkIf (cfg.settings != null) {
+    home.activation.marsConfig = lib.mkIf (cfg.settings != null) {
       before = [ ];
       after = [ "writeBoundary" ];
       data = ''

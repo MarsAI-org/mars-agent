@@ -1,9 +1,9 @@
 import { Database, type SQLQueryBindings } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getAutoresearchDbPath, getAutoresearchProjectDir, logger } from "@oh-my-pi/pi-utils";
-import type { ASIData, ExperimentStatus, MetricDirection, NumericMetricMap } from "@oh-my-pi/pi-tui/tools/autoresearch";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getAutoresearchDbPath, getAutoresearchProjectDir, logger } from "@marsai-org/utils";
+import type { ASIData, ExperimentStatus, MetricDirection, NumericMetricMap } from "@marsai-org/tui/tools/autoresearch";
 
 /**
  * Encode an absolute project path into a single filesystem-safe segment.

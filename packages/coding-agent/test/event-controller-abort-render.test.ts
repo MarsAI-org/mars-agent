@@ -17,15 +17,15 @@
  *         persisted reason survives and the shared presentation renders nothing.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { resolveAssistantErrorPresentation } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
+import type { AssistantMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { resolveAssistantErrorPresentation } from "@marsai-org/tui/chat/transcript-render-helpers";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 function makeAssistantMessage(overrides: Partial<AssistantMessage> = {}): AssistantMessage {

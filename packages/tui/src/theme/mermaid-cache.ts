@@ -1,6 +1,6 @@
-import type { MermaidRenderOptions } from "@oh-my-pi/pi-natives";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import * as mermaidAscii from "@oh-my-pi/pi-utils/mermaid-ascii";
+import type { MermaidRenderOptions } from "@marsai-org/natives";
+import { LRUCache } from "@marsai-org/utils/lru";
+import * as mermaidAscii from "@marsai-org/utils/mermaid-ascii";
 
 /**
  * Options controlling how fenced Mermaid source is resolved to terminal ASCII.

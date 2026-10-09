@@ -1,6 +1,6 @@
-import type { AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { invalidateMessageCache, MIN_PRUNE_TOKENS } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ToolResultMessage } from "@oh-my-pi/pi-ai";
+import type { AgentMessage, Tokenizer } from "@marsai-org/agent-core";
+import { invalidateMessageCache, MIN_PRUNE_TOKENS } from "@marsai-org/agent-core/compaction";
+import type { ToolResultMessage } from "@marsai-org/ai";
 
 /**
  * Tools whose output the advisor can get back by calling them again. Anything

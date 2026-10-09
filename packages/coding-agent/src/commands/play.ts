@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
-import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { isEnoent } from "@marsai-org/utils";
+import { Args, CliUsageError, Command, Flags } from "@marsai-org/utils/cli";
 import { playHelp as commandHelp } from "../cli/command-help";
 import { playRecording } from "../stream/player";
 import { latestRecording, parseRecording, type Recording, recordingsDir } from "../stream/recording";

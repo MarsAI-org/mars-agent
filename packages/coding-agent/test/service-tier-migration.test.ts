@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { ServiceTierByFamily } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import type { ServiceTierByFamily } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	resolveAgentServiceTierOverride,
 	validateAgentServiceTierOverrides,
-} from "@oh-my-pi/pi-coding-agent/config/service-tier";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/config/service-tier";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { getProjectAgentDir, TempDir } from "@marsai-org/utils";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
@@ -19,7 +19,7 @@ import {
 	cfgTierGoogle,
 	cfgTierOpenai,
 	cfgTierSubagent,
-} from "@oh-my-pi/pi-coding-agent/session/settings";
+} from "@marsai-org/coding-agent/session/settings";
 
 function requiredBundledModel(provider: "openai-codex" | "anthropic" | "google", id: string) {
 	const model = getBundledModel(provider, id);

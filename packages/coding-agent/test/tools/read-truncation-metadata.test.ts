@@ -3,16 +3,16 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getThemeByName, initTheme, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { ReadToolDetails, ReadTruncationStats } from "@oh-my-pi/pi-tui/tools/read";
-import { formatTruncationMetaNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { readToolRenderer } from "@oh-my-pi/pi-tui/tools/read";
-import { writeArchive } from "@oh-my-pi/pi-utils/ar";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { getThemeByName, initTheme, type Theme } from "@marsai-org/tui/theme";
+import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@marsai-org/tui/tools/streaming-output";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import type { ReadToolDetails, ReadTruncationStats } from "@marsai-org/tui/tools/read";
+import { formatTruncationMetaNotice } from "@marsai-org/tui/tools/output-meta";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { readToolRenderer } from "@marsai-org/tui/tools/read";
+import { writeArchive } from "@marsai-org/utils/ar";
 
 function textOutput(result: AgentToolResult<ReadToolDetails>): string {
 	return result.content

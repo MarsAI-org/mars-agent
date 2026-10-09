@@ -1,4 +1,4 @@
-import { runPauseScreen } from "@oh-my-pi/pi-tui/overlays/pause-screen";
+import { runPauseScreen } from "@marsai-org/tui/overlays/pause-screen";
 import { clearSubmittedText } from "./helpers/draft";
 import { shutdownHandlerTui } from "./builtin-lifecycle";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";

@@ -2,22 +2,22 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { readModelCache, writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
+import { buildModel } from "@marsai-org/catalog/build";
+import { sendsImageInputOnWire } from "@marsai-org/ai/providers/vision-guard";
+import { Effort } from "@marsai-org/catalog/effort";
+import { readModelCache, writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { getBundledModels } from "@marsai-org/catalog/models";
 import {
 	fetchWellKnownModels,
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	modelsDevCatalogFallback,
 	opencodeGoModelManagerOptions,
 	opencodeZenModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { USER_AGENT, type FetchImpl } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/provider-models/openai-compat";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import { USER_AGENT, type FetchImpl } from "@marsai-org/utils";
 import { mergePreviousSnapshotModels } from "../scripts/generate-models";
 
 const LIVE_FREE_MODEL_IDS = [

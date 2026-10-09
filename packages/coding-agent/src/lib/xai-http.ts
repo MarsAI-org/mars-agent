@@ -1,8 +1,8 @@
 // Ported from NousResearch/hermes-agent (MIT) — tools/xai_http.py.
 
-import { resolveXaiBaseUrl, XAI_DEFAULT_BASE_URL } from "@oh-my-pi/pi-ai/providers/xai-base-url";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { $env } from "@oh-my-pi/pi-utils";
+import { resolveXaiBaseUrl, XAI_DEFAULT_BASE_URL } from "@marsai-org/ai/providers/xai-base-url";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { $env } from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 
 interface XAICredentials {

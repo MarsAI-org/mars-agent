@@ -1,7 +1,7 @@
-export * from "@oh-my-pi/pi-catalog/effort";
-export * from "@oh-my-pi/pi-catalog/types";
+export * from "@marsai-org/catalog/effort";
+export * from "@marsai-org/catalog/types";
 
-import type { Type } from "@oh-my-pi/omptype";
+import type { Type } from "@marsai-org/omptype";
 import type { AnthropicSlowModeHooks } from "./providers/anthropic-slow-mode";
 import type {
 	DeleteArgs,
@@ -33,9 +33,9 @@ import type {
 	ShellResult,
 	WriteArgs,
 	WriteResult,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Api, FetchImpl, KnownApi, Model, Provider, ThinkingBudgets, Usage } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import type { Effort } from "@marsai-org/catalog/effort";
+import type { Api, FetchImpl, KnownApi, Model, Provider, ThinkingBudgets, Usage } from "@marsai-org/catalog/types";
 import type { ApiKey } from "./auth-retry";
 import type { OAuthRequestIdentity } from "./auth/types";
 import type { BedrockOptions } from "./providers/amazon-bedrock";

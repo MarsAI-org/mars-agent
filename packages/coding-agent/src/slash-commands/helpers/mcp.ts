@@ -1,5 +1,5 @@
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getMCPConfigPath, logger } from "@oh-my-pi/pi-utils";
+import * as AIError from "@marsai-org/ai/error";
+import { getMCPConfigPath, logger } from "@marsai-org/utils";
 import { connectToServer, disconnectServer, listPrompts, listResources, listTools } from "../../mcp/client";
 import {
 	addMCPServer,

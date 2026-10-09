@@ -22,9 +22,9 @@
 import { Database, type SQLQueryBindings, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getHistoryDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { getDbBusyTimeoutMs } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { getHistoryDbPath } from "@marsai-org/utils/dirs";
+import { getDbBusyTimeoutMs } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
 
 const SESSION_INDEX_DDL = `
 CREATE TABLE IF NOT EXISTS session_titles (

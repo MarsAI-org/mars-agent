@@ -1,15 +1,15 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { visibleWidth } from "@marsai-org/tui";
 import { AsyncJobManager } from "../src/async/job-manager";
 import { resetSettingsForTest, Settings, settings } from "../src/config/settings";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
 import type { ToolSession } from "../src/tools";
-import { type CoordinationDetails, waitToolRenderer } from "@oh-my-pi/pi-tui/tools/wait";
+import { type CoordinationDetails, waitToolRenderer } from "@marsai-org/tui/tools/wait";
 import { snapshotJobs } from "../src/async/job-control";
-import { formatDuration, thinkingLevelGlyph } from "@oh-my-pi/pi-tui/render/render-utils";
+import { formatDuration, thinkingLevelGlyph } from "@marsai-org/tui/render/render-utils";
 
-import { cfgTaskShowResolvedModelBadge } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { cfgTaskShowResolvedModelBadge } from "@marsai-org/coding-agent/task/settings";
 
 const ansiPattern = /\x1b\[[0-9;]*m/g;
 const hyperlinkPattern = /\x1b\]8;[^\x1b\x07]*(?:\x07|\x1b\\)/g;

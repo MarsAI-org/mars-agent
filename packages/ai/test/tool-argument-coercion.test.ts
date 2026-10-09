@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
+import { type } from "@marsai-org/omptype";
+import type { Tool, ToolCall } from "@marsai-org/ai/types";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
 
 function createHistoryTool(keyword: "anyOf" | "oneOf"): Tool {
 	return {

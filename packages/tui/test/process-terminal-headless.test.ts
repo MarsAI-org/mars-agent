@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { isTerminalHeadless, setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { isTerminalHeadless, setTerminalHeadless } from "@marsai-org/utils";
 
 const TERMINAL_PROGRESS_ACTIVE_SEQUENCE = "\x1b]9;4;3\x07";
 const TERMINAL_PROGRESS_CLEAR_SEQUENCE = "\x1b]9;4;0;\x07";

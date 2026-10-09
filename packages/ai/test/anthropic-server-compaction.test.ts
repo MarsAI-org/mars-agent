@@ -3,9 +3,9 @@ import {
 	convertAnthropicMessages,
 	streamAnthropic,
 	supportsAnthropicCompaction,
-} from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { AssistantMessage, Context, Model, ModelSpec, UserMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/providers/anthropic";
+import type { AssistantMessage, Context, Model, ModelSpec, UserMessage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 const spec: ModelSpec<"anthropic-messages"> = {

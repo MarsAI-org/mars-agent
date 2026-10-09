@@ -5,10 +5,10 @@ import {
 	goalTokenDelta,
 	renderGoalPrompt,
 	renderTrustedObjective,
-} from "@oh-my-pi/pi-coding-agent/goals/runtime";
-import type { Goal } from "@oh-my-pi/pi-tui/tools/goal";
-import type { GoalModeState, GoalRuntimeEvent, GoalTokenUsage } from "@oh-my-pi/pi-coding-agent/goals/state";
-import { escapeXmlText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/goals/runtime";
+import type { Goal } from "@marsai-org/tui/tools/goal";
+import type { GoalModeState, GoalRuntimeEvent, GoalTokenUsage } from "@marsai-org/coding-agent/goals/state";
+import { escapeXmlText } from "@marsai-org/utils";
 
 function createUsage(overrides: Partial<GoalTokenUsage> = {}): GoalTokenUsage {
 	return {

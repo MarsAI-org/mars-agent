@@ -1,18 +1,18 @@
 {
-  "name": "@oh-my-pi/pi-natives",
+  "name": "@marsai-org/natives",
   "version": "18.8.6",
   "description": "Native Rust bindings for PDF conversion, audio, WebRTC, grep, clipboard, image processing, syntax highlighting, PTY, and shell operations via N-API",
   "type": "module",
-  "homepage": "https://omp.sh",
+  "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/MarsAI-org/mars-agent.git",
     "directory": "packages/natives"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/MarsAI-org/mars-agent/issues"
   },
   "keywords": [
     "napi",

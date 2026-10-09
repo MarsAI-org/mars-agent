@@ -14,10 +14,10 @@ import {
 	IsolationBaselineTooLargeError,
 	mergeTaskBranches,
 	parseIsolationBackend,
-} from "@oh-my-pi/pi-coding-agent/task/worktree";
-import * as natives from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeWithRetries, setWorktreesDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task/worktree";
+import * as natives from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { removeWithRetries, setWorktreesDir } from "@marsai-org/utils";
 
 const tempDirs: string[] = [];
 

@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { untilAborted } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { ElementHandle, KeyInput, KeyPressOptions, MouseButton, Page } from "puppeteer-core";
 import { ToolAbortError, throwIfAborted } from "../tool-errors";
 import { splitKeyCombo, ternKey } from "./tern/keys";

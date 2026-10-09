@@ -18,10 +18,10 @@ import {
 	type GuestSnapshotActivityReconcilerCtx,
 	reconcileGuestIdleHostState,
 	reconcileGuestSnapshotHostState,
-} from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
+} from "@marsai-org/coding-agent/collab/guest";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
 import { StatusLineTestComponents } from "../helpers/status-line";
 
 const statusLines = new StatusLineTestComponents();

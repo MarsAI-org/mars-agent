@@ -13,9 +13,9 @@
  * the auth registry (`rules/auth/typesafe.kdl`), `TYPESAFE_BASE_URL`
  * overrides the API root, `TYPESAFE_DEFAULT_MODEL` the model.
  */
-import { TYPESAFE_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/discovery";
-import type { Api, FetchImpl } from "@oh-my-pi/pi-catalog/types";
-import { $env } from "@oh-my-pi/pi-utils";
+import { TYPESAFE_DEFAULT_BASE_URL } from "@marsai-org/catalog/discovery";
+import type { Api, FetchImpl } from "@marsai-org/catalog/types";
+import { $env } from "@marsai-org/utils";
 import { type ApiKey, withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { getRetryAfterMsFromHeaders } from "../utils/retry-after";

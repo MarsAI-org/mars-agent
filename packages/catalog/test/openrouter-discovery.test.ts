@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { openrouterModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { openrouterModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
 
 const CHAT_PAYLOAD = {
 	data: [

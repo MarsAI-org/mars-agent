@@ -1,20 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { applyRpcQueueModeCommand } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { applyRpcQueueModeCommand } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import { SecretObfuscator } from "@marsai-org/coding-agent/secrets";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
-import { cfgInterruptMode } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { cfgFollowUpMode } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { cfgSteeringMode } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgInterruptMode } from "@marsai-org/coding-agent/modes/settings";
+import { cfgFollowUpMode } from "@marsai-org/coding-agent/modes/settings";
+import { cfgSteeringMode } from "@marsai-org/coding-agent/modes/settings";
 
 /**
  * Regression guard for #11555: the RPC queue-mode path (`persist: false`)

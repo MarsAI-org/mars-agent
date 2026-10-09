@@ -21,10 +21,10 @@ import { afterEach, beforeEach, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { validateJsonSchemaValue } from "@oh-my-pi/pi-ai/utils/schema/json-schema-validator";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { loadAllMCPConfigs } from "@oh-my-pi/pi-coding-agent/mcp/config";
-import { getConfigRootDir, logger, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { validateJsonSchemaValue } from "@marsai-org/ai/utils/schema/json-schema-validator";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { loadAllMCPConfigs } from "@marsai-org/coding-agent/mcp/config";
+import { getConfigRootDir, logger, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 import mcpSchema from "../../src/config/mcp-schema.json" with { type: "json" };
 
 const originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;

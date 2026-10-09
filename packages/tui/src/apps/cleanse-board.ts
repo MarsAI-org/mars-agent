@@ -10,14 +10,14 @@
  * Non-TTY output keeps the original plain-line protocol
  * (`[start]`/`[done]`/`[fail]`), so scripted callers see unchanged output.
  */
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
 import { sanitizeDisplaySingleLine } from "../overlays/extensions/display-text";
 import { truncateToWidth } from "../utils";
 import { renderProgressBar, type ProgressBarStyle } from "../components/progress-bar";
 import { fgOrPlain, theme } from "../theme/theme";
 import { createLiveBoard, type LiveBoardOutput } from "../chrome/live-board";
 import type { AgentProgress } from "../tools/task";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { col, elapsed, keyed, node, row, span, stableKey, text } from "../native/describe";
 import type { DescribeContext, NativeNode } from "../native/node";
 import { Memo } from "../native/memo";

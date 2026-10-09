@@ -6,11 +6,11 @@
  */
 import * as fsSync from "node:fs";
 import * as os from "node:os";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import { EventLoopKeepalive } from "@oh-my-pi/pi-agent-core/utils/yield";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { isEnoent, isEnotdir } from "@oh-my-pi/pi-utils";
+import type { ThinkingLevel } from "@marsai-org/agent-core/thinking";
+import { EventLoopKeepalive } from "@marsai-org/agent-core/utils/yield";
+import type { ImageContent, Model } from "@marsai-org/ai";
+import { getModelPricingStatus } from "@marsai-org/catalog/models";
+import { isEnoent, isEnotdir } from "@marsai-org/utils";
 import {
 	APP_NAME,
 	directoryIsMissing,
@@ -19,12 +19,12 @@ import {
 	normalizePathForComparison,
 	setProjectDir,
 	VERSION,
-} from "@oh-my-pi/pi-utils/dirs";
-import { $env, isBunTestRuntime, setInteractiveHost } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { fuzzyFilter } from "@oh-my-pi/pi-tui/fuzzy";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+} from "@marsai-org/utils/dirs";
+import { $env, isBunTestRuntime, setInteractiveHost } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
+import * as postmortem from "@marsai-org/utils/postmortem";
+import { fuzzyFilter } from "@marsai-org/tui/fuzzy";
+import chalk from "@marsai-org/utils/chalk";
 import { reset as resetCapabilities } from "./capability";
 import {
 	type Args,
@@ -37,13 +37,13 @@ import {
 import { applyExtensionFlags, type ExtensionFlagSink } from "./cli/extension-flags";
 import { processFileArguments } from "./cli/file-processor";
 import { buildInitialMessage } from "./cli/initial-message";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { SessionPickerOptions } from "@oh-my-pi/pi-tui/apps/session-picker";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import type { SessionPickerOptions } from "@marsai-org/tui/apps/session-picker";
 import { applyStartupCwd } from "./cli/startup-cwd";
 import { getLatestRelease } from "./cli/update-cli";
 import { findConfigFile } from "./config";
 import { ModelRegistry } from "./config/model-registry";
-import { formatModelSelectorValue } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue } from "@marsai-org/tui/overlays/model-selector";
 import {
 	DEFAULT_PREWALK_TARGET,
 	disabledProviderIds,
@@ -78,9 +78,9 @@ import type { InteractiveMode } from "./modes/interactive-mode";
 import type { PrintModeOptions } from "./modes/print-mode";
 import type { RpcModeOptions } from "./modes/rpc/rpc-mode";
 import { claimRpcInput } from "./modes/rpc/rpc-input";
-import { CURRENT_SETUP_VERSION } from "@oh-my-pi/pi-tui/setup/setup-version";
+import { CURRENT_SETUP_VERSION } from "@marsai-org/tui/setup/setup-version";
 import type * as SetupWizardModule from "./modes/setup";
-import type { SetupScene } from "@oh-my-pi/pi-tui/setup/scenes/types";
+import type { SetupScene } from "@marsai-org/tui/setup/scenes/types";
 import { invokeSkillCommandFromText, isKnownSkillCommand } from "./modes/skill-command";
 import {
 	applyStartupComposerPreferences,
@@ -88,7 +88,7 @@ import {
 	stopPendingStartupComposer,
 	takeStartupComposerLease,
 } from "./modes/startup-composer";
-import { ensureTheme, initTheme, stopThemeWatcher } from "@oh-my-pi/pi-tui/theme";
+import { ensureTheme, initTheme, stopThemeWatcher } from "@marsai-org/tui/theme";
 import type { SubmittedUserInput } from "./modes/types";
 import { createWarpEventBridgeExtension } from "./modes/warp-events";
 import { AgentLifecycleManager } from "./registry/agent-lifecycle";
@@ -124,9 +124,9 @@ import { createPersistedSubagentReviverFactory } from "./task/persisted-revive";
 import { createTelemetryExportConfig, initTelemetryExport, isTelemetryExportEnabled } from "./telemetry-export";
 import { cfgTelemetryOtlpExportEnabled } from "./telemetry-settings";
 import { registerLocalInferenceApi } from "./tiny/local-inference-api";
-import { concreteThinkingLevel, parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+import { concreteThinkingLevel, parseConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import type { LspStartupServerInfo } from "./tools";
-import { sanitizeDisplayWarnings } from "@oh-my-pi/pi-tui/render/render-utils";
+import { sanitizeDisplayWarnings } from "@marsai-org/tui/render/render-utils";
 import {
 	getChangelogPath,
 	readLastChangelogVersion,
@@ -195,7 +195,7 @@ type SessionPicker = (
 /** Resume/import-only graph boundary; ordinary launches never construct a picker. */
 async function loadSessionPicker(): Promise<SessionPicker> {
 	const [{ selectSession }, { HistoryStorage }, { loadPinnedSessionIds }, { FileSessionStorage }] = await Promise.all([
-		import("@oh-my-pi/pi-tui/apps/session-picker"),
+		import("@marsai-org/tui/apps/session-picker"),
 		import("./session/history-storage"),
 		import("./session/session-pins"),
 		import("./session/session-storage"),

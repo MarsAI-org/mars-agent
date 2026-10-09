@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { TSP_KINDS, type TspNode, type TspPickerProps } from "@oh-my-pi/pi-wire";
+import { TSP_KINDS, type TspNode, type TspPickerProps } from "@marsai-org/wire";
 import { ExtensionDashboard, type ExtensionDashboardRuntime } from "../src/overlays/extensions/extension-dashboard";
 import type { Extension, ExtensionProvider } from "../src/overlays/extensions/types";
 import { initTheme } from "../src/theme";

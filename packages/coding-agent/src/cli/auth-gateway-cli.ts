@@ -25,18 +25,18 @@ import {
 	completeSimple,
 	type Model,
 	type OAuthRequestIdentity,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	AuthBrokerClient,
 	loadAuthBrokerAccountPool,
 	RemoteAuthCredentialStore,
 	type SnapshotResponse,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { DEFAULT_AUTH_GATEWAY_BIND, startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { type GeneratedProvider, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { type ModelKind, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { getConfigRootDir, logger, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+} from "@marsai-org/ai/auth-broker";
+import { DEFAULT_AUTH_GATEWAY_BIND, startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import { type GeneratedProvider, getBundledModels } from "@marsai-org/catalog/models";
+import { type ModelKind, modelKind } from "@marsai-org/catalog/types";
+import { getConfigRootDir, logger, VERSION } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { ModelRegistry } from "../config/model-registry";
 import { cfgDisabledProviders } from "../config/model-settings";
 import type { Settings } from "../config/settings";

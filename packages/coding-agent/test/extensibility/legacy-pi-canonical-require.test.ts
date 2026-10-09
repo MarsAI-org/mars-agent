@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 
 const SHIM_PATH = path.join(import.meta.dir, "../../src/extensibility/plugins/legacy-pi-compat.ts");
 const PACKAGE_DIR = path.join(import.meta.dir, "../..");
@@ -51,26 +51,26 @@ describe("legacy-pi specifier shim", () => {
 		// `Bun.resolveSync` with a specifier this same hook matches. Bun
 		// re-entered the hook and re-prefixed the namespace on every pass until
 		// the import died as `NameTooLong reading "file:file:…"`, breaking every
-		// `require("@oh-my-pi/pi-ai/index.js")` first-use boundary — the
+		// `require("@marsai-org/ai/index.js")` first-use boundary — the
 		// `/login` provider selector among them.
-		const loaded = parseLoaded(await requireThroughShim("@oh-my-pi/pi-ai/index.js"));
+		const loaded = parseLoaded(await requireThroughShim("@marsai-org/ai/index.js"));
 		expect(loaded.pluginLocal).toBe(false);
 		expect(loaded.keys).toBeGreaterThan(1);
 	}, 30_000);
 
 	it("keeps a plugin's canonical subpath import on the host copy, not a plugin-local install", async () => {
-		// A plugin that ships its own `@oh-my-pi/pi-ai` must still share the host
+		// A plugin that ships its own `@marsai-org/ai` must still share the host
 		// singleton (split registries otherwise); only the host copy exposes more
 		// than the fixture's single marker export.
 		tempDir = TempDir.createSync("@pi-legacy-canonical-shadow-");
-		const localPackage = tempDir.join("node_modules/@oh-my-pi/pi-ai");
+		const localPackage = tempDir.join("node_modules/@marsai-org/ai");
 		await Bun.write(
 			path.join(localPackage, "package.json"),
-			JSON.stringify({ name: "@oh-my-pi/pi-ai", version: "0.0.0", main: "index.js" }),
+			JSON.stringify({ name: "@marsai-org/ai", version: "0.0.0", main: "index.js" }),
 		);
 		await Bun.write(path.join(localPackage, "index.js"), "module.exports = { PLUGIN_LOCAL_COPY: true };");
 		const pluginEntry = tempDir.join("plugin.cjs");
-		await Bun.write(pluginEntry, 'module.exports = require("@oh-my-pi/pi-ai/index.js");');
+		await Bun.write(pluginEntry, 'module.exports = require("@marsai-org/ai/index.js");');
 
 		const loaded = parseLoaded(await requireThroughShim(pluginEntry));
 		expect(loaded.pluginLocal).toBe(false);

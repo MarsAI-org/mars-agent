@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
-import { type AssistantMessageEventStream, clearCustomApis, getCustomApi } from "@oh-my-pi/pi-ai";
-import { getOAuthProvider } from "@oh-my-pi/pi-ai/oauth";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type AssistantMessageEventStream, clearCustomApis, getCustomApi } from "@marsai-org/ai";
+import { getOAuthProvider } from "@marsai-org/ai/oauth";
+import { buildModel } from "@marsai-org/catalog/build";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { ModelRegistry, type ProviderConfigInput } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 describe("ModelRegistry runtime source cleanup", () => {
 	let authStorage: AuthStorage;

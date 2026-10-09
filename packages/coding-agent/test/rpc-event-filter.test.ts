@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
-import { readLines, TempDir } from "@oh-my-pi/pi-utils";
+import { readLines, TempDir } from "@marsai-org/utils";
 
 describe("set_event_filter over RPC", () => {
 	test("rejects invalid replacements atomically and echoes projection resets in v1 and v2", async () => {

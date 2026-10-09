@@ -6,9 +6,9 @@
  * internals, which massively overcounts.
  */
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
+import { type } from "@marsai-org/omptype";
+import { Tokenizer } from "@marsai-org/agent-core";
+import { arkToWireSchema } from "@marsai-org/ai/utils/schema";
 import {
 	type ContextBreakdown,
 	computeNonMessageBreakdown,

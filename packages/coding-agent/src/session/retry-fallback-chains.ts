@@ -1,15 +1,15 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
 import type { ModelRegistry } from "../config/model-registry";
 import { cfgModelRoles } from "../config/model-settings";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue, parseModelString } from "@marsai-org/tui/overlays/model-selector";
 import { formatModelString, formatModelStringWithRouting } from "../config/model-resolver";
 import type { Settings } from "../config/settings";
 import {
 	type ConfiguredThinkingLevel,
 	concreteThinkingLevel,
 	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import { resolveConfiguredModelPatterns, resolveModelRoleValue } from "../config/model-resolver";
 import { getRoleInfo, isKindRole } from "../config/model-roles";
 

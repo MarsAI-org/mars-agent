@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
 
 describe("parseArgs — --print-thoughts flag", () => {
 	it("does not consume the next argument", () => {

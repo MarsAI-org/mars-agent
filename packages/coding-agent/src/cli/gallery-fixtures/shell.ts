@@ -109,7 +109,7 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 			details: {
 				language: "python",
 				languages: ["python"],
-				jsonOutputs: [["@ai-sdk/anthropic", "@oh-my-pi/pi-ai", "@oh-my-pi/pi-tui"]],
+				jsonOutputs: [["@ai-sdk/anthropic", "@marsai-org/ai", "@marsai-org/tui"]],
 				cells: [
 					{
 						index: 0,

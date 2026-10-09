@@ -1,4 +1,4 @@
-import type { ImageContent, MessageAttribution, ServiceTierByFamily, TextContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent, MessageAttribution, ServiceTierByFamily, TextContent } from "@marsai-org/ai";
 import type { AgentMessage } from "../types";
 
 export interface SessionEntryBase {

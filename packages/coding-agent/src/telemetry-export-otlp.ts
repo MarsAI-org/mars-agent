@@ -20,8 +20,8 @@ import type {
 	CostEstimate,
 	CostEstimatorContext,
 	ToolStatus,
-} from "@oh-my-pi/pi-agent-core";
-import { logger, postmortem } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { logger, postmortem } from "@marsai-org/utils";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -172,7 +172,7 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			readers: [new PeriodicExportingMetricReader({ exporter })],
 		});
 		metrics.setGlobalMeterProvider(meterProvider);
-		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@oh-my-pi/pi-coding-agent"));
+		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@marsai-org/coding-agent"));
 	}
 
 	if (signalConfig.log) {
@@ -182,7 +182,7 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			processors: [new BatchLogRecordProcessor({ exporter })],
 		});
 		logs.setGlobalLoggerProvider(logProvider);
-		otelLogger = logProvider.getLogger("@oh-my-pi/pi-coding-agent");
+		otelLogger = logProvider.getLogger("@marsai-org/coding-agent");
 		unregisterLogSink = logger.registerLogSink(event => {
 			emitOtelLog(event.level, event.message, logAttributesFromContext(event.context), "omp.log", event.timestamp);
 		});

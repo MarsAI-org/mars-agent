@@ -7,8 +7,8 @@ import {
 	type AutocompleteProvider,
 	CombinedAutocompleteProvider,
 	findLeadingSlashCommandStart,
-} from "@oh-my-pi/pi-tui/autocomplete";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
+} from "@marsai-org/tui/autocomplete";
+import { Editor } from "@marsai-org/tui/components/editor";
 import { defaultEditorTheme } from "./test-themes";
 
 function onceAutocompleteUpdate(editor: Editor): Promise<void> {

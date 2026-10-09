@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { extractPrintableText } from "@oh-my-pi/pi-tui/keys";
-import { ProcessTerminal, type TerminalStartOptions } from "@oh-my-pi/pi-tui/terminal";
+import { extractPrintableText } from "@marsai-org/tui/keys";
+import { ProcessTerminal, type TerminalStartOptions } from "@marsai-org/tui/terminal";
 import {
 	type CellDimensions,
 	getCellDimensions,
 	getTerminalInfo,
 	setCellDimensions,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/terminal-capabilities";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 const stdinIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdin, "isTTY");
 const stdoutIsTtyDescriptor = Object.getOwnPropertyDescriptor(process.stdout, "isTTY");

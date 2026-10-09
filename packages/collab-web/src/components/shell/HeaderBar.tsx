@@ -1,4 +1,4 @@
-import type { SessionHeader, SessionState } from "@oh-my-pi/pi-wire";
+import type { SessionHeader, SessionState } from "@marsai-org/wire";
 import { LogOut, PanelRight } from "lucide-react";
 import type { ReactNode } from "react";
 import { memo } from "react";

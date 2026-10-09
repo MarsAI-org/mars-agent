@@ -1,8 +1,8 @@
 import { Database, type Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type AgentTelemetry, instrumentedCompleteSimple } from "@oh-my-pi/pi-agent-core";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
+import { type AgentTelemetry, instrumentedCompleteSimple } from "@marsai-org/agent-core";
+import type { Api, Model } from "@marsai-org/ai";
 import {
 	getAgentDir,
 	getSkillDescriptionsDbPath,
@@ -11,7 +11,7 @@ import {
 	logger,
 	postmortem,
 	prompt,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { getModelMatchPreferences, parseModelPattern, resolveRoleSelection } from "../config/model-resolver";
 import type { Settings } from "../config/settings";

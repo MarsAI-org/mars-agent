@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { Text } from "@oh-my-pi/pi-tui";
+import * as themeModule from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { Component } from "@marsai-org/tui";
+import { Text } from "@marsai-org/tui";
 
 /**
  * Regression for issue #6337: a status message presented while the auto-theme

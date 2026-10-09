@@ -2,18 +2,14 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type AgentToolResult, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import {
-	pruneSupersededToolResults,
-	readToolSupersedeKey,
-	type SessionEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { isCompleteReadResult } from "@oh-my-pi/pi-coding-agent/tools/read-supersede";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { type AgentToolResult, Tokenizer } from "@marsai-org/agent-core";
+import { pruneSupersededToolResults, readToolSupersedeKey, type SessionEntry } from "@marsai-org/agent-core/compaction";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { isCompleteReadResult } from "@marsai-org/coding-agent/tools/read-supersede";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // Real `ReadTool` results through the supersede pass with `isCompleteReadResult`,
 // so each completeness signal it relies on is exercised end to end.

@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { bindPreparedExtensions, loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import { bindPreparedExtensions, loadExtensions } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import type { ExtensionAPI } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 
 const temporaryDirectories: string[] = [];
 

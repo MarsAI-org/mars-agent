@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "bun:test";
-import { type TerminalFramePlan, type TerminalFrameProvider, TUI, type ViewportSize } from "@oh-my-pi/pi-tui";
+import { type TerminalFramePlan, type TerminalFrameProvider, TUI, type ViewportSize } from "@marsai-org/tui";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { VirtualTerminal } from "./virtual-terminal";
 

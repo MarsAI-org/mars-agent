@@ -16,12 +16,12 @@ import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { runPluginCommand } from "@oh-my-pi/pi-coding-agent/cli/plugin-cli";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/manager";
-import { MarketplaceManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import type { InstalledPlugin } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { runPluginCommand } from "@marsai-org/coding-agent/cli/plugin-cli";
+import { PluginManager } from "@marsai-org/coding-agent/extensibility/plugins/manager";
+import { MarketplaceManager } from "@marsai-org/coding-agent/extensibility/plugins/marketplace";
+import type { InstalledPlugin } from "@marsai-org/coding-agent/extensibility/plugins/types";
+import * as piUtils from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const FAKE_INSTALLED: InstalledPlugin = {
 	name: "kimi-datasource",

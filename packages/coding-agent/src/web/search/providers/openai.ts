@@ -1,5 +1,5 @@
-import { type Api, type AuthStorage, type Model, withAuth } from "@oh-my-pi/pi-ai";
-import { asRecord } from "@oh-my-pi/pi-utils";
+import { type Api, type AuthStorage, type Model, withAuth } from "@marsai-org/ai";
+import { asRecord } from "@marsai-org/utils";
 import {
 	type SearchCitation,
 	SearchProviderError,

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import { streamAppleFoundationModels } from "@oh-my-pi/pi-ai/providers/apple-foundation-models";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as natives from "@oh-my-pi/pi-natives";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import { streamAppleFoundationModels } from "@marsai-org/ai/providers/apple-foundation-models";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as natives from "@marsai-org/natives";
 import { BEDROCK_TEST_CONTEXT, bedrockEvent, bedrockTestModel } from "./helpers/bedrock-stream";
 
 const raw = '{"path":"repaired.txt","content":"hello';

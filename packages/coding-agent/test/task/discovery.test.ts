@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { disableProvider, enableProvider } from "@oh-my-pi/pi-coding-agent/capability";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { clearAgentPluginRootCache } from "@oh-my-pi/pi-coding-agent/discovery/agent-plugin-format";
+import { disableProvider, enableProvider } from "@marsai-org/coding-agent/capability";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { clearAgentPluginRootCache } from "@marsai-org/coding-agent/discovery/agent-plugin-format";
 import {
 	clearOmpExtensionCliRoots,
 	injectOmpExtensionCliRoots,
-} from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { clearClaudePluginRootsCache, injectPluginDirRoots } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { discoverAgents } from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { clearClaudePluginRootsCache, injectPluginDirRoots } from "@marsai-org/coding-agent/discovery/helpers";
+import { discoverAgents } from "@marsai-org/coding-agent/task/discovery";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const OMP_AGENT_MD = [
 	"---",

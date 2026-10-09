@@ -1,11 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { CompactionCancelledError, type CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { getThemeByName, setThemeInstance, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { Container, Spacer } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { CompactionCancelledError, type CompactionResult } from "@marsai-org/agent-core/compaction";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { CommandController } from "@marsai-org/coding-agent/modes/controllers/command-controller";
+import { getThemeByName, setThemeInstance, type Theme, theme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { Container, Spacer } from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 
 /**
  * Contract under test: `CommandController.executeCompaction` must not leak

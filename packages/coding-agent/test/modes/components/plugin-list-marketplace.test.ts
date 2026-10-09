@@ -1,22 +1,22 @@
 import { beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as os from "node:os";
 import { stripVTControlCharacters } from "node:util";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins";
+import { PluginManager } from "@marsai-org/coding-agent/extensibility/plugins";
 import {
 	type InstalledPluginSummary,
 	MarketplaceManager,
 	parsePluginId,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import type { InstalledPlugin } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/types";
+} from "@marsai-org/coding-agent/extensibility/plugins/marketplace";
+import { createPluginSettingsHost } from "@marsai-org/coding-agent/extensibility/plugins/settings-host";
+import type { InstalledPlugin } from "@marsai-org/coding-agent/extensibility/plugins/types";
 import {
 	type InstalledPluginSummary as MarketplaceSettingsPlugin,
 	MarketplacePluginDetailComponent,
 	PluginListComponent,
 	type PluginListEntry,
 	PluginSettingsComponent,
-} from "@oh-my-pi/pi-tui/overlays/plugin-settings";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/overlays/plugin-settings";
+import { initTheme } from "@marsai-org/tui/theme";
 
 beforeAll(async () => {
 	await initTheme();

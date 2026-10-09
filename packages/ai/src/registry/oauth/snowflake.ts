@@ -1,5 +1,5 @@
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { authPolicyFor } from "@marsai-org/catalog/compat/auth";
+import { isRecord } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import { normalizeSnowflakeAccountUrl } from "../snowflake";
 import { OAuthCallbackFlow } from "./callback-server";

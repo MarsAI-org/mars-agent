@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, expect, it, vi } from "bun:test";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { Text } from "@oh-my-pi/pi-tui";
+import { Composer } from "@marsai-org/tui/prompt/composer";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { initTheme } from "@marsai-org/tui/theme";
+import { Text } from "@marsai-org/tui";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";
 import { withoutTerminalMultiplexer } from "./terminal-multiplexer-environment";

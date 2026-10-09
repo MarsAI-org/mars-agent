@@ -4,14 +4,14 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Type } from "@oh-my-pi/omptype/typebox";
-import type { AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { HookRunner, type LoadedHook } from "@oh-my-pi/pi-coding-agent/extensibility/hooks";
-import { HookToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/tool-wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Type } from "@marsai-org/omptype/typebox";
+import type { AgentTool, AgentToolContext } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { HookRunner, type LoadedHook } from "@marsai-org/coding-agent/extensibility/hooks";
+import { HookToolWrapper } from "@marsai-org/coding-agent/extensibility/hooks/tool-wrapper";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
 describe("HookToolWrapper tool_call contract", () => {
 	let sharedTempDir: TempDir;

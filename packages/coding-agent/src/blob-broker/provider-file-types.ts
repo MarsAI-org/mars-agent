@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { OmpErrors, type } from "@oh-my-pi/omptype";
-import type { ProviderFileReference } from "@oh-my-pi/pi-ai";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { OmpErrors, type } from "@marsai-org/omptype";
+import type { ProviderFileReference } from "@marsai-org/ai";
+import { isEnoent } from "@marsai-org/utils";
 import type { RemoteDeleteAction } from "./publication";
 
 /** Model providers whose official APIs support reusable uploaded-file references. */

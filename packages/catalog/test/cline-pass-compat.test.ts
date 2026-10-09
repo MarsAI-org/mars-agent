@@ -1,17 +1,17 @@
 import { describe, expect, it } from "bun:test";
-import { toClinePassPublicModelId, toClinePassWireModelId } from "@oh-my-pi/pi-catalog/cline-pass-model-id";
-import { isBareIdReferenceProvider } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { toClinePassPublicModelId, toClinePassWireModelId } from "@marsai-org/catalog/cline-pass-model-id";
+import { isBareIdReferenceProvider } from "@marsai-org/catalog/compat/behavior";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { Effort } from "@marsai-org/catalog/effort";
 import {
 	DEFAULT_MODEL_PER_PROVIDER,
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
 	PROVIDER_DESCRIPTORS,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import { createReferenceResolver } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { clinePassModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models";
+import { createReferenceResolver } from "@marsai-org/catalog/provider-models/bundled-references";
+import { clinePassModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 const CLINEPASS_MODELS_DEV_FIXTURE = {
 	"cline-pass": {

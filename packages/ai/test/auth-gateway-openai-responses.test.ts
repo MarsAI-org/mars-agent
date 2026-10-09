@@ -2,16 +2,16 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { encodeResponse, encodeStream, parseRequest } from "@oh-my-pi/pi-ai/providers/openai-responses-server";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { encodeResponse, encodeStream, parseRequest } from "@marsai-org/ai/providers/openai-responses-server";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import type { AssistantMessage, Context, ModelSpec } from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 function zeroUsage(): AssistantMessage["usage"] {
 	return {

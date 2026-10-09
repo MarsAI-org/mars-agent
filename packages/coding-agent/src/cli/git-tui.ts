@@ -1,10 +1,6 @@
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import {
-	type GitTuiHost,
-	runGitTui as runView,
-	showGitOverlay as showOverlay,
-} from "@oh-my-pi/pi-tui/apps/git/git-tui";
+import * as vcs from "@marsai-org/natives/vcs";
+import type { TUI } from "@marsai-org/tui";
+import { type GitTuiHost, runGitTui as runView, showGitOverlay as showOverlay } from "@marsai-org/tui/apps/git/git-tui";
 import { generateGitCommit } from "../commit/conventional/service";
 import { aiStage } from "./git-tui/ai-stage";
 import { AvatarLoader } from "./git-tui/avatar";

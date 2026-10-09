@@ -1,9 +1,9 @@
 /**
  * CustomToolAdapter wraps CustomTool instances into AgentTool for use with the agent.
  */
-import type { AgentTool, AgentToolUpdateCallback, ToolLoadMode } from "@oh-my-pi/pi-agent-core";
-import type { Static, TSchema } from "@oh-my-pi/pi-ai";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentTool, AgentToolUpdateCallback, ToolLoadMode } from "@marsai-org/agent-core";
+import type { Static, TSchema } from "@marsai-org/ai";
+import type { Theme } from "@marsai-org/tui/theme";
 import { defaultLoadModeForToolName } from "../../tools/essential-tools";
 import { applyToolProxy } from "../tool-proxy";
 import type { CustomTool, CustomToolContext } from "./types";

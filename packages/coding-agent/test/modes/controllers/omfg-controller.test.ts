@@ -2,15 +2,15 @@ import { afterEach, beforeAll, describe, expect, it, type Mock, vi } from "bun:t
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { OmfgController } from "@oh-my-pi/pi-coding-agent/modes/controllers/omfg-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { Container, type TUI } from "@oh-my-pi/pi-tui";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { clearCache, readDirEntries } from "@oh-my-pi/pi-coding-agent/capability/fs";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
+import type { Rule } from "@marsai-org/coding-agent/capability/rule";
+import { OmfgController } from "@marsai-org/coding-agent/modes/controllers/omfg-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { Container, type TUI } from "@marsai-org/tui";
+import { removeWithRetries } from "@marsai-org/utils";
+import { clearCache, readDirEntries } from "@marsai-org/coding-agent/capability/fs";
 
 const PROJECT_OPTION = "This project (.omp/rules)";
 

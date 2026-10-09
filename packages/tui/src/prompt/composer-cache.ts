@@ -18,12 +18,12 @@
 import type { Database, Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getComposerCacheDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { openSqliteDatabaseSync } from "@oh-my-pi/pi-utils/sqlite";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { getComposerCacheDbPath } from "@marsai-org/utils/dirs";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
+import * as postmortem from "@marsai-org/utils/postmortem";
+import { openSqliteDatabaseSync } from "@marsai-org/utils/sqlite";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import type { ComposerPreferences, ComposerStatusCache } from "./composer";
 import { readStatusLineStartupData } from "../status-line/startup";
 import type { SymbolPreset } from "../theme/theme";

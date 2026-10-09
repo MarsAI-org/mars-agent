@@ -1,4 +1,4 @@
-import type { AuthStorage, UsageReport } from "@oh-my-pi/pi-ai";
+import type { AuthStorage, UsageReport } from "@marsai-org/ai";
 
 /** Identity slice of a stored credential, for "every account" coverage. */
 export interface UsageAccountIdentity {

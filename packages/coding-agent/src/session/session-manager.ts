@@ -8,8 +8,8 @@ import type {
 	ServiceTierByFamily,
 	TextContent,
 	Usage,
-} from "@oh-my-pi/pi-ai";
-import { createSyntheticToolResultMessage } from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/ai";
+import { createSyntheticToolResultMessage } from "@marsai-org/agent-core";
 import {
 	directoryIsEnterable,
 	directoryIsMissing,
@@ -25,8 +25,8 @@ import {
 	pathIsWithin,
 	stringifyJson,
 	toError,
-} from "@oh-my-pi/pi-utils";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/utils";
+import type { StructuredSubagentSchemaMode } from "@marsai-org/tui/tools/task";
 import { moveFileAcrossDevices } from "../utils/atomic-file";
 import { ArtifactManager } from "./artifacts";
 import { type BlobPutOptions, type BlobPutResult, BlobStore, lazyImageDataSync } from "./blob-store";

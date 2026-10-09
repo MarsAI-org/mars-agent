@@ -11,7 +11,7 @@ import {
 	resolveTelemetry,
 	type StreamFn,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	Context,
 	CredentialDisabledEvent,
@@ -23,22 +23,22 @@ import type {
 	ServiceTier,
 	ServiceTierByFamily,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import type { DiscoverAuthStorageOptions } from "@oh-my-pi/pi-ai/auth-broker/discover";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import { prewarmOpenAICodexResponses } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { isOpenAICodexWebSocketPreferred } from "@oh-my-pi/pi-ai/providers/openai-codex-transport";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { FALLBACK_DIALECT, preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { $env } from "@oh-my-pi/pi-utils/env";
-import { getAgentDir, getModelDbPath, getProjectDir } from "@oh-my-pi/pi-utils/dirs";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import * as prompt from "@oh-my-pi/pi-utils/prompt";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/ai";
+import { resolveApiKeyOnce } from "@marsai-org/ai/auth-retry";
+import type { DiscoverAuthStorageOptions } from "@marsai-org/ai/auth-broker/discover";
+import type { Dialect } from "@marsai-org/ai/dialect";
+import { prewarmOpenAICodexResponses } from "@marsai-org/ai/providers/openai-codex-responses";
+import { isOpenAICodexWebSocketPreferred } from "@marsai-org/ai/providers/openai-codex-transport";
+import { withCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
+import { FALLBACK_DIALECT, preferredDialect } from "@marsai-org/catalog/identity";
+import type { Component } from "@marsai-org/tui";
+import { $env } from "@marsai-org/utils/env";
+import { getAgentDir, getModelDbPath, getProjectDir } from "@marsai-org/utils/dirs";
+import * as logger from "@marsai-org/utils/logger";
+import * as postmortem from "@marsai-org/utils/postmortem";
+import * as prompt from "@marsai-org/utils/prompt";
+import { Snowflake } from "@marsai-org/utils/snowflake";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import {
 	discoverAdvisorConfigs,
 	discoverWatchdogFiles,
@@ -79,7 +79,7 @@ import {
 	resolveSessionModelSelector,
 	sessionModelDiscoveryProviders,
 } from "./config/model-resolver";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue, parseModelString } from "@marsai-org/tui/overlays/model-selector";
 import { loadPromptTemplates as loadPromptTemplatesInternal, type PromptTemplate } from "./config/prompt-templates";
 import { buildServiceTierByFamily } from "./config/service-tier";
 import { bindEffects, combine } from "./config/registry";
@@ -95,7 +95,7 @@ import { disposeVmContextsByOwner } from "./eval/js/context-manager";
 import { getEnabledEvalPreludes, type EvalPreludeDefinition } from "./eval/preludes";
 import { disposeAllKernelSessions, disposeKernelSessionsByOwner } from "./eval/py/executor";
 import { defaultEvalSessionId } from "./eval/session-id";
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditMode } from "@marsai-org/tui/tools/edit";
 import {
 	type CustomCommandsLoadResult,
 	type LoadedCustomCommand,
@@ -139,7 +139,7 @@ import {
 import { type FileSlashCommand, loadSlashCommands as loadSlashCommandsInternal } from "./extensibility/slash-commands";
 import type { HindsightSessionState } from "./hindsight/state";
 import { LocalProtocolHandler, type LocalProtocolOptions } from "./internal-urls";
-import { stripXdUrlPrefix } from "@oh-my-pi/pi-tui/tools/xd-url";
+import { stripXdUrlPrefix } from "@marsai-org/tui/tools/xd-url";
 import { setSharedLspEnabled } from "./lsp/client";
 import { LSP_STARTUP_EVENT_CHANNEL, type LspStartupEvent } from "./lsp/startup-events";
 import {
@@ -152,7 +152,7 @@ import {
 	type MCPToolsLoadResult,
 	shouldFilterBrowserMCPForPrelude,
 } from "./mcp";
-import { parseMCPToolName } from "@oh-my-pi/pi-tui/tools/mcp";
+import { parseMCPToolName } from "@marsai-org/tui/tools/mcp";
 import { MCP_CONNECTION_STATUS_EVENT_CHANNEL, type McpConnectionStatusEvent } from "./mcp/startup-events";
 import { resolveMCPToolAlias } from "./mcp/tool-bridge";
 import { createSessionMemoryRuntimeContext, resolveMemoryBackend } from "./memory-backend";
@@ -233,7 +233,7 @@ import { AgentOutputManager } from "./task/output-manager";
 import { wrapStreamFnWithProviderConcurrency } from "./task/provider-concurrency";
 import { sessionDelegationBias } from "./task/prompt-policy";
 import { isScoutSpawnable } from "./task/spawn-policy";
-import type { StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
+import type { StructuredSubagentSchemaMode } from "@marsai-org/tui/tools/task";
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -244,7 +244,7 @@ import {
 	resolveThinkingLevelForModel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import {
 	BashTool,
 	BUILTIN_TOOLS,
@@ -295,7 +295,7 @@ import { ttsTool } from "./tools/tts";
 import { resolveActiveRepoContext } from "./utils/active-repo-context";
 import { EventBus } from "./utils/event-bus";
 import { normalizeProviderContextImagesForModel } from "./utils/image-loading";
-import { formatLocalCalendarDate } from "@oh-my-pi/pi-tui/chrome/local-date";
+import { formatLocalCalendarDate } from "@marsai-org/tui/chrome/local-date";
 import { normalizePromptPath } from "./utils/prompt-path";
 import { buildNamedToolChoice } from "./utils/tool-choice";
 import { VibeSessionRegistry } from "./vibe/runtime";
@@ -1651,7 +1651,7 @@ export function createAutoLearnCaptureRunner(
  * const { session } = await createAgentSession();
  *
  * // With explicit model
- * import { getModel } from '@oh-my-pi/pi-ai';
+ * import { getModel } from '@marsai-org/ai';
  * const { session } = await createAgentSession({
  *   model: getModel('anthropic', 'claude-opus-4-5'),
  *   thinkingLevel: 'high',

@@ -1,19 +1,19 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentMessage, SyntheticToolResultDetails } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import type { AgentMessage, SyntheticToolResultDetails } from "@marsai-org/agent-core";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { kCursorExecResolved } from "@marsai-org/ai/utils/block-symbols";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { Model, Usage } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	type RecoveryCompactionResult,
 	TurnRecovery,
 	type TurnRecoveryHost,
-} from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/turn-recovery";
+import { TempDir } from "@marsai-org/utils";
 import { createProviderErrorMessage } from "../../ai/src/providers/error-message";
 
 const USAGE: Usage = {

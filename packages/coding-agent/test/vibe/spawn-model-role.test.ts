@@ -9,15 +9,15 @@
  * chain and vibe children silently retry on the `default` role's chain.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { ExecutorOptions } from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { VibeCli } from "@oh-my-pi/pi-tui/tools/vibe";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { ExecutorOptions } from "@marsai-org/coding-agent/task/executor";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import type { SingleResult } from "@marsai-org/tui/tools/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import type { VibeCli } from "@marsai-org/tui/tools/vibe";
+import { VibeSessionRegistry } from "@marsai-org/coding-agent/vibe/runtime";
 
 function makeParentSession(settings: Settings): ToolSession {
 	return {

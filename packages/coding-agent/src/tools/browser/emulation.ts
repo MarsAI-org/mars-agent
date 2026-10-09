@@ -1,4 +1,4 @@
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { Device, Frame, NetworkConditions, Page, Permission } from "puppeteer-core";
 import { pressKey } from "./interactions";
 import { applyViewport } from "./launch";

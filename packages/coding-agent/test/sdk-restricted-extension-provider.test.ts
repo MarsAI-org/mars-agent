@@ -3,22 +3,22 @@ import { $ } from "bun";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { type AssistantMessage, createAssistantMessageEventStream, getCustomApi, type ToolCall } from "@oh-my-pi/pi-ai";
-import { runCommitAgentSession } from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import * as commitTools from "@oh-my-pi/pi-coding-agent/commit/agentic/tools";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
+import { type } from "@marsai-org/omptype";
+import { type AssistantMessage, createAssistantMessageEventStream, getCustomApi, type ToolCall } from "@marsai-org/ai";
+import { runCommitAgentSession } from "@marsai-org/coding-agent/commit/agentic/agent";
+import * as commitTools from "@marsai-org/coding-agent/commit/agentic/tools";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeExtensions } from "@marsai-org/coding-agent/modes/runtime-init";
 import {
 	type CreateAgentSessionOptions,
 	createAgentSession,
 	type ExtensionFactory,
-} from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/sdk";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir, Snowflake } from "@marsai-org/utils";
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {
@@ -29,7 +29,7 @@ function restoreEnv(key: string, value: string | undefined): void {
 }
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
-import { cfgExtensionHandlersToolCallTimeoutMs } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
+import { cfgExtensionHandlersToolCallTimeoutMs } from "@marsai-org/coding-agent/extensibility/settings";
 
 const providerName = "restricted-session-provider";
 const modelId = "restricted-session-model";

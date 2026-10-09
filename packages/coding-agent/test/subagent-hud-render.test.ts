@@ -7,35 +7,35 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resetHangulCompatibilityJamoWidthForTests, setHangulCompatibilityJamoWidth } from "@oh-my-pi/pi-tui";
-import { PINNED_HUD_TOGGLE_ID } from "@oh-my-pi/pi-tui/prompt/composer";
+import { Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { resetHangulCompatibilityJamoWidthForTests, setHangulCompatibilityJamoWidth } from "@marsai-org/tui";
+import { PINNED_HUD_TOGGLE_ID } from "@marsai-org/tui/prompt/composer";
 import {
 	InteractiveMode,
 	layoutPinnedHud,
 	nextSubagentPreviewTickMs,
 	renderSubagentHudLines,
 	SubagentHudComponent,
-} from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { type ObservableSession, SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { type AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/coding-agent/modes/interactive-mode";
+import { type ObservableSession, SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { type AgentProgress } from "@marsai-org/tui/tools/task";
 import {
 	type SubagentLifecyclePayload,
 	type SubagentProgressPayload,
 	TASK_SUBAGENT_LIFECYCLE_CHANNEL,
 	TASK_SUBAGENT_PROGRESS_CHANNEL,
-} from "@oh-my-pi/pi-coding-agent/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir } from "@marsai-org/utils";
 
-import { cfgDisplaySubagentLivePreview } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { cfgTaskShowResolvedModelBadge } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { cfgDisplaySubagentLivePreview } from "@marsai-org/coding-agent/modes/settings";
+import { cfgTaskShowResolvedModelBadge } from "@marsai-org/coding-agent/task/settings";
 
 function makeSession(overrides: Partial<ObservableSession> & { id: string }): ObservableSession {
 	return {

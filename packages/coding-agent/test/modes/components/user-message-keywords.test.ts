@@ -1,20 +1,20 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import * as url from "node:url";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { MAGIC_KEYWORDS } from "@oh-my-pi/pi-coding-agent/modes/magic-keywords";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { imageReferenceHyperlink } from "@oh-my-pi/pi-tui/prompt/image-references";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { getEditorTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { Container } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { MAGIC_KEYWORDS } from "@marsai-org/coding-agent/modes/magic-keywords";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@marsai-org/tui/prompt/composer-attachments";
+import { imageReferenceHyperlink } from "@marsai-org/tui/prompt/image-references";
+import { setMagicKeywords } from "@marsai-org/tui/prompt/magic-keywords";
+import { getEditorTheme, initTheme, theme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { Container } from "@marsai-org/tui";
 
-import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgTuiHyperlinks } from "@marsai-org/coding-agent/modes/settings";
 
 beforeAll(async () => {
 	resetSettingsForTest();

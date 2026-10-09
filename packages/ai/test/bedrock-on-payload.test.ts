@@ -3,10 +3,10 @@
 // upstream. The replacement contract matches anthropic / openai-responses /
 // google: await the hook and use its non-undefined return as the request body.
 import { describe, expect, it, vi } from "bun:test";
-import { type BedrockOptions, streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type BedrockOptions, streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 function model(): Model<"bedrock-converse-stream"> {
 	return buildModel({

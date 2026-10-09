@@ -8,7 +8,7 @@ import {
 	readSseJson,
 	readSseJsonOrText,
 	type ServerSentEvent,
-} from "@oh-my-pi/pi-utils/stream";
+} from "@marsai-org/utils/stream";
 
 const encoder = new TextEncoder();
 

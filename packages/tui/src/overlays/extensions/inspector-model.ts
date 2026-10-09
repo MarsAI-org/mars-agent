@@ -5,8 +5,8 @@
  * are joined here at render time — the same seam as {@link snapshotMcpRuntime}.
  */
 import * as path from "node:path";
-import { arkToWireSchema, isArkSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { normalizePathForComparison, parseFrontmatter } from "@oh-my-pi/pi-utils";
+import { arkToWireSchema, isArkSchema } from "@marsai-org/ai/utils/schema";
+import { normalizePathForComparison, parseFrontmatter } from "@marsai-org/utils";
 import {
 	sanitizeDisplayField,
 	sanitizeDisplayLine,

@@ -1,18 +1,11 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
-import { BlobStore } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type {
-	CompactionEntry,
-	FileEntry,
-	SessionMessageEntry,
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { formatSessionHistoryMarkdown } from "@oh-my-pi/pi-coding-agent/session/session-history-format";
-import {
-	loadSessionMessagesReadOnly,
-	resolveBlobRefsInEntries,
-} from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import { BlobStore } from "@marsai-org/coding-agent/session/blob-store";
+import type { CompactionEntry, FileEntry, SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { formatSessionHistoryMarkdown } from "@marsai-org/coding-agent/session/session-history-format";
+import { loadSessionMessagesReadOnly, resolveBlobRefsInEntries } from "@marsai-org/coding-agent/session/session-loader";
+import { TempDir } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 
 const timestamp = new Date(0).toISOString();
 const header = { type: "session", version: 3, id: "session", timestamp, cwd: "/tmp" };

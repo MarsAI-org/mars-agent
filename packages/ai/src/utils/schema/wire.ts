@@ -6,8 +6,8 @@
  * validators see the same JSON Schema dialect.
  */
 
-import type { Type } from "@oh-my-pi/omptype";
-import { isRecord, structuredCloneJSON } from "@oh-my-pi/pi-utils";
+import type { Type } from "@marsai-org/omptype";
+import { isRecord, structuredCloneJSON } from "@marsai-org/utils";
 import type { Tool, TSchema } from "../../types";
 import { upgradeJsonSchemaTo202012 } from "./draft";
 import { stamp } from "./stamps";

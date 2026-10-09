@@ -15,10 +15,10 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { runModelsListing } from "@oh-my-pi/pi-coding-agent/cli/models-cli";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage } from "@marsai-org/ai";
+import { runModelsListing } from "@marsai-org/coding-agent/cli/models-cli";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getProjectAgentDir, TempDir } from "@marsai-org/utils";
 
 let tmp: TempDir;
 let extPath: string;

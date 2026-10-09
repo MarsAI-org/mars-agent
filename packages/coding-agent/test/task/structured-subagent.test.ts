@@ -8,33 +8,33 @@ import {
 	getDisabledProviders,
 	isProviderEnabled,
 	setDisabledProviders,
-} from "@oh-my-pi/pi-coding-agent/capability";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AgentCompactionThresholdOverride } from "@oh-my-pi/pi-coding-agent/config/compaction-threshold";
-import type { BeforeSubagentSpawnEvent } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+} from "@marsai-org/coding-agent/capability";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { AgentCompactionThresholdOverride } from "@marsai-org/coding-agent/config/compaction-threshold";
+import type { BeforeSubagentSpawnEvent } from "@marsai-org/coding-agent/extensibility/extensions/types";
 import {
 	artifactsDirsFromRegistry,
 	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import * as planHandoff from "@oh-my-pi/pi-coding-agent/plan-mode/plan-handoff";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { createEvalCustomTools } from "@oh-my-pi/pi-coding-agent/task/eval-tools";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
+} from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import * as planHandoff from "@marsai-org/coding-agent/plan-mode/plan-handoff";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import { createEvalCustomTools } from "@marsai-org/coding-agent/task/eval-tools";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import * as isolationRunner from "@marsai-org/coding-agent/task/isolation-runner";
 import {
 	buildStructuredSubagentRecoveryHint,
 	resolveEffectiveSubagentPolicy,
 	runStructuredSubagent,
 	StructuredSubagentError,
 	type StructuredSubagentRequest,
-} from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+} from "@marsai-org/coding-agent/task/structured-subagent";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { SingleResult } from "@marsai-org/tui/tools/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
-import { cfgRetryModelFallback } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgTaskAgentModelOverrides, cfgTaskEnableEffort } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { cfgRetryModelFallback } from "@marsai-org/coding-agent/session/settings";
+import { cfgTaskAgentModelOverrides, cfgTaskEnableEffort } from "@marsai-org/coding-agent/task/settings";
 
 const AGENT: AgentDefinition = {
 	name: "worker",

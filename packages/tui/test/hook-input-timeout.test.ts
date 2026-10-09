@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 
-import { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import { HookInputComponent } from "@marsai-org/tui/overlays/hook-input";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { TUI } from "@marsai-org/tui";
 
 beforeAll(async () => {
 	const theme = await getThemeByName("dark");

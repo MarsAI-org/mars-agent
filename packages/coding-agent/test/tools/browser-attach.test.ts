@@ -11,9 +11,9 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, test,
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 import {
 	attachPageWithTimeout,
 	findFreeCdpPort,
@@ -24,16 +24,16 @@ import {
 	shouldPreserveConnectedBrowserFocus,
 	waitForCdp,
 	waitForMainFrame,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+} from "@marsai-org/coding-agent/tools/browser/attach";
+import { ensureChromiumExecutable } from "@marsai-org/coding-agent/tools/browser/launch";
 import {
 	acquireBrowser,
 	type BrowserHandle,
 	normalizeConnectedCdpUrl,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { acquireTab, getTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/coding-agent/tools/browser/registry";
+import { acquireTab, getTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { Process, ProcessStatus } from "@marsai-org/natives";
 import type { Browser, HTTPRequest, Page, Target } from "puppeteer-core";
 import { rejectionOf } from "../helpers/rejection";
 import { chromiumAvailable } from "./chromium-probe";

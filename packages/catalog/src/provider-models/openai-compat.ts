@@ -1,5 +1,5 @@
-import { USER_AGENT, getInstallId } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { USER_AGENT, getInstallId } from "@marsai-org/utils";
+import * as logger from "@marsai-org/utils/logger";
 import { toClinePassPublicModelId } from "../cline-pass-model-id";
 import {
 	apiRouteExactModelIds,

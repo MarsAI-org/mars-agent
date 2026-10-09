@@ -1,21 +1,21 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession, type AsyncJobSnapshotItem } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Container } from "@oh-my-pi/pi-tui";
-import { isNativeRendering, setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { JobsSheet } from "@oh-my-pi/pi-tui/overlays/jobs-panel";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { CommandController } from "@marsai-org/coding-agent/modes/controllers/command-controller";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentSession, type AsyncJobSnapshotItem } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { Container } from "@marsai-org/tui";
+import { isNativeRendering, setNativeRendering } from "@marsai-org/tui/native/state";
+import { JobsSheet } from "@marsai-org/tui/overlays/jobs-panel";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 
 const WIDTH = 60;
 

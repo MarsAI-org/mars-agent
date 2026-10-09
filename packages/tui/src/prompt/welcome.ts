@@ -1,5 +1,5 @@
-import { APP_NAME } from "@oh-my-pi/pi-utils/dirs";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import { APP_NAME } from "@marsai-org/utils/dirs";
+import type { TspSpan } from "@marsai-org/wire";
 import { formatDoubleTap, formatKeyHint, formatKeyHints, type KeyName } from "../app-keybindings";
 import { editorKey } from "../chrome/keybinding-hints";
 import { getKeybindings, type Keybinding } from "../keybindings";

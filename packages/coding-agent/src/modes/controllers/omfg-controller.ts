@@ -1,11 +1,11 @@
 import * as path from "node:path";
-import { CONFIG_DIR_NAME, prompt } from "@oh-my-pi/pi-utils";
+import { CONFIG_DIR_NAME, prompt } from "@marsai-org/utils";
 import { invalidate as invalidateCapabilityCache } from "../../capability";
 import type { Rule } from "../../capability/rule";
 import omfgUserPrompt from "../../prompts/system/omfg-user.md" with { type: "text" };
 import { TtsrToolInspector } from "../../session/ttsr-outputs";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { OmfgPanelComponent } from "@oh-my-pi/pi-tui/overlays/omfg-panel";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { OmfgPanelComponent } from "@marsai-org/tui/overlays/omfg-panel";
 import type { InteractiveModeContext } from "../types";
 import {
 	buildOmfgRuleForPath,

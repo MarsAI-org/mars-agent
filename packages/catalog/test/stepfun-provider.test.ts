@@ -2,12 +2,12 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import type { FetchImpl, ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { isStepfunChatModelId, stepfunModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import type { FetchImpl, ResolvedOpenAICompat } from "@marsai-org/catalog/types";
+import { isStepfunChatModelId, stepfunModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import { getBundledModels } from "@marsai-org/catalog/models";
 
 /** StepFun's documented three-tier ladder; the relay-host default spans minimal…xhigh. */
 const STEPFUN_LADDER = [Effort.Low, Effort.Medium, Effort.High];

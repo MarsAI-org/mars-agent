@@ -5,9 +5,9 @@
  */
 import * as path from "node:path";
 import { createInterface } from "node:readline/promises";
-import { Shell } from "@oh-my-pi/pi-natives";
-import { APP_NAME, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { Shell } from "@marsai-org/natives";
+import { APP_NAME, getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { Settings } from "../config/settings";
 import { buildMinimizerOptions } from "../exec/bash-executor";
 import { cfgShellMinimizer } from "../exec/settings";

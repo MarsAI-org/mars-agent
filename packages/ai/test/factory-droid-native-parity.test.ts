@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type } from "@marsai-org/omptype";
+import type { Effort } from "@marsai-org/catalog/effort";
 import { streamFactoryDroid } from "../src/providers/factory-droid";
 import type { Context, Message } from "../src/types";
 import corpus from "./fixtures/factory-droid-native-requests.json" with { type: "json" };

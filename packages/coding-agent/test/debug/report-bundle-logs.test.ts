@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { createReportBundle } from "@oh-my-pi/pi-coding-agent/debug/report-bundle";
-import { getConfigRootDir, getLogsDir, localDay, logger, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { createReportBundle } from "@marsai-org/coding-agent/debug/report-bundle";
+import { getConfigRootDir, getLogsDir, localDay, logger, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 const originalXdgStateHome = process.env.XDG_STATE_HOME;

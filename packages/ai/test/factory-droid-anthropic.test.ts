@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type } from "@marsai-org/omptype";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 import { streamAnthropic } from "../src/providers/anthropic";
 import { streamFactoryDroid } from "../src/providers/factory-droid";
 import type { AssistantMessage, Message } from "../src/types";

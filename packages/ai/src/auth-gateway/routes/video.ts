@@ -1,5 +1,5 @@
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@marsai-org/catalog/types";
+import { logger } from "@marsai-org/utils";
 import type { ResolvedApiKey } from "../../auth-retry";
 import { classifyGatewayError } from "../../error/gateway";
 import * as videoServer from "../../providers/video-server";

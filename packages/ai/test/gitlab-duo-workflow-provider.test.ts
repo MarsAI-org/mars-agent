@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { isContextOverflow } from "@oh-my-pi/pi-ai/error";
+import { type } from "@marsai-org/omptype";
+import { isContextOverflow } from "@marsai-org/ai/error";
 import {
 	buildGitLabDuoWorkflowApprovalStartRequest,
 	buildGitLabDuoWorkflowCreateBody,
@@ -26,8 +26,8 @@ import {
 	runGitLabDuoWorkflowSocket,
 	streamGitLabDuoWorkflow,
 	traceGitLabDuoWorkflow,
-} from "@oh-my-pi/pi-ai/providers/gitlab-duo-workflow";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
+} from "@marsai-org/ai/providers/gitlab-duo-workflow";
+import { configureCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
 import type {
 	AssistantMessage,
 	Context,
@@ -37,11 +37,11 @@ import type {
 	ProviderSessionState,
 	Tool,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { extractHttpStatusFromError } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { buildModel } from "@marsai-org/catalog/build";
+import { extractHttpStatusFromError } from "@marsai-org/utils";
 
 beforeAll(() => configureCredentialRedaction(true));
 afterAll(() => configureCredentialRedaction(false));

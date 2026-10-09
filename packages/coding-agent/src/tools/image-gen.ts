@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
+import { type } from "@marsai-org/omptype";
+import type { AgentToolResult } from "@marsai-org/agent-core";
 import {
 	type GeneratedImage,
 	generateImage,
@@ -11,9 +11,9 @@ import {
 	isImageGenerationApi,
 	type Model,
 	parseAntigravityCredentials,
-} from "@oh-my-pi/pi-ai";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { isEnoent, logger, parseImageMetadata, prompt, ptree, Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import { isEnoent, logger, parseImageMetadata, prompt, ptree, Snowflake, untilAborted } from "@marsai-org/utils";
 import { type RoleChainCandidate, resolveModelRoleValue, resolveRoleChain } from "../config/model-resolver";
 import { roleCandidatePool } from "../config/model-roles";
 import { isAuthenticated, type ModelRegistry } from "../config/model-registry";

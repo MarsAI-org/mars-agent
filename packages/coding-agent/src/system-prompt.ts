@@ -4,11 +4,11 @@
 
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample, TSchema } from "@oh-my-pi/pi-ai";
-import { renderToolInventory } from "@oh-my-pi/pi-ai/dialect";
-import type { DelegationBias } from "@oh-my-pi/pi-catalog/compat/delegation";
-import { $env, getAgentDir, getProjectDir, hasFsCode, isEnoent, logger, prompt } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { ToolExample, TSchema } from "@marsai-org/ai";
+import { renderToolInventory } from "@marsai-org/ai/dialect";
+import type { DelegationBias } from "@marsai-org/catalog/compat/delegation";
+import { $env, getAgentDir, getProjectDir, hasFsCode, isEnoent, logger, prompt } from "@marsai-org/utils";
 import { contextFileCapability } from "./capability/context-file";
 import { systemPromptCapability } from "./capability/system-prompt";
 import { findConfigFile } from "./config";
@@ -30,8 +30,8 @@ import projectPromptTemplate from "./prompts/system/project-prompt.md" with { ty
 import systemPromptTemplate from "./prompts/system/system-prompt.md" with { type: "text" };
 import userAppendPromptTemplate from "./prompts/system/user-append.md" with { type: "text" };
 import { normalizeConcurrencyLimit } from "./task/parallel";
-import type { ActiveRepoContext } from "@oh-my-pi/pi-tui/status-line/host";
-import { XD_URL_PREFIX } from "@oh-my-pi/pi-tui/tools/xd-url";
+import type { ActiveRepoContext } from "@marsai-org/tui/status-line/host";
+import { XD_URL_PREFIX } from "@marsai-org/tui/tools/xd-url";
 import { resolveActiveRepoContext } from "./utils/active-repo-context";
 import { normalizePromptPath } from "./utils/prompt-path";
 import { AGENTS_MD_LIMIT, buildWorkspaceTree, type WorkspaceTree } from "./workspace-tree";

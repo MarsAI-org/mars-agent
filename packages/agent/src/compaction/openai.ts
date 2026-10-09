@@ -15,18 +15,18 @@
  *   with `{ summary, shortSummary? }`.
  */
 
-import { attach, create, Flag, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { getCodexAttestationHeader } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { createOpenAICodexCompactionRequestContext } from "@oh-my-pi/pi-ai/providers/openai-codex-compaction";
-import { applyCodexResponsesLiteShape } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { createOpenAICodexCompatibilityMetadata } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import { attach, create, Flag, ProviderHttpError } from "@marsai-org/ai/error";
+import { getCodexAttestationHeader } from "@marsai-org/ai/providers/openai-codex-attestation";
+import { createOpenAICodexCompactionRequestContext } from "@marsai-org/ai/providers/openai-codex-compaction";
+import { applyCodexResponsesLiteShape } from "@marsai-org/ai/providers/openai-codex/request-transformer";
+import { createOpenAICodexCompatibilityMetadata } from "@marsai-org/ai/providers/openai-codex-responses";
 import {
 	encodeResponsesToolResultOutput,
 	hoistInterleavedResponsesToolBatchMessages,
 	parseAzureDeploymentNameMap,
 	parseTextSignature,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
+} from "@marsai-org/ai/providers/openai-shared";
+import { transformMessages } from "@marsai-org/ai/providers/transform-messages";
 import type {
 	AssistantMessage,
 	CodexCompactionContext,
@@ -34,16 +34,16 @@ import type {
 	Message,
 	Model,
 	ProviderSessionState,
-} from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/types";
 import {
 	dropMalformedOpenAIResponsesToolCalls,
 	getOpenAIResponsesHistoryItems,
 	getOpenAIResponsesHistoryPayload,
 	normalizeResponsesToolCallId,
 	stripOpenAIResponsesOutputOnlyStatusesForReplay,
-} from "@oh-my-pi/pi-ai/utils";
-import { captureOpenAIHttpError } from "@oh-my-pi/pi-ai/utils/openai-http";
-import { isBedrockOpenAIUrl } from "@oh-my-pi/pi-catalog/hosts";
+} from "@marsai-org/ai/utils";
+import { captureOpenAIHttpError } from "@marsai-org/ai/utils/openai-http";
+import { isBedrockOpenAIUrl } from "@marsai-org/catalog/hosts";
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -51,8 +51,8 @@ import {
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, isRecord, logger, prompt, ptree, stringifyJson, structuredCloneJSON } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/wire/codex";
+import { $env, isRecord, logger, prompt, ptree, stringifyJson, structuredCloneJSON } from "@marsai-org/utils";
 import { dataUrlImageSize, estimateImageTokens } from "../image-tokens";
 import { Tokenizer } from "../tokenizer";
 import { appendAzureApiVersion, resolveAzureOpenAiBaseUrl } from "./azure-openai-endpoint";

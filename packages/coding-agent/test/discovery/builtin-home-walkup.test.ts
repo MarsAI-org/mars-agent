@@ -8,16 +8,16 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getCapability } from "@oh-my-pi/pi-coding-agent/capability";
-import { type ContextFile, contextFileCapability } from "@oh-my-pi/pi-coding-agent/capability/context-file";
-import { clearCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { type Skill, skillCapability } from "@oh-my-pi/pi-coding-agent/capability/skill";
-import { type Rule, ruleCapability } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { type SystemPrompt, systemPromptCapability } from "@oh-my-pi/pi-coding-agent/capability/system-prompt";
-import type { LoadContext } from "@oh-my-pi/pi-coding-agent/capability/types";
+import { getCapability } from "@marsai-org/coding-agent/capability";
+import { type ContextFile, contextFileCapability } from "@marsai-org/coding-agent/capability/context-file";
+import { clearCache } from "@marsai-org/coding-agent/capability/fs";
+import { type Skill, skillCapability } from "@marsai-org/coding-agent/capability/skill";
+import { type Rule, ruleCapability } from "@marsai-org/coding-agent/capability/rule";
+import { type SystemPrompt, systemPromptCapability } from "@marsai-org/coding-agent/capability/system-prompt";
+import type { LoadContext } from "@marsai-org/coding-agent/capability/types";
 // Importing discovery registers all providers as a side effect.
-import "@oh-my-pi/pi-coding-agent/discovery";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import "@marsai-org/coding-agent/discovery";
+import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 
 let tempDir: string;
 let home: string;

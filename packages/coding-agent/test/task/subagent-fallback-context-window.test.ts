@@ -7,14 +7,14 @@
  * of the run.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+import type { AssistantMessage, Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { TurnRecovery, type TurnRecoveryHost } from "@marsai-org/coding-agent/session/turn-recovery";
+import { runSubprocess } from "@marsai-org/coding-agent/task/executor";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 function model(provider: string, id: string, contextWindow: number): Model {

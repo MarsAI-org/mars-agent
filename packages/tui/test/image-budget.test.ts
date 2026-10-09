@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import * as natives from "@oh-my-pi/pi-natives";
-import { TUI } from "@oh-my-pi/pi-tui";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Image, ImageBudget } from "@oh-my-pi/pi-tui/components/image";
-import { Text } from "@oh-my-pi/pi-tui/components/text";
+import * as natives from "@marsai-org/natives";
+import { TUI } from "@marsai-org/tui";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { Image, ImageBudget } from "@marsai-org/tui/components/image";
+import { Text } from "@marsai-org/tui/components/text";
 import {
 	encodeKittyVirtualPlacement,
 	getKittyGraphics,
 	KITTY_PLACEHOLDER,
 	setKittyGraphics,
-} from "@oh-my-pi/pi-tui/kitty-graphics";
+} from "@marsai-org/tui/kitty-graphics";
 import {
 	type CellDimensions,
 	encodeKitty,
@@ -22,7 +22,7 @@ import {
 	setCellDimensions,
 	TERMINAL,
 	wrapTmuxPassthrough,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
+} from "@marsai-org/tui/terminal-capabilities";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 
 withoutTerminalMultiplexer();

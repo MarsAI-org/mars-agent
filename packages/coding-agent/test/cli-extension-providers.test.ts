@@ -16,12 +16,12 @@
 
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getModelMatchPreferences, resolveCliModel } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadCliExtensionProviders } from "@oh-my-pi/pi-coding-agent/sdk";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getModelMatchPreferences, resolveCliModel } from "@marsai-org/coding-agent/config/model-resolver";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { loadCliExtensionProviders } from "@marsai-org/coding-agent/sdk";
+import { TempDir } from "@marsai-org/utils";
 
 let tmp: TempDir;
 let extPath: string;

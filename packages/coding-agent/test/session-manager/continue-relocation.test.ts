@@ -3,13 +3,13 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { SessionHeader } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { writeTerminalBreadcrumb } from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getTerminalId } from "@oh-my-pi/pi-tui";
-import { getConfigRootDir, getTerminalSessionsDir, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { SessionHeader } from "@marsai-org/coding-agent/session/session-entries";
+import { loadEntriesFromFile } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { writeTerminalBreadcrumb } from "@marsai-org/coding-agent/session/session-paths";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { getTerminalId } from "@marsai-org/tui";
+import { getConfigRootDir, getTerminalSessionsDir, setAgentDir } from "@marsai-org/utils";
 
 import { makeAssistantMessage } from "./helpers";
 

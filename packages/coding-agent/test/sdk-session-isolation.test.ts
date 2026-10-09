@@ -2,23 +2,23 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as secrets from "@oh-my-pi/pi-coding-agent/secrets";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
-import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getActiveProfile, getConfigRootDir, setProfile } from "@oh-my-pi/pi-utils/dirs";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { Rule } from "@marsai-org/coding-agent/capability/rule";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { LocalProtocolHandler } from "@marsai-org/coding-agent/internal-urls/local-protocol";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import * as secrets from "@marsai-org/coding-agent/secrets";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { VibeSessionRegistry } from "@marsai-org/coding-agent/vibe/runtime";
+import { getSessionsDir, removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
+import { getActiveProfile, getConfigRootDir, setProfile } from "@marsai-org/utils/dirs";
 
 function createTtsrRule(name: string): Rule {
 	return {

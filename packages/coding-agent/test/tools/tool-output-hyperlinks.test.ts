@@ -3,19 +3,19 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { editToolRenderer } from "@oh-my-pi/pi-tui/tools/edit";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { astGrepToolRenderer } from "@oh-my-pi/pi-tui/tools/ast-grep";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { readToolRenderer } from "@oh-my-pi/pi-tui/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { grepToolRenderer } from "@oh-my-pi/pi-tui/tools/grep";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { editToolRenderer } from "@marsai-org/tui/tools/edit";
+import { getThemeByName, initTheme } from "@marsai-org/tui/theme";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { astGrepToolRenderer } from "@marsai-org/tui/tools/ast-grep";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { readToolRenderer } from "@marsai-org/tui/tools/read";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { writeToolRenderer } from "@marsai-org/tui/tools/write";
+import { removeSyncWithRetries } from "@marsai-org/utils";
+import { grepToolRenderer } from "@marsai-org/tui/tools/grep";
 
-import { cfgTuiHyperlinks } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgTuiHyperlinks } from "@marsai-org/coding-agent/modes/settings";
 
 // 1x1 PNG so the read tool takes its image branch.
 const TINY_PNG_BASE64 =

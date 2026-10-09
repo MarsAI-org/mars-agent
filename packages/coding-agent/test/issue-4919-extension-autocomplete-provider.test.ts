@@ -10,29 +10,29 @@
  * - interactive mode stacks each factory on top of the built-in editor provider.
  *
  * NOTE: imports are relative (`../src/...`) so the tests exercise this checkout
- * even when `node_modules/@oh-my-pi/pi-coding-agent` resolves elsewhere.
+ * even when `node_modules/@marsai-org/coding-agent` resolves elsewhere.
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import type { AutocompleteProvider } from "@oh-my-pi/pi-tui";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import { type Api, Effort, type Model } from "@marsai-org/ai";
+import type { AutocompleteProvider } from "@marsai-org/tui";
+import { logger, TempDir } from "@marsai-org/utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { resetSettingsForTest, Settings } from "../src/config/settings";
 import { loadExtensions } from "../src/extensibility/extensions/loader";
 import { ExtensionRunner } from "../src/extensibility/extensions/runner";
 import { InteractiveMode } from "../src/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@marsai-org/tui/theme";
 import { AgentSession } from "../src/session/agent-session";
 import { AuthStorage } from "../src/session/auth-storage";
 import { SessionManager } from "../src/session/session-manager";
 
-import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgStartupQuiet } from "@marsai-org/coding-agent/modes/settings";
 
 function makeTool(name: string): AgentTool {
 	return {

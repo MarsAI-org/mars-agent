@@ -1,5 +1,5 @@
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
+import { sanitizeText } from "@marsai-org/utils";
+import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@marsai-org/tui/render/render-utils";
 import type { SessionPersistenceNotice } from "../session/session-manager";
 
 /**

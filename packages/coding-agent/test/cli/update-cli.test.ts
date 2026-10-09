@@ -61,7 +61,7 @@ describe("getLatestRelease rename pointers", () => {
 	it("follows omp.rename to the new package and resolves version, dist, and names from its manifest", async () => {
 		const urls = stubRegistry({
 			"@new/omp": { version: "999.1.0", omp: { dist: "npm" } },
-			"@oh-my-pi/pi-coding-agent": {
+			"@marsai-org/coding-agent": {
 				version: "999.0.0",
 				omp: { dist: "binary", rename: { package: "@new/omp", natives: "@new/natives" } },
 			},
@@ -73,25 +73,25 @@ describe("getLatestRelease rename pointers", () => {
 		expect(release.dist).toBe("npm");
 		expect(release.packages).toEqual({ pkg: "@new/omp", natives: "@new/natives" });
 		expect(urls).toEqual([
-			"https://registry.npmjs.org/@oh-my-pi%2fpi-coding-agent/latest",
+			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
 			"https://registry.npmjs.org/@new%2fomp/latest",
 		]);
 	});
 	it("fetches the canary dist-tag when checking the canary channel", async () => {
 		const urls = stubRegistry({
-			"@oh-my-pi/pi-coding-agent": { version: "999.0.0-canary.1" },
+			"@marsai-org/coding-agent": { version: "999.0.0-canary.1" },
 		});
 
 		await getLatestRelease({ channel: "canary", registries: npmjs });
 
-		expect(urls).toEqual(["https://registry.npmjs.org/@oh-my-pi%2fpi-coding-agent/canary"]);
+		expect(urls).toEqual(["https://registry.npmjs.org/@marsai-org%2fcoding-agent/canary"]);
 	});
 
 	it("ignores a rename pointer that cycles back to an already-visited package", async () => {
 		const urls = stubRegistry({
-			"@oh-my-pi/pi-coding-agent": {
+			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				omp: { rename: { package: "@oh-my-pi/pi-coding-agent" } },
+				omp: { rename: { package: "@marsai-org/coding-agent" } },
 			},
 		});
 
@@ -99,7 +99,7 @@ describe("getLatestRelease rename pointers", () => {
 
 		expect(urls).toHaveLength(1);
 		expect(release.version).toBe("999.0.0");
-		expect(release.packages).toEqual({ pkg: "@oh-my-pi/pi-coding-agent", natives: "@oh-my-pi/pi-natives" });
+		expect(release.packages).toEqual({ pkg: "@marsai-org/coding-agent", natives: "@marsai-org/natives" });
 	});
 });
 
@@ -130,7 +130,7 @@ describe("getLatestRelease configured registry", () => {
 
 		expect(requests).toEqual([
 			{
-				url: "https://npm.corp.example/api/npm/feed/@oh-my-pi%2fpi-coding-agent/latest",
+				url: "https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest",
 				authorization: "Bearer s3cret",
 			},
 		]);
@@ -157,8 +157,8 @@ describe("getLatestRelease configured registry", () => {
 		const release = await getLatestRelease({ registries: feed });
 
 		expect(urls).toEqual([
-			"https://npm.corp.example/api/npm/feed/@oh-my-pi%2fpi-coding-agent/latest",
-			"https://npm.corp.example/api/npm/feed/@oh-my-pi%2fpi-coding-agent",
+			"https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest",
+			"https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent",
 		]);
 		expect(release.version).toBe("999.2.0");
 		expect(release.dist).toBe("binary");
@@ -181,7 +181,7 @@ describe("getLatestRelease configured registry", () => {
 
 		const release = await getLatestRelease({ registries: feed });
 
-		expect(urls).toEqual(["https://npm.corp.example/api/npm/feed/@oh-my-pi%2fpi-coding-agent/latest"]);
+		expect(urls).toEqual(["https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest"]);
 		expect(release.version).toBe("999.3.0");
 		expect(release.dist).toBe("binary");
 	});
@@ -279,7 +279,7 @@ describe("getLatestRelease proxy errors", () => {
 		const fetchStub = Object.assign(
 			async () => {
 				throw new Error(
-					'UnsupportedProxyProtocol fetching "https://registry.npmjs.org/@oh-my-pi/pi-coding-agent/latest". ' +
+					'UnsupportedProxyProtocol fetching "https://registry.npmjs.org/@marsai-org/coding-agent/latest". ' +
 						"For more information, pass `verbose: true` in the second argument to fetch()",
 				);
 			},

@@ -3,26 +3,26 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelKind, ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { CODEX_CLIENT_VERSION } from "@oh-my-pi/pi-catalog/wire/codex";
+import type { FetchImpl, Model } from "@marsai-org/ai";
+import type { OAuthCredentials } from "@marsai-org/ai/oauth/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { resolveModelCacheProviderId, resolveOllamaModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import type { ModelKind, ModelSpec, OpenAICompat } from "@marsai-org/catalog/types";
+import { CODEX_CLIENT_VERSION } from "@marsai-org/catalog/wire/codex";
 import {
 	discoverOllamaModels,
 	discoverOpenAIModelsList,
 	discoveryProbeTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/config/model-discovery";
-import { RUNTIME_DYNAMIC_MODEL_FETCH_TIMEOUT_MS } from "@oh-my-pi/pi-coding-agent/config/model-provider-discovery";
-import { kNoAuth, ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { ProviderDiscoverySchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/config/model-discovery";
+import { RUNTIME_DYNAMIC_MODEL_FETCH_TIMEOUT_MS } from "@marsai-org/coding-agent/config/model-provider-discovery";
+import { kNoAuth, ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { ProviderDiscoverySchema } from "@marsai-org/coding-agent/config/models-config-schema";
+import { resetSettingsForTest } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 describe("ModelRegistry runtime discovery", () => {
 	let tempDir: string;

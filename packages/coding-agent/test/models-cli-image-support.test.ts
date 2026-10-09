@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { Api, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { MODEL_KINDS, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { renderProviderModels } from "@oh-my-pi/pi-coding-agent/cli/models-cli";
-import Models from "@oh-my-pi/pi-coding-agent/commands/models";
-import type { CliConfig } from "@oh-my-pi/pi-utils/cli";
+import type { Api, Model, ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { MODEL_KINDS, modelKind, type ModelKind } from "@marsai-org/catalog/types";
+import { renderProviderModels } from "@marsai-org/coding-agent/cli/models-cli";
+import Models from "@marsai-org/coding-agent/commands/models";
+import type { CliConfig } from "@marsai-org/utils/cli";
 
 const TEST_CONFIG: CliConfig = { bin: "omp", version: "test", commands: new Map() };
 

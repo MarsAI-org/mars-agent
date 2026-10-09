@@ -1,5 +1,5 @@
 import { pathToFileURL } from "node:url";
-import type { TextContent } from "@oh-my-pi/pi-ai";
+import type { TextContent } from "@marsai-org/ai";
 import { type Component } from "../tui";
 import { Box } from "../components/box";
 import { Disclosure } from "../components/disclosure";
@@ -12,7 +12,7 @@ import type { CustomMessage, SkillPromptDetails } from "./messages";
 import { fileHyperlink } from "../render";
 import { collapseSkillTokens, skillChipLabel, skillChipStyle, skillToken } from "../prompt/composer-attachments";
 import { type UserBubbleOptions, UserMessageComponent, userBubbleColor } from "./user-message";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { card, md, node, span, text } from "../native/describe";
 import { type NativeChild, type NativeNode, type NativeUiEvent, rootToggleExpanded } from "../native/node";
 import { Memo } from "../native/memo";

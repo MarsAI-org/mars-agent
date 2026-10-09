@@ -1,5 +1,5 @@
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getProjectDir } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getProjectDir } from "@marsai-org/utils";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";
 import { cfgCommitChangelogMaxDiffChars } from "./settings";

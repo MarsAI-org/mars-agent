@@ -2,10 +2,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, type 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { computeBankScope, ensureBankExists } from "@oh-my-pi/pi-coding-agent/hindsight/bank";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { computeBankScope, ensureBankExists } from "@marsai-org/coding-agent/hindsight/bank";
+import { HindsightApi } from "@marsai-org/coding-agent/hindsight/client";
+import type { HindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // Isolate `git` invocations in this file from the host's global config —
 // `~/.gitconfig` commit signing or template hooks would otherwise turn the

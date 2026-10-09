@@ -3,16 +3,16 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { shouldSendServiceTier } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fetchCodexModels } from "@oh-my-pi/pi-catalog/discovery/codex";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { openaiCodexModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/special";
-import { modelKind, type ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { resolveProviderModelReference } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
+import { shouldSendServiceTier } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { fetchCodexModels } from "@marsai-org/catalog/discovery/codex";
+import { Effort } from "@marsai-org/catalog/effort";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { openaiCodexModelManagerOptions } from "@marsai-org/catalog/provider-models/special";
+import { modelKind, type ModelSpec } from "@marsai-org/catalog/types";
+import { resolveProviderModelReference } from "@marsai-org/coding-agent/config/model-resolver";
 
 describe("Codex model discovery", () => {
 	it("normalizes optional maximum context windows separately from the default window", async () => {

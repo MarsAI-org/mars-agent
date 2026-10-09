@@ -9,16 +9,16 @@ import type {
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { TSchema } from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/agent-core";
+import type { TSchema } from "@marsai-org/ai/types";
 import {
 	dereferenceJsonSchema,
 	isValidJsonSchema,
 	type JsonSchemaValidationResult,
 	sanitizeSchemaForStrictMode,
 	tryEnforceStrictSchema,
-} from "@oh-my-pi/pi-ai/utils/schema";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/utils/schema";
+import { prompt } from "@marsai-org/utils";
 import yieldDescription from "../prompts/tools/yield.md" with { type: "text" };
 import { subprocessToolRegistry } from "../task/subprocess-tool-registry";
 import type { WorkPoolYieldItem } from "../task/workpool-yield";

@@ -1,6 +1,6 @@
-import type { AgentMessage, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Tool, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import type { AgentMessage, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Tool, UsageLimit, UsageReport } from "@marsai-org/ai";
+import type { Model } from "@marsai-org/catalog/types";
 import type { CompactionBoundaries } from "./context-usage";
 import type { StatusLineSettings } from "./types";
 

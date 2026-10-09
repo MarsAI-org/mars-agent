@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
 import {
 	fitAbortAndRestoreQueueResponse,
 	fitRemoveQueuedMessageResponse,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import type { RpcPromptResultFrame, RpcResponse, RpcSessionState } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { isRecord, readJsonl, removeWithRetries, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import type { RpcPromptResultFrame, RpcResponse, RpcSessionState } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import { isRecord, readJsonl, removeWithRetries, withTimeout } from "@marsai-org/utils";
 import { rejectionOf } from "./helpers/rejection";
 
 describe("RPC queued-message editing", () => {

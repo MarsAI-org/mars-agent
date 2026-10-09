@@ -6,8 +6,8 @@
  * `/v1/healthz` require a bearer token.
  */
 
-import { type } from "@oh-my-pi/omptype";
-import { readSseEvents } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { readSseEvents } from "@marsai-org/utils";
 import type { AuthCredential, DisabledCredentialSummary, OAuthRefreshReason } from "../auth-storage";
 import type {
 	ClientUsageReportRequest,

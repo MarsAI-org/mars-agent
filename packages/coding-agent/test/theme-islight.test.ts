@@ -2,18 +2,18 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { generateThemeVars } from "@oh-my-pi/pi-coding-agent/export/html";
-import { defaultThemes } from "@oh-my-pi/pi-tui/theme/defaults";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
+import { generateThemeVars } from "@marsai-org/coding-agent/export/html";
+import { defaultThemes } from "@marsai-org/tui/theme/defaults";
+import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
 import {
 	getEditorTheme,
 	getResolvedThemeColors,
 	getThemeByName,
 	isLightTheme,
 	setThemeInstance,
-} from "@oh-my-pi/pi-tui/theme";
-import { Editor } from "@oh-my-pi/pi-tui";
-import { getAgentDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/theme";
+import { Editor } from "@marsai-org/tui";
+import { getAgentDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 function createBaseThemes() {
 	const builtins = getBuiltinThemes();

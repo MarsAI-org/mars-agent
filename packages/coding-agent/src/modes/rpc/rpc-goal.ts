@@ -8,8 +8,8 @@
  * opt-in continuation driver keyed to agent lifecycle events instead of an
  * editor idle window.
  */
-import type { Goal } from "@oh-my-pi/pi-tui/tools/goal";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Goal } from "@marsai-org/tui/tools/goal";
+import { logger } from "@marsai-org/utils";
 import { cfgGoalContinuationModes, cfgGoalEnabled } from "../../goals/settings";
 import { type GoalModeState, goalContinuationActivity, goalFromModeData } from "../../goals/state";
 import type { AgentSession, AgentSessionEvent } from "../../session/agent-session";

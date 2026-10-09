@@ -8,10 +8,10 @@ import {
 	type AgentToolUpdateCallback,
 	isNonBlankContext,
 	type ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@oh-my-pi/pi-ai";
-import { sanitizeText, untilAborted } from "@oh-my-pi/pi-utils";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/agent-core";
+import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@marsai-org/ai";
+import { sanitizeText, untilAborted } from "@marsai-org/utils";
+import type { Theme } from "@marsai-org/tui/theme";
 import {
 	denyError,
 	formatApprovalPrompt,

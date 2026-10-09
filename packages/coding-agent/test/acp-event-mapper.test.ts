@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentSideConnection, SessionNotification } from "@oh-my-pi/pi-utils/acp";
+import { type } from "@marsai-org/omptype";
+import type { AgentSideConnection, SessionNotification } from "@marsai-org/utils/acp";
 
 const arkSessionNotification = type({
 	sessionId: "string",
@@ -13,18 +13,18 @@ const arkSessionNotification = type({
 	},
 });
 
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AcpAgent } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AcpAgent } from "@marsai-org/coding-agent/modes/acp/acp-agent";
 import {
 	buildToolCallStartUpdate,
 	mapAgentSessionEventToAcpSessionUpdates,
 	mapToolKind,
 	normalizeReplayToolArguments,
-} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-event-mapper";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/modes/acp/acp-event-mapper";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import { expectAcpStructure } from "./helpers/acp-schema";
 
 function makeAssistantMessage(text: string) {

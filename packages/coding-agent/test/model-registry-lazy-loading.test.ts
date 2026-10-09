@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import * as path from "node:path";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { litellmModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { litellmModelManagerOptions } from "@marsai-org/catalog/provider-models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 const probePath = path.join(import.meta.dir, "fixtures", "model-registry-construction-build-probe.ts");
 

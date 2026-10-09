@@ -1,8 +1,8 @@
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { theme as activeTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import type { TUI } from "@marsai-org/tui";
+import { theme as activeTheme, initTheme } from "@marsai-org/tui/theme";
 
 beforeAll(async () => {
 	await initTheme();

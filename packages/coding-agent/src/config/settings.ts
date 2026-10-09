@@ -26,9 +26,9 @@ import {
 	logger,
 	MAIN_CONFIG_FILENAMES,
 	procmgr,
-} from "@oh-my-pi/pi-utils";
-import { withFileLock } from "@oh-my-pi/pi-utils/file-lock";
-import { isLightTheme } from "@oh-my-pi/pi-tui/theme/theme";
+} from "@marsai-org/utils";
+import { withFileLock } from "@marsai-org/utils/file-lock";
+import { isLightTheme } from "@marsai-org/tui/theme/theme";
 import { JSONC, YAML } from "bun";
 import { invalidate as invalidateCapabilityFsCache } from "../capability/fs";
 import { type Settings as SettingsCapabilityItem, settingsCapability } from "../capability/settings";
@@ -39,7 +39,7 @@ import { type CompactionMethod, DEFAULT_COMPACTION_METHOD_ORDER } from "../sessi
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import { replaceFileAtomically } from "../utils/atomic-file";
 import { isRegisteredSearchEngine } from "../web/search/provider";
-import { stringifyYamlConfig } from "@oh-my-pi/pi-utils/yaml-config";
+import { stringifyYamlConfig } from "@marsai-org/utils/yaml-config";
 import {
 	type AnySetting,
 	all as allSettings,

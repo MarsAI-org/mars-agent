@@ -1,6 +1,6 @@
-import type * as XtermModule from "@oh-my-pi/pi-utils/vterm";
-import type { Terminal as XtermTerminalType } from "@oh-my-pi/pi-utils/vterm";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type * as XtermModule from "@marsai-org/utils/vterm";
+import type { Terminal as XtermTerminalType } from "@marsai-org/utils/vterm";
+import type { TspSpan } from "@marsai-org/wire";
 import type { Component } from "../tui";
 import { ansi, col, row, span, text } from "../native/describe";
 import { Memo } from "../native/memo";

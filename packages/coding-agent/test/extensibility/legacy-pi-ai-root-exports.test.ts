@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import type { AssistantMessage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import type { AssistantMessage, FetchImpl } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 import {
 	anthropicMessagesApi,
 	isContextOverflow,
@@ -9,12 +9,12 @@ import {
 	parseStreamingJson,
 	repairJson,
 	streamSimpleOpenAIResponses,
-} from "@oh-my-pi/pi-coding-agent/extensibility/legacy-pi-ai-shim";
+} from "@marsai-org/coding-agent/extensibility/legacy-pi-ai-shim";
 
 // Issue #6859: pi extensions import runtime helpers from the `@earendil-works/pi-ai`
-// (aliased to `@oh-my-pi/pi-ai`) package root that omp's barrel no longer forwards.
-// `isContextOverflow` moved under `@oh-my-pi/pi-ai/error` and the JSON-repair
-// helpers moved to `@oh-my-pi/pi-utils`, so `export * from "@oh-my-pi/pi-ai"` left
+// (aliased to `@marsai-org/ai`) package root that omp's barrel no longer forwards.
+// `isContextOverflow` moved under `@marsai-org/ai/error` and the JSON-repair
+// helpers moved to `@marsai-org/utils`, so `export * from "@marsai-org/ai"` left
 // them off the shim surface and a named import tripped Bun's static
 // "No matching export" check during plugin validation (e.g.
 // `omp plugin install pi-blackhole`). This pins the bridged root surface so it

@@ -2,23 +2,23 @@ import { afterAll, afterEach, beforeEach, describe, expect, it } from "bun:test"
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { getMemoryRoot } from "@oh-my-pi/pi-coding-agent/memories";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { getMemoryRoot } from "@marsai-org/coding-agent/memories";
 import {
 	loadMnemopi,
 	loadMnemopiCore,
 	MnemopiSessionState,
 	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { getInternalUrlSuggestions } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GlobTool } from "@oh-my-pi/pi-coding-agent/tools/glob";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mnemopi/state";
+import { getInternalUrlSuggestions } from "@marsai-org/tui/prompt/internal-url-autocomplete";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { GlobTool } from "@marsai-org/coding-agent/tools/glob";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { getAgentDir, removeWithRetries, setAgentDir, TempDir } from "@marsai-org/utils";
 
 // Mnemopi state is loaded lazily; preload so `new MnemopiSessionState(...)` can
 // resolve the module synchronously in the fixtures below.

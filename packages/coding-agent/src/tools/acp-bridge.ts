@@ -13,7 +13,7 @@ import { FileChangeType, notifyWorkspaceWatchedFiles } from "../lsp/client";
 import type { ToolSession } from ".";
 import { invalidateFsScanAfterWrite } from "./fs-cache-invalidation";
 import { resolvePlanPath, targetsLocalSandbox } from "./plan-mode-guard";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 /**
  * Return `true` when an ACP client bridge write is appropriate for this path.

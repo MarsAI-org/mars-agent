@@ -15,7 +15,7 @@ import {
 	isRecord,
 	logger,
 	stripWindowsExtendedLengthPathPrefix,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { registerPluginCacheInvalidator } from "../../discovery/helpers";
 
 const USE_BUNDLED_PI_MODULES = isCompiledBinary() || Boolean(process.env.PI_BUNDLED);
@@ -798,23 +798,44 @@ function resolveBundledVirtualSpecifier(
 	return { path: registryKey, namespace };
 }
 
-// Canonical scope for in-process pi packages. Plugins published against any of
+// Canonical scope for in-process host packages. Plugins published against any of
 // the aliased scopes below (mariozechner's original publish, earendil-works'
-// fork, or the canonical @oh-my-pi scope itself) are remapped to this scope and
-// resolved against the bundled copy that ships inside the omp binary. This
-// keeps plugins running against the exact runtime state of the host (single
-// module registry, single tool registry, etc.) regardless of which historical
-// scope name they happened to declare in their peerDependencies.
-const CANONICAL_PI_SCOPE = "@oh-my-pi";
+// fork, or the former canonical @oh-my-pi scope itself) are remapped to this
+// scope and resolved against the bundled copy that ships inside the mars
+// binary. This keeps plugins running against the exact runtime state of the
+// host (single module registry, single tool registry, etc.) regardless of
+// which historical scope name they happened to declare in their
+// peerDependencies.
+const CANONICAL_PI_SCOPE = "@marsai-org";
 
 // Scopes that have historically been used to publish (or alias) internal host
-// packages. `@oh-my-pi` is intentionally included so direct
-// canonical imports still pass through the same host-bundled package resolution
-// path instead of pulling a duplicate copy from plugin node_modules.
-const PI_SCOPE_ALIASES = ["oh-my-pi", "mariozechner", "earendil-works"] as const;
+// packages. `@oh-my-pi` (and the Mars scope itself) are intentionally included
+// so direct canonical imports still pass through the same host-bundled package
+// resolution path instead of pulling a duplicate copy from plugin node_modules.
+const PI_SCOPE_ALIASES = ["marsai-org", "oh-my-pi", "mariozechner", "earendil-works"] as const;
 
-// Internal host package basenames bundled inside the omp binary.
+// Internal host package basenames bundled inside the mars binary, in their
+// current (renamed) form. Each legacy `pi-*` name is kept alongside so the
+// remap table below can rewrite a historical specifier onto the live name.
 const PI_PACKAGE_NAMES = [
+	"agent-core",
+	"ai",
+	"catalog",
+	"coding-agent",
+	"natives",
+	"tui",
+	"utils",
+	"browser-relay",
+	"collab-web",
+	"metaharness",
+	"mnemopi",
+	"omptype",
+	"snapcompact",
+	"stats",
+	"typescript-edit-benchmark",
+	"wire",
+	// Legacy upstream basenames that no longer exist as package names but are
+	// still matched so the specifier filter can rewrite them onto the live name.
 	"pi-agent-core",
 	"pi-ai",
 	"pi-catalog",
@@ -827,6 +848,23 @@ const PI_PACKAGE_NAMES = [
 const PI_SCOPE_ALTERNATION = PI_SCOPE_ALIASES.join("|");
 const PI_PACKAGE_ALTERNATION = PI_PACKAGE_NAMES.join("|");
 
+// Host package basenames that were renamed when the product was rebranded to
+// Mars. Legacy `pi-*` names stay intact inside a specifier on purpose: the
+// compat shims below are keyed on them, so renaming the basename here would
+// bypass `createCodingTools` / `copyToClipboard` / `Type` re-export. Instead
+// the *new* names are registered as extra override keys so imports written
+// against the Mars scope resolve to the same host-bundled copy.
+// Used only to keep the specifier filter aware of the live basenames.
+const PI_PACKAGE_RENAMES: ReadonlyMap<string, string> = new Map<string, string>([
+	["pi-agent-core", "agent-core"],
+	["pi-ai", "ai"],
+	["pi-catalog", "catalog"],
+	["pi-coding-agent", "coding-agent"],
+	["pi-natives", "natives"],
+	["pi-tui", "tui"],
+	["pi-utils", "utils"],
+]);
+
 // Upstream `@mariozechner/*` packages exposed a few subpaths at the package
 // root that we relocated under a different folder. Each entry rewrites
 // `<pkg>/<from>` → `<pkg>/<to>` after the scope has been canonicalised, so
@@ -837,6 +875,9 @@ const PI_SUBPATH_REMAPS: ReadonlyMap<string, string> = new Map<string, string>([
 	["pi-ai/utils/oauth", "pi-ai/oauth"],
 	["pi-ai/utils/oauth/", "pi-ai/oauth/"],
 	["pi-ai/compat", "pi-ai"],
+	["ai/utils/oauth", "ai/oauth"],
+	["ai/utils/oauth/", "ai/oauth/"],
+	["ai/compat", "ai"],
 ]);
 
 function remapLegacyPiSubpath(rest: string): string {
@@ -906,7 +947,7 @@ const TYPEBOX_SPECIFIER_FILTER = /^(?:@sinclair\/typebox|typebox)$/;
  *
  * `bundle-dist.ts` defines `process.env.PI_BUNDLED="true"`; after bundling,
  * `import.meta.dir` points at `<package>/dist`. Do not resolve the package via
- * bare `@oh-my-pi/pi-coding-agent` here: from a global install Bun can pick an
+ * bare `@marsai-org/coding-agent` here: from a global install Bun can pick an
  * older cache entry, recreating mixed-runtime plugin loading.
  */
 export function __computeBundledSelfPackageRoot(metaDir: string, pathImpl: typeof path = path): string {
@@ -966,7 +1007,7 @@ const TYPEBOX_SHIM_PATH = __resolveTypeBoxShimPath(USE_BUNDLED_PI_MODULES, sourc
 // longer satisfies those imports. The override below redirects only the bare
 // pi-ai package root onto a sibling shim that re-exports the canonical surface
 // plus the borrowed `Type` runtime from the omptype TypeBox facade. Subpath
-// imports such as `@oh-my-pi/pi-ai/oauth` continue to resolve directly
+// imports such as `@marsai-org/ai/oauth` continue to resolve directly
 // against the bundled pi-ai package.
 const LEGACY_PI_AI_SHIM_PATH = USE_BUNDLED_PI_MODULES
 	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/pi-ai`)
@@ -1042,6 +1083,13 @@ export function __buildLegacyPiPackageRootOverrides(
 		[`${CANONICAL_PI_SCOPE}/pi-ai`]: LEGACY_PI_AI_SHIM_PATH,
 		[`${CANONICAL_PI_SCOPE}/pi-coding-agent`]: LEGACY_PI_CODING_AGENT_SHIM_PATH,
 		[`${CANONICAL_PI_SCOPE}/pi-tui`]: LEGACY_PI_TUI_SHIM_PATH,
+		// Mars-scope equivalents: the packages were renamed from `pi-*` when the
+		// product was rebranded, so imports written against the new basenames
+		// must reach the same compat shims (they re-attach the legacy helper
+		// surface that the current roots no longer export).
+		[`${CANONICAL_PI_SCOPE}/ai`]: LEGACY_PI_AI_SHIM_PATH,
+		[`${CANONICAL_PI_SCOPE}/coding-agent`]: LEGACY_PI_CODING_AGENT_SHIM_PATH,
+		[`${CANONICAL_PI_SCOPE}/tui`]: LEGACY_PI_TUI_SHIM_PATH,
 	};
 	if (useBundledModules) {
 		for (const key of bundledModuleKeys) {
@@ -1100,8 +1148,14 @@ function getResolvedSpecifier(specifier: string): string {
 }
 
 /**
- * Resolve a canonical `@oh-my-pi/*` specifier to a filesystem path, preferring
- * a bundled compat shim when one is registered for the package root.
+ * Resolve a canonical `@marsai-org/*` specifier to a filesystem path,
+ * preferring a bundled compat shim when one is registered for the package
+ * root.
+ *
+ * The host packages were renamed (`pi-utils` → `utils`, …) when the product was
+ * rebranded, so a canonicalized specifier can still carry a legacy basename
+ * while only the new name is installed. Both spellings are tried before
+ * falling back to `getResolvedSpecifier`.
  *
  * Falls back to `getResolvedSpecifier` (which may throw under compiled binary
  * mode); callers handle that the same way they would for non-overridden
@@ -1112,7 +1166,37 @@ function resolveCanonicalPiSpecifier(remappedSpecifier: string): string {
 	if (override) {
 		return override;
 	}
-	return getResolvedSpecifier(remappedSpecifier);
+	try {
+		return getResolvedSpecifier(remappedSpecifier);
+	} catch (err) {
+		// Only the legacy basename spelling failed to resolve (or remapping
+		// produced a name that no longer exists). Retry with the live name.
+		const renamed = rewriteLegacyPiBasename(remappedSpecifier);
+		if (renamed !== remappedSpecifier) {
+			return getResolvedSpecifier(renamed);
+		}
+		throw err;
+	}
+}
+
+/**
+ * Rewrite `@<scope>/pi-<rest>[/...]` onto `@<scope>/<rest>[/...]` so a
+ * canonicalized legacy specifier still resolves against the renamed host
+ * package. Non-matching specifiers are returned unchanged.
+ */
+function rewriteLegacyPiBasename(specifier: string): string {
+	const slashIdx = specifier.indexOf("/", 1);
+	if (slashIdx === -1) {
+		return specifier;
+	}
+	// Drop the subpath (`/oauth`, `/utils/oauth`, …) before looking up the
+	// basename: the rename table is keyed on the package name only.
+	const afterScope = specifier.slice(slashIdx + 1);
+	const subpathIdx = afterScope.indexOf("/");
+	const basename = subpathIdx === -1 ? afterScope : afterScope.slice(0, subpathIdx);
+	const subpath = subpathIdx === -1 ? "" : afterScope.slice(subpathIdx);
+	const renamed = PI_PACKAGE_RENAMES.get(basename);
+	return renamed === undefined ? specifier : `${specifier.slice(0, slashIdx + 1)}${renamed}${subpath}`;
 }
 
 function toImportSpecifier(resolvedPath: string): string {
@@ -1833,6 +1917,19 @@ async function resolveExtensionBareDependency(specifier: string, importerPath: s
 }
 
 async function resolveExtensionBareDependencyUncached(specifier: string, importerPath: string): Promise<string | null> {
+	// Legacy `pi-*` specifiers (any scope alias) must be canonicalised onto the
+	// Mars namespace before resolution: a rewritten specifier — or a renamed
+	// host basename like `pi-ai` → `ai` — would otherwise fail here even
+	// though a compat shim exists for it.
+	const remappedSpecifier = remapLegacyPiSpecifier(specifier);
+	if (remappedSpecifier) {
+		try {
+			return await Promise.resolve(resolveCanonicalPiSpecifier(remappedSpecifier));
+		} catch {
+			// A malformed compiled registry can still fall through to an
+			// extension-installed legacy peer dependency.
+		}
+	}
 	// Resolve against the runtime package manifest first. Besides working in a
 	// compiled binary, this preserves the package's ESM `import` condition when
 	// the absolute target is later loaded outside normal package resolution.
@@ -2759,7 +2856,7 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 		const resolved = resolveRemappedLegacyPiSpecifier(remappedSpecifier, args);
 		// A canonical specifier that remaps to itself and already resolves to the
 		// same host file from its importer (host code, e.g. `/login` requiring
-		// `@oh-my-pi/pi-ai/index.js`) has nothing to rewrite: decline and let Bun
+		// `@marsai-org/ai/index.js`) has nothing to rewrite: decline and let Bun
 		// resolve it natively. Answering it anyway breaks `require()` on Bun
 		// 1.3.x, which reads the returned path back as `file:<path>` and, on
 		// source-link/dev installs, recurses into `NameTooLong reading

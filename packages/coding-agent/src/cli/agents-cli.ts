@@ -5,10 +5,10 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, getProjectDir, isEnoent } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { getAgentDir, getProjectDir, isEnoent } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { YAML } from "bun";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@marsai-org/tui/theme";
 import { loadBundledAgents } from "../task/agents";
 import type { AgentDefinition } from "../task/types";
 

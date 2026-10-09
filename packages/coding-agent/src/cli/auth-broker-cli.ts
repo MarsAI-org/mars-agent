@@ -27,13 +27,13 @@ import {
 	type OAuthProvider,
 	PROVIDER_REGISTRY,
 	SqliteAuthCredentialStore,
-} from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient, DEFAULT_AUTH_BROKER_BIND, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import { refreshOAuthToken } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { $which, APP_NAME, getAgentDbPath, getConfigRootDir, logger, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { setTransports as setLoggerTransports } from "@oh-my-pi/pi-utils/logger";
+} from "@marsai-org/ai";
+import { AuthBrokerClient, DEFAULT_AUTH_BROKER_BIND, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { refreshOAuthToken } from "@marsai-org/ai/oauth";
+import type { OAuthCredentials } from "@marsai-org/ai/oauth/types";
+import { $which, APP_NAME, getAgentDbPath, getConfigRootDir, logger, VERSION } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { setTransports as setLoggerTransports } from "@marsai-org/utils/logger";
 import { $ } from "bun";
 import { refreshManagedMcpOAuthCredential } from "../mcp/oauth-credentials";
 import { isManagedMCPOAuthCredentialId, mcpOAuthServerUrlFromCredentialId } from "../mcp/oauth-flow";

@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { createCustomMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
-import type { ImageContent, MessageAttribution, TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { createCustomMessage } from "@marsai-org/agent-core/compaction/messages";
+import type { ImageContent, MessageAttribution, TextContent } from "@marsai-org/ai";
 import {
 	type CustomMessage,
 	type CustomMessageContent,

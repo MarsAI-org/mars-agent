@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it, setSystemTime } from "bun:test";
-import type { Api, AssistantMessage, Context, Message, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { DateCwdReminderInjector, renderDateCwdReminder } from "@oh-my-pi/pi-coding-agent/session/date-cwd-reminder";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { formatLocalCalendarDate } from "@oh-my-pi/pi-tui/chrome/local-date";
-import { normalizePromptPath } from "@oh-my-pi/pi-coding-agent/utils/prompt-path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessage, Context, Message, Model, ModelSpec } from "@marsai-org/ai";
+import { clearCustomApis, registerCustomApi } from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { DateCwdReminderInjector, renderDateCwdReminder } from "@marsai-org/coding-agent/session/date-cwd-reminder";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { formatLocalCalendarDate } from "@marsai-org/tui/chrome/local-date";
+import { normalizePromptPath } from "@marsai-org/coding-agent/utils/prompt-path";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("date-cwd-reminder", () => {

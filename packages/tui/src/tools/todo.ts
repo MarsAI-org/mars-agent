@@ -2,8 +2,8 @@ import type { ToolRenderer } from "./renderer";
 
 import type { Component } from "../index";
 import { Text } from "../index";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { sanitizeText } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import type { RenderResultOptions } from "./renderer";
 import type { Theme } from "../theme/theme";
 
@@ -11,7 +11,7 @@ import { renderStatusLine, renderTreeList } from "../render";
 import { framedToolCard } from "../render/tool-card";
 
 import { formatErrorDetail, formatMoreItems, PREVIEW_LIMITS, pluralize, replaceTabs } from "../render/render-utils";
-import type { TspChecklistItem, TspChecklistPhase } from "@oh-my-pi/pi-wire";
+import type { TspChecklistItem, TspChecklistPhase } from "@marsai-org/wire";
 import { node } from "../native/describe";
 import { OwnerMemo } from "../native/memo";
 import { errorText, noteText, resultText } from "./native-view";

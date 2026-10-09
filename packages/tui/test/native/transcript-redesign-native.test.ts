@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { setTranscriptActionHandler, type TranscriptAction } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { StatusNotice } from "@oh-my-pi/pi-tui/chrome/status-notice";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TspNode } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { setTranscriptActionHandler, type TranscriptAction } from "@marsai-org/tui/chat/transcript-actions";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { StatusNotice } from "@marsai-org/tui/chrome/status-notice";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TspNode } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
 
 beforeAll(async () => {

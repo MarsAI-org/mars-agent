@@ -2,10 +2,10 @@ import { afterEach, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { getEnabledPlugins, getPluginSettings } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { logger, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { getEnabledPlugins, getPluginSettings } from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import * as piUtils from "@marsai-org/utils";
+import { logger, removeWithRetries } from "@marsai-org/utils";
 
 // Issue #14518: a malformed or unreadable project plugin-overrides.json was
 // swallowed by the loader's loadProjectOverrides, so the file silently acted

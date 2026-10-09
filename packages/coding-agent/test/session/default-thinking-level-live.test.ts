@@ -2,17 +2,17 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { type CreateAgentSessionOptions, createAgentSession, discoverAuthStorage } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgDefaultThinkingLevel } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { createSubagentSettings } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { Effort } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { SelectorController } from "@marsai-org/coding-agent/modes/controllers/selector-controller";
+import { type CreateAgentSessionOptions, createAgentSession, discoverAuthStorage } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { cfgDefaultThinkingLevel } from "@marsai-org/coding-agent/session/settings";
+import { createSubagentSettings } from "@marsai-org/coding-agent/task/executor";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 import { createInteractiveModeContext } from "../helpers/interactive-mode-context";
 
 // `defaultThinkingLevel` seeds new sessions. A later write that is not the user's

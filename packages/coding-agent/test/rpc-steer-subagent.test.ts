@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { handleRpcSteerSubagent } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { RpcSubagentRegistry } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-subagents";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { PromptDroppedError } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type SubagentLifecyclePayload, TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { handleRpcSteerSubagent } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import { RpcSubagentRegistry } from "@marsai-org/coding-agent/modes/rpc/rpc-subagents";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { PromptDroppedError } from "@marsai-org/coding-agent/session/agent-session";
+import { type SubagentLifecyclePayload, TASK_SUBAGENT_LIFECYCLE_CHANNEL } from "@marsai-org/coding-agent/task/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 interface SentMessage {
 	id: string;

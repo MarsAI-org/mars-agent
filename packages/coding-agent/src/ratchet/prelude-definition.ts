@@ -1,9 +1,9 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentToolResult, ToolApprovalDecision } from "@oh-my-pi/pi-agent-core";
-import type { ModelCost } from "@oh-my-pi/pi-catalog/types";
-import type { ExtensionAskDialogResult } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentToolResult, ToolApprovalDecision } from "@marsai-org/agent-core";
+import type { ModelCost } from "@marsai-org/catalog/types";
+import type { ExtensionAskDialogResult } from "@marsai-org/tui/overlays/ask-dialog";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { untilAborted } from "@marsai-org/utils";
 import type { EvalPreludeContext, EvalPreludeDefinition } from "../eval/preludes";
 import { cfgRatchetEnabled } from "../tools/settings";
 import ratchetDocumentation from "../prompts/tools/ratchet.md" with { type: "text" };

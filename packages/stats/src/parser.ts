@@ -11,9 +11,9 @@ import {
 	type ToolCall,
 	type ToolResultMessage,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { getSessionsDir, isEnoent, readLines } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { getSessionsDir, isEnoent, readLines } from "@marsai-org/utils";
 import type {
 	AgentType,
 	MessageStatsInput,

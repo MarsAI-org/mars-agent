@@ -3,8 +3,8 @@
  * immediately runs `/join <link>`.
  */
 
-import { APP_NAME } from "@oh-my-pi/pi-utils";
-import { Args, Command } from "@oh-my-pi/pi-utils/cli";
+import { APP_NAME } from "@marsai-org/utils";
+import { Args, Command } from "@marsai-org/utils/cli";
 import { parseArgs } from "../cli/args";
 import { joinHelp as commandHelp } from "../cli/command-help";
 import { runRootCommand } from "../main";

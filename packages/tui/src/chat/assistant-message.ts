@@ -1,13 +1,13 @@
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, ImageContent, TextContent } from "@marsai-org/ai";
 import { type Component, Container } from "../tui";
 import { Image, type ImageBudget } from "../components/image";
 import { ImageProtocol, TERMINAL } from "../terminal-capabilities";
 import { Markdown, type MarkdownTheme, rewriteMarkdownLinkDestinations } from "../components/markdown";
 import { Spacer } from "../components/spacer";
 import { Text } from "../components/text";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { LRUCache } from "@marsai-org/utils/lru";
 import type { AssistantThinkingRenderer } from "./extension-types";
 import { ensureThemeSync, getMarkdownTheme, getMarkdownThemeWithLinkTargets, getThemeEpoch, theme } from "../theme";
 import { card, col, elapsed, node, span, text } from "../native/describe";

@@ -8,7 +8,7 @@
  * the construction lives in one place rather than being repeated per callsite.
  */
 
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 import { EditTool } from "./edit";
 import type { ExtensionAgentIdentity, ExtensionRunner } from "./extensibility/extensions";
 import { ExtensionToolWrapper } from "./extensibility/extensions";

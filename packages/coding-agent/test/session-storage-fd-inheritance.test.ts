@@ -21,9 +21,9 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Shell } from "@oh-my-pi/pi-natives";
-import { RotatingFileSink } from "@oh-my-pi/pi-utils/logger/rotating-file";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Shell } from "@marsai-org/natives";
+import { RotatingFileSink } from "@marsai-org/utils/logger/rotating-file";
+import { removeWithRetries } from "@marsai-org/utils";
 import { FileSessionStorage } from "../src/session/session-storage";
 
 const ROOTS: string[] = [];

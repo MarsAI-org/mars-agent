@@ -1,5 +1,5 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import { $env } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai";
+import { $env } from "@marsai-org/utils";
 
 const DEFAULT_AZURE_API_VERSION = "v1";
 

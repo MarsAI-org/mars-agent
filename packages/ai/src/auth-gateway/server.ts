@@ -28,9 +28,9 @@
  * serves them over HTTP behind bearer auth, `stdio.ts` over JSON lines.
  */
 
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { type ModelKind, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { logger } from "@oh-my-pi/pi-utils";
+import { Effort } from "@marsai-org/catalog/effort";
+import { type ModelKind, modelKind } from "@marsai-org/catalog/types";
+import { logger } from "@marsai-org/utils";
 import { classifyGatewayError } from "../error/gateway";
 import * as anthropicMessages from "../providers/anthropic-messages-server";
 import * as openaiChat from "../providers/openai-chat-server";

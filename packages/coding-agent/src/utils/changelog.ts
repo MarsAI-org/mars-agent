@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { getLastChangelogVersionPath, isEnoent, logger } from "@oh-my-pi/pi-utils";
-import { Lexer } from "@oh-my-pi/pi-utils/marked";
+import { getLastChangelogVersionPath, isEnoent, logger } from "@marsai-org/utils";
+import { Lexer } from "@marsai-org/utils/marked";
 import type { BunFile } from "bun";
 import bundledChangelogPath from "../../CHANGELOG.md" with { type: "file" };
 import type { SettingValueOf } from "../config/registry";

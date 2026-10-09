@@ -3,7 +3,7 @@
  * Handles data loading, tree building, filtering, and toggle persistence.
  */
 import * as path from "node:path";
-import { getMCPConfigPath, logger } from "@oh-my-pi/pi-utils";
+import { getMCPConfigPath, logger } from "@marsai-org/utils";
 import type { ContextFile } from "../../../capability/context-file";
 import type { ExtensionModule } from "../../../capability/extension-module";
 import type { Hook } from "../../../capability/hook";
@@ -24,8 +24,8 @@ import {
 	loadCapability,
 } from "../../../discovery";
 import { readDisabledServers, readEnabledServers } from "../../../mcp/config-writer";
-import { commandPreview } from "@oh-my-pi/pi-tui/overlays/extensions/inspector-model";
-import { inferMcpTransport } from "@oh-my-pi/pi-tui/overlays/extensions/mcp-runtime";
+import { commandPreview } from "@marsai-org/tui/overlays/extensions/inspector-model";
+import { inferMcpTransport } from "@marsai-org/tui/overlays/extensions/mcp-runtime";
 import {
 	type DisabledReason,
 	type Extension,
@@ -33,7 +33,7 @@ import {
 	type ExtensionState,
 	makeExtensionId,
 	sourceFromMeta,
-} from "@oh-my-pi/pi-tui/overlays/extensions/types";
+} from "@marsai-org/tui/overlays/extensions/types";
 
 /**
  * Provider-level gate for one discovered item: the whole-provider switch, plus

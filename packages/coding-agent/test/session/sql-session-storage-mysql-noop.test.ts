@@ -21,8 +21,8 @@ import {
 	SqlSessionStorage,
 	type SqlSessionStorageClient,
 	type SqlSessionStorageResult,
-} from "@oh-my-pi/pi-coding-agent/session/sql-session-storage";
-import { SessionWriteConflictError } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+} from "@marsai-org/coding-agent/session/sql-session-storage";
+import { SessionWriteConflictError } from "@marsai-org/coding-agent/session/session-storage";
 
 interface FakeRow {
 	content: string;

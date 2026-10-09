@@ -2,11 +2,11 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { RawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
-import { createReportBundle } from "@oh-my-pi/pi-coding-agent/debug/report-bundle";
-import { getConfigRootDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { RawSseDebugBuffer } from "@marsai-org/tui/apps/debug/raw-sse-buffer";
+import { createReportBundle } from "@marsai-org/coding-agent/debug/report-bundle";
+import { getConfigRootDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const model: Model<"anthropic-messages"> = buildModel({
 	id: "claude-test",

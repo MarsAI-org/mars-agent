@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, AgentBusyError, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { type } from "@marsai-org/omptype";
+import { Agent, AgentBusyError, type AgentMessage, type AgentTool } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
 import { createAssistantMessage, createUserMessage } from "./helpers";
 
 function userTexts(messages: readonly AgentMessage[]): string[] {

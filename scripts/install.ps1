@@ -24,9 +24,9 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
     throw "Windows PowerShell 5.1 or newer is required (found $($PSVersionTable.PSVersion)). Install PowerShell 7 from https://aka.ms/powershell and re-run the installer."
 }
 
-$Repo = "can1357/oh-my-pi"
-$Package = "@oh-my-pi/pi-coding-agent"
-$InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\omp" }
+$Repo = "MarsAI-org/mars-agent"
+$Package = "@marsai-org/coding-agent"
+$InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\mars" }
 # Windows PowerShell 5.1 (.NET Framework) does not reliably resolve
 # [System.Runtime.InteropServices.RuntimeInformation] without an
 # assembly-qualified name, while PowerShell 7+ (Core) loads that type from a
@@ -46,7 +46,7 @@ $NativeArchitecture = switch ($RawArchitecture.ToUpperInvariant()) {
     "ARM64" { "arm64" }
     default { throw "Unsupported Windows architecture: $RawArchitecture" }
 }
-$BinaryName = "omp-windows-$NativeArchitecture.exe"
+$BinaryName = "mars-windows-$NativeArchitecture.exe"
 $MinimumBunVersion = "1.3.14"
 
 # PowerShell 5.1 raises a terminating NativeCommandError for any line a native
@@ -274,11 +274,11 @@ function Install-ViaBun {
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp via bun" -ForegroundColor Green
+    Write-Host "[OK] Installed mars via bun" -ForegroundColor Green
 
     Configure-BashShell
 
-    Write-Host "Run 'omp' to get started!"
+    Write-Host "Run 'mars' to get started!"
 }
 
 function Install-Binary {
@@ -305,11 +305,11 @@ function Install-Binary {
     # Download binary
     $BinaryUrl = "https://github.com/$Repo/releases/download/$Latest/$BinaryName"
     Write-Host "Downloading $BinaryName..."
-    $OutPath = Join-Path $InstallDir "omp.exe"
+    $OutPath = Join-Path $InstallDir "mars.exe"
     Invoke-WebRequest -Uri $BinaryUrl -OutFile $OutPath -TimeoutSec 900
 
     Write-Host ""
-    Write-Host "[OK] Installed omp to $OutPath" -ForegroundColor Green
+    Write-Host "[OK] Installed mars to $OutPath" -ForegroundColor Green
 
     # Add to PATH if not already there
     $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -322,9 +322,9 @@ function Install-Binary {
     Configure-BashShell
 
     if ($needsRestart) {
-        Write-Host "Restart your terminal, then run 'omp' to get started!"
+        Write-Host "Restart your terminal, then run 'mars' to get started!"
     } else {
-        Write-Host "Run 'omp' to get started!"
+        Write-Host "Run 'mars' to get started!"
     }
 }
 

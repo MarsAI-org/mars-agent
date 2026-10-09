@@ -15,7 +15,7 @@ import {
 	isBetter,
 } from "./autoresearch-data";
 import { formatNum, type ExperimentResult, type ExperimentState } from "../tools/autoresearch";
-import type { TspSpan, TspTableColumn, TspText } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspTableColumn, TspText } from "@marsai-org/wire";
 import { card, col, elapsed, keyed, node, row, span, text } from "../native/describe";
 import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";
 import { actionBar, actionButton, hintsRow } from "../native/overlay";

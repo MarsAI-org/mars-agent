@@ -7,14 +7,14 @@
  * #applyPlanModeModel() therefore has no thinking level to apply.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
-import { cfgModelRoles } from "@oh-my-pi/pi-coding-agent/config/model-settings";
+import { cfgModelRoles } from "@marsai-org/coding-agent/config/model-settings";
 
 describe("plan mode thinking level", () => {
 	let session: AgentSession;

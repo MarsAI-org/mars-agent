@@ -1,16 +1,8 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	$which,
-	getPuppeteerDir,
-	isRecord,
-	logger,
-	removeWithRetries,
-	toError,
-	untilAborted,
-} from "@oh-my-pi/pi-utils";
-import type * as BrowsersNs from "@oh-my-pi/pi-utils/browsers";
+import { $which, getPuppeteerDir, isRecord, logger, removeWithRetries, toError, untilAborted } from "@marsai-org/utils";
+import type * as BrowsersNs from "@marsai-org/utils/browsers";
 import type {
 	Browser,
 	CDPSession,
@@ -36,7 +28,7 @@ import stealthPluginsScript from "../puppeteer/10_stealth_plugins.txt" with { ty
 import stealthHardwareScript from "../puppeteer/11_stealth_hardware.txt" with { type: "text" };
 import stealthCodecsScript from "../puppeteer/12_stealth_codecs.txt" with { type: "text" };
 import stealthWorkerScript from "../puppeteer/13_stealth_worker.txt" with { type: "text" };
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { withDownload } from "../../downloads/activity";
 
 export const DEFAULT_VIEWPORT = { width: 1365, height: 768, deviceScaleFactor: 1.25 };
@@ -221,7 +213,7 @@ export function loadedNetworkConditions(): Readonly<Record<string, NetworkCondit
 let browsersModule: typeof BrowsersNs | undefined;
 async function loadBrowsers(): Promise<typeof BrowsersNs> {
 	if (!browsersModule) {
-		browsersModule = await import("@oh-my-pi/pi-utils/browsers");
+		browsersModule = await import("@marsai-org/utils/browsers");
 	}
 	return browsersModule;
 }

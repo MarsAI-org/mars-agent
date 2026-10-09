@@ -11,7 +11,7 @@
 
 import { $ } from "bun";
 
-const REPO = process.env.OMP_REPO ?? "can1357/oh-my-pi";
+const REPO = process.env.OMP_REPO ?? "MarsAI-org/mars-agent";
 const HOMEPAGE = "https://omp.sh";
 const DESC = "Coding agent with the IDE wired in";
 
@@ -73,27 +73,27 @@ export function renderFormula(version: string, sums: Record<string, string>): st
 
   on_macos do
     on_arm do
-      url "https://github.com/${REPO}/releases/download/v#{version}/omp-darwin-arm64",
+      url "https://github.com/${REPO}/releases/download/v#{version}/mars-darwin-arm64",
           using: :nounzip
-      sha256 "${sums["omp-darwin-arm64"]}"
+      sha256 "${sums["mars-darwin-arm64"]}"
     end
     on_intel do
-      url "https://github.com/${REPO}/releases/download/v#{version}/omp-darwin-x64",
+      url "https://github.com/${REPO}/releases/download/v#{version}/mars-darwin-x64",
           using: :nounzip
-      sha256 "${sums["omp-darwin-x64"]}"
+      sha256 "${sums["mars-darwin-x64"]}"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/${REPO}/releases/download/v#{version}/omp-linux-arm64",
+      url "https://github.com/${REPO}/releases/download/v#{version}/mars-linux-arm64",
           using: :nounzip
-      sha256 "${sums["omp-linux-arm64"]}"
+      sha256 "${sums["mars-linux-arm64"]}"
     end
     on_intel do
-      url "https://github.com/${REPO}/releases/download/v#{version}/omp-linux-x64",
+      url "https://github.com/${REPO}/releases/download/v#{version}/mars-linux-x64",
           using: :nounzip
-      sha256 "${sums["omp-linux-x64"]}"
+      sha256 "${sums["mars-linux-x64"]}"
     end
   end
 
@@ -117,7 +117,7 @@ async function main(): Promise<void> {
 	const version = tag.replace(/^v/, "");
 	const assets = await fetchAssets(tag);
 
-	const targets = ["omp-darwin-arm64", "omp-darwin-x64", "omp-linux-arm64", "omp-linux-x64"];
+	const targets = ["mars-darwin-arm64", "mars-darwin-x64", "mars-linux-arm64", "mars-linux-x64"];
 	const sums: Record<string, string> = {};
 	for (const name of targets) sums[name] = sha256For(assets, name);
 

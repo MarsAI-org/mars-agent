@@ -12,13 +12,13 @@ import type {
 	SpeculativeOperationContext,
 	SpeculativeToolExecutionConfig,
 	SpeculativeToolReference,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	BINARY_SNIFF_BYTES,
 	IMAGE_METADATA_HEADER_BYTES,
 	isProbablyBinaryHeader,
 	parseImageMetadata,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { Settings } from "../config/settings";
 import type { ToolSession } from "../tools";
 import { resolveApproval } from "../tools/approval";
@@ -31,7 +31,7 @@ import {
 } from "../tools/read";
 import { isCpuProfilePath } from "../utils/cpuprofile";
 import { isSampleProfilePath } from "../utils/sample-profile";
-import { isVideoPath } from "@oh-my-pi/pi-tui/prompt/video";
+import { isVideoPath } from "@marsai-org/tui/prompt/video";
 import { cfgTaskSpeculativeLaunch } from "../task/settings";
 
 import {

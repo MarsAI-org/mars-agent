@@ -1,5 +1,5 @@
 /**
- * Re-exports from @oh-my-pi/pi-ai.
+ * Re-exports from @marsai-org/ai.
  * All credential storage types and the AuthStorage class now live in the ai package.
  */
 
@@ -19,6 +19,6 @@ export type {
 	ResetCreditRedeemOutcome,
 	ResetCreditTarget,
 	StoredAuthCredential,
-} from "@oh-my-pi/pi-ai";
-export { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-export type { SnapshotResponse } from "@oh-my-pi/pi-ai/auth-broker/types";
+} from "@marsai-org/ai";
+export { AuthStorage, REMOTE_REFRESH_SENTINEL, SqliteAuthCredentialStore } from "@marsai-org/ai";
+export type { SnapshotResponse } from "@marsai-org/ai/auth-broker/types";

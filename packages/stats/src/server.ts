@@ -1,7 +1,7 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { isEnoent, logger } from "@marsai-org/utils";
 import { $, type Server } from "bun";
 import {
 	getCostDashboardStats,

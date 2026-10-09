@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function createSseResponse(events: unknown[]): Response {
 	const payload = `${events

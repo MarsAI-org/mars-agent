@@ -1,8 +1,8 @@
 import { clearSubmittedText } from "./helpers/draft";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { CompactionCancelledError } from "@oh-my-pi/pi-agent-core/compaction";
-import { logger, setProjectDir } from "@oh-my-pi/pi-utils";
+import { CompactionCancelledError } from "@marsai-org/agent-core/compaction";
+import { logger, setProjectDir } from "@marsai-org/utils";
 import { clearClaudePluginRootsCache } from "../discovery/helpers";
 import { rebindMemoryBackendForCwd } from "../hindsight/backend";
 import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../memory-backend";

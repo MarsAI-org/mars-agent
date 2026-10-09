@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import * as terminalCapabilities from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+import * as terminalCapabilities from "@marsai-org/tui/terminal-capabilities";
+import { VERSION } from "@marsai-org/utils/dirs";
 import type {
 	AgentEndEvent,
 	AgentStartEvent,

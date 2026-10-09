@@ -1,27 +1,27 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Message, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponseSource } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type CustomMessage, convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentMessage, type AgentTool } from "@marsai-org/agent-core";
+import type { Message, Model } from "@marsai-org/ai";
+import { createMockModel, type MockResponseSource } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CustomTool } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { type CustomMessage, convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionMaintenance } from "@marsai-org/coding-agent/session/session-maintenance";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	collectMountedMCPToolRoutes,
 	projectMountedMCPXdevGuidance,
-} from "@oh-my-pi/pi-coding-agent/session/session-tools";
-import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-tools";
+import { listXdevTools, XDEV_EXTERNAL_DESCRIPTION_CAP, type XdevState } from "@marsai-org/coding-agent/tools/xdev";
+import { logger } from "@marsai-org/utils";
 
-import { cfgSkillful } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { cfgToolsXdevDocs, cfgToolsXdevInlineDevices } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgSkillful } from "@marsai-org/coding-agent/session/settings";
+import { cfgStartupQuiet } from "@marsai-org/coding-agent/modes/settings";
+import { cfgToolsXdevDocs, cfgToolsXdevInlineDevices } from "@marsai-org/coding-agent/tools/settings";
 
 // Cache-stability invariant: when MCP servers reconnect with byte-identical tool
 // definitions, `refreshMCPTools` must not rebuild the system prompt. A rebuild

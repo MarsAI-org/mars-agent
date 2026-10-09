@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import * as fs from "node:fs/promises";
-import { TempDir } from "@oh-my-pi/pi-utils/temp";
+import { TempDir } from "@marsai-org/utils/temp";
 import { base64ImageNode, getNativeBlob } from "../../../src/native/blobs";
 import type { NativeNode } from "../../../src/native/node";
 import { settleNative } from "../../../src/native/settle";

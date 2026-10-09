@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Process } from "@oh-my-pi/pi-natives";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Process } from "@marsai-org/natives";
+import { TempDir } from "@marsai-org/utils";
 import { Settings } from "../../src/config/settings";
 import { startDaemonBrokerFromEnvironment } from "../../src/launch/broker";
 import * as brokerClients from "../../src/launch/client";

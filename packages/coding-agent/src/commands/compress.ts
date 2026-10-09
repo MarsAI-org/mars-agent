@@ -1,5 +1,5 @@
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { postmortem } from "@marsai-org/utils";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { compressHelp as commandHelp } from "../cli/command-help";
 import { CliUsageError } from "../cli/usage-error";
 import { runCompressCommand } from "../compress";

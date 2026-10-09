@@ -12,15 +12,15 @@
  * carry subsystem-specific message types — lives in the per-subsystem
  * `types.ts` files and is documented there.
  */
-import { type AgentMessage, isNonBlankContext, joinAdditionalContext } from "@oh-my-pi/pi-agent-core";
-import type { CompactionPreparation, CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantRetryRecovery, ImageContent, TextContent, ToolResultMessage } from "@oh-my-pi/pi-ai";
+import { type AgentMessage, isNonBlankContext, joinAdditionalContext } from "@marsai-org/agent-core";
+import type { CompactionPreparation, CompactionResult } from "@marsai-org/agent-core/compaction";
+import type { AssistantRetryRecovery, ImageContent, TextContent, ToolResultMessage } from "@marsai-org/ai";
 import type { Rule } from "../capability/rule";
-import type { Goal } from "@oh-my-pi/pi-tui/tools/goal";
+import type { Goal } from "@marsai-org/tui/tools/goal";
 import type { GoalModeState } from "../goals/state";
 import type { BranchSummaryEntry, CompactionEntry, SessionEntry } from "../session/session-entries";
 import type { CacheWarmingAction } from "../session/cache-warmer";
-import type { TodoItem } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoItem } from "@marsai-org/tui/tools/todo";
 
 // ============================================================================
 // Session Events

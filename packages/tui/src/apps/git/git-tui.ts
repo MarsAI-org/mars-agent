@@ -25,7 +25,7 @@
  * every file underneath it.
  */
 
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { formatKeyHint, formatKeyHints, formatTooltipKey } from "../../app-keybindings";
 import { SplitPane } from "../../components/layout/split-pane";
 import { Stack } from "../../components/layout/stack";

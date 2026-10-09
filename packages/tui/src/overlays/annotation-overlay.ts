@@ -16,7 +16,7 @@ import { wrapLiteralLine } from "../utils";
 import { appKey, editorKey } from "../chrome/keybinding-hints";
 import { formatKeyHint, formatKeyHints, type KeybindingsManager } from "../app-keybindings";
 import type { Keybinding } from "../keybindings";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { type Theme } from "../theme/theme";
 import type {
 	CodeReviewAnnotation,

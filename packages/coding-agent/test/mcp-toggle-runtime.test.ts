@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { applyMcpToggleRuntime } from "@oh-my-pi/pi-coding-agent/modes/components/extensions/mcp-runtime";
+import type { CustomTool } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import { applyMcpToggleRuntime } from "@marsai-org/coding-agent/modes/components/extensions/mcp-runtime";
 
 function stubCustomTool(name: string): CustomTool {
 	return {

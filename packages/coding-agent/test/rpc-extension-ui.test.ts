@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { isRecord, readJsonl, TempDir } from "@oh-my-pi/pi-utils";
-import type { ExtensionAskDialogQuestion } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
+import { isRecord, readJsonl, TempDir } from "@marsai-org/utils";
+import type { ExtensionAskDialogQuestion } from "@marsai-org/coding-agent/extensibility/extensions";
 import {
 	type PendingExtensionRequest,
 	type RpcExtensionUIResponse,
 	requestRpcAskDialog,
 	requestRpcDialog,
 	requestRpcSelect,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
 
 function requireRequest(frame: object | undefined): { id: string } {
 	if (!frame || !("id" in frame)) {
@@ -43,7 +43,7 @@ const featuresQuestion: ExtensionAskDialogQuestion = {
  * context to the first user message); a tool result ends the turn.
  */
 const scriptedAskProvider = `
-import { createAssistantMessageEventStream } from "@oh-my-pi/pi-ai";
+import { createAssistantMessageEventStream } from "@marsai-org/ai";
 
 export default function (pi) {
 	pi.registerProvider("scripted", {

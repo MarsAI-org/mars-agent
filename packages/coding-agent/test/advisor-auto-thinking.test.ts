@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AUTO_THINKING, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import { Effort, type Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { AUTO_THINKING, toReasoningEffort } from "@marsai-org/tui/thinking";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 // `auto` is a session-level selector: the per-turn difficulty classifier runs

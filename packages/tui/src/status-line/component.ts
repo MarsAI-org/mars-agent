@@ -1,14 +1,14 @@
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, UsageLimit, UsageReport } from "@marsai-org/ai";
 import {
 	getAntigravityCounterKeyForModel,
 	scopeAntigravityLimitsForModel,
-} from "@oh-my-pi/pi-ai/usage/google-antigravity";
-import { getNextTimeBasedPricingTransition } from "@oh-my-pi/pi-catalog/models";
-import type { Model, ModelCost } from "@oh-my-pi/pi-catalog/types";
-import type { VcsGitRepo, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+} from "@marsai-org/ai/usage/google-antigravity";
+import { getNextTimeBasedPricingTransition } from "@marsai-org/catalog/models";
+import type { Model, ModelCost } from "@marsai-org/catalog/types";
+import type { VcsGitRepo, VcsRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
 import {
 	type Component,
 	type ComposerStyle,
@@ -18,7 +18,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import { adjustHsv, formatNumber, getProjectDir, hexToRgb, rgbToHex } from "@oh-my-pi/pi-utils";
+import { adjustHsv, formatNumber, getProjectDir, hexToRgb, rgbToHex } from "@marsai-org/utils";
 import type {
 	ActiveRepoContext,
 	StatusAccountIdentity as OAuthAccountIdentity,
@@ -39,7 +39,7 @@ import { canReuseCachedPr, createPrCacheContext, isSamePrCacheContext, type PrCa
 import { summarizeUsageResetCredits } from "../overlays/usage-display";
 import { getPreset } from "./presets";
 import { describeSegment, renderSegment, type SegmentContext } from "./segments";
-import type { TspMeterMark, TspProps } from "@oh-my-pi/pi-wire";
+import type { TspMeterMark, TspProps } from "@marsai-org/wire";
 import type { NativeNode, NativeUiEvent } from "../native/node";
 import { col, node, span } from "../native/describe";
 import { getContextMeterThresholds } from "../chrome/context-thresholds";

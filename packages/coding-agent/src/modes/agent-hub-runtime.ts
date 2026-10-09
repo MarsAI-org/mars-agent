@@ -1,13 +1,13 @@
 import * as fs from "node:fs";
-import type { AgentHubDeps, AgentHubRemote } from "@oh-my-pi/pi-tui/overlays/agent-hub";
+import type { AgentHubDeps, AgentHubRemote } from "@marsai-org/tui/overlays/agent-hub";
 import {
 	type AgentMetrics,
 	aggregateMetrics,
 	hubFallbackStatsSession,
 	hubRowMetrics,
-} from "@oh-my-pi/pi-tui/overlays/agent-hub-projection";
-import type { AgentTranscriptSource } from "@oh-my-pi/pi-tui/overlays/agent-transcript-viewer";
-import type { ObservableSession, SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
+} from "@marsai-org/tui/overlays/agent-hub-projection";
+import type { AgentTranscriptSource } from "@marsai-org/tui/overlays/agent-transcript-viewer";
+import type { ObservableSession, SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
 import { AgentActivityIndex } from "../activity";
 import { getRoleInfo } from "../config/model-roles";
 import type { Settings } from "../config/settings";

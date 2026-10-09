@@ -4,11 +4,11 @@
  * Handles `omp q`/`omp web-search` subcommands for testing web search models.
  */
 
-import { APP_NAME, getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { APP_NAME, getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { Settings } from "../config/settings";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { renderSearchResult } from "@oh-my-pi/pi-tui/tools/web-search";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { renderSearchResult } from "@marsai-org/tui/tools/web-search";
 import { runSearchQuery, type SearchQueryParams } from "../web/search/index";
 
 export interface SearchCommandArgs {

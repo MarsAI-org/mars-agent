@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelTokenizer } from "@oh-my-pi/pi-catalog/model-tokenizer";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveModelTokenizer } from "@marsai-org/catalog/model-tokenizer";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 function spec(id: string): ModelSpec<"openai-completions"> {
 	return {

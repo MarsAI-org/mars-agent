@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { readJsonl, TempDir } from "@oh-my-pi/pi-utils";
+import { readJsonl, TempDir } from "@marsai-org/utils";
 
 const cliEntry = path.resolve(import.meta.dir, "../src/cli.ts");
 

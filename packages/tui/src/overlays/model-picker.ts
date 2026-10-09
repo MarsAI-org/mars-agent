@@ -4,7 +4,7 @@
  * Model entries switch the current session only; a search beginning with `@`
  * exposes the configured ctrl+p quick roles.
  */
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { Model } from "@marsai-org/ai";
 import { addKeyAliases, canonicalKeyId } from "../keybindings";
 import { type KeyId, parseKey } from "../keys";
 import type { Component, TUI } from "../tui";
@@ -26,7 +26,7 @@ import { editorKey, editorKeys } from "../chrome/keybinding-hints";
 import { card, compact, span, text } from "../native/describe";
 import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "../native/node";
 import { CLOSE_ACTION, picker, pickerAction, pickerEvent } from "../native/picker";
-import type { TspPickerProps } from "@oh-my-pi/pi-wire";
+import type { TspPickerProps } from "@marsai-org/wire";
 import { actionHint, hintsRow, type NativeHint } from "../native/overlay";
 
 /** Configured role resolved to a concrete model. */

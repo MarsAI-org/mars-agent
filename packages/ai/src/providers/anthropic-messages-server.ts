@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { logger } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Effort } from "@marsai-org/catalog/effort";
+import { logger } from "@marsai-org/utils";
 import { captureRequestHeaders, resolvePromptCacheKey } from "../auth-gateway/http";
 import * as AIError from "../error";
 import type {

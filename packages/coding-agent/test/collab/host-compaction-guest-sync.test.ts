@@ -12,19 +12,19 @@
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, type Mock, spyOn } from "bun:test";
 import * as os from "node:os";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { tryAcquireSessionLease } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { refreshDirsFromEnv, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { CollabHost } from "@marsai-org/coding-agent/collab/host";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { tryAcquireSessionLease } from "@marsai-org/coding-agent/session/session-storage";
+import { refreshDirsFromEnv, TempDir } from "@marsai-org/utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 

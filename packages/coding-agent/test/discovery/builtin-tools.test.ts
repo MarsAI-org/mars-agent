@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { type CustomTool, toolCapability } from "@oh-my-pi/pi-coding-agent/capability/tool";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { discoverCustomToolPaths, loadCustomTools } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/loader";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { type CustomTool, toolCapability } from "@marsai-org/coding-agent/capability/tool";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeWithSettings, loadCapability } from "@marsai-org/coding-agent/discovery";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { discoverCustomToolPaths, loadCustomTools } from "@marsai-org/coding-agent/extensibility/custom-tools/loader";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 
 function toolSource(name: string): string {

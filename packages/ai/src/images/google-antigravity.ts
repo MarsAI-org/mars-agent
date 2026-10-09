@@ -2,10 +2,10 @@ import {
 	ANTIGRAVITY_PRIMARY_ENDPOINT,
 	ANTIGRAVITY_SANDBOX_ENDPOINT,
 	fetchAntigravityImageModel,
-} from "@oh-my-pi/pi-catalog/discovery/antigravity";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { readSseJson } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/discovery/antigravity";
+import type { Model } from "@marsai-org/catalog/types";
+import { getAntigravityUserAgent } from "@marsai-org/catalog/wire/gemini-headers";
+import { readSseJson } from "@marsai-org/utils";
 import { withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { errorMessage, ImageApiError, usageFromWire } from "./shared";

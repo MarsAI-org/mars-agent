@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { AgentProgress, SingleResult, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { taskToolRenderer } from "@oh-my-pi/pi-tui/tools/task";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { AgentProgress, SingleResult, TaskToolDetails } from "@marsai-org/tui/tools/task";
+import { taskToolRenderer } from "@marsai-org/tui/tools/task";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
 
 describe("task renderer: nested live rendering", () => {
 	beforeAll(async () => {

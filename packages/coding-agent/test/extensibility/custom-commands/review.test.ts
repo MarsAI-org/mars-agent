@@ -2,16 +2,16 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn, vi } from 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ReviewCommand } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review";
-import type { CustomCommandAPI } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
-import type { HookCommandContext } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/types";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { PrDiffPayload, ViewLookupResult } from "@oh-my-pi/pi-coding-agent/tools/gh";
-import * as gh from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import type { VcsGitRepo, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { ReviewCommand } from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/review";
+import type { CustomCommandAPI } from "@marsai-org/coding-agent/extensibility/custom-commands/types";
+import type { HookCommandContext } from "@marsai-org/coding-agent/extensibility/hooks/types";
+import type { SessionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import type { PrDiffPayload, ViewLookupResult } from "@marsai-org/coding-agent/tools/gh";
+import * as gh from "@marsai-org/coding-agent/tools/gh";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import type { VcsGitRepo, VcsRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { removeWithRetries } from "@marsai-org/utils";
 import { $ } from "bun";
 
 const SAMPLE_JJ_DIFF = `diff --git a/src/workspace.ts b/src/workspace.ts

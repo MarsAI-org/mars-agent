@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { TernElementHandle, TernTab, userSourceFunction } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/tern-tab";
-import { TernSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/wire";
+import { TernElementHandle, TernTab, userSourceFunction } from "@marsai-org/coding-agent/tools/browser/tern/tern-tab";
+import { TernSocketClient } from "@marsai-org/coding-agent/tools/browser/tern/wire";
 import { type FakeAnswer, type FakeDaemon, startFakeDaemon } from "./tern-fake-daemon";
 
 interface FakePage {

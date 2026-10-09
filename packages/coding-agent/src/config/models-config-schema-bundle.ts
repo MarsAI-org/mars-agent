@@ -1,6 +1,6 @@
-import { type NarrowContext, type } from "@oh-my-pi/omptype";
-import { MODEL_KINDS, RUNNER_API_KINDS } from "@oh-my-pi/pi-catalog/types";
-import { once } from "@oh-my-pi/pi-utils";
+import { type NarrowContext, type } from "@marsai-org/omptype";
+import { MODEL_KINDS, RUNNER_API_KINDS } from "@marsai-org/catalog/types";
+import { once } from "@marsai-org/utils";
 
 function validateMaxContextWindow(
 	value: { maxContextWindow?: number; contextWindow?: number },

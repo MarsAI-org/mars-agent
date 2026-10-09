@@ -3,10 +3,10 @@ import {
 	type RequestBody,
 	sanitizeCodexCallId,
 	transformRequestBody,
-} from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
-import { buildTransformedCodexRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { normalizeResponsesToolCallIdForTransform } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { Context } from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/providers/openai-codex/request-transformer";
+import { buildTransformedCodexRequestBody } from "@marsai-org/ai/providers/openai-codex-responses";
+import { normalizeResponsesToolCallIdForTransform } from "@marsai-org/ai/providers/openai-shared";
+import type { Context } from "@marsai-org/ai/types";
 import { createCodexModel } from "./helpers";
 
 describe("OpenAI Codex call_id sanitization and 64-char limit", () => {

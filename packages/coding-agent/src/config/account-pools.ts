@@ -1,6 +1,6 @@
-import type { AuthApiKeyOptions, AuthStorage, SessionRestrictionLease } from "@oh-my-pi/pi-ai/auth-storage";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import type { AuthApiKeyOptions, AuthStorage, SessionRestrictionLease } from "@marsai-org/ai/auth-storage";
+import type { Api, Model } from "@marsai-org/ai/types";
+import { isRecord } from "@marsai-org/utils";
 import { type ApiKeyResolverModel, type ApiKeyResolverOptions, createApiKeyResolver } from "./api-key-resolver";
 import type { ModelRegistry } from "./model-registry";
 

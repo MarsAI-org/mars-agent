@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { clearWorktrees } from "@oh-my-pi/pi-coding-agent/cli/worktree-cli";
+import * as natives from "@marsai-org/natives";
+import { clearWorktrees } from "@marsai-org/coding-agent/cli/worktree-cli";
 import {
 	ISOLATION_OWNER_FILE,
 	RETAINED_BACKEND_FILE,
 	writeIsolationOwner,
 	writeRetainedBackend,
-} from "@oh-my-pi/pi-coding-agent/task/isolation-ownership";
-import { setWorktreesDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task/isolation-ownership";
+import { setWorktreesDir } from "@marsai-org/utils";
 
 /**
  * Regression for #6761: `omp worktree clear` (no `--all`) must delete only

@@ -9,20 +9,20 @@ import {
 	agentLoop,
 	type SpeculativeOperationSink,
 	type SpeculativePhysicalOutcome,
-} from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Context, Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as jsContextManager from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import { EvalShadowCellSession } from "@oh-my-pi/pi-coding-agent/eval/speculation/cell-session";
-import { CodingAgentSpeculativeExecutionHost } from "@oh-my-pi/pi-coding-agent/speculation/host";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import type { AssistantMessage, Context, Message } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { setStreamingPartialJson } from "@marsai-org/ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as jsContextManager from "@marsai-org/coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions } from "@marsai-org/coding-agent/eval/py/executor";
+import { EvalShadowCellSession } from "@marsai-org/coding-agent/eval/speculation/cell-session";
+import { CodingAgentSpeculativeExecutionHost } from "@marsai-org/coding-agent/speculation/host";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const temporaryDirectories: string[] = [];
 const pythonIt = process.env.PI_PYTHON_INTEGRATION === "1" ? it : it.skip;

@@ -1,24 +1,24 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolContext } from "@marsai-org/agent-core";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { computerApproval, createComputerPrelude } from "@oh-my-pi/pi-coding-agent/tools/computer";
-import { isReadOnlyComputerCall, renderComputerCall } from "@oh-my-pi/pi-coding-agent/tools/computer/call";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@marsai-org/coding-agent/eval/preludes";
+import { disposeAllKernelSessions, executePython } from "@marsai-org/coding-agent/eval/py/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { computerApproval, createComputerPrelude } from "@marsai-org/coding-agent/tools/computer";
+import { isReadOnlyComputerCall, renderComputerCall } from "@marsai-org/coding-agent/tools/computer/call";
 import type {
 	ComputerSessionSnapshot,
 	ComputerWorkerInbound,
 	ComputerWorkerOutbound,
 	ComputerWorkerTransport,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/protocol";
+} from "@marsai-org/coding-agent/tools/computer/protocol";
 import {
 	type ComputerController,
 	ComputerSupervisor,
 	type ComputerWorkerHandle,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { ComputerWorkerCore, type NativeDesktopSession } from "@oh-my-pi/pi-coding-agent/tools/computer/worker";
+} from "@marsai-org/coding-agent/tools/computer/supervisor";
+import { ComputerWorkerCore, type NativeDesktopSession } from "@marsai-org/coding-agent/tools/computer/worker";
 import type {
 	AxNode,
 	AxQuery,
@@ -30,9 +30,9 @@ import type {
 	DesktopPoint,
 	DesktopWindow,
 	PointerOptions,
-} from "@oh-my-pi/pi-natives";
+} from "@marsai-org/natives";
 
-import { cfgComputerEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgComputerEnabled } from "@marsai-org/coding-agent/tools/settings";
 
 /** Method name of the last step in a facade call chain, or "" when the chain is malformed. */
 function terminalMethod(chain: unknown): string {

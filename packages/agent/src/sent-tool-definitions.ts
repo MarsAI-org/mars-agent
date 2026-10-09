@@ -1,4 +1,4 @@
-import type { Message, Tool } from "@oh-my-pi/pi-ai";
+import type { Message, Tool } from "@marsai-org/ai";
 
 /**
  * Last wire definition this Agent sent for each tool name, so a provider that keeps

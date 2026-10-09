@@ -2,30 +2,30 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as capability from "@oh-my-pi/pi-coding-agent/capability";
-import type { CapabilityResult } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resetActiveSkillsForTests, setActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
+import * as capability from "@marsai-org/coding-agent/capability";
+import type { CapabilityResult } from "@marsai-org/coding-agent/capability/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { resetActiveSkillsForTests, setActiveSkills } from "@marsai-org/coding-agent/extensibility/skills";
 import {
 	type InternalResource,
 	type InternalUrl,
 	InternalUrlRouter,
 	LocalProtocolHandler,
 	type ProtocolHandler,
-} from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import * as sshFileTransfer from "@oh-my-pi/pi-coding-agent/ssh/file-transfer";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/internal-urls";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { SessionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import * as sshFileTransfer from "@marsai-org/coding-agent/ssh/file-transfer";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { removeWithRetries } from "@marsai-org/utils";
 import { AstGrepTool } from "../../src/tools/ast-grep";
 import { GlobTool } from "../../src/tools/glob";
 import { GrepTool } from "../../src/tools/grep";
 
-import { cfgCompactionExperimentalContextManagement } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { cfgReadSummarizeEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgCompactionExperimentalContextManagement } from "@marsai-org/coding-agent/session/context-settings";
+import { cfgReadSummarizeEnabled } from "@marsai-org/coding-agent/tools/settings";
 
 function getResultText(result: { content: Array<{ type: string; text?: string }> }): string {
 	return result.content

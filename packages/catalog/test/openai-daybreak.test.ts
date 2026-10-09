@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { seedModels } from "@marsai-org/catalog/compat/providers";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const DAYBREAK_EFFORTS = [Effort.Low, Effort.Medium, Effort.High, Effort.XHigh, Effort.Max];

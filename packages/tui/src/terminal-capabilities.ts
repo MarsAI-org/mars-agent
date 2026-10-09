@@ -1,5 +1,5 @@
-import { encodeSixel } from "@oh-my-pi/pi-natives";
-import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@oh-my-pi/pi-utils/env";
+import { encodeSixel } from "@marsai-org/natives";
+import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@marsai-org/utils/env";
 import { writeTerminalSequence } from "./active-terminal";
 import { sendDesktopNotification, shouldDeliverDesktopNotification } from "./desktop-notify";
 import {

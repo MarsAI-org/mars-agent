@@ -1,5 +1,5 @@
-import { replaceTabs, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { replaceTabs, TRUNCATE_LENGTHS, truncateToWidth } from "@marsai-org/tui/render/render-utils";
+import { prompt } from "@marsai-org/utils";
 import type { CustomCommand, CustomCommandAPI } from "../../../../extensibility/custom-commands/types";
 import type { HookCommandContext } from "../../../../extensibility/hooks/types";
 import reviewCustomRequestTemplate from "../../../../prompts/review-custom-request.md" with { type: "text" };

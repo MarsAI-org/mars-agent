@@ -14,11 +14,11 @@
  */
 import * as fs from "node:fs";
 import { performance } from "node:perf_hooks";
-import { getDebugLogPath } from "@oh-my-pi/pi-utils/dirs";
-import { $flag } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import type { TspFrame, TspNode, TspText } from "@oh-my-pi/pi-wire";
+import { getDebugLogPath } from "@marsai-org/utils/dirs";
+import { $flag } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
+import * as postmortem from "@marsai-org/utils/postmortem";
+import type { TspFrame, TspNode, TspText } from "@marsai-org/wire";
 import { DEFAULT_MAX_INLINE_IMAGES, ImageBudget } from "./components/image";
 import { TuiDebugServer } from "./debug-server";
 import { isKeyRelease, matchesKey } from "./keys";

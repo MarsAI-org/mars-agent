@@ -14,16 +14,16 @@
  *    background ("running") finalizes and untracks it.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import type { TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { type BashToolDetails, formatBackgroundNotice } from "@oh-my-pi/pi-tui/tools/bash";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { SessionContext } from "@marsai-org/coding-agent/session/session-context";
+import type { TaskToolDetails } from "@marsai-org/tui/tools/task";
+import { type BashToolDetails, formatBackgroundNotice } from "@marsai-org/tui/tools/bash";
+import type { CoordinationDetails } from "@marsai-org/tui/tools/wait";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 function taskResult(asyncState: "running" | "completed" | "failed" | undefined, text: string) {

@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 
 const packageRoot = path.resolve(import.meta.dir, "..");
 

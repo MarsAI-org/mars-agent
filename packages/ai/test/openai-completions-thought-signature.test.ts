@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { FetchImpl, Message, ModelSpec, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import type { FetchImpl, Message, ModelSpec, ToolCall } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const model = buildModel({
 	id: "gemini-3.7-flash",

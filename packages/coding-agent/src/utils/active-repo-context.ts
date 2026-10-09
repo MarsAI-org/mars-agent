@@ -2,9 +2,9 @@ import * as fs from "node:fs";
 import * as fsPromises from "node:fs/promises";
 import * as path from "node:path";
 
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import * as vcs from "@marsai-org/natives/vcs";
 
-import type { ActiveRepoContext } from "@oh-my-pi/pi-tui/status-line/host";
+import type { ActiveRepoContext } from "@marsai-org/tui/status-line/host";
 
 function compareEntryNames(left: fs.Dirent, right: fs.Dirent): number {
 	if (left.name < right.name) return -1;

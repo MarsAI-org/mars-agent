@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
-import { abliterationModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import { seedModels } from "@marsai-org/catalog/compat/providers";
+import { abliterationModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, Model } from "@marsai-org/catalog/types";
 
 function seed(id: string): Model<"openai-responses"> {
 	const spec = seedModels<"openai-responses">("abliteration").find(model => model.id === id);

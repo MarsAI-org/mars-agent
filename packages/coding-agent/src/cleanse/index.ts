@@ -1,13 +1,9 @@
-import { getProjectDir } from "@oh-my-pi/pi-utils";
-import {
-	type CleanseTargetChoice,
-	pickCleanseTarget,
-	promptCleanseRequest,
-} from "@oh-my-pi/pi-tui/apps/cleanse-picker";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
+import { getProjectDir } from "@marsai-org/utils";
+import { type CleanseTargetChoice, pickCleanseTarget, promptCleanseRequest } from "@marsai-org/tui/apps/cleanse-picker";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
 import { type CleanseAgentHooks, type CleanseAgentRuntime, createCleanseAgentRuntime } from "./agent";
 import { groupDiagnosticsByFile } from "./balance";
-import { type CleanseStatusBoard, createCleanseStatusBoard } from "@oh-my-pi/pi-tui/apps/cleanse-board";
+import { type CleanseStatusBoard, createCleanseStatusBoard } from "@marsai-org/tui/apps/cleanse-board";
 import {
 	buildCustomCleanseSuite,
 	type CleanseCheckerDescriptor,

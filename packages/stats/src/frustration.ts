@@ -16,10 +16,10 @@
  * using the judge the omp host registered through `startServer`. Standalone
  * `omp-stats` has none and only shows the regex fallback.
  */
-import type { ChoiceQuestion, Judge, Model, ScoreQuestion } from "@oh-my-pi/pi-ai";
-import { compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/compat/revision";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ChoiceQuestion, Judge, Model, ScoreQuestion } from "@marsai-org/ai";
+import { compareRevision, parseRevision } from "@marsai-org/catalog/compat/revision";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { logger } from "@marsai-org/utils";
 import { getTimeRangeConfig } from "./aggregator";
 import {
 	type FrustrationModelRow,

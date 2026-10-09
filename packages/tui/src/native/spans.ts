@@ -12,8 +12,8 @@
  * escape grammar for spans and plain text), control characters and lone
  * surrogates removed, tabs expanded.
  */
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import type { TspSpan, TspText } from "@oh-my-pi/pi-wire";
+import { sanitizeText } from "@marsai-org/utils";
+import type { TspSpan, TspText } from "@marsai-org/wire";
 import darkThemeJson from "../theme/dark.json" with { type: "json" };
 import { isValidThemeColor, type Theme, type ThemeBg, type ThemeColor, theme } from "../theme/theme";
 import { replaceTabs } from "../utils";

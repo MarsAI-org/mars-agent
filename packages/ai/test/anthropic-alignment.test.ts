@@ -3,9 +3,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as tls from "node:tls";
-import { type as arkType } from "@oh-my-pi/omptype";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { NO_AUTH_SENTINEL } from "@oh-my-pi/pi-ai/auth-retry";
+import { type as arkType } from "@marsai-org/omptype";
+import { Effort } from "@marsai-org/ai";
+import { NO_AUTH_SENTINEL } from "@marsai-org/ai/auth-retry";
 import {
 	applyClaudeToolPrefix,
 	buildAnthropicClientOptions,
@@ -19,11 +19,11 @@ import {
 	mapStainlessOs,
 	streamAnthropic,
 	stripClaudeToolPrefix,
-} from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { getClaudeCodeVersion } from "@oh-my-pi/pi-ai/providers/claude-code-fingerprint";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
+} from "@marsai-org/ai/providers/anthropic";
+import type { MessageCreateParams } from "@marsai-org/ai/providers/anthropic-wire";
+import { getClaudeCodeVersion } from "@marsai-org/ai/providers/claude-code-fingerprint";
+import { getEnvApiKey } from "@marsai-org/ai/env-api-key";
+import { streamSimple } from "@marsai-org/ai/stream";
 import type {
 	AssistantMessage,
 	CacheRetention,
@@ -33,9 +33,9 @@ import type {
 	TJsonSchema,
 	TokenTaskBudget,
 	Tool,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 const ANTHROPIC_MODEL_SPEC: ModelSpec<"anthropic-messages"> = {

@@ -2,20 +2,20 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/sdk";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { getActiveSkills } from "@marsai-org/coding-agent/extensibility/skills";
+import type { Skill } from "@marsai-org/coding-agent/sdk";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeSyncWithRetries } from "@marsai-org/utils";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
 import { cleanupTempHome } from "./helpers/temp-home-cleanup";
 
-import { cfgAutolearnEnabled } from "@oh-my-pi/pi-coding-agent/autolearn/settings";
-import { cfgSkillsCustomDirectories } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
+import { cfgAutolearnEnabled } from "@marsai-org/coding-agent/autolearn/settings";
+import { cfgSkillsCustomDirectories } from "@marsai-org/coding-agent/extensibility/settings";
 
 function createIsolatedSkillsSettings(extensions: string[] = []): Settings {
 	return Settings.isolated({

@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { singularityApiDevModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { getOAuthProviders } from "@marsai-org/ai/registry/oauth";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { singularityApiDevModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@marsai-org/catalog/types";
 import {
 	SINGULARITYAPI_DEV_API_BASE_URL,
 	normalizeSingularityApiBaseUrl,
-} from "@oh-my-pi/pi-catalog/wire/singularityapi";
+} from "@marsai-org/catalog/wire/singularityapi";
 
 afterEach(() => {
 	vi.restoreAllMocks();

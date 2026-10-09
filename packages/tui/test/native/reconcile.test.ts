@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { TspDocument } from "@oh-my-pi/pi-tui/native/apply";
-import { node } from "@oh-my-pi/pi-tui/native/describe";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { type NativeRegions, nativeComponentId, Reconciler } from "@oh-my-pi/pi-tui/native/reconcile";
-import { settleNative } from "@oh-my-pi/pi-tui/native/settle";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
-import type { TspKind, TspOp } from "@oh-my-pi/pi-wire";
+import { TspDocument } from "@marsai-org/tui/native/apply";
+import { node } from "@marsai-org/tui/native/describe";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { type NativeRegions, nativeComponentId, Reconciler } from "@marsai-org/tui/native/reconcile";
+import { settleNative } from "@marsai-org/tui/native/settle";
+import type { Component } from "@marsai-org/tui/tui";
+import type { TspKind, TspOp } from "@marsai-org/wire";
 
 const cx: DescribeContext = { cols: 60, reduceMotion: false, dark: true, supports: () => true, feature: () => true };
 

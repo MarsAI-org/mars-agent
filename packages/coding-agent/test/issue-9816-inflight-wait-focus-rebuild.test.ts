@@ -12,18 +12,18 @@
  * delivered through the newly installed subscription.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { SessionFocusController } from "@oh-my-pi/pi-coding-agent/modes/controllers/session-focus-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import type { AgentProgress, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { SessionFocusController } from "@marsai-org/coding-agent/modes/controllers/session-focus-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry, MAIN_AGENT_ID } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import type { SessionContext } from "@marsai-org/coding-agent/session/session-context";
+import type { AgentProgress, TaskToolDetails } from "@marsai-org/tui/tools/task";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 const usage = {

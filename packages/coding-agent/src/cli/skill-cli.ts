@@ -3,10 +3,10 @@
  * registry, and dispatch install/update/uninstall/search/info to the installer.
  */
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { formatBytes, isEnoent, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { CliUsageError } from "@oh-my-pi/pi-utils/cli";
+import * as vcs from "@marsai-org/natives/vcs";
+import { formatBytes, isEnoent, VERSION } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { CliUsageError } from "@marsai-org/utils/cli";
 import {
 	SKILL_LIMITS,
 	SKILL_SCOPE_RE,
@@ -15,7 +15,7 @@ import {
 	type SkillPublishResponse,
 	type SkillReportedProvenance,
 	type SkillSearchSort,
-} from "@oh-my-pi/pi-wire/skillshare";
+} from "@marsai-org/wire/skillshare";
 import { StencilCredential } from "../stencil/credential";
 import { parseSkillSpec, type SkillSpec, SkillshareClient, SkillshareError } from "../skillshare/client";
 import { installSkills, searchSkills, showSkillInfo, uninstallSkills, updateSkills } from "../skillshare/installer";

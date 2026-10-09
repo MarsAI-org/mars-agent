@@ -7,16 +7,16 @@ import {
 	renderGalleryState,
 	renderGallerySurfaceSections,
 	resolveFixture,
-} from "@oh-my-pi/pi-coding-agent/cli/gallery-cli";
+} from "@marsai-org/coding-agent/cli/gallery-cli";
 import {
 	type GalleryFixture,
 	getComposerGalleryInventory,
 	getSegmentGalleryInventory,
-} from "@oh-my-pi/pi-coding-agent/cli/gallery-fixtures";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { toolRenderers } from "@oh-my-pi/pi-tui/tools";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
+} from "@marsai-org/coding-agent/cli/gallery-fixtures";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { toolRenderers } from "@marsai-org/tui/tools";
+import { writeToolRenderer } from "@marsai-org/tui/tools/write";
 
 beforeAll(async () => {
 	resetSettingsForTest();

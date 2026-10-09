@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { classifyDifficulty } from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import * as ai from "@marsai-org/ai";
+import { Effort, type Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { classifyDifficulty } from "@marsai-org/coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	AUTO_THINKING,
 	clampAutoThinkingEffort,
@@ -15,9 +15,9 @@ import {
 	parseThinkingLevel,
 	resolveProvisionalAutoLevel,
 	resolveTaskEffortLevel,
-} from "@oh-my-pi/pi-tui/thinking";
-import type { TinyMemoryLocalModelKey } from "@oh-my-pi/pi-coding-agent/tiny/models";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
+} from "@marsai-org/tui/thinking";
+import type { TinyMemoryLocalModelKey } from "@marsai-org/coding-agent/tiny/models";
+import { tinyModelClient } from "@marsai-org/coding-agent/tiny/title-client";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("auto thinking classifier helpers", () => {
