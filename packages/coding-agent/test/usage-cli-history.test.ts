@@ -6,7 +6,7 @@ import { runUsageCommand } from "@marsai-org/coding-agent/cli/usage-cli";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import * as sdkModule from "@marsai-org/coding-agent/sdk";
 
-const BROKER_ENV = ["OMP_AUTH_BROKER_URL", "OMP_AUTH_BROKER_TOKEN"] as const;
+const BROKER_ENV = ["MARS_AUTH_BROKER_URL", "MARS_AUTH_BROKER_TOKEN"] as const;
 const HOUR_MS = 60 * 60 * 1000;
 
 function snapshot(provider: string, recordedAt: number, usedFraction: number): UsageHistoryEntry {
@@ -37,8 +37,8 @@ beforeEach(() => {
 		bearerTokens: ["history-bearer"],
 		disableRefresher: true,
 	});
-	process.env.OMP_AUTH_BROKER_URL = handle.url;
-	process.env.OMP_AUTH_BROKER_TOKEN = "history-bearer";
+	process.env.MARS_AUTH_BROKER_URL = handle.url;
+	process.env.MARS_AUTH_BROKER_TOKEN = "history-bearer";
 	vi.spyOn(Settings, "loadReadOnly").mockResolvedValue(Settings.isolated());
 	vi.spyOn(sdkModule, "discoverAuthStorage").mockResolvedValue(new AuthStorage(localStore));
 });

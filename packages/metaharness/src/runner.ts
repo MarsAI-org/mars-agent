@@ -32,7 +32,7 @@ const AGENT_IMPORT_PATH = "omp_local:OmpLocal";
 const PI_UPSTREAM_IMPORT_PATH = "pi_upstream:PiUpstream";
 /** Upstream `@earendil-works/pi-coding-agent` version pinned for `--agent pi`. */
 const PI_UPSTREAM_VERSION = "0.86.1";
-/** Agents this runner installs itself (config + secrets travel via `OMP_BENCH_*`). */
+/** Agents this runner installs itself (config + secrets travel via `MARS_BENCH_*`). */
 const MANAGED_AGENTS: Record<string, true> = { omp: true, pi: true };
 
 /** Container-side mount points for `--install source` (must match omp_local.py defaults). */
@@ -44,11 +44,11 @@ const VMNET_HOST_IP = "192.168.64.1";
 const DOCKER_GATEWAY_URL = "http://host.docker.internal:4000";
 const VMNET_GATEWAY_URL = `http://${VMNET_HOST_IP}:4000`;
 /**
- * Resolver injected into Apple Container runs (OMP_BENCH_CONTAINER_DNS overrides).
+ * Resolver injected into Apple Container runs (MARS_BENCH_CONTAINER_DNS overrides).
  * The vmnet gateway resolver (192.168.64.1:53) is unreachable when VPN/DNS
  * agents on the host intercept port 53, so containers get an explicit one.
  */
-const CONTAINER_DNS = process.env.OMP_BENCH_CONTAINER_DNS || "1.1.1.1";
+const CONTAINER_DNS = process.env.MARS_BENCH_CONTAINER_DNS || "1.1.1.1";
 
 export interface Config {
 	models: string[];
@@ -1390,7 +1390,7 @@ function buildHarborArgs(
 	if (mountsJson) a.push("--mounts", mountsJson);
 
 	if (MANAGED_AGENTS[cfg.agent]) {
-		// Config + secrets travel via env (OMP_BENCH_*); the agent reads os.environ.
+		// Config + secrets travel via env (MARS_BENCH_*); the agent reads os.environ.
 		a.push("--agent-import-path", cfg.agent === "pi" ? PI_UPSTREAM_IMPORT_PATH : AGENT_IMPORT_PATH);
 		void modelsYaml;
 		void tarball;
@@ -1451,44 +1451,44 @@ export function buildHarborEnv(
 	source: SourceMount | null = null,
 ): Record<string, string> {
 	const env: Record<string, string> = { ...(process.env as Record<string, string>) };
-	// Drop any stale OMP_BENCH_FORWARD_ENV inherited from the caller's shell before
+	// Drop any stale MARS_BENCH_FORWARD_ENV inherited from the caller's shell before
 	// the agent-type early return, so it never leaks (incl. into the dry-run dump).
-	delete env.OMP_BENCH_FORWARD_ENV;
+	delete env.MARS_BENCH_FORWARD_ENV;
 	if (!MANAGED_AGENTS[cfg.agent]) return env;
 	const prepend = (k: string, v: string): void => {
 		env[k] = env[k] ? `${v}:${env[k]}` : v;
 	};
 	prepend("PYTHONPATH", AGENT_DIR);
 	if (cfg.agent === "pi") {
-		env.OMP_BENCH_PI_VERSION = cfg.version ?? PI_UPSTREAM_VERSION;
-		env.OMP_BENCH_PI_MODELS = JSON.stringify(upstreamModelSpecs(cfg));
-		env.OMP_BENCH_PI_SYSTEM_PROMPT = PI_UPSTREAM_SYSTEM_PROMPT;
+		env.MARS_BENCH_PI_VERSION = cfg.version ?? PI_UPSTREAM_VERSION;
+		env.MARS_BENCH_PI_MODELS = JSON.stringify(upstreamModelSpecs(cfg));
+		env.MARS_BENCH_PI_SYSTEM_PROMPT = PI_UPSTREAM_SYSTEM_PROMPT;
 	}
-	env.OMP_BENCH_INSTALL = cfg.install;
-	env.OMP_BENCH_VERSION = cfg.version ?? version;
-	if (tarball) env.OMP_BENCH_TARBALL = tarball;
+	env.MARS_BENCH_INSTALL = cfg.install;
+	env.MARS_BENCH_VERSION = cfg.version ?? version;
+	if (tarball) env.MARS_BENCH_TARBALL = tarball;
 	if (source) {
-		env.OMP_BENCH_SOURCE_DIR = SOURCE_SRC_MOUNT;
-		env.OMP_BENCH_SOURCE_BUN = `${SOURCE_BIN_MOUNT}/bun`;
-		env.OMP_BENCH_SOURCE_ARCH = source.arch;
+		env.MARS_BENCH_SOURCE_DIR = SOURCE_SRC_MOUNT;
+		env.MARS_BENCH_SOURCE_BUN = `${SOURCE_BIN_MOUNT}/bun`;
+		env.MARS_BENCH_SOURCE_ARCH = source.arch;
 	}
-	if (cfg.binaryArm64) env.OMP_BENCH_BINARY_ARM64 = cfg.binaryArm64;
-	if (cfg.binaryX64) env.OMP_BENCH_BINARY_X64 = cfg.binaryX64;
-	if (cfg.thinking) env.OMP_BENCH_THINKING = cfg.thinking;
-	if (cfg.agentArgs.length > 0) env.OMP_BENCH_AGENT_ARGS = JSON.stringify(cfg.agentArgs);
-	if (cfg.tools) env.OMP_BENCH_TOOLS = cfg.tools.join(",");
-	if (Object.keys(cfg.settings).length > 0) env.OMP_BENCH_SETTINGS = JSON.stringify(cfg.settings);
-	if (cfg.webSearch) env.OMP_BENCH_WEB_SEARCH = "1";
-	env.OMP_BENCH_GATEWAY = cfg.gateway ? "1" : "0";
+	if (cfg.binaryArm64) env.MARS_BENCH_BINARY_ARM64 = cfg.binaryArm64;
+	if (cfg.binaryX64) env.MARS_BENCH_BINARY_X64 = cfg.binaryX64;
+	if (cfg.thinking) env.MARS_BENCH_THINKING = cfg.thinking;
+	if (cfg.agentArgs.length > 0) env.MARS_BENCH_AGENT_ARGS = JSON.stringify(cfg.agentArgs);
+	if (cfg.tools) env.MARS_BENCH_TOOLS = cfg.tools.join(",");
+	if (Object.keys(cfg.settings).length > 0) env.MARS_BENCH_SETTINGS = JSON.stringify(cfg.settings);
+	if (cfg.webSearch) env.MARS_BENCH_WEB_SEARCH = "1";
+	env.MARS_BENCH_GATEWAY = cfg.gateway ? "1" : "0";
 	if (cfg.gateway) {
-		env.OMP_BENCH_MODELS_YAML = modelsYaml;
-		env.OMP_BENCH_GATEWAY_URL = cfg.gatewayUrl;
-		env.OMP_BENCH_GATEWAY_TOKEN = cfg.gatewayToken;
-		env.OMP_BENCH_GATEWAY_PROVIDERS = deriveProviders(cfg).join(",");
+		env.MARS_BENCH_MODELS_YAML = modelsYaml;
+		env.MARS_BENCH_GATEWAY_URL = cfg.gatewayUrl;
+		env.MARS_BENCH_GATEWAY_TOKEN = cfg.gatewayToken;
+		env.MARS_BENCH_GATEWAY_PROVIDERS = deriveProviders(cfg).join(",");
 	}
-	if (cfg.envType === "apple-container") env.OMP_BENCH_CONTAINER_DNS = CONTAINER_DNS;
+	if (cfg.envType === "apple-container") env.MARS_BENCH_CONTAINER_DNS = CONTAINER_DNS;
 	const forward = collectForwardEnv(cfg);
-	if (Object.keys(forward).length > 0) env.OMP_BENCH_FORWARD_ENV = JSON.stringify(forward);
+	if (Object.keys(forward).length > 0) env.MARS_BENCH_FORWARD_ENV = JSON.stringify(forward);
 	return env;
 }
 
@@ -1681,15 +1681,16 @@ async function runBenchmark(cfg: Config): Promise<BenchmarkRun> {
 		}
 		process.stdout.write(bold("omp env:\n"));
 		for (const key in harborEnv) {
-			if (key === "OMP_BENCH_FORWARD_ENV") continue;
-			if (key.startsWith("OMP_BENCH_") || key === "PYTHONPATH") process.stdout.write(`  ${key}=${harborEnv[key]}\n`);
+			if (key === "MARS_BENCH_FORWARD_ENV") continue;
+			if (key.startsWith("MARS_BENCH_") || key === "PYTHONPATH")
+				process.stdout.write(`  ${key}=${harborEnv[key]}\n`);
 		}
-		if (harborEnv.OMP_BENCH_FORWARD_ENV) {
-			const parsedForwardEnv: unknown = JSON.parse(harborEnv.OMP_BENCH_FORWARD_ENV);
+		if (harborEnv.MARS_BENCH_FORWARD_ENV) {
+			const parsedForwardEnv: unknown = JSON.parse(harborEnv.MARS_BENCH_FORWARD_ENV);
 			if (parsedForwardEnv !== null && typeof parsedForwardEnv === "object" && !Array.isArray(parsedForwardEnv)) {
 				const keys: string[] = [];
 				for (const key in parsedForwardEnv) keys.push(key);
-				process.stdout.write(`  OMP_BENCH_FORWARD_ENV=${keys.join(",")} (values hidden)\n`);
+				process.stdout.write(`  MARS_BENCH_FORWARD_ENV=${keys.join(",")} (values hidden)\n`);
 			}
 		}
 		process.stdout.write(`\njob dir: ${jobDir}\nbench dir: ${benchDir}\n`);

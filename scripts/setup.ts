@@ -3,7 +3,7 @@
  * `bun setup` entrypoint. Chains the four setup steps (install → native
  * addon build → coding-agent link → mars link). The native host build uses
  * the local Cargo/N-API backend by default; set
- * `OMP_NATIVE_BUILD_BACKEND=bazel` to opt into bazel. Flags after `--` are
+ * `MARS_NATIVE_BUILD_BACKEND=bazel` to opt into bazel. Flags after `--` are
  * appended to the native build invocation.
  *
  * On Windows the final `link mars` step runs natively in this file instead of

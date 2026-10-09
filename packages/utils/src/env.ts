@@ -260,7 +260,7 @@ export function getDotenvEnvValues(
 /**
  * Parses a complete .env file with the runtime's dotenv grammar, then retains
  * only shell-identifier names and spawn-safe values before mirroring valid
- * `OMP_` variables to their `PI_` aliases.
+ * `MARS_` variables to their `PI_` aliases.
  */
 export function parseEnvFile(filePath: string): Record<string, string> {
 	const result: Record<string, string> = {};
@@ -274,10 +274,10 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 		// File doesn't exist or can't be read - return empty result
 	}
 
-	// OMP_ overrides PI_
+	// MARS_ overrides PI_
 	for (const k in result) {
-		if (k.startsWith("OMP_")) {
-			result[`PI_${k.slice(4)}`] = result[k];
+		if (k.startsWith("MARS_")) {
+			result[`PI_${k.slice(5)}`] = result[k];
 		}
 	}
 

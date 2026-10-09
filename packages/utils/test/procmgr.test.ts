@@ -73,14 +73,14 @@ describe("refreshShellConfigCache", () => {
 	it.skipIf(process.platform !== "linux")(
 		"keeps a launcher-exported value the project's dotenv file repeats, and drops dotenv-only values",
 		async () => {
-			const project = tempProject("OMP_REFRESH_SHARED=same\nOMP_REFRESH_DOTENV_ONLY=from-dotenv\n");
-			const result = await probe(project, { OMP_REFRESH_SHARED: "same", OMP_REFRESH_DOTENV_ONLY: undefined }, [
+			const project = tempProject("MARS_REFRESH_SHARED=same\nMARS_REFRESH_DOTENV_ONLY=from-dotenv\n");
+			const result = await probe(project, { MARS_REFRESH_SHARED: "same", MARS_REFRESH_DOTENV_ONLY: undefined }, [
 				"refreshShellConfigCache();",
 				"const env = getShellConfig().env;",
 				"process.stdout.write(JSON.stringify({",
-				"  shared: env.OMP_REFRESH_SHARED ?? null,",
-				"  dotenvOnly: env.OMP_REFRESH_DOTENV_ONLY ?? null,",
-				"  loaded: process.env.OMP_REFRESH_DOTENV_ONLY ?? null,",
+				"  shared: env.MARS_REFRESH_SHARED ?? null,",
+				"  dotenvOnly: env.MARS_REFRESH_DOTENV_ONLY ?? null,",
+				"  loaded: process.env.MARS_REFRESH_DOTENV_ONLY ?? null,",
 				"}));",
 			]);
 			expect(result).toEqual({ shared: "same", dotenvOnly: null, loaded: "from-dotenv" });
@@ -94,15 +94,15 @@ describe("refreshShellConfigCache", () => {
 		["a build", "getShellConfig();"],
 	] as const) {
 		it(`keeps the launch project's dotenv values out of another project's session after ${first} in the launch project`, async () => {
-			const launch = tempProject("OMP_REFRESH_LAUNCH_SECRET=a-secret\n");
+			const launch = tempProject("MARS_REFRESH_LAUNCH_SECRET=a-secret\n");
 			const other = tempProject("");
-			const result = await probe(launch, { OMP_REFRESH_LAUNCH_SECRET: undefined }, [
+			const result = await probe(launch, { MARS_REFRESH_LAUNCH_SECRET: undefined }, [
 				firstLine,
 				`setProjectDir(${JSON.stringify(other)});`,
 				"refreshShellConfigCache();",
 				"process.stdout.write(JSON.stringify({",
-				"  child: getShellConfig().env.OMP_REFRESH_LAUNCH_SECRET ?? null,",
-				"  loaded: process.env.OMP_REFRESH_LAUNCH_SECRET ?? null,",
+				"  child: getShellConfig().env.MARS_REFRESH_LAUNCH_SECRET ?? null,",
+				"  loaded: process.env.MARS_REFRESH_LAUNCH_SECRET ?? null,",
 				"}));",
 			]);
 			expect(result).toEqual({ child: null, loaded: "a-secret" });

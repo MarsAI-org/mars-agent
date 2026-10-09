@@ -104,7 +104,7 @@ bun scripts/gen-bazel-lock.ts --check   # bazel fetch --repo=@crates --lockfile_
 # Addon for the current host (x64 hosts pick modern vs baseline via AVX2
 # detection), installed into packages/natives/native/. The host target builds
 # through the local cargo/napi-rs backend by default; set
-# OMP_NATIVE_BUILD_BACKEND=bazel (or pass bazel args after `--`) for bazel:
+# MARS_NATIVE_BUILD_BACKEND=bazel (or pass bazel args after `--`) for bazel:
 bun --cwd=packages/natives run build          # = bun ../../scripts/bazel-natives.ts host --dest native
 # same, from the repo root:
 bun run build:native
@@ -120,7 +120,7 @@ bazelisk build //:natives-darwin-arm64
 bazelisk build //:natives-all
 ```
 
-The driver builds `host` through the local cargo/napi-rs path (`packages/natives/scripts/build-bindings.ts`) unless Bazel is requested via `OMP_NATIVE_BUILD_BACKEND=bazel` or extra Bazel args. The Cargo path also regenerates declarations and ESM/enum exports. `OMP_NATIVE_BUILD_BACKEND=cargo` forces that host-only path; Windows hosts always use it and cannot build explicit Bazel cross targets. `OMP_NATIVE_CARGO_PROFILE` selects the Cargo profile (default `local`; `ci` is stripped). `OMP_NATIVE_FEATURES` passes extra cargo features to `napi build --features` on that path (e.g. `OMP_NATIVE_FEATURES=wayland-pipewire`); Bazel builds ignore it. For explicit targets it runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `OMP_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
+The driver builds `host` through the local cargo/napi-rs path (`packages/natives/scripts/build-bindings.ts`) unless Bazel is requested via `MARS_NATIVE_BUILD_BACKEND=bazel` or extra Bazel args. The Cargo path also regenerates declarations and ESM/enum exports. `MARS_NATIVE_BUILD_BACKEND=cargo` forces that host-only path; Windows hosts always use it and cannot build explicit Bazel cross targets. `MARS_NATIVE_CARGO_PROFILE` selects the Cargo profile (default `local`; `ci` is stripped). `MARS_NATIVE_FEATURES` passes extra cargo features to `napi build --features` on that path (e.g. `MARS_NATIVE_FEATURES=wayland-pipewire`); Bazel builds ignore it. For explicit targets it runs one `bazel build` for all requested targets, locates outputs via `bazel cquery --output=files` (falling back to the `bazel-bin/natives-<t>/<canonical>.node` path convention), and copies them dereferenced into `--dest` (default `packages/natives/native`). Extra args after `--` go to bazel verbatim. It resolves `bazelisk` (or `bazel`) from `PATH` and honors an `MARS_BAZEL_RC` env var as a `--bazelrc=` startup option (that's how CI injects cache wiring).
 
 Building `all` into one dest would clobber gnu addons with musl ones (shared basenames) — the driver refuses; use separate invocations with separate `--dest` dirs.
 
@@ -186,7 +186,7 @@ Bazel native jobs need no toolchain setup: bazelisk is baked into the kata runne
 
 ### `bazel-cache` action (`.github/actions/bazel-cache`)
 
-Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `OMP_BAZEL_RC`. Every Bazel job runs on omp-kata, where the pod env's `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD` select the cluster remote cache: a temporary output root, `--config=ci`, the PVC-backed repository/xwin caches, `--config=cache-rw`, the in-cluster TLS remote-cache endpoint and masked Basic-auth header, plus `--remote_download_toplevel`. Without those credentials the fragment carries only `--config=ci` and the build runs uncached. The remote endpoint resolves only inside the cluster.
+Single source of truth for cache wiring, emitted as a bazelrc fragment (its `rc` output) that consumers pass via `bazelisk --bazelrc=...` or `MARS_BAZEL_RC`. Every Bazel job runs on omp-kata, where the pod env's `BAZEL_REMOTE_USER`/`BAZEL_REMOTE_PASSWORD` select the cluster remote cache: a temporary output root, `--config=ci`, the PVC-backed repository/xwin caches, `--config=cache-rw`, the in-cluster TLS remote-cache endpoint and masked Basic-auth header, plus `--remote_download_toplevel`. Without those credentials the fragment carries only `--config=ci` and the build runs uncached. The remote endpoint resolves only inside the cluster.
 
 ### Native artifact actions
 

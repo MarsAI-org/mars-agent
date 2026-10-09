@@ -7,7 +7,7 @@ import { __resetDirsFromEnvForTests, getAgentDir, getNativesDir } from "@marsai-
 const ENV_KEYS = [
 	"HOME",
 	"USERPROFILE",
-	"OMP_PROFILE",
+	"MARS_PROFILE",
 	"PI_PROFILE",
 	"PI_CONFIG_DIR",
 	"PI_CODING_AGENT_DIR",
@@ -58,7 +58,7 @@ describe("native directory override", () => {
 		process.env.XDG_CACHE_HOME = cache;
 		process.env.XDG_DATA_HOME = data;
 		process.env.PI_CONFIG_DIR = ".alternate";
-		process.env.OMP_PROFILE = "isolated";
+		process.env.MARS_PROFILE = "isolated";
 		__resetDirsFromEnvForTests();
 		const defaultNatives = path.join(
 			xdgPlatform ? path.join(cache, "omp") : path.join(home, ".alternate"),

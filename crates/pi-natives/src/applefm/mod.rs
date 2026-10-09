@@ -73,7 +73,7 @@ mod platform {
 	type Emit = extern "C" fn(context: *mut c_void, event: *const c_char, is_final: bool);
 
 	/// The bridge dylib; empty when the build host could not compile it.
-	const DYLIB: &[u8] = include_bytes!(env!("OMP_APPLEFM_BRIDGE"));
+	const DYLIB: &[u8] = include_bytes!(env!("MARS_APPLEFM_BRIDGE"));
 	/// First macOS release shipping `FoundationModels` with the APIs the bridge
 	/// uses.
 	const MIN_MACOS_MAJOR: u32 = 27;

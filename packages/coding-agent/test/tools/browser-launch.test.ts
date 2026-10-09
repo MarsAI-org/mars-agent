@@ -199,7 +199,7 @@ describe("browser executable selection", () => {
 			const result = Bun.spawnSync([process.execPath, EXECUTABLE_PROBE], {
 				env: {
 					...process.env,
-					OMP_BROWSER_PROBE_PLATFORM: "win32",
+					MARS_BROWSER_PROBE_PLATFORM: "win32",
 					ProgramFiles: tempDir.path(),
 					"ProgramFiles(x86)": path.join(tempDir.path(), "missing-x86"),
 					LOCALAPPDATA: path.join(tempDir.path(), "missing-local"),
@@ -239,7 +239,7 @@ describe("browser executable selection", () => {
 					XDG_CACHE_HOME: xdgCache,
 					XDG_DATA_HOME: path.join(tempDir.path(), "data"),
 					XDG_STATE_HOME: path.join(tempDir.path(), "state"),
-					OMP_BROWSER_PROBE_PLATFORM: "darwin",
+					MARS_BROWSER_PROBE_PLATFORM: "darwin",
 					PUPPETEER_EXECUTABLE_PATH: "",
 				};
 

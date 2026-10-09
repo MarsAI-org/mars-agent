@@ -113,7 +113,7 @@ it("filters expanded dotenv values while preserving matching and empty launcher 
 			"	project: env.TEST_ENV_FROM_DOTENV ?? null,",
 			"	deployment: env.CONVEX_DEPLOYMENT ?? null,",
 			"	url: env.CONVEX_URL ?? null,",
-			"	inherited: env.OMP_TEST_INHERITED_MARKER ?? null,",
+			"	inherited: env.MARS_TEST_INHERITED_MARKER ?? null,",
 			"	empty: env.EMPTY_PARENT_VAR ?? null,",
 			"	matching: env.NODE_ENV ?? null,",
 			"	exported: env.EXPORTED_SECRET ?? null,",
@@ -127,7 +127,7 @@ it("filters expanded dotenv values while preserving matching and empty launcher 
 				env: {
 					HOME: process.env.HOME ?? "",
 					EMPTY_PARENT_VAR: "",
-					OMP_TEST_INHERITED_MARKER: "keep-me",
+					MARS_TEST_INHERITED_MARKER: "keep-me",
 					NODE_ENV: "development",
 					PATH: process.env.PATH ?? "",
 					SHELL: process.env.SHELL ?? "/bin/bash",

@@ -10,7 +10,7 @@
  * traceable. The file is created on the first record written. Records are
  * batched — one write per second or per 64 KiB — while `warn`/`error` records
  * are written at once together with everything buffered before them; exit,
- * fatal, and signal paths flush the rest. `OMP_LOG_LEVEL` optionally limits
+ * fatal, and signal paths flush the rest. `MARS_LOG_LEVEL` optionally limits
  * the levels written to the file (default: all).
  */
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -319,11 +319,11 @@ const LOG_LEVEL_RANK: Record<LogLevel, number> = { error: 0, warn: 1, info: 2, d
 const IMMEDIATE_FLUSH_RANK = LOG_LEVEL_RANK.warn;
 
 /**
- * Rank of the most verbose level the file transport persists: `OMP_LOG_LEVEL`
+ * Rank of the most verbose level the file transport persists: `MARS_LOG_LEVEL`
  * (error|warn|info|debug, case-insensitive), default `debug` (everything).
  */
 function resolveFileLevelRank(): number {
-	const requested = process.env.OMP_LOG_LEVEL?.trim().toLowerCase();
+	const requested = process.env.MARS_LOG_LEVEL?.trim().toLowerCase();
 	return requested && Object.hasOwn(LOG_LEVEL_RANK, requested)
 		? LOG_LEVEL_RANK[requested as LogLevel]
 		: LOG_LEVEL_RANK.debug;
@@ -388,7 +388,7 @@ function emitLocally(level: LogLevel, message: string, context: Record<string, u
  * long-running services (the auth broker, etc.) that want their structured
  * logs piped into a process supervisor instead of the rotating file.
  * The previous file transport writes its buffered records before closing, and
- * the file level (`OMP_LOG_LEVEL`) is re-read on each reconfiguration.
+ * the file level (`MARS_LOG_LEVEL`) is re-read on each reconfiguration.
  */
 export function setTransports(opts: { console?: boolean; file?: boolean | string }): void {
 	transportOpts = opts;

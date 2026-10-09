@@ -26,7 +26,7 @@ describe("test runner watchdog", () => {
 				`import { runTestCommandsInParallel } from ${JSON.stringify(import.meta.resolve("./ci-test-ts.ts"))}; await runTestCommandsInParallel(${JSON.stringify(commands)}, 1);`,
 			],
 			{
-				env: { ...Bun.env, OMP_TEST_CHUNK_TIMEOUT: "1", NO_COLOR: "1" },
+				env: { ...Bun.env, MARS_TEST_CHUNK_TIMEOUT: "1", NO_COLOR: "1" },
 				timeout: 10_000,
 				detached: true,
 				allowNonZero: true,
@@ -41,7 +41,7 @@ describe("test runner watchdog", () => {
 	}, 15_000);
 });
 
-describe("OMP_TEST_SHARD", () => {
+describe("MARS_TEST_SHARD", () => {
 	test("shards partition every chunk exactly once, balanced to within one", () => {
 		const chunks = Array.from({ length: 79 }, (_, i) => i);
 		const shards = [1, 2, 3].map(i => selectShard(chunks, `${i}/3`));
@@ -54,7 +54,7 @@ describe("OMP_TEST_SHARD", () => {
 
 	test("rejects malformed specs instead of running an empty or partial shard", () => {
 		for (const spec of ["0/2", "3/2", "1/0", "2", "a/b", "1/2/3"]) {
-			expect(() => selectShard([1, 2, 3], spec)).toThrow("Invalid OMP_TEST_SHARD");
+			expect(() => selectShard([1, 2, 3], spec)).toThrow("Invalid MARS_TEST_SHARD");
 		}
 	});
 

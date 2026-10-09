@@ -24,8 +24,8 @@ const CHROMIUM_AVAILABLE = await chromiumAvailable();
 // Headful launches additionally need a display; `CHROMIUM_AVAILABLE` only
 // checks headless CDP on Linux, which does not require an X server.
 // Never open a desktop window during ordinary test runs; exercise this manual
-// viewport smoke test only with OMP_TEST_VISIBLE_BROWSER=1.
-const VISIBLE_BROWSER_AVAILABLE = process.env.OMP_TEST_VISIBLE_BROWSER === "1" && (await visibleBrowserAvailable());
+// viewport smoke test only with MARS_TEST_VISIBLE_BROWSER=1.
+const VISIBLE_BROWSER_AVAILABLE = process.env.MARS_TEST_VISIBLE_BROWSER === "1" && (await visibleBrowserAvailable());
 
 class FakeStartupWorker {
 	#errorHandlers = new Set<(error: Error) => void>();

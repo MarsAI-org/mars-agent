@@ -429,7 +429,7 @@ win32 ones cross-compile on the pods). GitHub-hosted PR jobs build nothing:
 `native_addons` restores main's linux-x64 pair from the GitHub Actions cache
 (which GitHub shares from the default branch across pull requests). Kata
 jobs skip artifact downloads entirely (`--remote_download_toplevel`), and the
-xwin MSVC splat persists on the runner-cache PVC (`OMP_XWIN_CACHE_DIR`).
+xwin MSVC splat persists on the runner-cache PVC (`MARS_XWIN_CACHE_DIR`).
 
 **(b) Cargo registry cache** - the scale-set pod template mounts only the
 immutable download cache and sparse index at
@@ -491,7 +491,7 @@ kubectl -n arc-runners delete secret sccache-s3
 kubectl delete namespace sccache        # removes RustFS and the rustfs-data PVC
 # then: drop the sccache tcp/9000 rule from runner-egress-lockdown, and remove
 # the sccache-s3 envFrom entry, the native-artifacts subPath mount, and
-# OMP_NATIVE_CACHE_DIR from arc-omp-values.yaml (+ helm upgrade).
+# MARS_NATIVE_CACHE_DIR from arc-omp-values.yaml (+ helm upgrade).
 ```
 
 ---

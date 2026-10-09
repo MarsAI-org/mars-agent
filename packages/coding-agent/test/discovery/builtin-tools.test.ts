@@ -36,7 +36,7 @@ describe("native executable custom tool discovery", () => {
 		clearFsCache();
 		originalHome = process.env.HOME;
 		originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
-		originalOmpProfileEnv = process.env.OMP_PROFILE;
+		originalOmpProfileEnv = process.env.MARS_PROFILE;
 		originalPiProfileEnv = process.env.PI_PROFILE;
 		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-builtin-tools-"));
 		const home = path.join(root, "home");
@@ -60,7 +60,7 @@ describe("native executable custom tool discovery", () => {
 		clearFsCache();
 		vi.restoreAllMocks();
 		restoreEnvValue("HOME", originalHome);
-		restoreEnvValue("OMP_PROFILE", originalOmpProfileEnv);
+		restoreEnvValue("MARS_PROFILE", originalOmpProfileEnv);
 		restoreEnvValue("PI_PROFILE", originalPiProfileEnv);
 		restoreEnvValue("PI_CODING_AGENT_DIR", originalAgentDirEnv);
 		__resetDirsFromEnvForTests();

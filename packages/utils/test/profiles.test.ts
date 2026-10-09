@@ -53,7 +53,7 @@ describe("profile directories", () => {
 		originalAgentDir = getAgentDir();
 		originalProfile = getActiveProfile();
 		originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
-		originalOmpProfileEnv = process.env.OMP_PROFILE;
+		originalOmpProfileEnv = process.env.MARS_PROFILE;
 		originalPiProfileEnv = process.env.PI_PROFILE;
 		originalConfigDir = process.env.PI_CONFIG_DIR;
 		originalXdgDataHome = process.env.XDG_DATA_HOME;
@@ -104,9 +104,9 @@ describe("profile directories", () => {
 			setProfile(undefined);
 		}
 		if (originalOmpProfileEnv === undefined) {
-			delete process.env.OMP_PROFILE;
+			delete process.env.MARS_PROFILE;
 		} else {
-			process.env.OMP_PROFILE = originalOmpProfileEnv;
+			process.env.MARS_PROFILE = originalOmpProfileEnv;
 		}
 		if (originalPiProfileEnv === undefined) {
 			delete process.env.PI_PROFILE;
@@ -231,7 +231,7 @@ describe("profile directories", () => {
 	});
 
 	it("does not restore a profile-derived agent dir as the default baseline", () => {
-		// Reproduces a child process that inherited OMP_PROFILE=work plus the
+		// Reproduces a child process that inherited MARS_PROFILE=work plus the
 		// profile-derived PI_CODING_AGENT_DIR that setProfile propagates to
 		// children. The module-load snapshot must not capture that profile dir as
 		// the default baseline, or setProfile(undefined) would resolve default
@@ -241,7 +241,7 @@ describe("profile directories", () => {
 		expect(getAgentDir()).toBe(workAgentDir);
 		expect(process.env.PI_CODING_AGENT_DIR).toBe(workAgentDir);
 
-		// Re-snapshot exactly as module load would, now that OMP_PROFILE and the
+		// Re-snapshot exactly as module load would, now that MARS_PROFILE and the
 		// profile-derived PI_CODING_AGENT_DIR are present in the environment.
 		__resetProfileSnapshotForTests();
 
@@ -253,12 +253,12 @@ describe("profile directories", () => {
 });
 
 describe("profile env + name validation", () => {
-	it("honors OMP_PROFILE precedence and treats empty/default as the default profile", () => {
-		// OMP_PROFILE is canonical and wins over the legacy PI_PROFILE fallback.
+	it("honors MARS_PROFILE precedence and treats empty/default as the default profile", () => {
+		// MARS_PROFILE is canonical and wins over the legacy PI_PROFILE fallback.
 		expect(resolveProfileEnv("work", "other")).toBe("work");
-		// PI_PROFILE is consulted only when OMP_PROFILE is undefined.
+		// PI_PROFILE is consulted only when MARS_PROFILE is undefined.
 		expect(resolveProfileEnv(undefined, "work")).toBe("work");
-		// An explicitly-empty OMP_PROFILE selects the default profile; it must NOT
+		// An explicitly-empty MARS_PROFILE selects the default profile; it must NOT
 		// fall through to the lower-precedence PI_PROFILE.
 		expect(resolveProfileEnv("", "work")).toBeUndefined();
 		expect(resolveProfileEnv("   ", "work")).toBeUndefined();
@@ -324,7 +324,7 @@ describe("dirs module import behavior", () => {
 			const workerHostUrl = import.meta.resolve("@marsai-org/utils/worker-host");
 			const agentDir = path.join(root, "agent");
 			await fs.mkdir(agentDir, { recursive: true });
-			await Bun.write(path.join(agentDir, ".env"), "OMP_WORKER_HOST_PROBE=from-agent-env\n");
+			await Bun.write(path.join(agentDir, ".env"), "MARS_WORKER_HOST_PROBE=from-agent-env\n");
 			const probePath = path.join(root, "probe.ts");
 			await Bun.write(
 				probePath,
@@ -332,7 +332,7 @@ describe("dirs module import behavior", () => {
 					`import { declareWorkerHostEntry, workerHostEntry } from ${JSON.stringify(workerHostUrl)};`,
 					"declareWorkerHostEntry();",
 					"process.stdout.write(JSON.stringify({",
-					"	envProbe: process.env.OMP_WORKER_HOST_PROBE ?? null,",
+					"	envProbe: process.env.MARS_WORKER_HOST_PROBE ?? null,",
 					"	hostDeclared: workerHostEntry() === Bun.main,",
 					"}));",
 				].join("\n"),
@@ -342,7 +342,7 @@ describe("dirs module import behavior", () => {
 				...process.env,
 				PI_CODING_AGENT_DIR: agentDir,
 			};
-			delete childEnv.OMP_WORKER_HOST_PROBE;
+			delete childEnv.MARS_WORKER_HOST_PROBE;
 			const proc = Bun.spawn([process.execPath, probePath], {
 				stdout: "pipe",
 				stderr: "pipe",
@@ -364,7 +364,7 @@ describe("dirs module import behavior", () => {
 		}
 	});
 
-	it("ignores inherited profile agent dir when OMP_PROFILE explicitly selects default", async () => {
+	it("ignores inherited profile agent dir when MARS_PROFILE explicitly selects default", async () => {
 		const root = await fs.mkdtemp(path.join(os.tmpdir(), "pi-utils-dirs-default-profile-"));
 		const probeConfigDir = `.omp-default-profile-${Snowflake.next()}`;
 		try {
@@ -388,7 +388,7 @@ describe("dirs module import behavior", () => {
 				const childEnv: Record<string, string | undefined> = {
 					...process.env,
 					PI_CONFIG_DIR: probeConfigDir,
-					OMP_PROFILE: ompProfile,
+					MARS_PROFILE: ompProfile,
 					PI_PROFILE: "work",
 					PI_CODING_AGENT_DIR: workAgentDir,
 				};
@@ -452,7 +452,7 @@ describe("dirs module import behavior", () => {
 				...process.env,
 				HOME: homeDir,
 				PI_CONFIG_DIR: profileConfigDir,
-				OMP_PROFILE: "work",
+				MARS_PROFILE: "work",
 				PI_PROFILE: "work",
 			};
 			delete childEnv.PI_CODING_AGENT_DIR;

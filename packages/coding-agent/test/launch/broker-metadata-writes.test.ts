@@ -152,7 +152,7 @@ describe("daemon metadata writes", () => {
 					name: "lifecycle",
 					application: process.execPath,
 					args: ["-e", "setTimeout(() => {}, 200)"],
-					env: { OMP_SPEC_TEST_MARKER: marker },
+					env: { MARS_SPEC_TEST_MARKER: marker },
 					cwd: projectDir,
 					pty: false,
 					restart: "no",
@@ -173,7 +173,7 @@ describe("daemon metadata writes", () => {
 		}
 		const after = await fs.stat(specPath);
 		expect({ ino: after.ino, mtimeMs: after.mtimeMs }).toEqual({ ino: specStat!.ino, mtimeMs: specStat!.mtimeMs });
-		expect(await Bun.file(specPath).json()).toMatchObject({ env: { OMP_SPEC_TEST_MARKER: marker } });
+		expect(await Bun.file(specPath).json()).toMatchObject({ env: { MARS_SPEC_TEST_MARKER: marker } });
 		const metadata = await Bun.file(metadataPath).text();
 		expect(metadata).not.toContain("SPEC_ONLY_MARKER_");
 		expect(JSON.parse(metadata)).toMatchObject({ daemon: { state: "exited" } });

@@ -13,7 +13,7 @@ import { clearClaudePluginRootsCache, injectPluginDirRoots } from "@marsai-org/c
 import { discoverAgents } from "@marsai-org/coding-agent/task/discovery";
 import { removeWithRetries } from "@marsai-org/utils";
 
-const OMP_AGENT_MD = [
+const MARS_AGENT_MD = [
 	"---",
 	"name: omp-test-agent",
 	"description: OMP-native test agent.",
@@ -21,7 +21,7 @@ const OMP_AGENT_MD = [
 	"You are an OMP task agent.",
 ].join("\n");
 
-const OMP_PLUGIN_AGENT_MD = [
+const MARS_PLUGIN_AGENT_MD = [
 	"---",
 	"name: loom-verify-spec",
 	"description: Plugin-shipped verification agent.",
@@ -56,7 +56,7 @@ async function writeOmpPluginAgent(home: string): Promise<void> {
 			dependencies: { loom: "1.0.0" },
 		}),
 	);
-	await fs.writeFile(path.join(pluginRoot, "agents", "loom-verify-spec.md"), OMP_PLUGIN_AGENT_MD);
+	await fs.writeFile(path.join(pluginRoot, "agents", "loom-verify-spec.md"), MARS_PLUGIN_AGENT_MD);
 }
 
 function agentMd(name: string, model: string): string {
@@ -138,7 +138,7 @@ describe("discoverAgents", () => {
 
 	test("loads OMP agents but skips Claude Code custom agents", async () => {
 		await fs.mkdir(path.join(projectDir, ".omp", "agents"), { recursive: true });
-		await fs.writeFile(path.join(projectDir, ".omp", "agents", "omp-test-agent.md"), OMP_AGENT_MD);
+		await fs.writeFile(path.join(projectDir, ".omp", "agents", "omp-test-agent.md"), MARS_AGENT_MD);
 
 		await fs.mkdir(path.join(tempHome, ".claude", "agents"), { recursive: true });
 		await fs.writeFile(path.join(tempHome, ".claude", "agents", "user-cc-test-agent.md"), CLAUDE_AGENT_MD);
