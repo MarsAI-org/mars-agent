@@ -18,6 +18,7 @@ import {
 	getProjectDir,
 	normalizePathForComparison,
 	setProjectDir,
+	takeLegacyConfigMigrationNotice,
 	VERSION,
 } from "@marsai-org/utils/dirs";
 import { $env, isBunTestRuntime, setInteractiveHost } from "@marsai-org/utils/env";
@@ -1751,6 +1752,13 @@ export async function runRootCommand(
 			writeStartupNotice(parsedArgs, `Exported to: ${result}\n`);
 			process.exit(0);
 		}
+
+		// Adopting the pre-rebrand `~/.omp` config root happened once, at the first
+		// config-root read this process made; report it here through the startup
+		// notice sink (stderr in json mode), never through a shared logger, and after
+		// the `--version`/`--export` exits so their output stays byte-exact.
+		const legacyConfigMigrationNotice = takeLegacyConfigMigrationNotice();
+		if (legacyConfigMigrationNotice) writeStartupNotice(parsedArgs, legacyConfigMigrationNotice);
 
 		if ((parsedArgs.mode === "rpc" || parsedArgs.mode === "rpc-ui") && parsedArgs.fileArgs.length > 0) {
 			process.stderr.write(`${chalk.red("Error: @file arguments are not supported in RPC mode")}\n`);

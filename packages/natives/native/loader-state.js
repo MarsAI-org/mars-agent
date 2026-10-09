@@ -56,6 +56,9 @@ function startupMarker(text) {
 	}
 }
 
+/** App-name segment under an XDG root; mirrors `APP_NAME` in pi-utils. Must stay in sync. */
+const APP_NAME = "mars";
+
 function getNativesDir() {
 	// Match pi-utils directory overrides without depending on pi-utils.
 	const override = process.env.PI_NATIVES_DIR?.trim();
@@ -66,10 +69,10 @@ function getNativesDir() {
 		if (path.isAbsolute(dir)) return path.normalize(dir);
 	}
 	const xdgDataHome = process.env.XDG_DATA_HOME;
-	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, "omp"))) {
-		return path.join(xdgDataHome, "omp", "natives");
+	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, APP_NAME))) {
+		return path.join(xdgDataHome, APP_NAME, "natives");
 	}
-	return path.join(os.homedir(), ".omp", "natives");
+	return path.join(os.homedir(), ".mars", "natives");
 }
 
 function resolveLeafPackageDir(platformTag) {
@@ -120,7 +123,7 @@ export function getAddonFilenames({ tag, arch, variant }) {
 
 /**
  * Decide whether the loader should mirror the package's `native/<filename>.node`
- * into the per-version cache directory (`~/.omp/natives/<version>/`) before loading.
+ * into the per-version cache directory (`~/.mars/natives/<version>/`) before loading.
  *
  * Windows-only safety net for `bun install -g` updates: when a previous `omp`
  * process is running, bun cannot overwrite the locked `.node` inside

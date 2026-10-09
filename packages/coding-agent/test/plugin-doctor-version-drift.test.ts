@@ -7,7 +7,7 @@ import type { PluginRuntimeState } from "@marsai-org/coding-agent/extensibility/
 import * as piUtils from "@marsai-org/utils";
 import { removeWithRetries } from "@marsai-org/utils";
 
-// Regression for #11090: `omp-plugins.lock.json` can diverge from the package
+// Regression for #11090: `mars-plugins.lock.json` can diverge from the package
 // version in node_modules. `plugin doctor` must surface the stale copy instead
 // of treating the on-disk manifest alone as proof of health.
 describe("PluginManager.doctor version drift", () => {
@@ -24,7 +24,7 @@ describe("PluginManager.doctor version drift", () => {
 		vi.spyOn(piUtils, "getPluginsDir").mockReturnValue(pluginsDir);
 		vi.spyOn(piUtils, "getPluginsNodeModules").mockReturnValue(pluginsNodeModules);
 		vi.spyOn(piUtils, "getPluginsPackageJson").mockReturnValue(path.join(pluginsDir, "package.json"));
-		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(pluginsDir, "omp-plugins.lock.json"));
+		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(pluginsDir, "mars-plugins.lock.json"));
 		vi.spyOn(piUtils, "getProjectDir").mockReturnValue(tmpRoot);
 		vi.spyOn(piUtils, "getProjectPluginOverridesPath").mockReturnValue(path.join(tmpRoot, "plugin-overrides.json"));
 	});
@@ -47,7 +47,7 @@ describe("PluginManager.doctor version drift", () => {
 		);
 		const state: PluginRuntimeState = { version: lockVersion, enabledFeatures: null, enabled: true };
 		await Bun.write(
-			path.join(pluginsDir, "omp-plugins.lock.json"),
+			path.join(pluginsDir, "mars-plugins.lock.json"),
 			JSON.stringify({ plugins: { [name]: state }, settings: {} }, null, 2),
 		);
 	}

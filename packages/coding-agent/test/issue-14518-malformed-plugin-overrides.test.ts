@@ -33,7 +33,7 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; p
 	tempRoots.push(root);
 	const home = path.join(root, "home");
 	const cwd = path.join(root, "project");
-	const pluginsDir = path.join(home, ".omp", "plugins");
+	const pluginsDir = path.join(home, ".mars", "plugins");
 	await fs.mkdir(cwd, { recursive: true });
 
 	const declaredDir = path.join(pluginsDir, "node_modules", "declared-plugin");
@@ -44,7 +44,7 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; p
 		omp: { extensions: ["ext.ts"] },
 	});
 	await writeJson(path.join(pluginsDir, "package.json"), { dependencies: { "declared-plugin": "1.0.0" } });
-	await writeJson(path.join(pluginsDir, "omp-plugins.lock.json"), {
+	await writeJson(path.join(pluginsDir, "mars-plugins.lock.json"), {
 		plugins: { "declared-plugin": { version: "1.0.0", enabled: true, enabledFeatures: null } },
 		settings: {},
 	});
@@ -52,8 +52,8 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; p
 }
 
 async function writeOverrides(cwd: string, contents: string): Promise<string> {
-	const overridesPath = path.join(cwd, ".omp", "plugin-overrides.json");
-	await fs.mkdir(path.join(cwd, ".omp"), { recursive: true });
+	const overridesPath = path.join(cwd, ".mars", "plugin-overrides.json");
+	await fs.mkdir(path.join(cwd, ".mars"), { recursive: true });
 	await Bun.write(overridesPath, contents);
 	return overridesPath;
 }
@@ -95,7 +95,7 @@ test("getPluginSettings surfaces the same diagnostic for malformed project overr
 	const overridesPath = await writeOverrides(cwd, "{ not valid json");
 
 	const getPluginsLockfile = spyOn(piUtils, "getPluginsLockfile").mockReturnValue(
-		path.join(pluginsDir, "omp-plugins.lock.json"),
+		path.join(pluginsDir, "mars-plugins.lock.json"),
 	);
 	const warn = spyOn(logger, "warn").mockImplementation(() => {});
 	try {

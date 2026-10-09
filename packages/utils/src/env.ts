@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
-import { getAgentDir, getConfigRootDir, getProjectDir, refreshDirsFromEnv } from "./dirs";
+import { getAgentDir, getConfigRootDir, getProjectDir, maybeMigrateLegacyConfigDir, refreshDirsFromEnv } from "./dirs";
 
 export * from "./worker-host";
 
@@ -489,3 +489,13 @@ export function parseFlag(value: string | undefined, def = false): boolean {
 export function $flag(name: string, def: boolean = false): boolean {
 	return parseFlag($env[name], def);
 }
+
+// After the refresh, a `PI_CONFIG_DIR` arriving from a profile/agent `.env` is
+// final, so the one-time `~/.omp` → `~/.mars` migration below evaluates against
+// the real root. It runs here — rather than in every config-root caller — so
+// CLI hosts, RPC/ACP hosts, workers, and SDK embeds all migrate exactly once
+// per install; consumers print the drained notice through their own output
+// sink, so no shared path writes to the streams. `bun test` never migrates:
+// these paths run against the developer's real home there, and
+// `maybeMigrateLegacyConfigDir` is exported for direct unit testing.
+if (!isBunTestRuntime()) maybeMigrateLegacyConfigDir();

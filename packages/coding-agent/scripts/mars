@@ -30,7 +30,7 @@ cli=$scripts_dir/../src/cli.ts
 preload=$scripts_dir/mars.ts
 timing_preload=$scripts_dir/../../utils/src/module-timer.ts
 
-launch_dir=${MARS_DEV_LAUNCH_DIR:-${HOME}/.omp/.dev-cwd}
+launch_dir=${MARS_DEV_LAUNCH_DIR:-${HOME}/.mars/.dev-cwd}
 mkdir -p "$launch_dir"
 
 MARS_LAUNCH_CWD=$PWD

@@ -38,7 +38,7 @@ describe("XDG-aware runtime paths", () => {
 		originalEnv = {};
 		for (const key of ENV_KEYS) originalEnv[key] = process.env[key];
 		tempRoot = path.join(os.tmpdir(), "pi-utils-dirs-xdg", Snowflake.next());
-		configDir = `.omp-dirs-xdg-${Snowflake.next()}`;
+		configDir = `.mars-dirs-xdg-${Snowflake.next()}`;
 		defaultAgentDir = path.join(os.homedir(), configDir, "agent");
 		await fs.mkdir(tempRoot, { recursive: true });
 		process.env.PI_CONFIG_DIR = configDir;
@@ -63,17 +63,17 @@ describe("XDG-aware runtime paths", () => {
 	});
 
 	it.skipIf(!xdgPlatform)(
-		"routes skill descriptions db and predict state under an initialized $XDG_DATA_HOME/omp",
+		"routes skill descriptions db and predict state under an initialized $XDG_DATA_HOME/mars",
 		async () => {
 			const xdgData = path.join(tempRoot, "data");
-			await fs.mkdir(path.join(xdgData, "omp"), { recursive: true });
+			await fs.mkdir(path.join(xdgData, "mars"), { recursive: true });
 			process.env.XDG_DATA_HOME = xdgData;
 			setAgentDir(defaultAgentDir);
 
-			expect(getSkillDescriptionsDbPath()).toBe(path.join(xdgData, "omp", "skill-descriptions.db"));
-			expect(getPredictStateDir(undefined, "ngram")).toBe(path.join(xdgData, "omp", "predict", "ngram"));
+			expect(getSkillDescriptionsDbPath()).toBe(path.join(xdgData, "mars", "skill-descriptions.db"));
+			expect(getPredictStateDir(undefined, "ngram")).toBe(path.join(xdgData, "mars", "predict", "ngram"));
 			// The daemon passes its agent dir explicitly; the default dir still resolves to XDG.
-			expect(getPredictStateDir(defaultAgentDir, "ngram")).toBe(path.join(xdgData, "omp", "predict", "ngram"));
+			expect(getPredictStateDir(defaultAgentDir, "ngram")).toBe(path.join(xdgData, "mars", "predict", "ngram"));
 		},
 	);
 
@@ -82,7 +82,7 @@ describe("XDG-aware runtime paths", () => {
 		await fs.mkdir(legacy, { recursive: true });
 		await Bun.write(path.join(legacy, "cursor.json"), JSON.stringify({ historyId: 42 }));
 		const xdgData = path.join(tempRoot, "data");
-		await fs.mkdir(path.join(xdgData, "omp"), { recursive: true });
+		await fs.mkdir(path.join(xdgData, "mars"), { recursive: true });
 		process.env.XDG_DATA_HOME = xdgData;
 		setAgentDir(defaultAgentDir);
 
@@ -97,9 +97,9 @@ describe("XDG-aware runtime paths", () => {
 
 	it.skipIf(!xdgPlatform)("shares the global daemon runtime dir across profiles and custom agent dirs", async () => {
 		const xdgState = path.join(tempRoot, "state");
-		await fs.mkdir(path.join(xdgState, "omp"), { recursive: true });
+		await fs.mkdir(path.join(xdgState, "mars"), { recursive: true });
 		process.env.XDG_STATE_HOME = xdgState;
-		const shared = path.join(xdgState, "omp", "run", "daemons", "global", "text-predict");
+		const shared = path.join(xdgState, "mars", "run", "daemons", "global", "text-predict");
 
 		setAgentDir(defaultAgentDir);
 		expect(getGlobalDaemonRuntimeDir("text-predict")).toBe(shared);
@@ -114,7 +114,7 @@ describe("XDG-aware runtime paths", () => {
 		const custom = path.join(tempRoot, "custom-agent");
 		await fs.mkdir(custom, { recursive: true });
 		const xdgData = path.join(tempRoot, "data");
-		await fs.mkdir(path.join(xdgData, "omp"), { recursive: true });
+		await fs.mkdir(path.join(xdgData, "mars"), { recursive: true });
 		process.env.XDG_DATA_HOME = xdgData;
 		setAgentDir(custom);
 

@@ -105,7 +105,7 @@ async function readMarketplaceRootManifest(root: ClaudePluginRoot): Promise<Clau
 	const catalogs = await Promise.all(
 		[
 			path.join(root.path, "marketplace.json"),
-			path.join(root.path, ".omp-plugin", "marketplace.json"),
+			path.join(root.path, ".mars-plugin", "marketplace.json"),
 			path.join(root.path, ".claude-plugin", "marketplace.json"),
 		].map(catalogPath => readFile(catalogPath)),
 	);
@@ -462,7 +462,7 @@ function extractServerMap(obj: Record<string, unknown>): Record<string, unknown>
  * Resolve where a plugin's MCP servers come from, honoring the manifest's
  * `mcpServers` field before the conventional root `.mcp.json`.
  *
- * `.omp-plugin/plugin.json` takes precedence over `.claude-plugin/plugin.json`.
+ * `.mars-plugin/plugin.json` takes precedence over `.claude-plugin/plugin.json`.
  * The field may be an inline object (the server map itself) or a string path to
  * a config file within the plugin root; a path escaping the root is rejected
  * with a warning. When no manifest declares the field, `<root>/.mcp.json` is the
@@ -470,7 +470,7 @@ function extractServerMap(obj: Record<string, unknown>): Record<string, unknown>
  */
 async function resolvePluginMCPConfig(root: ClaudePluginRoot): Promise<ResolvedMCPConfig> {
 	const fallback = path.join(root.path, ".mcp.json");
-	for (const manifestDir of [".omp-plugin", ".claude-plugin"]) {
+	for (const manifestDir of [".mars-plugin", ".claude-plugin"]) {
 		const manifestPath = path.join(root.path, manifestDir, "plugin.json");
 		const raw = await readFile(manifestPath);
 		if (raw === null) continue;
