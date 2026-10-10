@@ -34,7 +34,7 @@ describe("plugin manifest path resolution", () => {
 				JSON.stringify({
 					name: "fixture-plugin",
 					version: "1.0.0",
-					mars: { extensions: ["./ext.ts"], tools: "." },
+					omp: { extensions: ["./ext.ts"], tools: "." },
 				}),
 			);
 			fs.writeFileSync(path.join(dir, "index.ts"), "export default {};");
@@ -60,7 +60,7 @@ describe("plugin manifest path resolution", () => {
 			fs.mkdirSync(extensionsDir);
 			fs.writeFileSync(
 				path.join(extensionsDir, "package.json"),
-				JSON.stringify({ mars: { extensions: ["./missing.ts"] } }),
+				JSON.stringify({ omp: { extensions: ["./missing.ts"] } }),
 			);
 			fs.writeFileSync(path.join(extensionsDir, "index.ts"), "export default function () {};");
 			const plugin = makePlugin(dir, {

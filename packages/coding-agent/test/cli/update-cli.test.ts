@@ -63,7 +63,7 @@ describe("getLatestRelease rename pointers", () => {
 			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				mars: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
+				omp: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
 			},
 		});
 
@@ -91,7 +91,7 @@ describe("getLatestRelease rename pointers", () => {
 		const urls = stubRegistry({
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				mars: { rename: { package: "@marsai-org/coding-agent" } },
+				omp: { rename: { package: "@marsai-org/coding-agent" } },
 			},
 		});
 

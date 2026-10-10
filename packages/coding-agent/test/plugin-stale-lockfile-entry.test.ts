@@ -41,7 +41,7 @@ test("stale lockfile-only directory plugin is skipped while declared and linked 
 	await writeJson(path.join(declaredDir, "package.json"), {
 		name: "declared-plugin",
 		version: "1.0.0",
-		mars: { extensions: ["ext.ts"] },
+		omp: { extensions: ["ext.ts"] },
 	});
 
 	// Lockfile-only entry backed by a real directory: the stale orphan; must be skipped.
@@ -50,7 +50,7 @@ test("stale lockfile-only directory plugin is skipped while declared and linked 
 	await writeJson(path.join(staleDir, "package.json"), {
 		name: "stale-plugin",
 		version: "0.1.0",
-		mars: { extensions: ["ext.ts"] },
+		omp: { extensions: ["ext.ts"] },
 	});
 
 	// Lockfile-only entry backed by a symlink (mars plugin link): loads.
@@ -59,14 +59,14 @@ test("stale lockfile-only directory plugin is skipped while declared and linked 
 	await writeJson(path.join(linkedSource, "package.json"), {
 		name: "linked-plugin",
 		version: "0.2.0",
-		mars: { extensions: ["ext.ts"] },
+		omp: { extensions: ["ext.ts"] },
 	});
 	await fs.symlink(linkedSource, path.join(nodeModules, "linked-plugin"));
 
 	await writeJson(path.join(pluginsDir, "package.json"), {
 		dependencies: { "declared-plugin": "1.0.0" },
 	});
-	await writeJson(path.join(pluginsDir, "mars-plugins.lock.json"), {
+	await writeJson(path.join(pluginsDir, "omp-plugins.lock.json"), {
 		plugins: {
 			"declared-plugin": { version: "1.0.0", enabled: true, enabledFeatures: null },
 			"stale-plugin": { version: "0.1.0", enabled: true, enabledFeatures: null },
@@ -92,9 +92,9 @@ test("manifest-less project roots retain lockfile-only directory plugins", async
 	await writeJson(path.join(installedDir, "package.json"), {
 		name: "project-plugin",
 		version: "1.0.0",
-		mars: { extensions: ["ext.ts"] },
+		omp: { extensions: ["ext.ts"] },
 	});
-	await writeJson(path.join(pluginsDir, "mars-plugins.lock.json"), {
+	await writeJson(path.join(pluginsDir, "omp-plugins.lock.json"), {
 		plugins: {
 			"project-plugin": { version: "1.0.0", enabled: true, enabledFeatures: null },
 		},

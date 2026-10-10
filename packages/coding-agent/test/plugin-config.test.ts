@@ -20,7 +20,7 @@ describe("plugin config", () => {
 	beforeEach(async () => {
 		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-plugin-config-"));
 		pluginsDir = path.join(tmpRoot, "plugins");
-		lockfile = path.join(pluginsDir, "mars-plugins.lock.json");
+		lockfile = path.join(pluginsDir, "omp-plugins.lock.json");
 
 		spyOn(piUtils, "getPluginsDir").mockReturnValue(pluginsDir);
 		spyOn(piUtils, "getPluginsLockfile").mockReturnValue(lockfile);
@@ -71,7 +71,7 @@ describe("plugin config", () => {
 			JSON.stringify({
 				name: pluginName,
 				version: "1.0.0",
-				mars: {
+				omp: {
 					version: "1.0.0",
 					settings: {
 						mainBranchProtection: {
@@ -128,7 +128,7 @@ describe("plugin config", () => {
 			JSON.stringify({
 				name: pluginName,
 				version: "1.0.0",
-				mars: { version: "1.0.0", features: { review: { description: "Review changes" } } },
+				omp: { version: "1.0.0", features: { review: { description: "Review changes" } } },
 			}),
 		);
 		await fs.mkdir(path.dirname(pluginPath), { recursive: true });
@@ -165,13 +165,13 @@ describe("plugin config", () => {
 			JSON.stringify({
 				name: pluginName,
 				version: "2.0.0",
-				mars: { version: "2.0.0", features: { projectOnly: { description: "Project-only feature" } } },
+				omp: { version: "2.0.0", features: { projectOnly: { description: "Project-only feature" } } },
 			}),
 		);
 		await fs.mkdir(path.dirname(projectPluginPath), { recursive: true });
 		await fs.symlink(projectInstallPath, projectPluginPath, "dir");
 		await Bun.write(
-			path.join(projectPluginsDir, "mars-plugins.lock.json"),
+			path.join(projectPluginsDir, "omp-plugins.lock.json"),
 			JSON.stringify({
 				plugins: { [pluginName]: { version: "2.0.0", enabledFeatures: null, enabled: true } },
 				settings: {},
@@ -204,7 +204,7 @@ describe("plugin config", () => {
 	async function installProjectMarketplacePlugin(schemaDefault: string, enabled = true): Promise<string> {
 		const installPath = path.join(tmpRoot, "cache", `mars-commit-project-${schemaDefault}`);
 		await writeManifest(installPath, {
-			mars: {
+			omp: {
 				version: "2.0.0",
 				settings: { splitMode: { type: "enum", values: ["auto", "manual"], default: schemaDefault } },
 			},
@@ -213,7 +213,7 @@ describe("plugin config", () => {
 		await fs.mkdir(path.join(projectRoot, "node_modules"), { recursive: true });
 		await fs.symlink(installPath, path.join(projectRoot, "node_modules", "mars-commit"), "dir");
 		await Bun.write(
-			path.join(projectRoot, "mars-plugins.lock.json"),
+			path.join(projectRoot, "omp-plugins.lock.json"),
 			JSON.stringify({
 				plugins: { "mars-commit": { version: "2.0.0", enabledFeatures: null, enabled } },
 				settings: {},
@@ -234,7 +234,7 @@ describe("plugin config", () => {
 		// User install: same package name, different schema default.
 		const userPkg = path.join(pluginsDir, "node_modules", "mars-commit");
 		await writeManifest(userPkg, {
-			mars: {
+			omp: {
 				version: "1.0.0",
 				settings: { splitMode: { type: "enum", values: ["auto", "manual"], default: "manual" } },
 			},
@@ -256,7 +256,7 @@ describe("plugin config", () => {
 	test("falls back to an enabled user plugin when the project copy is disabled", async () => {
 		const userPkg = path.join(pluginsDir, "node_modules", "mars-commit");
 		await writeManifest(userPkg, {
-			mars: {
+			omp: {
 				version: "1.0.0",
 				settings: { splitMode: { type: "enum", values: ["auto", "manual"], default: "manual" } },
 			},

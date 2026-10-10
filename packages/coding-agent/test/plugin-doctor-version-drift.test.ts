@@ -7,7 +7,7 @@ import type { PluginRuntimeState } from "@marsai-org/coding-agent/extensibility/
 import * as piUtils from "@marsai-org/utils";
 import { removeWithRetries } from "@marsai-org/utils";
 
-// Regression for #11090: `mars-plugins.lock.json` can diverge from the package
+// Regression for #11090: `omp-plugins.lock.json` can diverge from the package
 // version in node_modules. `plugin doctor` must surface the stale copy instead
 // of treating the on-disk manifest alone as proof of health.
 describe("PluginManager.doctor version drift", () => {
@@ -24,7 +24,7 @@ describe("PluginManager.doctor version drift", () => {
 		vi.spyOn(piUtils, "getPluginsDir").mockReturnValue(pluginsDir);
 		vi.spyOn(piUtils, "getPluginsNodeModules").mockReturnValue(pluginsNodeModules);
 		vi.spyOn(piUtils, "getPluginsPackageJson").mockReturnValue(path.join(pluginsDir, "package.json"));
-		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(pluginsDir, "mars-plugins.lock.json"));
+		vi.spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(pluginsDir, "omp-plugins.lock.json"));
 		vi.spyOn(piUtils, "getProjectDir").mockReturnValue(tmpRoot);
 		vi.spyOn(piUtils, "getProjectPluginOverridesPath").mockReturnValue(path.join(tmpRoot, "plugin-overrides.json"));
 	});
@@ -39,7 +39,7 @@ describe("PluginManager.doctor version drift", () => {
 		await fs.mkdir(installedDir, { recursive: true });
 		await Bun.write(
 			path.join(installedDir, "package.json"),
-			JSON.stringify({ name, version: diskVersion, mars: { version: diskVersion } }, null, 2),
+			JSON.stringify({ name, version: diskVersion, omp: { version: diskVersion } }, null, 2),
 		);
 		await Bun.write(
 			path.join(pluginsDir, "package.json"),
@@ -47,7 +47,7 @@ describe("PluginManager.doctor version drift", () => {
 		);
 		const state: PluginRuntimeState = { version: lockVersion, enabledFeatures: null, enabled: true };
 		await Bun.write(
-			path.join(pluginsDir, "mars-plugins.lock.json"),
+			path.join(pluginsDir, "omp-plugins.lock.json"),
 			JSON.stringify({ plugins: { [name]: state }, settings: {} }, null, 2),
 		);
 	}
@@ -69,7 +69,7 @@ describe("PluginManager.doctor version drift", () => {
 		const expectedVersion = "1.0.3";
 		await seed(name, "1.0.2", expectedVersion);
 		const packagePath = path.join(pluginsNodeModules, name, "package.json");
-		const reinstalled = JSON.stringify({ name, version: expectedVersion, mars: { version: expectedVersion } });
+		const reinstalled = JSON.stringify({ name, version: expectedVersion, omp: { version: expectedVersion } });
 		const install = Bun.spawn(["bun", "-e", ""], { stdin: "ignore", stdout: "pipe", stderr: "pipe" });
 		Object.defineProperty(install, "exited", {
 			get: async () => {
@@ -124,7 +124,7 @@ describe("PluginManager.doctor version drift", () => {
 		const reinstalled = JSON.stringify({
 			name,
 			version: expectedVersion,
-			mars: { version: expectedVersion, tools: "./missing.js" },
+			omp: { version: expectedVersion, tools: "./missing.js" },
 		});
 		const install = Bun.spawn(["bun", "-e", ""], { stdin: "ignore", stdout: "pipe", stderr: "pipe" });
 		Object.defineProperty(install, "exited", {
@@ -152,7 +152,7 @@ describe("PluginManager.doctor version drift", () => {
 		await fs.mkdir(sourcePath, { recursive: true });
 		await Bun.write(
 			path.join(sourcePath, "package.json"),
-			JSON.stringify({ name, version: "1.0.3", mars: { version: "1.0.3" } }),
+			JSON.stringify({ name, version: "1.0.3", omp: { version: "1.0.3" } }),
 		);
 		const installedPath = path.join(pluginsNodeModules, name);
 		await fs.rm(installedPath, { recursive: true });

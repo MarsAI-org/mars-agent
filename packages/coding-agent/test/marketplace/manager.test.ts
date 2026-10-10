@@ -53,7 +53,7 @@ function buildMinimalFixture(): string {
 		JSON.stringify({
 			name: "hello-plugin",
 			version: "1.0.0",
-			mars: { extensions: ["./extensions"] },
+			omp: { extensions: ["./extensions"] },
 		}),
 	);
 	fs.writeFileSync(path.join(pluginDir, "extensions", "index.ts"), "export default {};\n");
@@ -122,7 +122,7 @@ function mockPluginManagerPaths(root: string) {
 		spyOn(piUtils, "getPluginsDir").mockReturnValue(root),
 		spyOn(piUtils, "getPluginsNodeModules").mockReturnValue(path.join(root, "node_modules")),
 		spyOn(piUtils, "getPluginsPackageJson").mockReturnValue(path.join(root, "package.json")),
-		spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(root, "mars-plugins.lock.json")),
+		spyOn(piUtils, "getPluginsLockfile").mockReturnValue(path.join(root, "omp-plugins.lock.json")),
 		spyOn(piUtils, "getProjectPluginOverridesPath").mockReturnValue(path.join(root, "plugin-overrides.json")),
 	];
 }
@@ -277,7 +277,7 @@ describe("MarketplaceManager", () => {
 		const linkPath = path.join(ctx.tmpDir, "node_modules", "hello-plugin");
 		expect(fs.realpathSync(linkPath)).toBe(fs.realpathSync(instEntry.installPath));
 
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(runtimeConfig.plugins["hello-plugin"]).toEqual({
 			version: "1.0.0",
 			enabledFeatures: null,
@@ -325,7 +325,7 @@ describe("MarketplaceManager", () => {
 		expect(fs.realpathSync(path.join(ctx.tmpDir, "node_modules", "Manifest-Name"))).toBe(
 			fs.realpathSync(manifest.installPath),
 		);
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(Object.keys(runtimeConfig.plugins).sort()).toEqual(["Manifest-Name", "No-Manifest"]);
 		const installed = await ctx.manager.listInstalledPlugins();
 		expect(installed.map(plugin => plugin.id).sort()).toEqual([
@@ -357,7 +357,7 @@ describe("MarketplaceManager", () => {
 			'Runtime package name "foo" conflicts with installed plugin "Foo@upper-market"',
 		);
 		expect(fs.realpathSync(linkPath)).toBe(installedRealpath);
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(Object.keys(runtimeConfig.plugins)).toEqual(["Foo"]);
 		expect((await ctx.manager.listInstalledPlugins()).map(plugin => plugin.id)).toEqual(["Foo@upper-market"]);
 		expect(fs.existsSync(path.join(ctx.tmpDir, "cache", "plugins", "lower-market___foo___1.0.0"))).toBe(false);
@@ -423,7 +423,7 @@ describe("MarketplaceManager", () => {
 			"first-plugin@first-market",
 			"second-plugin@second-market",
 		]);
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(Object.keys(runtimeConfig.plugins).sort()).toEqual(["original-runtime", "taken-runtime"]);
 	});
 
@@ -437,7 +437,7 @@ describe("MarketplaceManager", () => {
 		fs.mkdirSync(path.dirname(linkedLink), { recursive: true });
 		fs.symlinkSync(linkedPackage, linkedLink, "dir");
 		fs.writeFileSync(
-			path.join(ctx.tmpDir, "mars-plugins.lock.json"),
+			path.join(ctx.tmpDir, "omp-plugins.lock.json"),
 			JSON.stringify({ plugins: { foo: { version: "1.2.3", enabledFeatures: null, enabled: true } }, settings: {} }),
 		);
 
@@ -471,7 +471,7 @@ describe("MarketplaceManager", () => {
 		expect(hasExactEntry(path.join(ctx.tmpDir, "node_modules"), "widget")).toBe(true);
 		// The stale mixed-case link and lockfile key are removed, not left stranded.
 		expect(hasExactEntry(path.join(ctx.tmpDir, "node_modules"), "Widget")).toBe(false);
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(Object.keys(runtimeConfig.plugins)).toEqual(["widget"]);
 		expect((await ctx.manager.listInstalledPlugins()).map(plugin => plugin.id)).toEqual(["widget@rename-market"]);
 	});
@@ -495,7 +495,7 @@ describe("MarketplaceManager", () => {
 		fs.mkdirSync(path.dirname(linkedLink), { recursive: true });
 		fs.symlinkSync(linkedPackage, linkedLink, "dir");
 		fs.writeFileSync(
-			path.join(projectRoot, "mars-plugins.lock.json"),
+			path.join(projectRoot, "omp-plugins.lock.json"),
 			JSON.stringify({
 				plugins: { shared: { version: "9.9.9", enabledFeatures: null, enabled: true } },
 				settings: {},
@@ -535,9 +535,9 @@ describe("MarketplaceManager", () => {
 		expect(hasExactEntry(path.join(ctx.tmpDir, "node_modules"), "Gadget")).toBe(false);
 		expect(hasExactEntry(path.join(projectRoot, "node_modules"), "gadget")).toBe(true);
 		expect(hasExactEntry(path.join(projectRoot, "node_modules"), "Gadget")).toBe(false);
-		const userConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const userConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(Object.keys(userConfig.plugins)).toEqual(["gadget"]);
-		const projectConfig = await Bun.file(path.join(projectRoot, "mars-plugins.lock.json")).json();
+		const projectConfig = await Bun.file(path.join(projectRoot, "omp-plugins.lock.json")).json();
 		expect(Object.keys(projectConfig.plugins)).toEqual(["gadget"]);
 	});
 
@@ -585,7 +585,7 @@ describe("MarketplaceManager", () => {
 		await ctx.manager.installPlugin("widget", "cfg-market");
 
 		// The user has selected features, disabled the plugin, and set settings under the current key.
-		const lockPath = path.join(ctx.tmpDir, "mars-plugins.lock.json");
+		const lockPath = path.join(ctx.tmpDir, "omp-plugins.lock.json");
 		const lock = await Bun.file(lockPath).json();
 		lock.plugins.Widget.enabledFeatures = ["alpha"];
 		lock.plugins.Widget.enabled = false;
@@ -696,7 +696,7 @@ describe("MarketplaceManager", () => {
 			`${JSON.stringify({
 				name: "hello-plugin",
 				version: "9.9.9",
-				mars: { tools: "tools" },
+				omp: { tools: "tools" },
 			})}\n`,
 		);
 		fs.mkdirSync(path.join(localPlugin, "tools"), { recursive: true });
@@ -770,7 +770,7 @@ describe("MarketplaceManager", () => {
 			expect(fs.realpathSync(projectLink)).toBe(
 				fs.realpathSync(path.join(userPluginsDir, "cache", "plugins", "test-marketplace___hello-plugin___1.0.0")),
 			);
-			const projectLock = await Bun.file(path.join(projectPluginsDir, "mars-plugins.lock.json")).json();
+			const projectLock = await Bun.file(path.join(projectPluginsDir, "omp-plugins.lock.json")).json();
 			expect(projectLock.plugins["hello-plugin"]).toEqual({
 				version: "1.0.0",
 				enabledFeatures: null,
@@ -779,7 +779,7 @@ describe("MarketplaceManager", () => {
 
 			// User-scope tree stays untouched.
 			expect(fs.existsSync(path.join(userPluginsDir, "node_modules", "hello-plugin"))).toBe(false);
-			expect(fs.existsSync(path.join(userPluginsDir, "mars-plugins.lock.json"))).toBe(false);
+			expect(fs.existsSync(path.join(userPluginsDir, "omp-plugins.lock.json"))).toBe(false);
 		} finally {
 			fs.rmSync(tmpHome, { recursive: true, force: true });
 			fs.rmSync(projectAnchor, { recursive: true, force: true });
@@ -991,7 +991,7 @@ describe("MarketplaceManager", () => {
 		expect(second.installPath).toBe(first.installPath);
 		expect(fs.existsSync(second.installPath)).toBe(true);
 
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(runtimeConfig.plugins["hello-plugin"].enabled).toBe(false);
 
 		const installed = await ctx.manager.listInstalledPlugins();
@@ -1022,7 +1022,7 @@ describe("MarketplaceManager", () => {
 		expect(fs.existsSync(instEntry.installPath)).toBe(false);
 		expect(fs.existsSync(path.join(ctx.tmpDir, "node_modules", "hello-plugin"))).toBe(false);
 
-		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		const runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(runtimeConfig.plugins["hello-plugin"]).toBeUndefined();
 
 		const installed = await ctx.manager.listInstalledPlugins();
@@ -1047,12 +1047,12 @@ describe("MarketplaceManager", () => {
 
 		const installed = await ctx.manager.listInstalledPlugins();
 		expect(installed[0].entries[0].enabled).toBe(false);
-		let runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		let runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(runtimeConfig.plugins["hello-plugin"].enabled).toBe(false);
 
 		await ctx.manager.setPluginEnabled("hello-plugin@test-marketplace", true);
 		const updated = await ctx.manager.listInstalledPlugins();
-		runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "mars-plugins.lock.json")).json();
+		runtimeConfig = await Bun.file(path.join(ctx.tmpDir, "omp-plugins.lock.json")).json();
 		expect(runtimeConfig.plugins["hello-plugin"].enabled).toBe(true);
 		expect(updated[0].entries[0].enabled).toBe(true);
 	});

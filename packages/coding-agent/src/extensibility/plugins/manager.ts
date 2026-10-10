@@ -1167,7 +1167,7 @@ export class PluginManager {
 				status: hasManifest ? "ok" : "warning",
 				message: hasManifest
 					? `v${pluginPkg.version}${pluginPkg.description ? ` - ${pluginPkg.description}` : ""}`
-					: `v${pluginPkg.version} - No mars/pi manifest (not a mars plugin)`,
+					: `v${pluginPkg.version} - No omp/pi manifest (not a Mars plugin)`,
 			});
 
 			// Check tools path exists if specified
