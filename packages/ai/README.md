@@ -1087,10 +1087,7 @@ Official docs: [Application Default Credentials](https://cloud.google.com/docs/a
 
 ### CLI Login
 
-Authenticate via the [`mars`](https://omp.sh) coding-agent CLI, which drives this library's OAuth/API-key flows in-process and persists into `agent.db`:
-
-> **TODO(rebrand):** the link above still points at the upstream `https://omp.sh` site; no
-> Mars domain has been decided. See HANDOFF.md.
+Authenticate via the [`mars`](https://getmars.eu.cc) coding-agent CLI, which drives this library's OAuth/API-key flows in-process and persists into `agent.db`:
 
 ```bash
 mars auth-broker login              # interactive provider selection

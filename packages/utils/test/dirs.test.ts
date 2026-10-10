@@ -110,4 +110,9 @@ describe("dated log path", () => {
 		if (proc.exitCode !== 0) console.error(proc.stderr.toString());
 		expect(proc.exitCode).toBe(0);
 	});
+
+	it("resolves APP_URL to getmars.eu.cc by default with a trailing slash", async () => {
+		const { APP_URL } = await import("@marsai-org/utils/dirs");
+		expect(APP_URL).toBe("https://getmars.eu.cc/");
+	});
 });
