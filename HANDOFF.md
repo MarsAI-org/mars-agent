@@ -7,8 +7,20 @@ context. All statements below were verified against the repository.
 ## Current state
 
 - Branch: `rebrand/mars` (never push to or merge into `main`)
-- HEAD at time of writing: see `git log --oneline origin/main..HEAD`
-- **Phase 2 is DONE and pushed.** Phases 3–6 remain.
+- HEAD at time of writing: `47e28a3ad2` (all phases 0–6 complete)
+- **ALL PHASES (0, 1, 2, 3, 4, 5, 6) ARE COMPLETE.** Draft PR opened.
+
+### Phase Completion Status
+
+| Phase | Description | Status |
+| --- | --- | --- |
+| **Phase 0** | Audit & inventory (`REBRAND_AUDIT.md`) | **DONE** |
+| **Phase 1** | Package scope (`@marsai-org`), bin names (`mars`, `mars-stats`), binaries (`mars-*`) | **DONE** |
+| **Phase 2** | Runtime paths (`~/.mars`), env vars (`MARS_*`), migration helper | **DONE** |
+| **Phase 3** | UI text, CLI help/usage, error notices, prompts | **DONE** |
+| **Phase 4** | Docs, README, `CREDITS.md`, LICENSE copyright, package metadata | **DONE** |
+| **Phase 5** | Assets (`assets/mars-logo.*` placeholders, `ASSETS_TODO.md`) | **DONE** |
+| **Phase 6** | Read-only audit passes (H, I, J), build & test verification, `REBRAND_REPORT.md` | **DONE** |
 
 Phase-2 commit chain (in order, each on top of the previous):
 
