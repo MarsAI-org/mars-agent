@@ -229,19 +229,20 @@ Residual `OMP_*` after Phase 2 (verified with
 
 - Re-search the whole repo for old names.
 - Confirm build, check, tests.
-- Open a PR (not yet authorized — do not create one without explicit
-  approval).
+- Rebrand PR #1 merged into `main`.
+
+**Domain Integration (getmars.eu.cc) — COMPLETE.**
+
+- Domain `getmars.eu.cc` configured as base URL in `packages/utils/src/dirs.ts` (`APP_URL`), overridable via `MARS_APP_URL`.
+- STATIC URLs (`/install`, `/install.ps1`, schemas, metadata, README links) repointed to `getmars.eu.cc`.
+- DYNAMIC hosts (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`) kept with TODOs (no backend on getmars.eu.cc).
+- Static landing site and installer scripts created in `site/` with `CNAME` for `getmars.eu.cc`.
+- Audited and documented in `DOMAIN_AUDIT.md`.
 
 ## Open TODOs and uncertainties
 
-1. **`REBRAND_AUDIT.md` gained a §10 "Phase 2 status" section** recording
-   what moved and the exact identifiers left alone. It is still an audit
-   record, not a live index — Phase 6 must re-run the search rather than
-   trust any historical file.
-2. **Upstream-hosted service URLs.** `my.omp.sh`, `live.omp.sh`,
-   `qa.omp.sh`, `omp.sh/install` are still unreplaced. The policy is to
-   leave TODOs and gate dependent features behind config. Which config
-   value to use is not decided.
+1. **Official Domain Services**: Static landing site and installers are configured for `getmars.eu.cc`. Dynamic backends (collab relay, live broadcast, skill registry, QA grievances) remain pointed upstream or require dedicated backend deployment when ready.
+2. **`assets/mars-logo.*` artwork**: Placeholders created; final artwork needed before release.
 3. **`assets/mars-logo.*` artwork.** Not created. Final artwork is needed
    before release.
 4. **Python/robomp `OMP_*` block.** These are service-side config, not
