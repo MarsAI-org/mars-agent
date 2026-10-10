@@ -13,7 +13,7 @@ The companion relay server lives in the mars CLI (`mars browser-relay`, see `pac
 
 That's it: the relay server auto-starts under mars's profile-independent global daemon broker the first time Eval's browser API needs it. Every relay consumer holds a broker lease, so one project exiting cannot interrupt another; the server stops after the last consumer across all projects exits. The extension badge turns **on** when connected. Run `mars browser-relay` manually only for `--token`, `--no-group`, or a non-default port — a relay already serving the port is adopted, never fought over.
 
-`app.target` picks a specific tab by URL/title substring; without it, mars adopts the visible tab without stealing focus. Tabs mars is **actively driving** are gathered into a per-window **"omp" tab group** (cyan) — released when mars lets go of the tab and dissolved on disconnect; the rest of your tabs, pinned tabs, tabs in your own groups, and tabs you drag out are left alone. Disable with `mars browser-relay --no-group`.
+`app.target` picks a specific tab by URL/title substring; without it, mars adopts the visible tab without stealing focus. Tabs mars is **actively driving** are gathered into a per-window **"mars" tab group** (cyan) — released when mars lets go of the tab and dissolved on disconnect; the rest of your tabs, pinned tabs, tabs in your own groups, and tabs you drag out are left alone. Disable with `mars browser-relay --no-group`.
 
 ## Development
 

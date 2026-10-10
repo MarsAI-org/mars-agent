@@ -4,7 +4,7 @@ import type { AssistantMessage, Context, Model } from "@marsai-org/ai/types";
 import { Effort } from "@marsai-org/catalog/effort";
 import { getBundledModel } from "@marsai-org/catalog/models";
 
-// Issue #8248: with prewalk enabled, OMP switches into a DeepSeek Responses
+// Issue #8248: with prewalk enabled, Mars switches into a DeepSeek Responses
 // target (opencode-go) after mid-run compaction. The replayed assistant turns
 // were minted by the previous model, so the Responses input builder re-encodes
 // them and demotes their reasoning to plain text, emitting no reasoning item.

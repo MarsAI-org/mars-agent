@@ -46,7 +46,7 @@ afterEach(async () => {
 
 describe("raw SSE report bundle", () => {
 	it("includes captured raw SSE text and dropped-record disclosure", async () => {
-		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-raw-sse-report-"));
+		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-raw-sse-report-"));
 		const xdgStateHome = path.join(cleanupRoot, "state");
 		await fs.mkdir(path.join(xdgStateHome, "mars"), { recursive: true });
 		process.env.XDG_STATE_HOME = xdgStateHome;

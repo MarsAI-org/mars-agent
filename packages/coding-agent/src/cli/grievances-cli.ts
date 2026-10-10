@@ -1,5 +1,5 @@
 /**
- * CLI handler for `omp grievances` — view, clean, and manually push reported tool issues.
+ * CLI handler for `mars grievances` — view, clean, and manually push reported tool issues.
  */
 import chalk from "@marsai-org/utils/chalk";
 import { Settings } from "../config/settings";
@@ -167,7 +167,7 @@ export async function cleanGrievances(options: CleanGrievancesOptions): Promise<
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// Manual push (`omp grievances push`)
+// Manual push (`mars grievances push`)
 // ───────────────────────────────────────────────────────────────────────────
 
 /**

@@ -241,7 +241,7 @@ async function writeSyntheticTree(
 	patches: readonly string[],
 	options: SyntheticTreeOptions = {},
 ): Promise<string> {
-	const tempIndex = path.join(os.tmpdir(), `omp-task-index-${Snowflake.next()}`);
+	const tempIndex = path.join(os.tmpdir(), `mars-task-index-${Snowflake.next()}`);
 	const repo = vcs.requireGit(repoDir);
 	try {
 		await repo.readTree(baseTreeish, tempIndex);
@@ -435,7 +435,7 @@ export async function applyNestedPatches(
 		// Preserve any pre-existing dirty state (tracked + untracked) so we
 		// commit only the agent delta, not the user's in-flight work.
 		const stashed = (await repository.isDirty())
-			? await repository.stashPush(`omp-isolation-${Snowflake.next()}`)
+			? await repository.stashPush(`mars-isolation-${Snowflake.next()}`)
 			: false;
 		try {
 			for (const { patch } of repoPatches) {
@@ -569,7 +569,7 @@ export async function ensureIsolation(
 		// Claim ownership before the backend materialises `m`. Backends only
 		// create/replace `mergedDir` (and overlay upper/work), never the base
 		// dir, so the marker survives `isoStart` — and a concurrent
-		// `omp worktree clear` never sees this sandbox without a live owner,
+		// `mars worktree clear` never sees this sandbox without a live owner,
 		// even while a large clone is still in progress.
 		await fs.mkdir(baseDir, { recursive: true });
 		await writeIsolationOwner(baseDir, id);
@@ -820,7 +820,7 @@ async function replayFilteredAgentCommits(opts: FilteredAgentReplayOptions): Pro
 
 /**
  * Capture task-only changes from the isolation worktree onto a parent-repo
- * branch named `omp/task/${taskId}`. Only root-repo changes go on the branch;
+ * branch named `mars/task/${taskId}`. Only root-repo changes go on the branch;
  * nested-repo patches are returned separately because the parent git can't
  * track files inside gitlinks.
  *
@@ -859,7 +859,7 @@ export async function commitToBranch(
 
 	const repoRoot = baseline.root.repoRoot;
 	const repo = vcs.requireGit(repoRoot);
-	const branchName = `omp/task/${taskId}`;
+	const branchName = `mars/task/${taskId}`;
 	const fallbackMessage = description || taskId;
 
 	let tip: string;

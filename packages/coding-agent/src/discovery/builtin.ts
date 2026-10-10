@@ -1,7 +1,7 @@
 /**
  * Builtin Provider (.mars)
  *
- * Primary provider for OMP native configs. Supports all capabilities.
+ * Primary provider for Mars native configs. Supports all capabilities.
  */
 import * as path from "node:path";
 import { getAgentDir, logger, normalizePathForComparison, parseFrontmatter, tryParseJson } from "@marsai-org/utils";
@@ -37,8 +37,8 @@ import {
 } from "./helpers";
 
 const PROVIDER_ID = "native";
-const DISPLAY_NAME = "OMP";
-const DESCRIPTION = "Native OMP configuration from ~/.mars and .mars/";
+const DISPLAY_NAME = "Mars";
+const DESCRIPTION = "Native Mars configuration from ~/.mars and .mars/";
 const PRIORITY = 100;
 
 const PATHS = SOURCE_PATHS.native;

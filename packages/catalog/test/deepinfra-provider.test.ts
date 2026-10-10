@@ -8,7 +8,7 @@ import { getBundledModels } from "@marsai-org/catalog/models";
 import { DEEPINFRA_BASE_URL, deepinfraModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
 import type { ModelSpec } from "@marsai-org/catalog/types";
 
-const DISCOVERY_URL = "https://api.deepinfra.com/v1/openai/models?filter=with_meta&sort_by=omp";
+const DISCOVERY_URL = "https://api.deepinfra.com/v1/openai/models?filter=with_meta&sort_by=mars";
 
 function catalogFixture(): Response {
 	return Response.json({

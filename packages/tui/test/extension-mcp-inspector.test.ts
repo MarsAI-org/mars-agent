@@ -16,7 +16,7 @@ const githubServer = {
 	transport: "stdio",
 	_source: {
 		provider: "native",
-		providerName: "OMP (User)",
+		providerName: "Mars (User)",
 		path: "/home/sf/.mars/agent/mcp.json",
 		level: "user" as const,
 	},
@@ -284,7 +284,7 @@ describe("MCP inspector runtime join", () => {
 			path: "/home/sf/.mars/agent/mcp.json",
 			source: {
 				provider: "native",
-				providerName: "OMP (User)",
+				providerName: "Mars (User)",
 				level: "user",
 			},
 			state: "active",
@@ -294,7 +294,7 @@ describe("MCP inspector runtime join", () => {
 				transport: "stdio",
 				_source: {
 					provider: "native",
-					providerName: "OMP (User)",
+					providerName: "Mars (User)",
 					path: "/home/sf/.mars/agent/mcp.json",
 					level: "user",
 				},

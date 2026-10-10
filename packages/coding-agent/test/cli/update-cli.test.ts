@@ -60,10 +60,10 @@ describe("getLatestRelease rename pointers", () => {
 
 	it("follows omp.rename to the new package and resolves version, dist, and names from its manifest", async () => {
 		const urls = stubRegistry({
-			"@new/omp": { version: "999.1.0", omp: { dist: "npm" } },
+			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				omp: { dist: "binary", rename: { package: "@new/omp", natives: "@new/natives" } },
+				mars: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
 			},
 		});
 
@@ -71,7 +71,7 @@ describe("getLatestRelease rename pointers", () => {
 
 		expect(release.version).toBe("999.1.0");
 		expect(release.dist).toBe("npm");
-		expect(release.packages).toEqual({ pkg: "@new/omp", natives: "@new/natives" });
+		expect(release.packages).toEqual({ pkg: "@new/mars", natives: "@new/natives" });
 		expect(urls).toEqual([
 			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
 			"https://registry.npmjs.org/@new%2fomp/latest",
@@ -91,7 +91,7 @@ describe("getLatestRelease rename pointers", () => {
 		const urls = stubRegistry({
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				omp: { rename: { package: "@marsai-org/coding-agent" } },
+				mars: { rename: { package: "@marsai-org/coding-agent" } },
 			},
 		});
 
@@ -147,7 +147,7 @@ describe("getLatestRelease configured registry", () => {
 					if (url.endsWith("/latest")) return new Response(null, { status: 404, statusText: "Not Found" });
 					return Response.json({
 						"dist-tags": { latest: "999.2.0" },
-						versions: { "999.2.0": { version: "999.2.0", omp: { dist: "binary" } } },
+						versions: { "999.2.0": { version: "999.2.0", mars: { dist: "binary" } } },
 					});
 				},
 				{ preconnect: globalThis.fetch.preconnect },
@@ -172,7 +172,7 @@ describe("getLatestRelease configured registry", () => {
 					urls.push(String(input));
 					return Response.json({
 						"dist-tags": { latest: "999.3.0" },
-						versions: { "999.3.0": { version: "999.3.0", omp: { dist: "binary" } } },
+						versions: { "999.3.0": { version: "999.3.0", mars: { dist: "binary" } } },
 					});
 				},
 				{ preconnect: globalThis.fetch.preconnect },

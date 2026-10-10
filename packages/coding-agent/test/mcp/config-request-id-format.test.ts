@@ -8,7 +8,7 @@
  * transports read. A field missing from either step silently degrades to the
  * snowflake-string default, which is the hang the option exists to avoid.
  *
- * Both OMP-native loaders are covered: `.mars/mcp.json` (native provider) and a
+ * Both Mars-native loaders are covered: `.mars/mcp.json` (native provider) and a
  * standalone project-root `.mcp.json` (mcp-json provider).
  *
  * Separately, `isSameMCPConnection` treats two differently-named entries with the
@@ -37,9 +37,9 @@ let originalHome: string | undefined;
 
 beforeEach(async () => {
 	originalHome = process.env.HOME;
-	tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-mcp-reqid-home-"));
-	tempAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-mcp-reqid-agent-"));
-	tempCwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-mcp-reqid-cwd-"));
+	tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-reqid-home-"));
+	tempAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-reqid-agent-"));
+	tempCwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-reqid-cwd-"));
 	process.env.HOME = tempHome;
 	vi.spyOn(os, "homedir").mockReturnValue(tempHome);
 	setAgentDir(tempAgentDir);

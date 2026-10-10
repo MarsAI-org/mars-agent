@@ -129,7 +129,7 @@ export const cfgWorktreeOnExit = register({
 		tab: "tasks",
 		group: "Isolation",
 		label: "Worktree on Exit",
-		description: "What to do on exit with worktrees created since omp started (on start or with `/wt`)",
+		description: "What to do on exit with worktrees created since mars started (on start or with `/wt`)",
 		options: [
 			{ value: "keep", label: "Keep", description: "Leave worktrees in place" },
 			{ value: "ask", label: "Ask", description: "Ask on exit" },
@@ -202,7 +202,7 @@ export const cfgWorktreeBase = register({
 		group: "Isolation",
 		label: "Worktree Base Directory",
 		description:
-			"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `omp worktree` cleanup all live here. Unset uses ~/.mars/wt. Must be an absolute or ~-relative path; relative paths are ignored. The MARS_WORKTREE_DIR env var overrides this.",
+			"Base directory for agent-managed worktrees — task-isolation copies, `github` PR checkouts, and `mars worktree` cleanup all live here. Unset uses ~/.mars/wt. Must be an absolute or ~-relative path; relative paths are ignored. The MARS_WORKTREE_DIR env var overrides this.",
 	},
 });
 effect(cfgWorktreeBase, value => {

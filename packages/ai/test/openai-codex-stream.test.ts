@@ -482,7 +482,7 @@ describe("openai-codex streaming", () => {
 		expect(requestHeaders?.get("Authorization")).toBe("Bearer opaque-proxy-key");
 		expect(requestHeaders?.has("chatgpt-account-id")).toBe(false);
 		expect(requestHeaders?.get("OpenAI-Beta")).toBe("responses=experimental");
-		expect(requestHeaders?.get("originator")).toBe("omp");
+		expect(requestHeaders?.get("originator")).toBe("mars");
 		// An opaque proxy key is not a JWT, so no residency claim to declare.
 		expect(requestHeaders?.has("x-openai-internal-codex-residency")).toBe(false);
 	});
@@ -604,7 +604,7 @@ describe("openai-codex streaming", () => {
 		expect(capturedHeaders?.authorization).toBe("Bearer opaque-proxy-key");
 		expect(capturedHeaders?.["chatgpt-account-id"]).toBeUndefined();
 		expect(capturedHeaders?.["openai-beta"]).toBe("responses_websockets=2026-02-06");
-		expect(capturedHeaders?.originator).toBe("omp");
+		expect(capturedHeaders?.originator).toBe("mars");
 		expect(capturedHeaders?.["x-openai-internal-codex-residency"]).toBeUndefined();
 	});
 
@@ -1938,7 +1938,7 @@ describe("openai-codex streaming", () => {
 		expect(metadata.parent_turn_id).toBe("turn_parent-1");
 		expect(turnMetadata.parent_turn_id).toBe("turn_parent-1");
 		// `code_mode_tool_names` is likewise reserved (codex-rs
-		// CODE_MODE_TOOL_NAMES_KEY, #35271): OMP never emits it, and caller extras
+		// CODE_MODE_TOOL_NAMES_KEY, #35271): Mars never emits it, and caller extras
 		// cannot smuggle it into either projection.
 		expect(metadata.code_mode_tool_names).toBeUndefined();
 		expect(turnMetadata.code_mode_tool_names).toBeUndefined();
@@ -2020,7 +2020,7 @@ describe("openai-codex streaming", () => {
 				expect(headers?.get("Authorization")).toBe(`Bearer ${token}`);
 				expect(headers?.get("chatgpt-account-id")).toBe("acc_test");
 				expect(headers?.get("OpenAI-Beta")).toBe("responses=experimental");
-				expect(headers?.get("originator")).toBe("omp");
+				expect(headers?.get("originator")).toBe("mars");
 				expect(headers?.get("accept")).toBe("text/event-stream");
 				expect(headers?.has("x-api-key")).toBe(false);
 				return new Response(stream, {

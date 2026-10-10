@@ -26,7 +26,7 @@ import type {
 	TinyWorkerResponse,
 } from "@marsai-org/coding-agent/tiny/title-protocol";
 
-const SOURCE_ID = "omp/local-inference";
+const SOURCE_ID = "mars/local-inference";
 const model = getBundledModel("local", "lfm2.5-230m")!;
 
 function zeroUsage(): Usage {

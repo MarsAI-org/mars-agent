@@ -58,7 +58,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "@demo/plugin",
 				version: "1.0.0",
-				omp: {
+				mars: {
 					extensions: ["./dist/extension.ts"],
 				},
 			}),
@@ -651,7 +651,7 @@ describe("plugin extension discovery", () => {
 		// is a decoy that must NOT win (manifest takes precedence, like the -e scanner).
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", mars: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			realEntry,
@@ -709,7 +709,7 @@ describe("plugin extension discovery", () => {
 		// not exist (e.g. unbuilt). The leftover index.ts must NOT be loaded as a fallback.
 		fs.writeFileSync(
 			path.join(featureDir, "package.json"),
-			JSON.stringify({ name: "feature-ext", version: "1.0.0", omp: { extensions: ["./dist/real-ext.ts"] } }),
+			JSON.stringify({ name: "feature-ext", version: "1.0.0", mars: { extensions: ["./dist/real-ext.ts"] } }),
 		);
 		fs.writeFileSync(
 			path.join(featureDir, "index.ts"),
@@ -748,7 +748,7 @@ describe("plugin extension discovery", () => {
 			JSON.stringify({
 				name: "dts-plugin",
 				version: "1.0.0",
-				omp: { extensions: ["./extensions"] },
+				mars: { extensions: ["./extensions"] },
 			}),
 		);
 		fs.writeFileSync(

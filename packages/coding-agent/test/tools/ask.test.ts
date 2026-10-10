@@ -1627,7 +1627,7 @@ describe("AskTool rich ask dialog", () => {
 		let describeCalls: unknown[][];
 
 		beforeEach(async () => {
-			tempDir = await TempDir.create("@omp-ask-describe-");
+			tempDir = await TempDir.create("@mars-ask-describe-");
 			describeCalls = [];
 			vi.spyOn(ai, "completeSimple").mockImplementation(completeImpl);
 		});

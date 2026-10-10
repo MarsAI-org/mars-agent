@@ -35,7 +35,7 @@ const originalExitCode = process.exitCode;
 
 beforeEach(async () => {
 	settingsState = beginSettingsTest();
-	root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-gc-"));
+	root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-gc-"));
 	writes = [];
 	stderrWrites = [];
 	process.exitCode = 0;
@@ -2404,11 +2404,11 @@ describe("runGcCommand stale state", () => {
 		const agentDir = path.join(root, "agent");
 		const reportsDir = path.join(root, "reports");
 		const collabDir = path.join(root, "collab");
-		const newestReport = await writeAged(reportsDir, "omp-report-newest.tar.gz", "r", 10);
-		const youngReport = await writeAged(reportsDir, "omp-report-young.tar.gz", "r", 20);
+		const newestReport = await writeAged(reportsDir, "mars-report-newest.tar.gz", "r", 10);
+		const youngReport = await writeAged(reportsDir, "mars-report-young.tar.gz", "r", 20);
 		const oldReports = [
-			await writeAged(reportsDir, "omp-report-old.tar.gz", "r", 40),
-			await writeAged(reportsDir, "omp-report-older.tar.gz", "r", 50),
+			await writeAged(reportsDir, "mars-report-old.tar.gz", "r", 40),
+			await writeAged(reportsDir, "mars-report-older.tar.gz", "r", 50),
 		];
 		const unrelated = await writeAged(reportsDir, "notes.txt", "keep", 100);
 		const liveReplica = await writeAged(collabDir, "room-live.jsonl", "{}\n", 1);

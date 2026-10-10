@@ -8,17 +8,17 @@
 let
   cfg = config.programs.mars;
   yaml = pkgs.formats.yaml { };
-  configFile = yaml.generate "omp-config.yml" cfg.settings;
+  configFile = yaml.generate "mars-config.yml" cfg.settings;
 in
 {
   options.programs.mars = {
-    enable = lib.mkEnableOption "OMP coding agent";
+    enable = lib.mkEnableOption "Mars coding agent";
 
     package = lib.mkOption {
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
       defaultText = lib.literalExpression "inputs.mars.packages.${pkgs.stdenv.hostPlatform.system}.default";
-      description = "OMP package to install.";
+      description = "Mars package to install.";
     };
 
     settings = lib.mkOption {
@@ -28,7 +28,7 @@ in
         Settings written declaratively to {file}`~/.mars/agent/config.yml`.
         On each `home-manager switch` the declared settings are copied into
         place as a writable regular file (not a read-only store symlink), so
-        OMP can acquire its config lock and rewrite the file when persisting
+        Mars can acquire its config lock and rewrite the file when persisting
         runtime changes (`/settings`, onboarding). Those runtime changes are
         overwritten by the declared values again on the next
         `home-manager switch`.
@@ -43,7 +43,7 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    # OMP rewrites its config at runtime and acquires an advisory lock on it
+    # Mars rewrites its config at runtime and acquires an advisory lock on it
     # first; on macOS the lock backend creates an flock sidecar next to the
     # target file. A `home.file` store symlink is read-only and lives under
     # /nix/store, so both the lock and the atomic rewrite fail with EACCES and

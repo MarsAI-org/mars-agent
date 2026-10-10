@@ -1718,7 +1718,7 @@ describe("Settings", () => {
 			// Process loads its #global snapshot.
 			const settings = await Settings.init({ cwd: projectDir, agentDir });
 
-			// External edit (another omp instance / manual edit): changes advisor,
+			// External edit (another mars instance / manual edit): changes advisor,
 			// adds vision. This process's #global is now stale.
 			await writeSettings({
 				modelRoles: {

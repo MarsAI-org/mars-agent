@@ -150,7 +150,13 @@ describe("zod-like parsing", () => {
 	});
 
 	it("supports string and number refinements plus nullable and optional values", () => {
-		expect(z.string().regex(/^omp$/).url().safeParse("omp").success).toBe(false);
+		expect(
+			z
+				.string()
+				.regex(/^mars$/)
+				.url()
+				.safeParse("mars").success,
+		).toBe(false);
 		expect(z.string().url().parse("https://omp.sh")).toBe("https://omp.sh");
 		expect(z.number().int().nonnegative().parse(0)).toBe(0);
 		expect(z.number().int().safeParse(1.5).success).toBe(false);
@@ -181,11 +187,23 @@ describe("zod-like trim and superRefine", () => {
 		expect(z.string().min(2).trim().parse("  ab  ")).toBe("ab");
 		expect(z.string().trim().min(3).parse("  abc  ")).toBe("abc");
 		expect(z.string().trim().min(3).safeParse("  ab  ").success).toBe(false);
-		expect(z.string().trim().regex(/^omp$/).parse("  omp  ")).toBe("omp");
-		expect(z.string().trim().regex(/^omp$/).safeParse("  nope  ").success).toBe(false);
+		expect(
+			z
+				.string()
+				.trim()
+				.regex(/^mars$/)
+				.parse("  mars  "),
+		).toBe("mars");
+		expect(
+			z
+				.string()
+				.trim()
+				.regex(/^mars$/)
+				.safeParse("  nope  ").success,
+		).toBe(false);
 		expect(z.string().trim().url().parse("  https://omp.sh  ")).toBe("https://omp.sh");
 		expect(z.string().trim().url().safeParse("  not-a-url  ").success).toBe(false);
-		expect(z.object({ name: z.string().default(" omp ").trim() }).parse({})).toEqual({ name: "omp" });
+		expect(z.object({ name: z.string().default(" mars ").trim() }).parse({})).toEqual({ name: "mars" });
 	});
 
 	it("supports superRefine with addIssue", () => {

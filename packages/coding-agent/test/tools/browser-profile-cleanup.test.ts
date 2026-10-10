@@ -2,7 +2,7 @@
  * Regression test for issue #7058: on Windows, puppeteer-core deletes its temp
  * Chrome profile with an unretried `rm()` from an eager process-exit hook, so an
  * EBUSY on the still-locked profile surfaces as an unhandled rejection that
- * crashes OMP. OMP now owns the profile directory and removes it itself with a
+ * crashes Mars. Mars now owns the profile directory and removes it itself with a
  * lock-tolerant, warn-and-leave cleanup.
  */
 
@@ -15,7 +15,7 @@ import { type BrowserHandle, releaseBrowser } from "@marsai-org/coding-agent/too
 import * as piUtils from "@marsai-org/utils";
 
 async function makeProfileDir(): Promise<string> {
-	const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "omp-chrome-profile-test-"));
+	const dir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "mars-chrome-profile-test-"));
 	await Bun.write(path.join(dir, "SingletonLock"), "lock");
 	await Bun.write(path.join(dir, "Default", "Preferences"), "{}");
 	return dir;

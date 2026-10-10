@@ -260,7 +260,7 @@ docker save "$IMAGE" | k3s ctr -n k8s.io images import --platform linux/amd64 -
 echo "==> [4/5] pointing ARC runner scale set at $IMAGE"
 sed -i "s#image: omp-kata-runner:.*#image: $IMAGE#" /root/arc-omp-values.yaml
 helm upgrade omp-kata --namespace arc-runners --version 0.14.2 \
-  -f /root/arc-omp-values.yaml \
+  -f /root/arc-mars-values.yaml \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set >/dev/null
 
 echo "==> [5/5] verifying rollout"

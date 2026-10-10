@@ -37,7 +37,7 @@ async function loadLockedSkill(
 	// Ids are validated when the lock is parsed.
 	const { scope, name } = parseSkillId(id)!;
 	const storeDir = getSkillStorePath(scope, name, entry.version);
-	// Only a completed unpack of the locked bytes counts; anything else is restored by `omp skill update`.
+	// Only a completed unpack of the locked bytes counts; anything else is restored by `mars skill update`.
 	if ((await readStoredIntegrity(storeDir)) !== entry.integrity) {
 		logger.debug("Skillshare skill missing from store; run `mars skill update` to restore it", {
 			id,

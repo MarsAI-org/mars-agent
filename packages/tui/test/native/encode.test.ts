@@ -24,7 +24,7 @@ describe("TSP framing", () => {
 		expect(JSON.parse(raw.body)).toEqual({
 			q: "hello",
 			v: [1],
-			app: "omp",
+			app: "mars",
 			features: ["edit", "undo", "send"],
 			ver: "test",
 		});

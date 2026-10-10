@@ -34,7 +34,7 @@ describe("runInteractiveBashPty", () => {
 
 	beforeEach(async () => {
 		initTheme();
-		tempDir = TempDir.createSync("@omp-bash-pty-env-");
+		tempDir = TempDir.createSync("@mars-bash-pty-env-");
 		resetSettingsForTest();
 		await Settings.init({ inMemory: true, cwd: tempDir.path() });
 		// The spawn env is filtered `Bun.env` plus procmgr's fixed keys. Those keys

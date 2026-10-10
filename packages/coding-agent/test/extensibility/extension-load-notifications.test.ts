@@ -6,7 +6,7 @@ import { formatExtensionLoadNotifications } from "@marsai-org/coding-agent/exten
 describe("extension load startup notifications", () => {
 	it("formats load failures as sanitized single-line warnings for TUI and print startup paths", () => {
 		const homeDir = os.homedir();
-		const extensionPath = path.join(homeDir, "omp-notification-fixture", "plugin\tname", "extension.ts");
+		const extensionPath = path.join(homeDir, "mars-notification-fixture", "plugin\tname", "extension.ts");
 		const tailMarker = "TAIL_MARKER_AFTER_TRUNCATION";
 		const [message] = formatExtensionLoadNotifications([
 			{

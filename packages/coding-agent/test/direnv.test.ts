@@ -182,7 +182,7 @@ describe.skipIf(!hasDirenv)("loadDirenvEnv (real direnv, allow-list honored)", (
 		expect((await loadDirenvEnv(root))?.set.DIRENV_DENY_TEST).toBe("allowed");
 	});
 
-	it("restarts from a clean baseline when the OMP process environment changes", async () => {
+	it("restarts from a clean baseline when the Mars process environment changes", async () => {
 		const root = tmp();
 		await Bun.write(path.join(root, ".envrc"), "export PI_DIRENV_CHILD_TEST=$PI_DIRENV_PARENT_TEST\n");
 		await allowEnvrc(root);
@@ -339,7 +339,7 @@ describe.skipIf(!hasDirenv)("bash executor direnv wiring (end-to-end)", () => {
 		const root = tmp();
 		await Bun.write(path.join(root, ".envrc"), "unset PI_DIRENV_UNSET_E2E\n");
 		await allowEnvrc(root);
-		// Inherited from the process env (as an OMP-provided var would be); the
+		// Inherited from the process env (as an Mars-provided var would be); the
 		// caller does NOT re-supply it, so direnv's unset must strip it. `printenv`
 		// exits non-zero and prints nothing when the name is genuinely absent. A
 		// unique sessionKey forces a fresh shell that captures the var we just set.

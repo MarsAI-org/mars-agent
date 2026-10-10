@@ -63,7 +63,7 @@ describe("formatScreenshot", () => {
 	});
 
 	it("formats non-home path without tilde", () => {
-		const filePath = path.join(path.parse(os.homedir()).root, "omp-render-utils", "capture.png");
+		const filePath = path.join(path.parse(os.homedir()).root, "mars-render-utils", "capture.png");
 		const resized = fakeResized({ mimeType: "image/webp", buffer: new Uint8Array(1024) });
 
 		expect(
@@ -89,7 +89,7 @@ describe("formatScreenshot", () => {
 				saveFullRes: false,
 				savedMimeType: "image/webp",
 				savedByteLength: 3072,
-				dest: path.join(os.tmpdir(), "omp-sshots-123.png"),
+				dest: path.join(os.tmpdir(), "mars-sshots-123.png"),
 				resized,
 			}),
 		).toEqual(["Screenshot captured", "Format: image/webp (3.00 KB)", "Dimensions: 800x600"]);
@@ -103,7 +103,7 @@ describe("formatScreenshot", () => {
 				saveFullRes: false,
 				savedMimeType: "image/png",
 				savedByteLength: 4096,
-				dest: path.join(os.tmpdir(), "omp-sshots-123.png"),
+				dest: path.join(os.tmpdir(), "mars-sshots-123.png"),
 				resized,
 			}),
 		).toContain("Resize: image decoder failed; using original image bytes");

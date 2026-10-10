@@ -168,14 +168,14 @@ describe("profile directories", () => {
 		process.env.XDG_STATE_HOME = path.join(tempRoot, "state");
 		process.env.XDG_CACHE_HOME = path.join(tempRoot, "cache");
 
-		// Fresh install: XDG vars are set (typical Linux) but no $XDG/omp exists yet.
+		// Fresh install: XDG vars are set (typical Linux) but no $XDG/mars exists yet.
 		// First activation must land in ~/<config-dir>/profiles/work because
 		// the profile-specific XDG path does not exist.
 		setProfile("work");
 		const firstAgentDir = getAgentDir();
 		expect(firstAgentDir).toBe(path.join(os.homedir(), configDir, "profiles", "work", "agent"));
 
-		// Later, the base XDG app dir materializes (e.g. via `omp config init-xdg`
+		// Later, the base XDG app dir materializes (e.g. via `mars config init-xdg`
 		// migrating only the default-profile data). The named profile must stay
 		// in its original location until the user explicitly migrates it.
 		await fs.mkdir(path.join(process.env.XDG_DATA_HOME, "mars"), { recursive: true });
@@ -188,8 +188,8 @@ describe("profile directories", () => {
 	});
 
 	it("rejects path-like profile names", () => {
-		expect(() => setProfile("../work")).toThrow("Invalid OMP profile");
-		expect(() => setProfile("work/team")).toThrow("Invalid OMP profile");
+		expect(() => setProfile("../work")).toThrow("Invalid Mars profile");
+		expect(() => setProfile("work/team")).toThrow("Invalid Mars profile");
 	});
 
 	it("rejects trailing-dot profile names to avoid Windows path collisions", () => {
@@ -269,8 +269,8 @@ describe("profile env + name validation", () => {
 	it("rejects uppercase profile names so isolation is filesystem-independent", () => {
 		// `work` and `WORK` would collide on case-insensitive macOS/Windows but
 		// differ on Linux; reject uppercase to keep profile identity stable.
-		expect(() => normalizeProfileName("WORK")).toThrow("Invalid OMP profile");
-		expect(() => normalizeProfileName("Work")).toThrow("Invalid OMP profile");
+		expect(() => normalizeProfileName("WORK")).toThrow("Invalid Mars profile");
+		expect(() => normalizeProfileName("Work")).toThrow("Invalid Mars profile");
 		expect(normalizeProfileName("work")).toBe("work");
 		expect(normalizeProfileName("work-2.0_a")).toBe("work-2.0_a");
 	});

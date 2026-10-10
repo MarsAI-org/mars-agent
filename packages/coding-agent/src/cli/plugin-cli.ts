@@ -1,7 +1,7 @@
 /**
  * Plugin CLI command handlers.
  *
- * Handles `omp plugin <command>` subcommands for plugin lifecycle management.
+ * Handles `mars plugin <command>` subcommands for plugin lifecycle management.
  */
 
 import * as path from "node:path";

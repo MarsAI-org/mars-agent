@@ -14,7 +14,7 @@ import { getAgentDir, getConfigRootDir, getPluginsDir } from "@marsai-org/utils"
 // 2. `getAgentDir()` (`~/.mars/agent` or `$PI_CODING_AGENT_DIR`)
 //    Handles `PI_CODING_AGENT_DIR` overrides that relocate the agent dir
 //    (and therefore `agent/extensions/`) out from under the config root.
-// 3. `getPluginsDir()` (XDG-aware: `$XDG_DATA_HOME/omp/plugins` or legacy)
+// 3. `getPluginsDir()` (XDG-aware: `$XDG_DATA_HOME/mars/plugins` or legacy)
 //    Handles installed plugin extensions that live outside `~/.mars` when
 //    XDG_DATA_HOME resolves the plugins dir somewhere else.
 //

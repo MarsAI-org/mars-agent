@@ -12,7 +12,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/bash",
 			platform: "linux",
 			homeDir: "/home/me",
@@ -24,7 +24,7 @@ describe("profile alias installer", () => {
 
 		expect(result.configPath).toBe("/home/me/.bashrc");
 		expect(result.command).toBe("mars --profile=work");
-		expect(files.get("/home/me/.bashrc")).toContain("omp-work() {");
+		expect(files.get("/home/me/.bashrc")).toContain("mars-work() {");
 		expect(files.get("/home/me/.bashrc")).toContain('command mars --profile=work "$@"');
 	});
 
@@ -83,7 +83,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/zsh",
 			platform: "darwin",
 			homeDir: "/Users/me",
@@ -100,7 +100,7 @@ describe("profile alias installer", () => {
 		});
 
 		expect(result.command).toBe("bun /repo/packages/coding-agent/src/cli.ts --profile=work");
-		expect(files.get("/Users/me/.zshrc")).toContain("omp-work() {");
+		expect(files.get("/Users/me/.zshrc")).toContain("mars-work() {");
 		expect(files.get("/Users/me/.zshrc")).toContain(
 			`command bun '/repo/packages/coding-agent/src/cli.ts' --profile=work "$@"`,
 		);
@@ -111,7 +111,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/zsh",
 			platform: "darwin",
 			homeDir: "/Users/me",
@@ -123,7 +123,7 @@ describe("profile alias installer", () => {
 		});
 
 		expect(result.configPath).toBe("/Users/me/.config/zsh/.zshrc");
-		expect(files.get(result.configPath)).toContain("omp-work() {");
+		expect(files.get(result.configPath)).toContain("mars-work() {");
 	});
 
 	it("writes a fish function that forwards argv", async () => {
@@ -131,7 +131,7 @@ describe("profile alias installer", () => {
 
 		await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/opt/homebrew/bin/fish",
 			platform: "darwin",
 			homeDir: "/Users/me",
@@ -143,7 +143,7 @@ describe("profile alias installer", () => {
 		});
 
 		const content = files.get("/Users/me/.config/fish/conf.d/mars-profiles.fish") ?? "";
-		expect(content).toContain("function omp-work --wraps mars");
+		expect(content).toContain("function mars-work --wraps mars");
 		expect(content).toContain("command mars --profile=work $argv");
 	});
 
@@ -152,7 +152,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/usr/bin/fish",
 			platform: "linux",
 			homeDir: "/home/me",
@@ -164,7 +164,7 @@ describe("profile alias installer", () => {
 		});
 
 		expect(result.configPath).toBe("/home/me/.dotfiles/config/fish/conf.d/mars-profiles.fish");
-		expect(files.get(result.configPath)).toContain("function omp-work --wraps mars");
+		expect(files.get(result.configPath)).toContain("function mars-work --wraps mars");
 	});
 
 	it("writes a PowerShell function because aliases cannot carry arguments", async () => {
@@ -172,7 +172,7 @@ describe("profile alias installer", () => {
 
 		await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "pwsh.exe",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
@@ -184,7 +184,7 @@ describe("profile alias installer", () => {
 
 		const psConfigPath = path.join("C:\\Users\\me", "Documents", "PowerShell", "Microsoft.PowerShell_profile.ps1");
 		const content = files.get(psConfigPath) ?? "";
-		expect(content).toContain("function omp-work");
+		expect(content).toContain("function mars-work");
 		expect(content).toContain("& mars --profile=work @args");
 	});
 
@@ -193,7 +193,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
 			env: {
@@ -217,7 +217,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
 			env: {
@@ -245,7 +245,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
 			env: { POWERSHELL_DISTRIBUTION_CHANNEL: "MSI:Windows 10 Pro" },
@@ -266,9 +266,9 @@ describe("profile alias installer", () => {
 				"/home/me/.zshrc",
 				[
 					"before",
-					"# >>> mars profile alias: omp-work >>>",
-					"alias omp-work='command mars --profile=old'",
-					"# <<< mars profile alias: omp-work <<<",
+					"# >>> mars profile alias: mars-work >>>",
+					"alias mars-work='command mars --profile=old'",
+					"# <<< mars profile alias: mars-work <<<",
 					"after",
 				].join("\n"),
 			],
@@ -276,7 +276,7 @@ describe("profile alias installer", () => {
 
 		await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/zsh",
 			platform: "darwin",
 			homeDir: "/home/me",
@@ -298,14 +298,14 @@ describe("profile alias installer", () => {
 		// was interrupted or hand-edited. Appending a fresh block would let the
 		// *next* install splice from the stale start through the new end, deleting
 		// the user config in between. Refuse and preserve the file untouched.
-		const original = ["# >>> mars profile alias: omp-work >>>", "omp-work() {", "export SECRET=keepme"].join("\n");
+		const original = ["# >>> mars profile alias: mars-work >>>", "mars-work() {", "export SECRET=keepme"].join("\n");
 		const files = new Map<string, string>([["/home/me/.zshrc", original]]);
 		let wrote = false;
 
 		await expect(
 			installProfileAlias({
 				profile: "work",
-				aliasName: "omp-work",
+				aliasName: "mars-work",
 				shellPath: "/bin/zsh",
 				platform: "darwin",
 				homeDir: "/home/me",
@@ -356,7 +356,7 @@ describe("profile alias installer", () => {
 		await expect(
 			installProfileAlias({
 				profile: "work",
-				aliasName: "omp-work",
+				aliasName: "mars-work",
 				shellPath: "/bin/sh",
 				platform: "linux",
 				homeDir: "/home/me",
@@ -384,7 +384,7 @@ describe("profile alias installer", () => {
 		await expect(
 			installProfileAlias({
 				profile: "work'; touch /tmp/pwn; #",
-				aliasName: "omp-work",
+				aliasName: "mars-work",
 				shellPath: "/bin/bash",
 				platform: "linux",
 				homeDir: "/home/me",
@@ -393,7 +393,7 @@ describe("profile alias installer", () => {
 					files.set(filePath, content);
 				},
 			}),
-		).rejects.toThrow("Invalid OMP profile");
+		).rejects.toThrow("Invalid Mars profile");
 		expect(files.size).toBe(0);
 	});
 
@@ -402,7 +402,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/bash",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
@@ -423,7 +423,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/zsh",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
@@ -443,7 +443,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/fish",
 			platform: "win32",
 			homeDir: "C:\\Users\\me",
@@ -463,7 +463,7 @@ describe("profile alias installer", () => {
 
 		const result = await installProfileAlias({
 			profile: "work",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			shellPath: "/bin/bash",
 			platform: "win32",
 			homeDir: "\\\\server\\share\\me",

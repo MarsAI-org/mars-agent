@@ -29,15 +29,15 @@ const USE_BUNDLED_PI_MODULES = isCompiledBinary() || Boolean(process.env.PI_BUND
 // imports inside runtime-loaded extensions.
 //
 // Compiled binaries and npm bundles retain lazy loaders for host packages and
-// serve requested surfaces through `omp-legacy-pi-bundled:<key>` synthetic modules.
+// serve requested surfaces through `mars-legacy-pi-bundled:<key>` synthetic modules.
 // `scripts/legacy-pi-virtual-module.ts` derives literal dynamic-import edges
 // from current package exports inside a Bun build plugin: no generated source
 // or duplicate key list exists on disk. Deferring each host module evaluation
 // avoids cycles with an extension-loading command that is itself in the
 // retained package graph.
-const BUNDLED_VIRTUAL_SCHEME = "omp-legacy-pi-bundled:";
-const BUNDLED_VIRTUAL_NAMESPACE = "omp-legacy-pi-bundled";
-const BUNDLED_HOST_NAMESPACE = "omp-legacy-pi-host";
+const BUNDLED_VIRTUAL_SCHEME = "mars-legacy-pi-bundled:";
+const BUNDLED_VIRTUAL_NAMESPACE = "mars-legacy-pi-bundled";
+const BUNDLED_HOST_NAMESPACE = "mars-legacy-pi-host";
 const BUNDLED_HOST_SCHEME = `${BUNDLED_HOST_NAMESPACE}:`;
 const TYPEBOX_BUNDLED_MODULE_KEY = "typebox";
 
@@ -569,9 +569,9 @@ function getExtensionParseCacheDb(): Database | null {
 		try {
 			if (fs.statSync(cachePath).size > EXTENSION_PARSE_CACHE_MAX_BYTES) {
 				// Remove the full WAL set, not just the main db. A leftover
-				// `-wal`/`-shm` pair still owned by a concurrent omp process is
+				// `-wal`/`-shm` pair still owned by a concurrent mars process is
 				// adopted by this fresh connection; when that `-wal` has
-				// uncheckpointed frames (the normal case while another omp is
+				// uncheckpointed frames (the normal case while another mars is
 				// writing its own cache entries), `journal_mode=WAL` fails with
 				// SQLITE_IOERR — disabling the parse cache for the whole process
 				// and forcing a reparse of every extension on startup. See #9549.
@@ -588,7 +588,7 @@ function getExtensionParseCacheDb(): Database | null {
 		// `PRAGMA journal_mode=WAL`, which takes an exclusive lock during WAL
 		// recovery). See #2421. WAL + synchronous=NORMAL avoids the per-entry
 		// journal create/delete + fsync churn that serialized this cache behind
-		// concurrent omp startups and blocked the event loop for ~20s (#9549).
+		// concurrent mars startups and blocked the event loop for ~20s (#9549).
 		db.run(`PRAGMA busy_timeout = ${getDbBusyTimeoutMs()}`);
 		db.run("PRAGMA journal_mode=WAL");
 		db.run("PRAGMA synchronous=NORMAL");
@@ -747,11 +747,11 @@ let bundledModuleLoadersPromise: Promise<BundledModuleLoaders> | null = null;
 /** Load the build-supplied registry without evaluating unrelated host modules. */
 function ensureBundledModuleLoadersLoaded(): Promise<BundledModuleLoaders> {
 	if (!USE_BUNDLED_PI_MODULES) {
-		return Promise.reject(new Error("omp:legacy-pi-shim: bundled modules are only available in bundled mode"));
+		return Promise.reject(new Error("mars:legacy-pi-shim: bundled modules are only available in bundled mode"));
 	}
 	if (!bundledModuleLoadersPromise) {
 		// This virtual module exists only in compiled/npm builds; source mode cannot import it statically.
-		bundledModuleLoadersPromise = import("omp-legacy-pi-modules").then(module => module.BUNDLED_PI_MODULE_LOADERS);
+		bundledModuleLoadersPromise = import("mars-legacy-pi-modules").then(module => module.BUNDLED_PI_MODULE_LOADERS);
 	}
 	return bundledModuleLoadersPromise;
 }
@@ -762,7 +762,7 @@ async function loadBundledModule(moduleKey: string): Promise<BundledModule> {
 	const loaders = await ensureBundledModuleLoadersLoaded();
 	const loader = loaders[moduleKey];
 	if (!loader) {
-		throw new Error(`omp:legacy-pi-shim: no bundled module registered for ${moduleKey}`);
+		throw new Error(`mars:legacy-pi-shim: no bundled module registered for ${moduleKey}`);
 	}
 	const module = await loader();
 	loadedBundledModules[moduleKey] = module;
@@ -793,7 +793,7 @@ function resolveBundledVirtualSpecifier(
 	const scheme = `${namespace}:`;
 	const registryKey = specifier.startsWith(scheme) ? specifier.slice(scheme.length) : specifier;
 	if (!registryKey) {
-		throw new Error("omp:legacy-pi-shim: bundled virtual specifier has no registry key");
+		throw new Error("mars:legacy-pi-shim: bundled virtual specifier has no registry key");
 	}
 	return { path: registryKey, namespace };
 }
@@ -934,7 +934,7 @@ const PACKAGE_IMPORT_EXCLUDED = Symbol("packageImportExcluded");
 const TYPEBOX_SPECIFIER_FILTER = /^(?:@sinclair\/typebox|typebox)$/;
 
 // Compat-shim path resolution. In compiled-binary mode every bundled surface
-// is served through the `omp-legacy-pi-bundled:` virtual namespace (see the
+// is served through the `mars-legacy-pi-bundled:` virtual namespace (see the
 // bundled-module block above) — bunfs paths are unreachable on Bun 1.3.14+, so the
 // pre-#3423 helpers that derived `/$bunfs/root/...` paths from
 // `import.meta.dir` are gone. Dev / source-link / installed-package modes
@@ -983,7 +983,7 @@ function sourceShimPath(file: string): string {
  * entrypoint is missing.
  *
  * In compiled binaries and npm bundles the surface is served through the
- * `omp-legacy-pi-bundled:` virtual namespace (issue #3423). Dev and source SDK
+ * `mars-legacy-pi-bundled:` virtual namespace (issue #3423). Dev and source SDK
  * imports use the shipped source module.
  *
  * Exported for tests; production callers use `TYPEBOX_SHIM_PATH`.
@@ -1040,14 +1040,14 @@ const LEGACY_PI_TUI_SHIM_PATH = USE_BUNDLED_PI_MODULES
 // source-tree path would miss installs where bundled packages live at
 // `node_modules/@oh-my-pi/pi-*`.
 //
-// Bundled entries are `omp-legacy-pi-bundled:<key>` specifiers handed to the
+// Bundled entries are `mars-legacy-pi-bundled:<key>` specifiers handed to the
 // synthetic onLoad in `installLegacyPiSpecifierShim()`. Filesystem-shaped
 // overrides are still validated against on-disk presence so a missing dev-mode
 // shim falls through to `getResolvedSpecifier`.
 
 /**
  * Drop overrides whose filesystem targets are missing so they can fall
- * through to the canonical-resolution path. Virtual `omp-legacy-pi-bundled:`
+ * through to the canonical-resolution path. Virtual `mars-legacy-pi-bundled:`
  * entries always pass because live bundled module references are the source of
  * truth.
  *
@@ -1200,7 +1200,7 @@ function rewriteLegacyPiBasename(specifier: string): string {
 }
 
 function toImportSpecifier(resolvedPath: string): string {
-	// Virtual `omp-legacy-pi-bundled:` specifiers are served by the synthetic
+	// Virtual `mars-legacy-pi-bundled:` specifiers are served by the synthetic
 	// onLoad in `installLegacyPiSpecifierShim()`; wrapping them as `file://`
 	// would corrupt the scheme.
 	if (isBundledVirtualSpecifier(resolvedPath)) {
@@ -1210,7 +1210,7 @@ function toImportSpecifier(resolvedPath: string): string {
 }
 
 /**
- * Rewrite the extension-owned specifiers OMP must host-resolve — legacy
+ * Rewrite the extension-owned specifiers Mars must host-resolve — legacy
  * `@(scope)/pi-*`, bare TypeBox packages, package `imports` aliases like
  * `#src/*`, and extension-local bare dependencies — to absolute `file://` URLs
  * or compiled-mode virtual specifiers. Relative siblings and built-in modules
@@ -2301,7 +2301,7 @@ interface ExtensionModuleGraph {
 
 /**
  * Walk the extension's import graph starting at `entryRealPath`, returning the
- * realpath of every reachable source module OMP must rewrite at load time.
+ * realpath of every reachable source module Mars must rewrite at load time.
  * Relative imports, package `imports` aliases, and ESM bare dependencies are
  * graph-owned recursively because compiled Bun cannot resolve runtime
  * `node_modules` from those modules. Graph-owned CommonJS modules also own
@@ -2571,7 +2571,7 @@ function prepareGraphCommonJsDefinition(modulePath: string, source: string, targ
 }
 
 /**
- * Linkedom's canvas bridge uses its bundled fallback because OMP does not ship
+ * Linkedom's canvas bridge uses its bundled fallback because Mars does not ship
  * native canvas.
  */
 async function prepareGraphCommonJsModule(modulePath: string, source: string): Promise<void> {
@@ -2615,7 +2615,7 @@ async function installExtensionGraphHook(
 		const filter = new RegExp(`^(?:${alternation})(?:\\?mtime=\\d+)?$`);
 		const hookId = Bun.hash(`${entryRealPath}\0async\0${[...asyncModules.keys()].join("\0")}`).toString(36);
 		Bun.plugin({
-			name: `omp:legacy-pi-ext:${hookId}`,
+			name: `mars:legacy-pi-ext:${hookId}`,
 			setup(build) {
 				build.onLoad({ filter, namespace: "file" }, args => {
 					const queryIndex = args.path.indexOf("?mtime=");
@@ -2656,7 +2656,7 @@ async function installExtensionGraphHook(
 		const filter = new RegExp(`^(?:${alternation})(?:\\?mtime=\\d+)?$`);
 		const hookId = Bun.hash(`${entryRealPath}\0commonjs\0${[...commonJsPaths].join("\0")}`).toString(36);
 		Bun.plugin({
-			name: `omp:legacy-pi-ext:${hookId}`,
+			name: `mars:legacy-pi-ext:${hookId}`,
 			setup(build) {
 				build.onLoad({ filter, namespace: "file" }, args => {
 					const queryIndex = args.path.indexOf("?mtime=");
@@ -2685,7 +2685,7 @@ async function installExtensionGraphHook(
 		const filter = new RegExp(`^(?:${alternation})(?:\\?mtime=\\d+)?$`);
 		const hookId = Bun.hash(`${entryRealPath}\0sync-source\0${[...synchronousSourcePaths].join("\0")}`).toString(36);
 		Bun.plugin({
-			name: `omp:legacy-pi-ext:${hookId}`,
+			name: `mars:legacy-pi-ext:${hookId}`,
 			setup(build) {
 				build.onLoad({ filter, namespace: "file" }, args => {
 					const queryIndex = args.path.indexOf("?mtime=");
@@ -2916,14 +2916,14 @@ export function installLegacyPiSpecifierShim(): void {
 	isLegacyPiSpecifierShimInstalled = true;
 
 	Bun.plugin({
-		name: "omp:legacy-pi-shim",
+		name: "mars:legacy-pi-shim",
 		setup(build) {
 			build.onResolve({ filter: LEGACY_PI_SPECIFIER_FILTER, namespace: "file" }, resolveLegacyPiSpecifier);
 			build.onResolve({ filter: TYPEBOX_SPECIFIER_FILTER, namespace: "file" }, resolveTypeBoxSpecifier);
-			build.onResolve({ filter: /^omp-legacy-pi-bundled:.+$/, namespace: "file" }, args =>
+			build.onResolve({ filter: /^mars-legacy-pi-bundled:.+$/, namespace: "file" }, args =>
 				resolveBundledVirtualSpecifier(args.path),
 			);
-			build.onResolve({ filter: /^omp-legacy-pi-host:.+$/, namespace: "file" }, args =>
+			build.onResolve({ filter: /^mars-legacy-pi-host:.+$/, namespace: "file" }, args =>
 				resolveBundledVirtualSpecifier(args.path, BUNDLED_HOST_NAMESPACE),
 			);
 			build.onResolve({ filter: /.*/, namespace: BUNDLED_VIRTUAL_NAMESPACE }, args =>

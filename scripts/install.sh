@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# OMP Coding Agent Installer
+# Mars Coding Agent Installer
 # Usage: curl -fsSL https://raw.githubusercontent.com/can1357/oh-my-pi/main/scripts/install.sh | sh
 #
 # Options:

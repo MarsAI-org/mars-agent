@@ -99,7 +99,7 @@ async function ensureToken(): Promise<string> {
 /**
  * OAuth refresh handler for `mars auth-broker serve`'s {@link AuthStorage}.
  *
- * The vault holds provider OAuth rows AND OMP-managed `mcp_oauth:*` rows.
+ * The vault holds provider OAuth rows AND Mars-managed `mcp_oauth:*` rows.
  * Provider rows refresh through the per-provider registry. MCP rows are
  * self-describing — the embedded token endpoint and client credentials are the
  * only refresh material — so they refresh with a generic `refresh_token` grant.
@@ -304,7 +304,7 @@ async function runList(flags: AuthBrokerCommandArgs["flags"]): Promise<void> {
 // ─── CLIProxyAPI import ─────────────────────────────────────────────────
 
 /**
- * Maps the `type` field of a CLIProxyAPI credential JSON to the omp provider id.
+ * Maps the `type` field of a CLIProxyAPI credential JSON to the mars provider id.
  * The filename also encodes the type (e.g. `claude-foo@bar.json`), but the
  * in-file `type` is authoritative — we only fall back to filename if absent.
  */

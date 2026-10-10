@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * Token-usage audit over the local omp session corpus (~/.mars/agent/sessions/).
+ * Token-usage audit over the local mars session corpus (~/.mars/agent/sessions/).
  *
  * Phase 1 (scan, no LLM): walks recent sessions, sums *real* per-request usage
  * (input/output/cacheRead/cacheWrite + nominal cost recorded in each assistant
@@ -22,7 +22,7 @@
  *   bun scripts/session-stats/audit.ts --folder Projects-pi --max-llm 6
  *   bun scripts/session-stats/audit.ts --json out.json
  *
- * Auth: resolves an API key for the classifier provider through omp's auth
+ * Auth: resolves an API key for the classifier provider through mars's auth
  * storage (~/.mars/agent/agent.db: stored key, OAuth, or env var fallback).
  */
 
@@ -1010,7 +1010,7 @@ async function openClassifier(modelSpec: string): Promise<Classifier> {
 	await storage.credentials.reload();
 	const apiKey = await storage.keys.get(provider);
 	if (!apiKey) {
-		throw new Error(`no credentials for provider "${provider}" (omp login or env var required)`);
+		throw new Error(`no credentials for provider "${provider}" (mars login or env var required)`);
 	}
 	return { model, apiKey };
 }

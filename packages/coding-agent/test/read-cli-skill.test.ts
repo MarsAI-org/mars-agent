@@ -7,13 +7,13 @@ import { removeWithRetries } from "@marsai-org/utils";
 
 const CLI_ENTRY = path.join(import.meta.dir, "..", "src", "cli.ts");
 
-describe("omp read skill resources", () => {
+describe("mars read skill resources", () => {
 	let root: string;
 	let projectDir: string;
 	let agentDir: string;
 
 	beforeEach(async () => {
-		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-read-skill-"));
+		root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-read-skill-"));
 		projectDir = path.join(root, "project");
 		agentDir = path.join(root, "agent");
 		const skillDir = path.join(projectDir, ".mars", "skills", "standalone-skill");

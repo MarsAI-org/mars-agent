@@ -85,7 +85,7 @@ function readyOutcome(body: string): RelayWaitOutcome {
 			!("ompExtensionDiscardedTabsProtocol" in parsed) ||
 			parsed.ompExtensionDiscardedTabsProtocol !== String(DISCARDED_TABS_PROTOCOL_VERSION)
 		) {
-			// A relay from another OMP version is the likelier culprit than the extension.
+			// A relay from another Mars version is the likelier culprit than the extension.
 			if (!("ompRelayVersion" in parsed) || parsed.ompRelayVersion !== VERSION) return "outdated-relay";
 			return "outdated-extension";
 		}

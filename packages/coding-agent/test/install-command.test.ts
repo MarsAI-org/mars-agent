@@ -1,5 +1,5 @@
 /**
- * Regression test for #1496 (bug 2): `omp install ./my-extension` used to be
+ * Regression test for #1496 (bug 2): `mars install ./my-extension` used to be
  * silently rewritten to `launch install ./my-extension` and forwarded to the
  * LLM as an initial prompt because no top-level `install` subcommand existed.
  *
@@ -61,7 +61,7 @@ describe("looksLikeLocalPath", () => {
 	});
 
 	test("bare names that exist as a local directory are treated as local", () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-install-test-"));
+		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-install-test-"));
 		try {
 			fs.mkdirSync(path.join(tempDir, "vendored-ext"));
 			expect(looksLikeLocalPath("vendored-ext", tempDir)).toBe(true);

@@ -101,7 +101,7 @@ helm install arc \
 helm install omp-kata \
   --namespace arc-runners --create-namespace \
   --version 0.14.2 \
-  -f arc-omp-values.yaml \
+  -f arc-mars-values.yaml \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 ```
 
@@ -127,7 +127,7 @@ kubectl -n arc-systems get pods
 
 ---
 
-## 3. Scale-set values (`arc-omp-values.yaml`)
+## 3. Scale-set values (`arc-mars-values.yaml`)
 
 Create the namespace-local PVC before installing or upgrading the scale set. This
 is the shared mutable filesystem cache for data whose tools already validate
@@ -153,7 +153,7 @@ Apply it once:
 kubectl apply -f runner-cache-pvc.yaml
 ```
 
-This is the live `arc-omp-values.yaml` verbatim, with only the repo owner/name in
+This is the live `arc-mars-values.yaml` verbatim, with only the repo owner/name in
 `githubConfigUrl` redacted:
 
 ```yaml
@@ -401,8 +401,8 @@ One endpoint, one auth model — **reads are unauthenticated, writes require the
     `ci`, mounted at `/auth` (`--allow_unauthenticated_reads` keeps reads open);
   - `arc-runners/bazel-remote-ci` - `BAZEL_REMOTE_USER` / `BAZEL_REMOTE_PASSWORD`,
     injected into every runner pod via `envFrom`
-    ([step 3](#3-scale-set-values-arc-omp-valuesyaml); `infra/reload-runner.sh`
-    inserts the `envFrom` entry into `arc-omp-values.yaml` idempotently on the
+    ([step 3](#3-scale-set-values-arc-mars-valuesyaml); `infra/reload-runner.sh`
+    inserts the `envFrom` entry into `arc-mars-values.yaml` idempotently on the
     next image reload).
 - **No GitHub secrets.** Nothing outside the cluster holds cache credentials;
   the public repo carries only the CA *certificate*.
@@ -491,7 +491,7 @@ kubectl -n arc-runners delete secret sccache-s3
 kubectl delete namespace sccache        # removes RustFS and the rustfs-data PVC
 # then: drop the sccache tcp/9000 rule from runner-egress-lockdown, and remove
 # the sccache-s3 envFrom entry, the native-artifacts subPath mount, and
-# MARS_NATIVE_CACHE_DIR from arc-omp-values.yaml (+ helm upgrade).
+# MARS_NATIVE_CACHE_DIR from arc-mars-values.yaml (+ helm upgrade).
 ```
 
 ---
@@ -653,14 +653,14 @@ also logs `bun cache backend: mounted PVC (...)`. To inspect the mounted
 runner cache, scale to zero and check the `runner-cache` local-path volume on
 the host.
 
-**Resize a job's VM** - edit the `resources` block in `arc-omp-values.yaml`
-([step 3](#3-scale-set-values-arc-omp-valuesyaml); requests = guaranteed VM size,
+**Resize a job's VM** - edit the `resources` block in `arc-mars-values.yaml`
+([step 3](#3-scale-set-values-arc-mars-valuesyaml); requests = guaranteed VM size,
 limits = hotplug ceiling) and roll out:
 
 ```bash
 helm upgrade omp-kata \
   --namespace arc-runners --version 0.14.2 \
-  -f arc-omp-values.yaml \
+  -f arc-mars-values.yaml \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 ```
 
@@ -689,12 +689,12 @@ helm install <release> \
   --set githubConfigUrl=https://github.com/<OWNER>/<OTHER_REPO> \
   --set githubConfigSecret=arc-github \
   --set runnerScaleSetName=<other-repo>-kata \
-  -f arc-omp-values.yaml \
+  -f arc-mars-values.yaml \
   oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set
 ```
 
 Jobs in the other repo then target `runs-on: <other-repo>-kata`. (On this host a
-convenience wrapper, `omp-add-repo-runner <OWNER>/<REPO> [label]`, performs exactly
+convenience wrapper, `mars-add-repo-runner <OWNER>/<REPO> [label]`, performs exactly
 this install.)
 
 **Uninstall** (leaves k3s/Kata in place):

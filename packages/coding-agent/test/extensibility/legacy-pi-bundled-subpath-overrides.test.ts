@@ -31,11 +31,11 @@ async function runRegistryProbe(entries: BundledPiEntry[], source: string): Prom
 // `rewriteLegacyPiImports` catch left the original specifier in place and
 // Bun's native resolver couldn't find a peer install. The build plugin now
 // derives every module key from current package exports, so subpaths route to
-// the same `omp-legacy-pi-bundled:` virtual namespace as package roots without
+// the same `mars-legacy-pi-bundled:` virtual namespace as package roots without
 // a generated registry or duplicate key list.
 describe("legacy pi compat compiled-mode subpath overrides (issue #3442)", () => {
 	it("does not evaluate unrelated host modules while loading the registry", async () => {
-		using tempDir = TempDir.createSync("@omp-legacy-pi-loaders-");
+		using tempDir = TempDir.createSync("@mars-legacy-pi-loaders-");
 		const alphaPath = path.join(tempDir.path(), "alpha.ts");
 		const betaPath = path.join(tempDir.path(), "beta.ts");
 		const registryPath = path.join(tempDir.path(), "registry.ts");
@@ -79,7 +79,7 @@ export const finalBeta = Reflect.get(globalThis, "__betaLoads") ?? 0;
 
 	it("serves @marsai-org/ai/oauth through the bundled virtual namespace in compiled mode", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@marsai-org/ai/oauth"]).toBe("omp-legacy-pi-bundled:@marsai-org/ai/oauth");
+		expect(overrides["@marsai-org/ai/oauth"]).toBe("mars-legacy-pi-bundled:@marsai-org/ai/oauth");
 	});
 
 	it("expands wildcard exports for concrete on-disk targets (issue #3442 follow-up)", () => {
@@ -90,7 +90,7 @@ export const finalBeta = Reflect.get(globalThis, "__betaLoads") ?? 0;
 		// fall-through. The generator now globs each wildcard's source pattern
 		// and registers every concrete `.ts` match against the virtual namespace.
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@marsai-org/ai/oauth/anthropic"]).toBe("omp-legacy-pi-bundled:@marsai-org/ai/oauth/anthropic");
+		expect(overrides["@marsai-org/ai/oauth/anthropic"]).toBe("mars-legacy-pi-bundled:@marsai-org/ai/oauth/anthropic");
 		// Sanity: the wildcard expansion also reaches deeper subroots so plugins
 		// pinned to e.g. `@marsai-org/ai/providers/openai` keep resolving.
 		expect(bundledModuleKeys.has("@marsai-org/ai/oauth/anthropic")).toBe(true);
@@ -118,7 +118,7 @@ export const observed = [mod.piEscapeRegexLiteral("a.b*c"), mod.piJoinPath("src"
 		).toEqual(["a\\.b\\*c", path.join("src", "*.ts")]);
 
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
+		expect(overrides[key]).toBe(`mars-legacy-pi-bundled:${key}`);
 	});
 
 	it("loads catalog root and provider-model exports from the bundled graph", async () => {
@@ -159,7 +159,7 @@ export const observed = buildModel({
 		);
 		expect(observed).toBe("Sample");
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
+		expect(overrides[key]).toBe(`mars-legacy-pi-bundled:${key}`);
 	});
 
 	it("expands web search provider wildcard exports for compiled plugin imports", () => {
@@ -173,7 +173,7 @@ export const observed = buildModel({
 
 		for (const key of providerKeys) {
 			expect(bundledModuleKeys.has(key)).toBe(true);
-			expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
+			expect(overrides[key]).toBe(`mars-legacy-pi-bundled:${key}`);
 		}
 	});
 
@@ -181,7 +181,7 @@ export const observed = buildModel({
 		const key = "@marsai-org/coding-agent/registry/agent-registry";
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(bundledModuleKeys.has(key)).toBe(true);
-		expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
+		expect(overrides[key]).toBe(`mars-legacy-pi-bundled:${key}`);
 	});
 
 	it("keeps non-catalog root catch-all wildcards (./* / ./*.js) out of the bundle", () => {
@@ -214,7 +214,7 @@ export const observed = buildModel({
 				key === "typebox"
 			)
 				continue;
-			if (overrides[key] !== `omp-legacy-pi-bundled:${key}`) {
+			if (overrides[key] !== `mars-legacy-pi-bundled:${key}`) {
 				missing.push(key);
 			}
 		}
@@ -266,6 +266,6 @@ export const observed = { role: actionBar([actionButton("Go", "go")]).p.role, li
 		);
 		expect(observed).toEqual({ role: "omp.actions", line: "a b" });
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		for (const key of keys) expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
+		for (const key of keys) expect(overrides[key]).toBe(`mars-legacy-pi-bundled:${key}`);
 	});
 });

@@ -1,4 +1,4 @@
-# OMP Coding Agent Installer for Windows
+# Mars Coding Agent Installer for Windows
 # Usage: irm https://raw.githubusercontent.com/can1357/oh-my-pi/main/scripts/install.ps1 | iex
 #
 # Or with options:
@@ -195,7 +195,7 @@ function Configure-BashShell {
             Write-Host "[OK] Configured shell path in $settingsFile" -ForegroundColor Green
         } else {
             Write-Host ""
-            Write-Host "No bash shell found - OMP will use its built-in shell." -ForegroundColor Cyan
+            Write-Host "No bash shell found - Mars will use its built-in shell." -ForegroundColor Cyan
             Write-Host "  For shell snapshots and interactive terminals, install Git for Windows:" -ForegroundColor Cyan
             Write-Host "    https://git-scm.com/download/win" -ForegroundColor Cyan
             Write-Host "  Or set a custom path in:" -ForegroundColor Cyan
@@ -222,7 +222,7 @@ function Install-ViaBun {
             throw "git is required for -Ref when installing from source"
         }
 
-        $tmpRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("omp-install-" + [System.Guid]::NewGuid().ToString("N"))
+        $tmpRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("mars-install-" + [System.Guid]::NewGuid().ToString("N"))
         New-Item -ItemType Directory -Force -Path $tmpRoot | Out-Null
 
         try {

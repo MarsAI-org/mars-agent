@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
 
 it("imports the CLI entry graph without loading dotenv before profile bootstrap", async () => {
-	using tempDir = TempDir.createSync("@omp-js-process-import-");
+	using tempDir = TempDir.createSync("@mars-js-process-import-");
 	await Bun.write(path.join(tempDir.path(), ".env"), "MARS_PROCESS_ENTRY_ENV_PROBE=loaded-too-early\n");
 	const env = Object.fromEntries(
 		Object.entries(process.env).filter((entry): entry is [string, string] => typeof entry[1] === "string"),
@@ -88,7 +88,7 @@ it("loads the computer worker module directly outside a declared CLI host", asyn
 });
 
 it("dispatches the computer worker from a single npm-style host bundle", async () => {
-	using outDir = TempDir.createSync("@omp-computer-worker-bundle-");
+	using outDir = TempDir.createSync("@mars-computer-worker-bundle-");
 	const packageDir = path.resolve(import.meta.dir, "../..");
 	const nodeModulesDir = path.resolve(packageDir, "../../node_modules");
 	fs.symlinkSync(nodeModulesDir, outDir.join("node_modules"), process.platform === "win32" ? "junction" : "dir");
@@ -108,7 +108,7 @@ it("dispatches the computer worker from a single npm-style host bundle", async (
 });
 
 it("keeps non-computer selectors isolated in a compiled single-entry worker host", async () => {
-	using tempDir = TempDir.createSync("@omp-compiled-worker-selector-");
+	using tempDir = TempDir.createSync("@mars-compiled-worker-selector-");
 	const packageDir = path.resolve(import.meta.dir, "../..");
 	const outfile = path.join(tempDir.path(), process.platform === "win32" ? "worker-host.exe" : "worker-host");
 	const build = Bun.spawn(

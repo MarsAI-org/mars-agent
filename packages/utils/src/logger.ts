@@ -58,12 +58,12 @@ function emitToSinks(level: LogLevel, message: string, context: Record<string, u
 	}
 }
 
-/** Per-process logs from the current prefix plus the pre-rebrand `omp` one, so stale-process pruning still cleans earlier releases' files. */
-const PROCESS_LOG_PATTERN = /^(?:omp|mars)\.(\d{4}-\d{2}-\d{2})\.(\d+)\.log(?:\.(\d+))?$/;
+/** Per-process logs from the current prefix plus the pre-rebrand `mars` one, so stale-process pruning still cleans earlier releases' files. */
+const PROCESS_LOG_PATTERN = /^(?:mars|mars)\.(\d{4}-\d{2}-\d{2})\.(\d+)\.log(?:\.(\d+))?$/;
 /** Per-process audit files written by earlier releases (pre- and post-rebrand names); current sinks track rotations in memory. */
-const PROCESS_AUDIT_PATTERN = /^\.(?:omp|mars)\.(\d+)-audit\.json$/;
+const PROCESS_AUDIT_PATTERN = /^\.(?:mars|mars)\.(\d+)-audit\.json$/;
 /** Shared daily logs (plain, size-rolled, or gzipped) written by the winston-era logger. */
-const LEGACY_LOG_PATTERN = /^omp\.(\d{4}-\d{2}-\d{2})\.log(?:\.\d+)?(?:\.gz)?$/;
+const LEGACY_LOG_PATTERN = /^mars\.(\d{4}-\d{2}-\d{2})\.log(?:\.\d+)?(?:\.gz)?$/;
 /** Hash-named audit files written by winston-daily-rotate-file. */
 const LEGACY_AUDIT_PATTERN = /^\.[0-9a-f]{8,}-audit\.json$/;
 const RETAINED_STALE_LOGS_PER_PROCESS_DAY = 1;

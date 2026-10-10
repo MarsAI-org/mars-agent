@@ -27,7 +27,7 @@ export default class BrowserRelay extends Command {
 			description: "Extension install directory (install; default ~/.mars/browser-relay/extension)",
 		}),
 		"no-group": Flags.boolean({
-			description: "Don't gather controllable tabs into an 'omp' tab group",
+			description: "Don't gather controllable tabs into an 'mars' tab group",
 			default: false,
 		}),
 		verbose: Flags.boolean({ char: "v", description: "Log relay traffic summaries to stderr", default: false }),

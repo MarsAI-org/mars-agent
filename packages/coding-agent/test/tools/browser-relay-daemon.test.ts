@@ -129,7 +129,7 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 	});
 
 	it("stays alive while a consumer in another project holds the global broker lease", async () => {
-		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-relay-global-"));
+		const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-global-"));
 		const firstProject = path.join(home, "project-a");
 		const secondProject = path.join(home, "project-b");
 		const firstMarker = path.join(home, "first-ready");
@@ -221,7 +221,7 @@ try {
 	}, 60_000);
 
 	it("keeps one port's relay running when another relay starts on a different port", async () => {
-		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-relay-ports-"));
+		const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-ports-"));
 		const globalRuntimeDir = path.join(home, ".mars", "run", "daemons", "global", "browser-relay");
 		const firstPort = await findFreeCdpPort();
 		let secondPort = await findFreeCdpPort();

@@ -13,8 +13,8 @@ describe("renderFormula", () => {
 
 	// Regression: bare-binary URLs must opt out of Homebrew's UnpackStrategy.
 	// Without `using: :nounzip` the default CurlDownloadStrategy nests the file
-	// outside the staging CWD, `Dir["omp-*"].first` returns `nil`, and
-	// `bin.install nil => "omp"` raises (issue #2398).
+	// outside the staging CWD, `Dir["mars-*"].first` returns `nil`, and
+	// `bin.install nil => "mars"` raises (issue #2398).
 	it("attaches `using: :nounzip` to every per-platform url stanza", () => {
 		const matches = formula.match(/using: :nounzip/g) ?? [];
 		expect(matches).toHaveLength(4);
@@ -32,7 +32,7 @@ describe("renderFormula", () => {
 	// sandbox profile) during the build (issue #2398).
 	it("wraps `generate_completions_from_executable` with a HOME redirect to buildpath", () => {
 		expect(formula).toMatch(
-			/with_env\(HOME: buildpath\) do\n\s+generate_completions_from_executable\(bin\/"omp", "completions", shells: \[:bash, :zsh, :fish\]\)\n\s+end/,
+			/with_env\(HOME: buildpath\) do\n\s+generate_completions_from_executable\(bin\/"mars", "completions", shells: \[:bash, :zsh, :fish\]\)\n\s+end/,
 		);
 		// And the bare form (which is what failed in the sandbox) must not appear
 		// outside the `with_env` block.

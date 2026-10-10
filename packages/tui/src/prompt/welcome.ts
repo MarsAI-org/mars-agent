@@ -248,7 +248,7 @@ export class WelcomeComponent implements Component {
 					node(
 						"image",
 						{
-							builtin: "omp",
+							builtin: "mars",
 							alt: APP_NAME,
 							w: 128,
 							role: "omp.welcome.logo",

@@ -5,7 +5,7 @@ import { TempDir } from "@marsai-org/utils";
 let tempDir: TempDir | null = null;
 
 async function freshStorage(): Promise<HistoryStorage> {
-	tempDir = TempDir.createSync("@omp-history-search-");
+	tempDir = TempDir.createSync("@mars-history-search-");
 	HistoryStorage.close();
 	return HistoryStorage.open(tempDir.join("history.db"));
 }

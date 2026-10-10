@@ -117,9 +117,9 @@ _patch_harbor_cleanup_cancellation()
 _patch_apple_container_dns()
 
 # Container-side staging paths (absolute; never depend on $HOME at write time).
-_TARBALL_DST = "/tmp/omp-local.tgz"
-_MODELS_DST = "/tmp/omp-models.yml"
-_CONFIG_DST = "/tmp/omp-config.yml"
+_TARBALL_DST = "/tmp/mars-local.tgz"
+_MODELS_DST = "/tmp/mars-models.yml"
+_CONFIG_DST = "/tmp/mars-config.yml"
 _OUTPUT_FILENAME = "omp.txt"
 
 # mars's daemon broker stops the services the agent started (bash `name` +
@@ -256,8 +256,8 @@ class OmpLocal(BaseInstalledAgent):
         # the in-container mars run, JSON-encoded in MARS_BENCH_FORWARD_ENV.
         self._forward_env = self._parse_forward_env()
         # Source-mount paths (defaults must match the runner's compose overlay).
-        self._source_dir = _env("MARS_BENCH_SOURCE_DIR", "/opt/omp/src")
-        self._source_bun = _env("MARS_BENCH_SOURCE_BUN", "/opt/omp/bin/bun")
+        self._source_dir = _env("MARS_BENCH_SOURCE_DIR", "/opt/mars/src")
+        self._source_bun = _env("MARS_BENCH_SOURCE_BUN", "/opt/mars/bin/bun")
         self._source_arch = _env("MARS_BENCH_SOURCE_ARCH")
         # Resolved during install(); reused by version + run commands.
         self._home = "/root"
@@ -270,7 +270,7 @@ class OmpLocal(BaseInstalledAgent):
     @staticmethod
     @override
     def name() -> str:
-        return "omp"
+        return "mars"
 
     @override
     def version(self) -> str | None:

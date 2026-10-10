@@ -25,7 +25,7 @@ import type {
  * Resolves documentation file names to their content, or lists available docs.
  */
 export class OmpProtocolHandler implements ProtocolHandler {
-	readonly scheme = "omp";
+	readonly scheme = "mars";
 	readonly spec: SchemeSpec = { backing: "virtual", selectors: "lines", immutable: true };
 
 	/** Always advertised: harness docs are embedded in every build. */

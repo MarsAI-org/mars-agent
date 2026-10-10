@@ -66,7 +66,7 @@ const RAW_HTTP_REQUEST_SAVE_FAILED_LINE = "raw-http-request-save-failed=";
 /**
  * Remove the local request-dump lines {@link appendRawHttpRequestDumpFor400} appends,
  * leaving only the provider-facing error text. Hosts that relay provider errors
- * (RPC `prompt_result`) must not leak OMP-local file paths.
+ * (RPC `prompt_result`) must not leak Mars-local file paths.
  */
 export function stripRawHttpRequestDiagnostics(message: string): string {
 	const lines = message.split("\n");

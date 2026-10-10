@@ -244,8 +244,8 @@ export interface TspMathProps {
 	text?: string;
 	display?: boolean;
 }
-/** Images the terminal ships (`image.p.builtin`): `omp` is omp's gradient mark. */
-export type TspBuiltinImage = "omp";
+/** Images the terminal ships (`image.p.builtin`): `mars` is mars's gradient mark. */
+export type TspBuiltinImage = "mars";
 export interface TspImageProps {
 	/** Content address (sha256 hex) of a blob sent with verb `b`. */
 	blob?: string;

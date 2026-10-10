@@ -1,4 +1,4 @@
-//! Native utilities exported via N-API for the omp toolchain.
+//! Native utilities exported via N-API for the mars toolchain.
 //!
 //! # Overview
 //! High-performance primitives for clipboard access, grep, file discovery,

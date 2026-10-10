@@ -95,9 +95,9 @@ export async function installAgent(
 	const binary = binaries[vm.arch];
 	if (!binary) throw new Error(`No mars binary available for guest architecture ${vm.arch}`);
 
-	const entrypoint = "/opt/omp/omp";
-	const mkdir = await vm.exec("mkdir -p /opt/omp");
-	if (mkdir.exitCode !== 0) throw new Error(`Could not create /opt/omp: ${mkdir.stderr.trim()}`);
+	const entrypoint = "/opt/mars/mars";
+	const mkdir = await vm.exec("mkdir -p /opt/mars");
+	if (mkdir.exitCode !== 0) throw new Error(`Could not create /opt/mars: ${mkdir.stderr.trim()}`);
 	await vm.copyTo(binary, entrypoint);
 	const chmod = await vm.exec(`chmod 755 ${shellQuote(entrypoint)}`);
 	if (chmod.exitCode !== 0) throw new Error(`Could not make mars executable: ${chmod.stderr.trim()}`);

@@ -68,7 +68,7 @@ class FakeStartupWorker {
 const initPayload = {
 	mode: "headless" as const,
 	browserWSEndpoint: "ws://127.0.0.1/devtools/browser/test",
-	safeDir: "/tmp/omp-puppeteer",
+	safeDir: "/tmp/mars-puppeteer",
 };
 
 describe("browser tab worker startup", () => {
@@ -224,7 +224,7 @@ describe("browser init deadline carry-over", () => {
 	);
 });
 
-describe("OMP-owned browser evaluation", () => {
+describe("Mars-owned browser evaluation", () => {
 	it.skipIf(!CHROMIUM_AVAILABLE)(
 		"adopts isolated element arguments into the main world without consuming caller handles",
 		async () => {
@@ -317,7 +317,7 @@ describe("OMP-owned browser evaluation", () => {
 	);
 });
 
-describe("OMP-owned browser input", () => {
+describe("Mars-owned browser input", () => {
 	it.skipIf(!CHROMIUM_AVAILABLE)(
 		"clicks background tabs through selector, observed handle, and raw Puppeteer actions",
 		async () => {
@@ -363,7 +363,7 @@ describe("OMP-owned browser input", () => {
 	);
 });
 
-describe("visible OMP-owned browser tabs", () => {
+describe("visible Mars-owned browser tabs", () => {
 	it.skipIf(!VISIBLE_BROWSER_AVAILABLE)(
 		"creates independent pages without pinning the resizable window viewport",
 		async () => {
@@ -379,7 +379,7 @@ describe("visible OMP-owned browser tabs", () => {
 				names.push(firstName);
 
 				// Shared broker launches use --no-startup-window. Mirror that
-				// OMP-owned-only target set, but only after the owned page exists:
+				// Mars-owned-only target set, but only after the owned page exists:
 				// a headful Chromium quits when its last window closes, so closing
 				// every page first would kill the browser this test still needs.
 				for (const page of await browser.browser.pages()) {

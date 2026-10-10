@@ -624,7 +624,7 @@ describe("shareSession", () => {
 
 describe("share command", () => {
 	test("rejects a missing path without creating or uploading a session", async () => {
-		using tempDir = TempDir.createSync("@omp-share-missing-");
+		using tempDir = TempDir.createSync("@mars-share-missing-");
 		const sessionArg = "./ghost.jsonl";
 		const missingSession = path.join(tempDir.path(), "ghost.jsonl");
 		const proc = Bun.spawn([process.execPath, CLI_ENTRY, "share", sessionArg], {

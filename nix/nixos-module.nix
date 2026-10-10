@@ -10,13 +10,13 @@ let
 in
 {
   options.programs.mars = {
-    enable = lib.mkEnableOption "OMP coding agent";
+    enable = lib.mkEnableOption "Mars coding agent";
 
     package = lib.mkOption {
       type = lib.types.package;
       default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
       defaultText = lib.literalExpression "inputs.mars.packages.${pkgs.stdenv.hostPlatform.system}.default";
-      description = "OMP package to install system-wide.";
+      description = "Mars package to install system-wide.";
     };
   };
 
