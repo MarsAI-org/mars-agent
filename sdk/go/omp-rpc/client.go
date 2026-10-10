@@ -149,7 +149,7 @@ type Client struct {
 	closeErr  error
 }
 
-// Start starts cmd (for example `exec.Command("omp", "--mode", "rpc")`; set
+// Start starts cmd (for example `exec.Command("mars", "--mode", "rpc")`; set
 // its Dir, Env, and Stderr as needed, and leave Stdin and Stdout nil) and
 // connects to it with NewClient. On Unix the server runs in its own process
 // group, so Close also stops the commands its tools started; cmd.WaitDelay

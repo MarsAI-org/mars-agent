@@ -1,7 +1,7 @@
 # omp-rpc (Go)
 
 Go client for the omp RPC protocol (`mars --mode rpc`, JSON lines over stdio).
-Module `github.com/can1357/oh-my-pi/sdk/go/omp-rpc`, package `omprpc`, standard library only.
+Module `github.com/MarsAI-org/mars-agent/sdk/go/omp-rpc`, package `omprpc`, standard library only.
 
 ## Layout
 
