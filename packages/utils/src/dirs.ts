@@ -22,11 +22,14 @@ import { isEnoent, isEnotdir } from "./fs-error";
 export const APP_NAME: string = "mars";
 
 /**
- * Public homepage that inference gateways (OpenRouter, Vercel AI Gateway) credit Mars traffic to.
- * TODO(rebrand): still the pre-rebrand `omp.sh` host — no Mars domain has been decided, and
- * repointing at an unowned domain would silently misattribute gateway traffic. Do not invent one.
+ * Public homepage that inference gateways (OpenRouter, Vercel AI Gateway) credit Mars traffic to,
+ * and base URL for static installation and schema assets. Overridable via MARS_APP_URL.
  */
-export const APP_URL: string = "https://omp.sh/";
+export const APP_URL: string = (
+	(typeof process !== "undefined" && process.env?.MARS_APP_URL) ||
+	(typeof Bun !== "undefined" && Bun.env?.MARS_APP_URL) ||
+	"https://getmars.eu.cc/"
+).replace(/\/?$/, "/");
 
 /** Config directory name (e.g. ".mars") */
 export const CONFIG_DIR_NAME: string = ".mars";

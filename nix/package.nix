@@ -329,7 +329,7 @@ stdenv.mkDerivation {
 
   meta = {
     description = "Terminal-based coding agent with multi-model support";
-    homepage = "https://omp.sh";
+    homepage = "https://getmars.eu.cc";
     changelog = "https://github.com/MarsAI-org/mars-agent/releases/tag/v${packageJson.version}";
     license = lib.licenses.mit;
     mainProgram = "mars";
