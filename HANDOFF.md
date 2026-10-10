@@ -1,26 +1,39 @@
 # Rebrand Handoff (oh-my-pi → Mars)
 
-This document is the working handoff for the rebrand effort. It is written
-so a fresh session with no memory can continue without rediscovering
-context. All statements below were verified against the repository.
+This document is the working handoff for the rebrand effort. All rebrand phases
+(0–6) have been completed and merged into `main`.
 
 ## Current state
 
-- Branch: `rebrand/mars` (never push to or merge into `main`)
-- HEAD at time of writing: `47e28a3ad2` (all phases 0–6 complete)
-- **ALL PHASES (0, 1, 2, 3, 4, 5, 6) ARE COMPLETE.** Draft PR opened.
+- Base branch: `main` (commit `5c2144b14e`, PR #1 merged)
+- Working branch: `chore/post-merge-handoff`
+- Branch protection: **Enabled on `main`** (requires PR, blocks force push and branch deletion).
+- Upstream remote: `upstream` configured (`https://github.com/can1357/oh-my-pi.git`, read-only fetch).
 
-### Phase Completion Status
+### Summary of Completed Phases
 
 | Phase | Description | Status |
 | --- | --- | --- |
-| **Phase 0** | Audit & inventory (`REBRAND_AUDIT.md`) | **DONE** |
+| **Phase 0** | Comprehensive audit and inventory (`REBRAND_AUDIT.md`) | **DONE** |
 | **Phase 1** | Package scope (`@marsai-org`), bin names (`mars`, `mars-stats`), binaries (`mars-*`) | **DONE** |
 | **Phase 2** | Runtime paths (`~/.mars`), env vars (`MARS_*`), migration helper | **DONE** |
 | **Phase 3** | UI text, CLI help/usage, error notices, prompts | **DONE** |
 | **Phase 4** | Docs, README, `CREDITS.md`, LICENSE copyright, package metadata | **DONE** |
 | **Phase 5** | Assets (`assets/mars-logo.*` placeholders, `ASSETS_TODO.md`) | **DONE** |
-| **Phase 6** | Read-only audit passes (H, I, J), build & test verification, `REBRAND_REPORT.md` | **DONE** |
+| **Phase 6** | Read-only audit passes (H, I, J), test verification, merge to `main` via PR #1 | **DONE** |
+
+---
+
+## Remaining Action Items & Manual Tasks
+
+1. **GitHub Issues**: Issues feature is currently disabled on `MarsAI-org/mars-agent` repository settings. Enable issues in repo settings if issue tracking is desired.
+2. **Official Domain**: Decide on a production domain for Mars to replace upstream service endpoints (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`, `omp.sh`).
+3. **Production Artwork**: Replace placeholders in `assets/mars-logo.png` and `assets/mars-logo.svg` with official brand assets as cataloged in `ASSETS_TODO.md`.
+4. **npm Scope & Publishing**: Claim and verify the `@marsai-org` scope on npm, then publish packages when ready.
+5. **Homebrew Tap**: Establish `MarsAI-org/homebrew-tap` (or similar) and update the formula workflow.
+6. **Periodic Upstream Sync**: Regularly fetch `upstream` (`can1357/oh-my-pi`) and merge or cherry-pick updates to keep Mars in sync with upstream improvements.
+7. **Symlink Guard Hardening**: Note tracked outside this repo regarding `assertOwnerPrivateDir` directory symlink traversal behavior; to be addressed on a dedicated security branch.
+8. **Token Revocation**: Revoke any temporary personal access tokens or credentials used during this management session.
 
 Phase-2 commit chain (in order, each on top of the previous):
 
