@@ -9,15 +9,15 @@ Target official domain for Mars: **`getmars.eu.cc`** (base URL: `https://getmars
 ## 1. Classification Summary
 
 Per rebrand policy:
-- **STATIC**: Only serves static files (install scripts, schemas, documentation, package metadata, homepages). These **can and should** be repointed to `getmars.eu.cc` or repository/release URLs.
+- **STATIC**: Only serves static files (install scripts, schemas, documentation, package metadata, homepages). These **can and should** be repointed to `getmars.eu.cc` or repository/release URLs. Note: The static website and installer scripts (`site/`) live in their own dedicated repository, **`MarsAI-org/mars-site`**, rather than inside `mars-agent`.
 - **DYNAMIC**: Live server APIs, WebSocket relays, authentication/OIDC, or data ingestion endpoints (`collab`, `live`, `skills`, `qa/grievances`). These **must NOT** be repointed to `getmars.eu.cc` because no backend servers exist there; they retain TODO markers and will clearly fail or be gated.
 - **UNKNOWN**: Non-standard or edge usage.
 
 | Host / URL | Type | Description | Repoint Action |
 | --- | --- | --- | --- |
-| `https://omp.sh/` (`APP_URL`) | **STATIC** | Root website and base URL of the product | Repoint to `https://getmars.eu.cc/` (via `APP_URL` in `dirs.ts`) |
-| `https://omp.sh/install` | **STATIC** | POSIX shell install script | Repoint to `https://getmars.eu.cc/install` |
-| `https://omp.sh/install.ps1` | **STATIC** | PowerShell install script | Repoint to `https://getmars.eu.cc/install.ps1` |
+| `https://omp.sh/` (`APP_URL`) | **STATIC** | Root website and base URL of the product | Repoint to `https://getmars.eu.cc/` (via `APP_URL` in `dirs.ts`; hosted via `MarsAI-org/mars-site`) |
+| `https://omp.sh/install` | **STATIC** | POSIX shell install script | Repoint to `https://getmars.eu.cc/install` (hosted via `MarsAI-org/mars-site`) |
+| `https://omp.sh/install.ps1` | **STATIC** | PowerShell install script | Repoint to `https://getmars.eu.cc/install.ps1` (hosted via `MarsAI-org/mars-site`) |
 | `https://omp.sh/schemas/*` | **STATIC** | JSON Schema IDs (`rpc-wire.json`) | Repoint to `https://getmars.eu.cc/schemas/*` |
 | `https://omp.sh/docs/*` | **STATIC** | Documentation URLs referenced in comments | Repoint to `https://getmars.eu.cc/docs/*` or repo docs |
 | `https://omp.sh` (metadata) | **STATIC** | `homepage` in `package.json`, `Cargo.toml`, Nix | Repoint to `https://getmars.eu.cc` |

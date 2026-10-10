@@ -27,7 +27,7 @@ This document is the working handoff for the rebrand effort. All rebrand phases
 ## Remaining Action Items & Manual Tasks
 
 1. **GitHub Issues**: Issues feature is currently disabled on `MarsAI-org/mars-agent` repository settings. Enable issues in repo settings if issue tracking is desired.
-2. **Official Domain**: Decide on a production domain for Mars to replace upstream service endpoints (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`, `omp.sh`).
+2. **Official Domain**: Target domain configured as `getmars.eu.cc` (`https://getmars.eu.cc`). The static site and installer assets live in the dedicated repository `MarsAI-org/mars-site`. Dynamic services (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`) remain flagged with TODO.
 3. **Production Artwork**: Replace placeholders in `assets/mars-logo.png` and `assets/mars-logo.svg` with official brand assets as cataloged in `ASSETS_TODO.md`.
 4. **npm Scope & Publishing**: Claim and verify the `@marsai-org` scope on npm, then publish packages when ready.
 5. **Homebrew Tap**: Establish `MarsAI-org/homebrew-tap` (or similar) and update the formula workflow.
