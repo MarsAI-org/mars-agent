@@ -5,9 +5,12 @@ This document is the working handoff for the rebrand effort. All rebrand phases
 
 ## Current state
 
-- Base branch: `main` (commit `5c2144b14e`, PR #1 merged)
-- Working branch: `chore/post-merge-handoff`
-- Branch protection: **Enabled on `main`** (requires PR, blocks force push and branch deletion).
+- Base branch: `main` (commit `6f87d35736`, PR #1, #2, #4, #5, #6 merged)
+- Two-Repository Architecture:
+  - `MarsAI-org/mars-agent`: Core coding agent repository containing packages (`@marsai-org/*`), native addons, CLI binaries, tests, and CI/release workflows.
+  - `MarsAI-org/mars-site`: Dedicated website and distribution repository for `getmars.eu.cc`, containing `index.html`, installer scripts (`install`, `install.ps1`), CNAME, GitHub Pages workflow, and installer smoke tests.
+- Branch protection: **Enabled on `main`** for both `mars-agent` and `mars-site`.
+- Releases: `v0.1.0-rc.1` (prerelease) and `v0.1.0` (stable release) published with 8 platform binaries + native addons + checksums.
 - Upstream remote: `upstream` configured (`https://github.com/can1357/oh-my-pi.git`, read-only fetch).
 
 ### Summary of Completed Phases
@@ -26,14 +29,24 @@ This document is the working handoff for the rebrand effort. All rebrand phases
 
 ## Remaining Action Items & Manual Tasks
 
-1. **GitHub Issues**: Issues feature is currently disabled on `MarsAI-org/mars-agent` repository settings. Enable issues in repo settings if issue tracking is desired.
-2. **Official Domain**: Decide on a production domain for Mars to replace upstream service endpoints (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`, `omp.sh`).
-3. **Production Artwork**: Replace placeholders in `assets/mars-logo.png` and `assets/mars-logo.svg` with official brand assets as cataloged in `ASSETS_TODO.md`.
-4. **npm Scope & Publishing**: Claim and verify the `@marsai-org` scope on npm, then publish packages when ready.
-5. **Homebrew Tap**: Establish `MarsAI-org/homebrew-tap` (or similar) and update the formula workflow.
-6. **Periodic Upstream Sync**: Regularly fetch `upstream` (`can1357/oh-my-pi`) and merge or cherry-pick updates to keep Mars in sync with upstream improvements.
-7. **Symlink Guard Hardening**: Note tracked outside this repo regarding `assertOwnerPrivateDir` directory symlink traversal behavior; to be addressed on a dedicated security branch.
-8. **Token Revocation**: Revoke any temporary personal access tokens or credentials used during this management session.
+1. **GitHub Issues**: Issues feature is **enabled** on `MarsAI-org/mars-agent` repository settings. Initial issues (#7 through #13) have been created.
+2. **DNS & Custom Domain (`getmars.eu.cc`)**:
+   - Repository `MarsAI-org/mars-site` is configured for Pages deployment via GitHub Actions with custom domain `getmars.eu.cc`.
+   - **Manual action required**: Configure DNS records at your domain registrar for `getmars.eu.cc`:
+     - Four A records pointing to GitHub Pages IPs:
+       - `185.199.108.153`
+       - `185.199.109.153`
+       - `185.199.110.153`
+       - `185.199.111.153`
+     - CNAME record for `www.getmars.eu.cc` pointing to `marsai-org.github.io`
+   - Once DNS propagates and the certificate is issued, enable HTTPS enforcement through GitHub Pages API.
+   - Dynamic service endpoints (`my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`) remain tracked under issue #11.
+3. **Production Artwork**: Replace placeholders in `assets/mars-logo.png` and `assets/mars-logo.svg` with official brand assets as cataloged in `ASSETS_TODO.md` (Issue #8).
+4. **npm Scope & Publishing**: Claim and verify the `@marsai-org` scope on npm registry, configure Trusted Publishing, and execute the initial manual package publishing (Issue #9).
+5. **Homebrew Tap**: Establish `MarsAI-org/homebrew-tap` and update formula automation (Issue #10).
+6. **Periodic Upstream Sync**: Regularly fetch `upstream` (`can1357/oh-my-pi`) and merge updates into Mars (Issue #12).
+7. **Speed Benchmark**: Objective benchmarking against other coding agents (Issue #13).
+8. **Token Revocation**: Revoke any temporary personal access tokens or credentials used during management sessions.
 
 Phase-2 commit chain (in order, each on top of the previous):
 
