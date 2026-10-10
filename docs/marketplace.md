@@ -15,7 +15,7 @@ In the TUI, `/marketplace` with no arguments opens the interactive plugin browse
 
 A **marketplace** is a Git repository (or local directory) containing a catalog file at `.mars-plugin/marketplace.json` (preferred) or `.claude-plugin/marketplace.json` (Claude Code-compatible fallback). The catalog lists available plugins with their sources, descriptions, and metadata.
 
-A **plugin** is a directory containing Claude/OMP plugin content such as skills, commands, agents, rules, hooks, tools, MCP servers, LSP servers, or DAP adapters. Root `plugin.json` packages declaring the Agent Plugins 1.0.0 schema use the portable `agent-plugins` discovery provider for skills and `mcp.json`; hybrid packages can still expose OMP-specific content. Marketplace installs also load extension modules declared by `package.json` `omp.extensions`: installation symlinks the cached plugin into the scope's `node_modules` tree and records it in `mars-plugins.lock.json`, the same runtime surfaces used by npm-installed and `omp plugin link`ed plugins. Plugins are identified by `name@marketplace` (e.g. `code-review@claude-plugins-official`).
+A **plugin** is a directory containing Claude/Mars plugin content such as skills, commands, agents, rules, hooks, tools, MCP servers, LSP servers, or DAP adapters. Root `plugin.json` packages declaring the Agent Plugins 1.0.0 schema use the portable `agent-plugins` discovery provider for skills and `mcp.json`; hybrid packages can still expose Mars-specific content. Marketplace installs also load extension modules declared by `package.json` `omp.extensions`: installation symlinks the cached plugin into the scope's `node_modules` tree and records it in `mars-plugins.lock.json`, the same runtime surfaces used by npm-installed and `mars plugin link`ed plugins. Plugins are identified by `name@marketplace` (e.g. `code-review@claude-plugins-official`).
 
 **Scopes**: marketplace plugins can be installed at two scopes:
 
@@ -24,7 +24,7 @@ A **plugin** is a directory containing Claude/OMP plugin content such as skills,
 
 Enabled project-scoped installs shadow enabled user-scoped installs of the same plugin. A disabled project install does not shadow the user install.
 
-On Linux and macOS, `omp config init-xdg` initializes the XDG data, state, and cache roots; it does not move existing data. With `XDG_DATA_HOME` set and its `omp/` directory initialized, user marketplace/plugin state resolves under `$XDG_DATA_HOME/omp` (including `marketplaces.json` and `plugins/`). Named profiles use their own roots; XDG routing requires the corresponding `omp/profiles/<name>/` directory. The `~/.mars` paths below are the default-profile, non-XDG defaults.
+On Linux and macOS, `mars config init-xdg` initializes the XDG data, state, and cache roots; it does not move existing data. With `XDG_DATA_HOME` set and its `mars/` directory initialized, user marketplace/plugin state resolves under `$XDG_DATA_HOME/mars` (including `marketplaces.json` and `plugins/`). Named profiles use their own roots; XDG routing requires the corresponding `mars/profiles/<name>/` directory. The `~/.mars` paths below are the default-profile, non-XDG defaults.
 
 On first XDG registry resolution, an existing config-root `marketplaces.json` is copied best-effort if the XDG target is absent; the old file remains. Plugin installation trees are not copied by this helper.
 
@@ -63,17 +63,17 @@ On first XDG registry resolution, an existing config-root `marketplaces.json` is
 The same operations are available from the command line:
 
 ```
-omp plugin marketplace add <source>
-omp plugin marketplace remove <name>
-omp plugin marketplace update [name]
-omp plugin marketplace list
-omp plugin discover [marketplace]
-omp plugin install [--dry-run] [--force] [--scope user|project] name@marketplace
-omp plugin uninstall [--dry-run] [--scope user|project] name@marketplace
-omp plugin upgrade [--scope user|project] [name@marketplace]
-omp plugin enable [--scope user|project] name@marketplace
-omp plugin disable [--scope user|project] name@marketplace
-omp plugin list
+mars plugin marketplace add <source>
+mars plugin marketplace remove <name>
+mars plugin marketplace update [name]
+mars plugin marketplace list
+mars plugin discover [marketplace]
+mars plugin install [--dry-run] [--force] [--scope user|project] name@marketplace
+mars plugin uninstall [--dry-run] [--scope user|project] name@marketplace
+mars plugin upgrade [--scope user|project] [name@marketplace]
+mars plugin enable [--scope user|project] name@marketplace
+mars plugin disable [--scope user|project] name@marketplace
+mars plugin list
 
 ```
 
@@ -97,7 +97,7 @@ Git and local sources must contain a catalog at `.mars-plugin/marketplace.json` 
 
 ## Catalog format (marketplace.json)
 
-A marketplace catalog lives at `.mars-plugin/marketplace.json` in the repository root. When omp is the only intended consumer, prefer this path. To remain Claude Code-compatible (omp loads the same shape from either path), publish at `.claude-plugin/marketplace.json` instead — omp uses it as a fallback when `.mars-plugin/marketplace.json` is absent. A repository may ship both: omp reads the `.mars-plugin/` copy, Claude Code reads the `.claude-plugin/` copy. Same catalog format either way:
+A marketplace catalog lives at `.mars-plugin/marketplace.json` in the repository root. When mars is the only intended consumer, prefer this path. To remain Claude Code-compatible (mars loads the same shape from either path), publish at `.claude-plugin/marketplace.json` instead — mars uses it as a fallback when `.mars-plugin/marketplace.json` is absent. A repository may ship both: mars reads the `.mars-plugin/` copy, Claude Code reads the `.claude-plugin/` copy. Same catalog format either way:
 
 ```json
 {
@@ -219,7 +219,7 @@ Invalid catalog JSON or invalid required top-level fields reject the catalog. An
 ## Updates, removal, and scope
 
 - `/marketplace update [name]` refreshes catalogs only; it does not reinstall plugins.
-- `omp plugin upgrade name@marketplace` reinstalls every installed scope when `--scope` is omitted. `/marketplace upgrade name@marketplace`, uninstall, and enable/disable require `--scope user|project` when the plugin exists in both scopes.
+- `mars plugin upgrade name@marketplace` reinstalls every installed scope when `--scope` is omitted. `/marketplace upgrade name@marketplace`, uninstall, and enable/disable require `--scope user|project` when the plugin exists in both scopes.
 - Upgrading all plugins compares only catalog entries that declare `version`. Semver versions must be newer; non-semver versions are treated as changed when unequal. Each installed scope is checked independently. Per-plugin failures are skipped, so an all-plugin upgrade can partially succeed. CLI `--scope` is ignored when upgrading all plugins.
 - Reinstall/upgrade preserves disabled state, feature selection, and settings. User and project installs share version-keyed cache directories, so forcing a reinstall of the same version replaces content used by both scopes. Runtime package-name and cache-path collisions with other plugins are rejected.
 - `marketplace.autoUpdate` controls startup checks: `off`, `notify` (default), or `auto`. Catalogs older than 24 hours are refreshed best-effort before version checks. Despite its name, current `notify` mode writes update availability only to the debug log; it does not show a user-facing notification.

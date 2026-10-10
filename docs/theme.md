@@ -10,14 +10,14 @@ The theme system drives:
 - markdown styling adapters (`getMarkdownTheme()`)
 - selector/editor/settings list adapters (`getSelectListTheme()`, `getEditorTheme()`, `getSettingsListTheme()`)
 - symbol preset + symbol overrides (`unicode`, `nerd`, `ascii`)
-- syntax highlighting colors used by native highlighter (`@oh-my-pi/pi-natives`)
+- syntax highlighting colors used by native highlighter (`@marsai-org/natives`)
 - status line segment colors
 
 Primary implementation: `packages/tui/src/theme/theme.ts`.
 
 ## Theme JSON shape
 
-Custom theme files are JSON objects validated by `validateThemeJson()` in `packages/tui/src/theme/schema-validation.ts` (using `@oh-my-pi/omptype`). Types live in `schema.ts`; the editor-facing JSON schema is `packages/tui/src/theme/theme-schema.json`. Embedded built-in themes bypass runtime validation.
+Custom theme files are JSON objects validated by `validateThemeJson()` in `packages/tui/src/theme/schema-validation.ts` (using `@marsai-org/omptype`). Types live in `schema.ts`; the editor-facing JSON schema is `packages/tui/src/theme/theme-schema.json`. Embedded built-in themes bypass runtime validation.
 
 Top-level fields:
 
@@ -162,7 +162,7 @@ Conversion behavior:
 The `theme` export is a live binding, including in bundled extensions. Read it inside rendering callbacks rather than retaining a theme instance across switches. Extension renderer callbacks may also use their supplied theme argument.
 
 ```ts
-import { theme } from "@oh-my-pi/pi-coding-agent";
+import { theme } from "@marsai-org/coding-agent";
 
 const renderStatus = () => theme.fg("accent", "Ready");
 ```
@@ -362,6 +362,6 @@ Use this workflow:
 
 - All `colors` tokens are required for custom themes except optional `thinkingMax`, which falls back to `thinkingXhigh`.
 - `export` and `symbols` are optional.
-- `$schema` in theme JSON is informational; custom-theme runtime validation is enforced by `@oh-my-pi/omptype` in `packages/tui/src/theme/schema-validation.ts`.
+- `$schema` in theme JSON is informational; custom-theme runtime validation is enforced by `@marsai-org/omptype` in `packages/tui/src/theme/schema-validation.ts`.
 - `setTheme` failure falls back to `dark`; `previewTheme` failure does not replace current theme.
 - File watcher reload errors or temporary missing files keep the current loaded theme until a successful reload or explicit theme switch.

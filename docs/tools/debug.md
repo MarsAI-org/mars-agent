@@ -277,8 +277,8 @@ GDB example for an OpenOCD remote target:
 - Subprocesses / native bindings
   - Spawns debugger adapters (`gdb`, `lldb-dap`, `python -m debugpy.adapter`, `dlv`, and others from `defaults.json`) detached.
   - Reverse DAP `runInTerminal` requests spawn the debuggee detached via `ptree.spawn()`; its stdout is consumed in a background drain for its lifetime.
-  - `getWorkProfile(30)` comes from `@oh-my-pi/pi-natives`.
-  - CPU profiling uses `node:inspector/promises`; memory statistics use `process.memoryUsage()` and numeric counters from `bun:jsc`'s `heapStats()` after GC; raw/log viewers sanitize text via `sanitizeText()` from `@oh-my-pi/pi-utils`.
+  - `getWorkProfile(30)` comes from `@marsai-org/natives`.
+  - CPU profiling uses `node:inspector/promises`; memory statistics use `process.memoryUsage()` and numeric counters from `bun:jsc`'s `heapStats()` after GC; raw/log viewers sanitize text via `sanitizeText()` from `@marsai-org/utils`.
   - `openPath()` launches the OS default file/browser handler for artifact dirs and SVGs.
   - Log/raw-SSE viewers can call `copyToClipboard()`.
 - Session state (transcript, memory, jobs, checkpoints, registries)
@@ -308,7 +308,7 @@ GDB example for an OpenOCD remote target:
 - Raw SSE buffer caps in `packages/tui/src/apps/debug/raw-sse-buffer.ts`:
   - `MAX_RAW_SSE_EVENTS = 1_000`
   - `MAX_RAW_SSE_CHARS = 512_000`
-  - `MAX_RAW_SSE_EVENT_CHARS = 64_000` per event; over-budget events first compact long `tools` schemas/descriptions to 200-character previews (name/type retained), then, if still oversized, use head+tail trimming with `: omp-debug-elided chars=...`. Trimmed events end with `: omp-debug-truncated originalChars=...`.
+  - `MAX_RAW_SSE_EVENT_CHARS = 64_000` per event; over-budget events first compact long `tools` schemas/descriptions to 200-character previews (name/type retained), then, if still oversized, use head+tail trimming with `: mars-debug-elided chars=...`. Trimmed events end with `: mars-debug-truncated originalChars=...`.
 - Log viewer window in `packages/tui/src/apps/debug/log-viewer.ts`:
   - `INITIAL_LOG_CHUNK = 50`
   - `LOAD_OLDER_CHUNK = 50`
@@ -355,7 +355,7 @@ GDB example for an OpenOCD remote target:
 
 ## Notes
 - `packages/coding-agent/src/prompts/tools/debug.md` tells the model only one active root session is supported. Adapter-requested child sessions belong to that root tree.
-- The default JavaScript/TypeScript adapter runs vscode-js-debug's `dapDebugServer.js` over TCP. Install it one of these ways; the first and last are auto-discovered by `resolveJsDebugServerPath()` in `packages/coding-agent/src/dap/config.ts`. (Don't try `npm i -g js-debug-adapter` — it 404s; `js-debug-adapter` is the omp adapter id, not an npm package.)
+- The default JavaScript/TypeScript adapter runs vscode-js-debug's `dapDebugServer.js` over TCP. Install it one of these ways; the first and last are auto-discovered by `resolveJsDebugServerPath()` in `packages/coding-agent/src/dap/config.ts`. (Don't try `npm i -g js-debug-adapter` — it 404s; `js-debug-adapter` is the mars adapter id, not an npm package.)
   - Release tarball, extracted so `dapDebugServer.js` lands at `~/.local/opt/js-debug/src/dapDebugServer.js`:
     ```sh
     curl -sL -o js-debug-dap.tar.gz \
@@ -365,7 +365,7 @@ GDB example for an OpenOCD remote target:
     Replace `v1.117.0` with the latest tag from the [releases page](https://github.com/microsoft/vscode-js-debug/releases).
   - Any other location via `JS_DEBUG_DAP_SERVER=<path-to-dapDebugServer.js>`.
   - Neovim users with Mason: `:MasonInstall js-debug-adapter` → discovered at `~/.local/share/nvim/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js`.
-- The adapter runs under `node` if on `PATH`, otherwise under the omp host (Bun); `resolveDefaultJsDebugAdapter()` falls back to `process.execPath`, so a Bun-only setup is supported.
+- The adapter runs under `node` if on `PATH`, otherwise under the mars host (Bun); `resolveDefaultJsDebugAdapter()` falls back to `process.execPath`, so a Bun-only setup is supported.
 - `configurationDone` is sent automatically during root and child launch/attach handshakes and lazily before later requests if the initial handshake did not complete.
 - `startDebugging` reverse requests create recursive child sessions on the same TCP server; a stopped child becomes the target for thread-level actions.
 - `output` exposes the active session's merged DAP `output` events and `runInTerminal` stdout. DAP stdout/stderr/console categories are not separated; the terminal-spawn path does not add its separately drained stderr to this cache.
