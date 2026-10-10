@@ -5,6 +5,7 @@ import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
 import { xaiOAuthModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
 import type { FetchImpl } from "@marsai-org/catalog/types";
 
+// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 // Regression for https://github.com/can1357/oh-my-pi/issues/12697: xAI's
 // OAuth /v1/models returns bare `{id}` rows with no reasoning, limits, or
 // modality metadata. Without a curated seed, grok-4.7 refreshes into a sparse

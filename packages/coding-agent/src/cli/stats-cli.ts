@@ -1,7 +1,7 @@
 /**
  * Stats CLI command handlers.
  *
- * Handles `omp stats` subcommand for viewing AI usage statistics.
+ * Handles `mars stats` subcommand for viewing AI usage statistics.
  */
 
 import { formatKeyHint } from "@marsai-org/tui/key-hint-format";

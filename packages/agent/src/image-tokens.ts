@@ -17,7 +17,7 @@ import { parseImageMetadata } from "@marsai-org/utils";
  *
  * Follows the catalog's image rule for the OpenAI Responses wire (GPT-5.5's
  * 32px patches, a per-detail pixel limit and patch budget, x1.2 multiplier),
- * which is also a close upper estimate for other providers once omp has
+ * which is also a close upper estimate for other providers once mars has
  * downscaled the image (≤1568px by default).
  */
 

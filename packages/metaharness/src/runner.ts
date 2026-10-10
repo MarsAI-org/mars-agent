@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { type GeneratedProvider, getBundledModel } from "@marsai-org/catalog/models";
 /**
- * Harbor benchmark runner for the local `omp` build.
+ * Harbor benchmark runner for the local `mars` build.
  *
  * Orchestrates Harbor (`harbor run`) against any Harbor dataset (default
  * terminal-bench-2) using a custom agent (`agent/omp_local.py`) that installs
@@ -59,11 +59,11 @@ export interface Config {
 	include: string[];
 	exclude: string[];
 	thinking: string | null;
-	/** Extra args forwarded verbatim to the in-container omp CLI invocation (repeatable). */
+	/** Extra args forwarded verbatim to the in-container mars CLI invocation (repeatable). */
 	agentArgs: string[];
-	/** omp tool allowlist (`--tools`); `null` keeps omp's default tool set. */
+	/** mars tool allowlist (`--tools`); `null` keeps mars's default tool set. */
 	tools: string[] | null;
-	/** Extra omp settings written into the container config (dotted key → JSON value). */
+	/** Extra mars settings written into the container config (dotted key → JSON value). */
 	settings: Record<string, unknown>;
 
 	agent: string;
@@ -140,7 +140,7 @@ function defaultConfig(): Config {
 	};
 }
 
-const HELP = `metaharness runner (local omp)
+const HELP = `metaharness runner (local mars)
 
 Usage: metaharness harbor [options] [-- <extra harbor args>]
 
@@ -150,18 +150,18 @@ Commands:
 Model / agent:
   -m, --model <provider/model>   Model (repeatable). Default anthropic/claude-sonnet-4-6
       --agent <name>             omp (default) | oracle | nop | any harbor agent
-      --install <source|local|published> omp install mode (default: source).
+      --install <source|local|published> mars install mode (default: source).
                                  source = mount /work/pi read-only + prebuilt linux deps tree; TS changes
                                  apply per-trial with no rebuild. local = pack a tarball. published = npm.
-      --version <v>              omp version for published install (default: latest)
+      --version <v>              mars version for published install (default: latest)
       --thinking <level>         off|minimal|low|medium|high|xhigh|max
 
-      --tarball <path>           Reuse a prebuilt omp tarball (implies --install local, --no-build)
+      --tarball <path>           Reuse a prebuilt mars tarball (implies --install local, --no-build)
       --no-build                 Skip packing; reuse newest tarball in bench dir (--install local)
-      --agent-arg <arg>          Extra arg forwarded verbatim to the in-container omp CLI (repeatable)
-      --tools <a,b,c>            omp tool allowlist; enables the find tool when listed
-      --setting <key=value>      omp setting for the container config, e.g. edit.mode=sloppy (repeatable; JSON values)
-      --env <KEY[=VALUE]>        Forward env into omp container (repeatable).
+      --agent-arg <arg>          Extra arg forwarded verbatim to the in-container mars CLI (repeatable)
+      --tools <a,b,c>            mars tool allowlist; enables the find tool when listed
+      --setting <key=value>      mars setting for the container config, e.g. edit.mode=sloppy (repeatable; JSON values)
+      --env <KEY[=VALUE]>        Forward env into mars container (repeatable).
                                  KEY alone forwards host value; host PI_* auto-forwarded.
 
 Dataset / scale:
@@ -177,7 +177,7 @@ Gateway (auth, no keys in container):
       --gateway-token <tok>      Default "no-auth" (gateway runs --no-auth)
       --providers <csv>          Providers to route (default: model provider + anthropic,openai-codex)
       --no-gateway               Pass host provider API keys into containers instead
-      --web-search               Enable omp web_search (off by default; can't auth via gateway)
+      --web-search               Enable mars web_search (off by default; can't auth via gateway)
       --allow-host <host>        harbor --allow-agent-host (repeatable)
 
 Environment:
@@ -1020,7 +1020,7 @@ function readPkgVersion(): string {
 }
 
 function buildTarball(benchDir: string): string {
-	process.stdout.write(dim("packing local omp (bun pm pack)…\n"));
+	process.stdout.write(dim("packing local mars (bun pm pack)…\n"));
 	const r = spawnSync("bun", ["pm", "pack", "--destination", benchDir], {
 		cwd: CODING_AGENT_DIR,
 		encoding: "utf8",
@@ -1054,7 +1054,7 @@ function newestTarball(benchDir: string): string | null {
 
 // ─────────────────────────────────────────────────────── source mount (--install source)
 
-/** Linux deps tree + mount plan for running omp straight from the mounted repo. */
+/** Linux deps tree + mount plan for running mars straight from the mounted repo. */
 export interface SourceMount {
 	arch: "arm64" | "x64";
 	/** Host dir holding the linux `bin/bun` + skeleton `node_modules` trees. */
@@ -1260,7 +1260,7 @@ const PI_UPSTREAM_SYSTEM_PROMPT = path.join(AGENT_DIR, "pi-upstream-system.md");
 /**
  * Catalog facts for each `provider/model` the upstream agent needs in its
  * `models.json`: wire api, limits, modalities and cost, so its usage accounting
- * matches omp's for the same model.
+ * matches mars's for the same model.
  */
 function upstreamModelSpecs(cfg: Config): Array<Record<string, unknown>> {
 	return cfg.models.map(spec => {
@@ -1429,7 +1429,7 @@ const FORWARD_ENV_DENYLIST = new Set([
 ]);
 
 /**
- * Env vars injected into the in-container omp run: every host `PI_*` knob (minus
+ * Env vars injected into the in-container mars run: every host `PI_*` knob (minus
  * container-hostile dir/profile/session keys) plus explicit `--env` entries,
  * which always win and bypass the denylist.
  */
@@ -1679,7 +1679,7 @@ async function runBenchmark(cfg: Config): Promise<BenchmarkRun> {
 			process.stdout.write(bold("models.yml:\n"));
 			process.stdout.write(`${fs.readFileSync(modelsYaml, "utf8")}\n`);
 		}
-		process.stdout.write(bold("omp env:\n"));
+		process.stdout.write(bold("mars env:\n"));
 		for (const key in harborEnv) {
 			if (key === "MARS_BENCH_FORWARD_ENV") continue;
 			if (key.startsWith("MARS_BENCH_") || key === "PYTHONPATH")

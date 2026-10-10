@@ -103,7 +103,7 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 			content: [
 				{
 					type: "text",
-					text: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies"].join("\n"),
+					text: ["@marsai-org/coding-agent v0.42.0", "37 dependencies"].join("\n"),
 				},
 			],
 			details: {
@@ -125,7 +125,7 @@ export const shellFixtures: Record<string, GalleryFixture> = {
 							'print(f"{len(deps)} dependencies")',
 							"display(sorted(deps)[:3])",
 						].join("\n"),
-						output: ["@oh-my-pi/coding-agent v0.42.0", "37 dependencies"].join("\n"),
+						output: ["@marsai-org/coding-agent v0.42.0", "37 dependencies"].join("\n"),
 						status: "complete",
 						durationMs: 64,
 						exitCode: 0,

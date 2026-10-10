@@ -1,9 +1,11 @@
 /**
- * Wire types for `omp stream`: Twitch-style live screen sharing at
+ * Wire types for `mars stream`: Twitch-style live screen sharing at
  * `live.omp.sh/<username>`.
  *
- * Independent from collab. A publisher (`omp stream`) sends plaintext JSON
- * screen deltas for one or more panes (one pane per omp session attached in
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
+ *
+ * Independent from collab. A publisher (`mars stream`) sends plaintext JSON
+ * screen deltas for one or more panes (one pane per mars session attached in
  * the same working directory); the stream server materializes each pane
  * (viewport + bounded history) so late viewers receive a snapshot without
  * touching the publisher, fans frames out to viewers, and hosts chat.

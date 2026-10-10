@@ -23,7 +23,7 @@
  *   ... --tiny openrouter/inclusionai/ling-2.6-flash
  *   ... --synth openrouter/openai/gpt-oss-120b
  *
- * Auth: provider API keys resolve through omp's auth storage
+ * Auth: provider API keys resolve through mars's auth storage
  * (~/.mars/agent/agent.db: stored key, OAuth, or env var fallback).
  */
 
@@ -125,7 +125,7 @@ async function openModel(modelSpec: string, storage: AuthStorage): Promise<Opene
 	if (!model) throw new Error(`unknown model "${modelSpec}" (not in bundled catalog)`);
 	const apiKey = await storage.keys.get(provider);
 	if (!apiKey) {
-		throw new Error(`no credentials for provider "${provider}" (run \`omp login\` or set the provider env var)`);
+		throw new Error(`no credentials for provider "${provider}" (run \`mars login\` or set the provider env var)`);
 	}
 	return { model, apiKey, spec: modelSpec, usage: { input: 0, output: 0, calls: 0 } };
 }

@@ -91,8 +91,8 @@ export function normalizeProfileName(profile: string | undefined): string | unde
  * than silently inheriting `PI_PROFILE`. Delegates validation/normalization to
  * {@link normalizeProfileName} (which throws on a syntactically invalid value).
  */
-export function resolveProfileEnv(omp: string | undefined, pi: string | undefined): string | undefined {
-	return normalizeProfileName(omp !== undefined ? omp : pi);
+export function resolveProfileEnv(mars: string | undefined, pi: string | undefined): string | undefined {
+	return normalizeProfileName(mars !== undefined ? mars : pi);
 }
 
 function getProfileFromEnv(): string | undefined {
@@ -645,7 +645,7 @@ export function getLogsDir(): string {
 
 /**
  * Local-timezone `YYYY-MM-DD` day key (zero-padded), formatted exactly like
- * the rotating log sink's file naming: log files are named `omp.<day>.<pid>.log`
+ * the rotating log sink's file naming: log files are named `mars.<day>.<pid>.log`
  * with the LOCAL day, not the UTC day `toISOString()` yields. Anything that
  * computes "today's" log path or matches same-day log files by name must use
  * this key, or between local midnight and UTC midnight it points at files that
@@ -655,7 +655,7 @@ export function localDay(date: Date): string {
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-/** Get this process's dated log path (~/.mars/logs/omp.YYYY-MM-DD.PID.log, local-day named like the rotating sink). */
+/** Get this process's dated log path (~/.mars/logs/mars.YYYY-MM-DD.PID.log, local-day named like the rotating sink). */
 export function getLogPath(date = new Date(), pid = process.pid): string {
 	return path.join(getLogsDir(), `${APP_NAME}.${localDay(date)}.${pid}.log`);
 }
@@ -703,9 +703,9 @@ export function getRemoteDir(): string {
  *
  * Worktree bases and the natives directory are process-global: a worktree base
  * is consumed by both creation (PR checkout, task isolation) and cleanup
- * (`omp worktree`), and every launch extracts or loads the native addon from
+ * (`mars worktree`), and every launch extracts or loads the native addon from
  * the same natives directory. A relative value would resolve against whatever
- * cwd happened to launch `omp`, so those readers could disagree — we refuse it
+ * cwd happened to launch `mars`, so those readers could disagree — we refuse it
  * rather than silently bind it to cwd.
  */
 function resolveAbsoluteDir(value: string | undefined): string | undefined {
@@ -721,7 +721,7 @@ let worktreesDirOverride: string | undefined;
 
 /**
  * Relocate the base directory for agent-managed worktrees (PR checkouts, task
- * isolation, and `omp worktree` cleanup all read the same base). Driven by the
+ * isolation, and `mars worktree` cleanup all read the same base). Driven by the
  * `worktree.base` setting in coding-agent; pass `undefined`/empty to clear and
  * fall back to `MARS_WORKTREE_DIR` or the `~/.mars/wt` default.
  *
@@ -1018,7 +1018,7 @@ export function getCrashLogPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, `${APP_NAME}-crash.log`, "state");
 }
 
-/** Get the debug log path (~/.mars/agent/omp-debug.log). */
+/** Get the debug log path (~/.mars/agent/mars-debug.log). */
 export function getDebugLogPath(agentDir?: string): string {
 	return dirs.agentSubdir(agentDir, `${APP_NAME}-debug.log`, "state");
 }
@@ -1027,7 +1027,7 @@ export function getDebugLogPath(agentDir?: string): string {
  * Best-effort one-time copy of a legacy config-root file to its redirected XDG
  * location. Existing installs that enable XDG after the file was created keep
  * their data (e.g. a placeholder key whose loss would break deobfuscation of
- * persisted transcripts). The legacy file is left in place for older omp
+ * persisted transcripts). The legacy file is left in place for older mars
  * versions sharing the profile.
  */
 function adoptLegacyFile(legacyPath: string, targetPath: string): void {
@@ -1047,7 +1047,7 @@ function adoptLegacyFile(legacyPath: string, targetPath: string): void {
  * location, so learned state survives enabling XDG. The copy is staged next to
  * the target and renamed into place, so a reader never sees a partial tree and
  * a concurrent adopter cannot clobber a finished one. The legacy directory is
- * left in place for older omp versions sharing the profile.
+ * left in place for older mars versions sharing the profile.
  */
 function adoptLegacyDir(legacyPath: string, targetPath: string): void {
 	if (targetPath === legacyPath) return;
@@ -1181,7 +1181,7 @@ export function getGlobalDaemonRuntimeDir(service: string): string {
 /**
  * Directory naming session ownership leases (~/.mars/run/session-owners; XDG
  * default: $XDG_STATE_HOME/mars/run/session-owners). Shared across profiles:
- * every omp process that opens a session must meet the same lease.
+ * every mars process that opens a session must meet the same lease.
  */
 export function getSessionOwnersDir(): string {
 	return dirs.baseRootSubdir(path.join("run", "session-owners"), "state");
@@ -1247,13 +1247,13 @@ let cachedInstallId: string | null = null;
 const INSTALL_ID_FILE = "install-id";
 /**
  * Application label for usage attribution (`MARS_APP_NAME`), defaulting to
- * `omp`. Embedders that drive omp programmatically (robomp, CI bots, …) set
+ * `mars`. Embedders that drive mars programmatically (robomp, CI bots, …) set
  * the env var so broker-side per-client burn tracking can answer "what did
  * app X use" instead of folding everything into one install-wide bucket.
  */
 export function getAppName(): string {
 	const value = process.env.MARS_APP_NAME?.trim();
-	return value ? value : "omp";
+	return value ? value : APP_NAME;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

@@ -1,5 +1,5 @@
 /**
- * Regression for the Windows `bun install -g` update path: when an `omp`
+ * Regression for the Windows `bun install -g` update path: when a `mars`
  * process is running, bun cannot overwrite a locked
  * `node_modules/@marsai-org/natives/native/pi_natives.win32-x64.node` during
  * package update and silently keeps the old binary next to the new ESM
@@ -33,8 +33,8 @@ import {
 } from "../native/loader-state.js";
 import packageJson from "../package.json" with { type: "json" };
 
-const winNodeModulesNativeDir = "C:\\Users\\Admin\\node_modules\\@oh-my-pi\\pi-natives\\native";
-const winWorkspaceNativeDir = "C:\\Users\\Admin\\dev\\oh-my-pi\\packages\\natives\\native";
+const winNodeModulesNativeDir = "C:\\Users\\Admin\\node_modules\\@marsai-org\\natives\\native";
+const winWorkspaceNativeDir = "C:\\Users\\Admin\\dev\\mars-agent\\packages\\natives\\native";
 const posixNodeModulesNativeDir = "/home/u/proj/node_modules/@marsai-org/natives/native";
 
 describe("windows native addon staging", () => {
@@ -88,7 +88,7 @@ describe("windows native addon staging", () => {
 
 	it("prepends versionedDir candidates ahead of node_modules when staging on Windows", () => {
 		const versionedDir = "C:\\Users\\Admin\\.mars\\natives\\15.0.1";
-		const userDataDir = "C:\\Users\\Admin\\AppData\\Local\\omp";
+		const userDataDir = "C:\\Users\\Admin\\AppData\\Local\\mars";
 		const candidates = resolveLoaderCandidates({
 			addonFilenames: getAddonFilenames({ tag: "win32-x64", arch: "x64", variant: "baseline" }),
 			isCompiledBinary: false,

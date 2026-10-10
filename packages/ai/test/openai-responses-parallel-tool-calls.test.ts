@@ -1,3 +1,4 @@
+// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 // Regression for https://github.com/can1357/oh-my-pi/issues/1880.
 //
 // llama.cpp (and any OpenAI-Responses-compatible host that interleaves

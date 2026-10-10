@@ -1,8 +1,9 @@
 /**
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * Regression for https://github.com/can1357/oh-my-pi/issues/823.
  *
  * On WSL (and any host where the user moves the standalone binary away from the
- * build-time native artifacts), the compiled `omp` binary fails to load
+ * build-time native artifacts), the compiled `mars` binary fails to load
  * `pi_natives.linux-x64-*.node`. Root cause: the old loader's
  * `isCompiledBinary` detection relied on signals that are unreliable in a Bun
  * standalone binary:
@@ -15,7 +16,7 @@
  *
  * When both signals were false, the loader skipped the embedded-addon
  * extraction path and only tried `nativeDir` (the dev machine's checkout) and
- * `execDir`. On WSL with `~/.local/bin/omp` and no sibling `.node` file, this
+ * `execDir`. On WSL with `~/.local/bin/mars` and no sibling `.node` file, this
  * failed with the error reported in the issue.
  *
  * The fix is to make the loader's compiled-binary detection authoritative on
@@ -113,7 +114,7 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 
 		// Versioned cache and user-data dir candidates must exist for compiled binaries —
 		// these are where the embedded-addon extraction lands (~/.mars/natives/<v>) and where
-		// `omp update` writes the standalone binary on linux (~/.local/bin).
+		// `mars update` writes the standalone binary on linux (~/.local/bin).
 		expect(candidates).toContain(versionedModern);
 		expect(candidates).toContain(versionedBaseline);
 		expect(candidates).toContain(userDataModern);
@@ -154,7 +155,7 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			nativeDir,
 			execDir: "/app/node_modules/.bin",
 			versionedDir,
-			userDataDir: "/home/u/AppData/Local/omp",
+			userDataDir: "/home/u/AppData/Local/mars",
 		});
 
 		const stagedBaseline = path.join(versionedDir, "pi_natives.win32-x64-baseline.node");

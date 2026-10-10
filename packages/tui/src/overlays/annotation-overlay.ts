@@ -155,7 +155,7 @@ function isTextSource(value: readonly ReviewDiffFile[] | TextReviewSource): valu
 	return !Array.isArray(value);
 }
 
-/** A fullscreen, annotated diff picker that only relies on public OMP APIs. */
+/** A fullscreen, annotated diff picker that only relies on public Mars APIs. */
 export class AnnotationOverlay implements Focusable {
 	focused = false;
 	#scrollView: ScrollView;
