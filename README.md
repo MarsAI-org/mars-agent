@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/hero.png" alt="Mars">
+  <img src="assets/mars-logo.png" alt="Mars">
 </p>
 
 <p align="center">
