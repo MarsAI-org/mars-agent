@@ -62,7 +62,7 @@ beforeEach(() => {
 	prevSocketPath = process.env.CMUX_SOCKET_PATH;
 	// Unique per test so the module-global browsers map (keyed by socket path)
 	// never carries a handle across tests.
-	process.env.CMUX_SOCKET_PATH = `/tmp/omp-open-lease-${process.pid}-${Math.random().toString(36).slice(2)}.sock`;
+	process.env.CMUX_SOCKET_PATH = `/tmp/mars-open-lease-${process.pid}-${Math.random().toString(36).slice(2)}.sock`;
 });
 
 afterEach(async () => {
@@ -165,7 +165,7 @@ describe("browser open — caller cancellation rolls back the fresh browser (#63
 });
 
 describe("browser open — failed spawned-app acquisition reaps its owned process (#9537)", () => {
-	it("kills the OMP-spawned process when no page target can be published", async () => {
+	it("kills the Mars-spawned process when no page target can be published", async () => {
 		const disconnectSpy = vi.fn();
 		const browser = {
 			key: "spawned:/tmp/chrome-headless-shell",

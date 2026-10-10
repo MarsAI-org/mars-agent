@@ -44,7 +44,7 @@ function restoreEnv(key: string, value: string | undefined): void {
 }
 
 beforeEach(async () => {
-	agentDirRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-xproj-agent-dir-"));
+	agentDirRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-xproj-agent-dir-"));
 	setAgentDir(path.join(agentDirRoot, "agent"));
 });
 
@@ -94,7 +94,7 @@ describe("createSessionManager — cross-project --resume", () => {
 	let existingProject: string;
 
 	beforeEach(async () => {
-		existingProject = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-xproj-"));
+		existingProject = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-xproj-"));
 		const match = buildGlobalMatch(existingProject);
 		await Bun.write(
 			match.session.path,
@@ -132,7 +132,7 @@ describe("createSessionManager — cross-project --resume", () => {
 
 describe("SessionManager.open — recorded cwd adoption", () => {
 	it("keeps the launch cwd when the recorded cwd cannot be probed", async () => {
-		const root = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-xproj-denied-"));
+		const root = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-xproj-denied-"));
 		const launchProject = path.join(root, "launch");
 		const deniedProject = path.join(root, "denied");
 		await fsp.mkdir(launchProject);
@@ -175,7 +175,7 @@ describe("SessionManager.open — recorded cwd adoption", () => {
 	});
 
 	it("keeps the launch cwd when the recorded cwd denies search permission", async () => {
-		const root = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-xproj-noexec-"));
+		const root = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-xproj-noexec-"));
 		const launchProject = path.join(root, "launch");
 		const deniedProject = path.join(root, "denied");
 		await fsp.mkdir(launchProject);
@@ -222,7 +222,7 @@ describe("runRootCommand — cross-project --resume", () => {
 
 	beforeEach(async () => {
 		originalProject = getProjectDir();
-		root = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-xproj-root-"));
+		root = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-xproj-root-"));
 		launchProject = path.join(root, "launch");
 		resumedProject = path.join(root, "resumed");
 		await Promise.all([fsp.mkdir(launchProject), fsp.mkdir(resumedProject)]);
@@ -448,7 +448,7 @@ describe("createSessionManager — cross-project --resume relocation (moved work
 	let missingProject: string;
 
 	beforeEach(async () => {
-		missingRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-moved-xproj-"));
+		missingRoot = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-moved-xproj-"));
 		missingProject = path.join(missingRoot, "worktree-gone");
 	});
 

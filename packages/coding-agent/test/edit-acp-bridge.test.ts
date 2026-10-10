@@ -54,7 +54,7 @@ let tmpDir: string;
 
 beforeEach(async () => {
 	resetSettingsForTest();
-	tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-acp-edit-"));
+	tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-acp-edit-"));
 	await Settings.init({ inMemory: true, cwd: tmpDir });
 });
 

@@ -28,7 +28,7 @@ describe("composer startup cache", () => {
 	let dbPath: string;
 
 	beforeEach(async () => {
-		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-composer-cache-"));
+		root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-composer-cache-"));
 		dbPath = path.join(root, "cache", "composer.db");
 	});
 

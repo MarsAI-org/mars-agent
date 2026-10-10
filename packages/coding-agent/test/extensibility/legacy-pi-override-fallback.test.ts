@@ -16,7 +16,7 @@ import {
 //
 // Follow-up (issue #3423): on Bun 1.3.14 the compiled binary's
 // `/$bunfs/...` paths are unreachable via every filesystem API, so
-// compiled-binary mode now routes through `omp-legacy-pi-bundled:` virtual
+// compiled-binary mode now routes through `mars-legacy-pi-bundled:` virtual
 // specifiers instead. Those entries must always pass validation because
 // the bundled registry — not the filesystem — is the source of truth.
 describe("legacy pi compat package-root override validation (issue #2168)", () => {
@@ -41,19 +41,19 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 		expect(result).not.toHaveProperty("@marsai-org/tui");
 	});
 
-	it("keeps virtual omp-legacy-pi-bundled: entries without touching the filesystem (issue #3423)", () => {
+	it("keeps virtual mars-legacy-pi-bundled: entries without touching the filesystem (issue #3423)", () => {
 		// Bun 1.3.14 `fs.existsSync` returns false for every bunfs path, so the
 		// pre-#3423 fix dropped every override in compiled mode. The new
 		// virtual scheme is the source of truth in compiled-binary mode; the
 		// validator MUST short-circuit before any filesystem probe.
 		let probed = false;
 		const candidates = {
-			"@marsai-org/ai": "omp-legacy-pi-bundled:@marsai-org/ai",
-			"@marsai-org/coding-agent": "omp-legacy-pi-bundled:@marsai-org/coding-agent",
-			"@marsai-org/agent-core": "omp-legacy-pi-bundled:@marsai-org/agent-core",
-			"@marsai-org/natives": "omp-legacy-pi-bundled:@marsai-org/natives",
-			"@marsai-org/tui": "omp-legacy-pi-bundled:@marsai-org/tui",
-			"@marsai-org/utils": "omp-legacy-pi-bundled:@marsai-org/utils",
+			"@marsai-org/ai": "mars-legacy-pi-bundled:@marsai-org/ai",
+			"@marsai-org/coding-agent": "mars-legacy-pi-bundled:@marsai-org/coding-agent",
+			"@marsai-org/agent-core": "mars-legacy-pi-bundled:@marsai-org/agent-core",
+			"@marsai-org/natives": "mars-legacy-pi-bundled:@marsai-org/natives",
+			"@marsai-org/tui": "mars-legacy-pi-bundled:@marsai-org/tui",
+			"@marsai-org/utils": "mars-legacy-pi-bundled:@marsai-org/utils",
 		};
 		const result = __validateLegacyPiPackageRootOverrides(candidates, () => {
 			probed = true;
@@ -65,14 +65,14 @@ describe("legacy pi compat package-root override validation (issue #2168)", () =
 
 	it("mixes virtual and filesystem entries: virtuals always pass, filesystems gated", () => {
 		const candidates = {
-			"@marsai-org/ai": "omp-legacy-pi-bundled:@marsai-org/ai",
+			"@marsai-org/ai": "mars-legacy-pi-bundled:@marsai-org/ai",
 			"@marsai-org/coding-agent": "/dev/source/legacy-pi-coding-agent-shim.ts",
 			"@marsai-org/tui": "/missing/path.ts",
 		};
 		const missing = new Set(["/missing/path.ts"]);
 		const result = __validateLegacyPiPackageRootOverrides(candidates, p => !missing.has(p));
 		expect(result).toEqual({
-			"@marsai-org/ai": "omp-legacy-pi-bundled:@marsai-org/ai",
+			"@marsai-org/ai": "mars-legacy-pi-bundled:@marsai-org/ai",
 			"@marsai-org/coding-agent": "/dev/source/legacy-pi-coding-agent-shim.ts",
 		});
 	});
@@ -91,7 +91,7 @@ describe("legacy pi compat typebox shim path resolution (issues #3414, #3423)", 
 			probed = true;
 			return false;
 		});
-		expect(result).toBe("omp-legacy-pi-bundled:typebox");
+		expect(result).toBe("mars-legacy-pi-bundled:typebox");
 		expect(probed).toBe(false);
 	});
 

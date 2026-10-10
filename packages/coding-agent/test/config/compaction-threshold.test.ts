@@ -19,7 +19,7 @@ import { compactionThresholdSettings, createSubagentSettings } from "@marsai-org
 import { cfgTaskAgentCompactionThresholdOverrides } from "@marsai-org/coding-agent/task/settings";
 
 async function withConfigDirs(run: (dirs: { root: string; agentDir: string; cwd: string }) => Promise<void>) {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-compaction-threshold-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-compaction-threshold-"));
 	const agentDir = path.join(root, "agent");
 	const cwd = path.join(root, "project");
 	await fs.mkdir(agentDir, { recursive: true });

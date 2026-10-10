@@ -50,7 +50,7 @@ afterEach(async () => {
 
 describe("report bundle logs", () => {
 	it("collects every same-day PID log, not only the current process", async () => {
-		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-report-logs-"));
+		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-report-logs-"));
 		await isolateLogsRoot(cleanupRoot);
 
 		const logsDir = getLogsDir();
@@ -94,7 +94,7 @@ describe("report bundle logs", () => {
 	});
 
 	it("includes this process's records still buffered by the batching file transport", async () => {
-		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-report-buffered-"));
+		cleanupRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-report-buffered-"));
 		await isolateLogsRoot(cleanupRoot);
 		const logsDir = getLogsDir();
 		logger.setTransports({ console: false, file: logsDir });

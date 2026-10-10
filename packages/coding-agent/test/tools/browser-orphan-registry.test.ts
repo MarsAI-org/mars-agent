@@ -30,7 +30,7 @@ const DAEMON_NAME = "omp.browser.headless";
 
 /** Unique per-test scope so registry dirs never collide across the suite. */
 function makeScope(): SharedTargetScope {
-	const projectDir = path.join("/tmp", `omp-orphan-test-${crypto.randomUUID()}`);
+	const projectDir = path.join("/tmp", `mars-orphan-test-${crypto.randomUUID()}`);
 	return { projectDir, daemonName: DAEMON_NAME };
 }
 

@@ -1,7 +1,7 @@
 /**
- * Session recordings (`/record`, `omp play`).
+ * Session recordings (`/record`, `mars play`).
  *
- * A recording is the single-pane `omp stream` feed persisted to disk: the same
+ * A recording is the single-pane `mars stream` feed persisted to disk: the same
  * normalized, redacted screen frames {@link StreamPaintEncoder} produces for
  * live viewers, stamped with their offset from the start of the recording.
  *
@@ -37,7 +37,7 @@ export interface RecordingHeader {
 	rows: number;
 	title: string;
 	createdAt: string;
-	/** Clip description, set by `omp clip --description`. */
+	/** Clip description, set by `mars clip --description`. */
 	description?: string;
 	/** Uploading Stencil username, stamped by the clip server. */
 	owner?: string;
@@ -56,7 +56,7 @@ export interface Recording {
 
 /** Directory `/record` writes into (temporary storage for now). */
 export function recordingsDir(): string {
-	return path.join(os.tmpdir(), "omp-recordings");
+	return path.join(os.tmpdir(), "mars-recordings");
 }
 
 /** Fresh, sortable recording path for one session: `<recordingsDir>/<utc-stamp>-<session>.ompcast`. */

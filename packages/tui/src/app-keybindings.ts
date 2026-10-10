@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 // Subpaths, not the `@marsai-org/utils` barrel: the barrel loads the native
 // addon (file-lock), and key-hint formatting runs on addon-free CLI paths
-// (`omp --version`, help) through cli/command-help.ts.
+// (`mars --version`, help) through cli/command-help.ts.
 import { getActiveProfile, getAgentDir, getProfileRootDir } from "@marsai-org/utils/dirs";
 import { isEnoent } from "@marsai-org/utils/fs-error";
 import * as logger from "@marsai-org/utils/logger";

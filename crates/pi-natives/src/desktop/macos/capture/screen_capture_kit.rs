@@ -111,8 +111,8 @@ struct CaptureClient {
 impl CaptureClient {
 	fn start() -> CoreResult<Self> {
 		control::check()?;
-		let directory = HelperDirectory::create("omp-capture")?;
-		let executable = directory.write("omp-capture-helper", HELPER, 0o700)?;
+		let directory = HelperDirectory::create("mars-capture")?;
+		let executable = directory.write("mars-capture-helper", HELPER, 0o700)?;
 		let mut child = Command::new(executable)
 			.stdin(Stdio::piped())
 			.stdout(Stdio::piped())

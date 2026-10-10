@@ -796,7 +796,7 @@ describe("runSubprocess follows the parent's MCP manager", () => {
 	};
 
 	beforeEach(() => {
-		workDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-subagent-mcp-follow-"));
+		workDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-subagent-mcp-follow-"));
 		manager = new MCPManager(workDir);
 	});
 

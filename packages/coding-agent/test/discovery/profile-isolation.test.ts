@@ -1,5 +1,5 @@
 /**
- * Regression: OMP-native user-level config discovery must follow the active
+ * Regression: Mars-native user-level config discovery must follow the active
  * profile. A profile relocates the agent directory to ~/.mars/profiles/<name>/agent;
  * the native provider used to read user config (commands, skills, rules, etc.)
  * from the literal home (~/.mars/agent) via `ctx.home`, leaking the default
@@ -46,9 +46,9 @@ describe("native user-level config discovery follows the active profile", () => 
 
 	beforeEach(async () => {
 		originalHome = process.env.HOME;
-		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-profile-iso-home-"));
-		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-profile-iso-project-"));
-		profileAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-profile-iso-agent-"));
+		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-iso-home-"));
+		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-iso-project-"));
+		profileAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-iso-agent-"));
 		process.env.HOME = tempHome;
 		vi.spyOn(os, "homedir").mockReturnValue(tempHome);
 		setAgentDir(profileAgentDir);

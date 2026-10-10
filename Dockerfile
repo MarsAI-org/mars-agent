@@ -163,7 +163,7 @@ COPY --from=natives-builder /out/pi_natives.linux-*.node /opt/bun/bin/
 COPY --from=wheel-builder /out/*.whl /tmp/wheels/
 RUN pip install /tmp/wheels/mars_rpc-*.whl && rm -rf /tmp/wheels
 
-# Legal payload for the reusable SDKs and the OMP product installed in this image.
+# Legal payload for the reusable SDKs and the Mars product installed in this image.
 COPY LICENSE  THIRD-PARTY-NOTICES.txt /usr/share/doc/mars/
 
 # `mars` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived

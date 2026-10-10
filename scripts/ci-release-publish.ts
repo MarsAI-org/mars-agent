@@ -183,7 +183,7 @@ export const packages: PublishPackage[] = [
 	{
 		dir: "packages/coding-agent",
 		kind: "typescript",
-		publishBin: { omp: "dist/cli.js" },
+		publishBin: { mars: "dist/cli.js" },
 		packLock: STATS_CLIENT_LOCK,
 	},
 ];
@@ -435,7 +435,7 @@ function publishTargetJob(target: PublishTarget, packLocks: KeyedMutex): Publish
 				return;
 			}
 			log(`Packing ${name}…`);
-			packDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-pack-"));
+			packDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-pack-"));
 			const destination = packDir;
 			// The tarball lands in a private temp dir, so the lock only needs to cover packing.
 			const result = await packLocks(target.packLock, () =>

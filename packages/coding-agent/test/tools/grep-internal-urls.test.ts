@@ -376,7 +376,7 @@ describe("GrepTool internal URL resolution", () => {
 		const text = getResultText(result);
 		expect(result.details?.files).toContain("omp://tools/read.md");
 		expect(text).toContain("Read files, directories, archives");
-		expect(text).not.toMatch(/omp:\/\/tools\/read\.md#[0-9A-F]{4}/);
+		expect(text).not.toMatch(/mars:\/\/tools\/read\.md#[0-9A-F]{4}/);
 	});
 
 	it("globs omp:// docs by URL pattern", async () => {

@@ -203,7 +203,7 @@ export function parseMarketplaceCatalog(content: string, filePath: string): Mark
 // ── fetchMarketplace ──────────────────────────────────────────────────
 
 /**
- * Catalog paths tried in priority order: omp-namespaced override first, then
+ * Catalog paths tried in priority order: mars-namespaced override first, then
  * the Claude Code-compatible fallback so existing marketplaces keep loading.
  */
 const CATALOG_RELATIVE_PATHS: readonly string[] = [".mars-plugin/marketplace.json", ".claude-plugin/marketplace.json"];

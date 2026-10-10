@@ -180,7 +180,7 @@ describe("fetchMarketplace", () => {
 	let tmpDir: string;
 
 	beforeEach(() => {
-		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-fetcher-test-"));
+		tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-fetcher-test-"));
 	});
 
 	afterEach(() => {
@@ -203,18 +203,18 @@ describe("fetchMarketplace", () => {
 	});
 
 	it("loads catalog from .mars-plugin/marketplace.json when present", async () => {
-		const root = path.join(tmpDir, "omp-only");
+		const root = path.join(tmpDir, "mars-only");
 		fs.mkdirSync(path.join(root, ".mars-plugin"), { recursive: true });
 		const catalog = {
-			name: "omp-only-marketplace",
+			name: "mars-only-marketplace",
 			owner: { name: "Test" },
-			plugins: [{ name: "omp-plugin", source: "./plugins/omp-plugin", description: "x" }],
+			plugins: [{ name: "mars-plugin", source: "./plugins/mars-plugin", description: "x" }],
 		};
 		fs.writeFileSync(path.join(root, ".mars-plugin", "marketplace.json"), JSON.stringify(catalog));
 
 		const result = await fetchMarketplace(root, tmpDir);
-		expect(result.catalog.name).toBe("omp-only-marketplace");
-		expect(result.catalog.plugins[0].name).toBe("omp-plugin");
+		expect(result.catalog.name).toBe("mars-only-marketplace");
+		expect(result.catalog.plugins[0].name).toBe("mars-plugin");
 	});
 
 	it("prefers .mars-plugin/marketplace.json over .claude-plugin/marketplace.json when both exist", async () => {
@@ -222,7 +222,7 @@ describe("fetchMarketplace", () => {
 		fs.mkdirSync(path.join(root, ".mars-plugin"), { recursive: true });
 		fs.mkdirSync(path.join(root, ".claude-plugin"), { recursive: true });
 		const ompCatalog = {
-			name: "from-omp-plugin",
+			name: "from-mars-plugin",
 			owner: { name: "Test" },
 			plugins: [{ name: "p", source: "./p", description: "x" }],
 		};
@@ -235,7 +235,7 @@ describe("fetchMarketplace", () => {
 		fs.writeFileSync(path.join(root, ".claude-plugin", "marketplace.json"), JSON.stringify(claudeCatalog));
 
 		const result = await fetchMarketplace(root, tmpDir);
-		expect(result.catalog.name).toBe("from-omp-plugin");
+		expect(result.catalog.name).toBe("from-mars-plugin");
 	});
 
 	it("error message names both candidate paths when neither exists", async () => {

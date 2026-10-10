@@ -12,7 +12,7 @@ fn main() {
 	if env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
 		build_darwin_native_helper(
 			"src/desktop/macos/capture/helper.m",
-			"omp-capture-helper",
+			"mars-capture-helper",
 			"MARS_CAPTURE_DARWIN_HELPER",
 			&["AppKit", "ScreenCaptureKit", "CoreGraphics"],
 			"14.0",
@@ -149,7 +149,7 @@ fn build_oauth_callback_relay(target_os: &str) {
 	let target = env::var("TARGET").expect("TARGET should be set");
 	let rustc = env::var_os("RUSTC").unwrap_or_else(|| OsString::from("rustc"));
 	let mut output = PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR should be set"))
-		.join("omp-oauth-callback-relay");
+		.join("mars-oauth-callback-relay");
 	if target_os == "windows" {
 		output.set_extension("exe");
 	}
@@ -215,7 +215,7 @@ mod darwin_compiler;
 fn build_darwin_oauth_callback_helper() {
 	build_darwin_native_helper(
 		"src/oauth_callback/darwin-helper.m",
-		"omp-oauth-callback-darwin-helper",
+		"mars-oauth-callback-darwin-helper",
 		"MARS_OAUTH_DARWIN_HELPER",
 		&["AppKit"],
 		"12.0",

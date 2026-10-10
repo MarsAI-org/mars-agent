@@ -20,7 +20,7 @@ function localDayBefore(base: Date, daysAgo: number): string {
 }
 
 async function makeProbe(logsDir: string): Promise<string> {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-probe-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-logger-probe-"));
 	roots.push(root);
 	const releasePath = path.join(logsDir, ".release");
 	const probePath = path.join(root, "probe.ts");
@@ -50,7 +50,7 @@ async function makeProbe(logsDir: string): Promise<string> {
 
 describe("multiprocess file logging", () => {
 	it("prunes completed PID namespaces across short-lived invocations", async () => {
-		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-retention-"));
+		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-logger-retention-"));
 		roots.push(logsDir);
 		// macOS process identifiers are far below these values, so the fixtures
 		// are deterministically completed rather than briefly lingering as zombies.
@@ -106,18 +106,18 @@ describe("multiprocess file logging", () => {
 	});
 
 	it("ages out legacy shared daily logs and hash-named audits past the retention window", async () => {
-		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-legacy-"));
+		const logsDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-logger-legacy-"));
 		roots.push(logsDir);
 		const now = new Date();
 		const localDate = (daysAgo: number): string => localDayBefore(now, daysAgo);
 		const expired = [
-			`omp.${localDate(30)}.log`,
-			`omp.${localDate(30)}.log.1`,
-			`omp.${localDate(30)}.log.gz`,
-			`omp.${localDate(30)}.log.2.gz`,
+			`mars.${localDate(30)}.log`,
+			`mars.${localDate(30)}.log.1`,
+			`mars.${localDate(30)}.log.gz`,
+			`mars.${localDate(30)}.log.2.gz`,
 			".0123456789abcdef0123456789abcdef01234567-audit.json",
 		];
-		const retained = [`omp.${localDate(1)}.log`, `omp.${localDate(1)}.log.gz`, ".fedcba9876543210-audit.json"];
+		const retained = [`mars.${localDate(1)}.log`, `mars.${localDate(1)}.log.gz`, ".fedcba9876543210-audit.json"];
 		for (const name of [...expired, ...retained]) await Bun.write(path.join(logsDir, name), name);
 		const thirtyDaysAgoSec = (Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000;
 		await fs.utimes(path.join(logsDir, expired[4]!), thirtyDaysAgoSec, thirtyDaysAgoSec);

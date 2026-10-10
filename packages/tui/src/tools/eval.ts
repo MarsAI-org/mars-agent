@@ -726,7 +726,7 @@ interface EvalCellSection {
 
 /**
  * A notebook cell: a gutter mark beside the input (←, muted until the cell
- * runs, omp's thinking starburst while it does) and beside its output (→).
+ * runs, mars's thinking starburst while it does) and beside its output (→).
  * Only multi-cell calls repeat titles; marks never invent execution counts.
  */
 function evalCellSection(cell: EvalCellSection, index: number, total: number): NativeNode {

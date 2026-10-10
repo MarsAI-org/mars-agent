@@ -33,11 +33,11 @@ const PI_UPSTREAM_IMPORT_PATH = "pi_upstream:PiUpstream";
 /** Upstream `@earendil-works/pi-coding-agent` version pinned for `--agent pi`. */
 const PI_UPSTREAM_VERSION = "0.86.1";
 /** Agents this runner installs itself (config + secrets travel via `MARS_BENCH_*`). */
-const MANAGED_AGENTS: Record<string, true> = { omp: true, pi: true };
+const MANAGED_AGENTS: Record<string, true> = { mars: true, pi: true };
 
 /** Container-side mount points for `--install source` (must match omp_local.py defaults). */
-const SOURCE_SRC_MOUNT = "/opt/omp/src";
-const SOURCE_BIN_MOUNT = "/opt/omp/bin";
+const SOURCE_SRC_MOUNT = "/opt/mars/src";
+const SOURCE_BIN_MOUNT = "/opt/mars/bin";
 
 /** Host address containers see on Apple Container's vmnet (bridge) network. */
 const VMNET_HOST_IP = "192.168.64.1";
@@ -111,7 +111,7 @@ function defaultConfig(): Config {
 		tools: null,
 		settings: {},
 
-		agent: "omp",
+		agent: "mars",
 		install: "source",
 		version: null,
 		tarball: null,
@@ -149,7 +149,7 @@ Commands:
 
 Model / agent:
   -m, --model <provider/model>   Model (repeatable). Default anthropic/claude-sonnet-4-6
-      --agent <name>             omp (default) | oracle | nop | any harbor agent
+      --agent <name>             mars (default) | oracle | nop | any harbor agent
       --install <source|local|published> mars install mode (default: source).
                                  source = mount /work/pi read-only + prebuilt linux deps tree; TS changes
                                  apply per-trial with no rebuild. local = pack a tarball. published = npm.
@@ -959,7 +959,7 @@ function writeReport(st: RenderState, benchDir: string, exitCode: number): strin
 	const tot = aggregate(trials, readJobResult(st.jobDir), st.expected);
 	const successPct = tot.done > 0 ? (tot.pass / tot.done) * 100 : 0;
 	const lines: string[] = [];
-	const isOmp = st.cfg.agent === "omp";
+	const isOmp = st.cfg.agent === "mars";
 	const argsLabel = agentArgsLabel(st.cfg);
 	const baseModelLine = st.cfg.models.join(", ");
 	const modelLine = argsLabel ? `${baseModelLine} (${argsLabel})` : baseModelLine;
@@ -1227,7 +1227,7 @@ function writeComposeOverlay(benchDir: string, cfg: Config, source: SourceMount 
 		lines.push(`      - ${path.join(source.depsDir, "bin")}:${SOURCE_BIN_MOUNT}:ro`);
 	}
 	if (lines.length === 0) return null;
-	const file = path.join(benchDir, "omp-compose-overlay.yaml");
+	const file = path.join(benchDir, "mars-compose-overlay.yaml");
 	fs.writeFileSync(file, `${["services:", "  main:", ...lines].join("\n")}\n`);
 	return file;
 }
@@ -1612,7 +1612,7 @@ async function runBenchmark(cfg: Config): Promise<BenchmarkRun> {
 	if (!which("harbor")) {
 		throw new Error("harbor not found on PATH. Install with: uv tool install harbor");
 	}
-	if (cfg.agent === "omp" && cfg.envType === "docker" && !which("docker")) {
+	if (cfg.agent === "mars" && cfg.envType === "docker" && !which("docker")) {
 		throw new Error("docker not found on PATH (required to run task containers).");
 	}
 	if (cfg.envType === "apple-container" && !which("container")) {
@@ -1635,7 +1635,7 @@ async function runBenchmark(cfg: Config): Promise<BenchmarkRun> {
 
 	// tarball (local install only)
 	let tarball: string | null = cfg.tarball;
-	if (cfg.agent === "omp" && cfg.install === "local" && !cfg.binaryArm64 && !cfg.binaryX64) {
+	if (cfg.agent === "mars" && cfg.install === "local" && !cfg.binaryArm64 && !cfg.binaryX64) {
 		if (tarball) {
 			process.stdout.write(dim(`using tarball ${tarball}\n`));
 		} else if (cfg.build) {
@@ -1648,13 +1648,13 @@ async function runBenchmark(cfg: Config): Promise<BenchmarkRun> {
 
 	// source mount (default): repo bind-mounted read-only + cached linux deps tree
 	let source: SourceMount | null = null;
-	if (cfg.agent === "omp" && cfg.install === "source" && !cfg.binaryArm64 && !cfg.binaryX64) {
+	if (cfg.agent === "mars" && cfg.install === "source" && !cfg.binaryArm64 && !cfg.binaryX64) {
 		source = prepareSourceDeps(cfg);
 	}
 
 	// models.yml (gateway)
 	let modelsYaml = "";
-	if (cfg.agent === "omp" && cfg.gateway) {
+	if (cfg.agent === "mars" && cfg.gateway) {
 		modelsYaml = writeModelsYaml(benchDir, cfg);
 		if (!gatewayHealthOk(cfg.gatewayUrl)) {
 			process.stderr.write(

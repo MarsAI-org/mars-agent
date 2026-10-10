@@ -2822,7 +2822,7 @@ export class EventController {
 
 		const sessionName = this.ctx.sessionManager.getSessionName();
 		TERMINAL.sendNotification({
-			title: sessionName || "omp",
+			title: sessionName || "mars",
 			body: "Stopped with error",
 			type: "error",
 			actions: "focus",
@@ -2847,7 +2847,7 @@ export class EventController {
 
 		const sessionName = this.ctx.sessionManager.getSessionName();
 		TERMINAL.sendNotification({
-			title: sessionName || "omp",
+			title: sessionName || "mars",
 			body: "Complete",
 			type: "completion",
 			actions: "focus",

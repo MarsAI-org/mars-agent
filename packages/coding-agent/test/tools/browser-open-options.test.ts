@@ -84,7 +84,7 @@ describe("browser open options CDP helpers", () => {
 	});
 
 	it("loads existing init-script files and preserves inline source", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-init-test-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "mars-browser-init-test-"));
 		tempDirs.push(directory);
 		await Bun.write(path.join(directory, "init.js"), "globalThis.fromFile = true;");
 		expect(await resolveInitScriptSources(["init.js", "globalThis.inline = true;"], directory)).toEqual([
@@ -174,7 +174,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 		try {
 			const invoke = browserHost();
 			const name = `ua-${crypto.randomUUID()}`;
-			await invoke({ action: "open", name, url: server.url.href, user_agent: "omp-open-options/1.0" });
+			await invoke({ action: "open", name, url: server.url.href, user_agent: "mars-open-options/1.0" });
 			expect(
 				returnedValue(
 					await invoke({
@@ -183,8 +183,8 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 						code: "return await tab.evaluate(() => navigator.userAgent);",
 					}),
 				),
-			).toBe("omp-open-options/1.0");
-			expect(await seen.promise).toBe("omp-open-options/1.0");
+			).toBe("mars-open-options/1.0");
+			expect(await seen.promise).toBe("mars-open-options/1.0");
 		} finally {
 			server.stop(true);
 		}
@@ -299,8 +299,8 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 				});
 			},
 		});
-		const first = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-download-test-"));
-		const second = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-download-test-"));
+		const first = await fs.mkdtemp(path.join(os.tmpdir(), "mars-browser-download-test-"));
+		const second = await fs.mkdtemp(path.join(os.tmpdir(), "mars-browser-download-test-"));
 		tempDirs.push(first, second);
 		try {
 			const invoke = browserHost();
@@ -347,7 +347,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 				});
 			},
 		});
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-browser-download-test-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "mars-browser-download-test-"));
 		tempDirs.push(directory);
 		try {
 			const invoke = browserHost();
@@ -411,7 +411,7 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 				}),
 			) as { path: string; bytes: number };
 			tempDirs.push(path.dirname(download.path));
-			expect(path.dirname(download.path)).toStartWith(path.join(os.tmpdir(), "omp-downloads-"));
+			expect(path.dirname(download.path)).toStartWith(path.join(os.tmpdir(), "mars-downloads-"));
 			expect(download.bytes).toBe(payload.byteLength);
 			expect(new Uint8Array(await Bun.file(download.path).arrayBuffer())).toEqual(payload);
 		} finally {

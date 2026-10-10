@@ -2,7 +2,7 @@
  * Bun `--preload` shim for the mars dev launcher (`scripts/mars`).
  *
  * The launcher starts Bun from an empty, bunfig-free directory so a foreign
- * project's `bunfig.toml` `preload` cannot run inside the omp CLI: Bun reads
+ * project's `bunfig.toml` `preload` cannot run inside the mars CLI: Bun reads
  * `bunfig.toml` from the *current working directory* on startup and evaluates
  * its `preload` entries before the entrypoint, so a bun-shebang bin inherits
  * whatever `preload` the directory you launched from declares (and crashes if

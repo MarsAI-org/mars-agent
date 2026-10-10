@@ -1,5 +1,5 @@
 /**
- * Resolve auth-broker connection configuration for the local omp client.
+ * Resolve auth-broker connection configuration for the local mars client.
  *
  * This is a thin coding-agent wrapper around the shared resolver in
  * `@marsai-org/ai/auth-broker/discover` that preserves the process-lifetime
@@ -248,9 +248,9 @@ export async function describeAuthBrokerStartupError(error: unknown): Promise<st
 	const target = url ? ` at ${url}` : "";
 	return (
 		`Auth broker${target} is unreachable (${error.message}). ` +
-		"omp is configured to use this broker for credentials and will not fall back to local credentials automatically.\n" +
-		"Start the broker with `omp auth-broker serve`, or disable it with " +
-		"`omp config reset auth.broker.url` and `omp config reset auth.broker.token` " +
+		"Mars is configured to use this broker for credentials and will not fall back to local credentials automatically.\n" +
+		"Start the broker with `mars auth-broker serve`, or disable it with " +
+		"`mars config reset auth.broker.url` and `mars config reset auth.broker.token` " +
 		"(or unset MARS_AUTH_BROKER_URL / MARS_AUTH_BROKER_TOKEN)."
 	);
 }

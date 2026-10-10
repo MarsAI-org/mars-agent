@@ -1,7 +1,7 @@
 /**
  * OTLP telemetry export bootstrap.
  *
- * omp's agent core (`@marsai-org/agent-core`) emits OpenTelemetry GenAI
+ * mars's agent core (`@marsai-org/agent-core`) emits OpenTelemetry GenAI
  * spans through the global `@opentelemetry/api` tracer, and exposes run-level
  * callbacks for metrics/log pipelines. This module resolves the standard
  * `OTEL_*` env contract (endpoint, exporter selection, protocol,

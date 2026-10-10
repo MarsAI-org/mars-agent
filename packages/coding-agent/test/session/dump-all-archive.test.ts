@@ -47,7 +47,7 @@ describe("AgentSession.dumpSessionArchiveToTmpDir", () => {
 	const archives: string[] = [];
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@omp-dump-all-");
+		tempDir = TempDir.createSync("@mars-dump-all-");
 		const model = getBundledModel("anthropic", "claude-sonnet-4-5");
 		if (!model) throw new Error("Expected bundled anthropic model");
 		const authStorage = createInMemoryAuthStorage();

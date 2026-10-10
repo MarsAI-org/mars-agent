@@ -72,7 +72,7 @@ build() {
 	shift $(($# < 4 ? $# : 4))
 	rm -f "$out"
 	if [ "$arch" = arm64 ] && [ -n "$swiftc" ]; then
-		cache=${MARS_APPLEFM_MODULE_CACHE:-${TMPDIR:-/tmp}/omp-applefm-module-cache}
+		cache=${MARS_APPLEFM_MODULE_CACHE:-${TMPDIR:-/tmp}/mars-applefm-module-cache}
 		# Loaded only on macOS 27+, so it targets 27 and needs no Swift
 		# back-deployment runtime.
 		"$swiftc" -emit-library -parse-as-library -module-name OmpAppleFm \

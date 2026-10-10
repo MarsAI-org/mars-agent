@@ -29,7 +29,7 @@ async function runScenario(
 	scenario: string,
 	options: { logLevel?: string; probe?: string; exitCode?: number } = {},
 ): Promise<ScenarioResult> {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-logger-contract-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-logger-contract-"));
 	roots.push(root);
 	const primaryDir = path.join(root, "primary");
 	const secondaryDir = path.join(root, "secondary");

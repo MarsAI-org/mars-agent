@@ -15,10 +15,10 @@ import { removeWithRetries } from "@marsai-org/utils";
 
 const MARS_AGENT_MD = [
 	"---",
-	"name: omp-test-agent",
-	"description: OMP-native test agent.",
+	"name: mars-test-agent",
+	"description: Mars-native test agent.",
 	"---",
-	"You are an OMP task agent.",
+	"You are an Mars task agent.",
 ].join("\n");
 
 const MARS_PLUGIN_AGENT_MD = [
@@ -46,7 +46,7 @@ async function writeOmpPluginAgent(home: string): Promise<void> {
 	await fs.mkdir(path.join(pluginRoot, "agents"), { recursive: true });
 	await fs.writeFile(
 		path.join(pluginRoot, "package.json"),
-		JSON.stringify({ name: "loom", version: "1.0.0", omp: { version: "1.0.0" } }),
+		JSON.stringify({ name: "loom", version: "1.0.0", mars: { version: "1.0.0" } }),
 	);
 	await fs.writeFile(
 		path.join(userPluginsRoot, "package.json"),
@@ -63,18 +63,18 @@ function agentMd(name: string, model: string): string {
 	return ["---", `name: ${name}`, `description: ${name} probe.`, `model: ${model}`, "---", `body ${name}`].join("\n");
 }
 
-// Register an omp-installed marketplace plugin via the OMP plugin registry
+// Register a mars-installed marketplace plugin via the Mars plugin registry
 // (`~/.mars/plugins/installed_plugins.json`), the path listClaudePluginRoots
-// reads as origin "omp" — distinct from the node_modules path above. `manifest`
-// controls the declared plugin dialect: `.mars-plugin/plugin.json` (OMP-native),
-// `.claude-plugin/plugin.json` (Claude Code), `both` (OMP wins by precedence),
+// reads as origin "mars" — distinct from the node_modules path above. `manifest`
+// controls the declared plugin dialect: `.mars-plugin/plugin.json` (Mars-native),
+// `.claude-plugin/plugin.json` (Claude Code), `both` (Mars wins by precedence),
 // or `none` (bare directory).
 async function writeOmpMarketplacePlugin(
 	home: string,
 	options: {
 		agentName: string;
 		model: string;
-		manifest: "omp" | "claude" | "both" | "none";
+		manifest: "mars" | "claude" | "both" | "none";
 	},
 ): Promise<void> {
 	const pluginRoot = path.join(home, "marketplace-cache", options.agentName);
@@ -84,7 +84,7 @@ async function writeOmpMarketplacePlugin(
 		agentMd(options.agentName, options.model),
 	);
 
-	const wantsOmp = options.manifest === "omp" || options.manifest === "both";
+	const wantsOmp = options.manifest === "mars" || options.manifest === "both";
 	const wantsClaude = options.manifest === "claude" || options.manifest === "both";
 	if (wantsOmp) {
 		await fs.mkdir(path.join(pluginRoot, ".mars-plugin"), { recursive: true });
@@ -121,7 +121,7 @@ describe("discoverAgents", () => {
 	let projectDir: string;
 
 	beforeEach(async () => {
-		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-task-agent-discovery-"));
+		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "mars-task-agent-discovery-"));
 		projectDir = path.join(tempHome, "project");
 		await fs.mkdir(projectDir, { recursive: true });
 	});
@@ -136,9 +136,9 @@ describe("discoverAgents", () => {
 		await removeWithRetries(tempHome);
 	});
 
-	test("loads OMP agents but skips Claude Code custom agents", async () => {
+	test("loads Mars agents but skips Claude Code custom agents", async () => {
 		await fs.mkdir(path.join(projectDir, ".mars", "agents"), { recursive: true });
-		await fs.writeFile(path.join(projectDir, ".mars", "agents", "omp-test-agent.md"), MARS_AGENT_MD);
+		await fs.writeFile(path.join(projectDir, ".mars", "agents", "mars-test-agent.md"), MARS_AGENT_MD);
 
 		await fs.mkdir(path.join(tempHome, ".claude", "agents"), { recursive: true });
 		await fs.writeFile(path.join(tempHome, ".claude", "agents", "user-cc-test-agent.md"), CLAUDE_AGENT_MD);
@@ -148,12 +148,12 @@ describe("discoverAgents", () => {
 		const { agents, projectAgentsDir } = await discoverAgents(projectDir, tempHome);
 		const names = agents.map(agent => agent.name);
 
-		expect(names).toContain("omp-test-agent");
+		expect(names).toContain("mars-test-agent");
 		expect(names).not.toContain("cc-test-agent");
 		expect(projectAgentsDir).toBe(path.join(projectDir, ".mars", "agents"));
 	});
 
-	test("loads agents from OMP npm plugins under <home>/.mars/plugins/node_modules", async () => {
+	test("loads agents from Mars npm plugins under <home>/.mars/plugins/node_modules", async () => {
 		await writeOmpPluginAgent(tempHome);
 
 		const { agents } = await discoverAgents(projectDir, tempHome);
@@ -257,9 +257,9 @@ describe("discoverAgents", () => {
 		expect(names).toContain("plugin-dir-agent");
 	});
 
-	test("honors model frontmatter of OMP-native omp-installed marketplace plugin agents (#12028)", async () => {
-		// omp-installed marketplace plugins ride the shared plugin registry as
-		// origin "omp" roots. An OMP-native package (no Claude manifest) uses OMP
+	test("honors model frontmatter of Mars-native mars-installed marketplace plugin agents (#12028)", async () => {
+		// mars-installed marketplace plugins ride the shared plugin registry as
+		// origin "mars" roots. An Mars-native package (no Claude manifest) uses Mars
 		// model selectors, so `model:` must survive discovery.
 		enableProvider("claude-plugins");
 		await writeOmpMarketplacePlugin(tempHome, {
@@ -269,15 +269,15 @@ describe("discoverAgents", () => {
 		});
 
 		const { agents } = await discoverAgents(projectDir, tempHome);
-		const agent = agents.find(candidate => candidate.name === "omp-probe");
+		const agent = agents.find(candidate => candidate.name === "mars-probe");
 
 		expect(agent).toBeDefined();
 		expect(agent?.model).toEqual(["@advisor", "@smol"]);
 	});
 
-	test("drops model frontmatter of a Claude-format plugin installed via the OMP registry (#12031 review)", async () => {
-		// origin "omp" but a `.claude-plugin` package: its `model: sonnet` is a
-		// Claude alias, not an OMP selector, so it must still be stripped.
+	test("drops model frontmatter of a Claude-format plugin installed via the Mars registry (#12031 review)", async () => {
+		// origin "mars" but a `.claude-plugin` package: its `model: sonnet` is a
+		// Claude alias, not an Mars selector, so it must still be stripped.
 		enableProvider("claude-plugins");
 		await writeOmpMarketplacePlugin(tempHome, {
 			agentName: "claude-probe",
@@ -292,9 +292,9 @@ describe("discoverAgents", () => {
 		expect(agent?.model).toBeUndefined();
 	});
 
-	test("honors model frontmatter when a plugin declares both OMP and Claude manifests (#12031 review)", async () => {
+	test("honors model frontmatter when a plugin declares both Mars and Claude manifests (#12031 review)", async () => {
 		// `.mars-plugin/plugin.json` wins over a sibling `.claude-plugin/plugin.json`,
-		// mirroring the MCP-config precedence, so OMP selectors survive.
+		// mirroring the MCP-config precedence, so Mars selectors survive.
 		enableProvider("claude-plugins");
 		await writeOmpMarketplacePlugin(tempHome, {
 			agentName: "hybrid-probe",

@@ -460,7 +460,7 @@ export function setActiveTodoDescriptionsProvider(provider: () => readonly strin
 	activeTodoDescriptionsProvider = provider;
 }
 
-/** omp todo status → checklist item status (§7.5). */
+/** mars todo status → checklist item status (§7.5). */
 const CHECKLIST_STATUS: Record<TodoStatus, TspChecklistItem["status"]> = {
 	pending: "pending",
 	in_progress: "active",

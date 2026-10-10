@@ -51,7 +51,7 @@ beforeEach(async () => {
 	originalExitCode = process.exitCode;
 	process.exitCode = undefined;
 	resetSettingsForTest();
-	tempAgentDir = TempDir.createSync("@omp-search-cli-");
+	tempAgentDir = TempDir.createSync("@mars-search-cli-");
 	setAgentDir(tempAgentDir.path());
 	const settings = await Settings.init({ inMemory: true, cwd: tempAgentDir.path() });
 	settings.setModelRole("web", "web/startpage");

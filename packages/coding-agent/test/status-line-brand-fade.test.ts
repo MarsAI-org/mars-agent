@@ -1,6 +1,6 @@
 /**
  * Contract for the `pi` brand segment's working transition (port of rust
- * omp's status-band brand fade): idle renders the omp icon in the dim color;
+ * mars's status-band brand fade): idle renders the mars icon in the dim color;
  * a turn start swaps the glyph to a spinner + turn timer whose foreground
  * fades dim → accent over 450ms (never an instant color swap), and a turn end
  * fades back from the color currently on screen. Regression: the first cut of
@@ -85,7 +85,7 @@ describe("status line brand fade", () => {
 		if (!dimAnsi || !accentAnsi) throw new Error("expected resolvable dim/accent theme colors");
 		const component = makeComponent();
 		try {
-			// Idle: omp icon settled in the dim color.
+			// Idle: mars icon settled in the dim color.
 			expect(component.renderBottomBar(80, "full")).toContain(`${dimAnsi}${theme.icon.omp}`);
 
 			// Turn start: the glyph becomes a spinner + whole-second timer at

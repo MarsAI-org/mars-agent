@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 //
-// Render the Homebrew formula for `omp` from a published GitHub release and write
+// Render the Homebrew formula for `mars` from a published GitHub release and write
 // it to a tap checkout. The release publishes per-platform bare binaries
-// (omp-<platform>-<arch>); this reads their sha256 digests straight from the
+// (mars-<platform>-<arch>); this reads their sha256 digests straight from the
 // release metadata so the formula never drifts from the shipped assets.
 //
 // Usage:
-//   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/omp.rb>
+//   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/mars.rb>
 //   bun scripts/ci-update-brew-formula.ts v15.10.3        # prints to stdout
 
 import { $ } from "bun";
 
 const REPO = process.env.MARS_REPO ?? "MarsAI-org/mars-agent";
-const HOMEPAGE = "https://omp.sh";
+const HOMEPAGE = "https://github.com/MarsAI-org/mars-agent";
 const DESC = "Coding agent with the IDE wired in";
 
 interface ReleaseAsset {
@@ -58,8 +58,8 @@ export function renderFormula(version: string, sums: Record<string, string>): st
 	// Each `url` carries `using: :nounzip` because the release assets are bare
 	// Mach-O/ELF executables, not archives. Without it Homebrew's default
 	// CurlDownloadStrategy routes through UnpackStrategy::Uncompressed#extract_nestedly,
-	// which nests the file outside the staging CWD; `Dir["omp-*"].first` then
-	// returns `nil` and `bin.install nil => "omp"` raises.
+	// which nests the file outside the staging CWD; `Dir["mars-*"].first` then
+	// returns `nil` and `bin.install nil => "mars"` raises.
 	//
 	// `with_env(HOME: buildpath)` redirects the CLI's `os.homedir()` lookup to
 	// the writable staging dir so `generate_completions_from_executable` does
@@ -98,15 +98,15 @@ export function renderFormula(version: string, sums: Record<string, string>): st
   end
 
   def install
-    bin.install Dir["omp-*"].first => "omp"
-    (bin/"omp").chmod 0555
+    bin.install Dir["mars-*"].first => "mars"
+    (bin/"mars").chmod 0555
     with_env(HOME: buildpath) do
-      generate_completions_from_executable(bin/"omp", "completions", shells: [:bash, :zsh, :fish])
+      generate_completions_from_executable(bin/"mars", "completions", shells: [:bash, :zsh, :fish])
     end
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/omp --version")
+    assert_match version.to_s, shell_output("#{bin}/mars --version")
   end
 end
 `;

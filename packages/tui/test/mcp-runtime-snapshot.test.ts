@@ -13,7 +13,7 @@ import {
 
 const source = {
 	provider: "native",
-	providerName: "OMP (User)",
+	providerName: "Mars (User)",
 	path: "/home/sf/.mars/agent/mcp.json",
 	level: "user",
 };

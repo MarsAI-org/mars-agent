@@ -28,7 +28,7 @@ function startBroker(projectDir: string, runtimeDir: string): { listening: Promi
 
 describe("daemon metadata writes", () => {
 	it("does not rewrite settled history on subscriber changes or broker restart", async () => {
-		using tempDir = TempDir.createSync("@omp-broker-metadata-");
+		using tempDir = TempDir.createSync("@mars-broker-metadata-");
 		const projectDir = path.join(tempDir.path(), "project");
 		const runtimeDir = path.join(tempDir.path(), "runtime");
 		const metadataPath = path.join(runtimeDir, "daemons", "historical", "meta.json");
@@ -133,7 +133,7 @@ describe("daemon metadata writes", () => {
 	}, 20_000);
 
 	it("writes the launch spec once and keeps lifecycle metadata free of it", async () => {
-		using tempDir = TempDir.createSync("@omp-broker-spec-");
+		using tempDir = TempDir.createSync("@mars-broker-spec-");
 		const projectDir = path.join(tempDir.path(), "project");
 		const runtimeDir = path.join(tempDir.path(), "runtime");
 		const daemonDir = path.join(runtimeDir, "daemons", "lifecycle");
@@ -179,8 +179,8 @@ describe("daemon metadata writes", () => {
 		expect(JSON.parse(metadata)).toMatchObject({ daemon: { state: "exited" } });
 	}, 20_000);
 
-	it("lists split-layout and legacy records in `omp ps` offline and while the broker is live", async () => {
-		using tempDir = TempDir.createSync("@omp-broker-ps-");
+	it("lists split-layout and legacy records in `mars ps` offline and while the broker is live", async () => {
+		using tempDir = TempDir.createSync("@mars-broker-ps-");
 		const projectDir = path.join(tempDir.path(), "project");
 		const runtimeDir = path.join(tempDir.path(), "runtime");
 		await fs.mkdir(projectDir);

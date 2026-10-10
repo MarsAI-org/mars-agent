@@ -497,7 +497,7 @@ const TEST_SESSION_OWNERS_DIR_ENV = "PI_TEST_SESSION_OWNERS_DIR";
 /**
  * A test run never touches the real state dir for session ownership leases:
  * bun test processes use one per-user directory in the OS temp dir. It is
- * exported when this module loads, before a test can spawn an omp process,
+ * exported when this module loads, before a test can spawn a mars process,
  * so spawned processes meet the same leases. Session ids are unique, so
  * concurrent test processes can share it, and it is reused across runs (bun
  * test fires no exit hook to remove it).
@@ -506,7 +506,7 @@ function testSessionOwnersDir(): string | undefined {
 	const exported = process.env[TEST_SESSION_OWNERS_DIR_ENV];
 	if (exported || !isBunTestRuntime()) return exported;
 	const uid = typeof process.getuid === "function" ? process.getuid() : os.userInfo().username;
-	const dir = path.join(os.tmpdir(), `omp-test-session-owners-${uid}`);
+	const dir = path.join(os.tmpdir(), `mars-test-session-owners-${uid}`);
 	process.env[TEST_SESSION_OWNERS_DIR_ENV] = dir;
 	return dir;
 }
@@ -552,7 +552,7 @@ function readSessionHeaderIdSync(sessionPath: string): string | undefined {
 /**
  * Take a session's ownership lease without waiting, or `null` while another
  * process holds it. A process writing the session holds it (see
- * `FileSessionStorage.claimSession`) until it exits; `omp gc` probes it to tell
+ * `FileSessionStorage.claimSession`) until it exits; `mars gc` probes it to tell
  * whether a session is live. Keyed by the session id from the journal's
  * header, not by the file's path, so every process that reaches the journal
  * (through a symlink, a hard link, or after a move) meets the same lease. Ids

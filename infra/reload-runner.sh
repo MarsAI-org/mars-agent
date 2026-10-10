@@ -23,7 +23,7 @@
 # Env knobs (defaults match the reference deployment):
 #   CI_HOST                  ssh target of the CI host                     (required)
 #   REMOTE_CTX               remote build dir for the Dockerfile           [/root/omp-kata-runner-image]
-#   ARC_VALUES               remote ARC scale-set helm values file         [/root/arc-omp-values.yaml]
+#   ARC_VALUES               remote ARC scale-set helm values file         [/root/arc-mars-values.yaml]
 #   ARC_RELEASE              helm release name of the runner scale set     [omp-kata]
 #   ARC_NAMESPACE            namespace the runner scale set lives in       [arc-runners]
 #   ARC_CHART_VERSION        gha-runner-scale-set chart version            [0.14.2]
@@ -50,7 +50,7 @@ set -euo pipefail
 
 : "${CI_HOST:?set CI_HOST to the ssh target of your CI host, e.g. CI_HOST=my-ci-host}"
 REMOTE_CTX="${REMOTE_CTX:-/root/omp-kata-runner-image}"
-ARC_VALUES="${ARC_VALUES:-/root/arc-omp-values.yaml}"
+ARC_VALUES="${ARC_VALUES:-/root/arc-mars-values.yaml}"
 ARC_RELEASE="${ARC_RELEASE:-omp-kata}"
 ARC_NAMESPACE="${ARC_NAMESPACE:-arc-runners}"
 ARC_CHART_VERSION="${ARC_CHART_VERSION:-0.14.2}"

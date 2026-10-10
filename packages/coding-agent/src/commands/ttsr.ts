@@ -1,10 +1,10 @@
 import { existsSync } from "node:fs";
 import * as path from "node:path";
 /**
- * `omp ttsr` — inspect and test Time-Traveling Stream Rules.
+ * `mars ttsr` — inspect and test Time-Traveling Stream Rules.
  *
- * `omp ttsr test` feeds a snippet (inline, --file, or stdin) through the real
- * TTSR matching pipeline and reports which rules would trigger. `omp ttsr list`
+ * `mars ttsr test` feeds a snippet (inline, --file, or stdin) through the real
+ * TTSR matching pipeline and reports which rules would trigger. `mars ttsr list`
  * shows every TTSR-registered rule the current project/user config would load.
  */
 import { Args, Command, Flags } from "@marsai-org/utils/cli";
@@ -81,7 +81,7 @@ export default class Ttsr extends Command {
 		const action = (args.action ?? "list") as (typeof TTSR_ACTIONS)[number];
 
 		// A positional that resolves to an existing file is a snippet file, not
-		// inline text — so `omp ttsr test src/foo.ts` works without --file.
+		// inline text — so `mars ttsr test src/foo.ts` works without --file.
 		// --file always wins over the positional.
 		let file = flags.file;
 		let snippet = args.snippet;

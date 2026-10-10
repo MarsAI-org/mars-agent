@@ -1,7 +1,7 @@
 # MLX tiny-model worker: one process per local model, owning that model's
 # socket and speaking the same JSON-lines protocol as the ONNX worker
 # (`title-protocol.ts`). Started by `title-client.ts` from the mlx-lm venv;
-# serves every omp process on the machine; exits on its own once idle.
+# serves every mars process on the machine; exits on its own once idle.
 #
 # Requests (one object per line):
 #   {"type": "ping", "id"}                        -> pong (with the launch tag)
@@ -64,7 +64,7 @@ def log(message):
 
 
 def _request(url):
-    headers = {"User-Agent": "omp-tiny-mlx"}
+    headers = {"User-Agent": "mars-tiny-mlx"}
     if HF_TOKEN:
         headers["Authorization"] = f"Bearer {HF_TOKEN}"
     return urllib.request.Request(url, headers=headers)
@@ -319,7 +319,7 @@ class Server:
         self.socket_path = socket_path
         server = self._bind(socket_path)
         threading.Thread(target=self._idle_watchdog, daemon=True).start()
-        sys.stdout.write(f"omp tiny worker listening on {socket_path}\n")
+        sys.stdout.write(f"mars tiny worker listening on {socket_path}\n")
         sys.stdout.flush()
         while True:
             conn, _ = server.accept()

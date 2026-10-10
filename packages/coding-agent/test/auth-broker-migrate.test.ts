@@ -39,8 +39,8 @@ describe("auth-broker migrate (org-only dedupe)", () => {
 	beforeEach(async () => {
 		savedEnv.MARS_AUTH_BROKER_URL = process.env.MARS_AUTH_BROKER_URL;
 		savedEnv.MARS_AUTH_BROKER_TOKEN = process.env.MARS_AUTH_BROKER_TOKEN;
-		agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-migrate-client-"));
-		brokerAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-migrate-broker-"));
+		agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-migrate-client-"));
+		brokerAgentDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-migrate-broker-"));
 		setAgentDir(agentDir);
 
 		brokerStore = await SqliteAuthCredentialStore.open(path.join(brokerAgentDir, "agent.db"));

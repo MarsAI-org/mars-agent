@@ -19,7 +19,7 @@ let originalAgentDir: string;
 
 beforeEach(async () => {
 	originalAgentDir = getAgentDir();
-	tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-skill-list-home-"));
+	tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "mars-skill-list-home-"));
 	spyOn(os, "homedir").mockReturnValue(tempHome);
 	setAgentDir(path.join(tempHome, ".mars", "agent"));
 });
@@ -32,7 +32,7 @@ afterEach(async () => {
 
 describe("runSkillsCommand", () => {
 	test("lists skills for a directory with public metadata", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "omp-skills-cmd-"));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), "mars-skills-cmd-"));
 		const skillsRoot = path.join(directory, "skills-fixture");
 		await fs.mkdir(path.join(skillsRoot, "first", "calendar"), { recursive: true });
 		await fs.mkdir(path.join(skillsRoot, "second", "reviewer"), { recursive: true });
@@ -75,7 +75,7 @@ describe("runSkillsCommand", () => {
 	});
 
 	test("resolves relative custom directories against the requested directory", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `omp-skills-rel-${Snowflake.next()}-`));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `mars-skills-rel-${Snowflake.next()}-`));
 		await fs.mkdir(path.join(directory, "rel-root", "calendar"), { recursive: true });
 		await Bun.write(
 			path.join(directory, "rel-root", "calendar", "SKILL.md"),
@@ -106,7 +106,7 @@ describe("handleSkillList", () => {
 	});
 
 	test("keeps stdout to TSV rows and sends warnings to stderr", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `omp-skills-list-${Snowflake.next()}-`));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `mars-skills-list-${Snowflake.next()}-`));
 		for (const root of ["first", "second"]) {
 			await fs.mkdir(path.join(directory, root, "calendar"), { recursive: true });
 			await Bun.write(
@@ -139,7 +139,7 @@ describe("handleSkillList", () => {
 			await removeWithRetries(directory);
 		}
 
-		// `omp skill list | cut -f1` must see skill rows only.
+		// `mars skill list | cut -f1` must see skill rows only.
 		const rows = stdout.split("\n").filter(Boolean);
 		expect(rows).toContain("calendar\tfirst calendar.");
 		for (const row of rows) expect(row).toMatch(/^[^\t]+\t/);
@@ -147,7 +147,7 @@ describe("handleSkillList", () => {
 	});
 
 	test("rejects a target that is not a directory", async () => {
-		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `omp-skills-list-${Snowflake.next()}-`));
+		const directory = await fs.mkdtemp(path.join(os.tmpdir(), `mars-skills-list-${Snowflake.next()}-`));
 		const file = path.join(directory, "file.txt");
 		await Bun.write(file, "not a directory");
 		try {

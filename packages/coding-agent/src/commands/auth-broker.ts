@@ -1,5 +1,5 @@
 /**
- * `mars auth-broker` — manage the omp credential vault.
+ * `mars auth-broker` — manage the mars credential vault.
  */
 
 import { Args, Command, Flags, renderCommandHelp } from "@marsai-org/utils/cli";

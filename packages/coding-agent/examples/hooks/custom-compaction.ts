@@ -10,7 +10,7 @@
  * which can be cheaper/faster than the main conversation model.
  *
  * Usage:
- *   omp --hook examples/hooks/custom-compaction.ts
+ *   mars --hook examples/hooks/custom-compaction.ts
  */
 import { serializeConversation } from "@marsai-org/agent-core/compaction";
 import { complete } from "@marsai-org/ai";

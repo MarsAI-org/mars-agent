@@ -48,7 +48,7 @@ import * as logger from "@marsai-org/utils/logger";
 function makeKind(socketSuffix: string): CmuxKind {
 	return {
 		kind: "cmux",
-		socketPath: `/tmp/omp-test-${socketSuffix}.sock`,
+		socketPath: `/tmp/mars-test-${socketSuffix}.sock`,
 		surface: `surface-${socketSuffix}`,
 	};
 }
@@ -526,7 +526,7 @@ describe("browser tab-supervisor — cmux tab close mid-run (#4499)", () => {
 			},
 		);
 
-		const screenshotDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-cmux-screenshot-"));
+		const screenshotDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-cmux-screenshot-"));
 		try {
 			const browser = await acquireBrowser(makeKind("screenshot-configured"), { cwd: "/tmp" });
 			await acquireTab("screenshot-configured", browser, {

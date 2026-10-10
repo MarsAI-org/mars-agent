@@ -53,7 +53,7 @@ Confirmed local repro required.
 ```bash
 MAIN="$(git rev-parse --show-toplevel)"
 ENC="$(printf '%s' "$MAIN" | sed 's|[/\\:]|-|g')"
-WT="$HOME/.omp/wt/${ENC}/fix-issue-<N>"
+WT="$HOME/.mars/wt/${ENC}/fix-issue-<N>"
 
 git -C "$MAIN" fetch origin main
 git -C "$MAIN" worktree add -B "fix/issue-<N>" "$WT" origin/main

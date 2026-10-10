@@ -387,7 +387,7 @@ describe("ChainJudge", () => {
 	});
 
 	it("answers repeated questions from the cache and sends only the unanswered ones", async () => {
-		using tempDir = TempDir.createSync("@omp-judgment-cache-");
+		using tempDir = TempDir.createSync("@mars-judgment-cache-");
 		const dbPath = path.join(tempDir.path(), "judgment-cache.db");
 		const cache = JudgmentCache.open(dbPath);
 		// $1000/M input tokens: 10 tokens per question bill $0.01 each.

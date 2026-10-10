@@ -19,7 +19,7 @@ const BYTES_PER_TOKEN_ESTIMATE = 4;
 const SQLITE_VARIABLE_CHUNK_SIZE = 500;
 
 // Paths that carry no dashboard signal — temp/internal locations.
-const TEMP_PATH_RE = /(?:^|\/)(?:T|tmp|pi-bash-exec|omp-bash-exec|pi-bash-detach)(?:\/|$)|^\/var\/folders(?:\/|$)/;
+const TEMP_PATH_RE = /(?:^|\/)(?:T|tmp|pi-bash-exec|mars-bash-exec|pi-bash-detach)(?:\/|$)|^\/var\/folders(?:\/|$)/;
 
 // ---------------------------------------------------------------------------
 // Project-match helper

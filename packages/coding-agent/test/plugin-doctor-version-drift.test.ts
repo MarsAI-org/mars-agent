@@ -16,7 +16,7 @@ describe("PluginManager.doctor version drift", () => {
 	let pluginsNodeModules: string;
 
 	beforeEach(async () => {
-		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-plugin-drift-"));
+		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-plugin-drift-"));
 		pluginsDir = path.join(tmpRoot, "plugins");
 		pluginsNodeModules = path.join(pluginsDir, "node_modules");
 		await fs.mkdir(pluginsNodeModules, { recursive: true });
@@ -39,7 +39,7 @@ describe("PluginManager.doctor version drift", () => {
 		await fs.mkdir(installedDir, { recursive: true });
 		await Bun.write(
 			path.join(installedDir, "package.json"),
-			JSON.stringify({ name, version: diskVersion, omp: { version: diskVersion } }, null, 2),
+			JSON.stringify({ name, version: diskVersion, mars: { version: diskVersion } }, null, 2),
 		);
 		await Bun.write(
 			path.join(pluginsDir, "package.json"),
@@ -69,7 +69,7 @@ describe("PluginManager.doctor version drift", () => {
 		const expectedVersion = "1.0.3";
 		await seed(name, "1.0.2", expectedVersion);
 		const packagePath = path.join(pluginsNodeModules, name, "package.json");
-		const reinstalled = JSON.stringify({ name, version: expectedVersion, omp: { version: expectedVersion } });
+		const reinstalled = JSON.stringify({ name, version: expectedVersion, mars: { version: expectedVersion } });
 		const install = Bun.spawn(["bun", "-e", ""], { stdin: "ignore", stdout: "pipe", stderr: "pipe" });
 		Object.defineProperty(install, "exited", {
 			get: async () => {
@@ -124,7 +124,7 @@ describe("PluginManager.doctor version drift", () => {
 		const reinstalled = JSON.stringify({
 			name,
 			version: expectedVersion,
-			omp: { version: expectedVersion, tools: "./missing.js" },
+			mars: { version: expectedVersion, tools: "./missing.js" },
 		});
 		const install = Bun.spawn(["bun", "-e", ""], { stdin: "ignore", stdout: "pipe", stderr: "pipe" });
 		Object.defineProperty(install, "exited", {
@@ -152,7 +152,7 @@ describe("PluginManager.doctor version drift", () => {
 		await fs.mkdir(sourcePath, { recursive: true });
 		await Bun.write(
 			path.join(sourcePath, "package.json"),
-			JSON.stringify({ name, version: "1.0.3", omp: { version: "1.0.3" } }),
+			JSON.stringify({ name, version: "1.0.3", mars: { version: "1.0.3" } }),
 		);
 		const installedPath = path.join(pluginsNodeModules, name);
 		await fs.rm(installedPath, { recursive: true });

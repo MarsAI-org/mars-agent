@@ -5,7 +5,7 @@ import { taskSubprocessRenderer } from "@marsai-org/tui/tools/subprocess";
  * Task tool - Delegate tasks to specialized agents.
  *
  * Discovers agent definitions from:
- *   - Bundled agents (shipped with omp-coding-agent)
+ *   - Bundled agents (shipped with mars-coding-agent)
  *   - ~/.mars/agent/agents/*.md (user-level)
  *   - .mars/agents/*.md (project-level)
  *

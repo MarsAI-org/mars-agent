@@ -105,7 +105,7 @@ describe("one-shot CLI command settlement", () => {
 	}, 30_000);
 
 	it("keeps a completed command's exit 0 and output", async () => {
-		using tempDir = TempDir.createSync("@omp-cli-settled-");
+		using tempDir = TempDir.createSync("@mars-cli-settled-");
 		const run = await runConfigSet(tempDir, "real");
 
 		expect(run.exitCode, run.stderr).toBe(0);
@@ -115,7 +115,7 @@ describe("one-shot CLI command settlement", () => {
 	}, 30_000);
 
 	it("keeps exit 0 when the loop resumes after a premature beforeExit and the command completes", async () => {
-		using tempDir = TempDir.createSync("@omp-cli-resumed-");
+		using tempDir = TempDir.createSync("@mars-cli-resumed-");
 		const run = await runConfigSet(tempDir, "resume-after-drain");
 
 		expect(run.exitCode, run.stderr).toBe(0);
@@ -125,7 +125,7 @@ describe("one-shot CLI command settlement", () => {
 	}, 30_000);
 
 	it("keeps an explicit exit's code when the loop resumed after a premature beforeExit", async () => {
-		using tempDir = TempDir.createSync("@omp-cli-exited-");
+		using tempDir = TempDir.createSync("@mars-cli-exited-");
 		const run = await runConfigSet(tempDir, "exit-after-drain");
 
 		expect(run.exitCode, run.stderr).toBe(0);

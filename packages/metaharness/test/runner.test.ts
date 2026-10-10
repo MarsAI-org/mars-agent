@@ -73,8 +73,8 @@ describe("install modes", () => {
 			nodeModules: ["node_modules"],
 		});
 		expect(env.MARS_BENCH_INSTALL).toBe("source");
-		expect(env.MARS_BENCH_SOURCE_DIR).toBe("/opt/omp/src");
-		expect(env.MARS_BENCH_SOURCE_BUN).toBe("/opt/omp/bin/bun");
+		expect(env.MARS_BENCH_SOURCE_DIR).toBe("/opt/mars/src");
+		expect(env.MARS_BENCH_SOURCE_BUN).toBe("/opt/mars/bin/bun");
 		expect(env.MARS_BENCH_SOURCE_ARCH).toBe("arm64");
 	});
 

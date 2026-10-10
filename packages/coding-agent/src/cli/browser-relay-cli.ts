@@ -24,7 +24,7 @@ export interface BrowserRelayCommandArgs {
 	token?: string;
 	/** Install target directory; defaults to ~/.mars/browser-relay/extension. */
 	dir?: string;
-	/** Gather tabs the agent actively drives into an 'omp' Chrome tab group (default true). */
+	/** Gather tabs the agent actively drives into an 'mars' Chrome tab group (default true). */
 	group?: boolean;
 	verbose?: boolean;
 }

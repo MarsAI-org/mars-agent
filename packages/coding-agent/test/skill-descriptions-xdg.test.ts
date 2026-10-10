@@ -22,7 +22,7 @@ describe.skipIf(process.platform !== "linux" && process.platform !== "darwin")(
 			originalAgentDir = getAgentDir();
 			originalEnv = {};
 			for (const key of ENV_KEYS) originalEnv[key] = process.env[key];
-			tempRoot = path.join(os.tmpdir(), "omp-skill-descriptions-xdg", Snowflake.next());
+			tempRoot = path.join(os.tmpdir(), "mars-skill-descriptions-xdg", Snowflake.next());
 			configDir = `.mars-skill-xdg-${Snowflake.next()}`;
 			agentDir = path.join(os.homedir(), configDir, "agent");
 			xdgData = path.join(tempRoot, "data");
@@ -46,7 +46,7 @@ describe.skipIf(process.platform !== "linux" && process.platform !== "darwin")(
 		});
 
 		it("adopts a legacy database, including uncheckpointed WAL rows, when XDG relocates it", () => {
-			// An older omp still holds the legacy db open: its latest row lives only in the WAL.
+			// An older mars still holds the legacy db open: its latest row lives only in the WAL.
 			using legacy = SkillDescriptionStore.open(path.join(agentDir, "skill-descriptions.db"));
 			legacy.put("k", "compressed description");
 

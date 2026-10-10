@@ -1084,7 +1084,7 @@ jobs:
          - name: Generate checksums
            run: |
               bun run ci:release:checksums SHA256SUMS.txt \
-                packages/coding-agent/binaries/omp-* \
+                packages/coding-agent/binaries/mars-* \
                 packages/browser-relay/dist/mars-browser-relay-extension.zip \
                 LICENSE \
                 THIRD-PARTY-NOTICES.txt
@@ -1094,7 +1094,7 @@ jobs:
               tag_name: ${{ needs.release_metadata.outputs.release-tag }}
               prerelease: ${{ needs.release_metadata.outputs.channel == 'canary' }}
               files: |
-                 packages/coding-agent/binaries/omp-*
+                 packages/coding-agent/binaries/mars-*
                  packages/browser-relay/dist/mars-browser-relay-extension.zip
                  LICENSE
                  THIRD-PARTY-NOTICES.txt
