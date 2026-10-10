@@ -1,6 +1,6 @@
 import { type ReactNode, useId } from "react";
 
-/** The omp π mark (same glyph as the OAuth page), filled with the brand gradient. */
+/** The mars π mark (same glyph as the OAuth page), filled with the brand gradient. */
 export function OmpMark({ size = 22 }: { size?: number }): ReactNode {
 	const gradient = `omp-mark-${useId().replace(/:/g, "")}`;
 	return (

@@ -62,18 +62,18 @@ export default class Ttsr extends Command {
 	};
 
 	static examples = [
-		"omp ttsr list",
-		"omp ttsr test 'const x: any = 1'",
-		"omp ttsr test src/foo.ts",
-		"omp ttsr test --file src/foo.ts",
-		"omp ttsr test --file src/foo.ts --source text",
-		"omp ttsr test --rule .mars/rules/no-any.md --source tool --path src/foo.ts 'const x: any = 1'",
-		"omp ttsr test --agent scout 'const x: any = 1'",
-		"echo 'Box::leak(&mut v)' | omp ttsr test --file - --path src/lib.rs",
-		"omp ttsr test --source tool --tool edit --path src/foo.ts 'const x: any = 1'",
-		"omp ttsr scan",
-		"omp ttsr scan src/",
-		"omp ttsr scan -r .mars/rules/no-any.md src/",
+		"mars ttsr list",
+		"mars ttsr test 'const x: any = 1'",
+		"mars ttsr test src/foo.ts",
+		"mars ttsr test --file src/foo.ts",
+		"mars ttsr test --file src/foo.ts --source text",
+		"mars ttsr test --rule .mars/rules/no-any.md --source tool --path src/foo.ts 'const x: any = 1'",
+		"mars ttsr test --agent scout 'const x: any = 1'",
+		"echo 'Box::leak(&mut v)' | mars ttsr test --file - --path src/lib.rs",
+		"mars ttsr test --source tool --tool edit --path src/foo.ts 'const x: any = 1'",
+		"mars ttsr scan",
+		"mars ttsr scan src/",
+		"mars ttsr scan -r .mars/rules/no-any.md src/",
 	];
 
 	async run(): Promise<void> {

@@ -130,6 +130,7 @@ export async function initDb(): Promise<Database> {
 
 	db = new Database(getStatsDbPath());
 	// Install the busy handler BEFORE any lock-taking statement. See
+	// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 	// https://github.com/can1357/oh-my-pi/issues/2421.
 	db.run("PRAGMA busy_timeout = 5000");
 	db.run("PRAGMA journal_mode = WAL");
@@ -835,7 +836,7 @@ export function applySessionParseResults(sessions: ParsedSession[]): {
 
 /**
  * SQLite `PRAGMA data_version` of the open connection, or null before
- * {@link initDb}. It moves only when another connection (another omp process)
+ * {@link initDb}. It moves only when another connection (another mars process)
  * commits, so a caller can detect foreign writes without scanning.
  */
 export function getDataVersion(): number | null {

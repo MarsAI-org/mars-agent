@@ -125,12 +125,12 @@ export function getAddonFilenames({ tag, arch, variant }) {
  * Decide whether the loader should mirror the package's `native/<filename>.node`
  * into the per-version cache directory (`~/.mars/natives/<version>/`) before loading.
  *
- * Windows-only safety net for `bun install -g` updates: when a previous `omp`
+ * Windows-only safety net for `bun install -g` updates: when a previous `mars`
  * process is running, bun cannot overwrite the locked `.node` inside
  * `node_modules/@marsai-org/natives/native/`, leaving an old binary next to a
  * newer `index.js` and producing `<sym> is not a function` crashes on the next
  * launch. Staging into the version-pinned cache:
- *   1. Gives every package version its own filesystem path, so concurrent omp
+ *   1. Gives every package version its own filesystem path, so concurrent mars
  *      processes never collide on the same file.
  *   2. Makes the running process keep its handle on the cache copy, freeing bun
  *      to overwrite the `node_modules` copy on subsequent updates.
@@ -724,9 +724,9 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	if (residentVersion && diskHasExpectedStamp) {
 		throw new Error(
 			`Loaded ${candidate}, which reports @marsai-org/natives@${residentVersion}, but this loader is ` +
-				`@${ctx.packageVersion}. omp was upgraded to ${ctx.packageVersion} while this session was running; ` +
+				`@${ctx.packageVersion}. mars was upgraded to ${ctx.packageVersion} while this session was running; ` +
 				`the ${residentVersion} addon is still resident in this process. Disk is already consistent — ` +
-				`restart omp to pick up ${ctx.packageVersion} (reinstalling changes nothing).`,
+				`restart mars to pick up ${ctx.packageVersion} (reinstalling changes nothing).`,
 		);
 	}
 	throw new Error(
@@ -877,7 +877,7 @@ export function initLoaderContext(overrides = {}) {
 	const versionedDir = path.join(nativesDir, packageVersion);
 	const userDataDir =
 		platform === "win32"
-			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "omp")
+			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "mars")
 			: path.join(os.homedir(), ".local", "bin");
 
 	const isCompiledBinary =

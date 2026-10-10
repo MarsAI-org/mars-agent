@@ -196,6 +196,7 @@ export const opencodeGoUsageProvider: UsageProvider = {
  * enabled, and the usage endpoint does not report that flag — blocking on it
  * would bench a working key until the subscription anniversary. Hard monthly
  * failures still rotate credentials via the `401 Insufficient balance`
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * usage-limit classification ([#3169](https://github.com/can1357/oh-my-pi/issues/3169)).
  */
 export const opencodeGoRankingStrategy: CredentialRankingStrategy = {

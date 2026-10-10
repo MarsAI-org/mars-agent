@@ -9,6 +9,7 @@
  * `/oauth/token`. When the overrides are absent, the bundled defaults remain
  * in effect.
  *
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * @see https://github.com/can1357/oh-my-pi/issues/2424
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";

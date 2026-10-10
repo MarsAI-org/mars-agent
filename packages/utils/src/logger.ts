@@ -1,12 +1,12 @@
 /**
- * Centralized logger for omp.
+ * Centralized logger for mars.
  *
  * Default: rotating `~/.mars/logs/mars.<DATE>.<PID>.log`, no console output (writing
  * to stdout/stderr would corrupt the TUI). Long-running headless services
  * (the auth broker, etc.) call {@link setTransports} to swap in a console
  * transport so a process supervisor (pm2, journald, k8s) captures the logs.
  *
- * Each entry includes `process.pid` so concurrent omp instances stay
+ * Each entry includes `process.pid` so concurrent mars instances stay
  * traceable. The file is created on the first record written. Records are
  * batched — one write per second or per 64 KiB — while `warn`/`error` records
  * are written at once together with everything buffered before them; exit,

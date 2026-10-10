@@ -33,7 +33,7 @@ describe("estimateImageTokens", () => {
 });
 
 describe("image-heavy remote compaction sizing", () => {
-	// 1568px is omp's default resize cap, so this is what screenshots look like on the wire.
+	// 1568px is mars's default resize cap, so this is what screenshots look like on the wire.
 	const screenshot = pngWithSize(1568, 882);
 	const imageCount = 25;
 

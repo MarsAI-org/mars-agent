@@ -29,7 +29,7 @@ function setHeader(headers: Record<string, string>, name: string, value: string)
 }
 
 /**
- * Project omp's identity and authoritative conversation id onto the headers
+ * Project mars's identity and authoritative conversation id onto the headers
  * understood by the active inference protocol and host.
  */
 export function applyInferenceHeaders(headers: Record<string, string>, options: InferenceHeaderOptions): void {
@@ -61,7 +61,7 @@ function isHeaderRecord(headers: RequestInit["headers"]): headers is Record<stri
 }
 
 /**
- * Return `init` with omp's process-wide inference User-Agent default applied.
+ * Return `init` with mars's process-wide inference User-Agent default applied.
  * Any explicit header, including Anthropic and Codex OAuth fingerprints,
  * remains authoritative. Called per request by `transportFetch`.
  *

@@ -31,6 +31,7 @@ function baseContext(): Context {
 	};
 }
 
+// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 // Repro for https://github.com/can1357/oh-my-pi/issues/911
 //
 // Mistral Medium 3.5 (mistral-medium-2604) streams `delta.content` as an array of typed

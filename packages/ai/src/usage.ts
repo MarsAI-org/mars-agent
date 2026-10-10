@@ -77,6 +77,7 @@ export interface UsageLimit {
  * Populated when the provider's listing endpoint returns individual credit
  * metadata (e.g. OpenAI Codex credits or Claude Cedar grants). Callers that
  * only need the count can ignore this; display layers use `expiresAt` to show
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * when banked resets expire ([#3339](https://github.com/can1357/oh-my-pi/issues/3339)).
  */
 export interface UsageResetCreditDetail {
@@ -237,7 +238,7 @@ export interface ClientUsageReport {
 	installId: string;
 	/** Human-readable machine name for display surfaces. */
 	hostname?: string;
-	/** Application label for the process that burned the tokens (e.g. `omp`, `robomp`). */
+	/** Application label for the process that burned the tokens (e.g. `mars`, `robomp`). */
 	app?: string;
 	entries: ObservedUsageEntry[];
 }

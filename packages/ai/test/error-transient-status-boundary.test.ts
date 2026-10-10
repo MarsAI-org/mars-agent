@@ -3,7 +3,7 @@ import * as AIError from "@marsai-org/ai/error";
 
 /**
  * The transient classifier matches bare HTTP status codes in error text. Those
- * digits must be a token of their own: omp appends its own
+ * digits must be a token of their own: mars appends its own
  * `raw-http-request=<...>/<random-id>.json` pointer to provider errors, and a
  * random id containing `503` used to make a hard 400 look retryable — which
  * turned a deterministic oversized-prompt rejection into ten identical retries.

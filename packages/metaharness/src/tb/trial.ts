@@ -17,8 +17,8 @@ const EMPTY_USAGE: TrialUsage = {
 };
 
 /**
- * omp's daemon broker stops the services the agent started (bash `name` + `ready`) once its last
- * client has been gone for `MARS_DAEMON_IDLE_GRACE_MS` (default 3 s). The verifier runs after omp
+ * mars's daemon broker stops the services the agent started (bash `name` + `ready`) once its last
+ * client has been gone for `MARS_DAEMON_IDLE_GRACE_MS` (default 3 s). The verifier runs after mars
  * exits, in the same guest, and grades those services, so keep them alive until the guest is
  * removed. An explicit `--env` value wins.
  */

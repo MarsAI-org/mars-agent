@@ -1319,6 +1319,7 @@ function parsedArrayMatchesArrayBranch(schema: Record<string, unknown>, value: u
  * against the schema's array branch. Conservative: array-shaped strings like
  * `"[1]"` stay on the string branch when the array branch is `string[]`.
  *
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * See https://github.com/can1357/oh-my-pi/issues/1788.
  */
 function normalizeStringEncodedArrayUnions(schema: unknown, value: unknown): { value: unknown; changed: boolean } {

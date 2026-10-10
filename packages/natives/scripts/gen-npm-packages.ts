@@ -98,6 +98,7 @@ export function buildLeafManifest({ tag, os, cpu, files, version }: BuildLeafMan
 		main: `./${main}`,
 		files: ["*.node", "README.md", ...NATIVE_LEAF_LEGAL_FILES],
 		license: "MIT",
+		// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 		repository: {
 			type: "git",
 			url: "git+https://github.com/can1357/oh-my-pi.git",
