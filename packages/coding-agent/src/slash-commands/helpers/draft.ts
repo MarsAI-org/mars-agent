@@ -1,6 +1,6 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { shiftImageMarkers } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import type { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
+import type { ImageContent } from "@marsai-org/ai";
+import { shiftImageMarkers } from "@marsai-org/tui/prompt/composer-attachments";
+import type { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
 import type { TuiSlashCommandRuntime } from "../types";
 
 /** Clear only text still owned by this submission, never a newer detached draft. */

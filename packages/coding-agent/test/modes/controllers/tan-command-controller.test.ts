@@ -1,19 +1,19 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import type { AsyncJobRegisterOptions } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { PreparedExtension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { resolveLocalRoot } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
-import { TanCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/tan-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, Model } from "@marsai-org/ai";
+import type { AsyncJobRegisterOptions } from "@marsai-org/coding-agent/async/job-manager";
+import type { EffectiveExtensionRoots } from "@marsai-org/coding-agent/capability/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { PreparedExtension } from "@marsai-org/coding-agent/extensibility/extensions";
+import { resolveLocalRoot } from "@marsai-org/coding-agent/internal-urls/local-protocol";
+import { TanCommandController } from "@marsai-org/coding-agent/modes/controllers/tan-command-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentRegistry, MAIN_AGENT_ID } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
 interface CapturedJobRunContext {
 	jobId: string;
@@ -107,7 +107,7 @@ function createContext(overrides?: {
 	effectiveExtensionRoots?: unknown;
 	extensionPaths?: unknown;
 }) {
-	const tempDir = TempDir.createSync("@omp-tan-controller-");
+	const tempDir = TempDir.createSync("@mars-tan-controller-");
 	const parentFile = path.join(tempDir.path(), "parent.jsonl");
 	// The clone nests inside the parent's artifact directory, like a subagent.
 	const cloneFile = path.join(parentFile.slice(0, -6), "clone.jsonl");

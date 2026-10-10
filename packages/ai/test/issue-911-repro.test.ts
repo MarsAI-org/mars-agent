@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function createSseResponse(events: unknown[]): Response {
 	const payload = `${events
@@ -31,6 +31,7 @@ function baseContext(): Context {
 	};
 }
 
+// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 // Repro for https://github.com/can1357/oh-my-pi/issues/911
 //
 // Mistral Medium 3.5 (mistral-medium-2604) streams `delta.content` as an array of typed

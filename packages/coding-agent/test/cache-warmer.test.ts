@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
-import type { AssistantMessage, AssistantMessageEvent, SimpleStreamOptions, Usage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import type { AssistantMessage, AssistantMessageEvent, SimpleStreamOptions, Usage } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { Model } from "@marsai-org/catalog/types";
 import {
 	CacheWarmer,
 	type CacheWarmerDeps,

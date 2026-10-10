@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from "bun:test";
-import { type Api, Effort, type Model, type ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { logger } from "@oh-my-pi/pi-utils";
-import { parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { type Api, Effort, type Model, type ModelSpec } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models";
+import { logger } from "@marsai-org/utils";
+import { parseModelString } from "@marsai-org/tui/overlays/model-selector";
 import {
 	expandRoleAlias,
 	extractExplicitThinkingSelector,
@@ -29,9 +29,9 @@ import {
 	resolveRoleChain,
 	rolePriorityDefaults,
 	resolveProviderModelReference,
-} from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "@oh-my-pi/pi-coding-agent/config/model-roles";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@marsai-org/coding-agent/config/model-resolver";
+import { DEFAULT_MODEL_ROLE_ALIAS, LEGACY_MODEL_ROLE_ALIAS_PREFIX } from "@marsai-org/coding-agent/config/model-roles";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 
 // Mock models for testing
 const mockModels: Model<"anthropic-messages">[] = [

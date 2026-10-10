@@ -21,12 +21,12 @@ import {
 	type ThinkingBudgets,
 	type ToolChoice,
 	type ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import type { HarmonyAuditEvent } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai";
+import type { Dialect } from "@marsai-org/ai/dialect";
+import type { HarmonyAuditEvent } from "@marsai-org/ai/utils/harmony-leak";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { logger } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import {
 	abortReasonText,
 	agentLoop,

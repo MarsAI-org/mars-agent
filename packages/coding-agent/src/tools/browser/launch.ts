@@ -1,16 +1,8 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import {
-	$which,
-	getPuppeteerDir,
-	isRecord,
-	logger,
-	removeWithRetries,
-	toError,
-	untilAborted,
-} from "@oh-my-pi/pi-utils";
-import type * as BrowsersNs from "@oh-my-pi/pi-utils/browsers";
+import { $which, getPuppeteerDir, isRecord, logger, removeWithRetries, toError, untilAborted } from "@marsai-org/utils";
+import type * as BrowsersNs from "@marsai-org/utils/browsers";
 import type {
 	Browser,
 	CDPSession,
@@ -36,7 +28,7 @@ import stealthPluginsScript from "../puppeteer/10_stealth_plugins.txt" with { ty
 import stealthHardwareScript from "../puppeteer/11_stealth_hardware.txt" with { type: "text" };
 import stealthCodecsScript from "../puppeteer/12_stealth_codecs.txt" with { type: "text" };
 import stealthWorkerScript from "../puppeteer/13_stealth_worker.txt" with { type: "text" };
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { withDownload } from "../../downloads/activity";
 
 export const DEFAULT_VIEWPORT = { width: 1365, height: 768, deviceScaleFactor: 1.25 };
@@ -221,7 +213,7 @@ export function loadedNetworkConditions(): Readonly<Record<string, NetworkCondit
 let browsersModule: typeof BrowsersNs | undefined;
 async function loadBrowsers(): Promise<typeof BrowsersNs> {
 	if (!browsersModule) {
-		browsersModule = await import("@oh-my-pi/pi-utils/browsers");
+		browsersModule = await import("@marsai-org/utils/browsers");
 	}
 	return browsersModule;
 }
@@ -239,7 +231,7 @@ async function loadBrowsers(): Promise<typeof BrowsersNs> {
  * system Chrome is used on macOS only when Chrome for Testing cannot be
  * obtained. Other platforms keep the download-avoiding system Chrome
  * preference and fall back to Chrome for Testing. The managed browser is
- * cached under ~/.omp/puppeteer (getPuppeteerDir). Returns undefined when
+ * cached under ~/.mars/puppeteer (getPuppeteerDir). Returns undefined when
  * platform detection fails (puppeteer default resolution takes over).
  * Exported so real-browser tests can probe launchability and skip on hosts
  * missing Chrome's system libraries.
@@ -486,9 +478,9 @@ export interface LaunchHeadlessOptions extends HeadlessLaunchFeatures {
 export interface LaunchHeadlessResult {
 	browser: Browser;
 	/**
-	 * OMP-owned temporary Chromium profile directory to remove after the browser
+	 * Mars-owned temporary Chromium profile directory to remove after the browser
 	 * process tree exits, or `undefined` when the caller supplied its own
-	 * `--user-data-dir` (which OMP must not delete).
+	 * `--user-data-dir` (which Mars must not delete).
 	 */
 	userDataDir?: string;
 }
@@ -555,7 +547,7 @@ export async function launchHeadlessBrowser(opts: LaunchHeadlessOptions): Promis
 	// (issue #7058). `removeUserDataDir` cleans it up on our terms instead.
 	let userDataDir: string | undefined;
 	if (!launchArgs.some(arg => arg.startsWith("--user-data-dir"))) {
-		userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "omp-chrome-profile-"));
+		userDataDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "mars-chrome-profile-"));
 		launchArgs.push(`--user-data-dir=${userDataDir}`);
 	}
 	try {
@@ -613,7 +605,7 @@ export async function resolveSharedBrowserLaunchSpec(opts: {
 }
 
 /**
- * Remove an OMP-owned headless Chromium profile directory, tolerating the brief
+ * Remove an Mars-owned headless Chromium profile directory, tolerating the brief
  * window on Windows in which Chromium (or an orphaned browser subprocess) still
  * holds the profile lock. The shared temp remover centralizes retry handling
  * for EBUSY/EPERM/ENOTEMPTY; if the directory is still busy afterwards we warn

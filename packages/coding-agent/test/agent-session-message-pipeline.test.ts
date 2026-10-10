@@ -5,7 +5,7 @@ import {
 	type AgentTool,
 	AppendOnlyContextManager,
 	type StreamFn,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	type Api,
 	type Context,
@@ -18,33 +18,33 @@ import {
 	type SimpleStreamOptions,
 	type TextContent,
 	type ToolCall,
-} from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+} from "@marsai-org/ai";
+import { streamSimple } from "@marsai-org/ai/stream";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
 import {
 	ExtensionRunner,
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { RegisteredToolAdapter } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import * as memoryBackend from "@oh-my-pi/pi-coding-agent/memory-backend";
-import type { MemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { type MnemopiSessionState, setMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { obfuscateProviderContext, SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { RegisteredToolAdapter } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import { initializeExtensions } from "@marsai-org/coding-agent/modes/runtime-init";
+import * as memoryBackend from "@marsai-org/coding-agent/memory-backend";
+import type { MemoryBackend } from "@marsai-org/coding-agent/memory-backend/types";
+import { type MnemopiSessionState, setMnemopiSessionState } from "@marsai-org/coding-agent/mnemopi/state";
+import { createAgentSession, type ExtensionContext, type ExtensionFactory } from "@marsai-org/coding-agent/sdk";
+import { obfuscateProviderContext, SecretObfuscator } from "@marsai-org/coding-agent/secrets";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, wrapSteeringForModel } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 function createAgent(): Agent {

@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import { logger, prompt, untilAborted } from "@marsai-org/utils";
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import { ensureBankExists } from "../hindsight/bank";
 import reflectDescription from "../prompts/tools/reflect.md" with { type: "text" };

@@ -1,13 +1,13 @@
 import * as fs from "node:fs";
 import { scheduler } from "node:timers/promises";
 import * as tls from "node:tls";
-import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { hostMatchesUrl, isVertexRawPredictUrl } from "@oh-my-pi/pi-catalog/hosts";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { mapEffortToAnthropicAdaptiveEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { isAnthropicOAuthToken } from "@oh-my-pi/pi-catalog/utils";
-import { parseGitHubCopilotApiKey } from "@oh-my-pi/pi-catalog/wire/github-copilot";
+import { isAnthropicSigningProxyUrl, isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import { hostMatchesUrl, isVertexRawPredictUrl } from "@marsai-org/catalog/hosts";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { mapEffortToAnthropicAdaptiveEffort } from "@marsai-org/catalog/model-thinking";
+import { calculateCost, getBundledModel } from "@marsai-org/catalog/models";
+import { isAnthropicOAuthToken } from "@marsai-org/catalog/utils";
+import { parseGitHubCopilotApiKey } from "@marsai-org/catalog/wire/github-copilot";
 import {
 	$env,
 	isEnoent,
@@ -15,7 +15,7 @@ import {
 	parseJsonWithRepair,
 	parseStreamingJsonThrottled,
 	readSseEvents,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
@@ -5139,7 +5139,7 @@ function toWellFormedDeep(value: unknown): unknown {
 }
 
 /**
- * Serialize omp {@link Message}s to Anthropic wire messages.
+ * Serialize mars {@link Message}s to Anthropic wire messages.
  *
  * `opts.serverSideFallbackEnabled` — when the CURRENT request itself
  * opts into the server-side-fallback beta chain. Only then may a persisted

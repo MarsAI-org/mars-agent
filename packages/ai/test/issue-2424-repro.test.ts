@@ -9,12 +9,13 @@
  * `/oauth/token`. When the overrides are absent, the bundled defaults remain
  * in effect.
  *
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * @see https://github.com/can1357/oh-my-pi/issues/2424
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@marsai-org/ai/registry/oauth/types";
+import type { FetchImpl } from "@marsai-org/ai/types";
 
 const BUNDLED_CLIENT_ID = "da4edff2e6ebd2bc3208611e2768bc1c1dd7be791dc5ff26ca34ca9ee44f7d4b";
 const provider = getProviderDefinition("gitlab-duo");

@@ -1,6 +1,6 @@
-import { type NarrowContext, type } from "@oh-my-pi/omptype";
-import { MODEL_KINDS, RUNNER_API_KINDS } from "@oh-my-pi/pi-catalog/types";
-import { once } from "@oh-my-pi/pi-utils";
+import { type NarrowContext, type } from "@marsai-org/omptype";
+import { MODEL_KINDS, RUNNER_API_KINDS } from "@marsai-org/catalog/types";
+import { once } from "@marsai-org/utils";
 
 function validateMaxContextWindow(
 	value: { maxContextWindow?: number; contextWindow?: number },
@@ -367,10 +367,10 @@ export const getModelsConfigSchemaBundle = once(() => {
 		 */
 		"requestMetadata?": { "[string]": "string" },
 		/**
-		 * Streaming transport override. When set to `"pi-native"`, omp dispatches
+		 * Streaming transport override. When set to `"pi-native"`, mars dispatches
 		 * every model under this provider via the auth-gateway's
 		 * `POST /v1/pi/stream` endpoint instead of the per-provider SDK. The
-		 * provider's `baseUrl` must point at a compatible `omp auth-gateway`
+		 * provider's `baseUrl` must point at a compatible `mars auth-gateway`
 		 * and `apiKey` must carry the gateway bearer.
 		 */
 		"transport?": '"pi-native"',

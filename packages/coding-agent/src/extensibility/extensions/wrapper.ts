@@ -8,10 +8,10 @@ import {
 	type AgentToolUpdateCallback,
 	isNonBlankContext,
 	type ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@oh-my-pi/pi-ai";
-import { sanitizeText, untilAborted } from "@oh-my-pi/pi-utils";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/agent-core";
+import type { ComputerSafetyCheck, ImageContent, Static, TextContent, TSchema } from "@marsai-org/ai";
+import { sanitizeText, untilAborted } from "@marsai-org/utils";
+import type { Theme } from "@marsai-org/tui/theme";
 import {
 	denyError,
 	formatApprovalPrompt,
@@ -27,10 +27,10 @@ import type { ExtensionRunner } from "./runner";
 import type { ExtensionAgentIdentity, RegisteredTool, ToolCallEventResult } from "./types";
 
 /**
- * Second `renderCall` argument that satisfies both the omp and the upstream-pi
+ * Second `renderCall` argument that satisfies both the mars and the upstream-pi
  * renderer contracts.
  *
- * omp invokes renderers as `renderCall(args, options, theme)` (see
+ * mars invokes renderers as `renderCall(args, options, theme)` (see
  * `packages/tui/src/tools/renderer.ts`), while pi-era renderers — including
  * every third-party plugin written against pi's published example — are
  * declared `renderCall(args, theme, context)`. Both shapes take three

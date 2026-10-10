@@ -6,7 +6,7 @@
  * Enter flips into the classic full per-account report, scrollable in place.
  */
 import * as os from "node:os";
-import { resolveUsedFraction, type UsageLimit, type UsageReport } from "@oh-my-pi/pi-ai";
+import { resolveUsedFraction, type UsageLimit, type UsageReport } from "@marsai-org/ai";
 import {
 	type Component,
 	matchesKey,
@@ -17,7 +17,7 @@ import {
 	visibleWidth,
 	wrapTextWithAnsi,
 } from "../index";
-import { colorLuma, formatDuration, hexToRgb, rgbToHex, sanitizeText } from "@oh-my-pi/pi-utils";
+import { colorLuma, formatDuration, hexToRgb, rgbToHex, sanitizeText } from "@marsai-org/utils";
 import { formatProviderName } from "../chrome/format";
 import {
 	collapseSharedUsageReports,
@@ -40,7 +40,7 @@ import {
 import { OverlayPanel, PanelDivider, PanelRows } from "../chrome/overlay-box";
 import { formatKeyHint } from "../app-keybindings";
 import { editorKey, editorKeys } from "../chrome/keybinding-hints";
-import type { TspSpan, TspTableColumn, TspText, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspTableColumn, TspText, TspTone } from "@marsai-org/wire";
 import { col, elapsed, node, span, text } from "../native/describe";
 import { type DescribeContext, leafKey, type NativeChild, type NativeNode, type NativeUiEvent } from "../native/node";
 import { actionBar, actionButton } from "../native/overlay";
@@ -375,7 +375,7 @@ export function buildHeatmapLayout(points: DailyActivityPoint[], weeks: number, 
 const NATIVE_HEATMAP_WEEKS = 53;
 /** Span tokens for heatmap intensity levels 1..4 (the `table` fallback). */
 const HEAT_LEVEL_TOKENS = ["dim", "accent dim", "accent", "accent strong"];
-/** Heatmap row labels, Monday first like omp's grid: M/W/F only. */
+/** Heatmap row labels, Monday first like Mars's grid: M/W/F only. */
 const HEATMAP_ROW_LABELS = ["M", "", "W", "", "F", "", ""];
 const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

@@ -13,13 +13,13 @@ import {
 	type Message,
 	type Model,
 	retryTransientCompletion,
-} from "@oh-my-pi/pi-ai";
-import { StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { SPINNER_FRAMES } from "@oh-my-pi/pi-tui/theme/symbols";
-import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { StreamMarkupHealing } from "@marsai-org/ai/utils/stream-markup-healing";
+import { writeTerminalSequence } from "@marsai-org/tui";
+import { isNativeRendering, onNativeRenderingChange } from "@marsai-org/tui/native/state";
+import { theme } from "@marsai-org/tui/theme";
+import { SPINNER_FRAMES } from "@marsai-org/tui/theme/symbols";
+import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 
 import { roleCandidatePool } from "../config/model-roles";
@@ -41,7 +41,7 @@ const TITLE_MARKER_INSTRUCTION = prompt.render(titleMarkerInstruction);
 // OS UI font, which has no nerd-font PUA coverage.
 const DEFAULT_TERMINAL_TITLE = "π";
 /** The native tab title without a session name. */
-const NATIVE_TERMINAL_TITLE = "omp";
+const NATIVE_TERMINAL_TITLE = "mars";
 const TERMINAL_TITLE_CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/g;
 
 interface WindowsConsoleTitleApi {
@@ -688,8 +688,8 @@ let reportedCwd: string | undefined;
  * Name the live session's source. Every session title update (start, new
  * session, resume, cwd switch) and {@link reportTernSession} re-read it and, in
  * Tern, report what changed: the file, so Tern's daemon can relaunch
- * `omp --resume <file>` after it restarts, and the directory, which Tern names
- * in omp's composer bar.
+ * `mars --resume <file>` after it restarts, and the directory, which Tern names
+ * in mars's composer bar.
  */
 export function setTerminalSessionSource(source: TerminalSessionSource | undefined): void {
 	sessionSource = source;
@@ -859,7 +859,7 @@ export function buildTerminalTitleWithState(
 }
 
 /**
- * The tab title while a TSP terminal renders: the session name (`omp` before
+ * The tab title while a TSP terminal renders: the session name (`mars` before
  * there is one) and the branch's pull request. The terminal shows run state
  * itself, so there is no brand or state separator.
  */

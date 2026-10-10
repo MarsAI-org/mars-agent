@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { ToolSession } from "../tools";
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditMode } from "@marsai-org/tui/tools/edit";
 
 import { cfgEditBlackboxEnabled } from "./settings";
 

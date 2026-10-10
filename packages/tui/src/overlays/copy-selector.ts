@@ -14,8 +14,8 @@
  * A URL that wrapped across terminal rows therefore needs neither a careful
  * mouse selection nor cmd-click.
  */
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { TspPickerColumn, TspPickerItem, TspPickerProps, TspText } from "@oh-my-pi/pi-wire";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { TspPickerColumn, TspPickerItem, TspPickerProps, TspText } from "@marsai-org/wire";
 import { type Component, matchesKey, routeSgrMouseInput, type TUI, truncateToWidth, visibleWidth } from "../index";
 import type { MessageRenderer } from "../chat/extension-types";
 import {
@@ -212,7 +212,7 @@ class TimelineItems {
 	}
 }
 
-/** Lines of a copy block shown in the native preview; longer blocks copy through omp. */
+/** Lines of a copy block shown in the native preview; longer blocks copy through Mars. */
 const PREVIEW_BLOCK_LINES = 400;
 
 /** A block's preview caption: `rust · 12 lines`, `quote`, `link · docs`. */
@@ -238,7 +238,7 @@ function blockBody(block: CopyBlock): NativeNode {
 
 /**
  * One borderless preview section of the copy picker. A click copies it in the
- * terminal (`copy`) when the preview holds the whole text, else asks omp to
+ * terminal (`copy`) when the preview holds the whole text, else asks Mars to
  * (`pick`); link sections also offer `open`. The focused block's section takes
  * the `omp.picker.block.focused` role and the accent tone.
  */
@@ -604,7 +604,7 @@ export class CopySelectorComponent implements Component {
 			return;
 		}
 		if (event.type === "action" && event.act === "pick") {
-			// A preview section too long to copy in the terminal: omp copies the full text.
+			// A preview section too long to copy in the terminal: Mars copies the full text.
 			this.#pickSection(event.key);
 			return;
 		}

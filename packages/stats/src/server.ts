@@ -1,7 +1,7 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent, logger } from "@oh-my-pi/pi-utils";
+import { isEnoent, logger } from "@marsai-org/utils";
 import { $, type Server } from "bun";
 import {
 	getCostDashboardStats,
@@ -73,7 +73,7 @@ async function getEmbeddedClientFiles(): Promise<Map<string, Blob>> {
 	const archive = decodeEmbeddedClientArchive(embeddedClientArchiveTxt);
 	if (!archive) {
 		throw new Error(
-			"Embedded stats client bundle missing. Rebuild the omp binary or npm bundle with embedded stats assets.",
+			"Embedded stats client bundle missing. Rebuild the mars binary or npm bundle with embedded stats assets.",
 		);
 	}
 
@@ -375,7 +375,7 @@ function createDashboardServer(port: number, hostname: string): Server<undefined
 			const url = new URL(req.url);
 			const path = url.pathname;
 
-			// The identity header lets another omp session's reuse probe positively
+			// The identity header lets another mars session's reuse probe positively
 			// recognize this dashboard without allowing cross-origin API reads.
 			const dashboardHeaders: Record<string, string> = {
 				[STATS_DASHBOARD_HEADER]: STATS_DASHBOARD_SECURITY_VERSION,
@@ -475,7 +475,7 @@ function liveEventStream(headers: Record<string, string>, signal: AbortSignal): 
 }
 
 /**
- * Start the HTTP server, reusing a live dashboard or reclaiming a stale omp listener.
+ * Start the HTTP server, reusing a live dashboard or reclaiming a stale mars listener.
  */
 export interface StatsServerHandle {
 	hostname: string;

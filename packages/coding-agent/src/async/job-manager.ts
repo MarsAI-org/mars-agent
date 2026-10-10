@@ -1,7 +1,7 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
-import type { StructuredSubagentOutput } from "@oh-my-pi/pi-tui/tools/task";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+import type { ImageContent } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
+import type { StructuredSubagentOutput } from "@marsai-org/tui/tools/task";
+import type { OutputMeta } from "@marsai-org/tui/tools/output-meta";
 
 const DELIVERY_RETRY_BASE_MS = 500;
 const DELIVERY_RETRY_MAX_MS = 30_000;

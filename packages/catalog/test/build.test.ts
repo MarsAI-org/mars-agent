@@ -3,19 +3,19 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { readModelCache, writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels, resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
+import { buildDiscoveredModel, buildModel } from "@marsai-org/catalog/build";
+import { isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { Effort } from "@marsai-org/catalog/effort";
+import { readModelCache, writeModelCache } from "@marsai-org/catalog/model-cache";
+import { fingerprintStaticModels, resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
 import {
 	deepinfraModelManagerOptions,
 	openrouterModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { Api, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models/openai-compat";
+import type { Api, Model, ModelSpec } from "@marsai-org/catalog/types";
 
 function completionsSpec(overrides: Partial<ModelSpec<"openai-completions">> = {}): ModelSpec<"openai-completions"> {
 	return {

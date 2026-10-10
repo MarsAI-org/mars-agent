@@ -13,12 +13,12 @@ import {
 	disableUserSource,
 	enableProvider,
 	enableUserSource,
-} from "@oh-my-pi/pi-coding-agent/capability";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { resolveAgentModelPatterns } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { discoverAgents } from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/capability";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { resolveAgentModelPatterns } from "@marsai-org/coding-agent/config/model-resolver";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { discoverAgents } from "@marsai-org/coding-agent/task/discovery";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 const PLUGIN_AGENT_MD = [
 	"---",

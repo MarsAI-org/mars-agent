@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { AssistantMessage, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { buildParams } from "@marsai-org/ai/providers/openai-responses";
+import type { AssistantMessage, Context, Model } from "@marsai-org/ai/types";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 const singleUserContext: Context = {
 	messages: [{ role: "user", content: "hello", timestamp: 0 }],

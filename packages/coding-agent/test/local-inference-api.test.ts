@@ -7,26 +7,26 @@ import {
 	streamSimple,
 	type Usage,
 	type UserMessage,
-} from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai";
+import { unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	buildLocalInferenceMessages,
 	registerLocalInferenceApi,
-} from "@oh-my-pi/pi-coding-agent/tiny/local-inference-api";
-import { TINY_LOCAL_MODELS } from "@oh-my-pi/pi-coding-agent/tiny/models";
+} from "@marsai-org/coding-agent/tiny/local-inference-api";
+import { TINY_LOCAL_MODELS } from "@marsai-org/coding-agent/tiny/models";
 import {
 	type TinyModelChatOptions,
 	TinyTitleClient,
 	tinyModelClient,
-} from "@oh-my-pi/pi-coding-agent/tiny/title-client";
+} from "@marsai-org/coding-agent/tiny/title-client";
 import type {
 	TinyChatMessage,
 	TinyWorkerRequest,
 	TinyWorkerResponse,
-} from "@oh-my-pi/pi-coding-agent/tiny/title-protocol";
+} from "@marsai-org/coding-agent/tiny/title-protocol";
 
-const SOURCE_ID = "omp/local-inference";
+const SOURCE_ID = "mars/local-inference";
 const model = getBundledModel("local", "lfm2.5-230m")!;
 
 function zeroUsage(): Usage {

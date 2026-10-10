@@ -9,8 +9,8 @@ import {
 	setTerminalSessionSource,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/utils/title-generator";
+import { setTerminalHeadless } from "@marsai-org/utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 const LABEL = "my-project";
@@ -359,7 +359,7 @@ describe("disposeTerminalTitleState", () => {
 	});
 });
 
-// Tern names omp's directory in its composer bar from the OSC 7 omp writes, as
+// Tern names mars's directory in its composer bar from the OSC 7 mars writes, as
 // it does for a shell's prompt; other terminals must not hear it.
 describe("reporting the session to Tern", () => {
 	const OSC7 = /\x1b\]7;([^\x07]*)\x07/g;

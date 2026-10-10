@@ -1,18 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { BUILTIN_MODE_SLASH_COMMANDS } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-modes";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { initTheme } from "@marsai-org/tui/theme";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { BUILTIN_MODE_SLASH_COMMANDS } from "@marsai-org/coding-agent/slash-commands/builtin-modes";
+import { TempDir } from "@marsai-org/utils";
 
 /**
  * Issue #8137 — a `/skill:<name>` token embedded in a `/plan [prompt]` (or

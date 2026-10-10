@@ -1,4 +1,4 @@
-import { format, formatDistanceToNow } from "@oh-my-pi/pi-utils/dates";
+import { format, formatDistanceToNow } from "@marsai-org/utils/dates";
 import type { MessageStats } from "../types";
 
 /**

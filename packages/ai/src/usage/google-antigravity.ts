@@ -1,5 +1,5 @@
-import { quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { getAntigravityUserAgent } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
+import { quotaTierFor } from "@marsai-org/catalog/compat/behavior";
+import { getAntigravityUserAgent } from "@marsai-org/catalog/wire/gemini-headers";
 import * as AIError from "../error";
 import type {
 	CredentialRankingContext,

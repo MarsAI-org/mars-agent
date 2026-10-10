@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { discoverWatchdogFiles } from "../src/advisor/watchdog";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
@@ -118,7 +118,7 @@ describe("advisor watchdog prompt discovery", () => {
 		const tempDir = TempDir.createSync("@pi-advisor-watchdog-");
 		tempDirs.push(tempDir);
 		const cwd = tempDir.join("project-root");
-		const ompDir = path.join(cwd, ".omp");
+		const ompDir = path.join(cwd, ".mars");
 		const userAgentDir = tempDir.join("user-agent");
 		fs.mkdirSync(cwd, { recursive: true });
 		fs.mkdirSync(path.join(cwd, ".git"), { recursive: true });

@@ -7,13 +7,13 @@ import {
 	SESSION_TITLE_SLOT_BYTES,
 	type SessionHeader,
 	TITLE_CHANGE_ENTRY_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { resetSessionIndexForTests } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, type WriteTextAtomicOptions } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-entries";
+import { resetSessionIndexForTests } from "@marsai-org/coding-agent/session/session-index";
+import { loadEntriesFromFile } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { FileSessionStorage, type WriteTextAtomicOptions } from "@marsai-org/coding-agent/session/session-storage";
+import type { SessionTitleUpdate } from "@marsai-org/coding-agent/session/session-title-slot";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 
 import { makeAssistantMessage } from "./helpers";
 
@@ -66,7 +66,7 @@ describe("session title source persistence", () => {
 	const fallbackAgentDir = path.join(getConfigRootDir(), "agent");
 
 	beforeEach(() => {
-		testAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-title-source-"));
+		testAgentDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-title-source-"));
 		cwd = path.join(testAgentDir, "cwd");
 		fs.mkdirSync(cwd, { recursive: true });
 		setAgentDir(testAgentDir);

@@ -2,9 +2,9 @@ import { afterEach, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { getEnabledPlugins } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { getEnabledPlugins } from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempRoots: string[] = [];
 
@@ -20,18 +20,18 @@ async function writeJson(filePath: string, value: unknown): Promise<void> {
 }
 
 // Regression: a package removed from the plugins package.json outside
-// `omp plugin remove` leaves its lockfile entry and (because bun install
+// `mars plugin remove` leaves its lockfile entry and (because bun install
 // never prunes undeclared directories) its node_modules tree behind. The
 // loader must not load that orphan — doing so double-loads its extensions
 // (every envoy message was delivered twice). Lockfile-only entries are
-// legitimate only as symlinks (`omp plugin link`, marketplace runtime
+// legitimate only as symlinks (`mars plugin link`, marketplace runtime
 // registration), which must keep loading.
 test("stale lockfile-only directory plugin is skipped while declared and linked plugins load", async () => {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-plugin-stale-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-plugin-stale-"));
 	tempRoots.push(root);
 	const home = path.join(root, "home");
 	const cwd = path.join(root, "project");
-	const pluginsDir = path.join(home, ".omp", "plugins");
+	const pluginsDir = path.join(home, ".mars", "plugins");
 	const nodeModules = path.join(pluginsDir, "node_modules");
 	await fs.mkdir(cwd, { recursive: true });
 
@@ -53,7 +53,7 @@ test("stale lockfile-only directory plugin is skipped while declared and linked 
 		omp: { extensions: ["ext.ts"] },
 	});
 
-	// Lockfile-only entry backed by a symlink (omp plugin link): loads.
+	// Lockfile-only entry backed by a symlink (mars plugin link): loads.
 	const linkedSource = path.join(root, "linked-plugin-src");
 	await fs.mkdir(linkedSource, { recursive: true });
 	await writeJson(path.join(linkedSource, "package.json"), {
@@ -82,11 +82,11 @@ test("stale lockfile-only directory plugin is skipped while declared and linked 
 });
 
 test("manifest-less project roots retain lockfile-only directory plugins", async () => {
-	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-project-plugin-"));
+	const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-project-plugin-"));
 	tempRoots.push(root);
 	const home = path.join(root, "home");
 	const cwd = path.join(root, "project");
-	const pluginsDir = path.join(cwd, ".omp", "plugins");
+	const pluginsDir = path.join(cwd, ".mars", "plugins");
 	const installedDir = path.join(pluginsDir, "node_modules", "project-plugin");
 	await fs.mkdir(installedDir, { recursive: true });
 	await writeJson(path.join(installedDir, "package.json"), {

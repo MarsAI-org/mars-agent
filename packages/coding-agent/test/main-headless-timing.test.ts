@@ -5,14 +5,14 @@
  * appending to that tree for the life of the process.
  */
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { parseArgs, type Args } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { logger, postmortem, TempDir } from "@oh-my-pi/pi-utils";
+import { parseArgs, type Args } from "@marsai-org/coding-agent/cli/args";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { logger, postmortem, TempDir } from "@marsai-org/utils";
 
 const tempDirs: TempDir[] = [];
 

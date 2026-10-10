@@ -10,10 +10,10 @@ import {
 	discoverModels,
 	ModelRegistry,
 	SessionManager,
-} from "@oh-my-pi/pi-coding-agent";
+} from "@marsai-org/coding-agent";
 
-// Default: discoverAuthStorage() uses ~/.omp/agent/agent.db
-// discoverModels() loads built-in + custom models from ~/.omp/agent/models.json
+// Default: discoverAuthStorage() uses ~/.mars/agent/agent.db
+// discoverModels() loads built-in + custom models from ~/.mars/agent/models.json
 const authStorage = await discoverAuthStorage();
 const modelRegistry = await discoverModels(authStorage);
 

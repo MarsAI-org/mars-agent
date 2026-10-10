@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, setSystemTime, vi } from "bun:test";
-import { type Component, type RenderScheduler, TUI } from "@oh-my-pi/pi-tui";
+import { type Component, type RenderScheduler, TUI } from "@marsai-org/tui";
 import { VirtualTerminal } from "./virtual-terminal";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import type { BtwHistoryRecord } from "@oh-my-pi/pi-tui/overlays/btw-history";
-import { Input } from "@oh-my-pi/pi-tui/components/input";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { SPACE_HOLD_MECHANICAL_RUN, SPACE_HOLD_RELEASE_MS } from "@oh-my-pi/pi-tui/space-hold";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import { BtwHistoryPanel } from "@marsai-org/tui/overlays/btw-history-panel";
+import type { BtwHistoryRecord } from "@marsai-org/tui/overlays/btw-history";
+import { Input } from "@marsai-org/tui/components/input";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { SPACE_HOLD_MECHANICAL_RUN, SPACE_HOLD_RELEASE_MS } from "@marsai-org/tui/space-hold";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme";
 
 class BlockingDoubleInterruptComponent implements Component {
 	interruptsHandled = 0;

@@ -1,13 +1,13 @@
 import { createModelBrowserSource } from "../src/modes/model-browser-source";
 import { beforeAll, describe, expect, test } from "bun:test";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	buildBrowserItems,
 	buildSearchAffinity,
@@ -16,9 +16,9 @@ import {
 	type RoleAssignments,
 	resolveRoleAssignments,
 	sortModelItems,
-} from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { createModelMentionSource } from "@oh-my-pi/pi-tui/prompt/model-mention-autocomplete";
+} from "@marsai-org/tui/overlays/model-browser";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { createModelMentionSource } from "@marsai-org/tui/prompt/model-mention-autocomplete";
 
 /** Optional presentation metadata a catalog or discovery source may attach. */
 type NativeMetadata = Pick<Model, "description" | "isNew" | "isBeta" | "isRecommended" | "int" | "tps"> &

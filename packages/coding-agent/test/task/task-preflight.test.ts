@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult, TaskParams } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { TaskTool } from "@marsai-org/coding-agent/task";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { SingleResult, TaskParams } from "@marsai-org/tui/tools/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
 const taskAgent: AgentDefinition = {
 	name: "task",
@@ -167,10 +167,10 @@ describe("task async preflight", () => {
 	});
 
 	it("names the searched agent directories, home-shortened, when the agent is unknown", async () => {
-		const home = await fs.mkdtemp(path.join(os.tmpdir(), "omp-unknown-agent-"));
+		const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-unknown-agent-"));
 		try {
 			const projectDir = path.join(home, "project");
-			await fs.mkdir(path.join(projectDir, ".omp", "agents"), { recursive: true });
+			await fs.mkdir(path.join(projectDir, ".mars", "agents"), { recursive: true });
 			vi.spyOn(os, "homedir").mockReturnValue(home);
 			const tool = await TaskTool.create(createSession({ manager: manager(), cwd: projectDir }));
 
@@ -182,7 +182,7 @@ describe("task async preflight", () => {
 
 			const text = textOf(result);
 			// shortenPath renders home paths as portable `~/…` on every platform.
-			expect(text).toContain("Searched: ~/project/.omp/agents");
+			expect(text).toContain("Searched: ~/project/.mars/agents");
 			expect(text).not.toContain(home);
 		} finally {
 			await fs.rm(home, { recursive: true, force: true });

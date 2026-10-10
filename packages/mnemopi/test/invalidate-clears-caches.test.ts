@@ -9,10 +9,10 @@
  * which cache implementation a host wires in.
  */
 import { describe, expect, test } from "bun:test";
-import { initBeam } from "@oh-my-pi/pi-mnemopi/core/beam/schema";
-import { invalidate, remember } from "@oh-my-pi/pi-mnemopi/core/beam/store";
-import type { BeamMemoryState } from "@oh-my-pi/pi-mnemopi/core/beam/types";
-import { openDatabase } from "@oh-my-pi/pi-mnemopi/db";
+import { initBeam } from "@marsai-org/mnemopi/core/beam/schema";
+import { invalidate, remember } from "@marsai-org/mnemopi/core/beam/store";
+import type { BeamMemoryState } from "@marsai-org/mnemopi/core/beam/types";
+import { openDatabase } from "@marsai-org/mnemopi/db";
 
 /** A beam whose query cache counts how often it is invalidated. */
 function makeBeam(): { beam: BeamMemoryState; cleared: () => number } {

@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import * as themeModule from "@oh-my-pi/pi-tui/theme";
-import { toolRenderers } from "@oh-my-pi/pi-tui/tools";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import * as themeModule from "@marsai-org/tui/theme";
+import { toolRenderers } from "@marsai-org/tui/tools";
+import type { TUI } from "@marsai-org/tui";
+import { removeWithRetries } from "@marsai-org/utils";
 
 async function getUiTheme() {
 	await themeModule.initTheme(false, undefined, undefined, "dark", "light");
@@ -194,7 +194,7 @@ describe("apply_patch rendering", () => {
 					op: "update",
 					diff: [
 						" 10|}",
-						'+11|import { CODEX_INSTRUCTIONS } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";',
+						'+11|import { CODEX_INSTRUCTIONS } from "@marsai-org/ai/providers/openai-codex-responses";',
 						" 12|\t$env,",
 						" 228|\toutput_format: typeof OPENAI_IMAGE_OUTPUT_FORMAT;",
 						"+235|\tinstructions?: string;",

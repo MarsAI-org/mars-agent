@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { ANTHROPIC_THINKING, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { ANTHROPIC_THINKING, streamSimple } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl, Model, ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 const context: Context = {
 	systemPrompt: ["Summarize the conversation."],

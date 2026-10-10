@@ -1,7 +1,7 @@
 import { Buffer } from "node:buffer";
-import { planRequirementFor, quotaTierFor } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
+import { planRequirementFor, quotaTierFor } from "@marsai-org/catalog/compat/behavior";
+import { toNumber } from "@marsai-org/catalog/utils";
+import { USER_AGENT } from "@marsai-org/utils";
 import type {
 	CredentialRankingContext,
 	CredentialRankingStrategy,
@@ -214,7 +214,7 @@ function parseAdditionalRateLimit(payload: unknown): ParsedAdditionalUsage | nul
 /**
  * True when paid credits can still fund plan-window overage. Codex CLI never
  * gates on `/wham/usage`, so once the plan allowance is spent it keeps working
- * off this balance; omp must mirror that or it parks a perfectly usable account
+ * off this balance; mars must mirror that or it parks a perfectly usable account
  * until the weekly reset.
  *
  * Scoped to the plan verdict on purpose. `credits` describes the account's

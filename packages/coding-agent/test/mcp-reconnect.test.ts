@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "bun:test";
-import { createMCPJsonRpcError, MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { MCPReconnect } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
+import { createMCPJsonRpcError, MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { MCPReconnect } from "@marsai-org/coding-agent/mcp/tool-bridge";
 import {
 	createLegacyMCPToolName,
 	createMCPToolName,
@@ -8,11 +8,11 @@ import {
 	deduplicateMCPToolsByName,
 	isRetriableConnectionError,
 	MCPTool,
-} from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPImageContent } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mcp/tool-bridge";
+import type { MCPImageContent } from "@marsai-org/tui/tools/mcp";
+import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@marsai-org/coding-agent/mcp/types";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { logger } from "@marsai-org/utils";
 
 // ---------------------------------------------------------------------------
 // Helpers

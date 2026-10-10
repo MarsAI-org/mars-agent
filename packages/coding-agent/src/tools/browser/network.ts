@@ -1,9 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { untilAborted } from "@marsai-org/utils";
 import type { HTTPRequest, HTTPResponse, Page } from "puppeteer-core";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 /** Maximum number of request records retained per tab; the oldest are evicted first. */
 export const REQUEST_LOG_LIMIT = 200;
@@ -513,7 +513,7 @@ export function buildHarLog(entries: Record<string, unknown>[]): object {
 	return {
 		log: {
 			version: "1.2",
-			creator: { name: "omp-browser", version: "1" },
+			creator: { name: "mars-browser", version: "1" },
 			pages: [],
 			entries,
 		},

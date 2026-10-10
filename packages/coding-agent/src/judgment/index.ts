@@ -16,7 +16,7 @@ import {
 	type AgentTelemetryConfig,
 	recordJudgmentTelemetry,
 	resolveTelemetry,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	type Answer,
 	type AssistantMessage,
@@ -36,10 +36,10 @@ import {
 	TypeSafeJudge,
 	tokenUsage,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { logger, prompt } from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelStringWithRouting, resolveRoleChain, type RoleChainCandidate } from "../config/model-resolver";
 import { roleCandidatePool } from "../config/model-roles";

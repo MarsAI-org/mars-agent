@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessageEvent } from "@oh-my-pi/pi-ai";
-import { MAX_RPC_FRAME_BYTES, RpcFrameEncoder } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-frame";
-import { RpcSessionEventForwarder } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-session-events";
-import type { RpcProjectedSessionEventFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessageEvent } from "@marsai-org/ai";
+import { MAX_RPC_FRAME_BYTES, RpcFrameEncoder } from "@marsai-org/coding-agent/modes/rpc/rpc-frame";
+import { RpcSessionEventForwarder } from "@marsai-org/coding-agent/modes/rpc/rpc-session-events";
+import type { RpcProjectedSessionEventFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 const reply = { role: "assistant", content: [] } as unknown as AgentMessage;

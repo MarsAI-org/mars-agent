@@ -1,21 +1,21 @@
 import { describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { type AgentMessage, type AgentTelemetryConfig, Tokenizer } from "@oh-my-pi/pi-agent-core";
+import { type } from "@marsai-org/omptype";
+import { type AgentMessage, type AgentTelemetryConfig, Tokenizer } from "@marsai-org/agent-core";
 import {
 	buildOpenAiNativeHistory,
 	createCompactionSummaryMessage,
 	defaultConvertToLlm,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
+} from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai";
 import type {
 	ResponseFileSearchToolCall,
 	ResponseFunctionWebSearch,
 	ResponseInput,
 	ResponseToolSearchOutputItemParam,
-} from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai/providers/openai-responses-wire";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import * as AIError from "@marsai-org/ai/error";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	AdviseTool,
 	type AdvisorAgent,
@@ -36,8 +36,8 @@ import {
 	quarantineAdvisorUnsafeOutput,
 	resolveAdvisorDeliveryChannel,
 } from "../../src/advisor";
-import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
+import { createAdvisorMessageCard } from "@marsai-org/tui/chat/advisor-message";
+import { getThemeByName } from "@marsai-org/tui/theme";
 import { obfuscateMessages } from "../../src/secrets/message-transform";
 import { SecretObfuscator } from "../../src/secrets/obfuscator";
 import { getOpenAiRemoteCompactionPayload } from "../../src/session/session-context";

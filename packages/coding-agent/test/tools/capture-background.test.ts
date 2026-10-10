@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as evalIndex from "@marsai-org/coding-agent/eval";
+import * as bashExecutor from "@marsai-org/coding-agent/exec/bash-executor";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { TempDir } from "@marsai-org/utils";
 
 function sessionFor(root: string, manager?: AsyncJobManager): ToolSession {
 	return {

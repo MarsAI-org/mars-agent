@@ -19,9 +19,9 @@ import type {
 	ToolResultMessage,
 	ToolResultProviderMetadata,
 	TSchema,
-} from "@oh-my-pi/pi-ai";
-import type { Dialect } from "@oh-my-pi/pi-ai/dialect";
-import type { HarmonyAuditEvent } from "@oh-my-pi/pi-ai/utils/harmony-leak";
+} from "@marsai-org/ai";
+import type { Dialect } from "@marsai-org/ai/dialect";
+import type { HarmonyAuditEvent } from "@marsai-org/ai/utils/harmony-leak";
 import type { AppendOnlyContextManager } from "./append-only-context";
 import type { AgentRunCoverage, AgentRunSummary } from "./run-collector";
 import type { SentToolDefinitions } from "./sent-tool-definitions";

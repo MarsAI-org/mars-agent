@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import MODELS_JSON from "@oh-my-pi/pi-catalog/models.json" with { type: "json" };
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { buildXaiOAuthStaticSeed } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import MODELS_JSON from "@marsai-org/catalog/models.json" with { type: "json" };
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models/descriptors";
+import { buildXaiOAuthStaticSeed } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 
 // Pins the invariant: bundled `models.json` carries every entry the runtime
 // xai-oauth KDL seed (surfaced via buildXaiOAuthStaticSeed) emits. Without

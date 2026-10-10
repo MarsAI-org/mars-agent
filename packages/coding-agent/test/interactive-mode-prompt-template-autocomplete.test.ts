@@ -1,5 +1,5 @@
 /**
- * Issue #2462: prompt templates discovered from `cwd/.omp/prompts/` were never
+ * Issue #2462: prompt templates discovered from `cwd/.mars/prompts/` were never
  * surfaced in the slash-command autocomplete picker. The runtime expansion in
  * `AgentSession.prompt()` worked, but `InteractiveMode.refreshSlashCommandState`
  * never passed `session.promptTemplates` into the autocomplete provider.
@@ -8,21 +8,21 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { PromptTemplate } from "@oh-my-pi/pi-coding-agent/config/prompt-templates";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { AutocompleteProvider } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import { type Api, Effort, type Model } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import type { PromptTemplate } from "@marsai-org/coding-agent/config/prompt-templates";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { initTheme } from "@marsai-org/tui/theme";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { AutocompleteProvider } from "@marsai-org/tui";
+import { TempDir } from "@marsai-org/utils";
 
-import { cfgStartupQuiet } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgStartupQuiet } from "@marsai-org/coding-agent/modes/settings";
 
 function makeTool(name: string): AgentTool {
 	return {

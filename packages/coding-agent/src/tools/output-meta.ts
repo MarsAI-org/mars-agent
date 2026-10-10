@@ -10,9 +10,9 @@ import type {
 	AgentToolExecFn,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import { isRecord, logger } from "@marsai-org/utils";
 import type { Setting } from "../config/registry";
 import type { Settings } from "../config/settings";
 
@@ -21,8 +21,8 @@ import {
 	type TruncationResult,
 	truncateMiddle,
 	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { formatOutputNotice, type OutputMeta, type TruncationMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
+} from "@marsai-org/tui/tools/streaming-output";
+import { formatOutputNotice, type OutputMeta, type TruncationMeta } from "@marsai-org/tui/tools/output-meta";
 import { renderError } from "./tool-errors";
 import {
 	cfgToolsArtifactHeadBytes,

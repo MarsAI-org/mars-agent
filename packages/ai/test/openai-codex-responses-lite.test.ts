@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type InputItem, transformRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+import { type InputItem, transformRequestBody } from "@marsai-org/ai/providers/openai-codex/request-transformer";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
 	resetOpenAICodexHistoryAfterCompaction,
 	streamOpenAICodexResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { isOpenAIResponsesProgressEvent } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
+} from "@marsai-org/ai/providers/openai-codex-responses";
+import { isOpenAIResponsesProgressEvent } from "@marsai-org/ai/providers/openai-shared";
+import { configureCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
 import type {
 	CodexCompactionRequestContext,
 	Context,
 	FetchImpl,
 	ModelSpec,
 	ProviderSessionState,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as piUtils from "@marsai-org/utils";
 import { createCodexModel } from "./helpers";
 
 beforeAll(() => configureCredentialRedaction(true));

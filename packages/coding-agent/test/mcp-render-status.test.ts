@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
-import { DeferredMCPTool, MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { type MCPToolDetails } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { theme as activeTheme, getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { type OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatStatusIcon } from "@oh-my-pi/pi-tui/render/render-utils";
-import { TUI } from "@oh-my-pi/pi-tui";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { TSchema } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { renderMCPResult } from "@marsai-org/tui/tools/mcp";
+import { DeferredMCPTool, MCPTool } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import { type MCPToolDetails } from "@marsai-org/tui/tools/mcp";
+import type { MCPServerConnection, MCPToolDefinition, MCPTransport } from "@marsai-org/coding-agent/mcp/types";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { theme as activeTheme, getThemeByName, initTheme } from "@marsai-org/tui/theme";
+import { type OutputMeta } from "@marsai-org/tui/tools/output-meta";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { formatStatusIcon } from "@marsai-org/tui/render/render-utils";
+import { TUI } from "@marsai-org/tui";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 beforeAll(async () => {

@@ -13,18 +13,18 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
 import {
 	AUTH_GATEWAY_MAX_SESSION_STATES,
 	AuthGatewaySessionStateStore,
 	startAuthGateway,
-} from "@oh-my-pi/pi-ai/auth-gateway";
-import type { AuthGatewayServerHandle, AuthGatewaySessionStateRequest } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import type { Api, Context, Model, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/auth-gateway";
+import type { AuthGatewayServerHandle, AuthGatewaySessionStateRequest } from "@marsai-org/ai/auth-gateway";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import type { Api, Context, Model, ProviderSessionState } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 import { captureFetch, type CapturedRequest, completionsChunks, kimiK3 } from "./helpers/factory-droid";
 

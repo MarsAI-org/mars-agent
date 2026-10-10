@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
 const tempDirs: TempDir[] = [];
 

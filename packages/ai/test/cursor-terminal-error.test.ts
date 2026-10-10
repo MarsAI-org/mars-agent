@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as http2 from "node:http2";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import type { Context, CursorToolResultHandler, Model, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as AIError from "@marsai-org/ai/error";
+import { streamCursor } from "@marsai-org/ai/providers/cursor";
+import type { Context, CursorToolResultHandler, Model, ToolResultMessage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	AgentServerMessageSchema,
 	ConversationStateStructureSchema,
@@ -26,8 +26,8 @@ import {
 	TurnEndedUpdateSchema,
 	UpdateTodosArgsSchema,
 	UpdateTodosToolCallSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 const CONNECT_END_STREAM_FLAG = 0b00000010;
 

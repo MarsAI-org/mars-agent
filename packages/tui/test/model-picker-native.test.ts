@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, expect, test } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { TspPickerGroup, TspPickerProps } from "@oh-my-pi/pi-wire";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { TspPickerGroup, TspPickerProps } from "@marsai-org/wire";
 import type { DescribeContext, NativeChild, NativeNode } from "../src/native/node";
 import { ModelHubComponent, type ModelHubRegistry, type ModelHubSource } from "../src/overlays/model-hub";
 import { ModelPickerComponent } from "../src/overlays/model-picker";

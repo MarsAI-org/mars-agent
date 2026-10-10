@@ -2,14 +2,14 @@ import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter, LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import type { PlanModeState } from "@oh-my-pi/pi-coding-agent/plan-mode/state";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { enforcePlanModeWrite, resolvePlanPath } from "@oh-my-pi/pi-coding-agent/tools/plan-mode-guard";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter, LocalProtocolHandler } from "@marsai-org/coding-agent/internal-urls";
+import type { PlanModeState } from "@marsai-org/coding-agent/plan-mode/state";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { enforcePlanModeWrite, resolvePlanPath } from "@marsai-org/coding-agent/tools/plan-mode-guard";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const ARTIFACTS_DIR = path.join(os.tmpdir(), "agent-artifacts");
 const REPO_ROOT = path.join(os.tmpdir(), "repo");
@@ -45,7 +45,7 @@ describe("resolvePlanPath local:// support", () => {
 	it("falls back to os tmp root when artifacts dir is unavailable", async () => {
 		const session = makeSession({ artifactsDir: null, sessionId: "session-42" });
 		expect(await resolvePlanPath(session, "local://memo.txt")).toBe(
-			path.join(os.tmpdir(), "omp-local", "session-42", "memo.txt"),
+			path.join(os.tmpdir(), "mars-local", "session-42", "memo.txt"),
 		);
 	});
 });

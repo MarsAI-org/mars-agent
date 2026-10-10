@@ -3,27 +3,27 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, spyOn, te
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort, type FetchImpl, type Model, type OpenAICompat, type ThinkingConfig } from "@oh-my-pi/pi-ai";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveMaxContextWindow } from "@oh-my-pi/pi-catalog/compat/context-window";
-import { factoryDroidRegistry, resolveFactoryDroidPolicy } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels } from "@oh-my-pi/pi-catalog/model-manager";
-import * as catalogModels from "@oh-my-pi/pi-catalog/models";
-import { calculateUsageCost, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { finalizeCustomModel } from "@oh-my-pi/pi-coding-agent/config/custom-models";
-import { applyModelPatch, mergeDiscoveredModel } from "@oh-my-pi/pi-coding-agent/config/model-patch";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resolveRoleChain } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { roleCandidatePool } from "@oh-my-pi/pi-coding-agent/config/model-roles";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { Effort, type FetchImpl, type Model, type OpenAICompat, type ThinkingConfig } from "@marsai-org/ai";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import { streamSimple } from "@marsai-org/ai/stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveMaxContextWindow } from "@marsai-org/catalog/compat/context-window";
+import { factoryDroidRegistry, resolveFactoryDroidPolicy } from "@marsai-org/catalog/compat/factory-droid";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { fingerprintStaticModels } from "@marsai-org/catalog/model-manager";
+import * as catalogModels from "@marsai-org/catalog/models";
+import { calculateUsageCost, getBundledModels } from "@marsai-org/catalog/models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { finalizeCustomModel } from "@marsai-org/coding-agent/config/custom-models";
+import { applyModelPatch, mergeDiscoveredModel } from "@marsai-org/coding-agent/config/model-patch";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resolveRoleChain } from "@marsai-org/coding-agent/config/model-resolver";
+import { roleCandidatePool } from "@marsai-org/coding-agent/config/model-roles";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
-import { cfgExtendedContext } from "@oh-my-pi/pi-coding-agent/session/context-settings";
+import { cfgExtendedContext } from "@marsai-org/coding-agent/session/context-settings";
 
 describe("ModelRegistry", () => {
 	let tempDir: string;
@@ -631,7 +631,7 @@ describe("ModelRegistry", () => {
 		});
 
 		test("refresh keeps transport override on built-in provider (#2555 openrouter gateway)", async () => {
-			// Reporter ran `omp` with the auth-gateway broker proxying OpenRouter.
+			// Reporter ran `mars` with the auth-gateway broker proxying OpenRouter.
 			// Default model worked; switching via `/model` produced
 			// `404 No route: POST /chat/completions` until restart. Root cause:
 			// background discovery refresh re-fetched the openrouter catalog and

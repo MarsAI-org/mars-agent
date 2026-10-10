@@ -1,19 +1,19 @@
-import type { GlobToolDetails } from "@oh-my-pi/pi-tui/tools/glob";
+import type { GlobToolDetails } from "@marsai-org/tui/tools/glob";
 import * as fs from "node:fs";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import * as natives from "@oh-my-pi/pi-natives";
-import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import * as natives from "@marsai-org/natives";
+import { formatGroupedPaths, hasFsCode, isEnoent, prompt, untilAborted } from "@marsai-org/utils";
 import { InternalUrlRouter, sessionResolveContext } from "../internal-urls";
 import { InternalUrlFilesystem, type UrlFileStat } from "../internal-urls/url-filesystem";
 import globDescription from "../prompts/tools/glob.md" with { type: "text" };
-import { truncateHead } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { truncateHead } from "@marsai-org/tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { isScoutSpawnable } from "../task/spawn-policy";
 import type { ToolSession } from ".";
 import { resolveToolTier } from "./approval";
 import { isFindEnabled } from "./jfind";
-import { applyListLimit } from "@oh-my-pi/pi-tui/tools/list-limit";
+import { applyListLimit } from "@marsai-org/tui/tools/list-limit";
 import {
 	expandDelimitedPathEntries,
 	formatPathRelativeToCwd,
@@ -24,9 +24,9 @@ import {
 	resolveSearchBase,
 	resolveSearchResultPath,
 } from "./path-utils";
-import { toPathList } from "@oh-my-pi/pi-tui/render/render-utils";
+import { toPathList } from "@marsai-org/tui/render/render-utils";
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
 import { cfgTaskDisabledAgents } from "../task/settings";

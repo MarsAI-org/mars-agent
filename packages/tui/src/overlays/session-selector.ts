@@ -14,8 +14,8 @@ import {
 	visibleWidth,
 } from "../index";
 import * as path from "node:path";
-import { formatBytes, getProjectDir } from "@oh-my-pi/pi-utils";
-import type { TspPickerGroup, TspPickerItem, TspSpan, TspText, TspTone } from "@oh-my-pi/pi-wire";
+import { formatBytes, getProjectDir } from "@marsai-org/utils";
+import type { TspPickerGroup, TspPickerItem, TspSpan, TspText, TspTone } from "@marsai-org/wire";
 import { compact, kv, md, node, span } from "../native/describe";
 import {
 	picker,
@@ -1353,7 +1353,7 @@ export interface SessionSelectorOptions<T extends SessionSelectorEntry = Session
 	/** Path of the live session, or a getter so detach/newSession stays accurate. */
 	currentSessionPath?: string | (() => string | undefined);
 	/**
-	 * The picker is the whole program (`omp --resume`): the native picker
+	 * The picker is the whole program (`mars --resume`): the native picker
 	 * fills the screen surface (`size:"screen"`) instead of floating as a
 	 * sheet over the transcript.
 	 */

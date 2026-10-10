@@ -5,8 +5,8 @@ import {
 	planFileUrlForSlug,
 	resolveApprovedPlan,
 	resolvePlanTitle,
-} from "@oh-my-pi/pi-coding-agent/plan-mode/approved-plan";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
+} from "@marsai-org/coding-agent/plan-mode/approved-plan";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls/router";
 
 describe("planFileUrlForSlug", () => {
 	it("maps a slug to its local plan URL", () => {

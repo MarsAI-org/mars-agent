@@ -1,6 +1,6 @@
-import type { Agent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { prompt } from "@oh-my-pi/pi-utils";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
+import type { Agent, AgentMessage } from "@marsai-org/agent-core";
+import { prompt } from "@marsai-org/utils";
+import { type IrcMessage } from "@marsai-org/tui/tools/irc";
 import parentIrcSteerTemplate from "../prompts/steering/parent-irc.md" with { type: "text" };
 import ircIncomingTemplate from "../prompts/system/irc-incoming.md" with { type: "text" };
 import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";

@@ -11,7 +11,7 @@
  *      user), and either decision tool resets the counter.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	Agent,
 	type AgentMessage,
@@ -19,19 +19,19 @@ import {
 	type StreamFn,
 	type ToolApproval,
 	type ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { XdevState } from "@oh-my-pi/pi-coding-agent/tools/xdev";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { createMockModel, type MockModel, type MockResponse } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CustomTool } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import { resolveLocalUrlToPath } from "@marsai-org/coding-agent/internal-urls";
+import { type IrcMessage } from "@marsai-org/tui/tools/irc";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { XdevState } from "@marsai-org/coding-agent/tools/xdev";
+import { TempDir } from "@marsai-org/utils";
 import planModeReminderPrompt from "../src/prompts/system/plan-mode-tool-decision-reminder.md" with { type: "text" };
 
 /** A stable, literal (non-templated) line of the reminder prompt, so the test

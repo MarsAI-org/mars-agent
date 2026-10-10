@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { gunzipSync } from "node:zlib";
-import { streamDevin } from "@oh-my-pi/pi-ai/providers/devin";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamDevin } from "@marsai-org/ai/providers/devin";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	type AssignModelRequest,
 	AssignModelRequestSchema,
@@ -16,9 +16,9 @@ import {
 	GetUserJwtResponseSchema,
 	ModelAssignmentSchema,
 	StopReason,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import type { DevinCompat } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import type { DevinCompat } from "@marsai-org/catalog/types";
 
 const AUTH_PAYLOAD = toBinary(GetUserJwtResponseSchema, create(GetUserJwtResponseSchema, { userJwt: "user-jwt" }));
 

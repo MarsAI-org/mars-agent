@@ -10,12 +10,12 @@ const COPILOT_PREMIUM_MULTIPLIERS: Record<string, number> = {
 };
 
 import * as path from "node:path";
-import { discoverAuthStorage } from "@oh-my-pi/pi-ai/auth-broker/discover";
-import type { OAuthAccess } from "@oh-my-pi/pi-ai/auth-storage";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import { getGitLabDuoModels } from "@oh-my-pi/pi-ai/providers/gitlab-duo";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { $env } from "@oh-my-pi/pi-utils";
+import { discoverAuthStorage } from "@marsai-org/ai/auth-broker/discover";
+import type { OAuthAccess } from "@marsai-org/ai/auth-storage";
+import type { OAuthProvider } from "@marsai-org/ai/oauth/types";
+import { getGitLabDuoModels } from "@marsai-org/ai/providers/gitlab-duo";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { $env } from "@marsai-org/utils";
 import { buildModel } from "../src/build";
 import { isRetiredProvider } from "../src/compat/behavior";
 import { collapseVariants } from "../src/compat/collapse";
@@ -486,7 +486,7 @@ async function fetchAntigravityModels(): Promise<ModelSpec<"google-gemini-cli">[
 	const access = await getOAuthAccessFromStorage("google-antigravity");
 	if (!access) {
 		console.log("No Antigravity or Gemini CLI credentials found, will use previous models.");
-		console.log("Tip: If you are logged in under a specific profile, run with OMP_PROFILE=<name>.");
+		console.log("Tip: If you are logged in under a specific profile, run with MARS_PROFILE=<name>.");
 		return [];
 	}
 	try {
@@ -543,7 +543,7 @@ async function fetchCodexDiscoveryModels(): Promise<ModelSpec<"openai-codex-resp
 	}
 	if (accounts.length === 0) {
 		console.log("No Codex credentials found, will use previous models.");
-		console.log("Tip: If you are logged in under a specific profile, run with OMP_PROFILE=<name>.");
+		console.log("Tip: If you are logged in under a specific profile, run with MARS_PROFILE=<name>.");
 		return [];
 	}
 	console.log(`Fetching models from Codex API for ${accounts.length} account(s)...`);

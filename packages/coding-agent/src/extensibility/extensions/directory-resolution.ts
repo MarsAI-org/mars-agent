@@ -1,10 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { hasFsCode, isEacces, isEnoent, isRecord } from "@oh-my-pi/pi-utils";
+import { hasFsCode, isEacces, isEnoent, isRecord } from "@marsai-org/utils";
 
 /** Selected extension files and whether a manifest suppresses convention fallback. */
 export interface ExtensionDirectoryResolution {
-	/** Whether package.json declares a non-empty omp/pi extensions array. */
+	/** Whether package.json declares a non-empty mars/pi extensions array. */
 	declared: boolean;
 	/** Existing files selected by the authoritative manifest or directory conventions. */
 	files: string[];

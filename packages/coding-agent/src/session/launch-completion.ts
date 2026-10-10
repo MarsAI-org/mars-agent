@@ -1,10 +1,10 @@
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import type { DaemonCompletionNotification } from "../launch/protocol";
 import launchCompletionTemplate from "../prompts/session/launch-completion.md" with { type: "text" };
 import type { CustomMessage } from "./messages";
 
-import { LAUNCH_COMPLETION_MESSAGE_TYPE } from "@oh-my-pi/pi-tui/chat/messages";
-export { LAUNCH_COMPLETION_MESSAGE_TYPE } from "@oh-my-pi/pi-tui/chat/messages";
+import { LAUNCH_COMPLETION_MESSAGE_TYPE } from "@marsai-org/tui/chat/messages";
+export { LAUNCH_COMPLETION_MESSAGE_TYPE } from "@marsai-org/tui/chat/messages";
 
 /** One broker completion awaiting injection into its owning session. */
 export type LaunchCompletionEntry = DaemonCompletionNotification;

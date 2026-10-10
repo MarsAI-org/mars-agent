@@ -1,9 +1,9 @@
-import type { ToolApprovalDecision } from "@oh-my-pi/pi-agent-core";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { REPORT_ISSUE_DEVICE_NAME } from "@oh-my-pi/pi-tui/tools/report-tool-issue";
-import { isResolutionDeviceName } from "@oh-my-pi/pi-tui/tools/resolve";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { parseXdTopicUrl, parseXdUrl } from "@oh-my-pi/pi-tui/tools/xd-url";
+import type { ToolApprovalDecision } from "@marsai-org/agent-core";
+import { isRecord } from "@marsai-org/utils";
+import { REPORT_ISSUE_DEVICE_NAME } from "@marsai-org/tui/tools/report-tool-issue";
+import { isResolutionDeviceName } from "@marsai-org/tui/tools/resolve";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { parseXdTopicUrl, parseXdUrl } from "@marsai-org/tui/tools/xd-url";
 import type { ToolSession } from "../tools";
 import { resolveToolTier } from "../tools/approval";
 import { dispatchReportIssueDevice, reportIssueDeviceUsage } from "../tools/report-tool-issue";

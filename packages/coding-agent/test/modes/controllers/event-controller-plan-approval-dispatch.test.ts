@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { PROPOSE_DEVICE_NAME } from "@oh-my-pi/pi-tui/tools/resolve";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { PROPOSE_DEVICE_NAME } from "@marsai-org/tui/tools/resolve";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 beforeAll(() => {

@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { parseSessionEntries, type SessionHeader } from "@oh-my-pi/pi-coding-agent";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import { removeWithRetries, withTimeout } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { parseSessionEntries, type SessionHeader } from "@marsai-org/coding-agent";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import { removeWithRetries, withTimeout } from "@marsai-org/utils";
 import { rejectionOf } from "./helpers/rejection";
 
 async function readSessionFile(sessionFile: string): Promise<{ header: SessionHeader; messageIds: string[] }> {

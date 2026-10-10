@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { completeSimple, stream } from "@oh-my-pi/pi-ai";
-import { buildAnthropicClientOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { resolveOpenAIRequestSetup } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
+import { completeSimple, stream } from "@marsai-org/ai";
+import { buildAnthropicClientOptions } from "@marsai-org/ai/providers/anthropic";
+import { resolveOpenAIRequestSetup } from "@marsai-org/ai/providers/openai-shared";
+import type { Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { USER_AGENT } from "@marsai-org/utils";
 
 const OPENCODE_SESSION_HEADER = "x-opencode-session";
 
@@ -161,7 +161,7 @@ describe("opencode and gpt session header on OpenAI transports", () => {
 		expect(setup.headers[OPENCODE_SESSION_HEADER]).toBeUndefined();
 	});
 
-	it("applies omp's common User-Agent as the global inference default", async () => {
+	it("applies mars's common User-Agent as the global inference default", async () => {
 		const userAgents: Array<string | null> = [];
 		const fetchMock = async (_input: string | URL | Request, init?: RequestInit) => {
 			userAgents.push(new Headers(init?.headers).get("User-Agent"));

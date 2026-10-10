@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { readModelCache, writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { fingerprintStaticModels } from "@oh-my-pi/pi-catalog/model-manager";
-import * as catalogModels from "@oh-my-pi/pi-catalog/models";
-import { mergeDiscoveredModel } from "@oh-my-pi/pi-coding-agent/config/model-patch";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { readModelCache, writeModelCache } from "@marsai-org/catalog/model-cache";
+import { fingerprintStaticModels } from "@marsai-org/catalog/model-manager";
+import * as catalogModels from "@marsai-org/catalog/models";
+import { mergeDiscoveredModel } from "@marsai-org/coding-agent/config/model-patch";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 function fixtureModel(id = "merge-fixture"): Model<"openai-completions"> {
 	return buildModel({

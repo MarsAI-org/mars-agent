@@ -34,4 +34,4 @@ export type {
 	MCPImageContent,
 	MCPResourceContent,
 	MCPContent,
-} from "@oh-my-pi/pi-tui/tools/mcp";
+} from "@marsai-org/tui/tools/mcp";

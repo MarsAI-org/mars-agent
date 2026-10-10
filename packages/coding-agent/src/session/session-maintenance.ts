@@ -9,7 +9,7 @@ import {
 	resolveTelemetry,
 	type StreamFn,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	AGGRESSIVE_SHAKE_CONFIG,
 	AUTO_HANDOFF_THRESHOLD_FOCUS,
@@ -42,15 +42,15 @@ import {
 	shouldCompact,
 	shouldUseProviderNativeCompaction,
 	upsertFileOperations,
-} from "@oh-my-pi/pi-agent-core/compaction";
+} from "@marsai-org/agent-core/compaction";
 import {
 	DEFAULT_PRUNE_CONFIG,
 	type PruneResult,
 	pruneSupersededToolResults,
 	pruneToolOutputs,
 	readToolSupersedeKey,
-} from "@oh-my-pi/pi-agent-core/compaction/pruning";
-import type { ProtectedToolMatcher } from "@oh-my-pi/pi-agent-core/compaction/tool-protection";
+} from "@marsai-org/agent-core/compaction/pruning";
+import type { ProtectedToolMatcher } from "@marsai-org/agent-core/compaction/tool-protection";
 import type {
 	AssistantMessage,
 	CodexCompactionContext,
@@ -58,13 +58,13 @@ import type {
 	Message,
 	Model,
 	ProviderSessionState,
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { resolvePromptCacheLookback } from "@oh-my-pi/pi-catalog/compat/prompt-cache-lookback";
-import { preferredDialect } from "@oh-my-pi/pi-catalog/identity";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { isRecord, logger, prompt, Snowflake } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { resolvePromptCacheLookback } from "@marsai-org/catalog/compat/prompt-cache-lookback";
+import { preferredDialect } from "@marsai-org/catalog/identity";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { isRecord, logger, prompt, Snowflake } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { writeArtifact } from "./artifacts";
 import type { ModelRegistry } from "../config/model-registry";
 import { CHAT_MODEL_ROLE_IDS } from "../config/model-roles";
@@ -74,10 +74,10 @@ import type { CompactOptions, ContextUsage } from "../extensibility/extensions/t
 import type { GoalModeState } from "../goals/state";
 import { resolveMemoryBackend } from "../memory-backend/resolve";
 import type { MemoryBackendOperationContext } from "../memory-backend/types";
-import { computeNonMessageTokens, type NonMessageTokenSource } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import { computeNonMessageTokens, type NonMessageTokenSource } from "@marsai-org/tui/status-line/context-usage";
 import { createPlanReadMatcher } from "../plan-mode/plan-protection";
 import { isCompleteReadResult } from "../tools/read-supersede";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ContextUsageBreakdown, HandoffResult, SessionHandoffOptions } from "./agent-session-types";
 import { findCompactMode } from "./compact-modes";

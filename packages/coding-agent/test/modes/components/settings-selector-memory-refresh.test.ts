@@ -1,13 +1,13 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadHindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { loadHindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
+import { SettingsSelectorComponent } from "@marsai-org/tui/overlays/settings-selector";
+import { createSettingsHost } from "@marsai-org/coding-agent/config/settings-ui";
+import { createPluginSettingsHost } from "@marsai-org/coding-agent/extensibility/plugins/settings-host";
+import { initTheme } from "@marsai-org/tui/theme";
 
-import { cfgHindsightApiToken } from "@oh-my-pi/pi-coding-agent/hindsight/settings";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
+import { cfgHindsightApiToken } from "@marsai-org/coding-agent/hindsight/settings";
+import { cfgMemoryBackend } from "@marsai-org/coding-agent/memory-backend/settings";
 
 beforeAll(async () => {
 	await initTheme();

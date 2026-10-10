@@ -5,35 +5,35 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Type } from "@oh-my-pi/omptype/typebox";
-import type { AgentMessage, AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { convertToLlm, wrapSteeringForModel } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
+import { Type } from "@marsai-org/omptype/typebox";
+import type { AgentMessage, AgentTool, AgentToolContext } from "@marsai-org/agent-core";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { MessageCreateParams } from "@marsai-org/ai/providers/anthropic-wire";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import { kCursorExecResolved } from "@marsai-org/ai/utils/block-symbols";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { convertToLlm, wrapSteeringForModel } from "@marsai-org/coding-agent/session/messages";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensions } from "@marsai-org/coding-agent/extensibility/extensions/loader";
 import {
 	EXTENSION_HANDLER_TIMEOUT_MS,
 	ExtensionRunner,
 	SESSION_SHUTDOWN_HANDLER_TIMEOUT_MS,
 	testSetExtensionHandlerTimeoutMs,
 	testSetSessionShutdownHandlerTimeoutMs,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+} from "@marsai-org/coding-agent/extensibility/extensions/runner";
 import type {
 	Extension,
 	ExtensionError,
 	ExtensionUIContext,
 	InputEvent,
 	InputEventResult,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getProjectAgentDir, logger, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { getProjectAgentDir, logger, TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("ExtensionRunner", () => {

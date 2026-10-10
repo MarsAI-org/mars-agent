@@ -16,18 +16,18 @@ import {
 	generateBranchSummary,
 	generateHandoff,
 	generateSummary,
-} from "@oh-my-pi/pi-agent-core/compaction";
+} from "@marsai-org/agent-core/compaction";
 import {
 	type AgentTelemetryConfig,
 	GenAIAttr,
 	GenAIOperation,
 	OmpGenAIAttr,
 	resolveTelemetry,
-} from "@oh-my-pi/pi-agent-core/telemetry";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/agent-core/telemetry";
+import type { AgentMessage } from "@marsai-org/agent-core/types";
+import type { AssistantMessage, Model, Usage } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
 import { SpanStatusCode } from "@opentelemetry/api";
 import {
 	BasicTracerProvider,

@@ -26,7 +26,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import * as logger from "@marsai-org/utils/logger";
 import {
 	TSP_DEFAULT_APC_LIMIT,
 	TSP_DEFAULT_CREDITS,
@@ -37,7 +37,7 @@ import {
 	type TspKind,
 	type TspNode,
 	type TspOp,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import type { Terminal } from "../terminal";
 import {
 	bindTheme,
@@ -205,7 +205,7 @@ function sameSet(a: ReadonlySet<string>, b: ReadonlySet<string>): boolean {
 /**
  * The reply a v1 terminal is assumed to give before its real `hello` arrives
  * (the `TERM_PROGRAM=tern` optimistic start): the whole vocabulary, the
- * default APC limit and credits, the terminal's width, the appearance omp
+ * default APC limit and credits, the terminal's width, the appearance mars
  * already detected, full motion, and `blobs`, so a resumed session's images
  * are asked about rather than resent before the reply comes.
  */
@@ -450,7 +450,7 @@ export class NativeBackend {
 		surface.acked = surface.seq;
 		surface.focus = null;
 		surface.dirty = false;
-		this.#write("o", { id: surface.id, mode: "inline", title: "omp", role: SESSION_ROLE, adopt: true });
+		this.#write("o", { id: surface.id, mode: "inline", title: "mars", role: SESSION_ROLE, adopt: true });
 		this.#sendPalette(surface);
 		// After the `o`, as in `start()`.
 		setNativeRendering(true);
@@ -592,7 +592,7 @@ export class NativeBackend {
 	}
 
 	#open(surface: Surface): void {
-		this.#write("o", { id: surface.id, mode: surface.mode, title: "omp", role: surface.role });
+		this.#write("o", { id: surface.id, mode: surface.mode, title: "mars", role: surface.role });
 		this.#sendPalette(surface);
 	}
 

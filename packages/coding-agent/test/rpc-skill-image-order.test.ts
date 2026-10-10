@@ -2,10 +2,10 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { RpcPromptResultFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import type { RpcPromptResultFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { removeWithRetries } from "@marsai-org/utils";
 import { ONE_PIXEL_PNG as PNG, waitForFile } from "./helpers/skill-image-vision";
 
 function submissionOrder(messages: AgentMessage[]): string[] {

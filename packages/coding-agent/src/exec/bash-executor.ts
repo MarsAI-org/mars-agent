@@ -3,19 +3,19 @@
  *
  * Uses brush-core via native bindings for shell execution.
  */
-import { ExponentialYield } from "@oh-my-pi/pi-agent-core/utils/yield";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import { ExponentialYield } from "@marsai-org/agent-core/utils/yield";
+import type { ImageContent } from "@marsai-org/ai";
 import {
 	type MinimizerOptions,
 	PtySession,
 	Shell,
 	type ShellFilesystem,
 	type ShellRunResult,
-} from "@oh-my-pi/pi-natives";
-import { $env } from "@oh-my-pi/pi-utils/env";
-import { isCmdShell, isExecutable, type ShellConfig } from "@oh-my-pi/pi-utils/procmgr";
+} from "@marsai-org/natives";
+import { $env } from "@marsai-org/utils/env";
+import { isCmdShell, isExecutable, type ShellConfig } from "@marsai-org/utils/procmgr";
 import { Settings } from "../config/settings";
-import { type OutputArtifactError, OutputSink, type OutputSummary } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { type OutputArtifactError, OutputSink, type OutputSummary } from "@marsai-org/tui/tools/streaming-output";
 import {
 	resolveOutputMaxColumns,
 	resolveOutputSinkArtifactMaxBytes,

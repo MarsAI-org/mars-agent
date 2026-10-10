@@ -1,14 +1,14 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import type {
 	WebMcpEventsResult,
 	WebMcpInvokeResult,
 	WebMcpListResult,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/webmcp";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/webmcp";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

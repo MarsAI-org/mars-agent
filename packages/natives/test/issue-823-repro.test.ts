@@ -1,8 +1,9 @@
 /**
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * Regression for https://github.com/can1357/oh-my-pi/issues/823.
  *
  * On WSL (and any host where the user moves the standalone binary away from the
- * build-time native artifacts), the compiled `omp` binary fails to load
+ * build-time native artifacts), the compiled `mars` binary fails to load
  * `pi_natives.linux-x64-*.node`. Root cause: the old loader's
  * `isCompiledBinary` detection relied on signals that are unreliable in a Bun
  * standalone binary:
@@ -15,7 +16,7 @@
  *
  * When both signals were false, the loader skipped the embedded-addon
  * extraction path and only tried `nativeDir` (the dev machine's checkout) and
- * `execDir`. On WSL with `~/.local/bin/omp` and no sibling `.node` file, this
+ * `execDir`. On WSL with `~/.local/bin/mars` and no sibling `.node` file, this
  * failed with the error reported in the issue.
  *
  * The fix is to make the loader's compiled-binary detection authoritative on
@@ -93,7 +94,7 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 	});
 
 	it("places embedded-extracted candidates ahead of build-host candidates for linux-x64 standalone", () => {
-		const versionedDir = "/home/u/.omp/natives/14.5.2";
+		const versionedDir = "/home/u/.mars/natives/14.5.2";
 		const userDataDir = "/home/u/.local/bin";
 		const nativeDir = "/build-host/packages/natives/native";
 		const execDir = "/home/u/.local/bin";
@@ -112,8 +113,8 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 		const buildHostModern = path.join(nativeDir, "pi_natives.linux-x64-modern.node");
 
 		// Versioned cache and user-data dir candidates must exist for compiled binaries —
-		// these are where the embedded-addon extraction lands (~/.omp/natives/<v>) and where
-		// `omp update` writes the standalone binary on linux (~/.local/bin).
+		// these are where the embedded-addon extraction lands (~/.mars/natives/<v>) and where
+		// `mars update` writes the standalone binary on linux (~/.local/bin).
 		expect(candidates).toContain(versionedModern);
 		expect(candidates).toContain(versionedBaseline);
 		expect(candidates).toContain(userDataModern);
@@ -124,15 +125,15 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 	});
 
 	it("prefers platform leaf package candidates ahead of core nativeDir candidates on npm installs", () => {
-		const leafPackageDir = "/app/node_modules/@oh-my-pi/pi-natives-linux-x64";
-		const nativeDir = "/app/node_modules/@oh-my-pi/pi-natives/native";
+		const leafPackageDir = "/app/node_modules/@marsai-org/natives-linux-x64";
+		const nativeDir = "/app/node_modules/@marsai-org/natives/native";
 		const candidates = resolveLoaderCandidates({
 			addonFilenames: getAddonFilenames({ tag: "linux-x64", arch: "x64", variant: "baseline" }),
 			isCompiledBinary: false,
 			leafPackageDir,
 			nativeDir,
 			execDir: "/app/node_modules/.bin",
-			versionedDir: "/home/u/.omp/natives/15.5.15",
+			versionedDir: "/home/u/.mars/natives/15.5.15",
 			userDataDir: "/home/u/.local/bin",
 		});
 
@@ -143,9 +144,9 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 	});
 
 	it("keeps Windows staging ahead of leaf package and core nativeDir candidates", () => {
-		const versionedDir = "/home/u/.omp/natives/15.5.15";
-		const leafPackageDir = "/app/node_modules/@oh-my-pi/pi-natives-win32-x64";
-		const nativeDir = "/app/node_modules/@oh-my-pi/pi-natives/native";
+		const versionedDir = "/home/u/.mars/natives/15.5.15";
+		const leafPackageDir = "/app/node_modules/@marsai-org/natives-win32-x64";
+		const nativeDir = "/app/node_modules/@marsai-org/natives/native";
 		const candidates = resolveLoaderCandidates({
 			addonFilenames: getAddonFilenames({ tag: "win32-x64", arch: "x64", variant: "baseline" }),
 			isCompiledBinary: false,
@@ -154,7 +155,7 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			nativeDir,
 			execDir: "/app/node_modules/.bin",
 			versionedDir,
-			userDataDir: "/home/u/AppData/Local/omp",
+			userDataDir: "/home/u/AppData/Local/mars",
 		});
 
 		const stagedBaseline = path.join(versionedDir, "pi_natives.win32-x64-baseline.node");
@@ -173,7 +174,7 @@ describe("issue 823: standalone-binary native loader path resolution", () => {
 			isCompiledBinary: false,
 			nativeDir,
 			execDir,
-			versionedDir: "/home/u/.omp/natives/15.5.15",
+			versionedDir: "/home/u/.mars/natives/15.5.15",
 			userDataDir: "/home/u/.local/bin",
 		});
 

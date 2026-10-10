@@ -8,10 +8,10 @@
  * started or joined. Hosts correlate on the command `id` instead of inferring
  * ownership of an `agent_end` that carries no prompt identity.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { stripRawHttpRequestDiagnostics } from "@oh-my-pi/pi-ai/utils/http-inspector";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { stripRawHttpRequestDiagnostics } from "@marsai-org/ai/utils/http-inspector";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { isRpcSessionSettled, type RpcScheduledTurnProbe, type RpcSettleSession } from "./rpc-session-settle";
 import type { RpcPromptError, RpcPromptResultFrame, RpcPromptStatus } from "./rpc-types";

@@ -13,9 +13,9 @@
  * statusLine.attachToEditor(editor, getComposerStyle(shape));
  * ```
  */
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/catalog/types";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { parseThinkingLevel } from "../thinking";
 import { StatusLineComponent } from "./component";
 import type { CompactionBoundaries } from "./context-usage";

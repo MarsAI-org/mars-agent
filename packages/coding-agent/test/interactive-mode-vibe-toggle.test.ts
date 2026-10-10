@@ -9,24 +9,24 @@
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, VIBE_MODE_CONTEXT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, type WriteTextAtomicOptions } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { VIBE_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/vibe";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool, type StreamFn } from "@marsai-org/agent-core";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { initTheme } from "@marsai-org/tui/theme";
+import * as vcs from "@marsai-org/natives/vcs";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, VIBE_MODE_CONTEXT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { FileSessionStorage, type WriteTextAtomicOptions } from "@marsai-org/coding-agent/session/session-storage";
+import { VIBE_TOOL_NAMES } from "@marsai-org/coding-agent/tools/vibe";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { VibeSessionRegistry } from "@marsai-org/coding-agent/vibe/runtime";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function stubTool(name: string): AgentTool {

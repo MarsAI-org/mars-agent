@@ -8,14 +8,14 @@ import type {
 	ArchiveRecap,
 	ArchiveSession,
 	ArchiveSessionDetail,
-} from "@oh-my-pi/pi-coding-agent/archive/archive";
-import { createArchivePrelude } from "@oh-my-pi/pi-coding-agent/archive/prelude-definition";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { recordSessionRecap, resetSessionIndexForTests } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { sessionDirForCwd } from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/archive/archive";
+import { createArchivePrelude } from "@marsai-org/coding-agent/archive/prelude-definition";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { recordSessionRecap, resetSessionIndexForTests } from "@marsai-org/coding-agent/session/session-index";
+import { sessionDirForCwd } from "@marsai-org/coding-agent/session/session-paths";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
@@ -59,7 +59,7 @@ async function call<T>(params: Record<string, unknown>, cwd = app): Promise<T> {
 }
 
 beforeEach(() => {
-	root = fs.mkdtempSync(path.join(os.tmpdir(), "omp-archive-"));
+	root = fs.mkdtempSync(path.join(os.tmpdir(), "mars-archive-"));
 	app = path.join(root, "app");
 	lib = path.join(root, "lib");
 	HistoryStorage.close();

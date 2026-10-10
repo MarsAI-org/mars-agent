@@ -1,24 +1,24 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolContext } from "@marsai-org/agent-core";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { computerApproval, createComputerPrelude } from "@oh-my-pi/pi-coding-agent/tools/computer";
-import { isReadOnlyComputerCall, renderComputerCall } from "@oh-my-pi/pi-coding-agent/tools/computer/call";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@marsai-org/coding-agent/eval/preludes";
+import { disposeAllKernelSessions, executePython } from "@marsai-org/coding-agent/eval/py/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { computerApproval, createComputerPrelude } from "@marsai-org/coding-agent/tools/computer";
+import { isReadOnlyComputerCall, renderComputerCall } from "@marsai-org/coding-agent/tools/computer/call";
 import type {
 	ComputerSessionSnapshot,
 	ComputerWorkerInbound,
 	ComputerWorkerOutbound,
 	ComputerWorkerTransport,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/protocol";
+} from "@marsai-org/coding-agent/tools/computer/protocol";
 import {
 	type ComputerController,
 	ComputerSupervisor,
 	type ComputerWorkerHandle,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { ComputerWorkerCore, type NativeDesktopSession } from "@oh-my-pi/pi-coding-agent/tools/computer/worker";
+} from "@marsai-org/coding-agent/tools/computer/supervisor";
+import { ComputerWorkerCore, type NativeDesktopSession } from "@marsai-org/coding-agent/tools/computer/worker";
 import type {
 	AxNode,
 	AxQuery,
@@ -30,9 +30,9 @@ import type {
 	DesktopPoint,
 	DesktopWindow,
 	PointerOptions,
-} from "@oh-my-pi/pi-natives";
+} from "@marsai-org/natives";
 
-import { cfgComputerEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgComputerEnabled } from "@marsai-org/coding-agent/tools/settings";
 
 /** Method name of the last step in a facade call chain, or "" when the chain is malformed. */
 function terminalMethod(chain: unknown): string {
@@ -865,7 +865,7 @@ describe("computer prelude", () => {
 				realm,
 			);
 			for (const zoom of zooms) {
-				expect(zoom.path).toMatch(/omp-computer-.*\.png$/);
+				expect(zoom.path).toMatch(/mars-computer-.*\.png$/);
 				expect(zoom).toMatchObject({
 					width: 128,
 					height: 64,
@@ -1035,12 +1035,12 @@ describe("computer worker round trips", () => {
 		const images = result.payload.displays.filter(block => block.type === "image");
 		expect(texts).toHaveLength(1);
 		expect(texts[0]?.text).toMatch(
-			/^screenshot desktop 64×32; coordinateWidth=64 coordinateHeight=32 → .*omp-computer-.*\.png$/,
+			/^screenshot desktop 64×32; coordinateWidth=64 coordinateHeight=32 → .*mars-computer-.*\.png$/,
 		);
 		expect(images).toEqual([{ type: "image", data: "iVBORw==", mimeType: "image/png", detail: "original" }]);
 		expect(result.payload.screenshots).toHaveLength(1);
 		expect(result.payload.screenshots[0]).toMatchObject({ width: 64, height: 32, target: "desktop" });
-		expect(result.payload.screenshots[0]?.path).toMatch(/omp-computer-.*\.png$/);
+		expect(result.payload.screenshots[0]?.path).toMatch(/mars-computer-.*\.png$/);
 	});
 
 	it("reports source dimensions when a screenshot is scaled", async () => {
@@ -1057,7 +1057,7 @@ describe("computer worker round trips", () => {
 			expect.objectContaining({
 				type: "text",
 				text: expect.stringMatching(
-					/^screenshot desktop 64×32 \(scaled from 128×64\); coordinateWidth=64 coordinateHeight=32 → .*omp-computer-.*\.png$/,
+					/^screenshot desktop 64×32 \(scaled from 128×64\); coordinateWidth=64 coordinateHeight=32 → .*mars-computer-.*\.png$/,
 				),
 			}),
 		);

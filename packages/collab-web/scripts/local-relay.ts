@@ -1,4 +1,5 @@
 /**
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * Offline stand-in for the public collab relay (`wss://my.omp.sh`).
  *
  * Speaks the exact relay contract the real clients expect:

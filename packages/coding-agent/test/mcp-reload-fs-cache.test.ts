@@ -2,11 +2,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "bu
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache, readFile } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import type { MCPServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { MCPCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/mcp-command-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { getMCPConfigPath, getProjectDir, removeWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
+import { clearCache, readFile } from "@marsai-org/coding-agent/capability/fs";
+import type { MCPServerConfig } from "@marsai-org/coding-agent/mcp/types";
+import { MCPCommandController } from "@marsai-org/coding-agent/modes/controllers/mcp-command-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { getMCPConfigPath, getProjectDir, removeWithRetries, setProjectDir } from "@marsai-org/utils";
 import { createInteractiveModeContext, createMcpManagerStub } from "./helpers/interactive-mode-context";
 
 const originalProjectDir = getProjectDir();
@@ -65,7 +65,7 @@ describe("/mcp reload picks up external mcp.json edits", () => {
 	});
 
 	beforeEach(async () => {
-		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-mcp-reload-project-"));
+		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-reload-project-"));
 		setProjectDir(projectDir);
 		clearCache();
 	});

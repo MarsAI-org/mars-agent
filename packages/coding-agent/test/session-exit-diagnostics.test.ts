@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSessionTeardown } from "@oh-my-pi/pi-coding-agent/modes/session-teardown";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { Agent } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createSessionTeardown } from "@marsai-org/coding-agent/modes/session-teardown";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	collectPendingToolCalls,
 	createInterruptedToolResults,
@@ -17,10 +17,10 @@ import {
 	SESSION_EXIT_CUSTOM_TYPE,
 	TOOL_EXECUTION_START_CUSTOM_TYPE,
 	type ToolExecutionStartData,
-} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/exit-diagnostics";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { postmortem, TempDir } from "@marsai-org/utils";
 
 const pendingAssistant: AssistantMessage = {
 	role: "assistant",

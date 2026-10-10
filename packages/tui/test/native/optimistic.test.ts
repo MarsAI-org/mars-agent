@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { md } from "@oh-my-pi/pi-tui/native/describe";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { nativeComponentId } from "@oh-my-pi/pi-tui/native/reconcile";
-import { isNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
+import { md } from "@marsai-org/tui/native/describe";
+import type { DescribeContext, NativeNode } from "@marsai-org/tui/native/node";
+import { nativeComponentId } from "@marsai-org/tui/native/reconcile";
+import { isNativeRendering } from "@marsai-org/tui/native/state";
+import type { Component } from "@marsai-org/tui/tui";
 import { TspHarness } from "./tsp-harness";
 
 /** Markdown where the terminal renders it, else rows. */

@@ -1,14 +1,14 @@
 import { describe, expect, spyOn, test } from "bun:test";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getOAuthApiKey } from "@oh-my-pi/pi-ai/registry/oauth";
-import { loginSnowflake, refreshSnowflakeToken } from "@oh-my-pi/pi-ai/registry/oauth/snowflake";
-import type { OAuthController, OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import { normalizeSnowflakeAccountUrl } from "@oh-my-pi/pi-ai/registry/snowflake";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import * as AIError from "@marsai-org/ai/error";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { getOAuthApiKey } from "@marsai-org/ai/registry/oauth";
+import { loginSnowflake, refreshSnowflakeToken } from "@marsai-org/ai/registry/oauth/snowflake";
+import type { OAuthController, OAuthCredentials } from "@marsai-org/ai/registry/oauth/types";
+import { normalizeSnowflakeAccountUrl } from "@marsai-org/ai/registry/snowflake";
+import { stream } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import { withEnv } from "./helpers";
 
 const ACCOUNT = "https://myorg-acct.snowflakecomputing.com";

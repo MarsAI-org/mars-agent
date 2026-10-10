@@ -47,11 +47,11 @@ CustomTool.execute(toolCallId, params, onUpdate, ctx, signal)
 `discoverAndLoadCustomTools(configuredPaths, cwd, builtInToolNames, pushPendingAction?, agentDir?)` merges:
 
 1. Capability providers (`toolCapability`), including:
-   - Native OMP config (`<agentDir>/tools`, default `~/.omp/agent/tools`; `.omp/tools`)
+   - Native Mars config (`<agentDir>/tools`, default `~/.mars/agent/tools`; `.mars/tools`)
    - Claude config (`<Claude config dir>/tools`, default `~/.claude/tools`; `.claude/tools`)
    - Codex config (`~/.codex/tools`, `.codex/tools`)
-   - OMP package roots and Claude marketplace plugins
-2. Enabled installed plugin manifests (user `~/.omp/plugins` and the active project `.omp/plugins` registry via the plugin loader; project packages shadow same-named user packages)
+   - Mars package roots and Claude marketplace plugins
+2. Enabled installed plugin manifests (user `~/.mars/plugins` and the active project `.mars/plugins` registry via the plugin loader; project packages shadow same-named user packages)
 3. Explicit configured paths passed to the loader
 
 ### Important behavior
@@ -61,7 +61,7 @@ CustomTool.execute(toolCallId, params, onUpdate, ctx, signal)
 - Duplicate resolved paths are deduplicated by discovery; `loadCustomTools` itself loads the supplied path list.
 - Filesystem tool name conflicts are rejected against the supplied built-in names and already-loaded custom tools. Configured paths are appended, not name overrides.
 - Invalid factory results are reported per array entry; valid entries from the same factory can still load. Import/factory failures are collected in `errors` without stopping later modules.
-- Automatic tool-directory scans discover `.ts` and `.js` modules; native OMP discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
+- Automatic tool-directory scans discover `.ts` and `.js` modules; native Mars discovery also checks immediate subdirectories for `index.ts`. Executable discovery excludes `.d.ts` and filters out metadata and scripts before tool-name deduplication. Declarative metadata such as `.md` and `.json` remains available to capability consumers but is not loaded as executable tools.
 - `.mjs` and `.cjs` modules can be loaded through explicitly configured paths or declared plugin tool entries, but the tool-directory scans above do not discover them automatically. Explicitly configured `.md` or `.json` paths still produce a load error.
 - Relative configured paths are resolved from `cwd`; `~` is expanded.
 
@@ -70,7 +70,7 @@ CustomTool.execute(toolCallId, params, onUpdate, ctx, signal)
 A custom tool module must export a function (default export preferred):
 
 ```ts
-import type { CustomToolFactory } from "@oh-my-pi/pi-coding-agent";
+import type { CustomToolFactory } from "@marsai-org/coding-agent";
 
 const factory: CustomToolFactory = (pi) => ({
   name: "repo_stats",
@@ -135,7 +135,7 @@ From `types.ts` and `loader.ts`:
 - `arktype`: injected omptype `type(...)` builder
 - `zod`: injected Zod-compatible omptype builder
 - `typebox`: compatibility shim for legacy TypeBox-style schemas
-- `pi`: injected `@oh-my-pi/pi-coding-agent` exports
+- `pi`: injected `@marsai-org/coding-agent` exports
 - `pushPendingAction(action)`: stage a preview action that is finalized by writing a plain-text reason to `xd://resolve` or `xd://reject`
 
 The loader starts with a no-op UI context and `hasUI: false`. Library hosts can

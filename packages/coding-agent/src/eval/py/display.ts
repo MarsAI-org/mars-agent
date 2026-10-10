@@ -2,8 +2,8 @@
  * Display bundle rendering shared between the Python runner output and the
  * legacy Jupyter MIME conventions. Pure function, no kernel coupling.
  */
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import type { ImageContent } from "@marsai-org/ai";
+import { isRecord } from "@marsai-org/utils";
 import { htmlToBasicMarkdown } from "../../web/scrapers/types";
 import { evalImageMetadata } from "../types";
 

@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { withAuth } from "@oh-my-pi/pi-ai/auth-retry";
-import type { Api, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { invalidateAllCommandConfigs, resolveConfigValue } from "@oh-my-pi/pi-coding-agent/config/resolve-config-value";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { streamSimple } from "@marsai-org/ai";
+import { withAuth } from "@marsai-org/ai/auth-retry";
+import type { Api, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { invalidateAllCommandConfigs, resolveConfigValue } from "@marsai-org/coding-agent/config/resolve-config-value";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import * as piUtils from "@marsai-org/utils";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 function shellQuote(value: string): string {
 	return `'${value.replaceAll("'", "'\\''")}'`;
@@ -550,7 +550,7 @@ describe("ModelRegistry command-resolved models.yml values", () => {
 		expect(await registry.getApiKey(model)).toBe("stale-key");
 		expect(fs.readFileSync(counterFile, "utf8")).toBe("1");
 
-		// User-facing recovery: `omp models refresh`, TUI F5.
+		// User-facing recovery: `mars models refresh`, TUI F5.
 		await registry.refresh("online", { refreshCommandCredentials: true });
 		expect(await registry.getApiKey(model)).toBe("fresh-key");
 		expect(fs.readFileSync(counterFile, "utf8")).toBe("11");

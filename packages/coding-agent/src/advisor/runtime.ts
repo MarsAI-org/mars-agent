@@ -1,8 +1,8 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { raceWithSignal } from "@oh-my-pi/pi-ai/utils/abort";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, ImageContent, TextContent } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { raceWithSignal } from "@marsai-org/ai/utils/abort";
+import { logger } from "@marsai-org/utils";
 import {
 	collectNativeReplayRegexSecretValues,
 	obfuscateNativeReplay,

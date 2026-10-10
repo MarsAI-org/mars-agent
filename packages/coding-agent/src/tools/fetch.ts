@@ -1,20 +1,20 @@
-import { repairCollapsedScheme, tryExtractEmbeddedUrlSelector } from "@oh-my-pi/pi-tui/tools/fetch";
-import type { ReadUrlToolDetails } from "@oh-my-pi/pi-tui/tools/fetch";
+import { repairCollapsedScheme, tryExtractEmbeddedUrlSelector } from "@marsai-org/tui/tools/fetch";
+import type { ReadUrlToolDetails } from "@marsai-org/tui/tools/fetch";
 import type { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { type FetchImpl, getEnvApiKey, type ImageContent, type TextContent } from "@oh-my-pi/pi-ai";
-import { htmlToMarkdown, notebookToEditableText } from "@oh-my-pi/pi-natives";
-import { $which, ptree } from "@oh-my-pi/pi-utils";
-import { type ArchiveFormat, listArchiveRoot, sniffArchiveFormat } from "@oh-my-pi/pi-utils/ar";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { type FetchImpl, getEnvApiKey, type ImageContent, type TextContent } from "@marsai-org/ai";
+import { htmlToMarkdown, notebookToEditableText } from "@marsai-org/natives";
+import { $which, ptree } from "@marsai-org/utils";
+import { type ArchiveFormat, listArchiveRoot, sniffArchiveFormat } from "@marsai-org/utils/ar";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import type { ToolSession } from "../sdk";
 import type { AgentStorage } from "../session/agent-storage";
-import { DEFAULT_MAX_BYTES, truncateHead } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { webpExclusionForModel } from "@oh-my-pi/pi-tui/chat/image-loading";
+import { DEFAULT_MAX_BYTES, truncateHead } from "@marsai-org/tui/tools/streaming-output";
+import { webpExclusionForModel } from "@marsai-org/tui/chat/image-loading";
 import { formatDimensionNote, resizeImage } from "../utils/image-resize";
 import { CONVERTIBLE_EXTENSIONS } from "../utils/markit";
 import { ensureTool } from "../utils/tools-manager";
@@ -24,15 +24,15 @@ import type { RenderResult, SpecialHandler } from "../web/scrapers/types";
 import { finalizeOutput, loadPage, looksLikeHtml, MAX_BYTES, MAX_OUTPUT_CHARS } from "../web/scrapers/types";
 import { type BinaryFetchResult, convertWithMarkit, fetchBinary } from "../web/scrapers/utils";
 import { findCredential } from "../web/search/providers/utils";
-import { applyListLimit } from "@oh-my-pi/pi-tui/tools/list-limit";
+import { applyListLimit } from "@marsai-org/tui/tools/list-limit";
 import { parseTailCount } from "./path-utils";
-import { type LineRange, parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import { isReadableUrlPath } from "@oh-my-pi/pi-tui/tools/read";
+import { type LineRange, parseLineRanges } from "@marsai-org/tui/tools/line-ranges";
+import { isReadableUrlPath } from "@marsai-org/tui/tools/read";
 import type { ParsedSelector } from "./read-selector";
-import { formatBytes } from "@oh-my-pi/pi-tui/render/render-utils";
+import { formatBytes } from "@marsai-org/tui/render/render-utils";
 import { listTables, looksLikeSqlite, openSqliteReadConnection, renderTableList } from "./sqlite-reader";
 import { ToolAbortError } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 import { clampTimeout } from "./tool-timeouts";
 
@@ -470,7 +470,7 @@ function cleanFeedText(text: string): string {
  * Parse RSS/Atom feed to markdown
  */
 async function parseFeedToMarkdown(content: string, maxItems = 10): Promise<string> {
-	const { parseHTML } = await import("@oh-my-pi/pi-utils/dom");
+	const { parseHTML } = await import("@marsai-org/utils/dom");
 	try {
 		const doc = parseHTML(content).document;
 
@@ -873,13 +873,13 @@ async function withTempBinaryFile<T>(
 }
 
 async function renderNotebookPayload(bytes: Uint8Array, displayUrl: string): Promise<string> {
-	return withTempBinaryFile("omp-url-notebook-", ".ipynb", bytes, async tempPath =>
+	return withTempBinaryFile("mars-url-notebook-", ".ipynb", bytes, async tempPath =>
 		notebookToEditableText(await Bun.file(tempPath).text(), displayUrl),
 	);
 }
 
 async function renderSqlitePayload(bytes: Uint8Array): Promise<string> {
-	return withTempBinaryFile("omp-url-sqlite-", ".sqlite", bytes, async tempPath => {
+	return withTempBinaryFile("mars-url-sqlite-", ".sqlite", bytes, async tempPath => {
 		let db: Database | null = null;
 		try {
 			db = await openSqliteReadConnection(tempPath);

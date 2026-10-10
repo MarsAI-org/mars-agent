@@ -1,4 +1,4 @@
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import type { Model } from "@marsai-org/catalog/types";
 import * as AIError from "../error";
 import { resolveXaiBaseUrl } from "../providers/xai-base-url";
 import {

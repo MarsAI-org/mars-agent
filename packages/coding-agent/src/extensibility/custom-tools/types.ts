@@ -5,9 +5,9 @@
  * They can provide custom rendering for tool calls and results in the TUI.
  */
 
-import type { type as ArkType } from "@oh-my-pi/omptype";
-import type * as TypeBox from "@oh-my-pi/omptype/typebox";
-import type * as zod from "@oh-my-pi/omptype/zod";
+import type { type as ArkType } from "@marsai-org/omptype";
+import type * as TypeBox from "@marsai-org/omptype/typebox";
+import type * as zod from "@marsai-org/omptype/zod";
 import type {
 	AgentToolResult,
 	AgentToolUpdateCallback,
@@ -15,12 +15,12 @@ import type {
 	ToolApprovalDecision,
 	ToolLoadMode,
 	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { FetchImpl, Model, Static, TSchema } from "@oh-my-pi/pi-ai";
-import type { Component } from "@oh-my-pi/pi-tui";
-import type { NativeToolView, RenderResultOptions } from "@oh-my-pi/pi-tui/tools/renderer";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import type { CompactionResult } from "@marsai-org/agent-core/compaction";
+import type { FetchImpl, Model, Static, TSchema } from "@marsai-org/ai";
+import type { Component } from "@marsai-org/tui";
+import type { NativeToolView, RenderResultOptions } from "@marsai-org/tui/tools/renderer";
+import type { logger as PiLogger } from "@marsai-org/utils";
 import type { Rule } from "../../capability/rule";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { Settings } from "../../config/settings";
@@ -28,9 +28,9 @@ import type { ExecOptions, ExecResult } from "../../exec/exec";
 import type { HookUIContext } from "../../extensibility/hooks/types";
 import type * as PiCodingAgent from "../../index";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import type { Theme } from "@marsai-org/tui/theme";
 import type { ReadonlySessionManager } from "../../session/session-manager";
-import type { TodoItem } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoItem } from "@marsai-org/tui/tools/todo";
 import type { RetryErrorUpdate } from "../shared-events";
 
 /** Alias for clarity */
@@ -102,7 +102,7 @@ export interface CustomToolContext {
 	settings?: Settings;
 	/** Fetch implementation for outbound HTTP; defaults to global fetch when omitted. */
 	fetch?: FetchImpl;
-	/** Calling session's `local://` root mapping for tools that bridge out of the OMP process. */
+	/** Calling session's `local://` root mapping for tools that bridge out of the Mars process. */
 	localProtocolOptions?: LocalProtocolOptions;
 	/** Whether to auto-approve all destructive tool operations (--auto-approve CLI flag) */
 	autoApprove?: boolean;

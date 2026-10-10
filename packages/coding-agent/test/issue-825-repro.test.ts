@@ -19,10 +19,10 @@
  */
 
 import { beforeAll, describe, expect, mock, test } from "bun:test";
-import { AgentBusyError } from "@oh-my-pi/pi-agent-core";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
+import { AgentBusyError } from "@marsai-org/agent-core";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
 
 beforeAll(() => {
 	initTheme();

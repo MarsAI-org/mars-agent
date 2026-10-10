@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createLspWritethrough } from "@oh-my-pi/pi-coding-agent/lsp";
-import { type FileDiagnosticsResult, FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
-import * as lspClient from "@oh-my-pi/pi-coding-agent/lsp/client";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@oh-my-pi/pi-coding-agent/lsp/diagnostics";
-import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { EquivalentUriMap, fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { type ptree, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createLspWritethrough } from "@marsai-org/coding-agent/lsp";
+import { type FileDiagnosticsResult, FileFormatResult } from "@marsai-org/tui/tools/lsp";
+import * as lspClient from "@marsai-org/coding-agent/lsp/client";
+import * as lspConfig from "@marsai-org/coding-agent/lsp/config";
+import { formatContent, INLINE_DIAGNOSTICS_WAIT_TIMEOUT_MS } from "@marsai-org/coding-agent/lsp/diagnostics";
+import type { Diagnostic, LinterClient, LspClient, ServerConfig } from "@marsai-org/coding-agent/lsp/types";
+import { EquivalentUriMap, fileToUri } from "@marsai-org/coding-agent/lsp/utils";
+import type { DeferredDiagnosticsEntry, ToolSession } from "@marsai-org/coding-agent/tools";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { type ptree, TempDir } from "@marsai-org/utils";
 
 const TEST_SERVER: ServerConfig = {
 	command: "test-lsp",
@@ -123,7 +123,7 @@ describe("LSP diagnostics freshness", () => {
 	let tempDir: TempDir;
 
 	beforeEach(() => {
-		tempDir = TempDir.createSync("@omp-lsp-freshness-");
+		tempDir = TempDir.createSync("@mars-lsp-freshness-");
 	});
 
 	afterEach(() => {
@@ -847,9 +847,9 @@ describe("LSP diagnostics freshness", () => {
 		// "orphan" file look like it belongs to a project.
 		const server: ServerConfig = {
 			...TEST_SERVER,
-			rootMarkers: ["omp-lsp-orphan-test-root.marker"],
+			rootMarkers: ["mars-lsp-orphan-test-root.marker"],
 		};
-		const orphanDir = TempDir.createSync("@omp-lsp-orphan-");
+		const orphanDir = TempDir.createSync("@mars-lsp-orphan-");
 		try {
 			const filePath = path.join(orphanDir.path(), "scratch.ts");
 			const uri = fileToUri(filePath);

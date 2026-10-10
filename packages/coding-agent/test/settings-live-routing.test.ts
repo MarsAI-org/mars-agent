@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { resolveAgentModelSelection } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { createAuthStorageSettingsSync } from "@oh-my-pi/pi-coding-agent/session/auth-broker-config";
-import { getRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { cfgRetryUsageReservePct } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgTaskAgentModelOverrides } from "@oh-my-pi/pi-coding-agent/task/settings";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { resolveAgentModelSelection } from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { createAuthStorageSettingsSync } from "@marsai-org/coding-agent/session/auth-broker-config";
+import { getRetryFallbackChains } from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { cfgRetryUsageReservePct } from "@marsai-org/coding-agent/session/settings";
+import { cfgTaskAgentModelOverrides } from "@marsai-org/coding-agent/task/settings";
+import { logger, TempDir } from "@marsai-org/utils";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 

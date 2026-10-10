@@ -5,8 +5,8 @@ import {
 	type TerminalFrameProvider,
 	TUI,
 	type ViewportSize,
-} from "@oh-my-pi/pi-tui";
-import type { RenderTimer } from "@oh-my-pi/pi-tui/tui";
+} from "@marsai-org/tui";
+import type { RenderTimer } from "@marsai-org/tui/tui";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";

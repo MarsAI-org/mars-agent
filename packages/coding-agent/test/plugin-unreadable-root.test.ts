@@ -2,9 +2,9 @@ import { afterEach, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { getEnabledPlugins } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { getEnabledPlugins } from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempRoots: string[] = [];
 const restore: string[] = [];
@@ -30,7 +30,7 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; m
 	tempRoots.push(root);
 	const home = path.join(root, "home");
 	const cwd = path.join(root, "project");
-	const pluginsDir = path.join(home, ".omp", "plugins");
+	const pluginsDir = path.join(home, ".mars", "plugins");
 	await fs.mkdir(cwd, { recursive: true });
 
 	const declaredDir = path.join(pluginsDir, "node_modules", "declared-plugin");
@@ -60,7 +60,7 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; m
 // working plugin set, and it holds wherever the suite runs. Only the denial
 // needs mode bits to be enforced, which excludes root and Windows.
 test("a readable plugins root still loads its declared plugin", async () => {
-	const readable = await plantRoot("omp-plugin-readable-");
+	const readable = await plantRoot("mars-plugin-readable-");
 	expect((await getEnabledPlugins(readable.cwd, { home: readable.home })).map(plugin => plugin.name)).toEqual([
 		"declared-plugin",
 	]);
@@ -69,7 +69,7 @@ test("a readable plugins root still loads its declared plugin", async () => {
 test.skipIf(process.platform === "win32" || process.getuid?.() === 0)(
 	"an unreadable plugins root is skipped instead of failing plugin collection",
 	async () => {
-		const denied = await plantRoot("omp-plugin-denied-");
+		const denied = await plantRoot("mars-plugin-denied-");
 		await fs.chmod(denied.manifest, 0o000);
 		restore.push(denied.manifest);
 		expect(await getEnabledPlugins(denied.cwd, { home: denied.home })).toEqual([]);
@@ -82,7 +82,7 @@ test.skipIf(process.platform === "win32" || process.getuid?.() === 0)(
 		// The root's own manifest and lockfile are readable here, so the guards
 		// above have already passed: enumeration reads each plugin's manifest,
 		// and one denied package.json used to abort the whole collection.
-		const { home, cwd, pluginsDir } = await plantRoot("omp-plugin-sibling-");
+		const { home, cwd, pluginsDir } = await plantRoot("mars-plugin-sibling-");
 		const otherDir = path.join(pluginsDir, "node_modules", "other-plugin");
 		await fs.mkdir(otherDir, { recursive: true });
 		const otherManifest = path.join(otherDir, "package.json");

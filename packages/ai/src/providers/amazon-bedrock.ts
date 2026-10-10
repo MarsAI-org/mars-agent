@@ -10,10 +10,10 @@
  * only AWS's own regional host is re-pointed at the resolved region. SigV4 unaffected.
  */
 
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { mapEffortToAnthropicAdaptiveEffort, requireSupportedEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { $flag, fetchWithRetry, logger, parseStreamingJsonThrottled, USER_AGENT } from "@oh-my-pi/pi-utils";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { mapEffortToAnthropicAdaptiveEffort, requireSupportedEffort } from "@marsai-org/catalog/model-thinking";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { $flag, fetchWithRetry, logger, parseStreamingJsonThrottled, USER_AGENT } from "@marsai-org/utils";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";

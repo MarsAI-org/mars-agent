@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { executePythonWithKernel } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { executePythonWithKernel } from "@marsai-org/coding-agent/eval/py/executor";
+import { DEFAULT_MAX_BYTES } from "@marsai-org/tui/tools/streaming-output";
 import { FakeKernel } from "./helpers";
 
 describe("executePythonWithKernel streaming", () => {

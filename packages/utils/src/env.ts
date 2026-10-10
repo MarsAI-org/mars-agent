@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
-import { getAgentDir, getConfigRootDir, getProjectDir, refreshDirsFromEnv } from "./dirs";
+import { getAgentDir, getConfigRootDir, getProjectDir, maybeMigrateLegacyConfigDir, refreshDirsFromEnv } from "./dirs";
 
 export * from "./worker-host";
 
@@ -215,7 +215,7 @@ function filterChildShellEnvInternal(
 		}
 		if (runtimeLaunchEnvValues || projectEnvNamesLoadedByOmp.has(key)) {
 			// Strong provenance: the launch environment is known and this name is
-			// absent from it, or OMP itself injected the value — either way it came
+			// absent from it, or Mars itself injected the value — either way it came
 			// from a project dotenv file, not the parent shell.
 			const value = result[key];
 			if (value !== undefined) onDotenvValue?.(value);
@@ -260,7 +260,7 @@ export function getDotenvEnvValues(
 /**
  * Parses a complete .env file with the runtime's dotenv grammar, then retains
  * only shell-identifier names and spawn-safe values before mirroring valid
- * `OMP_` variables to their `PI_` aliases.
+ * `MARS_` variables to their `PI_` aliases.
  */
 export function parseEnvFile(filePath: string): Record<string, string> {
 	const result: Record<string, string> = {};
@@ -274,10 +274,10 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 		// File doesn't exist or can't be read - return empty result
 	}
 
-	// OMP_ overrides PI_
+	// MARS_ overrides PI_
 	for (const k in result) {
-		if (k.startsWith("OMP_")) {
-			result[`PI_${k.slice(4)}`] = result[k];
+		if (k.startsWith("MARS_")) {
+			result[`PI_${k.slice(5)}`] = result[k];
 		}
 	}
 
@@ -316,7 +316,7 @@ refreshDirsFromEnv();
 /**
  * Intentional re-export of Bun.env.
  *
- * All users should import this env module (import { $env } from "@oh-my-pi/pi-utils")
+ * All users should import this env module (import { $env } from "@marsai-org/utils")
  * before using environment variables. This ensures that .env files have been loaded and
  * overrides (project, home) have been applied, so $env always reflects the correct values.
  */
@@ -489,3 +489,13 @@ export function parseFlag(value: string | undefined, def = false): boolean {
 export function $flag(name: string, def: boolean = false): boolean {
 	return parseFlag($env[name], def);
 }
+
+// After the refresh, a `PI_CONFIG_DIR` arriving from a profile/agent `.env` is
+// final, so the one-time `~/.omp` → `~/.mars` migration below evaluates against
+// the real root. It runs here — rather than in every config-root caller — so
+// CLI hosts, RPC/ACP hosts, workers, and SDK embeds all migrate exactly once
+// per install; consumers print the drained notice through their own output
+// sink, so no shared path writes to the streams. `bun test` never migrates:
+// these paths run against the developer's real home there, and
+// `maybeMigrateLegacyConfigDir` is exported for direct unit testing.
+if (!isBunTestRuntime()) maybeMigrateLegacyConfigDir();

@@ -15,10 +15,10 @@ import {
 	type StreamFn,
 	Tokenizer,
 	tokenizerEncodingForModel,
-} from "@oh-my-pi/pi-agent-core";
-import { type Model, type SimpleStreamOptions, streamSimple } from "@oh-my-pi/pi-ai";
-import { serverSideFallbackModels } from "@oh-my-pi/pi-catalog/compat/server-side-fallback";
-import type { Encoding } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/agent-core";
+import { type Model, type SimpleStreamOptions, streamSimple } from "@marsai-org/ai";
+import { serverSideFallbackModels } from "@marsai-org/catalog/compat/server-side-fallback";
+import type { Encoding } from "@marsai-org/natives";
 import type { Settings } from "../config/settings";
 import { type AnthropicSlowModeLanes, anthropicSlowModeLanes } from "./anthropic-slow-mode";
 

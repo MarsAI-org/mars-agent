@@ -1,8 +1,8 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { visibleWidth } from "@marsai-org/tui";
 import { Settings } from "../../../src/config/settings";
-import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@oh-my-pi/pi-tui/overlays/plan-save-overlay";
-import { getThemeByName, setThemeInstance, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@marsai-org/tui/overlays/plan-save-overlay";
+import { getThemeByName, setThemeInstance, type Theme, theme } from "@marsai-org/tui/theme";
 
 describe("PlanSaveOverlay", () => {
 	let uiTheme: Theme;

@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/manager";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { PluginManager } from "@marsai-org/coding-agent/extensibility/plugins/manager";
+import * as piUtils from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 
 function emptyStream(): ReadableStream<Uint8Array> {
@@ -68,7 +68,7 @@ describe("PluginManager.install load validation", () => {
 	let pluginsPkgJson: string;
 
 	beforeEach(async () => {
-		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-plugin-validation-"));
+		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-plugin-validation-"));
 		pluginsDir = path.join(tmpRoot, "plugins");
 		pluginsNodeModules = path.join(pluginsDir, "node_modules");
 		pluginsPkgJson = path.join(pluginsDir, "package.json");

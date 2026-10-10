@@ -20,7 +20,7 @@ import { matchesKey } from "../../keys";
 import { col, compact, item, keyed, list, node, row, span, stableKey, text } from "../../native/describe";
 import { Memo } from "../../native/memo";
 import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "../../native/node";
-import type { TspProps, TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspProps, TspSpan } from "@marsai-org/wire";
 import { TERMINAL } from "../../terminal-capabilities";
 import { truncateToWidth, visibleWidth } from "../../utils";
 import { getEditorTheme, theme } from "../../theme/theme";
@@ -1272,7 +1272,7 @@ export class Sidebar {
 				: this.#model.staged.length > 0
 					? "Commit"
 					: "Stage all & commit";
-		// The panels' button (omp-panels.css `omp.btn`): accent while the keyboard is on it, muted when it can't run.
+		// The panels' button (theme `omp.btn` role): accent while the keyboard is on it, muted when it can't run.
 		const commitTone = !canCommit ? "muted" : on({ kind: "commit-button" }) ? "accent" : undefined;
 		return col(
 			[

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { Database, Statement } from "bun:sqlite";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
+import { ThinkingLevel } from "@marsai-org/agent-core";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { COMPOSER_DEFAULTS, type ComposerStatusCache } from "@oh-my-pi/pi-tui/prompt/composer";
-import { ComposerCache } from "@oh-my-pi/pi-tui/prompt/composer-cache";
+import { COMPOSER_DEFAULTS, type ComposerStatusCache } from "@marsai-org/tui/prompt/composer";
+import { ComposerCache } from "@marsai-org/tui/prompt/composer-cache";
 
 function statusFor(thinkingLevel: ThinkingLevel): ComposerStatusCache {
 	return {
@@ -28,7 +28,7 @@ describe("composer startup cache", () => {
 	let dbPath: string;
 
 	beforeEach(async () => {
-		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-composer-cache-"));
+		root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-composer-cache-"));
 		dbPath = path.join(root, "cache", "composer.db");
 	});
 
@@ -134,18 +134,18 @@ describe("composer startup cache", () => {
 		const project = path.join(root, "project");
 		await Promise.all([
 			fs.mkdir(home, { recursive: true }),
-			fs.mkdir(path.join(xdgCache, "omp"), { recursive: true }),
+			fs.mkdir(path.join(xdgCache, "mars"), { recursive: true }),
 		]);
 		await Bun.write(path.join(home, ".env"), `XDG_CACHE_HOME=${xdgCache}\n`);
 
-		const composerCacheModule = Bun.resolveSync("@oh-my-pi/pi-tui/prompt/composer-cache", import.meta.dir);
+		const composerCacheModule = Bun.resolveSync("@marsai-org/tui/prompt/composer-cache", import.meta.dir);
 		const script = [
 			'import * as path from "node:path";',
 			`import { ComposerCache } from ${JSON.stringify(composerCacheModule)};`,
 			"const cache = ComposerCache.open();",
 			`cache.writeUi(${JSON.stringify(project)}, {}, {});`,
 			"cache.close();",
-			`const expected = path.join(${JSON.stringify(xdgCache)}, "omp", "cache", "composer.db");`,
+			`const expected = path.join(${JSON.stringify(xdgCache)}, "mars", "cache", "composer.db");`,
 			"process.stdout.write(String(await Bun.file(expected).exists()));",
 		].join("\n");
 		const proc = Bun.spawn([process.execPath, "--no-env-file", "--no-install", "--eval", script], {
@@ -155,7 +155,7 @@ describe("composer startup cache", () => {
 				HOME: home,
 				XDG_CACHE_HOME: undefined,
 				PI_CODING_AGENT_DIR: undefined,
-				OMP_PROFILE: undefined,
+				MARS_PROFILE: undefined,
 				PI_PROFILE: undefined,
 			},
 			stdout: "pipe",

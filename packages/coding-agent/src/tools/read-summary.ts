@@ -1,12 +1,12 @@
 import * as path from "node:path";
-import { type SummaryResult, summarizeCodeAsync } from "@oh-my-pi/pi-natives";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { isMarkdownPath } from "@oh-my-pi/pi-tui/theme";
+import { type SummaryResult, summarizeCodeAsync } from "@marsai-org/natives";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { isMarkdownPath } from "@marsai-org/tui/theme";
 import type { ClientBridge } from "../session/client-bridge";
 import type { ToolSession } from "../sdk";
 import { resolveFileDisplayMode } from "../utils/file-display-mode";
 import { countTextLines } from "./read-format";
-import { formatReadSummary } from "@oh-my-pi/pi-tui/tools/read";
+import { formatReadSummary } from "@marsai-org/tui/tools/read";
 import { throwIfAborted } from "./tool-errors";
 
 import {

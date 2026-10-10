@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { type BtwHistoryRecord, type BtwHistoryTurn, getBtwLatestTurn } from "@oh-my-pi/pi-tui/overlays/btw-history";
-import { acquireFileLock, type FileLockHandle, isEnoent, toError } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { type BtwHistoryRecord, type BtwHistoryTurn, getBtwLatestTurn } from "@marsai-org/tui/overlays/btw-history";
+import { acquireFileLock, type FileLockHandle, isEnoent, toError } from "@marsai-org/utils";
 import { replaceFileAtomically } from "../utils/atomic-file";
 
 export {
@@ -11,7 +11,7 @@ export {
 	getBtwCopyText,
 	getBtwLatestTurn,
 	getBtwTurns,
-} from "@oh-my-pi/pi-tui/overlays/btw-history";
+} from "@marsai-org/tui/overlays/btw-history";
 
 const turnFields = {
 	question: "string",

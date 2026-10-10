@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { UsageReport } from "@marsai-org/ai";
+import { TempDir } from "@marsai-org/utils";
 import {
 	buildRedactionMap,
 	collectHistoryIdentityStrings,
@@ -11,13 +11,13 @@ import {
 	formatUsageHistory,
 	runUsageCommand,
 	type UsagePolicyDiagnosticsOptions,
-} from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
+} from "@marsai-org/coding-agent/cli/usage-cli";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
 import {
 	collectUnreportedAccounts,
 	type UsageAccountIdentity,
-} from "@oh-my-pi/pi-coding-agent/slash-commands/helpers/usage-accounts";
+} from "@marsai-org/coding-agent/slash-commands/helpers/usage-accounts";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const HOUR = 3_600_000;
@@ -1208,7 +1208,7 @@ describe("formatUsageHistory", () => {
 
 describe("usage command configuration", () => {
 	it("uses PI_CONFIG_FILES account policies during auth discovery", async () => {
-		using tempDir = TempDir.createSync("@omp-usage-overlay-");
+		using tempDir = TempDir.createSync("@mars-usage-overlay-");
 		const overlayPath = tempDir.join("overlay.yml");
 		await Promise.all([
 			Bun.write(
@@ -1261,7 +1261,7 @@ describe("usage command configuration", () => {
 	});
 });
 
-describe("omp usage accounts", () => {
+describe("mars usage accounts", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});

@@ -2,15 +2,15 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, mock,
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import { AuthStorage } from "@marsai-org/ai";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
 import {
 	BOUNDED_GUIDANCE_MODE,
 	BOUNDED_GUIDANCE_TOOL_COUNT,
@@ -61,7 +61,7 @@ describe("createAgentSession MCP server instructions (deferred UI)", () => {
 	beforeAll(async () => {
 		isolatedHome = path.join(os.tmpdir(), `pi-sdk-mcp-instr-home-${Snowflake.next()}`);
 		fs.mkdirSync(isolatedHome, { recursive: true });
-		isolatedAgentDir = path.join(isolatedHome, ".omp", "agent");
+		isolatedAgentDir = path.join(isolatedHome, ".mars", "agent");
 		fs.mkdirSync(isolatedAgentDir, { recursive: true });
 		originalAgentDir = getAgentDir();
 		setAgentDir(isolatedAgentDir);

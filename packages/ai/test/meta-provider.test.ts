@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry/registry";
-import type { Context } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import { getProviderDefinition } from "@marsai-org/ai/registry/registry";
+import type { Context } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { seedModels } from "@marsai-org/catalog/compat/providers";
 
 const loginMeta = getProviderDefinition("meta")!.login!;
 

@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ModelBrowserItem } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { setInternalUrlCompletionHost } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { getSelectListTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui";
+import { buildModel } from "@marsai-org/catalog/build";
+import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@marsai-org/tui/app-keybindings";
+import type { ModelBrowserItem } from "@marsai-org/tui/overlays/model-browser";
+import { setInternalUrlCompletionHost } from "@marsai-org/tui/prompt/internal-url-autocomplete";
+import { createPromptActionAutocompleteProvider } from "@marsai-org/tui/prompt/prompt-action-autocomplete";
+import { getSelectListTheme, initTheme, theme } from "@marsai-org/tui/theme";
+import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@marsai-org/tui";
 
 function modelMentionItem(provider: string, id: string, name: string): ModelBrowserItem {
 	return {
@@ -33,8 +33,8 @@ describe("prompt action autocomplete", () => {
 		// The coding-agent internal-url router installs the real host; here a stub
 		// proves the fall-through contract without the router.
 		setInternalUrlCompletionHost({
-			completionSchemes: () => ["omp"],
-			resolveCompletions: async scheme => (scheme === "omp" ? [{ value: "docs", label: "docs" }] : null),
+			completionSchemes: () => ["mars"],
+			resolveCompletions: async scheme => (scheme === "mars" ? [{ value: "docs", label: "docs" }] : null),
 		});
 	});
 

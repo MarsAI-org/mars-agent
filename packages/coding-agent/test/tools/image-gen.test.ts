@@ -1,19 +1,15 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { afterAll, describe, expect, it } from "bun:test";
-import { type Api, type FetchImpl, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomToolContext, CustomToolResult } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import {
-	getImageGenTools,
-	getImageGenToolsWithRegistry,
-	imageGenTool,
-} from "@oh-my-pi/pi-coding-agent/tools/image-gen";
-import { hasFsCode, removeWithRetries, TempDir } from "@oh-my-pi/pi-utils";
+import { type Api, type FetchImpl, type Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { modelKind } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CustomToolContext, CustomToolResult } from "@marsai-org/coding-agent/extensibility/custom-tools";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { getImageGenTools, getImageGenToolsWithRegistry, imageGenTool } from "@marsai-org/coding-agent/tools/image-gen";
+import { hasFsCode, removeWithRetries, TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const generatedImagePaths: string[] = [];
@@ -491,7 +487,7 @@ describe("imageGenTool catalog routing", () => {
 		"rejects a FIFO image input before reading or contacting the provider",
 		async () => {
 			// Real kernel FIFO I/O cannot be driven by fake timers; the race proves the async read rejects boundedly.
-			const tempDir = TempDir.createSync("@omp-image-special-file-");
+			const tempDir = TempDir.createSync("@mars-image-special-file-");
 			const fifo = path.join(tempDir.path(), "input.png");
 			try {
 				expect(Bun.spawnSync(["mkfifo", fifo]).exitCode).toBe(0);

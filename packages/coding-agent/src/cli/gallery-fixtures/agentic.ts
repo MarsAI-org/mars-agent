@@ -1,7 +1,7 @@
 // Gallery fixtures for agentic orchestration (task, wait, goal).
-import type { Usage } from "@oh-my-pi/pi-ai";
-import type { TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
+import type { Usage } from "@marsai-org/ai";
+import type { TaskToolDetails } from "@marsai-org/tui/tools/task";
+import type { CoordinationDetails } from "@marsai-org/tui/tools/wait";
 import type { GalleryFixture } from "./types";
 
 /** Message/activity timestamps are offsets from load time so gallery ages stay plausible. */

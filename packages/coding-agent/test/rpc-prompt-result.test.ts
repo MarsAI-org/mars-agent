@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import {
 	RpcExtensionUserMessageTracker,
 	RpcPromptResults,
 	reportPromptResult,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-prompt-results";
 import type { ExtensionActions } from "../src/extensibility/extensions/types";
 import { initializeExtensions } from "../src/modes/runtime-init";
 import type { AgentSession, AgentSessionEvent } from "../src/session/agent-session";
@@ -136,7 +136,7 @@ describe("RpcPromptResults", () => {
 		]);
 	});
 
-	test("reports provider failures without OMP-local diagnostics and classifies retryability", async () => {
+	test("reports provider failures without Mars-local diagnostics and classifies retryability", async () => {
 		const { frames, session, results } = createHarness();
 		session.isStreaming = true;
 		// Still streaming when the results are written: the session is not settled.
@@ -147,7 +147,7 @@ describe("RpcPromptResults", () => {
 					stopReason: "error",
 					errorStatus: 400,
 					errorMessage:
-						"400 invalid_request_error: messages.0: bad block\nraw-http-request=/home/u/.omp/logs/x.json",
+						"400 invalid_request_error: messages.0: bad block\nraw-http-request=/home/u/.mars/logs/x.json",
 				}),
 			]),
 		);

@@ -1,12 +1,12 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Shell } from "@oh-my-pi/pi-natives";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { DEFAULT_MAX_LINES, truncateHead, truncateTail } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Shell } from "@marsai-org/natives";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { DEFAULT_MAX_LINES, truncateHead, truncateTail } from "@marsai-org/tui/tools/streaming-output";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isEnoent } from "@marsai-org/utils";
 import type { ToolSession } from "../sdk";
 import { quotePosixArgument } from "../utils/shell-quote";
 import { resolveReadPath } from "./path-utils";
@@ -241,7 +241,7 @@ async function runJq(
 	const { signal, stopAfterLines } = options;
 	throwIfAborted(signal);
 
-	const stderrPath = path.join(os.tmpdir(), `omp-jq-${crypto.randomUUID()}.err`);
+	const stderrPath = path.join(os.tmpdir(), `mars-jq-${crypto.randomUUID()}.err`);
 	// jaq parses any argument starting with `-` as flags even when shell-quoted;
 	// `--` keeps filters such as `-.price` positional.
 	const command = `jq ${flags.join(" ")} -- ${quotePosixArgument(query)} ${quotePosixArgument(filePath)} 2>${quotePosixArgument(stderrPath)}`;

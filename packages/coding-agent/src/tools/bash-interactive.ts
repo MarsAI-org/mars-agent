@@ -1,10 +1,10 @@
-import { BashInteractiveOverlayComponent } from "@oh-my-pi/pi-tui/tools/bash-interactive";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { type PtyRunResult, PtySession } from "@oh-my-pi/pi-natives";
-import { loadXtermTerminal } from "@oh-my-pi/pi-tui/tools/terminal-output";
+import { BashInteractiveOverlayComponent } from "@marsai-org/tui/tools/bash-interactive";
+import type { AgentToolContext } from "@marsai-org/agent-core";
+import type { ImageContent } from "@marsai-org/ai";
+import { type PtyRunResult, PtySession } from "@marsai-org/natives";
+import { loadXtermTerminal } from "@marsai-org/tui/tools/terminal-output";
 import { Settings } from "../config/settings";
-import { OutputSink, type OutputSummary } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { OutputSink, type OutputSummary } from "@marsai-org/tui/tools/streaming-output";
 import { TerminalGraphicsDecoder } from "../utils/terminal-graphics";
 import { resolveOutputMaxColumns, resolveOutputSinkArtifactMaxBytes, resolveOutputSinkHeadBytes } from "./output-meta";
 

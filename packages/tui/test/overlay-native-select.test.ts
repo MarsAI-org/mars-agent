@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { type LogoutAccount, LogoutAccountSelectorComponent } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { type LogoutAccount, LogoutAccountSelectorComponent } from "@marsai-org/tui/overlays/logout-account-selector";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 
 const DOWN = "\x1b[B";
 const genericCx: DescribeContext = {

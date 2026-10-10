@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { type KagiSearchRequest, searchWithKagi } from "@oh-my-pi/pi-coding-agent/web/kagi";
-import { KagiProvider, searchKagi } from "@oh-my-pi/pi-coding-agent/web/search/providers/kagi";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { type KagiSearchRequest, searchWithKagi } from "@marsai-org/coding-agent/web/kagi";
+import { KagiProvider, searchKagi } from "@marsai-org/coding-agent/web/search/providers/kagi";
+import { SearchProviderError } from "@marsai-org/coding-agent/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const providerAuthStorage = createInMemoryAuthStorage();

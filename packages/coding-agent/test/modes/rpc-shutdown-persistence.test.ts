@@ -9,7 +9,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRecord, TempDir } from "@oh-my-pi/pi-utils";
+import { isRecord, TempDir } from "@marsai-org/utils";
 
 const tempDirs: TempDir[] = [];
 

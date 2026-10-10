@@ -7,13 +7,8 @@
  * names, and the system prompt lists schemes from {@link ProtocolHandler.promptDoc}.
  */
 
-import type {
-	AgentToolContext,
-	AgentToolUpdateCallback,
-	ToolApprovalDecision,
-	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentToolContext, AgentToolUpdateCallback, ToolApprovalDecision, ToolTier } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
 import type { Settings } from "../config/settings";
 import type { Rule } from "../capability/rule";
 import type { Skill } from "../extensibility/skills";
@@ -21,10 +16,10 @@ import type { AgentRegistry } from "../registry/agent-registry";
 import type { LocalProtocolOptions } from "./local-protocol";
 import type { SessionEntry } from "../session/session-entries";
 import type { ToolSession } from "../tools";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
-import type { ProcReadDetails, ProcWriteDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
-import type { CfgReadDetails, CfgWriteDetails } from "@oh-my-pi/pi-tui/tools/cfg-render";
-import type { XdevRenderDispatch } from "@oh-my-pi/pi-tui/tools/xdev";
+import type { CoordinationDetails } from "@marsai-org/tui/tools/wait";
+import type { ProcReadDetails, ProcWriteDetails } from "@marsai-org/tui/tools/proc-render";
+import type { CfgReadDetails, CfgWriteDetails } from "@marsai-org/tui/tools/cfg-render";
+import type { XdevRenderDispatch } from "@marsai-org/tui/tools/xdev";
 
 /** Transcript-only render state a handler write attaches to the `write` tool result. */
 export interface InternalWriteDetails {

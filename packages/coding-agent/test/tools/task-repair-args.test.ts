@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { repairDoubleEncodedJsonString, repairTaskParams } from "@oh-my-pi/pi-tui/tools/task-repair-args";
-import type { TaskParams } from "@oh-my-pi/pi-tui/tools/task";
+import { repairDoubleEncodedJsonString, repairTaskParams } from "@marsai-org/tui/tools/task-repair-args";
+import type { TaskParams } from "@marsai-org/tui/tools/task";
 
 describe("repairDoubleEncodedJsonString", () => {
 	it("decodes a uniformly double-encoded prose value", () => {

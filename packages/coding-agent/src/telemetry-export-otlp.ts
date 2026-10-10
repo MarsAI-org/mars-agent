@@ -20,8 +20,8 @@ import type {
 	CostEstimate,
 	CostEstimatorContext,
 	ToolStatus,
-} from "@oh-my-pi/pi-agent-core";
-import { logger, postmortem } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { logger, postmortem } from "@marsai-org/utils";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -44,13 +44,13 @@ import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
 import type { TelemetryModelPricingResolver, TelemetrySignalConfig } from "./telemetry-export";
 
 /**
- * Periodic flush interval. A long-lived `omp` process (the ACP server is
+ * Periodic flush interval. A long-lived `mars` process (the ACP server is
  * spawned once and reused across many turns) would otherwise hold finished
  * telemetry until a batch window elapses or the process exits.
  */
 const FLUSH_INTERVAL_MS = 30_000;
 
-const SERVICE_NAME = "oh-my-pi";
+const SERVICE_NAME = "Mars";
 
 type OtelLogLevel = "none" | logger.LogLevel;
 
@@ -172,7 +172,7 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			readers: [new PeriodicExportingMetricReader({ exporter })],
 		});
 		metrics.setGlobalMeterProvider(meterProvider);
-		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@oh-my-pi/pi-coding-agent"));
+		metricRecorder = new AgentMetricRecorder(metrics.getMeter("@marsai-org/coding-agent"));
 	}
 
 	if (signalConfig.log) {
@@ -182,7 +182,7 @@ export async function registerProviders(signalConfig: TelemetrySignalConfig): Pr
 			processors: [new BatchLogRecordProcessor({ exporter })],
 		});
 		logs.setGlobalLoggerProvider(logProvider);
-		otelLogger = logProvider.getLogger("@oh-my-pi/pi-coding-agent");
+		otelLogger = logProvider.getLogger("@marsai-org/coding-agent");
 		unregisterLogSink = logger.registerLogSink(event => {
 			emitOtelLog(event.level, event.message, logAttributesFromContext(event.context), "omp.log", event.timestamp);
 		});

@@ -10,15 +10,15 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import * as attach from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import * as registry from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { getTabsMapForTest, releaseTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import * as attach from "@marsai-org/coding-agent/tools/browser/attach";
+import { CmuxSocketClient } from "@marsai-org/coding-agent/tools/browser/cmux/socket-client";
+import * as registry from "@marsai-org/coding-agent/tools/browser/registry";
+import { getTabsMapForTest, releaseTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { TimeoutError } from "puppeteer-core";
 
 function makeSession(): ToolSession {
@@ -62,7 +62,7 @@ beforeEach(() => {
 	prevSocketPath = process.env.CMUX_SOCKET_PATH;
 	// Unique per test so the module-global browsers map (keyed by socket path)
 	// never carries a handle across tests.
-	process.env.CMUX_SOCKET_PATH = `/tmp/omp-open-lease-${process.pid}-${Math.random().toString(36).slice(2)}.sock`;
+	process.env.CMUX_SOCKET_PATH = `/tmp/mars-open-lease-${process.pid}-${Math.random().toString(36).slice(2)}.sock`;
 });
 
 afterEach(async () => {
@@ -165,7 +165,7 @@ describe("browser open — caller cancellation rolls back the fresh browser (#63
 });
 
 describe("browser open — failed spawned-app acquisition reaps its owned process (#9537)", () => {
-	it("kills the OMP-spawned process when no page target can be published", async () => {
+	it("kills the Mars-spawned process when no page target can be published", async () => {
 		const disconnectSpy = vi.fn();
 		const browser = {
 			key: "spawned:/tmp/chrome-headless-shell",

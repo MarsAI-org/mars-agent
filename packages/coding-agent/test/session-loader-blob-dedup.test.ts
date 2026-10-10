@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { BlobStore } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import type { ImageContent } from "@marsai-org/ai";
+import { BlobStore } from "@marsai-org/coding-agent/session/blob-store";
+import type { SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
 import {
 	resolveBlobRefsInEntries,
 	resolveBlobRefsInEntriesSync,
-} from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-loader";
+import { TempDir } from "@marsai-org/utils";
 
 function image(data: string): ImageContent {
 	return { type: "image", data, mimeType: "image/png" };

@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Personality } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { buildSystemPrompt } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { getAgentDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { Personality } from "@marsai-org/coding-agent/session/settings";
+import { buildSystemPrompt } from "@marsai-org/coding-agent/system-prompt";
+import { getAgentDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const EMPTY_TREE = {
 	rootPath: "",

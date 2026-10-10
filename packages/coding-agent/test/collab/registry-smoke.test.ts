@@ -10,8 +10,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { CollabListJsonOutput } from "@oh-my-pi/pi-coding-agent/cli/collab-cli";
-import { COLLAB_REGISTRY_VERSION, listCollabHosts } from "@oh-my-pi/pi-coding-agent/collab/registry";
+import type { CollabListJsonOutput } from "@marsai-org/coding-agent/cli/collab-cli";
+import { COLLAB_REGISTRY_VERSION, listCollabHosts } from "@marsai-org/coding-agent/collab/registry";
 
 const HELPER_PATH = path.resolve(import.meta.dir, "helpers/registry-host-process.ts");
 const CLI_PATH = path.resolve(import.meta.dir, "../../src/cli.ts");
@@ -133,12 +133,12 @@ describe("collab host registry (two-process smoke)", () => {
 			HOME: home,
 			USERPROFILE: home,
 			NO_COLOR: "1",
-			OMP_SMOKE_MARKER: marker,
-			OMP_SMOKE_INSTANCE_ID: instanceId,
+			MARS_SMOKE_MARKER: marker,
+			MARS_SMOKE_INSTANCE_ID: instanceId,
 		};
 		delete env.PI_CONFIG_DIR;
 		delete env.PI_PROFILE;
-		delete env.OMP_PROFILE;
+		delete env.MARS_PROFILE;
 		delete env.PI_CODING_AGENT_DIR;
 
 		const { child, stderr } = spawnHelper([], env);
@@ -165,7 +165,7 @@ describe("collab host registry (two-process smoke)", () => {
 		const listed = await runCli(["list", "--json"]);
 		expect({ code: listed.code, stderr: listed.stderr }).toEqual({ code: 0, stderr: "" });
 		const listJson: CollabListJsonOutput = JSON.parse(listed.stdout);
-		const hosts = await listCollabHosts({ dir: path.join(home, ".omp", "run", "collab-hosts") });
+		const hosts = await listCollabHosts({ dir: path.join(home, ".mars", "run", "collab-hosts") });
 		expect(listJson).toEqual({ version: COLLAB_REGISTRY_VERSION, hosts });
 		expect(listJson.hosts).toHaveLength(1);
 		expect(listJson.hosts[0]).toMatchObject({ instanceId, pid: child.pid });

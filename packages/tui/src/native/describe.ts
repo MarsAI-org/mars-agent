@@ -9,7 +9,7 @@
  *   ]);
  * }
  */
-import type { TspKind, TspProps, TspSpan, TspText } from "@oh-my-pi/pi-wire";
+import type { TspKind, TspProps, TspSpan, TspText } from "@marsai-org/wire";
 import type { NativeChild, NativeNode } from "./node";
 
 /** A node of any kind. */
@@ -42,7 +42,7 @@ export function card(p: TspProps<"card">, c: readonly NativeChild[]): NativeNode
 	return node("card", p, c);
 }
 
-/** Markdown source in omp's dialect. */
+/** Markdown source in mars's dialect. */
 export function md(source: string, p?: Omit<TspProps<"md">, "text">): NativeNode {
 	return node("md", { ...p, text: source });
 }

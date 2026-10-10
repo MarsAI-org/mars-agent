@@ -1,33 +1,33 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, CompactionCancelledError, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, UserMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@oh-my-pi/pi-coding-agent/session/context-notes";
+import { Agent, CompactionCancelledError, type AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage, UserMessage } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { CONTEXT_NOTES_ENTRY_TYPE, getContextNotes } from "@marsai-org/coding-agent/session/context-notes";
 import {
 	createCustomMessage,
 	convertToLlm,
 	SKILL_PROMPT_MESSAGE_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { CompactionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { computeNonMessageTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ContextNotesTool, NewContextTool } from "@oh-my-pi/pi-coding-agent/tools/context-notes";
-import { BUILTIN_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/builtin-names";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+} from "@marsai-org/coding-agent/session/messages";
+import type { CompactionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
+import { computeNonMessageTokens } from "@marsai-org/tui/status-line/context-usage";
+import { mnemopiBackend } from "@marsai-org/coding-agent/mnemopi/backend";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
+import { ContextNotesTool, NewContextTool } from "@marsai-org/coding-agent/tools/context-notes";
+import { BUILTIN_TOOL_NAMES } from "@marsai-org/coding-agent/tools/builtin-names";
+import { GrepTool } from "@marsai-org/coding-agent/tools/grep";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

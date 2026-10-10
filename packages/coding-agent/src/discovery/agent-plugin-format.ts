@@ -12,7 +12,7 @@
  * double-loaded through legacy conventions.
  */
 import * as path from "node:path";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { readFile } from "../capability/fs";
 import { isContainedResolved, realpathIfExists, resolveContainedPath } from "./contained-path";
 import { registerPluginCacheInvalidator } from "./helpers";
@@ -553,18 +553,18 @@ export async function legacyProviderAllowed(rootPath: string, surface: "skills" 
 /**
  * Whether a plugin root's task-agent `model:` frontmatter is written in the
  * Claude Code dialect (provider aliases such as `sonnet`/`opus`) rather than as
- * OMP model selectors. Claude-dialect frontmatter must be dropped during
- * discovery so its aliases are not misread as OMP selectors (#7966); OMP-native
+ * Mars model selectors. Claude-dialect frontmatter must be dropped during
+ * discovery so its aliases are not misread as Mars selectors (#7966); Mars-native
  * and Agent-Plugins-standard packages keep their selectors (#12028).
  *
  * The dialect is decided by the plugin's declared manifest, not by which
- * registry supplied the root — an omp-installed or `--plugin-dir` root can hold
+ * registry supplied the root — a mars-installed or `--plugin-dir` root can hold
  * a `.claude-plugin` package. Precedence mirrors {@link resolvePluginMCPConfig}:
- * a `.omp-plugin/plugin.json` (OMP-native) or an Agent Plugins standard root
+ * a `.mars-plugin/plugin.json` (Mars-native) or an Agent Plugins standard root
  * `plugin.json` wins over a sibling `.claude-plugin/plugin.json`.
  */
 export async function pluginUsesClaudeModelDialect(rootPath: string): Promise<boolean> {
-	if ((await readFile(path.join(rootPath, ".omp-plugin", "plugin.json"))) !== null) return false;
+	if ((await readFile(path.join(rootPath, ".mars-plugin", "plugin.json"))) !== null) return false;
 	const status = await classifyAgentPluginRoot(rootPath);
 	if (status.kind === "standard") return false;
 	return (await readFile(path.join(rootPath, ".claude-plugin", "plugin.json"))) !== null;

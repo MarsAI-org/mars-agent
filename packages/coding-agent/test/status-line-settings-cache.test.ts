@@ -3,14 +3,14 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { stripVTControlCharacters } from "node:util";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent, type StatusLineSettings } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { STATUS_LINE_PRESETS } from "@oh-my-pi/pi-tui/status-line/presets";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeSyncWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { StatusLineComponent, type StatusLineSettings } from "@marsai-org/tui/status-line";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { STATUS_LINE_PRESETS } from "@marsai-org/tui/status-line/presets";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { visibleWidth } from "@marsai-org/tui";
+import * as vcs from "@marsai-org/natives/vcs";
+import { removeSyncWithRetries, setProjectDir } from "@marsai-org/utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
@@ -19,7 +19,7 @@ import {
 	cfgStatusLineLeftSegments,
 	cfgStatusLinePreset,
 	cfgStatusLineRightSegments,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
+} from "@marsai-org/coding-agent/modes/settings";
 
 let settingsState: SettingsTestState | undefined;
 let projectDir = "";
@@ -27,7 +27,7 @@ const statusLines = new StatusLineTestComponents();
 
 beforeEach(async () => {
 	settingsState = beginSettingsTest();
-	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "omp-status-line-settings-cache-"));
+	projectDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-status-line-settings-cache-"));
 	setProjectDir(projectDir);
 	await Settings.init({ inMemory: true, cwd: projectDir });
 	await initTheme();

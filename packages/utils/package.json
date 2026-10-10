@@ -1,22 +1,22 @@
 {
-	"name": "@oh-my-pi/pi-utils",
+	"name": "@marsai-org/utils",
 	"version": "18.8.6",
-	"description": "Shared utilities for pi packages",
+	"description": "Shared utilities for Mars packages",
 	"keywords": [
 		"cli",
 		"logging",
 		"streams",
 		"utilities"
 	],
-	"homepage": "https://omp.sh",
+	"homepage": "https://github.com/MarsAI-org/mars-agent#readme",
 	"bugs": {
-		"url": "https://github.com/can1357/oh-my-pi/issues"
+		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
 	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/can1357/oh-my-pi.git",
+		"url": "git+https://github.com/MarsAI-org/mars-agent.git",
 		"directory": "packages/utils"
 	},
 	"files": [
@@ -51,7 +51,7 @@
 		"fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'"
 	},
 	"dependencies": {
-		"@oh-my-pi/pi-natives": "catalog:"
+		"@marsai-org/natives": "catalog:"
 	},
 	"devDependencies": {
 		"@types/bun": "catalog:"

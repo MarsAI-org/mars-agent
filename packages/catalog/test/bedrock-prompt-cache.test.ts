@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { classifyModel, compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/identity";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { classifyModel, compareRevision, parseRevision } from "@marsai-org/catalog/identity";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 import { buildGeneratedModel } from "../scripts/generate-models";
 
 function bedrockSpec(

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as settingsModule from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import { renderAsciiBar } from "@oh-my-pi/pi-tui/chrome/format";
+import * as settingsModule from "@marsai-org/coding-agent/config/settings";
+import type { Theme } from "@marsai-org/tui/theme";
+import { renderAsciiBar } from "@marsai-org/tui/chrome/format";
 
 const testTheme = {
 	fg(color: Parameters<Theme["fg"]>[0], text: string): string {

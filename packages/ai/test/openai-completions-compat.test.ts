@@ -1,11 +1,11 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect";
+import { renderDemotedThinking } from "@marsai-org/ai/dialect";
 import {
 	applyOpenRouterRoutingVariant,
 	convertMessages,
 	parseChunkUsage,
 	streamOpenAICompletions,
-} from "@oh-my-pi/pi-ai/providers/openai-completions";
+} from "@marsai-org/ai/providers/openai-completions";
 import type {
 	AssistantMessage,
 	Context,
@@ -15,13 +15,13 @@ import type {
 	OpenAICompat,
 	Tool,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { serializeAlibabaTokenPlanCredential } from "@oh-my-pi/pi-catalog/wire/alibaba-token-plan";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { clampThinkingLevelForModel, getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { ResolvedOpenAICompat } from "@marsai-org/catalog/types";
+import { serializeAlibabaTokenPlanCredential } from "@marsai-org/catalog/wire/alibaba-token-plan";
 
 const gpt4oMiniSpec: ModelSpec<"openai-completions"> = (() => {
 	const {

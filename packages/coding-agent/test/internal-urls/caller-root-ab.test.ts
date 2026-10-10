@@ -19,16 +19,16 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { resetRegisteredArtifactDirsForTests } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { ensurePersistedRoster } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import { CURRENT_SESSION_VERSION } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { ShellFsOp } from "@oh-my-pi/pi-natives";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { resetRegisteredArtifactDirsForTests } from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
+import { AgentRegistry, MAIN_AGENT_ID } from "@marsai-org/coding-agent/registry/agent-registry";
+import { ensurePersistedRoster } from "@marsai-org/coding-agent/registry/persisted-agents";
+import { CURRENT_SESSION_VERSION } from "@marsai-org/coding-agent/session/session-entries";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { GrepTool } from "@marsai-org/coding-agent/tools/grep";
+import { ShellFsOp } from "@marsai-org/natives";
 
 function sessionHeader(id: string): string {
 	return JSON.stringify({

@@ -1,9 +1,9 @@
 import { constants as fsConstants } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { getBundledModels } from "@oh-my-pi/pi-catalog";
-import { $which, type FetchImpl, formatBytes, getAgentDbPath, isEnoent } from "@oh-my-pi/pi-utils";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { getBundledModels } from "@marsai-org/catalog";
+import { $which, type FetchImpl, formatBytes, getAgentDbPath, isEnoent } from "@marsai-org/utils";
 import {
 	queryBlobBrokerDoctor,
 	queryBlobBrokerProbe,

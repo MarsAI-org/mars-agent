@@ -1,17 +1,17 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, FetchImpl, Model, ProviderSessionState, Usage } from "@oh-my-pi/pi-ai";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { AutoLearnController, buildAutoLearnInstructions } from "@oh-my-pi/pi-coding-agent/autolearn/controller";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAutoLearnCaptureRunner } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentMessage, type AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage, FetchImpl, Model, ProviderSessionState, Usage } from "@marsai-org/ai";
+import { streamGoogle } from "@marsai-org/ai/providers/google";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { AutoLearnController, buildAutoLearnInstructions } from "@marsai-org/coding-agent/autolearn/controller";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAutoLearnCaptureRunner } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
 
-import { cfgAutolearnEnabled } from "@oh-my-pi/pi-coding-agent/autolearn/settings";
+import { cfgAutolearnEnabled } from "@marsai-org/coding-agent/autolearn/settings";
 
 class FakeSession {
 	readonly listeners: Array<(event: AgentSessionEvent) => void> = [];

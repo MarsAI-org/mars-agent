@@ -1,8 +1,8 @@
 /**
- * Semantic search from the shell: `omp find "<query>" [path]`.
+ * Semantic search from the shell: `mars find "<query>" [path]`.
  */
 
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { findHelp as commandHelp } from "../cli/command-help";
 import { runFindCommand } from "../cli/find-cli";
 

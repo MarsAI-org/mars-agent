@@ -1,10 +1,10 @@
 import { describe, expect, spyOn, test } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { RpcHostToolBridge } from "@oh-my-pi/pi-coding-agent/modes/rpc/host-tools";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { RpcHostToolBridge } from "@marsai-org/coding-agent/modes/rpc/host-tools";
 import {
 	dispatchRpcInputFrame,
 	type PendingExtensionRequest,
@@ -12,18 +12,18 @@ import {
 	type RpcInputFrameDeps,
 	RpcPendingExtensionRequests,
 	RpcShutdownCoordinator,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
 import type {
 	RpcCommand,
 	RpcExtensionUIResponse,
 	RpcHostToolCallRequest,
 	RpcHostToolCancelRequest,
 	RpcResponse,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as imageLoading from "@marsai-org/coding-agent/utils/image-loading";
 
 type OutputFrame = RpcResponse | object;
 

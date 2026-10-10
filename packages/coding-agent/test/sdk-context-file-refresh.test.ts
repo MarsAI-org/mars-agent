@@ -1,18 +1,18 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeWithSettings } from "@oh-my-pi/pi-coding-agent/discovery";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeWithSettings } from "@marsai-org/coding-agent/discovery";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
-import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
-import { cfgDisabledExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
+import { cfgAdvisorEnabled } from "@marsai-org/coding-agent/advisor/settings";
+import { cfgDisabledExtensions } from "@marsai-org/coding-agent/extensibility/settings";
 
 const INITIAL_CONTEXT = "reload-context-initial-marker";
 const UPDATED_CONTEXT = "reload-context-updated-marker";

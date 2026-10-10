@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { Agent } from "@marsai-org/agent-core";
+import type { ResetCreditAccountStatus, ResetCreditTarget, UsageReport } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import * as envApiKey from "@marsai-org/ai/env-api-key";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	type CodexAutoRedeemCoordinator,
 	createCodexAutoRedeemCoordinator,
-} from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/codex-auto-reset";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
-import { cfgClaudeResetsAutoRedeem } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgClaudeResetsAutoRedeem } from "@marsai-org/coding-agent/session/settings";
 
 const ACCOUNT_ID = "claude-account";
 const EMAIL = "claude@example.com";

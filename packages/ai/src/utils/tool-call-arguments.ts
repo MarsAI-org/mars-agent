@@ -1,4 +1,4 @@
-import { parseJsonWithRepair } from "@oh-my-pi/pi-utils";
+import { parseJsonWithRepair } from "@marsai-org/utils";
 import type { ToolCall } from "../types";
 
 /** Final arguments must not reuse the streaming parser's auto-closed preview. */

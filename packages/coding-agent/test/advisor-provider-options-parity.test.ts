@@ -11,21 +11,21 @@
  * and its explicit websocket preference.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { Agent, type StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { FetchImpl, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { resolveApiKeyOnce } from "@oh-my-pi/pi-ai/auth-retry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { SessionAccountPoolScope } from "@oh-my-pi/pi-coding-agent/config/account-pools";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type StreamFn } from "@marsai-org/agent-core";
+import type { FetchImpl, Model, SimpleStreamOptions } from "@marsai-org/ai";
+import { streamSimple } from "@marsai-org/ai";
+import { resolveApiKeyOnce } from "@marsai-org/ai/auth-retry";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { SessionAccountPoolScope } from "@marsai-org/coding-agent/config/account-pools";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
-import { cfgProvidersOpenaiWebsockets } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgProvidersOpenaiWebsockets } from "@marsai-org/coding-agent/session/settings";
 
 /** Provider-facing advisor session ids must be UUIDv7 (issue #5040): Codex writes
  *  them verbatim onto `conversation_id`/`session_id` headers, so `-advisor`

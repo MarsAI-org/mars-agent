@@ -1,6 +1,6 @@
 import type { Database } from "bun:sqlite";
-import { cosineSimilarityPairs } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { cosineSimilarityPairs } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import * as embeddings from "./embeddings";
 import { cosineSimilarity } from "./vector-math";
 

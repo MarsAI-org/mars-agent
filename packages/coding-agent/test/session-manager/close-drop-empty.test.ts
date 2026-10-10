@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { isEnoent, TempDir } from "@oh-my-pi/pi-utils";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { isEnoent, TempDir } from "@marsai-org/utils";
 
 async function fileExists(p: string): Promise<boolean> {
 	try {

@@ -1,17 +1,17 @@
 import { afterEach, beforeAll, beforeEach, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { createSettingsHost } from "@marsai-org/coding-agent/config/settings-ui";
+import { createPluginSettingsHost } from "@marsai-org/coding-agent/extensibility/plugins/settings-host";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { TempDir } from "@marsai-org/utils";
+import { SettingsSelectorComponent } from "@marsai-org/tui/overlays/settings-selector";
+import { initTheme } from "@marsai-org/tui/theme";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "../helpers/settings-test-state";
 
-import { cfgSearxngEndpoint } from "@oh-my-pi/pi-coding-agent/web/settings";
+import { cfgSearxngEndpoint } from "@marsai-org/coding-agent/web/settings";
 
 let state: SettingsTestState | undefined;
 let tempDir: TempDir;
