@@ -958,13 +958,10 @@ jobs:
    # validation passes and every binary built. Runs on one linux runner: leaf
    # publishing is platform-agnostic file packaging (gen-npm-packages reads
    # packages/natives/native), so no per-platform runners are needed.
+   # npm publish step disabled safely in MarsAI-org/mars-agent until npm org/tokens exist
    release_native_leaves:
       name: Publish native leaf packages
-      if: ${{ needs.release_metadata.outputs.is-release == 'true' && !cancelled() &&
-         needs.release_gate.result == 'success' &&
-         needs.release_binary.result == 'success' &&
-         needs.release_smoke.result == 'success' &&
-         !inputs.skip_npm }}
+      if: github.repository == 'MarsAI-org/mars-agent' && false
       needs: [release_metadata, release_gate, release_binary, release_smoke]
       runs-on: ubuntu-22.04
       # id-token lets npm mint the OIDC token for trusted publishing; the
@@ -1136,17 +1133,10 @@ jobs:
               # lookup, so surface the result without gating the release on it.
               spctl -a -t exec -vv ./mars-darwin-arm64 || echo "spctl non-zero (expected for unstapled bare binary; ticket served online)"
 
+   # npm publish step disabled safely in MarsAI-org/mars-agent until npm org/tokens exist
    release_npm:
       name: Publish to npm
-      if: ${{ needs.release_metadata.outputs.is-release == 'true' && !cancelled() &&
-         needs.release_binary.result == 'success' &&
-         needs.release_smoke.result == 'success' &&
-         needs.release_github_verify.result == 'success' &&
-         needs.release_native_leaves.result == 'success' &&
-         !inputs.skip_npm }}
-      # release_native_leaves must finish first: the core package lists the
-      # leaf packages as lockstep-versioned optionalDependencies, so installs
-      # resolve them the moment the core version is live.
+      if: github.repository == 'MarsAI-org/mars-agent' && false
       needs: [release_metadata, release_binary, release_smoke, release_github_verify, release_native_leaves]
       runs-on: ubuntu-22.04
       # `id-token: write` lets npm mint the GitHub OIDC token it exchanges for a
@@ -1203,11 +1193,10 @@ jobs:
    # tap only cuts over to a release whose published binary was verified (matches
    # how release_npm is gated). No-ops when HOMEBREW_TAP_DEPLOY_KEY is unset, so a
    # release never blocks on tap access.
+   # Homebrew tap update disabled safely in MarsAI-org/mars-agent until Mars tap is configured
    release_brew:
       name: Update Homebrew tap
-      if: ${{ needs.release_metadata.outputs.is-release == 'true' && !cancelled() &&
-         needs.release_metadata.outputs.channel != 'canary' &&
-         needs.release_github_verify.result == 'success' }}
+      if: github.repository == 'MarsAI-org/mars-agent' && false
       needs: [release_metadata, release_github_verify]
       runs-on: ubuntu-22.04
       env:
