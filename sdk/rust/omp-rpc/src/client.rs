@@ -1,4 +1,4 @@
-//! Blocking transport for `omp --mode rpc` over any reader/writer pair.
+//! Blocking transport for `mars --mode rpc` over any reader/writer pair.
 //!
 //! A reader thread decodes stdout lines (reassembling protocol v2 `rpc_chunk`
 //! sequences), routes responses to waiting calls by id, feeds prompt
@@ -715,7 +715,7 @@ impl Drop for Collector<'_> {
 	}
 }
 
-/// A connected `omp --mode rpc` server.
+/// A connected `mars --mode rpc` server.
 pub struct Client {
 	shared:           Arc<Shared>,
 	/// The spawned server; its process group is torn down on close.

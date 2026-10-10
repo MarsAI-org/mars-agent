@@ -109,7 +109,7 @@ phases, and `get_state().todo_phases` returns the typed current todo state.
 By default the client runs:
 
 ```bash
-omp --mode rpc
+mars --mode rpc
 ```
 
 You can also point it at a custom command, which is useful inside this repo while
