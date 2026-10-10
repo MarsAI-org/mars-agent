@@ -3,7 +3,7 @@
 	"name": "@marsai-org/browser-relay",
 	"version": "0.1.0",
 	"private": true,
-	"description": "Chrome extension that lets the omp browser tool drive your existing tabs (relay server lives in the omp CLI: `omp browser-relay`)",
+	"description": "Chrome extension that lets the mars browser tool drive your existing tabs (relay server lives in the mars CLI: `mars browser-relay`)",
 	"homepage": "https://github.com/MarsAI-org/mars-agent#readme",
 	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
 	"license": "MIT",

@@ -1,6 +1,6 @@
 # macOS signing & notarization
 
-The compiled macOS `omp` binaries shipped on GitHub Releases can be signed with a
+The compiled macOS `mars` binaries shipped on GitHub Releases can be signed with a
 **Developer ID Application** certificate and **notarized** by Apple. This makes
 them eligible for Gatekeeper acceptance when the notarization ticket is
 available. The repository also maintains a Homebrew tap; formula installs
@@ -26,7 +26,7 @@ script signs with the Developer ID and notarizes; with none, it signs ad hoc
    - signs with the Developer ID certificate, the hardened runtime
      (`--code-signature-flags runtime`), a secure timestamp
      (`--for-notarization`), and `scripts/macos-entitlements.plist`, keeping
-     the file name (`omp-darwin-<arch>`) as the signing identifier;
+     the file name (`mars-darwin-<arch>`) as the signing identifier;
    - packages the binary in a ZIP and submits it with
      `rcodesign notary-submit --wait`, retrying a failed submission up to three
      times. Credential files are removed on exit.
@@ -51,7 +51,7 @@ bridge, so the hardened runtime needs:
 | `com.apple.security.cs.allow-jit`                        | JavaScriptCore JITs at runtime.                                                                                                                                                                                                                                                                                               |
 | `com.apple.security.cs.allow-unsigned-executable-memory` | JSC executable memory pages.                                                                                                                                                                                                                                                                                                  |
 | `com.apple.security.automation.apple-events`             | Allows macOS to prompt for Automation permission when `xcrun mcpbridge` connects to Xcode; without it, first-time Xcode MCP initialization hangs until timeout.                                                                                                                                                                |
-| `com.apple.security.cs.disable-library-validation`       | omp extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
+| `com.apple.security.cs.disable-library-validation`       | mars extracts its native addon (`pi_natives.<triple>.node`) and other optional dylibs to a runtime cache and `dlopen()`s them. They do not share the main binary's Team ID, so without this the hardened runtime aborts with _"mapping process and mapped file have different Team IDs"_ — breaking effectively every command. |
 
 Without `disable-library-validation`, a signed+notarized binary signs and
 notarizes fine but **fails at first real use**. `release_smoke` runs
@@ -71,8 +71,8 @@ signing or credential failure.
 
 What this means in practice:
 
-- `curl https://omp.sh/install | sh` — `curl` sets no quarantine bit, so
-  Gatekeeper is not consulted.
+- `curl https://github.com/MarsAI-org/mars-agent/releases | sh` — `curl` sets no
+  quarantine bit, so Gatekeeper is not consulted.
 - Homebrew **formula** installs — Homebrew does not quarantine formula files, so
   Gatekeeper is not consulted.
 - Anything that **quarantines** the binary (a browser download, or a Homebrew
@@ -97,7 +97,7 @@ signing to engage.
 
 ### Producing the credential files
 
-Drop these into a working directory (default `~/omp-signing`):
+Drop these into a working directory (default `~/mars-signing`):
 
 | File                 | How                                                                                                                                                                                                                                     |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -123,14 +123,14 @@ can appear in that subprocess's arguments. The script prints the filenames
 and Key ID.
 
 ```sh
-scripts/ci-macos-upload-secrets.sh ~/omp-signing --dry-run   # validate first
-scripts/ci-macos-upload-secrets.sh ~/omp-signing             # upload all five
-gh secret list --repo can1357/oh-my-pi                       # confirm
+scripts/ci-macos-upload-secrets.sh ~/mars-signing --dry-run   # validate first
+scripts/ci-macos-upload-secrets.sh ~/mars-signing             # upload all five
+gh secret list --repo MarsAI-org/mars-agent                       # confirm
 ```
 
 Re-run it whenever the certificate is renewed. `MARS_SIGNING_DIR` changes the
 default input directory; `MARS_REPO=owner/repo` changes the target repository
-(default `can1357/oh-my-pi`). The validation path requires macOS `security`;
+(default `MarsAI-org/mars-agent`). The validation path requires macOS `security`;
 uploading also requires an authenticated `gh` CLI.
 
 ### Finding your signing identity / Team ID (sanity check)
@@ -152,7 +152,7 @@ API key) by exporting the five env vars and running:
 RELEASE_TARGETS=darwin-arm64 bun run ci:release:build-binaries
 APPLE_CERTIFICATE_P12=… APPLE_CERTIFICATE_PASSWORD=… \
 APPLE_API_KEY_ID=… APPLE_API_ISSUER_ID=… APPLE_API_KEY=… \
-  bash scripts/ci-macos-sign.sh packages/coding-agent/binaries/omp-darwin-arm64
+  bash scripts/ci-macos-sign.sh packages/coding-agent/binaries/mars-darwin-arm64
 ```
 
 Without the env vars the same command signs ad hoc.

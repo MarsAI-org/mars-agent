@@ -1,8 +1,8 @@
 {
   "name": "safety-hook",
   "version": "1.0.0",
-  "description": "omp extension example: block rm -rf / via tool_call hook",
-  "homepage": "https://omp.sh",
+  "description": "mars extension example: block rm -rf / via tool_call hook",
+  "homepage": "https://github.com/MarsAI-org/mars-agent",
   "omp": {
     "extensions": ["./index.ts"]
   }

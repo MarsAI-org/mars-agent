@@ -1,4 +1,4 @@
-# @oh-my-pi/omp-stats
+# @marsai-org/stats
 
 Local observability dashboard for AI usage statistics.
 
@@ -29,22 +29,22 @@ Subscription-backed models use matching public API prices when an exact public m
 
 ```bash
 # Start dashboard server (default: http://localhost:3847)
-omp stats
+mars stats
 
 # Custom port
-omp stats --port 8080
+mars stats --port 8080
 
 # Print summary to console
-omp stats --summary
+mars stats --summary
 
 # Output as JSON (for scripting)
-omp stats --json
+mars stats --json
 ```
 
 ### Programmatic
 
 ```typescript
-import { getDashboardStats, syncAllSessions } from "@oh-my-pi/omp-stats";
+import { getDashboardStats, syncAllSessions } from "@marsai-org/stats";
 
 // Sync session logs to database
 const { processed, files } = await syncAllSessions();
@@ -76,7 +76,7 @@ Synchronization fetches file metadata and saved cursors in bounded batches and o
 
 Full reconciliation replays still scan every transcript. Unchanged transcripts retain their indexed rows while missing or stale records and unfinished links are repaired; modified transcripts are rebuilt. Parsing discards message bodies after extracting statistics rather than retaining entire decoded transcripts.
 
-Range queries read `message_rollup` / `tool_rollup` / `session_rollup`, maintained from the raw tables: triggers mark touched hours and transcripts dirty (from any omp process), and the dashboard re-rolls them newest-first in short transactions. Reads stay exact by aggregating the few dirty hours raw; during an initial build the header shows the indexing backlog.
+Range queries read `message_rollup` / `tool_rollup` / `session_rollup`, maintained from the raw tables: triggers mark touched hours and transcripts dirty (from any mars process), and the dashboard re-rolls them newest-first in short transactions. Reads stay exact by aggregating the few dirty hours raw; during an initial build the header shows the indexing backlog.
 
 ## Dashboard
 

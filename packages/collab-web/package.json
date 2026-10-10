@@ -3,7 +3,7 @@
   "name": "@marsai-org/collab-web",
   "version": "16.3.6",
   "private": true,
-  "description": "Browser guest client and local relay tools for omp collab live sessions",
+  "description": "Browser guest client and local relay tools for Mars collab live sessions",
   "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
