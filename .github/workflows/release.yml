@@ -1,0 +1,244 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (build and test without publishing GitHub Release)"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release_metadata:
+    name: Resolve release metadata
+    runs-on: ubuntu-22.04
+    outputs:
+      release_tag: ${{ steps.meta.outputs.release_tag }}
+      is_dry_run: ${{ steps.meta.outputs.is_dry_run }}
+      is_prerelease: ${{ steps.meta.outputs.is_prerelease }}
+    steps:
+      - id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="v0.1.0-dryrun"
+            DRY_RUN="${{ inputs.dry_run }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            DRY_RUN="false"
+          fi
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "is_dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" == *"-rc"* ]] || [[ "$TAG" == *"-canary"* ]] || [[ "$TAG" == *"-beta"* ]] || [[ "$TAG" == *"-alpha"* ]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build_native:
+    name: "Build native addon: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [release_metadata]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            cargo_profile: ci
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            cargo_profile: ci
+          - os: macos-15-intel
+            target_id: darwin-x64
+            cargo_profile: ci
+          - os: macos-15
+            target_id: darwin-arm64
+            cargo_profile: ci
+          - os: windows-2025
+            target_id: win32-x64
+            cargo_profile: ci
+          - os: windows-11-arm
+            target_id: win32-arm64
+            cargo_profile: ci
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build native addon
+        env:
+          MARS_NATIVE_CARGO_PROFILE: ${{ matrix.cargo_profile }}
+        run: bun --cwd=packages/natives run build:bindings
+      - name: Upload native addon
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: native-${{ matrix.target_id }}
+          path: packages/natives/native/*.node
+
+  build_binary:
+    name: "Build binary: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [release_metadata, build_native]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            native_id: linux-x64
+            binary_name: mars-linux-x64
+          - os: ubuntu-22.04
+            target_id: linux-musl-x64
+            native_id: linux-x64
+            binary_name: mars-linux-musl-x64
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            native_id: linux-arm64
+            binary_name: mars-linux-arm64
+          - os: ubuntu-24.04-arm
+            target_id: linux-musl-arm64
+            native_id: linux-arm64
+            binary_name: mars-linux-musl-arm64
+          - os: macos-15-intel
+            target_id: darwin-x64
+            native_id: darwin-x64
+            binary_name: mars-darwin-x64
+          - os: macos-15
+            target_id: darwin-arm64
+            native_id: darwin-arm64
+            binary_name: mars-darwin-arm64
+          - os: windows-2025
+            target_id: win32-x64
+            native_id: win32-x64
+            binary_name: mars-windows-x64.exe
+          - os: windows-11-arm
+            target_id: win32-arm64
+            native_id: win32-arm64
+            binary_name: mars-windows-arm64.exe
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Download native addon
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: native-${{ matrix.native_id }}
+          path: packages/natives/native
+      - name: Build release binary
+        env:
+          RELEASE_TARGETS: ${{ matrix.target_id }}
+        run: bun run ci:release:build-binaries
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: binary-${{ matrix.target_id }}
+          path: packages/coding-agent/binaries/${{ matrix.binary_name }}
+
+  smoke_test:
+    name: "Smoke test: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [build_binary]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            binary_name: mars-linux-x64
+          - os: ubuntu-22.04
+            target_id: linux-musl-x64
+            binary_name: mars-linux-musl-x64
+            alpine: true
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            binary_name: mars-linux-arm64
+          - os: ubuntu-24.04-arm
+            target_id: linux-musl-arm64
+            binary_name: mars-linux-musl-arm64
+            alpine: true
+          - os: macos-15-intel
+            target_id: darwin-x64
+            binary_name: mars-darwin-x64
+          - os: macos-15
+            target_id: darwin-arm64
+            binary_name: mars-darwin-arm64
+          - os: windows-2025
+            target_id: win32-x64
+            binary_name: mars-windows-x64.exe
+          - os: windows-11-arm
+            target_id: win32-arm64
+            binary_name: mars-windows-arm64.exe
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: binary-${{ matrix.target_id }}
+          path: bin
+      - name: Test (POSIX)
+        if: runner.os != 'Windows' && !matrix.alpine
+        shell: bash
+        run: |
+          chmod +x bin/${{ matrix.binary_name }}
+          bin/${{ matrix.binary_name }} --version
+          bin/${{ matrix.binary_name }} --help
+      - name: Test (Alpine Docker)
+        if: matrix.alpine
+        shell: bash
+        run: |
+          chmod +x bin/${{ matrix.binary_name }}
+          docker run --rm -v "$(pwd)/bin/${{ matrix.binary_name }}:/usr/local/bin/mars:ro" alpine:3.22 sh -ec '
+            apk add --no-cache libstdc++ libgcc >/dev/null
+            mars --version
+            mars --help
+          '
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & .\bin\${{ matrix.binary_name }} --version
+          & .\bin\${{ matrix.binary_name }} --help
+
+  publish_release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-22.04
+    needs: [release_metadata, smoke_test]
+    if: needs.release_metadata.outputs.is_dry_run != 'true'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Download all binaries
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: binary-*
+          path: release-assets
+          merge-multiple: true
+      - name: Generate Checksums
+        shell: bash
+        run: |
+          cd release-assets
+          sha256sum mars-* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Create Release
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        with:
+          tag_name: ${{ needs.release_metadata.outputs.release_tag }}
+          prerelease: ${{ needs.release_metadata.outputs.is_prerelease == 'true' }}
+          generate_release_notes: true
+          files: |
+            release-assets/*
+            LICENSE
