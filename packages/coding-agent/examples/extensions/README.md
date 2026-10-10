@@ -1,12 +1,12 @@
 # Extension Examples
 
-Example extensions for pi-coding-agent.
+Example extensions for Mars (@marsai-org/coding-agent).
 
 ## Usage
 
 ```bash
 # Load an extension with --extension flag
-pi --extension examples/extensions/permission-gate.ts
+mars --extension examples/extensions/permission-gate.ts
 
 # Or copy to extensions directory for auto-discovery
 cp permission-gate.ts ~/.mars/agent/extensions/

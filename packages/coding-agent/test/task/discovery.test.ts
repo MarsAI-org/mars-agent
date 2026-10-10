@@ -46,7 +46,7 @@ async function writeOmpPluginAgent(home: string): Promise<void> {
 	await fs.mkdir(path.join(pluginRoot, "agents"), { recursive: true });
 	await fs.writeFile(
 		path.join(pluginRoot, "package.json"),
-		JSON.stringify({ name: "loom", version: "1.0.0", mars: { version: "1.0.0" } }),
+		JSON.stringify({ name: "loom", version: "1.0.0", omp: { version: "1.0.0" } }),
 	);
 	await fs.writeFile(
 		path.join(userPluginsRoot, "package.json"),
@@ -263,7 +263,7 @@ describe("discoverAgents", () => {
 		// model selectors, so `model:` must survive discovery.
 		enableProvider("claude-plugins");
 		await writeOmpMarketplacePlugin(tempHome, {
-			agentName: "omp-probe",
+			agentName: "mars-probe",
 			model: '["@advisor", "@smol"]',
 			manifest: "none",
 		});

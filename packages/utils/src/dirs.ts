@@ -687,7 +687,7 @@ export function getPluginsPackageJson(home?: string): string {
 	return path.join(getPluginsDir(home), "package.json");
 }
 
-/** Plugin lock file (~/.mars/plugins/mars-plugins.lock.json). */
+/** Plugin lock file (~/.mars/plugins/omp-plugins.lock.json). */
 export function getPluginsLockfile(home?: string): string {
 	return path.join(getPluginsDir(home), `${APP_NAME}-plugins.lock.json`);
 }
