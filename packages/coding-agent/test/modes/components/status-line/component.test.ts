@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { Settings } from "../../../../src/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line/component";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { loadTheme } from "@oh-my-pi/pi-tui/theme/loader";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import { StatusLineComponent } from "@marsai-org/tui/status-line/component";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { loadTheme } from "@marsai-org/tui/theme/loader";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 import type { AgentSession } from "../../../../src/session/agent-session";
 import { StatusLineTestComponents } from "../../../helpers/status-line";
 

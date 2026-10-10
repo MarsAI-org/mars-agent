@@ -21,12 +21,12 @@
  */
 
 import { beforeAll, describe, expect, mock, test } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { CompactionQueuedMessage, InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { RestoredQueuedMessage } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { ImageContent } from "@marsai-org/ai";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { CompactionQueuedMessage, InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { RestoredQueuedMessage } from "@marsai-org/coding-agent/session/agent-session";
 
 beforeAll(() => {
 	initTheme();

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { KeybindingsManager as AppKeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getGithubRefContext, getGithubRefSuggestions } from "@oh-my-pi/pi-tui/prompt/github-ref-autocomplete";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import type { SlashCommand } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager as AppKeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { getGithubRefContext, getGithubRefSuggestions } from "@marsai-org/tui/prompt/github-ref-autocomplete";
+import { createPromptActionAutocompleteProvider } from "@marsai-org/tui/prompt/prompt-action-autocomplete";
+import type { SlashCommand } from "@marsai-org/tui";
 
 function makeProvider(commands: SlashCommand[] = []) {
 	return createPromptActionAutocompleteProvider({

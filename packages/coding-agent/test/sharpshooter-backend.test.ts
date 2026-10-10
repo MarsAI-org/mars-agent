@@ -2,14 +2,14 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { sharpshooterBackend } from "@oh-my-pi/pi-coding-agent/sharpshooter/backend";
-import { sharpshooterBankDir } from "@oh-my-pi/pi-coding-agent/sharpshooter/paths";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
-import type { SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { resolveMemoryBackend } from "@marsai-org/coding-agent/memory-backend";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { sharpshooterBackend } from "@marsai-org/coding-agent/sharpshooter/backend";
+import { sharpshooterBankDir } from "@marsai-org/coding-agent/sharpshooter/paths";
+import { executeAcpBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/acp-builtins";
+import type { SlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
 
 const tempDirs: string[] = [];
 

@@ -19,15 +19,15 @@
  * Envelopes that are not a recognised throttle must fall through untouched.
  */
 import { describe, expect, it } from "bun:test";
-import { processResponsesStream } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { AssistantMessage, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isAuthRetryableError } from "@oh-my-pi/pi-ai/error/auth-classify";
-import { classify, Flag, is, retriable } from "@oh-my-pi/pi-ai/error/flags";
-import { isUsageLimitOutcome } from "@oh-my-pi/pi-ai/error/rate-limit";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error/classes";
-import { createInBandProviderError, createInBandProviderErrorFromText } from "@oh-my-pi/pi-ai/error/body-error";
+import { processResponsesStream } from "@marsai-org/ai/providers/openai-shared";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import type { AssistantMessage, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { isAuthRetryableError } from "@marsai-org/ai/error/auth-classify";
+import { classify, Flag, is, retriable } from "@marsai-org/ai/error/flags";
+import { isUsageLimitOutcome } from "@marsai-org/ai/error/rate-limit";
+import { ProviderHttpError } from "@marsai-org/ai/error/classes";
+import { createInBandProviderError, createInBandProviderErrorFromText } from "@marsai-org/ai/error/body-error";
 import { minimaxTokenPlanOpenAIModel } from "./helpers";
 
 function createSseResponse(events: unknown[]): Response {

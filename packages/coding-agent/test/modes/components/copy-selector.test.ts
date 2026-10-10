@@ -6,13 +6,13 @@
  * their blocks.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CopySelectorComponent, type CopyPickSource } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { CopySelectorComponent, type CopyPickSource } from "@marsai-org/tui/overlays/copy-selector";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import type { SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { setKeybindings, type TUI } from "@marsai-org/tui";
 
 const UP = "\x1b[A";
 const LEFT = "\x1b[D";

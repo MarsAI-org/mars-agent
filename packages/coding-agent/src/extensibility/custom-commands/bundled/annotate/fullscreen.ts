@@ -1,11 +1,11 @@
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { AnnotationOverlay } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
+import type { TUI } from "@marsai-org/tui";
+import { AnnotationOverlay } from "@marsai-org/tui/overlays/annotation-overlay";
 import type { CustomCommandContext } from "../../../../extensibility/custom-commands/types";
 import type {
 	CodeReviewOverlayResult,
 	TextReviewOverlayResult,
 	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
+} from "@marsai-org/tui/overlays/annotation-types";
 import type { ResolvedReviewTarget } from "../review/target";
 import { getEditorCommand, openInEditor } from "../../../../utils/external-editor";
 

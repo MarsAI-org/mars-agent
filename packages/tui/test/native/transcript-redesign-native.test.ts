@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { setTranscriptActionHandler, type TranscriptAction } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { StatusNotice } from "@oh-my-pi/pi-tui/chrome/status-notice";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TspNode } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { setTranscriptActionHandler, type TranscriptAction } from "@marsai-org/tui/chat/transcript-actions";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { StatusNotice } from "@marsai-org/tui/chrome/status-notice";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TspNode } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
 
 beforeAll(async () => {
@@ -61,7 +61,7 @@ function texts(node: TspNode | undefined): string {
 }
 
 describe("native transcript redesign", () => {
-	it("draws a failed request as one frame: status chip, the message once, actions that run omp's commands", async () => {
+	it("draws a failed request as one frame: status chip, the message once, actions that run mars's commands", async () => {
 		const actions: TranscriptAction[] = [];
 		setTranscriptActionHandler(action => actions.push(action));
 		const component = new AssistantMessageComponent(
@@ -170,7 +170,7 @@ describe("native transcript redesign", () => {
 		expect(harness.errors).toEqual([]);
 	});
 
-	it("gives a user message no head row, and routes its toolbar to omp's copy and rewind", async () => {
+	it("gives a user message no head row, and routes its toolbar to mars's copy and rewind", async () => {
 		const actions: TranscriptAction[] = [];
 		setTranscriptActionHandler(action => actions.push(action));
 		const user = new UserMessageComponent("Fix the build", { timestamp: Date.UTC(2026, 0, 1, 12, 30) });

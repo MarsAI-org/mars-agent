@@ -1,6 +1,7 @@
 /**
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * Wire contract for Skillshare (`skills.omp.sh`): an npm-style registry for
- * omp skills. Shared by the omp CLI (`omp skill …`), the Go server
+ * Mars skills. Shared by the Mars CLI (`mars skill …`), the Go server
  * (`stencil/apps/skills`), and its web UI (which mirrors this file).
  *
  * Packages are scoped: `@scope/name`. A scope is a Stencil username claimed on

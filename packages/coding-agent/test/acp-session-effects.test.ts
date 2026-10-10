@@ -1,17 +1,17 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { Api, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai";
-import { redactSensitiveCredentials } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { bindEffects } from "@oh-my-pi/pi-coding-agent/config/registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAcpSessionFactory } from "@oh-my-pi/pi-coding-agent/main";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, Model, ModelSpec } from "@marsai-org/ai";
+import { clearCustomApis, registerCustomApi } from "@marsai-org/ai";
+import { redactSensitiveCredentials } from "@marsai-org/ai/providers/transform-messages";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { bindEffects } from "@marsai-org/coding-agent/config/registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAcpSessionFactory } from "@marsai-org/coding-agent/main";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();
@@ -44,7 +44,7 @@ describe("concurrent ACP sessions", () => {
 	it("redact each session's requests per its own project's secrets.enabled", async () => {
 		using launchDir = TempDir.createSync("@pi-acp-effects-launch-");
 		using projectDir = TempDir.createSync("@pi-acp-effects-project-");
-		await Bun.write(projectDir.join(".omp/config.yml"), "secrets:\n  enabled: true\n");
+		await Bun.write(projectDir.join(".mars/config.yml"), "secrets:\n  enabled: true\n");
 		// What the provider's credential-redaction pass does to a token in each request it builds.
 		const requests: Array<{ context: string; credential: string }> = [];
 		registerCustomApi(API, (_model, context) => {
@@ -66,7 +66,7 @@ describe("concurrent ACP sessions", () => {
 			cwd: launchDir.path(),
 			agentDir: launchDir.join("agent"),
 		});
-		// `omp acp` binds its launch settings the way `Settings.init` does.
+		// `mars acp` binds its launch settings the way `Settings.init` does.
 		const releaseLaunch = bindEffects(launchSettings);
 		const factory = createAcpSessionFactory({
 			baseOptions: {

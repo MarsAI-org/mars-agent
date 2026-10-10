@@ -2,17 +2,17 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
+import type { ImageContent } from "@marsai-org/ai";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
 import {
 	handleRpcSessionChange,
 	type RpcSessionChangeCommand,
 	type RpcSessionChangeResult,
 	type RpcSessionChangeSession,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { RpcSubagentRegistry, readRpcSubagentTranscript } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-subagents";
-import type { RpcSubagentFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { type AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import { RpcSubagentRegistry, readRpcSubagentTranscript } from "@marsai-org/coding-agent/modes/rpc/rpc-subagents";
+import type { RpcSubagentFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { type AgentProgress } from "@marsai-org/tui/tools/task";
 import {
 	type SubagentEventPayload,
 	type SubagentLifecyclePayload,
@@ -20,9 +20,9 @@ import {
 	TASK_SUBAGENT_EVENT_CHANNEL,
 	TASK_SUBAGENT_LIFECYCLE_CHANNEL,
 	TASK_SUBAGENT_PROGRESS_CHANNEL,
-} from "@oh-my-pi/pi-coding-agent/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 const tempPaths: string[] = [];
 

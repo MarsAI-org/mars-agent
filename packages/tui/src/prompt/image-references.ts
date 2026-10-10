@@ -1,5 +1,5 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ImageContent } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import { blobExtensionForImageMimeType } from "./image-format";
 
 /** Materialized image destination returned by the host blob writer. */

@@ -33,18 +33,18 @@ describe("isFullyQualifiedPath", () => {
 		expect(isFullyQualifiedPath("c:/omp/bin/omp.exe", "win32")).toBe(true);
 		expect(isFullyQualifiedPath("\\\\server\\share\\omp.exe", "win32")).toBe(true);
 		expect(isFullyQualifiedPath("//server/share/omp.exe", "win32")).toBe(true);
-		expect(isFullyQualifiedPath("C:omp", "win32")).toBe(false);
-		expect(isFullyQualifiedPath(".\\omp", "win32")).toBe(false);
-		expect(isFullyQualifiedPath("\\bin\\omp", "win32")).toBe(false);
-		expect(isFullyQualifiedPath("/bin/omp", "win32")).toBe(false);
+		expect(isFullyQualifiedPath("C:mars", "win32")).toBe(false);
+		expect(isFullyQualifiedPath(".\\mars", "win32")).toBe(false);
+		expect(isFullyQualifiedPath("\\bin\\mars", "win32")).toBe(false);
+		expect(isFullyQualifiedPath("/bin/mars", "win32")).toBe(false);
 		expect(isFullyQualifiedPath("//", "win32")).toBe(false);
 		expect(isFullyQualifiedPath("\\\\", "win32")).toBe(false);
 	});
 
 	it("identifies absolute POSIX paths", () => {
-		expect(isFullyQualifiedPath("/usr/local/bin/omp", "darwin")).toBe(true);
-		expect(isFullyQualifiedPath("/usr/local/bin/omp", "linux")).toBe(true);
-		expect(isFullyQualifiedPath("./omp", "darwin")).toBe(false);
-		expect(isFullyQualifiedPath("omp", "linux")).toBe(false);
+		expect(isFullyQualifiedPath("/usr/local/bin/mars", "darwin")).toBe(true);
+		expect(isFullyQualifiedPath("/usr/local/bin/mars", "linux")).toBe(true);
+		expect(isFullyQualifiedPath("./mars", "darwin")).toBe(false);
+		expect(isFullyQualifiedPath("mars", "linux")).toBe(false);
 	});
 });

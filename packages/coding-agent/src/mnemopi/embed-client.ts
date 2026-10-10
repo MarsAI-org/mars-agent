@@ -1,5 +1,5 @@
-import { isFastembedModelCached } from "@oh-my-pi/pi-mnemopi/core/fastembed-model-cache";
-import { getFastembedCacheDir, logger } from "@oh-my-pi/pi-utils";
+import { isFastembedModelCached } from "@marsai-org/mnemopi/core/fastembed-model-cache";
+import { getFastembedCacheDir, logger } from "@marsai-org/utils";
 import { trackDownload } from "../downloads/activity";
 import {
 	createUnavailableWorker,
@@ -40,7 +40,7 @@ export const MNEMOPI_EMBED_WORKER_ARG = "__omp_worker_mnemopi_embed";
  * Spawn the mnemopi embeddings worker as a subprocess. Exported for tests and
  * the smoke probe; production callers go through {@link spawnMnemopiEmbedWorker}.
  * The child inherits the parent env — fastembed honours `HF_HUB_*`,
- * `HTTPS_PROXY`, etc., and our `loadFastembed()` reads the same `OMP_*`
+ * `HTTPS_PROXY`, etc., and our `loadFastembed()` reads the same `MARS_*`
  * runtime-install knobs the parent uses.
  */
 export function createMnemopiEmbedSubprocess(): SpawnedSubprocess<MnemopiEmbedWorkerOutbound> {

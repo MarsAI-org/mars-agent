@@ -16,12 +16,12 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
-} from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel, resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { parseCloudflareAiGatewayCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
-import { getAntigravityUserAgent, getGeminiCliHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
-import { fetchWithRetry, USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { clampThinkingLevelForModel, resolveWireModelId } from "@marsai-org/catalog/model-thinking";
+import { parseCloudflareAiGatewayCredential } from "@marsai-org/catalog/wire/cloudflare-ai-gateway";
+import { getAntigravityUserAgent, getGeminiCliHeaders } from "@marsai-org/catalog/wire/gemini-headers";
+import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@marsai-org/tui/thinking";
+import { fetchWithRetry, USER_AGENT } from "@marsai-org/utils";
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import type { ModelRegistry } from "../../../config/model-registry";
@@ -400,7 +400,7 @@ async function callGeminiSearch(
 			}
 		: {
 				userAgent: USER_AGENT,
-				requestId: `omp-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+				requestId: `mars-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
 			};
 
 	const normalizedSystemPrompt = systemPrompt?.toWellFormed();

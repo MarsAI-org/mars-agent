@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { pickWeightedTip, WelcomeComponent } from "@oh-my-pi/pi-tui/prompt/welcome";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { pickWeightedTip, WelcomeComponent } from "@marsai-org/tui/prompt/welcome";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { visibleWidth } from "@marsai-org/tui";
 
 describe("WelcomeComponent", () => {
 	beforeAll(async () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import { customToolToDefinition } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentTool, ToolApproval } from "@oh-my-pi/pi-agent-core";
+import { customToolToDefinition } from "@marsai-org/coding-agent/sdk";
+import type { AgentTool, ToolApproval } from "@marsai-org/agent-core";
 import {
 	type ApprovalMode,
 	denyError,
@@ -9,8 +9,8 @@ import {
 	resolveApproval,
 	resolveApprovalFromContext,
 	truncateForPrompt,
-} from "@oh-my-pi/pi-coding-agent/tools/approval";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
+} from "@marsai-org/coding-agent/tools/approval";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
 import { Settings } from "../../src/config/settings";
 import { EditTool } from "../../src/edit";
 import type { ToolSession } from "../../src/tools";

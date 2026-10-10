@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { UsageLimit, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { parseClaudeRateLimitHeaders } from "@oh-my-pi/pi-ai/usage/claude";
+import type { UsageLimit, UsageReport } from "@marsai-org/ai/usage";
+import { parseClaudeRateLimitHeaders } from "@marsai-org/ai/usage/claude";
 
 const NOW = 1_780_400_000_000;
 const BROKER_OAUTH_HEADERS = {

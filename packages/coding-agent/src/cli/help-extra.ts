@@ -1,6 +1,6 @@
-import "@oh-my-pi/pi-utils/env";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { APP_NAME, CONFIG_DIR_NAME } from "@oh-my-pi/pi-utils/dirs";
+import "@marsai-org/utils/env";
+import chalk from "@marsai-org/utils/chalk";
+import { APP_NAME, CONFIG_DIR_NAME } from "@marsai-org/utils/dirs";
 
 export function getExtraHelpText(): string {
 	return `${chalk.bold("Environment Variables:")}
@@ -62,8 +62,8 @@ export function getExtraHelpText(): string {
   TYPESAFE_API_KEY           - TypeSafe System One judgments (auto thinking, unexpected-stop, AI staging, eval judge())
 
   ${chalk.dim("# Configuration")}
-  OMP_PROFILE                 - Named profile for isolated agent state (same as --profile)
-  Use \`omp --profile <name> --alias <command>\` to create a shell shortcut for a profile
+  MARS_PROFILE                 - Named profile for isolated agent state (same as --profile)
+  Use \`mars --profile <name> --alias <command>\` to create a shell shortcut for a profile
   PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
   PI_PACKAGE_DIR             - Override package directory (for Nix/Guix store paths)
   PI_SMOL_MODEL              - Override smol/fast model (see --smol)
@@ -93,6 +93,6 @@ ${chalk.bold("Plugin Options:")}
   --plugin-dir <path>        Load plugin from directory (repeatable)
 
 ${chalk.bold("Useful Commands:")}
-  omp agents unpack           - Export bundled subagents to ~/.omp/agent/agents (default)
-  omp agents unpack --project - Export bundled subagents to ./.omp/agents`;
+  mars agents unpack           - Export bundled subagents to ~/.mars/agent/agents (default)
+  mars agents unpack --project - Export bundled subagents to ./.mars/agents`;
 }

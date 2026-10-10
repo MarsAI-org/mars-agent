@@ -2,13 +2,13 @@ import * as os from "node:os";
 import { setFeedModelBadgeEnabled } from "../src/render/render-utils";
 import { setShimmerMode } from "../src/theme/shimmer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type RenderResultOptions, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { taskToolRenderer } from "@oh-my-pi/pi-tui/tools/task";
-import { getSubprocessToolRenderer } from "@oh-my-pi/pi-tui/tools/subprocess";
-import type { AgentProgress, SingleResult, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { FEED_MODEL_BADGE_WIDTH } from "@oh-my-pi/pi-tui/render/render-utils";
-import { visibleWidth } from "@oh-my-pi/pi-tui";
+import { type RenderResultOptions, ThinkingLevel } from "@marsai-org/agent-core";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import { taskToolRenderer } from "@marsai-org/tui/tools/task";
+import { getSubprocessToolRenderer } from "@marsai-org/tui/tools/subprocess";
+import type { AgentProgress, SingleResult, TaskToolDetails } from "@marsai-org/tui/tools/task";
+import { FEED_MODEL_BADGE_WIDTH } from "@marsai-org/tui/render/render-utils";
+import { visibleWidth } from "@marsai-org/tui";
 
 function runningProgress(overrides: Partial<AgentProgress> = {}): AgentProgress {
 	return {

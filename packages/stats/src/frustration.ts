@@ -13,13 +13,13 @@
  * The SQL implementing both lives in `db.ts` (`FRUSTRATION_COUNTS_SQL`).
  *
  * Verdicts come from a single process-wide judge run over the unjudged prose,
- * using the judge the omp host registered through `startServer`. Standalone
- * `omp-stats` has none and only shows the regex fallback.
+ * using the judge the mars host registered through `startServer`. Standalone
+ * `mars-stats` has none and only shows the regex fallback.
  */
-import type { ChoiceQuestion, Judge, Model, ScoreQuestion } from "@oh-my-pi/pi-ai";
-import { compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/compat/revision";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { ChoiceQuestion, Judge, Model, ScoreQuestion } from "@marsai-org/ai";
+import { compareRevision, parseRevision } from "@marsai-org/catalog/compat/revision";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { logger } from "@marsai-org/utils";
 import { getTimeRangeConfig } from "./aggregator";
 import {
 	type FrustrationModelRow,
@@ -39,12 +39,12 @@ import type {
 	FrustrationModelStats,
 } from "./shared-types";
 
-/** Judge supplied by the omp host process; `primaryModel` prices the pre-run estimate. */
+/** Judge supplied by the mars host process; `primaryModel` prices the pre-run estimate. */
 export interface StatsJudge extends Judge {
 	primaryModel(): Model | undefined;
 }
 
-/** Lazily resolves the host judge on first estimate/run so `omp stats` startup stays fast. */
+/** Lazily resolves the host judge on first estimate/run so `mars stats` startup stays fast. */
 export type StatsJudgeProvider = () => Promise<StatsJudge>;
 
 /** Where the user's annoyance is aimed. */
@@ -101,7 +101,7 @@ const ATTEMPTS_PER_TEXT = 3;
 const CIRCUIT_BREAKER_FAILURES = 25;
 
 const NO_PROVIDER_REASON =
-	"This dashboard was started without a judge (standalone omp-stats). Run `omp stats` to classify.";
+	"This dashboard was started without a judge (standalone mars-stats). Run `mars stats` to classify.";
 const NO_MODEL_REASON = "No judge model is available. Configure the `judge` model role.";
 
 let judgeProvider: StatsJudgeProvider | undefined;

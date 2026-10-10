@@ -20,17 +20,17 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { getConfigRootDir, logger } from "@oh-my-pi/pi-utils";
-import type { AgentHubRemote, AgentHubRemoteTranscript } from "@oh-my-pi/pi-tui/overlays/agent-hub";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { ImageContent } from "@marsai-org/ai";
+import { getConfigRootDir, logger } from "@marsai-org/utils";
+import type { AgentHubRemote, AgentHubRemoteTranscript } from "@marsai-org/tui/overlays/agent-hub";
 import type { InteractiveModeContext } from "../modes/types";
 import { AgentRegistry } from "../registry/agent-registry";
 import type { AgentSessionEvent } from "../session/agent-session";
 import type { SessionEntry } from "../session/session-entries";
 import { mintSessionId } from "../session/session-manager";
 import { FileSessionStorage } from "../session/session-storage";
-import { shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { shouldDisableReasoning, toReasoningEffort } from "@marsai-org/tui/thinking";
 import { emitSubagentFrame } from "../utils/event-bus";
 import { GuestLifecycleEmitter } from "../extensibility/extensions/lifecycle-mirror";
 import { setSessionTerminalTitle } from "../utils/title-generator";
@@ -182,7 +182,7 @@ export class CollabGuestLink {
 	 * The replica's ownership lease, held from the first snapshot write until
 	 * the guest has left. Opening and reloading the replica never claims it, so
 	 * without this an idle guest would leave its live replica unowned (and
-	 * collectable by `omp gc`).
+	 * collectable by `mars gc`).
 	 */
 	#replicaLease: (() => void) | undefined;
 	/** Previous session file to restore on leave; null = previous session was unsaved. */
@@ -482,7 +482,7 @@ export class CollabGuestLink {
 		const lines = [header, ...pending.entries].map(entry => JSON.stringify(entry)).join("\n");
 		const storage = new FileSessionStorage();
 		this.#replicaLease ??= storage.claimSession(this.#replicaId, replicaPath) ?? undefined;
-		// Published atomically: `omp gc` reads the replica's header to find its
+		// Published atomically: `mars gc` reads the replica's header to find its
 		// lease, so a resync must never expose a truncated, headerless file.
 		const tempPath = `${replicaPath}.${mintSessionId()}.tmp`;
 		try {

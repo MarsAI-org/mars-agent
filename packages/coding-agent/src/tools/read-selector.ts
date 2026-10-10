@@ -1,7 +1,7 @@
-import type { LineRange } from "@oh-my-pi/pi-tui/tools/line-ranges";
+import type { LineRange } from "@marsai-org/tui/tools/line-ranges";
 import { parseTailCount } from "./path-utils";
-import { parseLineRanges } from "@oh-my-pi/pi-tui/tools/line-ranges";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { parseLineRanges } from "@marsai-org/tui/tools/line-ranges";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 /** Parsed representation of a path-embedded selector. */
 export type ParsedSelector =
 	| { kind: "none" }

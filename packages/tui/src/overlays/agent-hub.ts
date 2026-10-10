@@ -13,7 +13,7 @@
  *
  * Replaces the old SessionObserverOverlayComponent (ctrl+s observer).
  */
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 import type {
 	TspPickerAction,
 	TspPickerColumn,
@@ -22,12 +22,12 @@ import type {
 	TspPickerScope,
 	TspSpan,
 	TspTreeNode,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import { Container, type OverlayHandle, type TUI } from "../tui";
 import { matchesKey } from "../keys";
 import { routeSelectListMouse, routeSgrMouseInput, type SelectListMouseTarget } from "../mouse";
 import { padding, visibleWidth, wrapTextWithAnsi } from "../utils";
-import { formatAge, formatDuration, formatNumber, getProjectDir, logger } from "@oh-my-pi/pi-utils";
+import { formatAge, formatDuration, formatNumber, getProjectDir, logger } from "@marsai-org/utils";
 import {
 	type AgentActivitySource,
 	type AgentActivityKind,
@@ -1207,7 +1207,7 @@ export class AgentHubOverlayComponent<TRecord extends AgentRecordLike = AgentRec
 						[span("Finished, parked, and killed subagents remain with the session that created them.", "dim")],
 						{ wrap: "word" },
 					),
-					text([span("Resume that session with omp-dev --continue, or spawn a task here.", "dim")], {
+					text([span("Resume that session with mars-dev --continue, or spawn a task here.", "dim")], {
 						wrap: "word",
 					}),
 				],
@@ -1853,7 +1853,7 @@ export class AgentHubOverlayComponent<TRecord extends AgentRecordLike = AgentRec
 				const emptyState = [
 					`${theme.fg("muted", theme.status.shadowed)} ${theme.bold("No agents in this session")}`,
 					theme.fg("dim", "Finished, parked, and killed subagents remain with the session that created them."),
-					theme.fg("dim", "Resume that session with omp-dev --continue, or spawn a task here."),
+					theme.fg("dim", "Resume that session with mars-dev --continue, or spawn a task here."),
 				];
 				for (const line of emptyState.slice(0, budget)) {
 					lines.push(line);

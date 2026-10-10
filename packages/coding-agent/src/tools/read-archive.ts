@@ -1,18 +1,18 @@
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import type { TextContent } from "@marsai-org/ai";
 import {
 	type ArchiveFormat,
 	type ArchiveReader,
 	formatArchiveEntryLines,
 	openArchive,
 	parseArchivePathCandidates,
-} from "@oh-my-pi/pi-utils/ar";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+} from "@marsai-org/utils/ar";
+import { LRUCache } from "@marsai-org/utils/lru";
 import type { ToolSession } from "../sdk";
-import { truncateHead } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { applyListLimit } from "@oh-my-pi/pi-tui/tools/list-limit";
+import { truncateHead } from "@marsai-org/tui/tools/streaming-output";
+import { applyListLimit } from "@marsai-org/tui/tools/list-limit";
 import { resolveReadPath } from "./path-utils";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
 import {
 	buildInMemorySelectorResult,
 	decodeUtf8Text,
@@ -27,9 +27,9 @@ import {
 	type SuffixMatchCache,
 } from "./read-path-resolution";
 import { isMultiRange, type ParsedSelector, parseSel, resolveTailSelector, selToOffsetLimit } from "./read-selector";
-import { formatBytes } from "@oh-my-pi/pi-tui/render/render-utils";
+import { formatBytes } from "@marsai-org/tui/render/render-utils";
 import { throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 
 interface ResolvedArchiveReadPath {

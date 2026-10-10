@@ -12,10 +12,10 @@
  * is testable without a live session or TUI. The interactive mode performs the
  * resulting side effect.
  */
-import type { Model } from "@oh-my-pi/pi-ai";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
+import type { Model } from "@marsai-org/ai";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
 import type { ResolvedModelRoleValue } from "../config/model-resolver";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 
 /** The action implied by resolving the `plan` role against the active model. */
 export type PlanModelTransition =

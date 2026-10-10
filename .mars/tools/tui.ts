@@ -2,8 +2,8 @@
  * Project-local `tui` tool: run and debug pi-tui apps headlessly. Each session
  * spawns a TypeScript/JavaScript entry or executable on a Bun-native PTY — a
  * real controlling terminal, so capability probes, SIGWINCH resizes, and
- * immediate-mode hosts all behave as in production — with `OMP_TUI_DEBUG`
- * pointed at the unix socket served by an omp/pi-tui host. Injected input
+ * immediate-mode hosts all behave as in production — with `MARS_TUI_DEBUG`
+ * pointed at the unix socket served by a mars/pi-tui host. Injected input
  * rides the app's own input path, while renderer and component queries inspect
  * the last painted frame.
  *
@@ -104,7 +104,7 @@ function loadVt() {
 	vtApi ??= import("kitty-vt-wasm").catch((error) => {
 		vtApi = null;
 		throw new Error(
-			`screen emulation needs kitty-vt-wasm — run \`bun install\` in .omp/tools (${error})`,
+			`screen emulation needs kitty-vt-wasm — run \`bun install\` in .mars/tools (${error})`,
 		);
 	});
 	return vtApi;
@@ -191,7 +191,7 @@ async function loadCanvas() {
 		mod = await import("@napi-rs/canvas");
 	} catch (error) {
 		throw new Error(
-			`shot needs @napi-rs/canvas — run \`bun install\` in .omp/tools (${error})`,
+			`shot needs @napi-rs/canvas — run \`bun install\` in .mars/tools (${error})`,
 		);
 	}
 	const families = mod.GlobalFonts.families.map((entry) => entry.family);
@@ -237,7 +237,7 @@ function lerpColor(from: number, to: number, t: number): number {
  * Terminal emulation fed every PTY byte: kitty's real core (screen.c +
  * vt-parser.c compiled to wasm via kitty-vt-wasm), so SGR, rewrap-on-resize,
  * scrollback, graphemes, and wide chars behave exactly as in kitty. Any
- * session — omp-tui host or not — can be read as plain text (`snapshot`) or
+ * session — mars-tui host or not — can be read as plain text (`snapshot`) or
  * rasterized to pixels (`png`). Backs the `screen`/`shot` ops, the socketless
  * `text` fallback, and the after-screenshot on input ops. Query replies the
  * core emits (DA, DECRQSS, XTGETTCAP, OSC color queries) surface on
@@ -746,7 +746,7 @@ function request(
 		return Promise.reject(
 			new Error(
 				`session "${session.name}" has no debug socket — the app is not an ` +
-					"omp-tui host (or exited). screen/raw/send/resize/stop still work.",
+					"mars-tui host (or exited). screen/raw/send/resize/stop still work.",
 			),
 		);
 	}
@@ -783,7 +783,7 @@ async function stopSession(session: Session): Promise<number | null> {
 		if (session.sock) {
 			await request(session, { op: "quit" }, 2_000);
 		} else if (session.exit === null) {
-			// Non-omp-tui apps have no debug socket; Ctrl-C is the
+			// Non-mars-tui apps have no debug socket; Ctrl-C is the
 			// conventional quit chord.
 			session.proc.terminal.write("\x03");
 		}
@@ -964,7 +964,7 @@ function gated(gate: string, command: string[]): string[] {
 
 // ─── Tool ────────────────────────────────────────────────────────────────────
 
-const factory = (omp: ToolHost) => {
+const factory = (mars: ToolHost) => {
 	const startSession = async (params: TuiParams): Promise<string> => {
 		const name = params.name ?? "main";
 		if (sessions.has(name)) {
@@ -973,7 +973,7 @@ const factory = (omp: ToolHost) => {
 		if (params.file && params.bin) {
 			throw new Error("start takes `file` or `bin`, not both");
 		}
-		// Default target: this repo's own TUI, omp itself.
+		// Default target: this repo's own TUI, mars itself.
 		const file = params.bin ? undefined : (params.file ?? "packages/coding-agent/src/cli.ts");
 		const target = file ?? params.bin ?? "";
 		const command = file
@@ -982,7 +982,7 @@ const factory = (omp: ToolHost) => {
 
 		const rows = params.rows ?? 30;
 		const cols = params.cols ?? 100;
-		const dir = mkdtempSync(join(tmpdir(), `omp-tui-${name}-`));
+		const dir = mkdtempSync(join(tmpdir(), `mars-tui-${name}-`));
 		const sockPath = join(dir, "debug.sock");
 		const gatePath = join(dir, "spawn.gate");
 		const screen = await Screen.create(cols, rows);
@@ -996,7 +996,7 @@ const factory = (omp: ToolHost) => {
 				cwd: omp.cwd,
 				env: {
 					...process.env,
-					OMP_TUI_DEBUG: sockPath,
+					MARS_TUI_DEBUG: sockPath,
 					TERM: "xterm-256color",
 					COLORTERM: "truecolor",
 				},
@@ -1079,7 +1079,7 @@ const factory = (omp: ToolHost) => {
 			text += `\n${screenshotText(shot)}`;
 		} else {
 			text +=
-				"\n(no debug socket: app is not an omp-tui host; `send` injects " +
+				"\n(no debug socket: app is not a mars-tui host; `send` injects " +
 				"input, `screen` renders the emulated display)" +
 				`\n${session.screen.snapshot()}`;
 		}
@@ -1090,11 +1090,11 @@ const factory = (omp: ToolHost) => {
 		name: "tui",
 		label: "TUI Debug",
 		description:
-			"Run and debug omp/pi-tui apps headlessly on a real PTY plus the " +
-			"OMP_TUI_DEBUG socket. Start defaults to omp itself " +
+			"Run and debug mars/pi-tui apps headlessly on a real PTY plus the " +
+			"MARS_TUI_DEBUG socket. Start defaults to mars itself " +
 			"(packages/coding-agent/src/cli.ts); override with file (a TS/JS entry, e.g. " +
-			"file: \"packages/tui/examples/debug-demo.ts\") or bin (an executable name/path), plus optional rows/cols and args. Any omp/pi-tui app serves " +
-			"OMP_TUI_DEBUG. Ops: text (viewport screenshot as plain text), screen " +
+			"file: \"packages/tui/examples/debug-demo.ts\") or bin (an executable name/path), plus optional rows/cols and args. Any mars/pi-tui app serves " +
+			"MARS_TUI_DEBUG. Ops: text (viewport screenshot as plain text), screen " +
 			"(plain-text screen from kitty's real terminal core — works for any app, no " +
 			"debug socket needed; peek=N prepends N scrollback lines), frame (full " +
 			"document), tree (component tree with ids/rects/focus), values (widget " +
@@ -1123,7 +1123,7 @@ const factory = (omp: ToolHost) => {
 			file: omp.zod
 				.string()
 				.optional()
-				.describe("start: TS/JS entry path relative to cwd (default: packages/coding-agent/src/cli.ts — omp itself)"),
+				.describe("start: TS/JS entry path relative to cwd (default: packages/coding-agent/src/cli.ts — mars itself)"),
 			bin: omp.zod
 				.string()
 				.optional()
@@ -1219,7 +1219,7 @@ const factory = (omp: ToolHost) => {
 					const session = need(params.name);
 					const png = join(
 						tmpdir(),
-						`omp-tui-${session.name}-${Date.now()}.png`,
+						`mars-tui-${session.name}-${Date.now()}.png`,
 					);
 					const bytes = await session.screen.png();
 					writeFileSync(png, bytes);

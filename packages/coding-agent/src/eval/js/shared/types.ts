@@ -1,4 +1,4 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 
 /**
  * Structured status payload emitted by helpers (`read`, `write`, `env`, etc.) and the

@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { node } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
+import { Editor } from "@marsai-org/tui/components/editor";
+import { node } from "@marsai-org/tui/native/describe";
+import type { NativeNode } from "@marsai-org/tui/native/node";
+import type { Component } from "@marsai-org/tui/tui";
 import { defaultEditorTheme } from "../test-themes";
 import { TspHarness } from "./tsp-harness";
 

@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/manager";
-import type { PluginRuntimeState } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { PluginManager } from "@marsai-org/coding-agent/extensibility/plugins/manager";
+import type { PluginRuntimeState } from "@marsai-org/coding-agent/extensibility/plugins/types";
+import * as piUtils from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // Regression for #11090: `omp-plugins.lock.json` can diverge from the package
 // version in node_modules. `plugin doctor` must surface the stale copy instead
@@ -16,7 +16,7 @@ describe("PluginManager.doctor version drift", () => {
 	let pluginsNodeModules: string;
 
 	beforeEach(async () => {
-		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "omp-plugin-drift-"));
+		tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), "mars-plugin-drift-"));
 		pluginsDir = path.join(tmpRoot, "plugins");
 		pluginsNodeModules = path.join(pluginsDir, "node_modules");
 		await fs.mkdir(pluginsNodeModules, { recursive: true });

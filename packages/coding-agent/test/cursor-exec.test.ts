@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	type AgentEvent,
 	type AgentTool,
 	type AgentToolContext,
 	TOOL_RESULT_ADDITIONAL_CONTEXT,
 	type ToolResultWithAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
-import { type BlockState, handleServerMessage, type ToolCallState } from "@oh-my-pi/pi-ai/providers/cursor";
-import { piTruncation } from "@oh-my-pi/pi-ai/providers/cursor/exec-modern";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@marsai-org/agent-core";
+import { type BlockState, handleServerMessage, type ToolCallState } from "@marsai-org/ai/providers/cursor";
+import { piTruncation } from "@marsai-org/ai/providers/cursor/exec-modern";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -22,27 +22,27 @@ import {
 	McpArgsSchema,
 	ReadArgsSchema,
 	ShellArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CursorExecHandlers } from "@oh-my-pi/pi-coding-agent/cursor";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, fromBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { CursorExecHandlers } from "@marsai-org/coding-agent/cursor";
 import {
 	bridgeToolMap,
 	createBridgeEditTool,
 	createBridgeGrepFactory,
 	cursorMcpPrefersReplaceEdit,
 	normalizeCursorReplaceArgs,
-} from "@oh-my-pi/pi-coding-agent/cursor-bridge-tools";
+} from "@marsai-org/coding-agent/cursor-bridge-tools";
 
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { TodoTool } from "@oh-my-pi/pi-coding-agent/tools/todo";
-import type { TruncationMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions";
+import { BUILTIN_TOOLS, GrepTool, ReadTool, type Tool, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { TodoTool } from "@marsai-org/coding-agent/tools/todo";
+import type { TruncationMeta } from "@marsai-org/tui/tools/output-meta";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
+import { removeWithRetries } from "@marsai-org/utils";
 import { AdviseTool } from "../src/advisor/advise-tool";
 
 function yoloToolContext(): AgentToolContext {

@@ -1,18 +1,18 @@
 /**
  * Contract for the `pi` brand segment's working transition (port of rust
- * omp's status-band brand fade): idle renders the omp icon in the dim color;
+ * mars's status-band brand fade): idle renders the mars icon in the dim color;
  * a turn start swaps the glyph to a spinner + turn timer whose foreground
  * fades dim → accent over 450ms (never an instant color swap), and a turn end
  * fades back from the color currently on screen. Regression: the first cut of
  * the working brand swapped colors instantly with no tween.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { getSessionAccentAnsi } from "@oh-my-pi/pi-tui/theme/session-color";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { getSessionAccentAnsi } from "@marsai-org/tui/theme/session-color";
 
 beforeAll(async () => {
 	resetSettingsForTest();
@@ -85,7 +85,7 @@ describe("status line brand fade", () => {
 		if (!dimAnsi || !accentAnsi) throw new Error("expected resolvable dim/accent theme colors");
 		const component = makeComponent();
 		try {
-			// Idle: omp icon settled in the dim color.
+			// Idle: mars icon settled in the dim color.
 			expect(component.renderBottomBar(80, "full")).toContain(`${dimAnsi}${theme.icon.omp}`);
 
 			// Turn start: the glyph becomes a spinner + whole-second timer at

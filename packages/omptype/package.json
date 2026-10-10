@@ -1,18 +1,18 @@
 {
   "type": "module",
-  "name": "@oh-my-pi/omptype",
+  "name": "@marsai-org/omptype",
   "version": "18.8.6",
   "description": "ArkType-compatible runtime schema validation with lazy JIT compilation",
-  "homepage": "https://omp.sh",
+  "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/MarsAI-org/mars-agent.git",
     "directory": "packages/omptype"
   },
   "bugs": {
-    "url": "https://github.com/can1357/oh-my-pi/issues"
+    "url": "https://github.com/MarsAI-org/mars-agent/issues"
   },
   "keywords": [
     "schema",

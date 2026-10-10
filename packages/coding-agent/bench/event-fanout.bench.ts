@@ -1,5 +1,5 @@
-import { Agent, type AgentEvent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { Agent, type AgentEvent } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
 import { ModelRegistry } from "../src/config/model-registry";
 import { Settings } from "../src/config/settings";
 import { ExtensionRuntime, loadExtensionFromFactory } from "../src/extensibility/extensions/loader";

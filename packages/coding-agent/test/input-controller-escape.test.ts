@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { SpaceHoldGesture } from "@oh-my-pi/pi-tui/space-hold";
-import type { InteractiveModeContext, SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { vocalizer } from "@oh-my-pi/pi-coding-agent/tts/vocalizer";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import type { ImageContent } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { SpaceHoldGesture } from "@marsai-org/tui/space-hold";
+import type { InteractiveModeContext, SubmittedUserInput } from "@marsai-org/coding-agent/modes/types";
+import { USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import { vocalizer } from "@marsai-org/coding-agent/tts/vocalizer";
+import * as logger from "@marsai-org/utils/logger";
 
-import { cfgDoubleEscapeAction } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgDoubleEscapeAction } from "@marsai-org/coding-agent/modes/settings";
 
 type Spy = Mock<(...args: unknown[]) => unknown>;
 type StartPendingSubmissionSpy = Mock<InteractiveModeContext["startPendingSubmission"]>;

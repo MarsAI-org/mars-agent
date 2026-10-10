@@ -9,12 +9,12 @@ import {
 	type Component,
 	type Focusable,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import { formatKeyHint, formatKeyHints } from "@oh-my-pi/pi-tui/app-keybindings";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import type { StreamChatMessage, TspSpan } from "@oh-my-pi/pi-wire";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { col, kbd, node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
+} from "@marsai-org/tui";
+import { formatKeyHint, formatKeyHints } from "@marsai-org/tui/app-keybindings";
+import chalk from "@marsai-org/utils/chalk";
+import type { StreamChatMessage, TspSpan } from "@marsai-org/wire";
+import type { NativeNode } from "@marsai-org/tui/native/node";
+import { col, kbd, node, row, span, text } from "@marsai-org/tui/native/describe";
 import type { StreamConsoleEvent, StreamMuxHost } from "./streamer";
 
 const HISTORY_LIMIT = 50;

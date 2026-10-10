@@ -1,7 +1,7 @@
-import { type UpdateNotesDetails } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { updateNotesToolRenderer } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import { type } from "@oh-my-pi/omptype";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { type UpdateNotesDetails } from "@marsai-org/tui/tools/autoresearch";
+import { updateNotesToolRenderer } from "@marsai-org/tui/tools/autoresearch";
+import { type } from "@marsai-org/omptype";
+import * as vcs from "@marsai-org/natives/vcs";
 
 import type { ToolDefinition } from "../../extensibility/extensions";
 

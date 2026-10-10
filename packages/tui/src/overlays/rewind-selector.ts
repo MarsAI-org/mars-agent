@@ -29,7 +29,7 @@
  * surface of the transcript's own blocks with `pick`/`drop` marks in place of
  * the dotted outline (see `describeScreen`).
  */
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 import {
 	type Component,
 	Input,
@@ -61,7 +61,7 @@ import {
 	positionRail,
 	userTurnLabel,
 } from "../chat/transcript-outline";
-import type { TspMark } from "@oh-my-pi/pi-wire";
+import type { TspMark } from "@marsai-org/wire";
 import { kbd, node, span, text } from "../native/describe";
 import type { DescribeContext, NativeChild, NativeNode, NativeScreen, NativeUiEvent } from "../native/node";
 import { actionBar, actionButton, actionHint, hintsRow } from "../native/overlay";

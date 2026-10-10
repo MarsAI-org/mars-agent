@@ -2,10 +2,10 @@
  * Show what the read tool will return for a path, URL, or internal URI.
  */
 
-import { Args, Command } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command } from "@marsai-org/utils/cli";
 import { readHelp as commandHelp } from "../cli/command-help";
 import { type ReadCommandArgs, runReadCommand } from "../cli/read-cli";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@marsai-org/tui/theme";
 
 export default class Read extends Command {
 	static description = commandHelp.description;
@@ -18,14 +18,14 @@ export default class Read extends Command {
 	};
 
 	static examples = [
-		"omp read src/foo.ts",
-		"omp read src/foo.ts:50-100",
-		"omp read src/foo.ts:raw",
-		"omp read https://example.com",
-		"omp read omp://",
-		"omp read issue://123",
-		"omp read path/to/archive.zip:dir/file.ts",
-		"omp read path/to/db.sqlite:users:42",
+		"mars read src/foo.ts",
+		"mars read src/foo.ts:50-100",
+		"mars read src/foo.ts:raw",
+		"mars read https://example.com",
+		"`mars read omp://`",
+		"mars read issue://123",
+		"mars read path/to/archive.zip:dir/file.ts",
+		"mars read path/to/db.sqlite:users:42",
 	];
 
 	async run(): Promise<void> {

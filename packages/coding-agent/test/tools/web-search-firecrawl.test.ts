@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resolveFirecrawlUrl } from "@oh-my-pi/pi-coding-agent/web/firecrawl";
-import { FirecrawlProvider, searchFirecrawl } from "@oh-my-pi/pi-coding-agent/web/search/providers/firecrawl";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resolveFirecrawlUrl } from "@marsai-org/coding-agent/web/firecrawl";
+import { FirecrawlProvider, searchFirecrawl } from "@marsai-org/coding-agent/web/search/providers/firecrawl";
+import { SearchProviderError } from "@marsai-org/coding-agent/web/search/types";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const TEST_KEY = "test-firecrawl-key";

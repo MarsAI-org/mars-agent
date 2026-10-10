@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { RpcHostUriBridge } from "@oh-my-pi/pi-coding-agent/modes/rpc/host-uris";
-import type { RpcHostUriCancelRequest, RpcHostUriRequest } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { RpcHostUriBridge } from "@marsai-org/coding-agent/modes/rpc/host-uris";
+import type { RpcHostUriCancelRequest, RpcHostUriRequest } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
 
 const router = InternalUrlRouter.instance();
 
@@ -125,7 +125,7 @@ describe("RpcHostUriBridge", () => {
 		const bridge = new RpcHostUriBridge(() => {});
 		for (const scheme of ["security", "local", "Agent", "mcp"]) {
 			expect(() => bridge.setSchemes([{ scheme, writable: true }])).toThrow(
-				`Host URI scheme is reserved by OMP: ${scheme.toLowerCase()}://`,
+				`Host URI scheme is reserved by Mars: ${scheme.toLowerCase()}://`,
 			);
 		}
 		bridge.clear("test cleanup");

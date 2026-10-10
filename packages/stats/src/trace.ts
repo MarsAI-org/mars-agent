@@ -11,8 +11,8 @@
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getBundledModel, type GeneratedProvider } from "@oh-my-pi/pi-catalog/models";
-import { getSessionsDir, isEnoent } from "@oh-my-pi/pi-utils";
+import { getBundledModel, type GeneratedProvider } from "@marsai-org/catalog/models";
+import { getSessionsDir, isEnoent } from "@marsai-org/utils";
 import { initDb, isScheduledCatalogModel } from "./db";
 import { extractFolderFromPath, parseAllSessionEntries, resolveUsageTotal } from "./parser";
 import { getSessionRollups } from "./rollup";

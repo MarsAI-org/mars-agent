@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { StdinBuffer } from "@oh-my-pi/pi-tui/stdin-buffer";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme";
+import { StdinBuffer } from "@marsai-org/tui/stdin-buffer";
 
 /**
  * Regression for #3857.

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, ModelSpec, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import * as utils from "@oh-my-pi/pi-utils";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import { stream } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl, Model, ModelSpec, ProviderSessionState } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import * as utils from "@marsai-org/utils";
 
 const model = getBundledModel("openai", "gpt-5-mini") as Model<"openai-responses">;
 

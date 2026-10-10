@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { AssistantMessage, Context, CursorExecHandlers, ToolCall, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { getStreamingPartialJson, setStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { applyGlyphCodec, decodeGlyphText, encodeGlyphText } from "@oh-my-pi/pi-ai/utils/glyph-codec";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { PiEditExecArgsSchema, PiEditReplacementSchema } from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { AssistantMessage, Context, CursorExecHandlers, ToolCall, ToolResultMessage } from "@marsai-org/ai/types";
+import { getStreamingPartialJson, setStreamingPartialJson } from "@marsai-org/ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { applyGlyphCodec, decodeGlyphText, encodeGlyphText } from "@marsai-org/ai/utils/glyph-codec";
+import { buildModel } from "@marsai-org/catalog/build";
+import { PiEditExecArgsSchema, PiEditReplacementSchema } from "@marsai-org/catalog/discovery/cursor-proto";
+import { create } from "@marsai-org/catalog/discovery/protobuf";
 
 const ZERO_USAGE: AssistantMessage["usage"] = {
 	input: 0,

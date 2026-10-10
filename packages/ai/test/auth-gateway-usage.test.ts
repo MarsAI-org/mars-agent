@@ -1,8 +1,8 @@
 import { afterEach, expect, test, vi } from "bun:test";
-import { AuthStorage, REMOTE_REFRESH_SENTINEL } from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient, RemoteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-broker";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import type { UsageReport } from "@oh-my-pi/pi-ai/usage";
+import { AuthStorage, REMOTE_REFRESH_SENTINEL } from "@marsai-org/ai";
+import { AuthBrokerClient, RemoteAuthCredentialStore } from "@marsai-org/ai/auth-broker";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import type { UsageReport } from "@marsai-org/ai/usage";
 
 afterEach(() => {
 	vi.restoreAllMocks();

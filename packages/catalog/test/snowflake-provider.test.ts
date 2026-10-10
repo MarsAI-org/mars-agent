@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { seedModels } from "@marsai-org/catalog/compat/providers";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 
 function seed(id: string): ModelSpec<Api> {
 	const spec = seedModels("snowflake").find(model => model.id === id);

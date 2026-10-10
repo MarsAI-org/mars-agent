@@ -1,22 +1,22 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 
 import goalDescription from "../../prompts/tools/goal.md" with { type: "text" };
 
 import type { ToolSession } from "../../tools";
 
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 import { completionBudgetReport, remainingTokens } from "../runtime";
-import type { Goal, GoalToolDetails } from "@oh-my-pi/pi-tui/tools/goal";
+import type { Goal, GoalToolDetails } from "@marsai-org/tui/tools/goal";
 
 const goalSchema = type({
 	op: type("'create' | 'get' | 'complete' | 'resume' | 'drop'").describe("goal operation"),

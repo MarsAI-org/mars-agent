@@ -2,19 +2,16 @@ import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type {
-	ExtensionAgentIdentity,
-	ExtensionFactory,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { type CreateAgentSessionOptions, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import * as sessionAdvisors from "@oh-my-pi/pi-coding-agent/session/session-advisors";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ExtensionAgentIdentity, ExtensionFactory } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { type CreateAgentSessionOptions, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import * as sessionAdvisors from "@marsai-org/coding-agent/session/session-advisors";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { Snowflake } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 // Extensions need to know which agent they run in: the same factory is rebound to every

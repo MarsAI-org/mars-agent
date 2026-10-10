@@ -1,4 +1,4 @@
-import type { TspProps } from "@oh-my-pi/pi-wire";
+import type { TspProps } from "@marsai-org/wire";
 import { formatTooltipKey } from "../key-hint-format";
 import type { KeyId } from "../keys";
 import { elapsed, kbd, keyed, node, row, span, text } from "../native/describe";
@@ -290,7 +290,7 @@ export class Loader extends Text {
 		return described;
 	}
 
-	/** A TSP terminal clocks the spinner and timer, but a retry ring's fill is omp's: repaint it while counting down. */
+	/** A TSP terminal clocks the spinner and timer, but a retry ring's fill is mars's: repaint it while counting down. */
 	#startNativeCountdown(): void {
 		if (this.#nativeTimer || !isNativeRendering() || this.#working?.spec().variant?.kind !== "retry") return;
 		this.#nativeTimer = setInterval(() => this.#requestPaint(), RETRY_METER_REPAINT_MS);

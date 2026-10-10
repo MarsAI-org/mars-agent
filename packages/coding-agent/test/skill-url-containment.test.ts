@@ -2,11 +2,11 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/skill-protocol";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { ShellFsOp, type ShellFsResponse } from "@oh-my-pi/pi-natives";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { SkillProtocolHandler } from "@marsai-org/coding-agent/internal-urls/skill-protocol";
+import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
+import { ShellFsOp, type ShellFsResponse } from "@marsai-org/natives";
 
 let tempDir: string;
 let pluginRoot: string;

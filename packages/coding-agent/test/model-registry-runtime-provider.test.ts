@@ -10,12 +10,12 @@ import {
 	type FetchImpl,
 	getCustomApi,
 	type Model,
-} from "@oh-my-pi/pi-ai";
-import { getOAuthProviders, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { logger, removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { getOAuthProviders, unregisterOAuthProviders } from "@marsai-org/ai/oauth";
+import type { OAuthCredentials } from "@marsai-org/ai/oauth/types";
+import { ModelRegistry, type ProviderConfigInput } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { logger, removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 describe("ModelRegistry runtime provider registration", () => {
 	let tempDir: string;
@@ -1494,7 +1494,7 @@ describe("ModelRegistry runtime provider registration", () => {
 	});
 
 	test("resolves a configured provider base URL before any model is discovered", () => {
-		// `omp usage` constructs a registry and probes credentials immediately, so
+		// `mars usage` constructs a registry and probes credentials immediately, so
 		// a discovery-only provider (no bundled rows) has no model to read a URL
 		// from yet. Deriving solely from discovered models returned `undefined`
 		// here, and the usage probe then sent a proxy-scoped key to the

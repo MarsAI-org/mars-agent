@@ -1,5 +1,5 @@
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { parseHTML } from "@oh-my-pi/pi-utils/dom";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import { parseHTML } from "@marsai-org/utils/dom";
 import type { SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";
 import { formatScraperQuery } from "../query";

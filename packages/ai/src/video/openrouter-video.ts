@@ -1,5 +1,5 @@
-import type { Api, FetchImpl, Model, Usage } from "@oh-my-pi/pi-catalog/types";
-import { type } from "@oh-my-pi/omptype";
+import type { Api, FetchImpl, Model, Usage } from "@marsai-org/catalog/types";
+import { type } from "@marsai-org/omptype";
 import { type ApiKey, withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import type {

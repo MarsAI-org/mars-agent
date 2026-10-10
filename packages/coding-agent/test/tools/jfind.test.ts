@@ -2,26 +2,20 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@oh-my-pi/pi-ai";
-import { tokenUsage } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { FindTool } from "@oh-my-pi/pi-coding-agent/tools/jfind";
-import { runCascade } from "@oh-my-pi/pi-coding-agent/tools/jfind/cascade";
-import { keywordsFromQuery } from "@oh-my-pi/pi-coding-agent/tools/jfind/keywords";
-import { grepIndex } from "@oh-my-pi/pi-coding-agent/tools/jfind/lexical";
-import {
-	mergeHeat,
-	type Passage,
-	selectWindows,
-	sketch,
-	windows,
-} from "@oh-my-pi/pi-coding-agent/tools/jfind/passages";
-import { readText, ReadTextError } from "@oh-my-pi/pi-coding-agent/tools/jfind/text";
-import { eligibleFile, renderTree, resolveSearchRoot } from "@oh-my-pi/pi-coding-agent/tools/jfind/tree";
-import { resolveSearchResultPath } from "@oh-my-pi/pi-coding-agent/tools/path-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@marsai-org/ai";
+import { tokenUsage } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls/router";
+import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
+import { FindTool } from "@marsai-org/coding-agent/tools/jfind";
+import { runCascade } from "@marsai-org/coding-agent/tools/jfind/cascade";
+import { keywordsFromQuery } from "@marsai-org/coding-agent/tools/jfind/keywords";
+import { grepIndex } from "@marsai-org/coding-agent/tools/jfind/lexical";
+import { mergeHeat, type Passage, selectWindows, sketch, windows } from "@marsai-org/coding-agent/tools/jfind/passages";
+import { readText, ReadTextError } from "@marsai-org/coding-agent/tools/jfind/text";
+import { eligibleFile, renderTree, resolveSearchRoot } from "@marsai-org/coding-agent/tools/jfind/tree";
+import { resolveSearchResultPath } from "@marsai-org/coding-agent/tools/path-utils";
+import { removeWithRetries } from "@marsai-org/utils";
 
 /** Read-tier URL filesystem rooted at `cwd`, as the `find` tool builds one per call. */
 function urlFs(cwd: string): InternalUrlFilesystem {

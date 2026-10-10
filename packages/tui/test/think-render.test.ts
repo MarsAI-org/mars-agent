@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { getThemeByName, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { thinkToolRenderer } from "@oh-my-pi/pi-tui/tools/think";
+import { getThemeByName, initTheme } from "@marsai-org/tui/theme";
+import { thinkToolRenderer } from "@marsai-org/tui/tools/think";
 
 beforeAll(async () => {
 	await initTheme();

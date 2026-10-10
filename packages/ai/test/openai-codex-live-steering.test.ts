@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { planSteeredRequest } from "@oh-my-pi/pi-ai/providers/openai-codex/live-steering";
-import { streamOpenAICodexResponses } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import * as AIError from "@marsai-org/ai/error";
+import { planSteeredRequest } from "@marsai-org/ai/providers/openai-codex/live-steering";
+import { streamOpenAICodexResponses } from "@marsai-org/ai/providers/openai-codex-responses";
 import type {
 	AssistantMessage,
 	Context,
@@ -12,9 +12,9 @@ import type {
 	ProviderSessionState,
 	ToolResultMessage,
 	UserMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as piUtils from "@marsai-org/utils";
 
 const { getAgentDir, setAgentDir, TempDir } = piUtils;
 const originalAgentDir = getAgentDir();

@@ -9,7 +9,7 @@ import { embeddedAddon } from "./embedded-addon.js";
 import { bindingsHaveReleaseIdentity, bindingsReleaseVersion, containsVersionStamp } from "./version-sentinel.js";
 
 /**
- * Native addon loader for `@oh-my-pi/pi-natives`.
+ * Native addon loader for `@marsai-org/natives`.
  *
  * Owns every step between "Node imports `native/index.js`" and "the right
  * `pi_natives.<platform>-<arch>*.node` is required, validated, and returned":
@@ -56,6 +56,9 @@ function startupMarker(text) {
 	}
 }
 
+/** App-name segment under an XDG root; mirrors `APP_NAME` in pi-utils. Must stay in sync. */
+const APP_NAME = "mars";
+
 function getNativesDir() {
 	// Match pi-utils directory overrides without depending on pi-utils.
 	const override = process.env.PI_NATIVES_DIR?.trim();
@@ -66,16 +69,16 @@ function getNativesDir() {
 		if (path.isAbsolute(dir)) return path.normalize(dir);
 	}
 	const xdgDataHome = process.env.XDG_DATA_HOME;
-	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, "omp"))) {
-		return path.join(xdgDataHome, "omp", "natives");
+	if (xdgDataHome && fs.existsSync(path.join(xdgDataHome, APP_NAME))) {
+		return path.join(xdgDataHome, APP_NAME, "natives");
 	}
-	return path.join(os.homedir(), ".omp", "natives");
+	return path.join(os.homedir(), ".mars", "natives");
 }
 
 function resolveLeafPackageDir(platformTag) {
 	try {
 		const require_ = createRequire(import.meta.url);
-		return path.dirname(require_.resolve(`@oh-my-pi/pi-natives-${platformTag}/package.json`));
+		return path.dirname(require_.resolve(`@marsai-org/natives-${platformTag}/package.json`));
 	} catch {
 		return null;
 	}
@@ -120,14 +123,14 @@ export function getAddonFilenames({ tag, arch, variant }) {
 
 /**
  * Decide whether the loader should mirror the package's `native/<filename>.node`
- * into the per-version cache directory (`~/.omp/natives/<version>/`) before loading.
+ * into the per-version cache directory (`~/.mars/natives/<version>/`) before loading.
  *
- * Windows-only safety net for `bun install -g` updates: when a previous `omp`
+ * Windows-only safety net for `bun install -g` updates: when a previous `mars`
  * process is running, bun cannot overwrite the locked `.node` inside
- * `node_modules/@oh-my-pi/pi-natives/native/`, leaving an old binary next to a
+ * `node_modules/@marsai-org/natives/native/`, leaving an old binary next to a
  * newer `index.js` and producing `<sym> is not a function` crashes on the next
  * launch. Staging into the version-pinned cache:
- *   1. Gives every package version its own filesystem path, so concurrent omp
+ *   1. Gives every package version its own filesystem path, so concurrent mars
  *      processes never collide on the same file.
  *   2. Makes the running process keep its handle on the cache copy, freeing bun
  *      to overwrite the `node_modules` copy on subsequent updates.
@@ -211,7 +214,7 @@ function isOlderReleaseVersion(candidate, current) {
 	return false;
 }
 
-// A concurrently starting older OMP binary creates or refreshes this directory
+// A concurrently starting older Mars binary creates or refreshes this directory
 // before extracting its addon. Keep fresh directories long enough for that
 // startup to finish; a later launch can reclaim them once they are genuinely
 // stale.
@@ -720,14 +723,14 @@ export function validateLoadedBindings(ctx, bindings, candidate) {
 	if (isCompatiblePreSentinelNativeAddon(bindings, diskHasExpectedStamp)) return;
 	if (residentVersion && diskHasExpectedStamp) {
 		throw new Error(
-			`Loaded ${candidate}, which reports @oh-my-pi/pi-natives@${residentVersion}, but this loader is ` +
-				`@${ctx.packageVersion}. omp was upgraded to ${ctx.packageVersion} while this session was running; ` +
+			`Loaded ${candidate}, which reports @marsai-org/natives@${residentVersion}, but this loader is ` +
+				`@${ctx.packageVersion}. mars was upgraded to ${ctx.packageVersion} while this session was running; ` +
 				`the ${residentVersion} addon is still resident in this process. Disk is already consistent — ` +
-				`restart omp to pick up ${ctx.packageVersion} (reinstalling changes nothing).`,
+				`restart mars to pick up ${ctx.packageVersion} (reinstalling changes nothing).`,
 		);
 	}
 	throw new Error(
-		`Loaded ${candidate} but it reports ${residentVersion ? `@oh-my-pi/pi-natives@${residentVersion}` : "no release version"}, ` +
+		`Loaded ${candidate} but it reports ${residentVersion ? `@marsai-org/natives@${residentVersion}` : "no release version"}, ` +
 			`not the @${ctx.packageVersion} this loader expects. The .node file on disk is from a different ` +
 			"release than this loader — reinstall to re-sync.",
 	);
@@ -758,7 +761,7 @@ function describeLoadedAddon(bindings, candidate, ctx) {
 }
 
 /**
- * The addon behind this process's `@oh-my-pi/pi-natives` exports.
+ * The addon behind this process's `@marsai-org/natives` exports.
  * @returns {{ path: string; version: string | null; packageVersion: string; stale: boolean } | null}
  */
 export function nativeAddonStatus() {
@@ -800,15 +803,15 @@ export function missingNativeExport(symbolName, addon = loadedAddon) {
  */
 export function missingNativeExportMessage(symbolName, addon = loadedAddon) {
 	const rebuild = "rebuild it with `bun run build:native`";
-	if (!addon) return `@oh-my-pi/pi-natives does not export \`${symbolName}\`; ${rebuild}.`;
+	if (!addon) return `@marsai-org/natives does not export \`${symbolName}\`; ${rebuild}.`;
 	if (!addon.stale) {
-		return `@oh-my-pi/pi-natives export \`${symbolName}\` is missing from ${addon.path}; ${rebuild}.`;
+		return `@marsai-org/natives export \`${symbolName}\` is missing from ${addon.path}; ${rebuild}.`;
 	}
 	const loaded = addon.version
-		? `the @oh-my-pi/pi-natives@${addon.version} addon`
+		? `the @marsai-org/natives@${addon.version} addon`
 		: "an addon without a release stamp";
 	return (
-		`@oh-my-pi/pi-natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
+		`@marsai-org/natives export \`${symbolName}\` is missing: ${addon.path} is ${loaded}, not ` +
 		`@${addon.packageVersion} — ${rebuild}.`
 	);
 }
@@ -838,7 +841,7 @@ function buildHelpMessage(ctx) {
 		const expectedPaths = ctx.addonFilenames.map(filename => `  ${path.join(ctx.versionedDir, filename)}`).join("\n");
 		const downloadHints = ctx.addonFilenames
 			.map(filename => {
-				const downloadUrl = `https://github.com/can1357/oh-my-pi/releases/latest/download/${filename}`;
+				const downloadUrl = `https://github.com/MarsAI-org/mars-agent/releases/latest/download/${filename}`;
 				const targetPath = path.join(ctx.versionedDir, filename);
 				return `  curl -fsSL "${downloadUrl}" -o "${targetPath}"`;
 			})
@@ -849,7 +852,7 @@ function buildHelpMessage(ctx) {
 		);
 	}
 	return (
-		"If installed via npm/bun, try reinstalling: bun install @oh-my-pi/pi-natives\n" +
+		"If installed via npm/bun, try reinstalling: bun install @marsai-org/natives\n" +
 		"If developing locally, build with: bun --cwd=packages/natives run build\n" +
 		"Explicit targets: bun scripts/bazel-natives.ts <target> --dest packages/natives/native"
 	);
@@ -874,7 +877,7 @@ export function initLoaderContext(overrides = {}) {
 	const versionedDir = path.join(nativesDir, packageVersion);
 	const userDataDir =
 		platform === "win32"
-			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "omp")
+			? path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), "AppData", "Local"), "mars")
 			: path.join(os.homedir(), ".local", "bin");
 
 	const isCompiledBinary =

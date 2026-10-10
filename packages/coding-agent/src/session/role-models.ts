@@ -1,7 +1,7 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
 import type { ModelRegistry } from "../config/model-registry";
-import { formatModelSelectorValue, parseModelString } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue, parseModelString } from "@marsai-org/tui/overlays/model-selector";
 import {
 	extractExplicitThinkingSelector,
 	getModelMatchPreferences,

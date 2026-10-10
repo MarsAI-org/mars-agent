@@ -1,7 +1,7 @@
-import type { MemoryRetainDetails } from "@oh-my-pi/pi-tui/tools/memory";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { prompt } from "@oh-my-pi/pi-utils";
+import type { MemoryRetainDetails } from "@marsai-org/tui/tools/memory";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import { prompt } from "@marsai-org/utils";
 import { isHindsightConfigured, loadHindsightConfig } from "../hindsight/config";
 import retainDescription from "../prompts/tools/retain.md" with { type: "text" };
 import type { ToolSession } from ".";

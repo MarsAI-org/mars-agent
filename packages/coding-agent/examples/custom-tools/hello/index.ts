@@ -1,4 +1,4 @@
-import type { CustomToolFactory } from "@oh-my-pi/pi-coding-agent";
+import type { CustomToolFactory } from "@marsai-org/coding-agent";
 
 const factory: CustomToolFactory = pi => ({
 	name: "hello",

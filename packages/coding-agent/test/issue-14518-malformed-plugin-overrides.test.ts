@@ -2,10 +2,10 @@ import { afterEach, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearClaudePluginRootsCache } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { getEnabledPlugins, getPluginSettings } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { logger, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { clearClaudePluginRootsCache } from "@marsai-org/coding-agent/discovery/helpers";
+import { getEnabledPlugins, getPluginSettings } from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import * as piUtils from "@marsai-org/utils";
+import { logger, removeWithRetries } from "@marsai-org/utils";
 
 // Issue #14518: a malformed or unreadable project plugin-overrides.json was
 // swallowed by the loader's loadProjectOverrides, so the file silently acted
@@ -33,7 +33,7 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; p
 	tempRoots.push(root);
 	const home = path.join(root, "home");
 	const cwd = path.join(root, "project");
-	const pluginsDir = path.join(home, ".omp", "plugins");
+	const pluginsDir = path.join(home, ".mars", "plugins");
 	await fs.mkdir(cwd, { recursive: true });
 
 	const declaredDir = path.join(pluginsDir, "node_modules", "declared-plugin");
@@ -52,8 +52,8 @@ async function plantRoot(prefix: string): Promise<{ home: string; cwd: string; p
 }
 
 async function writeOverrides(cwd: string, contents: string): Promise<string> {
-	const overridesPath = path.join(cwd, ".omp", "plugin-overrides.json");
-	await fs.mkdir(path.join(cwd, ".omp"), { recursive: true });
+	const overridesPath = path.join(cwd, ".mars", "plugin-overrides.json");
+	await fs.mkdir(path.join(cwd, ".mars"), { recursive: true });
 	await Bun.write(overridesPath, contents);
 	return overridesPath;
 }
@@ -71,7 +71,7 @@ function overridesWarning(warn: {
 }
 
 test("a malformed project plugin-overrides.json is diagnosed instead of silently vanishing", async () => {
-	const { home, cwd } = await plantRoot("omp-plugin-overrides-malformed-");
+	const { home, cwd } = await plantRoot("mars-plugin-overrides-malformed-");
 	const overridesPath = await writeOverrides(cwd, "{ not valid json");
 
 	const warn = spyOn(logger, "warn").mockImplementation(() => {});
@@ -91,7 +91,7 @@ test("a malformed project plugin-overrides.json is diagnosed instead of silently
 });
 
 test("getPluginSettings surfaces the same diagnostic for malformed project overrides", async () => {
-	const { cwd, pluginsDir } = await plantRoot("omp-plugin-overrides-settings-");
+	const { cwd, pluginsDir } = await plantRoot("mars-plugin-overrides-settings-");
 	const overridesPath = await writeOverrides(cwd, "{ not valid json");
 
 	const getPluginsLockfile = spyOn(piUtils, "getPluginsLockfile").mockReturnValue(
@@ -111,7 +111,7 @@ test("getPluginSettings surfaces the same diagnostic for malformed project overr
 });
 
 test("a missing project plugin-overrides.json stays silent", async () => {
-	const { home, cwd } = await plantRoot("omp-plugin-overrides-missing-");
+	const { home, cwd } = await plantRoot("mars-plugin-overrides-missing-");
 
 	const warn = spyOn(logger, "warn").mockImplementation(() => {});
 	try {
@@ -124,7 +124,7 @@ test("a missing project plugin-overrides.json stays silent", async () => {
 });
 
 test("a valid project plugin-overrides.json still disables its plugin", async () => {
-	const { home, cwd } = await plantRoot("omp-plugin-overrides-valid-");
+	const { home, cwd } = await plantRoot("mars-plugin-overrides-valid-");
 	await writeOverrides(cwd, JSON.stringify({ disabled: ["declared-plugin"] }));
 
 	const plugins = await getEnabledPlugins(cwd, { home });

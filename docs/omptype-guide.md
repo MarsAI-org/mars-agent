@@ -1,8 +1,8 @@
 # omptype Guide (schema authoring in this repo)
 
-Internal schemas use **`@oh-my-pi/omptype`** — an ArkType-compatible validator
+Internal schemas use **`@marsai-org/omptype`** — an ArkType-compatible validator
 with a lazy JIT runtime (`packages/omptype`). Author types with
-`import { type } from "@oh-my-pi/omptype"`.
+`import { type } from "@marsai-org/omptype"`.
 
 
 ## Why omptype (runtime contract)
@@ -53,7 +53,7 @@ schema on the wire.
 ## Validating (same as arktype)
 
 ```ts
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 const out = schema(value);
 if (out instanceof type.errors) {
   // out.summary → human message; entries have .path (array) and .problem
@@ -93,7 +93,7 @@ Recursive or mutually-referencing schemas go through named scopes
 (`packages/omptype/src/type.ts`, `scope()` / `type.scope()`):
 
 ```ts
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 
 const types = type.module({
 	tree: { value: "number", "children?": "tree[]" },
@@ -136,8 +136,8 @@ const types = type.module({
 TypeBox-style and Zod-style authoring are backed by the omptype runtime:
 
 ```ts
-import { Type, type Static } from "@oh-my-pi/omptype/typebox";
-import { z } from "@oh-my-pi/omptype/zod";
+import { Type, type Static } from "@marsai-org/omptype/typebox";
+import { z } from "@marsai-org/omptype/zod";
 
 const User = z.object({ name: z.string() });
 type User = z.infer<typeof User>;

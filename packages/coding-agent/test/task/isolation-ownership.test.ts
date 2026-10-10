@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import * as natives from "@oh-my-pi/pi-natives";
-import { needsNativeTeardown } from "@oh-my-pi/pi-coding-agent/task/isolation-ownership";
+import * as natives from "@marsai-org/natives";
+import { needsNativeTeardown } from "@marsai-org/coding-agent/task/isolation-ownership";
 
 const { IsoBackendKind } = natives;
 
-// The sidecar set decides which retained workspaces `omp worktree clear`
+// The sidecar set decides which retained workspaces `mars worktree clear`
 // routes through native `isoStop` instead of plain recursive `rm`.
 describe("retained workspace teardown set", () => {
 	it("routes mounts and subvolumes through native teardown, nothing else", () => {

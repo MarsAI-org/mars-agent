@@ -11,7 +11,7 @@ import {
 	isEnoent,
 	logger,
 	normalizePathForComparison,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { JSONC } from "bun";
 import { resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { loadExtensions } from "../extensions/loader";
@@ -364,7 +364,7 @@ export class PluginManager {
 			throw err;
 		}
 
-		const backupRoot = await fs.promises.mkdtemp(path.join(os.tmpdir(), "omp-plugin-backup-"));
+		const backupRoot = await fs.promises.mkdtemp(path.join(os.tmpdir(), "mars-plugin-backup-"));
 		const backupPath = path.join(backupRoot, "package");
 		await fs.promises.cp(packagePath, backupPath, { recursive: true, verbatimSymlinks: true });
 		return { actualName, packagePath, backupRoot, backupPath };
@@ -828,7 +828,7 @@ export class PluginManager {
 
 	/**
 	 * Resolve a plugin from the active project plugin root
-	 * (`<anchor>/.omp/plugins`). Project npm/link/marketplace installs all record
+	 * (`<anchor>/.mars/plugins`). Project npm/link/marketplace installs all record
 	 * their runtime state and `node_modules` symlink there — invisible to the
 	 * user-root lookup — so this reads the project's own `package.json`
 	 * dependencies plus `omp-plugins.lock.json`, and resolves the package from
@@ -1147,7 +1147,7 @@ export class PluginManager {
 					status: fixed ? "ok" : "error",
 					message: fixed
 						? `Reconciled version drift: node_modules now matches lock v${recordedVersion}`
-						: `Version drift: lock records v${recordedVersion} but node_modules has v${pluginPkg.version} (run \`omp plugin install ${name} --force\`)`,
+						: `Version drift: lock records v${recordedVersion} but node_modules has v${pluginPkg.version} (run \`mars plugin install ${name} --force\`)`,
 					fixed,
 				});
 				if (fixed) {
@@ -1167,7 +1167,7 @@ export class PluginManager {
 				status: hasManifest ? "ok" : "warning",
 				message: hasManifest
 					? `v${pluginPkg.version}${pluginPkg.description ? ` - ${pluginPkg.description}` : ""}`
-					: `v${pluginPkg.version} - No omp/pi manifest (not an omp plugin)`,
+					: `v${pluginPkg.version} - No omp/pi manifest (not a Mars plugin)`,
 			});
 
 			// Check tools path exists if specified

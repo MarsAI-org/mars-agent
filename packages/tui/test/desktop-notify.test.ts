@@ -7,8 +7,8 @@ import {
 	resolveDesktopNotifier,
 	sendDesktopNotification,
 	shouldDeliverDesktopNotification,
-} from "@oh-my-pi/pi-tui/desktop-notify";
-import * as utils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/desktop-notify";
+import * as utils from "@marsai-org/utils";
 
 const LINUX_ENV: NodeJS.ProcessEnv = { DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/1000/bus" };
 
@@ -105,10 +105,10 @@ describe("buildDesktopNotifyCommand", () => {
 		expect(buildDesktopNotifyCommand(notifySend, "ping")).toEqual([
 			"/usr/bin/notify-send",
 			"--app-name",
-			"omp",
+			"mars",
 			"--urgency=normal",
 			"--expire-time=5000",
-			"omp",
+			"mars",
 			"ping",
 		]);
 	});
@@ -123,7 +123,7 @@ describe("buildDesktopNotifyCommand", () => {
 		).toEqual([
 			"/usr/bin/notify-send",
 			"--app-name",
-			"omp",
+			"mars",
 			"--urgency=critical",
 			"--expire-time=5000",
 			"Session 12",
@@ -135,16 +135,16 @@ describe("buildDesktopNotifyCommand", () => {
 		expect(buildDesktopNotifyCommand(notifySend, { title: "   ", body: "Waiting for input" })).toEqual([
 			"/usr/bin/notify-send",
 			"--app-name",
-			"omp",
+			"mars",
 			"--urgency=normal",
 			"--expire-time=5000",
-			"omp",
+			"mars",
 			"Waiting for input",
 		]);
 	});
 
 	it("produces a freedesktop Notify call for gdbus including the urgency hint byte", () => {
-		expect(buildDesktopNotifyCommand(gdbus, { title: "omp", body: "ping", urgency: "low" })).toEqual([
+		expect(buildDesktopNotifyCommand(gdbus, { title: "mars", body: "ping", urgency: "low" })).toEqual([
 			"/usr/bin/gdbus",
 			"call",
 			"--session",
@@ -154,10 +154,10 @@ describe("buildDesktopNotifyCommand", () => {
 			"/org/freedesktop/Notifications",
 			"--method",
 			"org.freedesktop.Notifications.Notify",
-			"omp",
+			"mars",
 			"0",
 			"",
-			"omp",
+			"mars",
 			"ping",
 			"[]",
 			'{"urgency": <byte 0>}',
@@ -193,7 +193,7 @@ describe("sendDesktopNotification", () => {
 		expect(opts.cmd).toEqual([
 			"/usr/bin/notify-send",
 			"--app-name",
-			"omp",
+			"mars",
 			"--urgency=normal",
 			"--expire-time=5000",
 			"Session",

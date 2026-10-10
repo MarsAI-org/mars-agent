@@ -1,4 +1,4 @@
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { Text } from "../components/text";
 import { col, span, text } from "../native/describe";
 import type { NativeNode } from "../native/node";

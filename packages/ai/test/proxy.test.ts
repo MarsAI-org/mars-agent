@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as net from "node:net";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import * as AIError from "@marsai-org/ai/error";
+import type { FetchImpl } from "@marsai-org/ai/types";
 import {
 	__resetGlobalProxyFetch,
 	__resetProxyCache,
@@ -14,7 +14,7 @@ import {
 	isLocalOrMetadataHost,
 	shouldBypassProxy,
 	wrapFetchForProxy,
-} from "@oh-my-pi/pi-ai/utils/proxy";
+} from "@marsai-org/ai/utils/proxy";
 
 const PROXY = "http://127.0.0.1:24560";
 
@@ -354,7 +354,7 @@ describe("installGlobalProxyFetch", () => {
 	it.skipIf(process.platform === "win32")(
 		"reaches a Unix-socket service instead of sending it to PI_PROXY",
 		async () => {
-			const socket = path.join(os.tmpdir(), `omp-proxy-${process.pid}.sock`);
+			const socket = path.join(os.tmpdir(), `mars-proxy-${process.pid}.sock`);
 			const connections = new Set<net.Socket>();
 			const server = net.createServer(connection => {
 				connections.add(connection);

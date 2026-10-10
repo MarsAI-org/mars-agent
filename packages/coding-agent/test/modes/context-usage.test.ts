@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { computeNonMessageBreakdown, estimateToolSchemaTokens } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import { Tokenizer } from "@marsai-org/agent-core";
+import { computeNonMessageBreakdown, estimateToolSchemaTokens } from "@marsai-org/tui/status-line/context-usage";
 import { applyToolProxy } from "../../src/extensibility/tool-proxy";
 
 const tokenizer = new Tokenizer();

@@ -1,10 +1,11 @@
 import { describe, expect, test, vi } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { xaiOAuthModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { xaiOAuthModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
+// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 // Regression for https://github.com/can1357/oh-my-pi/issues/12697: xAI's
 // OAuth /v1/models returns bare `{id}` rows with no reasoning, limits, or
 // modality metadata. Without a curated seed, grok-4.7 refreshes into a sparse

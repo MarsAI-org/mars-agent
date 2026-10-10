@@ -2,8 +2,8 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
-import { createLinuxSubreaperScript, exec, NonZeroExitError, spawn, TimeoutError } from "@oh-my-pi/pi-utils/ptree";
+import { Process, ProcessStatus } from "@marsai-org/natives";
+import { createLinuxSubreaperScript, exec, NonZeroExitError, spawn, TimeoutError } from "@marsai-org/utils/ptree";
 
 async function supportsLinuxMountNamespaces(): Promise<boolean> {
 	if (process.platform !== "linux") return false;
@@ -162,7 +162,7 @@ sleep 30
 			env: {
 				...Bun.env,
 				BUN_BE_BUN: "1",
-				OMP_PTREE_SUBREAPER_COMMAND: JSON.stringify([
+				MARS_PTREE_SUBREAPER_COMMAND: JSON.stringify([
 					process.execPath,
 					"-e",
 					'process.stdout.write("libc-fallback-ok")',
@@ -225,7 +225,7 @@ ${createLinuxSubreaperScript()}
 				env: {
 					...Bun.env,
 					BUN_BE_BUN: "1",
-					OMP_PTREE_SUBREAPER_COMMAND: JSON.stringify(["/bin/sh", "-c", "printf procfs-free-ok"]),
+					MARS_PTREE_SUBREAPER_COMMAND: JSON.stringify(["/bin/sh", "-c", "printf procfs-free-ok"]),
 				},
 				stdin: "ignore",
 				stdout: "pipe",

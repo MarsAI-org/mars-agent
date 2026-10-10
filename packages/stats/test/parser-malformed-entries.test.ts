@@ -2,7 +2,7 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
 import {
 	closeDb,
 	getFileOffset,
@@ -10,10 +10,10 @@ import {
 	initDb,
 	insertMessageStats,
 	insertToolCalls,
-} from "@oh-my-pi/omp-stats/db";
-import { getOverallStats } from "@oh-my-pi/omp-stats/rollup";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/stats/db";
+import { getOverallStats } from "@marsai-org/stats/rollup";
+import { parseSessionFile } from "@marsai-org/stats/parser";
+import { getSessionsDir, getStatsDbPath } from "@marsai-org/utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-malformed-");

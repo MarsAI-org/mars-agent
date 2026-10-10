@@ -1,20 +1,20 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { Editor } from "@oh-my-pi/pi-tui";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { Editor } from "@marsai-org/tui";
 import { Settings } from "../src/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { truncateToVisualLines } from "@oh-my-pi/pi-tui/chrome/visual-truncate";
-import { WelcomeComponent } from "@oh-my-pi/pi-tui/prompt/welcome";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { truncateToVisualLines } from "@marsai-org/tui/chrome/visual-truncate";
+import { WelcomeComponent } from "@marsai-org/tui/prompt/welcome";
 import {
 	BlockUnitCounter,
 	buildDisplayMessage,
 	nextStep,
 	visibleUnits,
 } from "../src/modes/controllers/streaming-reveal";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme";
 import type { ToolSession } from "../src/tools";
 import { ReadTool } from "../src/tools/read";
 

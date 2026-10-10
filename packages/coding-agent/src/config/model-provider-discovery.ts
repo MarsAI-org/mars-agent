@@ -1,7 +1,7 @@
-import type { OAuthAccess } from "@oh-my-pi/pi-ai";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
-import type { ModelResolutionSource } from "@oh-my-pi/pi-catalog/model-manager";
-import { MODELS_DEV_CATALOG_PROVIDER_IDS, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models";
+import type { OAuthAccess } from "@marsai-org/ai";
+import type { Api, Model } from "@marsai-org/ai/types";
+import type { ModelResolutionSource } from "@marsai-org/catalog/model-manager";
+import { MODELS_DEV_CATALOG_PROVIDER_IDS, PROVIDER_DESCRIPTORS } from "@marsai-org/catalog/provider-models";
 import type { AuthStorage, OAuthCredential } from "../session/auth-storage";
 
 /**

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <!--
+    PLACEHOLDER — NOT FINAL ARTWORK.
+    This is a temporary Mars brand placeholder. It contains no logo, no wordmark,
+    and no design: only a neutral gray box drawn so the asset path resolves.
+    Replace with final Mars artwork (120x240+ source, vector preferred).
+
+    Consumer: general-purpose brand/logo asset (docs, README, social-preview
+    master, future app icons). See ASSETS_TODO.md.
+  -->
+  <rect x="0" y="0" width="240" height="240" fill="#f2f2f2" stroke="#9ca3af" stroke-width="6"/>
+  <text x="120" y="112" font-family="monospace" font-size="34" fill="#6b7280" text-anchor="middle">PLACEHOLDER</text>
+  <text x="120" y="156" font-family="monospace" font-size="34" fill="#6b7280" text-anchor="middle">12 x 12</text>
+  <text x="120" y="200" font-family="monospace" font-size="22" fill="#6b7280" text-anchor="middle">MARS LOGO</text>
+  <text x="120" y="228" font-family="monospace" font-size="22" fill="#6b7280" text-anchor="middle">PENDING</text>
+</svg>

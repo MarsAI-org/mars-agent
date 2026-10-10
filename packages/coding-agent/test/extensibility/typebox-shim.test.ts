@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
-import { isValidJsonSchema, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { type TSchema, Type } from "@oh-my-pi/pi-coding-agent/extensibility/legacy-typebox";
+import type { Tool } from "@marsai-org/ai/types";
+import { isValidJsonSchema, toolWireSchema } from "@marsai-org/ai/utils/schema";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { type TSchema, Type } from "@marsai-org/coding-agent/extensibility/legacy-typebox";
 
 /**
  * Exercise the legacy `__validator` failure-marker contract independently of

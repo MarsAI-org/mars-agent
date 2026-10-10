@@ -7,9 +7,9 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { WorkProfile } from "@oh-my-pi/pi-natives";
-import { APP_NAME, getLogPath, getLogsDir, getReportsDir, isEnoent, localDay, logger } from "@oh-my-pi/pi-utils";
-import { writeArchive } from "@oh-my-pi/pi-utils/ar";
+import type { WorkProfile } from "@marsai-org/natives";
+import { APP_NAME, getLogPath, getLogsDir, getReportsDir, isEnoent, localDay, logger } from "@marsai-org/utils";
+import { writeArchive } from "@marsai-org/utils/ar";
 import type { CpuProfile, MemoryStats } from "./profiler";
 import { collectSystemInfo, sanitizeEnv } from "./system-info";
 
@@ -87,7 +87,7 @@ export async function createReportBundle(options: ReportBundleOptions): Promise<
 	await fs.mkdir(reportsDir, { recursive: true });
 
 	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-	const outputPath = path.join(reportsDir, `omp-report-${timestamp}.tar.gz`);
+	const outputPath = path.join(reportsDir, `mars-report-${timestamp}.tar.gz`);
 
 	const data: Record<string, string | Uint8Array> = {};
 	const files: string[] = [];
@@ -212,7 +212,7 @@ export async function getLogText(): Promise<string> {
 
 /**
  * Concatenate the tail of every same-day process log so a report generated
- * after a crash still captures the fatal PID's `omp.<date>.<pid>.log`. Files
+ * after a crash still captures the fatal PID's `mars.<date>.<pid>.log`. Files
  * are ordered oldest-first by mtime and separated by a filename header.
  */
 async function collectSameDayLogs(linesPerFile: number): Promise<string> {

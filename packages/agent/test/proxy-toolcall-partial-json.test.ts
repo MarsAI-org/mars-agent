@@ -7,12 +7,12 @@
  * ends without a `toolcall_end` event.
  */
 import { describe, expect, it } from "bun:test";
-import type { ProxyAssistantMessageEvent } from "@oh-my-pi/pi-agent-core/proxy";
-import { type ProxyMessageEventStream, streamProxy } from "@oh-my-pi/pi-agent-core/proxy";
-import type { AssistantMessage, AssistantMessageEvent, Context, FetchImpl, Model, ToolCall } from "@oh-my-pi/pi-ai";
-import { getStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import type { ProxyAssistantMessageEvent } from "@marsai-org/agent-core/proxy";
+import { type ProxyMessageEventStream, streamProxy } from "@marsai-org/agent-core/proxy";
+import type { AssistantMessage, AssistantMessageEvent, Context, FetchImpl, Model, ToolCall } from "@marsai-org/ai";
+import { getStreamingPartialJson } from "@marsai-org/ai/utils/block-symbols";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const mockModel: Model = buildModel({
 	id: "test-model",

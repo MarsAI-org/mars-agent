@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { SUPERSEDED_NOTICE } from "@oh-my-pi/pi-agent-core/compaction/pruning";
-import type { AssistantMessage, Model, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent } from "@marsai-org/agent-core";
+import { SUPERSEDED_NOTICE } from "@marsai-org/agent-core/compaction/pruning";
+import type { AssistantMessage, Model, ToolResultMessage } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 const OLD_RESULT = "old file contents\n".repeat(100);
 const NEW_RESULT = "new file contents\n".repeat(100);

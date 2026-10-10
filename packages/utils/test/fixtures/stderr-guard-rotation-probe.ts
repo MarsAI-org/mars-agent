@@ -4,11 +4,11 @@
  * hook re-points fd 2 when a local-day rotation moves the active file.
  *
  * Runs in a subprocess — it mutates fd 2 — with the fixed-date preload
- * supplying the clock via `OMP_LOGGER_TEST_NOW`.
+ * supplying the clock via `MARS_LOGGER_TEST_NOW`.
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getLogPath } from "../../src/dirs";
+import { APP_NAME, getLogPath } from "../../src/dirs";
 import { RotatingFileSink } from "../../src/logger/rotating-file";
 import { restoreTerminalStderr, setStderrRedirectTarget, suppressTerminalStderr } from "../../src/stderr-guard";
 
@@ -18,7 +18,7 @@ const thirdDay = process.argv[4];
 
 const sink = new RotatingFileSink({
 	directory,
-	filenamePrefix: "omp",
+	filenamePrefix: APP_NAME,
 	filenameSuffix: String(process.pid),
 	maxBytes: 10 * 1024 * 1024,
 	maxFiles: 5,
@@ -34,7 +34,7 @@ const logPathBasename = path.basename(getLogPath(new Date(), process.pid));
 const forced = suppressTerminalStderr({ force: true });
 fs.writeSync(2, "startup-day-marker\n");
 
-process.env.OMP_LOGGER_TEST_NOW = nextDay;
+process.env.MARS_LOGGER_TEST_NOW = nextDay;
 sink.write(JSON.stringify({ message: "next-day record" }));
 const currentFile = fs.readdirSync(directory).find(name => name.endsWith(".log") && name !== startupFile);
 fs.writeSync(2, "next-day-marker\n");
@@ -42,7 +42,7 @@ fs.writeSync(2, "next-day-marker\n");
 restoreTerminalStderr();
 // Terminal ownership is back with the shell: a rotation must only record the
 // new path, never dup2 it over the restored fd 2.
-process.env.OMP_LOGGER_TEST_NOW = thirdDay;
+process.env.MARS_LOGGER_TEST_NOW = thirdDay;
 sink.write(JSON.stringify({ message: "third-day record" }));
 fs.writeSync(2, "restored\n");
 sink.close();

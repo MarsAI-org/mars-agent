@@ -1,18 +1,18 @@
-import { createAgentHubRuntime } from "@oh-my-pi/pi-coding-agent/modes/agent-hub-runtime";
+import { createAgentHubRuntime } from "@marsai-org/coding-agent/modes/agent-hub-runtime";
 /**
  * Regression: the agent hub keeps its initial status/recency order while open,
  * regardless of heartbeats; newly spawned agents appear above existing rows.
  */
 import { afterEach, beforeAll, describe, expect, it, setSystemTime, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { type AgentHubDeps, AgentHubOverlayComponent } from "@oh-my-pi/pi-tui/overlays/agent-hub";
-import { SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import { type AgentHubDeps, AgentHubOverlayComponent } from "@marsai-org/tui/overlays/agent-hub";
+import { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { visibleWidth } from "@marsai-org/tui/utils";
 import { AgentActivityIndex, type AgentActivityRow } from "../src/activity";
 
 interface GeometryStub {
@@ -146,7 +146,7 @@ describe("Agent hub row ordering", () => {
 			const rendered = Bun.stripANSI(hub.render(120).join("\n"));
 			expect(rendered).toContain("No agents in this session");
 			expect(rendered).toContain("Finished, parked, and killed subagents remain with the session");
-			expect(rendered).toContain("Resume that session with omp-dev --continue, or spawn a task here.");
+			expect(rendered).toContain("Resume that session with mars-dev --continue, or spawn a task here.");
 		} finally {
 			hub.dispose();
 		}
@@ -658,7 +658,7 @@ describe("Agent hub row ordering", () => {
 			history: {
 				outputPath: "/tmp/Reviewer.md",
 				patchPath: "/tmp/Reviewer.patch",
-				branchName: "omp/task/Reviewer",
+				branchName: "mars/task/Reviewer",
 			},
 			createdAt,
 		});
@@ -725,7 +725,7 @@ describe("Agent hub row ordering", () => {
 			expect(rendered).toContain("Output /tmp/Reviewer.md");
 			expect(rendered).toContain("Patch /tmp/Reviewer.patch");
 			hub.handleInput("\x1b[6~");
-			expect(Bun.stripANSI(hub.render(140).join("\n"))).toContain("Worktree branch omp/task/Reviewer");
+			expect(Bun.stripANSI(hub.render(140).join("\n"))).toContain("Worktree branch mars/task/Reviewer");
 		} finally {
 			hub.dispose();
 		}

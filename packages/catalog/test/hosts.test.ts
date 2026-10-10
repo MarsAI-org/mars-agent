@@ -6,7 +6,7 @@ import {
 	isVertexRawPredictUrl,
 	modelMatchesHost,
 	resolveVertexEndpointHost,
-} from "@oh-my-pi/pi-catalog/hosts";
+} from "@marsai-org/catalog/hosts";
 
 describe("hostMatchesUrl", () => {
 	test("matches OpenRouter URLs and rejects other or missing URLs", () => {

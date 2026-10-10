@@ -6,9 +6,9 @@
  * image silently disappeared from the composer on retry.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import type { ImageContent } from "@marsai-org/ai";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 
 function createContext(opts: { pendingImages: ImageContent[]; pendingImageLinks?: (string | undefined)[] }) {
 	let editorText = "";

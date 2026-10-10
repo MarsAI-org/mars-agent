@@ -20,9 +20,9 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { fuzzyFilter } from "@oh-my-pi/pi-tui/fuzzy";
-import { formatDuration, isEnoent, prompt } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { fuzzyFilter } from "@marsai-org/tui/fuzzy";
+import { formatDuration, isEnoent, prompt } from "@marsai-org/utils";
 import { type AgentRef, AgentRegistry } from "../registry/agent-registry";
 import { ensurePersistedRoster } from "../registry/persisted-agents";
 import { executeSend, isIrcEnabled } from "../irc/messaging";

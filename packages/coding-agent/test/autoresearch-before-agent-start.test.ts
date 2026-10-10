@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createAutoresearchExtension } from "@oh-my-pi/pi-coding-agent/autoresearch";
-import { closeAllAutoresearchStorages } from "@oh-my-pi/pi-coding-agent/autoresearch/storage";
+import { createAutoresearchExtension } from "@marsai-org/coding-agent/autoresearch";
+import { closeAllAutoresearchStorages } from "@marsai-org/coding-agent/autoresearch/storage";
 import type {
 	BeforeAgentStartEvent,
 	BeforeAgentStartEventResult,
@@ -8,10 +8,10 @@ import type {
 	ExtensionContext,
 	ExtensionHandler,
 	SessionStartEvent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { TempDir } from "@marsai-org/utils";
 
 // Reproduces issue #3665: when the upstream system prompt resolution leaves
 // `event.systemPrompt` unset, the autoresearch handler must still render its
@@ -72,7 +72,7 @@ describe("autoresearch before_agent_start handler", () => {
 
 	beforeEach(() => {
 		dbDir = TempDir.createSync("@pi-autoresearch-bas-test-");
-		process.env.OMP_AUTORESEARCH_DB_DIR = dbDir.path();
+		process.env.MARS_AUTORESEARCH_DB_DIR = dbDir.path();
 		cwdDir = TempDir.createSync("@pi-autoresearch-bas-cwd-");
 		vi.spyOn(vcs, "git").mockReturnValue({
 			currentBranch: async () => "autoresearch/test",
@@ -88,7 +88,7 @@ describe("autoresearch before_agent_start handler", () => {
 	});
 
 	afterEach(() => {
-		delete process.env.OMP_AUTORESEARCH_DB_DIR;
+		delete process.env.MARS_AUTORESEARCH_DB_DIR;
 		closeAllAutoresearchStorages();
 		cwdDir.removeSync();
 		dbDir.removeSync();

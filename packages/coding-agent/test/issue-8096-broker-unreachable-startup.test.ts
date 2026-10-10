@@ -10,12 +10,12 @@
  * a silent fallback to local credentials.
  */
 import { describe, expect, it, vi } from "bun:test";
-import { AuthBrokerError } from "@oh-my-pi/pi-ai/auth-broker";
-import { MissingApiKeyError } from "@oh-my-pi/pi-ai/error";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { describeAuthBrokerStartupError } from "@oh-my-pi/pi-coding-agent/session/auth-broker-config";
-import { setInteractiveHost } from "@oh-my-pi/pi-utils";
+import { AuthBrokerError } from "@marsai-org/ai/auth-broker";
+import { MissingApiKeyError } from "@marsai-org/ai/error";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import { describeAuthBrokerStartupError } from "@marsai-org/coding-agent/session/auth-broker-config";
+import { setInteractiveHost } from "@marsai-org/utils";
 
 class ProcessExitSignal extends Error {
 	constructor(readonly code: number) {
@@ -32,29 +32,29 @@ describe("describeAuthBrokerStartupError", () => {
 		expect(message).not.toBeNull();
 		expect(message).toContain("Auth broker request failed after 2 attempt(s)");
 		// Both recovery routes the reporter asked for: start it, or disable it.
-		expect(message).toContain("omp auth-broker serve");
-		expect(message).toContain("omp config reset auth.broker.url");
-		expect(message).toContain("OMP_AUTH_BROKER_URL");
+		expect(message).toContain("mars auth-broker serve");
+		expect(message).toContain("mars config reset auth.broker.url");
+		expect(message).toContain("MARS_AUTH_BROKER_URL");
 	});
 
 	it("names the configured broker URL when it can be resolved", async () => {
-		const prevUrl = process.env.OMP_AUTH_BROKER_URL;
-		const prevToken = process.env.OMP_AUTH_BROKER_TOKEN;
-		process.env.OMP_AUTH_BROKER_URL = "http://127.0.0.1:8765";
-		process.env.OMP_AUTH_BROKER_TOKEN = "test-token";
+		const prevUrl = process.env.MARS_AUTH_BROKER_URL;
+		const prevToken = process.env.MARS_AUTH_BROKER_TOKEN;
+		process.env.MARS_AUTH_BROKER_URL = "http://127.0.0.1:8765";
+		process.env.MARS_AUTH_BROKER_TOKEN = "test-token";
 		try {
 			const message = await describeAuthBrokerStartupError(new AuthBrokerError("connection refused"));
 			expect(message).toContain("http://127.0.0.1:8765");
 		} finally {
-			if (prevUrl === undefined) delete process.env.OMP_AUTH_BROKER_URL;
-			else process.env.OMP_AUTH_BROKER_URL = prevUrl;
-			if (prevToken === undefined) delete process.env.OMP_AUTH_BROKER_TOKEN;
-			else process.env.OMP_AUTH_BROKER_TOKEN = prevToken;
+			if (prevUrl === undefined) delete process.env.MARS_AUTH_BROKER_URL;
+			else process.env.MARS_AUTH_BROKER_URL = prevUrl;
+			if (prevToken === undefined) delete process.env.MARS_AUTH_BROKER_TOKEN;
+			else process.env.MARS_AUTH_BROKER_TOKEN = prevToken;
 		}
 	});
 
 	it("passes through a missing-token message unchanged", async () => {
-		const err = new MissingApiKeyError(undefined, "OMP_AUTH_BROKER_URL is set but no bearer token is available.");
+		const err = new MissingApiKeyError(undefined, "MARS_AUTH_BROKER_URL is set but no bearer token is available.");
 		expect(await describeAuthBrokerStartupError(err)).toBe(err.message);
 	});
 
@@ -102,6 +102,6 @@ describe("runRootCommand — unreachable auth broker at startup", () => {
 		expect(thrown).toBeInstanceOf(ProcessExitSignal);
 		expect(exitCodes).toEqual([1]);
 		expect(stderr).toContain("Auth broker request failed after 2 attempt(s)");
-		expect(stderr).toContain("omp auth-broker serve");
+		expect(stderr).toContain("mars auth-broker serve");
 	}, 15_000);
 });

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	type ImageTokenization,
 	imageTokens,
 	resolveImageTokenization,
-} from "@oh-my-pi/pi-catalog/compat/image-tokenization";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+} from "@marsai-org/catalog/compat/image-tokenization";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import rules from "../src/compat/rules.json";
 
 const HIRES: ImageTokenization = { regime: "anthropic-patch", maxEdge: 2576, maxTokens: 4784 };

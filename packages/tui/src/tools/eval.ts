@@ -1,6 +1,6 @@
 import type { Component } from "../index";
 import { Markdown, Text } from "../index";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import type {
 	NativeToolHead,
 	NativeToolView,
@@ -8,7 +8,7 @@ import type {
 	RenderResultOptions,
 	ToolRenderer,
 } from "./renderer";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { ansi, code as codeNode, compact, keyed, md, node, span, text } from "../native/describe";
 import type { NativeChild, NativeNode } from "../native/node";
 import { plainText } from "../native/spans";
@@ -45,7 +45,7 @@ import {
 	truncateToWidth,
 	wrapBrackets,
 } from "../render/render-utils";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import type { OutputMeta } from "./output-meta";
 import { type ConfiguredThinkingLevel, expandKeyHint } from "../render/render-utils";
 
@@ -726,7 +726,7 @@ interface EvalCellSection {
 
 /**
  * A notebook cell: a gutter mark beside the input (←, muted until the cell
- * runs, omp's thinking starburst while it does) and beside its output (→).
+ * runs, mars's thinking starburst while it does) and beside its output (→).
  * Only multi-cell calls repeat titles; marks never invent execution counts.
  */
 function evalCellSection(cell: EvalCellSection, index: number, total: number): NativeNode {

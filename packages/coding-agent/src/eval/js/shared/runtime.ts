@@ -7,9 +7,9 @@ import { Writable } from "node:stream";
 import * as util from "node:util";
 
 // Subpath imports only: the computer worker's readiness graph includes this runtime and must not
-// load pi_natives (verified under `--no-addons`); the `@oh-my-pi/pi-utils` barrel loads it eagerly.
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+// load pi_natives (verified under `--no-addons`); the `@marsai-org/utils` barrel loads it eagerly.
+import * as logger from "@marsai-org/utils/logger";
+import { isRecord } from "@marsai-org/utils/type-guards";
 
 import { evalImageMetadata } from "../../types";
 import type { EvalPreludeSource } from "../worker-protocol";

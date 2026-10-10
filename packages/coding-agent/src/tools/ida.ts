@@ -1,17 +1,17 @@
 import * as fs from "node:fs/promises";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
-} from "@oh-my-pi/pi-agent-core";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import type { OutputMeta } from "@marsai-org/tui/tools/output-meta";
+import { enforceInlineByteCap } from "@marsai-org/tui/tools/streaming-output";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { prompt } from "@marsai-org/utils";
 import {
 	acquireIdaDatabase,
 	cfgIdaAvailable,

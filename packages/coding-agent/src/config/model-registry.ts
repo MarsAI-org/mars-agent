@@ -1,14 +1,14 @@
 import * as path from "node:path";
-import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@oh-my-pi/pi-ai";
-import { type AuthApiKeyOptions, oauthAccountKey } from "@oh-my-pi/pi-ai/auth-storage";
-import { registerCustomApi, unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
-import { setCodexAttestationProvider } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { OAuthRefreshUnavailableError } from "@oh-my-pi/pi-ai/error";
-import { isOfficialCodexApiUrl } from "@oh-my-pi/pi-ai/stream";
+import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@marsai-org/ai";
+import { type AuthApiKeyOptions, oauthAccountKey } from "@marsai-org/ai/auth-storage";
+import { registerCustomApi, unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@marsai-org/ai/oauth";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@marsai-org/ai/oauth/types";
+import { setCodexAttestationProvider } from "@marsai-org/ai/providers/openai-codex-attestation";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { getEnvApiKey } from "@marsai-org/ai/env-api-key";
+import { OAuthRefreshUnavailableError } from "@marsai-org/ai/error";
+import { isOfficialCodexApiUrl } from "@marsai-org/ai/stream";
 import type {
 	Api,
 	Context,
@@ -17,24 +17,24 @@ import type {
 	RemoteCompactionConfig,
 	SimpleStreamOptions,
 	ThinkingConfig,
-} from "@oh-my-pi/pi-ai/types";
-import type { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildDiscoveredModel, buildModel } from "@oh-my-pi/pi-catalog/build";
-import { collapseBuiltVariants } from "@oh-my-pi/pi-catalog/compat/collapse";
+} from "@marsai-org/ai/types";
+import type { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildDiscoveredModel, buildModel } from "@marsai-org/catalog/build";
+import { collapseBuiltVariants } from "@marsai-org/catalog/compat/collapse";
 import {
 	clampCodexContextWindow,
 	clampsContextOverride,
 	resolveMaxContextWindow,
-} from "@oh-my-pi/pi-catalog/compat/context-window";
-import { applyCatalogMetrics, CatalogMetricsIndex } from "@oh-my-pi/pi-catalog/identity/metrics";
-import { getModelCacheWriteStats, readModelCache } from "@oh-my-pi/pi-catalog/model-cache";
+} from "@marsai-org/catalog/compat/context-window";
+import { applyCatalogMetrics, CatalogMetricsIndex } from "@marsai-org/catalog/identity/metrics";
+import { getModelCacheWriteStats, readModelCache } from "@marsai-org/catalog/model-cache";
 import {
 	createModelManager,
 	fingerprintStaticModels,
 	type ModelManagerOptions,
 	type ModelRefreshStrategy,
-} from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels, getBundledProviders } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/catalog/model-manager";
+import { getBundledModels, getBundledProviders } from "@marsai-org/catalog/models";
 import {
 	googleAntigravityModelManagerOptions,
 	googleGeminiCliModelManagerOptions,
@@ -45,10 +45,10 @@ import {
 	PROVIDER_DESCRIPTORS,
 	resolveModelCacheProviderId,
 	resolveOllamaModelCacheProviderId,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { apiServesKind, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/provider-models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
+import { apiServesKind, modelKind, type ModelKind } from "@marsai-org/catalog/types";
+import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@marsai-org/utils";
 import { resolveProviderModelReference } from "../config/model-resolver";
 import { generateCodexAttestation } from "../live/attestation";
 import type { AuthStorage } from "../session/auth-storage";
@@ -237,7 +237,7 @@ function selectProviderModels<T extends { provider: string }>(models: T[], provi
  * Online discovery (`strategy: "online"`) is independent of credential minting:
  * opening `/models` and hovering a provider fetch catalogs without re-running
  * `!command` helpers. Pass `refreshCommandCredentials` only for explicit user
- * refresh (`omp models refresh`, TUI F5).
+ * refresh (`mars models refresh`, TUI F5).
  */
 export interface ModelRegistryRefreshOptions {
 	refreshCommandCredentials?: boolean;
@@ -2917,7 +2917,7 @@ export class ModelRegistry {
 
 	/**
 	 * Whether a config-declared discovery provider has not yet produced a
-	 * catalog in this process. A cold discovery cache (e.g. after `omp update`
+	 * catalog in this process. A cold discovery cache (e.g. after `mars update`
 	 * bumps the cache namespace) leaves the provider in its initial `idle`
 	 * state with no models, so a selector the provider will supply looks
 	 * unknown until background discovery lands (#10048).
@@ -2960,7 +2960,7 @@ export class ModelRegistry {
 	 * discovered model that defines one.
 	 *
 	 * The overrides lead because a model-derived answer is only available once
-	 * discovery has populated the registry. `omp usage` builds a `ModelRegistry`
+	 * discovery has populated the registry. `mars usage` builds a `ModelRegistry`
 	 * and probes credentials immediately, and providers whose roster is
 	 * discovery-only (no bundled rows) have no model to read a URL from at that
 	 * point — so deriving solely from models returned `undefined` cache-cold and

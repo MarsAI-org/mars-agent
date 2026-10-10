@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, Model, SimpleStreamOptions } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 function budgetModel(): Model<"bedrock-converse-stream"> {
 	return buildModel({

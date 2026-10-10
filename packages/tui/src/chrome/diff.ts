@@ -1,6 +1,6 @@
-import { diffWords } from "@oh-my-pi/pi-natives";
-import { DEFAULT_TAB_WIDTH, sanitizeText } from "@oh-my-pi/pi-utils";
-import type { TspDiffHunk, TspProps } from "@oh-my-pi/pi-wire";
+import { diffWords } from "@marsai-org/natives";
+import { DEFAULT_TAB_WIDTH, sanitizeText } from "@marsai-org/utils";
+import type { TspDiffHunk, TspProps } from "@marsai-org/wire";
 import { theme as activeTheme, getLanguageFromPath, highlightCode, type Theme } from "../theme/index";
 import { type CodeFrameMarker, formatCodeFrameLine, replaceTabs, shortenPath } from "../render/render-utils";
 import { node } from "../native/describe";
@@ -101,7 +101,7 @@ function renderIntraLineDiff(
 }
 
 /**
- * Native `diff` node for omp's compact diff text (`+12|added`, `-12|removed`,
+ * Native `diff` node for mars's compact diff text (`+12|added`, `-12|removed`,
  * ` 12|context`, blank or `…` rows between regions). Each contiguous region
  * becomes one hunk; the terminal draws gutters, word emphasis and highlighting.
  * Removed rows carry old line numbers, added rows new ones and context rows

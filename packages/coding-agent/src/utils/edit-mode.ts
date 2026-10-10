@@ -1,7 +1,7 @@
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
-import { $flag } from "@oh-my-pi/pi-utils";
+import { classifyModel } from "@marsai-org/catalog/identity";
+import { $flag } from "@marsai-org/utils";
 
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditMode } from "@marsai-org/tui/tools/edit";
 import type { Settings } from "../config/settings";
 import { cfgEditMode, editModelVariants } from "../edit/settings";
 

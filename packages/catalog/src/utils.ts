@@ -1,6 +1,6 @@
-import { type FetchImpl, wrapFetchForExtraCa } from "@oh-my-pi/pi-utils";
+import { type FetchImpl, wrapFetchForExtraCa } from "@marsai-org/utils";
 
-export { isRecord } from "@oh-my-pi/pi-utils";
+export { isRecord } from "@marsai-org/utils";
 
 /**
  * Fetch implementation for catalog discovery probes: the caller's override

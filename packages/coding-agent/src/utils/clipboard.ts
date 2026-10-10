@@ -3,11 +3,11 @@ import {
 	copyToClipboard as nativeCopyToClipboard,
 	readImageFromClipboard as nativeReadImageFromClipboard,
 	readTextFromClipboard as nativeReadTextFromClipboard,
-} from "@oh-my-pi/pi-natives/clipboard";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui/terminal";
-import { isWsl } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { SUPPORTED_IMAGE_MIME_TYPES } from "@oh-my-pi/pi-utils/mime";
+} from "@marsai-org/natives/clipboard";
+import { writeTerminalSequence } from "@marsai-org/tui/terminal";
+import { isWsl } from "@marsai-org/utils";
+import * as logger from "@marsai-org/utils/logger";
+import { SUPPORTED_IMAGE_MIME_TYPES } from "@marsai-org/utils/mime";
 import MAC_FILE_URL_SCRIPT from "./mac-file-urls.applescript" with { type: "text" };
 
 type SpawnCaptureOptions = { input?: string; timeoutMs?: number; env?: Record<string, string | undefined> };

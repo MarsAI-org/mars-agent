@@ -1,20 +1,20 @@
 import { describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { ModelControls, type ModelControlsHost } from "@oh-my-pi/pi-coding-agent/session/model-controls";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { ThinkingLevel } from "@marsai-org/agent-core/thinking";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { Model } from "@marsai-org/catalog/types";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { ModelControls, type ModelControlsHost } from "@marsai-org/coding-agent/session/model-controls";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 import {
 	BUILTIN_SLASH_COMMANDS,
 	buildTuiBuiltinSlashCommands,
 	executeBuiltinSlashCommand,
 	lookupBuiltinSlashCommand,
 	type SlashCommandRuntime,
-} from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
-import { AUTO_THINKING, type ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import type { TuiSlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
+import { CombinedAutocompleteProvider } from "@marsai-org/tui/autocomplete";
+import { AUTO_THINKING, type ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 
 const command = lookupBuiltinSlashCommand("effort");
 

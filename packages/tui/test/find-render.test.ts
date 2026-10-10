@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { findToolRenderer, type FindToolDetails } from "@oh-my-pi/pi-tui/tools/find";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { getThemeByName } from "@marsai-org/tui/theme";
+import { findToolRenderer, type FindToolDetails } from "@marsai-org/tui/tools/find";
+import { sanitizeText } from "@marsai-org/utils";
 import { applyHyperlinkSetting } from "../src/render/hyperlink";
 
 function extractLinkUris(text: string): string[] {
@@ -71,7 +71,7 @@ describe("findToolRenderer", () => {
 		expect(uris.filter(uri => uri.endsWith("/repo/src/other.ts"))).toHaveLength(2);
 	});
 
-	it("links omp hits to their doc URL instead of joining them onto cwd", async () => {
+	it("links mars hits to their doc URL instead of joining them onto cwd", async () => {
 		applyHyperlinkSetting("always");
 		const uiTheme = (await getThemeByName("dark"))!;
 		const ompDetails: FindToolDetails = {

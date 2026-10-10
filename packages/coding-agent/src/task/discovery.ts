@@ -1,10 +1,10 @@
 /**
  * Agent discovery from filesystem.
  *
- * Discovers agent definitions from OMP-native task-agent roots:
- *   - ~/.omp/agent/agents/*.md (user-level)
- *   - .omp/agents/*.md (project-level)
- *   - <ext>/agents/*.md for every OMP extension package wired through
+ * Discovers agent definitions from Mars-native task-agent roots:
+ *   - ~/.mars/agent/agents/*.md (user-level)
+ *   - .mars/agents/*.md (project-level)
+ *   - <ext>/agents/*.md for every Mars extension package wired through
  *     `listOmpExtensionRoots` (CLI `--extension` roots, `extensions:` in
  *     settings, and enabled npm/link plugins under `<plugins>/node_modules/`).
  *     Mirrors the same sub-discovery convention applied to `skills/`,
@@ -12,7 +12,7 @@
  *
  * Claude Code marketplace plugin agents are discovered separately via the
  * claude-plugins provider. Direct cross-harness roots such as .claude/agents
- * are intentionally skipped because their frontmatter schema is not the OMP
+ * are intentionally skipped because their frontmatter schema is not the Mars
  * task-agent contract.
  *
  * Agent files use markdown with YAML frontmatter.
@@ -20,7 +20,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { isProviderEnabled, isUserSourceEnabled } from "../capability";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import { findAllNearestProjectConfigDirs, getConfigDirs } from "../config";
@@ -28,10 +28,10 @@ import { pluginUsesClaudeModelDialect } from "../discovery/agent-plugin-format";
 import { listClaudePluginRoots } from "../discovery/helpers";
 import { listOmpExtensionRoots } from "../discovery/omp-extension-roots";
 import { loadBundledAgents, parseAgent } from "./agents";
-import type { AgentSource } from "@oh-my-pi/pi-tui/tools/task";
+import type { AgentSource } from "@marsai-org/tui/tools/task";
 import type { AgentDefinition } from "./types";
 
-const TASK_AGENT_CONFIG_SOURCE = ".omp";
+const TASK_AGENT_CONFIG_SOURCE = ".mars";
 
 /** Result of agent discovery */
 export interface DiscoveryResult {
@@ -75,8 +75,8 @@ async function loadAgentsFromDir({ dir, source, ignoreModel }: AgentDirectory): 
 
 /**
  * Discover agents from filesystem and merge with bundled agents.
- * Precedence (highest wins): project `.omp/agents`, user `.omp/agents`,
- * OMP extension-package agents from the effective `extensions` setting,
+ * Precedence (highest wins): project `.mars/agents`, user `.mars/agents`,
+ * Mars extension-package agents from the effective `extensions` setting,
  * installed npm/link plugins, Claude marketplace plugin agents (project scope
  * before user), then bundled.
  * @param cwd - Current working directory for project agent discovery
@@ -120,10 +120,10 @@ export async function discoverAgents(
 	}
 
 	// Load agents from Claude Code marketplace plugins (respects disabledProviders and opt-in).
-	// User-scope roots whose origin is not the foreign ~/.claude/plugins tree (omp's own
+	// User-scope roots whose origin is not the foreign ~/.claude/plugins tree (mars's own
 	// installs and `--plugin-dir` roots) survive the claude-plugins opt-in gate, mirroring
 	// isSourceEnabled in extensibility/skills.ts (#10743). Without this, `--plugin-dir` and
-	// omp-installed agents are dropped at user scope whenever the Claude source is disabled.
+	// mars-installed agents are dropped at user scope whenever the Claude source is disabled.
 	const claudePluginsUserEnabled = isUserSourceEnabled("claude-plugins") || isUserSourceEnabled("claude");
 	const { roots: pluginRoots } = isProviderEnabled("claude-plugins")
 		? await listClaudePluginRoots(home, resolvedCwd)
@@ -138,9 +138,9 @@ export async function discoverAgents(
 	const pluginModelDrops = await Promise.all(
 		// The `model:` dialect follows the plugin's declared manifest, not the
 		// registry that supplied it: foreign Claude roots (origin "claude") always
-		// use Claude aliases, and an omp-installed or --plugin-dir root can still
+		// use Claude aliases, and a mars-installed or --plugin-dir root can still
 		// ship a `.claude-plugin` package. Claude-dialect frontmatter is dropped so
-		// its aliases are not misread as OMP selectors (#7966); OMP-native and
+		// its aliases are not misread as Mars selectors (#7966); Mars-native and
 		// Agent-Plugins-standard plugin agents keep their selectors (#12028).
 		sortedPluginRoots.map(
 			async plugin => plugin.origin === "claude" || (await pluginUsesClaudeModelDialect(plugin.path)),

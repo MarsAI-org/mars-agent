@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { __computeBundledSelfPackageRoot } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
+import { __computeBundledSelfPackageRoot } from "@marsai-org/coding-agent/extensibility/plugins/legacy-pi-compat";
 
 // Issue #3423 removed the runtime bunfs-path computation (`__computeBunfsPackageRoot`,
 // `__joinBunfsPath`, `bunfsPath`): Bun 1.3.14 stopped exposing `--compile`
 // extras through any filesystem API, so the compat layer now routes the
-// bundled host packages and shims through the `omp-legacy-pi-bundled:`
+// bundled host packages and shims through the `mars-legacy-pi-bundled:`
 // virtual namespace (see `legacy-pi-bundled-virtual.test.ts`). The bunfs
 // path computation is dead and its regression tests (issues #1514, #3329)
 // retired alongside the code.
@@ -20,9 +20,9 @@ describe("legacy pi compat bundled-self package root computation", () => {
 			"C:\\Users\\me\\.bun\\install\\global\\node_modules\\@oh-my-pi\\pi-coding-agent",
 		);
 
-		const posixMetaDir = "/home/me/.bun/install/global/node_modules/@oh-my-pi/pi-coding-agent/dist";
+		const posixMetaDir = "/home/me/.bun/install/global/node_modules/@marsai-org/coding-agent/dist";
 		expect(__computeBundledSelfPackageRoot(posixMetaDir, path.posix)).toBe(
-			"/home/me/.bun/install/global/node_modules/@oh-my-pi/pi-coding-agent",
+			"/home/me/.bun/install/global/node_modules/@marsai-org/coding-agent",
 		);
 	});
 

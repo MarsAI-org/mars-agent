@@ -97,6 +97,7 @@ function buildRequestsLimits(payload: UmansUsagePayload, provider: string): Usag
 	// authoritative counter — weighted when available, else raw — drives the
 	// single row and CAN exhaust at the limit. Raw burst traffic above the
 	// limit still never drives exhaustion on its own: weighted headroom stays
+	// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 	// decisive (https://github.com/can1357/oh-my-pi/issues/7858).
 	if (weightedUsed === undefined || hardCap === undefined) {
 		const amount = buildUsageAmount({

@@ -1,5 +1,5 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { SessionState, TspSpan, TspTone } from "@oh-my-pi/pi-wire";
+import type { Model } from "@marsai-org/ai";
+import type { SessionState, TspSpan, TspTone } from "@marsai-org/wire";
 import type { NativeNode, NativeUiEvent } from "../native/node";
 import type { ContextLineMode, StatusLinePreset, StatusLineSegmentId, StatusLineSeparatorStyle } from "./schema";
 import type { ActiveRepoContext, StatusLineSession } from "./host";
@@ -173,7 +173,7 @@ export interface SegmentContext {
 	turnElapsedMs: number | null;
 	/**
 	 * Sampled foreground ANSI for the `pi` brand segment — tweened between dim
-	 * gray (idle) and the accent (working) across turn edges (rust omp's
+	 * gray (idle) and the accent (working) across turn edges (rust mars's
 	 * status-band brand fade). Absent in direct-segment fixtures and previews,
 	 * which fall back to the static dim color.
 	 */

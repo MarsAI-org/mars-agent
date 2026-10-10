@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { getProjectAgentDir, TempDir } from "@marsai-org/utils";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
-import { cfgAutocompleteMaxVisible } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgAutocompleteMaxVisible } from "@marsai-org/coding-agent/modes/settings";
 
 describe("autocompleteMaxVisible setting", () => {
 	let settingsState: SettingsTestState | undefined;

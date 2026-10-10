@@ -4,7 +4,7 @@
  * Provides a normalized schema to represent multiple limit windows, model tiers,
  * and shared quotas across providers.
  */
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import type { FetchImpl, Provider } from "./types";
 export type UsageUnit = "percent" | "tokens" | "requests" | "credits" | "usd" | "minutes" | "bytes" | "unknown";
 
@@ -77,6 +77,7 @@ export interface UsageLimit {
  * Populated when the provider's listing endpoint returns individual credit
  * metadata (e.g. OpenAI Codex credits or Claude Cedar grants). Callers that
  * only need the count can ignore this; display layers use `expiresAt` to show
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * when banked resets expire ([#3339](https://github.com/can1357/oh-my-pi/issues/3339)).
  */
 export interface UsageResetCreditDetail {
@@ -144,7 +145,7 @@ export interface UsageReport {
 	resetCredits?: UsageResetCredits;
 	/**
 	 * Provider-wide disclaimers shown once above per-account sections.
-	 * Use this for caveats that apply to every limit (e.g. "OMP-observed
+	 * Use this for caveats that apply to every limit (e.g. "Mars-observed
 	 * spend only"). Per-limit notes that differ per window (e.g. "Overage
 	 * requests: N") stay on {@link UsageLimit.notes}.
 	 */
@@ -237,7 +238,7 @@ export interface ClientUsageReport {
 	installId: string;
 	/** Human-readable machine name for display surfaces. */
 	hostname?: string;
-	/** Application label for the process that burned the tokens (e.g. `omp`, `robomp`). */
+	/** Application label for the process that burned the tokens (e.g. `mars`, `robomp`). */
 	app?: string;
 	entries: ObservedUsageEntry[];
 }

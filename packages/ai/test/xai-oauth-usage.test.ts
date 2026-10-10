@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { buildXAICliBillingUrl } from "@oh-my-pi/pi-ai/oauth/xai-oauth";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import type { UsageFetchParams } from "@oh-my-pi/pi-ai/usage";
-import { xaiOauthRankingStrategy, xaiOauthUsageProvider } from "@oh-my-pi/pi-ai/usage/xai-oauth";
+import { buildXAICliBillingUrl } from "@marsai-org/ai/oauth/xai-oauth";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import type { UsageFetchParams } from "@marsai-org/ai/usage";
+import { xaiOauthRankingStrategy, xaiOauthUsageProvider } from "@marsai-org/ai/usage/xai-oauth";
 import { isUsageLimitReached, reserveUsageLimits } from "../src/auth/usage-report";
 
 const USER_ID = "cf12ecb5-cca4-4ba0-9f02-298071a2d052";

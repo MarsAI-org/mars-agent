@@ -25,8 +25,8 @@
  * `willContinue: true`; older hosts omit the flag and such settles map without
  * one, matching the pre-flag notification.
  */
-import { logger } from "@oh-my-pi/pi-utils";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import { logger } from "@marsai-org/utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import type { ExtensionRunner } from "./runner";
 import type {

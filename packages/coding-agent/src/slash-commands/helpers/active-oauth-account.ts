@@ -1,6 +1,6 @@
-import type { UsageLimit, UsageReport } from "@oh-my-pi/pi-ai";
+import type { UsageLimit, UsageReport } from "@marsai-org/ai";
 import type { OAuthAccountIdentity } from "../../session/auth-storage";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 
 /** Codex's orgName is the login-time plan, not a workspace name. */
 export function codexUsagePlan(report: UsageReport): string | undefined {

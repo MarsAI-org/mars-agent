@@ -3,15 +3,15 @@ import { type ChildProcess, execSync, spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { __resetVertexTokenCache } from "@oh-my-pi/pi-ai/providers/google-auth";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { complete, stream } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { $which } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Effort } from "@marsai-org/ai";
+import { __resetVertexTokenCache } from "@marsai-org/ai/providers/google-auth";
+import { getEnvApiKey } from "@marsai-org/ai/env-api-key";
+import { complete, stream } from "@marsai-org/ai/stream";
+import type { Api, Context, ImageContent, Model, OptionsForApi, Tool, ToolResultMessage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { $which } from "@marsai-org/utils";
 import { removeWithRetries } from "../../utils/src/temp";
 import { e2eApiKey, resolveApiKey } from "./oauth";
 
@@ -682,7 +682,7 @@ describe("Generate E2E Tests", () => {
 			const originalLocation = Bun.env.VERTEX_LOCATION;
 			const originalApiKey = Bun.env.GOOGLE_CLOUD_API_KEY;
 			const originalGac = Bun.env.GOOGLE_APPLICATION_CREDENTIALS;
-			const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-vertex-impersonation-"));
+			const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-vertex-impersonation-"));
 			const adcPath = path.join(tmpDir, "impersonated-adc.json");
 			await Bun.write(
 				adcPath,

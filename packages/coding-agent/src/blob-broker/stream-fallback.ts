@@ -4,10 +4,10 @@
  * consumer-facing stream single and ordered.
  */
 
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import type { Context } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { StreamFn } from "@marsai-org/agent-core";
+import type { Context } from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { logger } from "@marsai-org/utils";
 import { clampProviderContextImageBytes } from "../session/provider-image-budget";
 import { contextHasImageUrls, contextHasProviderFiles } from "./context-images";
 import type { ImageUrlService } from "./service";

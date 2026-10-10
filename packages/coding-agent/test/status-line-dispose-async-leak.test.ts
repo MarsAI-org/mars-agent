@@ -14,15 +14,15 @@
  * asserting `#onBranchChange` never fires post-dispose.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { StatusLineSettings } from "@oh-my-pi/pi-tui/status-line";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { StatusLineSettings } from "@marsai-org/tui/status-line";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { initTheme } from "@marsai-org/tui/theme";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getProjectDir, setProjectDir } from "@marsai-org/utils";
 import { StatusLineTestComponents } from "./helpers/status-line";
 
 const originalProjectDir = getProjectDir();

@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { ShowImagesSelectorComponent } from "@oh-my-pi/pi-tui/overlays/show-images-selector";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { SgrMouseEvent } from "@oh-my-pi/pi-tui";
+import { ShowImagesSelectorComponent } from "@marsai-org/tui/overlays/show-images-selector";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { SgrMouseEvent } from "@marsai-org/tui";
 
 beforeAll(async () => {
 	await initTheme();

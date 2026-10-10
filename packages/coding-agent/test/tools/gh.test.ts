@@ -2,10 +2,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ToolCall } from "@oh-my-pi/pi-ai";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import type { ToolCall } from "@marsai-org/ai";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import {
 	buildSearchDateQualifier,
 	GithubTool,
@@ -13,14 +13,14 @@ import {
 	parsePrUnifiedDiff,
 	parseSearchDateBound,
 	resolveDefaultRepoMemoized,
-} from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { parseIssueUrl, parsePullRequestUrl } from "@oh-my-pi/pi-coding-agent/tools/gh-common";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { withRepoLock } from "@oh-my-pi/pi-coding-agent/utils/repo-lock";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/gh";
+import { parseIssueUrl, parsePullRequestUrl } from "@marsai-org/coding-agent/tools/gh-common";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { withRepoLock } from "@marsai-org/coding-agent/utils/repo-lock";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getAgentDir, hashPath, normalizePathForComparison, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const TINY_PNG_BASE64 =
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
@@ -186,7 +186,7 @@ async function createPrFixture(): Promise<PrFixture> {
 /**
  * Stub `os.homedir()` AND rebuild the cached `dirs` resolver in pi-utils so
  * `getWorktreesDir()` resolves under an isolated temp home instead of the
- * user's real `~/.omp/wt`. Returns the temp home and a cleanup hook.
+ * user's real `~/.mars/wt`. Returns the temp home and a cleanup hook.
  */
 interface TempHome {
 	home: string;
@@ -197,7 +197,7 @@ async function setupTempHome(): Promise<{ home: string; cleanup: () => Promise<v
 	const home = await fs.mkdtemp(path.join(os.tmpdir(), "gh-pr-tool-home-"));
 	vi.spyOn(os, "homedir").mockReturnValue(home);
 	// Clear XDG_*_HOME so the rebuilt resolver routes `dirs.rootSubdir("wt", "data")`
-	// through the spied homedir instead of `$XDG_DATA_HOME/omp/wt` (CI sets these).
+	// through the spied homedir instead of `$XDG_DATA_HOME/mars/wt` (CI sets these).
 	const xdgKeys = ["XDG_DATA_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME"] as const;
 	const xdgPrevious: Partial<Record<(typeof xdgKeys)[number], string | undefined>> = {};
 	for (const key of xdgKeys) {
@@ -208,7 +208,7 @@ async function setupTempHome(): Promise<{ home: string; cleanup: () => Promise<v
 	// we must rebuild the resolver after the spy + env scrub are in place.
 	// `setAgentDir` recreates it; we point it at the temp home's default agent dir.
 	const originalAgentDir = getAgentDir();
-	setAgentDir(path.join(home, ".omp", "agent"));
+	setAgentDir(path.join(home, ".mars", "agent"));
 	return {
 		home,
 		cleanup: async () => {
@@ -232,7 +232,7 @@ async function setupTempHome(): Promise<{ home: string; cleanup: () => Promise<v
 async function expectedWorktreePath(home: string, primaryRoot: string, localBranch: string): Promise<string> {
 	const prNumber = localBranch.replace(/^pr-/, "");
 	const segment = `${prNumber}-${hashPath(primaryRoot)}`;
-	return fs.realpath(path.join(home, ".omp", "wt", segment));
+	return fs.realpath(path.join(home, ".mars", "wt", segment));
 }
 
 describe("parsePrUnifiedDiff", () => {
@@ -1205,7 +1205,7 @@ describe("github tool", () => {
 
 	it("pins gh messages while preserving UTF-8 character locale", async () => {
 		if (process.platform === "win32") return;
-		const fakeBin = await fs.mkdtemp(path.join(os.tmpdir(), "omp-fake-gh-locale-"));
+		const fakeBin = await fs.mkdtemp(path.join(os.tmpdir(), "mars-fake-gh-locale-"));
 		const fakeGh = path.join(fakeBin, "gh");
 		await fs.writeFile(
 			fakeGh,

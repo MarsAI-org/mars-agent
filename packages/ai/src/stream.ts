@@ -3,18 +3,18 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@oh-my-pi/pi-catalog/hosts";
+import { isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { isVertexExpressOpenAIUrl, isVertexRawPredictUrl, resolveVertexEndpointHost } from "@marsai-org/catalog/hosts";
 import {
 	defaultSupportedEffort,
 	mapEffortToAnthropicAdaptiveEffort,
 	mapEffortToGoogleThinkingLevel,
 	requireSupportedEffort,
 	resolveWireModelId,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { CODEX_BASE_URL } from "@oh-my-pi/pi-catalog/wire/codex";
-import { $env, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/model-thinking";
+import { CODEX_BASE_URL } from "@marsai-org/catalog/wire/codex";
+import { $env, getProviderInFlightRoot, isEnoent, logger, untilAborted } from "@marsai-org/utils";
 import { getCustomApi } from "./api-registry";
 import { createAuthRetryKeyState, isApiKeyResolver, resolvedApiKeyBearer, resolveNextAuthRetryKey } from "./auth-retry";
 import type { OAuthRequestIdentity } from "./auth/types";
@@ -1258,7 +1258,7 @@ export function streamSimple<TApi extends Api>(
  * Forward a model-configured `User-Agent` override across the pi-native wire.
  * The model itself never crosses the wire — the client sends only `modelId`
  * and the gateway resolves its own model — so without this the gateway's
- * resolved Bedrock model always sends the default `omp/<version>` UA even
+ * resolved Bedrock model always sends the default `mars/<version>` UA even
  * when the client's local model config set an override. Only the single
  * header is forwarded, not the rest of `model.headers` (which may carry
  * unrelated local config), and only when the caller hasn't already set their

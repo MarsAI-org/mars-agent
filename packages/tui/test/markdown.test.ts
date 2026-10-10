@@ -5,14 +5,14 @@ import {
 	extractMarkdownLinks,
 	Markdown,
 	renderInlineMarkdown,
-} from "@oh-my-pi/pi-tui/components/markdown";
-import { setTerminalTextSizing, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { loadTheme } from "@oh-my-pi/pi-tui/theme/loader";
-import { getSymbolTheme, setThemeInstance } from "@oh-my-pi/pi-tui/theme/theme";
-import { type Component, TUI } from "@oh-my-pi/pi-tui/tui";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
-import { Chalk } from "@oh-my-pi/pi-utils/chalk";
-import { mathStartIndex } from "@oh-my-pi/pi-utils/math-delimiters";
+} from "@marsai-org/tui/components/markdown";
+import { setTerminalTextSizing, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { loadTheme } from "@marsai-org/tui/theme/loader";
+import { getSymbolTheme, setThemeInstance } from "@marsai-org/tui/theme/theme";
+import { type Component, TUI } from "@marsai-org/tui/tui";
+import { visibleWidth } from "@marsai-org/tui/utils";
+import { Chalk } from "@marsai-org/utils/chalk";
+import { mathStartIndex } from "@marsai-org/utils/math-delimiters";
 import { defaultMarkdownTheme } from "./test-themes.js";
 import { VirtualTerminal } from "./virtual-terminal.js";
 

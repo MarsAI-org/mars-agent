@@ -1,17 +1,17 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AuthStorage, Effort, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { runAgenticCommit } from "@oh-my-pi/pi-coding-agent/commit/agentic";
-import * as agentModule from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import type { CommitAgentInput } from "@oh-my-pi/pi-coding-agent/commit/agentic/agent";
-import type { CommitAgentState } from "@oh-my-pi/pi-coding-agent/commit/agentic/state";
-import * as modelSelection from "@oh-my-pi/pi-coding-agent/commit/model-selection";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { AuthStorage, Effort, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { runAgenticCommit } from "@marsai-org/coding-agent/commit/agentic";
+import * as agentModule from "@marsai-org/coding-agent/commit/agentic/agent";
+import type { CommitAgentInput } from "@marsai-org/coding-agent/commit/agentic/agent";
+import type { CommitAgentState } from "@marsai-org/coding-agent/commit/agentic/state";
+import * as modelSelection from "@marsai-org/coding-agent/commit/model-selection";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
 
 let authStorage: AuthStorage | undefined;
 

@@ -1,7 +1,7 @@
-import { resolveThresholdTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { ModelCompactionPoint } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { resolveThresholdTokens } from "@marsai-org/agent-core/compaction";
+import type { Model } from "@marsai-org/ai";
+import type { ModelCompactionPoint } from "@marsai-org/tui/overlays/model-browser";
+import { isRecord } from "@marsai-org/utils";
 import {
 	applyModelCompactionThreshold,
 	formatCompactionPointInput,

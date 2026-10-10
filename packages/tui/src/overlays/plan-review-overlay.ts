@@ -31,7 +31,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { sanitizeStatusText } from "../chrome/shared";
 import { getEditorTheme, getMarkdownTheme, getThemeEpoch, theme } from "../theme/theme";
 import {
@@ -1780,7 +1780,7 @@ export class PlanReviewOverlay implements Component {
 			];
 			if (this.#editingAnnotation) hints.push({ keys: [], label: "empty deletes" });
 			if (this.#externalEditorLabel) hints.push({ keys: [], label: `${this.#externalEditorLabel} editor` });
-			// The feedback field, inline under the plan: its caption names the anchor, omp's editor holds the text.
+			// The feedback field, inline under the plan: its caption names the anchor, Mars's editor holds the text.
 			return [
 				node(
 					"col",

@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import * as blobStore from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getAgentDir, getBlobsDir, setAgentDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import * as blobStore from "@marsai-org/coding-agent/session/blob-store";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { getAgentDir, getBlobsDir, setAgentDir } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 
 const FRAME_COUNT = 10;
 const FRAME_RAW_BYTES = 300_000;
@@ -85,12 +85,12 @@ describe("lazy snapcompact frame resolution", () => {
 	const originalAgentDir = getAgentDir();
 	const originalEnv = {
 		PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR,
-		OMP_PROFILE: process.env.OMP_PROFILE,
+		MARS_PROFILE: process.env.MARS_PROFILE,
 		PI_PROFILE: process.env.PI_PROFILE,
 	};
 
 	async function makeTempDir(): Promise<string> {
-		const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "omp-lazy-frames-"));
+		const dir = await fsp.mkdtemp(path.join(os.tmpdir(), "mars-lazy-frames-"));
 		tempDirs.push(dir);
 		return dir;
 	}

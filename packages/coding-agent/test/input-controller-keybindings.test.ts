@@ -1,18 +1,18 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { SpaceHoldGesture } from "@oh-my-pi/pi-tui/space-hold";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { SessionTreeNode } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { type KeyId, matchesKey } from "@oh-my-pi/pi-tui";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { ImageContent } from "@marsai-org/ai";
+import { AskDialogComponent } from "@marsai-org/tui/overlays/ask-dialog";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import { TreeSelectorComponent } from "@marsai-org/tui/overlays/tree-selector";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { SpaceHoldGesture } from "@marsai-org/tui/space-hold";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { SessionTreeNode } from "@marsai-org/coding-agent/session/session-entries";
+import { type KeyId, matchesKey } from "@marsai-org/tui";
+import { TempDir } from "@marsai-org/utils";
 import manualContinuePrompt from "../src/prompts/system/manual-continue.md" with { type: "text" };
-import { imageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
+import { imageAttachmentSource } from "@marsai-org/tui/prompt/image-source";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 
 type FakeEditor = {
@@ -751,7 +751,7 @@ describe("InputController image paste into an image-accepting prompt", () => {
 	beforeEach(async () => {
 		settingsState = beginSettingsTest();
 		await Settings.init({ inMemory: true });
-		tempDir = await TempDir.create("@omp-prompt-image-");
+		tempDir = await TempDir.create("@mars-prompt-image-");
 	});
 
 	afterEach(async () => {

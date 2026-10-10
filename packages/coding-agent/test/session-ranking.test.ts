@@ -2,11 +2,11 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
 import { gzipSync } from "node:zlib";
-import { runGcCommand } from "@oh-my-pi/pi-coding-agent/cli/gc-cli";
-import { mergeSessionRanking, rankSessionSearchMatches } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { listSessions, type SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getHistoryDbPath, getSessionsDir, TempDir } from "@oh-my-pi/pi-utils";
+import { runGcCommand } from "@marsai-org/coding-agent/cli/gc-cli";
+import { mergeSessionRanking, rankSessionSearchMatches } from "@marsai-org/tui/overlays/session-selector";
+import { listSessions, type SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
+import { MemorySessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { getHistoryDbPath, getSessionsDir, TempDir } from "@marsai-org/utils";
 
 function makeSession(id: string, overrides: Partial<SessionInfo> = {}): SessionInfo {
 	return {

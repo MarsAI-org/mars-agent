@@ -5,7 +5,7 @@ import {
 	MetricsPlugin,
 	MnemopiPlugin,
 	PluginManager,
-} from "@oh-my-pi/pi-mnemopi/core/plugins";
+} from "@marsai-org/mnemopi/core/plugins";
 
 class CountingPlugin extends MnemopiPlugin {
 	override name = "counting";

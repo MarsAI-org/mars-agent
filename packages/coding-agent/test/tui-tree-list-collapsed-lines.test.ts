@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { renderTreeList } from "@oh-my-pi/pi-tui/render/tree-list";
-import { truncateToWidth, visibleWidth } from "@oh-my-pi/pi-tui";
+import { renderTreeList } from "@marsai-org/tui/render/tree-list";
+import { truncateToWidth, visibleWidth } from "@marsai-org/tui";
 
 const stubTheme = {
 	fg: (_color: string, text: string) => text,

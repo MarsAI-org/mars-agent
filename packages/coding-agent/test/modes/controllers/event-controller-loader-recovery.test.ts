@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { Loader } from "@oh-my-pi/pi-tui";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { Loader } from "@marsai-org/tui";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
-import { cfgTerminalShowProgress } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgTerminalShowProgress } from "@marsai-org/coding-agent/modes/settings";
 
 /**
  * Faithful model of the shared `statusContainer` + working-loader invariant that

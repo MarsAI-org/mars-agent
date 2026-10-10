@@ -1,15 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model, ModelKind } from "@marsai-org/catalog/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	expandDefaultRetryFallbackChains,
 	findRetryFallbackCandidates,
 	type RetryFallbackResolutionContext,
 	resolveRetryFallbackChainKey,
 	validateRetryFallbackChains,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 
 function createContext(
 	chains: RetryFallbackResolutionContext["chains"],

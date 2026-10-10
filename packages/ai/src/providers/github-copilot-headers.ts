@@ -4,9 +4,9 @@ import {
 	getGitHubCopilotBaseUrl,
 	normalizeCopilotIntegrationId,
 	parseGitHubCopilotApiKey,
-} from "@oh-my-pi/pi-catalog/wire/github-copilot";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { $env, logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/wire/github-copilot";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { $env, logger } from "@marsai-org/utils";
 import type { FetchImpl, Message } from "../types";
 /**
  * Infer whether the current request to Copilot is user-initiated or agent-initiated.

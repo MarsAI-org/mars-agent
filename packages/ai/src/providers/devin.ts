@@ -1,6 +1,6 @@
 import { gunzipSync, gzipSync } from "node:zlib";
 
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
 import {
 	AssignModelRequestSchema,
 	AssignModelResponseSchema,
@@ -26,12 +26,12 @@ import {
 	type ModelAssignment,
 	PromptCacheOptionsSchema,
 	StopReason,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, devinWireMetadata } from "@oh-my-pi/pi-catalog/wire/devin";
-import { decodeDevinUnaryMessage } from "@oh-my-pi/pi-catalog/wire/devin-proto";
-import { isRecord, logger, parseStreamingJsonThrottled, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { DEVIN_DEFAULT_BASE_URL, devinCliMetadata, devinWireMetadata } from "@marsai-org/catalog/wire/devin";
+import { decodeDevinUnaryMessage } from "@marsai-org/catalog/wire/devin-proto";
+import { isRecord, logger, parseStreamingJsonThrottled, sanitizeText } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 
@@ -729,7 +729,7 @@ function buildUserPrompt(msg: UserMessage | DeveloperMessage, messageId: string)
 	return create(ChatMessagePromptSchema, { messageId, source: ChatMessageSource.USER, prompt, images });
 }
 
-/** Map omp `Message` history onto Cascade `ChatMessagePrompt`s (USER / SYSTEM / TOOL channels). */
+/** Map mars `Message` history onto Cascade `ChatMessagePrompt`s (USER / SYSTEM / TOOL channels). */
 function buildChatMessagePrompts(
 	messages: Message[],
 	cascadeId: string,

@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { museCodeUsageProvider } from "@oh-my-pi/pi-ai/usage/muse-code";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { museCodeUsageProvider } from "@marsai-org/ai/usage/muse-code";
 
 const credential = {
 	type: "oauth" as const,

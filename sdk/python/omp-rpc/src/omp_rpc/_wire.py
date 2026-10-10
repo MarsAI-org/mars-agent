@@ -843,7 +843,7 @@ class AvailableSlashCommand:
 
 @dataclass(slots=True, frozen=True, kw_only=True)
 class SessionEntries:
-    """OMP-native session entries in append order."""
+    """Mars-native session entries in append order."""
     entries: tuple[JsonObject, ...]
     leaf_id: str | None
 
@@ -1207,7 +1207,7 @@ class PromptError:
     """Failure detail of a `prompt_result` with `status: "error"`."""
     message: str
     retryable: bool
-    """Transient: resubmitting later may succeed (omp's own retries are exhausted)."""
+    """Transient: resubmitting later may succeed (mars's own retries are exhausted)."""
     provider: str | None = None
     model: str | None = None
     http_status: int | None = None

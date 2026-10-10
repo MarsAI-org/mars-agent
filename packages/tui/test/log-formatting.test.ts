@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { formatDebugLogExpandedLines, parseDebugLogTimestampMs } from "@oh-my-pi/pi-tui/apps/debug/log-formatting";
-import { sanitizeDisplayText } from "@oh-my-pi/pi-tui/overlays/extensions/display-text";
-import { truncateToWidth } from "@oh-my-pi/pi-tui/utils";
+import { formatDebugLogExpandedLines, parseDebugLogTimestampMs } from "@marsai-org/tui/apps/debug/log-formatting";
+import { sanitizeDisplayText } from "@marsai-org/tui/overlays/extensions/display-text";
+import { truncateToWidth } from "@marsai-org/tui/utils";
 
 describe("log display text", () => {
 	it("strips ANSI codes and carriage returns", () => {

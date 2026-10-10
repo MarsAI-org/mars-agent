@@ -8,18 +8,18 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomTool } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { type CreateAgentSessionOptions, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createMCPProxyTools, followMCPTools } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { AuthStorage } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CustomTool } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPStdioServerConfig } from "@marsai-org/coding-agent/mcp/types";
+import { type CreateAgentSessionOptions, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { createMCPProxyTools, followMCPTools } from "@marsai-org/coding-agent/task/executor";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 import { manyToolName } from "./fixtures/many-tools-mcp";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "many-tools-mcp.ts");
@@ -44,7 +44,7 @@ describe("subagent session MCP tools follow the shared manager", () => {
 	const sessions: AgentSession[] = [];
 
 	beforeEach(async () => {
-		dir = path.join(os.tmpdir(), `omp-subagent-mcp-follow-${Snowflake.next()}`);
+		dir = path.join(os.tmpdir(), `mars-subagent-mcp-follow-${Snowflake.next()}`);
 		fs.mkdirSync(dir, { recursive: true });
 		authStorage = await AuthStorage.create(path.join(dir, "auth.db"));
 		authStorage.keys.setRuntime("openai", "test-key");

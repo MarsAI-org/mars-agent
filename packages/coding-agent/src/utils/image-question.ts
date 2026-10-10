@@ -1,7 +1,7 @@
-import { instrumentedCompleteSimple, resolveTelemetry } from "@oh-my-pi/pi-agent-core";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import { type Api, type AssistantMessage, completeSimple, type Model, type Usage } from "@oh-my-pi/pi-ai";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { instrumentedCompleteSimple, resolveTelemetry } from "@marsai-org/agent-core";
+import { sendsImageInputOnWire } from "@marsai-org/ai/providers/vision-guard";
+import { type Api, type AssistantMessage, completeSimple, type Model, type Usage } from "@marsai-org/ai";
+import { prompt } from "@marsai-org/utils";
 import { extractTextContent } from "../commit/utils";
 import {
 	expandRoleAlias,
@@ -10,9 +10,9 @@ import {
 	resolveModelFromString,
 } from "../config/model-resolver";
 import imageQuestionSystemPromptTemplate from "../prompts/tools/image-question-system.md" with { type: "text" };
-import { concreteThinkingLevel, resolveThinkingLevelForModel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { concreteThinkingLevel, resolveThinkingLevelForModel, toReasoningEffort } from "@marsai-org/tui/thinking";
 import type { ToolSession } from "../tools";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { LoadedImageInput } from "./image-loading";
 
 import { cfgImagesBlockImages } from "../modes/settings";

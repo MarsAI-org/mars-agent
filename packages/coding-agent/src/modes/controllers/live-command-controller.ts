@@ -1,14 +1,14 @@
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import { LiveSessionController, type LiveSessionControllerOptions, type LiveTranscript } from "../../live/controller";
 import { LIVE_MODEL } from "../../live/protocol";
-import { LiveVisualizer } from "@oh-my-pi/pi-tui/apps/live-visualizer";
+import { LiveVisualizer } from "@marsai-org/tui/apps/live-visualizer";
 import { vocalizer } from "../../tts/vocalizer";
-import type { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import type { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import type { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { theme } from "@marsai-org/tui/theme";
 import type { InteractiveModeContext } from "../types";
-import { createAssistantMessageComponent } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+import { createAssistantMessageComponent } from "@marsai-org/tui/prompt/interactive-context-helpers";
 
 import { cfgLiveVoice } from "../../live/settings";
 

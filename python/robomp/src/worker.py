@@ -143,7 +143,7 @@ def _stage_agent_home() -> None:
     if not _AGENT_HOME_STAGE.exists():
         return
 
-    for rel in (Path(".agent"), Path(".omp/agent")):
+    for rel in (Path(".agent"), Path(".mars/agent")):
         src = _AGENT_HOME_STAGE / rel
         if not src.exists():
             continue
@@ -166,8 +166,8 @@ def _stage_agent_home() -> None:
     chown_to_root = os.geteuid() == 0
     for root, dirs, files in os.walk(_AGENT_HOME):
         root_path = Path(root)
-        if root_path == _AGENT_HOME / ".omp":
-            # ~/.omp/run is slot-writable daemon presence state, not template
+        if root_path == _AGENT_HOME / ".mars":
+            # ~/.mars/run is slot-writable daemon presence state, not template
             # config; keep it out of the read-only normalization below.
             dirs[:] = [d for d in dirs if d != "run"]
         try:
@@ -197,9 +197,9 @@ def _stage_agent_home() -> None:
 
 
 def _ensure_agent_run_dir() -> None:
-    """Keep ``~/.omp/run`` writable by every sandbox slot.
+    """Keep ``~/.mars/run`` writable by every sandbox slot.
 
-    omp registers daemon project presence under ``~/.omp/run`` at startup,
+    omp registers daemon project presence under ``~/.mars/run`` at startup,
     nesting per-project dirs (``daemons/<hash>/clients``) that any slot user
     must be able to create or enter regardless of which slot made them first.
     The tree stays group ``omp``, setgid, group-writable; slot subprocesses
@@ -207,7 +207,7 @@ def _ensure_agent_run_dir() -> None:
     """
     if os.geteuid() != 0:
         return
-    run_dir = _AGENT_HOME / ".omp" / "run"
+    run_dir = _AGENT_HOME / ".mars" / "run"
     try:
         gid = grp.getgrnam("omp").gr_gid
     except KeyError:
@@ -240,7 +240,7 @@ def _build_extra_env(settings: Settings) -> dict[str, str]:
     # Usage attribution: the pi-native gateway transport forwards this label
     # (x-omp-app) so broker-side per-client burn tracking shows `robomp`
     # instead of an anonymous gateway client.
-    env["OMP_APP_NAME"] = "robomp"
+    env["MARS_APP_NAME"] = "robomp"
     if _AGENT_HOME.is_dir():
         env["HOME"] = str(_AGENT_HOME)
     return env
@@ -597,7 +597,7 @@ def _run_rpc_blocking(
     rpc_env.update(_safe_directory_env(bindings.workspace.repo_dir))
     rpc_env.update(_git_identity_env(inputs.settings.resolved_author_name, inputs.settings.git_author_email))
     # Bare worktrees have no node_modules; install (idempotently) so the agent
-    # can resolve workspace packages (@oh-my-pi/pi-*) and actually run tests.
+    # can resolve workspace packages (@marsai-org/*) and actually run tests.
     host_tools.ensure_workspace_dependencies(bindings)
     resuming = _has_prior_session(bindings.workspace.session_dir)
     extra_args: tuple[str, ...] = ("--continue",) if resuming else ()

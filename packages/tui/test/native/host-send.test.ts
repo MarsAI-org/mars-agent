@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { encodeTspMessage } from "@oh-my-pi/pi-tui/native/encode";
-import { nativeComponentId } from "@oh-my-pi/pi-tui/native/reconcile";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { ImageContent } from "@marsai-org/ai";
+import { encodeTspMessage } from "@marsai-org/tui/native/encode";
+import { nativeComponentId } from "@marsai-org/tui/native/reconcile";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { initTheme } from "@marsai-org/tui/theme";
 import { defaultEditorTheme } from "../test-themes";
 import { TspHarness } from "./tsp-harness";
 

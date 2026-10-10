@@ -1,5 +1,5 @@
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { logger } from "@marsai-org/utils";
 import { classifyGatewayError } from "../../error/gateway";
 import { generateImage } from "../../images";
 import * as imagesServer from "../../providers/images-server";

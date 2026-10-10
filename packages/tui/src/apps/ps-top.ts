@@ -1,5 +1,5 @@
 /**
- * Interactive alt-screen monitor for `omp ps` (btop idiom): a live process
+ * Interactive alt-screen monitor for `mars ps` (btop idiom): a live process
  * table over every selected broker scope with in-place actions.
  *
  * Keys — table: `↑/↓`/`j/k` select, `enter`/`i` info, `l` logs, `s` stop,
@@ -14,14 +14,14 @@ import { renderTableRow, type TableColumn } from "../components/table";
 import { matchesKey } from "../keys";
 import { ProcessTerminal } from "../terminal";
 import { type Component, TUI } from "../tui";
-import type { TspSpan, TspText, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspText, TspTone } from "@marsai-org/wire";
 import { col, compact, elapsed, keyed, node, row, span, stableKey, text } from "../native/describe";
 import type { NativeNode, NativeUiEvent } from "../native/node";
 import { actionBar, actionButton } from "../native/overlay";
 import { Memo } from "../native/memo";
 import { truncateToWidth } from "../utils";
-import { formatDuration } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { formatDuration } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import type { DaemonSnapshot, DaemonSpec } from "../tools/daemon";
 import {
 	collapseCommand,
@@ -535,7 +535,7 @@ export class PsTopComponent implements Component {
 					[
 						text("No broker scopes", { role: "omp.app.empty-title" }),
 						text([
-							span("No omp process broker runs here. ", "muted"),
+							span("No Mars process broker runs here. ", "muted"),
 							span(this.#all ? "Nothing runs anywhere." : "Show every scope with ", "muted"),
 							...(this.#all ? [] : [span("a", "key"), span(".", "muted")]),
 						]),
@@ -631,7 +631,7 @@ export class PsTopComponent implements Component {
 
 	#header(width: number, title: string): string {
 		const age = this.#lastRefresh ? `updated ${formatDuration(Date.now() - this.#lastRefresh)} ago` : "updating…";
-		const left = ` ${chalk.bold("omp ps")} ${chalk.dim("·")} ${title}`;
+		const left = ` ${chalk.bold("mars ps")} ${chalk.dim("·")} ${title}`;
 		const right = chalk.dim(age);
 		const pad = Math.max(1, width - Bun.stringWidth(left) - Bun.stringWidth(right) - 1);
 		return truncateToWidth(`${left}${" ".repeat(pad)}${right}`, width);

@@ -8,15 +8,15 @@ import {
 	handleServerMessage,
 	processInteractionUpdate,
 	type ToolCallState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
+} from "@marsai-org/ai/providers/cursor";
 import type {
 	AssistantMessage,
 	CursorExecHandlers,
 	CursorToolResultHandler,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { kCursorExecResolved, kStreamingBlockKind } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@marsai-org/ai/types";
+import { kCursorExecResolved, kStreamingBlockKind } from "@marsai-org/ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -27,12 +27,12 @@ import {
 	ReadArgsSchema,
 	ToolCallSchema,
 	WriteArgsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, fromBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 const EDIT_ID = "tool_7aef3020-f275-4579-887c-34106e146f7";
 const ENVELOPE_ID = "call-edit-1";
-const TARGET = "/tmp/omp-cursor-edit-probe/note.txt";
+const TARGET = "/tmp/mars-cursor-edit-probe/note.txt";
 
 function cursorAssistantMessage(): AssistantMessage {
 	return {
@@ -167,7 +167,7 @@ describe("cursor native editToolCall (StrReplace)", () => {
 					role: "toolResult",
 					toolCallId: args.toolCallId,
 					toolName: "read",
-					content: [{ type: "text", text: "Hello from OMP probe.\nThe fruit is apple.\nGoodbye.\n" }],
+					content: [{ type: "text", text: "Hello from Mars probe.\nThe fruit is apple.\nGoodbye.\n" }],
 					isError: false,
 					timestamp: 1,
 				} satisfies ToolResultMessage;
@@ -205,7 +205,7 @@ describe("cursor native editToolCall (StrReplace)", () => {
 			execWrite({
 				path: TARGET,
 				toolCallId: EDIT_ID,
-				fileText: "Hello from OMP probe.\nThe fruit is orange.\nGoodbye.\n",
+				fileText: "Hello from Mars probe.\nThe fruit is orange.\nGoodbye.\n",
 			}),
 			output,
 			stream,

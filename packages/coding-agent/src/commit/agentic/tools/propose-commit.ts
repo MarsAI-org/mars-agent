@@ -1,5 +1,5 @@
-import { type } from "@oh-my-pi/omptype";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+import { type } from "@marsai-org/omptype";
+import * as vcs from "@marsai-org/natives/vcs";
 import type { CommitAgentState } from "../../../commit/agentic/state";
 import {
 	capDetails,

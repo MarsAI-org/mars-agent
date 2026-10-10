@@ -9,14 +9,14 @@ import type {
 	ToolResultMessage,
 	ToolResultProviderMetadata,
 	UserMessage,
-} from "@oh-my-pi/pi-ai";
-import { decodeDataUri } from "@oh-my-pi/pi-ai/providers/openai-data-uri";
-import { resolveInlineImageByteBudget } from "@oh-my-pi/pi-catalog/compat/request-size";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { providerImageBudget } from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai";
+import { decodeDataUri } from "@marsai-org/ai/providers/openai-data-uri";
+import { resolveInlineImageByteBudget } from "@marsai-org/catalog/compat/request-size";
+import { isRecord } from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { providerImageBudget } from "@marsai-org/snapcompact";
 import { supportsRemoteImageUrls } from "../blob-broker/context-images";
-import { imageDecodeFailureReason } from "@oh-my-pi/pi-tui/chat/image-loading";
+import { imageDecodeFailureReason } from "@marsai-org/tui/chat/image-loading";
 
 const IMAGE_OMISSION: TextContent = {
 	type: "text",

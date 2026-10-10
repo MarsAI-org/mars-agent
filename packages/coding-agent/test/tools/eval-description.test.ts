@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Tool as AiTool } from "@oh-my-pi/pi-ai";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { Tool as AiTool } from "@marsai-org/ai";
+import { toolWireSchema } from "@marsai-org/ai/utils/schema";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@marsai-org/coding-agent/eval/preludes";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool, getEvalDocTopics, getEvalToolDescription } from "@marsai-org/coding-agent/tools/eval";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
 
-import { cfgEvalPy } from "@oh-my-pi/pi-coding-agent/eval/settings";
-import { cfgTaskMaxRecursionDepth } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { cfgEvalPy } from "@marsai-org/coding-agent/eval/settings";
+import { cfgTaskMaxRecursionDepth } from "@marsai-org/coding-agent/task/settings";
 
 function makeSession(opts: {
 	spawns?: string | null;

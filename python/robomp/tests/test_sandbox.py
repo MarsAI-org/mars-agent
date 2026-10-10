@@ -53,7 +53,7 @@ def _workspace(root: Path) -> Workspace:
     return Workspace(
         root=root,
         repo_dir=root / "repo",
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch="farm/test/topic",
@@ -132,7 +132,7 @@ def test_rename_workspace_branch_renames_local_branch(tmp_path: Path) -> None:
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -160,7 +160,7 @@ def test_rename_workspace_branch_refreshes_shared_metadata(tmp_path: Path, monke
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -195,7 +195,7 @@ def test_rename_workspace_branch_runs_git_as_slot_when_permissions_active(
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -234,7 +234,7 @@ def test_rename_workspace_branch_is_idempotent_when_slug_unchanged(tmp_path: Pat
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -280,7 +280,7 @@ def test_rename_workspace_branch_noop_when_pr_open(tmp_path: Path) -> None:
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -320,7 +320,7 @@ def test_rename_workspace_branch_surfaces_git_failure(tmp_path: Path) -> None:
     ws = Workspace(
         root=root,
         repo_dir=repo_dir,
-        session_dir=root / ".omp-session",
+        session_dir=root / ".mars-session",
         context_dir=root / "context",
         artifacts_dir=root / "artifacts",
         branch=initial,
@@ -427,7 +427,7 @@ def test_release_workspace_resets_to_remote_main_and_uses_tag_session(
     assert workspace.branch == "main"
     assert workspace.issue_number == "release"
     assert workspace.workspace_key == "octo__widget__release"
-    assert workspace.session_dir.name == ".omp-session-v1.2.3"
+    assert workspace.session_dir.name == ".mars-session-v1.2.3"
 
     (workspace.repo_dir / "local.txt").write_text("discard me\n", encoding="utf-8")
     _git(["-C", str(workspace.repo_dir), "add", "local.txt"], cwd=tmp_path)
@@ -489,7 +489,7 @@ def test_release_workspace_resets_to_remote_main_and_uses_tag_session(
         author_email="robomp-bot@example.invalid",
     )
     assert next_release.repo_dir == resumed.repo_dir
-    assert next_release.session_dir.name == ".omp-session-v1.2.4"
+    assert next_release.session_dir.name == ".mars-session-v1.2.4"
 
 
 def test_ensure_workspace_pr_head_uses_detached_pr_ref(tmp_path: Path, upstream_repo: Path) -> None:
@@ -725,7 +725,7 @@ def test_prepare_slot_tmpdir_mkdirs_without_chown(tmp_path: Path, monkeypatch: p
 
     tmpdir = _prepare_slot_tmpdir(_workspace(tmp_path), 2001)
 
-    assert tmpdir == tmp_path / ".omp-tmp"
+    assert tmpdir == tmp_path / ".mars-tmp"
     assert tmpdir.is_dir()
     assert stat.S_IMODE(tmpdir.stat().st_mode) == 0o700
     assert chowns == []
@@ -734,7 +734,7 @@ def test_prepare_slot_tmpdir_mkdirs_without_chown(tmp_path: Path, monkeypatch: p
 def test_prepare_slot_tmpdir_replaces_symlink_without_touching_target(tmp_path: Path) -> None:
     target = tmp_path / "target"
     target.mkdir()
-    tmpdir = tmp_path / ".omp-tmp"
+    tmpdir = tmp_path / ".mars-tmp"
     tmpdir.symlink_to(target, target_is_directory=True)
 
     prepared = _prepare_slot_tmpdir(_workspace(tmp_path), None)
@@ -748,7 +748,7 @@ def test_prepare_slot_tmpdir_replaces_symlink_without_touching_target(tmp_path: 
 def test_provision_runtime_dirs_replaces_tmpdir_symlink_and_creates_xdg_tree(tmp_path: Path) -> None:
     target = tmp_path / "target"
     target.mkdir()
-    tmpdir = tmp_path / ".omp-tmp"
+    tmpdir = tmp_path / ".mars-tmp"
     tmpdir.symlink_to(target, target_is_directory=True)
 
     _provision_runtime_dirs(tmp_path)
@@ -757,10 +757,10 @@ def test_provision_runtime_dirs_replaces_tmpdir_symlink_and_creates_xdg_tree(tmp
     assert not tmpdir.is_symlink()
     assert target.is_dir()
     assert stat.S_IMODE(tmpdir.stat().st_mode) == 0o700
-    for base in (tmp_path / ".omp-xdg" / "data", tmp_path / ".omp-xdg" / "state", tmp_path / ".omp-xdg" / "cache"):
+    for base in (tmp_path / ".mars-xdg" / "data", tmp_path / ".mars-xdg" / "state", tmp_path / ".mars-xdg" / "cache"):
         assert base.is_dir()
         assert (base / "omp").is_dir()
-    assert (tmp_path / ".omp-xdg" / "cache" / "bun-install").is_dir()
+    assert (tmp_path / ".mars-xdg" / "cache" / "bun-install").is_dir()
 
 
 def test_safe_directory_env_scopes_single_repo_path(tmp_path: Path) -> None:
@@ -819,14 +819,14 @@ def test_prepare_slot_runtime_env_returns_workspace_private_paths_without_chown(
     monkeypatch.setattr("robomp.sandbox.subprocess.run", lambda cmd, **_kwargs: calls.append(cmd))
 
     ws = _workspace(tmp_path)
-    bun_cache = ws.root / ".omp-xdg" / "cache" / "bun-install"
+    bun_cache = ws.root / ".mars-xdg" / "cache" / "bun-install"
 
     env = _prepare_slot_runtime_env(ws, 2001)
 
-    assert env["TMPDIR"] == str(ws.root / ".omp-tmp")
-    assert env["XDG_CACHE_HOME"] == str(ws.root / ".omp-xdg" / "cache")
+    assert env["TMPDIR"] == str(ws.root / ".mars-tmp")
+    assert env["XDG_CACHE_HOME"] == str(ws.root / ".mars-xdg" / "cache")
     assert env["BUN_INSTALL_CACHE_DIR"] == str(bun_cache)
-    for base in (ws.root / ".omp-xdg" / "data", ws.root / ".omp-xdg" / "state", ws.root / ".omp-xdg" / "cache"):
+    for base in (ws.root / ".mars-xdg" / "data", ws.root / ".mars-xdg" / "state", ws.root / ".mars-xdg" / "cache"):
         assert base.is_dir()
         assert (base / "omp").is_dir()
     assert bun_cache.is_dir()
@@ -1069,14 +1069,14 @@ def test_ensure_workspace_provisions_and_slot_owns_runtime_dirs(
     def record_chown(ws_root: Path, slot_uid: int | None) -> None:
         assert slot_uid is not None
         paths = [
-            ws_root / ".omp-tmp",
-            ws_root / ".omp-xdg" / "data",
-            ws_root / ".omp-xdg" / "data" / "omp",
-            ws_root / ".omp-xdg" / "state",
-            ws_root / ".omp-xdg" / "state" / "omp",
-            ws_root / ".omp-xdg" / "cache",
-            ws_root / ".omp-xdg" / "cache" / "omp",
-            ws_root / ".omp-xdg" / "cache" / "bun-install",
+            ws_root / ".mars-tmp",
+            ws_root / ".mars-xdg" / "data",
+            ws_root / ".mars-xdg" / "data" / "omp",
+            ws_root / ".mars-xdg" / "state",
+            ws_root / ".mars-xdg" / "state" / "omp",
+            ws_root / ".mars-xdg" / "cache",
+            ws_root / ".mars-xdg" / "cache" / "omp",
+            ws_root / ".mars-xdg" / "cache" / "bun-install",
         ]
         runtime_paths.extend(paths)
         for path in paths:
@@ -1103,14 +1103,14 @@ def test_ensure_workspace_provisions_and_slot_owns_runtime_dirs(
 
     assert runtime_paths
     assert set(runtime_paths) == {
-        ws.root / ".omp-tmp",
-        ws.root / ".omp-xdg" / "data",
-        ws.root / ".omp-xdg" / "data" / "omp",
-        ws.root / ".omp-xdg" / "state",
-        ws.root / ".omp-xdg" / "state" / "omp",
-        ws.root / ".omp-xdg" / "cache",
-        ws.root / ".omp-xdg" / "cache" / "omp",
-        ws.root / ".omp-xdg" / "cache" / "bun-install",
+        ws.root / ".mars-tmp",
+        ws.root / ".mars-xdg" / "data",
+        ws.root / ".mars-xdg" / "data" / "omp",
+        ws.root / ".mars-xdg" / "state",
+        ws.root / ".mars-xdg" / "state" / "omp",
+        ws.root / ".mars-xdg" / "cache",
+        ws.root / ".mars-xdg" / "cache" / "omp",
+        ws.root / ".mars-xdg" / "cache" / "bun-install",
     }
     assert set(owned.values()) == {(2001, 2001)}
 
@@ -2418,20 +2418,20 @@ def _seed_reclaimable_workspace(mgr: SandboxManager, repo: str, number: int) -> 
         "repo/node_modules/left-pad",
         "repo/packages/tui/node_modules/dep",
         "repo/src",
-        ".omp-session",
-        ".omp-xdg/cache/bun-install",
-        ".omp-xdg/state/omp",
-        ".omp-tmp",
+        ".mars-session",
+        ".mars-xdg/cache/bun-install",
+        ".mars-xdg/state/omp",
+        ".mars-tmp",
         "artifacts",
     ):
         (ws_root / rel).mkdir(parents=True)
     (ws_root / "repo/node_modules/left-pad/index.js").write_text("x", encoding="utf-8")
     (ws_root / "repo/packages/tui/node_modules/dep/index.js").write_text("x", encoding="utf-8")
     (ws_root / "repo/src/keep.ts").write_text("keep", encoding="utf-8")
-    (ws_root / ".omp-session/session.jsonl").write_text("{}", encoding="utf-8")
-    (ws_root / ".omp-xdg/cache/bun-install/pkg.tgz").write_text("x", encoding="utf-8")
-    (ws_root / ".omp-xdg/state/omp/state.json").write_text("{}", encoding="utf-8")
-    (ws_root / ".omp-tmp/scratch").write_text("x", encoding="utf-8")
+    (ws_root / ".mars-session/session.jsonl").write_text("{}", encoding="utf-8")
+    (ws_root / ".mars-xdg/cache/bun-install/pkg.tgz").write_text("x", encoding="utf-8")
+    (ws_root / ".mars-xdg/state/omp/state.json").write_text("{}", encoding="utf-8")
+    (ws_root / ".mars-tmp/scratch").write_text("x", encoding="utf-8")
     (ws_root / "artifacts/run.log").write_text("x", encoding="utf-8")
     return ws_root
 
@@ -2447,11 +2447,11 @@ def test_reclaim_workspace_caches_strips_dep_caches_and_preserves_state(tmp_path
 
     assert not (ws_root / "repo/node_modules").exists()
     assert not (ws_root / "repo/packages/tui/node_modules").exists()
-    assert not (ws_root / ".omp-xdg/cache").exists()
-    assert not (ws_root / ".omp-tmp").exists()
+    assert not (ws_root / ".mars-xdg/cache").exists()
+    assert not (ws_root / ".mars-tmp").exists()
     assert (ws_root / "repo/src/keep.ts").read_text(encoding="utf-8") == "keep"
-    assert (ws_root / ".omp-session/session.jsonl").exists()
-    assert (ws_root / ".omp-xdg/state/omp/state.json").exists()
+    assert (ws_root / ".mars-session/session.jsonl").exists()
+    assert (ws_root / ".mars-xdg/state/omp/state.json").exists()
     assert (ws_root / "artifacts/run.log").exists()
     assert not list(ws_root.glob(".trash-*"))
 
@@ -2480,7 +2480,7 @@ def test_reclaim_all_caches_sweeps_workspaces_not_pool(tmp_path: Path) -> None:
 
     for ws_root in (ws_a, ws_b):
         assert not (ws_root / "repo/node_modules").exists()
-        assert (ws_root / ".omp-session/session.jsonl").exists()
+        assert (ws_root / ".mars-session/session.jsonl").exists()
         assert not list(ws_root.glob(".trash-*"))
     assert pool_marker.exists(), "sweep must never touch the shared clone pool"
     assert mgr.reclaim_all_caches() == 0

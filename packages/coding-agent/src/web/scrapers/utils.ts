@@ -1,8 +1,8 @@
-import { isRecord, ptree, tryParseJson } from "@oh-my-pi/pi-utils";
+import { isRecord, ptree, tryParseJson } from "@marsai-org/utils";
 
 export { isRecord };
 
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import { LRUCache } from "@marsai-org/utils/lru";
 import { ToolAbortError } from "../../tools/tool-errors";
 import { convertBufferWithMarkit } from "../../utils/markit";
 import type { LoadPageResult } from "./types";

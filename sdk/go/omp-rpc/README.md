@@ -1,7 +1,7 @@
 # omp-rpc (Go)
 
-Go client for the omp RPC protocol (`omp --mode rpc`, JSON lines over stdio).
-Module `github.com/can1357/oh-my-pi/sdk/go/omp-rpc`, package `omprpc`, standard library only.
+Go client for the omp RPC protocol (`mars --mode rpc`, JSON lines over stdio).
+Module `github.com/MarsAI-org/mars-agent/sdk/go/omp-rpc`, package `omprpc`, standard library only.
 
 ## Layout
 
@@ -61,7 +61,7 @@ echo := omprpc.HostTool{
 	},
 }
 
-cmd := exec.Command("omp", "--mode", "rpc", "--no-session")
+cmd := exec.Command("mars", "--mode", "rpc", "--no-session")
 cmd.Stderr = os.Stderr
 client, err := omprpc.Start(ctx, cmd, omprpc.WithHostTools(echo))
 if err != nil {
@@ -163,7 +163,7 @@ mid-way (`session_busy`, `stale_cursor`); under v1 it sends `get_messages`.
 
 ```sh
 go test -race ./...
-OMP_RPC_SMOKE=1 go test -run TestSmoke -v ./...   # real servers via bun, from this checkout
+MARS_RPC_SMOKE=1 go test -run TestSmoke -v ./...   # real servers via bun, from this checkout
 ```
 
 `TestSmokeModel` drives full prompt turns against the scripted model in

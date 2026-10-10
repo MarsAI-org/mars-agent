@@ -1,3 +1,3 @@
-module github.com/can1357/oh-my-pi/sdk/go/omp-rpc
+module github.com/MarsAI-org/mars-agent/sdk/go/omp-rpc
 
 go 1.23

@@ -2,12 +2,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as mcpClient from "@oh-my-pi/pi-coding-agent/mcp/client";
-import * as mcpConfigWriter from "@oh-my-pi/pi-coding-agent/mcp/config-writer";
-import { MCPCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/mcp-command-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { getConfigRootDir, getProjectDir, removeWithRetries, setAgentDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import * as mcpClient from "@marsai-org/coding-agent/mcp/client";
+import * as mcpConfigWriter from "@marsai-org/coding-agent/mcp/config-writer";
+import { MCPCommandController } from "@marsai-org/coding-agent/modes/controllers/mcp-command-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { Component } from "@marsai-org/tui";
+import { getConfigRootDir, getProjectDir, removeWithRetries, setAgentDir, setProjectDir } from "@marsai-org/utils";
 import {
 	createInteractiveModeContext,
 	createMcpManagerStub,
@@ -42,8 +42,8 @@ describe("interactive /mcp test", () => {
 	});
 
 	beforeEach(async () => {
-		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-issue-956-project-"));
-		agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-issue-956-agent-"));
+		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-issue-956-project-"));
+		agentDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-issue-956-agent-"));
 		setProjectDir(projectDir);
 		setAgentDir(agentDir);
 

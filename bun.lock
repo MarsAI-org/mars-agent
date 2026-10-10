@@ -21,40 +21,40 @@
       },
     },
     "packages/agent": {
-      "name": "@oh-my-pi/pi-agent-core",
+      "name": "@marsai-org/agent-core",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/snapcompact": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
         "@opentelemetry/api": "catalog:",
       },
       "devDependencies": {
-        "@oh-my-pi/omptype": "catalog:",
+        "@marsai-org/omptype": "catalog:",
         "@opentelemetry/context-async-hooks": "catalog:",
         "@opentelemetry/sdk-trace-base": "catalog:",
         "@types/bun": "catalog:",
       },
     },
     "packages/ai": {
-      "name": "@oh-my-pi/pi-ai",
+      "name": "@marsai-org/ai",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/omptype": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/browser-relay": {
-      "name": "@oh-my-pi/browser-relay",
+      "name": "@marsai-org/browser-relay",
       "version": "0.1.0",
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -62,37 +62,37 @@
       },
     },
     "packages/catalog": {
-      "name": "@oh-my-pi/pi-catalog",
+      "name": "@marsai-org/catalog",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@marsai-org/omptype": "catalog:",
+        "@marsai-org/utils": "catalog:",
       },
       "devDependencies": {
         "@bgotink/kdl": "0.4.0",
-        "@oh-my-pi/pi-ai": "catalog:",
+        "@marsai-org/ai": "catalog:",
         "@types/bun": "catalog:",
       },
     },
     "packages/coding-agent": {
-      "name": "@oh-my-pi/pi-coding-agent",
+      "name": "@marsai-org/coding-agent",
       "version": "18.8.6",
       "bin": {
-        "omp": "src/cli.ts",
+        "mars": "src/cli.ts",
       },
       "dependencies": {
         "@babel/parser": "catalog:",
-        "@oh-my-pi/omp-stats": "catalog:",
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-mnemopi": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-tui": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
+        "@marsai-org/agent-core": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/mnemopi": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/omptype": "catalog:",
+        "@marsai-org/snapcompact": "catalog:",
+        "@marsai-org/stats": "catalog:",
+        "@marsai-org/tui": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
         "@opentelemetry/api": "catalog:",
         "@opentelemetry/api-logs": "catalog:",
         "@opentelemetry/context-async-hooks": "catalog:",
@@ -116,11 +116,11 @@
       },
     },
     "packages/collab-web": {
-      "name": "@oh-my-pi/collab-web",
+      "name": "@marsai-org/collab-web",
       "version": "16.3.6",
       "dependencies": {
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
         "katex": "catalog:",
         "lucide-react": "catalog:",
         "react": "catalog:",
@@ -133,19 +133,19 @@
       },
     },
     "packages/metaharness": {
-      "name": "@oh-my-pi/pi-metaharness",
+      "name": "@marsai-org/metaharness",
       "version": "0.0.1",
       "bin": {
         "metaharness": "src/server.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-coding-agent": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/typescript-edit-benchmark": "workspace:*",
+        "@marsai-org/agent-core": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/coding-agent": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/typescript-edit-benchmark": "workspace:*",
+        "@marsai-org/utils": "catalog:",
         "@stencil-hq/vibemon": "^0.3.2",
         "clsx": "^2.1.1",
         "d3-scale": "^4.0.2",
@@ -166,16 +166,16 @@
       },
     },
     "packages/mnemopi": {
-      "name": "@oh-my-pi/pi-mnemopi",
+      "name": "@marsai-org/mnemopi",
       "version": "18.8.6",
       "bin": {
         "mnemopi": "src/cli.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/utils": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -192,7 +192,7 @@
       ],
     },
     "packages/natives": {
-      "name": "@oh-my-pi/pi-natives",
+      "name": "@marsai-org/natives",
       "version": "18.8.6",
       "devDependencies": {
         "@napi-rs/cli": "catalog:",
@@ -207,7 +207,7 @@
       },
     },
     "packages/omptype": {
-      "name": "@oh-my-pi/omptype",
+      "name": "@marsai-org/omptype",
       "version": "18.8.6",
       "devDependencies": {
         "@ark/attest": "0.56.3",
@@ -220,29 +220,29 @@
       },
     },
     "packages/snapcompact": {
-      "name": "@oh-my-pi/snapcompact",
+      "name": "@marsai-org/snapcompact",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/stats": {
-      "name": "@oh-my-pi/omp-stats",
+      "name": "@marsai-org/stats",
       "version": "18.8.6",
       "bin": {
-        "omp-stats": "./src/index.ts",
+        "mars-stats": "./src/index.ts",
       },
       "dependencies": {
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/utils": "catalog:",
         "lucide-react": "catalog:",
         "react": "catalog:",
         "react-dom": "catalog:",
@@ -254,36 +254,36 @@
       },
     },
     "packages/tui": {
-      "name": "@oh-my-pi/pi-tui",
+      "name": "@marsai-org/tui",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/omptype": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-catalog": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
-        "@oh-my-pi/pi-wire": "catalog:",
-        "@oh-my-pi/snapcompact": "catalog:",
+        "@marsai-org/agent-core": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/catalog": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/omptype": "catalog:",
+        "@marsai-org/snapcompact": "catalog:",
+        "@marsai-org/utils": "catalog:",
+        "@marsai-org/wire": "catalog:",
       },
       "devDependencies": {
         "kitty-vt-wasm": "catalog:",
       },
     },
     "packages/typescript-edit-benchmark": {
-      "name": "@oh-my-pi/typescript-edit-benchmark",
+      "name": "@marsai-org/typescript-edit-benchmark",
       "version": "0.0.1",
       "dependencies": {
         "@babel/generator": "catalog:",
         "@babel/parser": "catalog:",
         "@babel/traverse": "catalog:",
         "@babel/types": "catalog:",
-        "@oh-my-pi/pi-agent-core": "catalog:",
-        "@oh-my-pi/pi-ai": "catalog:",
-        "@oh-my-pi/pi-coding-agent": "catalog:",
-        "@oh-my-pi/pi-natives": "catalog:",
-        "@oh-my-pi/pi-tui": "catalog:",
-        "@oh-my-pi/pi-utils": "catalog:",
+        "@marsai-org/agent-core": "catalog:",
+        "@marsai-org/ai": "catalog:",
+        "@marsai-org/coding-agent": "catalog:",
+        "@marsai-org/natives": "catalog:",
+        "@marsai-org/tui": "catalog:",
+        "@marsai-org/utils": "catalog:",
         "diff": "catalog:",
         "prettier": "catalog:",
         "regexp-tree": "catalog:",
@@ -295,17 +295,17 @@
       },
     },
     "packages/utils": {
-      "name": "@oh-my-pi/pi-utils",
+      "name": "@marsai-org/utils",
       "version": "18.8.6",
       "dependencies": {
-        "@oh-my-pi/pi-natives": "catalog:",
+        "@marsai-org/natives": "catalog:",
       },
       "devDependencies": {
         "@types/bun": "catalog:",
       },
     },
     "packages/wire": {
-      "name": "@oh-my-pi/pi-wire",
+      "name": "@marsai-org/wire",
       "version": "18.8.6",
       "devDependencies": {
         "@types/bun": "catalog:",
@@ -340,19 +340,19 @@
     "@babel/traverse": "^7.29.7",
     "@babel/types": "^7.29.7",
     "@huggingface/transformers": "^4.2.0",
+    "@marsai-org/agent-core": "18.8.6",
+    "@marsai-org/ai": "18.8.6",
+    "@marsai-org/catalog": "18.8.6",
+    "@marsai-org/coding-agent": "18.8.6",
+    "@marsai-org/mnemopi": "18.8.6",
+    "@marsai-org/natives": "18.8.6",
+    "@marsai-org/omptype": "18.8.6",
+    "@marsai-org/snapcompact": "18.8.6",
+    "@marsai-org/stats": "18.8.6",
+    "@marsai-org/tui": "18.8.6",
+    "@marsai-org/utils": "18.8.6",
+    "@marsai-org/wire": "18.8.6",
     "@napi-rs/cli": "3.7.2",
-    "@oh-my-pi/omp-stats": "18.8.6",
-    "@oh-my-pi/omptype": "18.8.6",
-    "@oh-my-pi/pi-agent-core": "18.8.6",
-    "@oh-my-pi/pi-ai": "18.8.6",
-    "@oh-my-pi/pi-catalog": "18.8.6",
-    "@oh-my-pi/pi-coding-agent": "18.8.6",
-    "@oh-my-pi/pi-mnemopi": "18.8.6",
-    "@oh-my-pi/pi-natives": "18.8.6",
-    "@oh-my-pi/pi-tui": "18.8.6",
-    "@oh-my-pi/pi-utils": "18.8.6",
-    "@oh-my-pi/pi-wire": "18.8.6",
-    "@oh-my-pi/snapcompact": "18.8.6",
     "@opentelemetry/api": "^1.9.1",
     "@opentelemetry/api-logs": "^0.220.0",
     "@opentelemetry/context-async-hooks": "^2.9.0",
@@ -569,6 +569,38 @@
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
+    "@marsai-org/agent-core": ["@marsai-org/agent-core@workspace:packages/agent"],
+
+    "@marsai-org/ai": ["@marsai-org/ai@workspace:packages/ai"],
+
+    "@marsai-org/browser-relay": ["@marsai-org/browser-relay@workspace:packages/browser-relay"],
+
+    "@marsai-org/catalog": ["@marsai-org/catalog@workspace:packages/catalog"],
+
+    "@marsai-org/coding-agent": ["@marsai-org/coding-agent@workspace:packages/coding-agent"],
+
+    "@marsai-org/collab-web": ["@marsai-org/collab-web@workspace:packages/collab-web"],
+
+    "@marsai-org/metaharness": ["@marsai-org/metaharness@workspace:packages/metaharness"],
+
+    "@marsai-org/mnemopi": ["@marsai-org/mnemopi@workspace:packages/mnemopi"],
+
+    "@marsai-org/natives": ["@marsai-org/natives@workspace:packages/natives"],
+
+    "@marsai-org/omptype": ["@marsai-org/omptype@workspace:packages/omptype"],
+
+    "@marsai-org/snapcompact": ["@marsai-org/snapcompact@workspace:packages/snapcompact"],
+
+    "@marsai-org/stats": ["@marsai-org/stats@workspace:packages/stats"],
+
+    "@marsai-org/tui": ["@marsai-org/tui@workspace:packages/tui"],
+
+    "@marsai-org/typescript-edit-benchmark": ["@marsai-org/typescript-edit-benchmark@workspace:packages/typescript-edit-benchmark"],
+
+    "@marsai-org/utils": ["@marsai-org/utils@workspace:packages/utils"],
+
+    "@marsai-org/wire": ["@marsai-org/wire@workspace:packages/wire"],
+
     "@napi-rs/cli": ["@napi-rs/cli@3.7.2", "", { "dependencies": { "@inquirer/prompts": "^8.5.2", "@napi-rs/cross-toolchain": "^1.0.3", "@napi-rs/wasm-tools": "^1.0.1", "@octokit/rest": "^22.0.1", "clipanion": "^4.0.0-rc.4", "colorette": "^2.0.20", "emnapi": "^1.11.1", "es-toolkit": "^1.47.0", "js-yaml": "^4.2.0", "obug": "^2.1.2", "semver": "^7.8.2", "typanion": "^3.14.0" }, "peerDependencies": { "@emnapi/runtime": "^1.7.1" }, "optionalPeers": ["@emnapi/runtime"], "bin": { "napi": "dist/cli.js", "napi-raw": "cli.mjs" } }, "sha512-shDW0Td/XZQpP04Yy+OsMt1ILMKGGkoLcy1zVAsSAK0fLfWm0Upgkmfs/NOV2ZhMQwkgpR3ZEdyHmTwgrUDQuA=="],
 
     "@napi-rs/cross-toolchain": ["@napi-rs/cross-toolchain@1.0.3", "", { "dependencies": { "@napi-rs/lzma": "^1.4.5", "@napi-rs/tar": "^1.1.0", "debug": "^4.4.1" }, "peerDependencies": { "@napi-rs/cross-toolchain-arm64-target-aarch64": "^1.0.3", "@napi-rs/cross-toolchain-arm64-target-armv7": "^1.0.3", "@napi-rs/cross-toolchain-arm64-target-ppc64le": "^1.0.3", "@napi-rs/cross-toolchain-arm64-target-s390x": "^1.0.3", "@napi-rs/cross-toolchain-arm64-target-x86_64": "^1.0.3", "@napi-rs/cross-toolchain-x64-target-aarch64": "^1.0.3", "@napi-rs/cross-toolchain-x64-target-armv7": "^1.0.3", "@napi-rs/cross-toolchain-x64-target-ppc64le": "^1.0.3", "@napi-rs/cross-toolchain-x64-target-s390x": "^1.0.3", "@napi-rs/cross-toolchain-x64-target-x86_64": "^1.0.3" }, "optionalPeers": ["@napi-rs/cross-toolchain-arm64-target-aarch64", "@napi-rs/cross-toolchain-arm64-target-armv7", "@napi-rs/cross-toolchain-arm64-target-ppc64le", "@napi-rs/cross-toolchain-arm64-target-s390x", "@napi-rs/cross-toolchain-arm64-target-x86_64", "@napi-rs/cross-toolchain-x64-target-aarch64", "@napi-rs/cross-toolchain-x64-target-armv7", "@napi-rs/cross-toolchain-x64-target-ppc64le", "@napi-rs/cross-toolchain-x64-target-s390x", "@napi-rs/cross-toolchain-x64-target-x86_64"] }, "sha512-ENPfLe4937bsKVTDA6zdABx4pq9w0tHqRrJHyaGxgaPq03a2Bd1unD5XSKjXJjebsABJ+MjAv1A2OvCgK9yehg=="],
@@ -696,38 +728,6 @@
     "@octokit/rest": ["@octokit/rest@22.0.1", "", { "dependencies": { "@octokit/core": "^7.0.6", "@octokit/plugin-paginate-rest": "^14.0.0", "@octokit/plugin-request-log": "^6.0.0", "@octokit/plugin-rest-endpoint-methods": "^17.0.0" } }, "sha512-Jzbhzl3CEexhnivb1iQ0KJ7s5vvjMWcmRtq5aUsKmKDrRW6z3r84ngmiFKFvpZjpiU/9/S6ITPFRpn5s/3uQJw=="],
 
     "@octokit/types": ["@octokit/types@18.0.0", "", { "dependencies": { "@octokit/openapi-types": "^29.0.1" } }, "sha512-l6bAF43PNxkJp6g+W4PjoUSSkxHomXw2nOum5CTftJz1NlV3vu93NImgOYtLf6CbBUb5j+fiuzW0PPQ5JTSvZA=="],
-
-    "@oh-my-pi/browser-relay": ["@oh-my-pi/browser-relay@workspace:packages/browser-relay"],
-
-    "@oh-my-pi/collab-web": ["@oh-my-pi/collab-web@workspace:packages/collab-web"],
-
-    "@oh-my-pi/omp-stats": ["@oh-my-pi/omp-stats@workspace:packages/stats"],
-
-    "@oh-my-pi/omptype": ["@oh-my-pi/omptype@workspace:packages/omptype"],
-
-    "@oh-my-pi/pi-agent-core": ["@oh-my-pi/pi-agent-core@workspace:packages/agent"],
-
-    "@oh-my-pi/pi-ai": ["@oh-my-pi/pi-ai@workspace:packages/ai"],
-
-    "@oh-my-pi/pi-catalog": ["@oh-my-pi/pi-catalog@workspace:packages/catalog"],
-
-    "@oh-my-pi/pi-coding-agent": ["@oh-my-pi/pi-coding-agent@workspace:packages/coding-agent"],
-
-    "@oh-my-pi/pi-metaharness": ["@oh-my-pi/pi-metaharness@workspace:packages/metaharness"],
-
-    "@oh-my-pi/pi-mnemopi": ["@oh-my-pi/pi-mnemopi@workspace:packages/mnemopi"],
-
-    "@oh-my-pi/pi-natives": ["@oh-my-pi/pi-natives@workspace:packages/natives"],
-
-    "@oh-my-pi/pi-tui": ["@oh-my-pi/pi-tui@workspace:packages/tui"],
-
-    "@oh-my-pi/pi-utils": ["@oh-my-pi/pi-utils@workspace:packages/utils"],
-
-    "@oh-my-pi/pi-wire": ["@oh-my-pi/pi-wire@workspace:packages/wire"],
-
-    "@oh-my-pi/snapcompact": ["@oh-my-pi/snapcompact@workspace:packages/snapcompact"],
-
-    "@oh-my-pi/typescript-edit-benchmark": ["@oh-my-pi/typescript-edit-benchmark@workspace:packages/typescript-edit-benchmark"],
 
     "@opentelemetry/api": ["@opentelemetry/api@1.9.1", "", {}, "sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q=="],
 

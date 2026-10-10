@@ -1,23 +1,23 @@
 # hello-extension
 
-A minimal `omp` extension that demonstrates the two most common authoring patterns: subscribing to `session_start` to notify on load, and registering a `/hello` slash command that sends a greeting into the conversation. It is intentionally small — use it as a copy-paste starting point for your own extension.
+A minimal `mars` extension that demonstrates the two most common authoring patterns: subscribing to `session_start` to notify on load, and registering a `/hello` slash command that sends a greeting into the conversation. It is intentionally small — use it as a copy-paste starting point for your own extension.
 
 ## Install
 
 **Option A — drop into user extensions directory:**
 
 ```
-cp -r . ~/.omp/agent/extensions/hello-extension
+cp -r . ~/.mars/agent/extensions/hello-extension
 ```
 
-Restart `omp`. You will see the startup notification immediately.
+Restart `mars`. You will see the startup notification immediately.
 
-With `omp --profile <name>`, use `~/.omp/profiles/<name>/agent/extensions/hello-extension` under the default layout. `PI_CODING_AGENT_DIR` changes the default profile's agent directory, not a named profile's. Initialized XDG roots can change these locations.
+With `mars --profile <name>`, use `~/.mars/profiles/<name>/agent/extensions/hello-extension` under the default layout. `PI_CODING_AGENT_DIR` changes the default profile's agent directory, not a named profile's. Initialized XDG roots can change these locations.
 
 **Option B — point the settings `extensions` array at it:**
 
 ```yaml
-# ~/.omp/agent/config.yml
+# ~/.mars/agent/config.yml
 extensions:
   - /path/to/hello-extension
 ```
@@ -25,12 +25,12 @@ extensions:
 **Option C — load once via CLI flag:**
 
 ```
-omp --extension ./hello-extension
+mars --extension ./hello-extension
 ```
 
 ## Usage
 
-After loading, type `/hello` or `/hello Ada` in the omp prompt. The command sends a visible greeting custom message into the conversation and shows a "Message sent!" notification.
+After loading, type `/hello` or `/hello Ada` in the mars prompt. The command sends a visible greeting custom message into the conversation and shows a "Message sent!" notification.
 
 ## What it demonstrates
 

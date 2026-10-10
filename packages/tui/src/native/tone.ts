@@ -1,9 +1,9 @@
 /**
- * omp theme colours → TSP tones. Components that only hold ANSI stylers
+ * mars theme colours → TSP tones. Components that only hold ANSI stylers
  * (`(text) => string`) sample them with a probe string to recover the theme
  * token behind the escape, then map the token to a card/text tone.
  */
-import type { TspTone } from "@oh-my-pi/pi-wire";
+import type { TspTone } from "@marsai-org/wire";
 import { isValidThemeColor, type ThemeBg, type ThemeColor } from "../theme/theme";
 import { styledBackground, styledSpans } from "./spans";
 
@@ -28,7 +28,7 @@ export interface BackgroundChrome {
 	selected?: boolean;
 }
 
-/** Map an omp background token to card tone/role. */
+/** Map a mars background token to card tone/role. */
 export function backgroundChrome(bg: ThemeBg | undefined): BackgroundChrome {
 	switch (bg) {
 		case "userMessageBg":
@@ -51,7 +51,7 @@ export function backgroundChrome(bg: ThemeBg | undefined): BackgroundChrome {
 }
 
 /**
- * Tone of an omp colour used as a severity or border colour; undefined for
+ * Tone of a mars colour used as a severity or border colour; undefined for
  * colours that carry no tone (callers pick their own fallback).
  */
 export function colorTone(color: ThemeColor | undefined): TspTone | undefined {

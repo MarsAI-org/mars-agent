@@ -23,8 +23,8 @@ import {
 	type SpeculativeToolReference,
 	type ToolSpeculationAssessmentContext,
 	type ToolSpeculationStreamSession,
-} from "@oh-my-pi/pi-agent-core";
-import type { TaskParams } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/agent-core";
+import type { TaskParams } from "@marsai-org/tui/tools/task";
 import type { SpawnRun } from "./spawn-run";
 
 /**

@@ -19,9 +19,9 @@ import {
 	WebFetchRequestResponseSchema,
 	WebSearchRequestResponse_ApprovedSchema,
 	WebSearchRequestResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { $env, logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { $env, logger } from "@marsai-org/utils";
 import { frameConnectMessage } from "../connect-frame";
 
 const NOT_IMPLEMENTED_SUFFIX = "not implemented by this client";

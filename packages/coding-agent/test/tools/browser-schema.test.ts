@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 
-import { cfgBrowserEnabled } from "@oh-my-pi/pi-coding-agent/tools/browser/settings";
+import { cfgBrowserEnabled } from "@marsai-org/coding-agent/tools/browser/settings";
 
 function makeSession(settings = Settings.isolated({ "browser.enabled": true })): ToolSession {
 	return {

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import type { Context, ImageContent, ModelSpec, TextContent } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { decorateContextImages } from "@oh-my-pi/pi-coding-agent/blob-broker/context-images";
+import type { Context, ImageContent, ModelSpec, TextContent } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { decorateContextImages } from "@marsai-org/coding-agent/blob-broker/context-images";
 import {
 	clampProviderContextImageBytes,
 	clampProviderContextImages,
-} from "@oh-my-pi/pi-coding-agent/session/provider-image-budget";
+} from "@marsai-org/coding-agent/session/provider-image-budget";
 
 const UMANS_MODEL = buildModel({
 	id: "umans-glm-5.2",

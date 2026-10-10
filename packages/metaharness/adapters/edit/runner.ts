@@ -7,32 +7,32 @@
 /// <reference types="./bun-imports.d.ts" />
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { EditStore, hashlineCountOps, hashlineFormatHeader } from "@oh-my-pi/pi-natives";
-import type { AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ToolExample } from "@oh-my-pi/pi-ai";
-import { formatSessionDumpText, RpcClient } from "@oh-my-pi/pi-coding-agent";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { EditStore, hashlineCountOps, hashlineFormatHeader } from "@marsai-org/natives";
+import type { AgentMessage, ResolvedThinkingLevel, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model, ToolExample } from "@marsai-org/ai";
+import { formatSessionDumpText, RpcClient } from "@marsai-org/coding-agent";
+import { prompt } from "@marsai-org/utils";
 import { diffLines } from "diff";
-import { formatDirectory } from "@oh-my-pi/typescript-edit-benchmark/formatter";
+import { formatDirectory } from "@marsai-org/typescript-edit-benchmark/formatter";
 import {
 	discoverSharedInfra,
 	InProcessClient,
 	type SharedInfra,
-} from "@oh-my-pi/typescript-edit-benchmark/in-process-client";
+} from "@marsai-org/typescript-edit-benchmark/in-process-client";
 import { conversationDumpRelativePath } from "./dump-path";
 import benchmarkRetryPrompt from "./prompts/benchmark-retry.md" with { type: "text" };
 import benchmarkSystemPrompt from "./prompts/benchmark-system.md" with { type: "text" };
 import benchmarkTaskPrompt from "./prompts/benchmark-task.md" with { type: "text" };
-import type { EditTask } from "@oh-my-pi/typescript-edit-benchmark/tasks";
+import type { EditTask } from "@marsai-org/typescript-edit-benchmark/tasks";
 import {
 	verifyExpectedFileSubset,
 	verifyExpectedFiles,
-} from "@oh-my-pi/typescript-edit-benchmark/verify";
+} from "@marsai-org/typescript-edit-benchmark/verify";
 
 const REPO_ROOT = path.resolve(import.meta.dir, "..", "..", "..", "..");
 const RUNS_DIR = path.join(REPO_ROOT, "runs");
 const TMP = path.join(RUNS_DIR, `rb-${Math.random().toString(36).slice(2, 10)}`);
-const CLI_PATH = Bun.fileURLToPath(import.meta.resolve("@oh-my-pi/pi-coding-agent/cli"));
+const CLI_PATH = Bun.fileURLToPath(import.meta.resolve("@marsai-org/coding-agent/cli"));
 
 function formatLogPath(logFile: string): string {
 	const relativePath = path.relative(REPO_ROOT, logFile);

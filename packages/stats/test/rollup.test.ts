@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { initDb, insertMessageStats, insertToolCalls } from "@oh-my-pi/omp-stats/db";
+import { initDb, insertMessageStats, insertToolCalls } from "@marsai-org/stats/db";
 import {
 	getDailyActivityFromRollup,
 	getOverallStats,
@@ -11,8 +11,8 @@ import {
 	getToolStats,
 	getToolTimeSeries,
 	refreshRollups,
-} from "@oh-my-pi/omp-stats/rollup";
-import type { MessageStats, ToolCallStats } from "@oh-my-pi/omp-stats/types";
+} from "@marsai-org/stats/rollup";
+import type { MessageStats, ToolCallStats } from "@marsai-org/stats/types";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-rollup-");

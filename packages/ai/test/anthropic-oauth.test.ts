@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { getClaudeCodeVersion } from "@oh-my-pi/pi-ai/providers/claude-code-fingerprint";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthCredentials, OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import { getClaudeCodeVersion } from "@marsai-org/ai/providers/claude-code-fingerprint";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import type { OAuthCredentials, OAuthController } from "@marsai-org/ai/registry/oauth/types";
+import type { FetchImpl } from "@marsai-org/ai/types";
 import {
 	buildAnthropicAuthConfig,
 	buildAnthropicSearchHeaders,
 	buildAnthropicUrl,
-} from "@oh-my-pi/pi-ai/utils/anthropic-auth";
+} from "@marsai-org/ai/utils/anthropic-auth";
 import { withEnv } from "./helpers";
 
 afterEach(() => {

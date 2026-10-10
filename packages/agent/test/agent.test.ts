@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	Agent,
 	AgentBusyError,
@@ -8,11 +8,11 @@ import {
 	ThinkingLevel,
 	TOOL_RESULT_ADDITIONAL_CONTEXT,
 	type ToolResultWithAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
-import type { Context, SimpleStreamOptions, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@marsai-org/agent-core";
+import type { Context, SimpleStreamOptions, ToolResultMessage } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { kCursorExecResolved } from "@marsai-org/ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import { createAssistantMessage, createUserMessage } from "./helpers";
 
 describe("Agent", () => {

@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as evalIndex from "@oh-my-pi/pi-coding-agent/eval";
-import * as pyKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { resolveEvalBackends } from "@oh-my-pi/pi-coding-agent/tools/eval-backends";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as evalIndex from "@marsai-org/coding-agent/eval";
+import * as pyKernel from "@marsai-org/coding-agent/eval/py/kernel";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { resolveEvalBackends } from "@marsai-org/coding-agent/tools/eval-backends";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
 
-import { cfgEvalJs, cfgEvalPy } from "@oh-my-pi/pi-coding-agent/eval/settings";
-import { cfgToolsMaxTimeout } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgEvalJs, cfgEvalPy } from "@marsai-org/coding-agent/eval/settings";
+import { cfgToolsMaxTimeout } from "@marsai-org/coding-agent/tools/settings";
 
 let originalPiPy: string | undefined;
 let originalPiJs: string | undefined;

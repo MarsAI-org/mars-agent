@@ -1,5 +1,5 @@
 /**
- * OMP extension package roots.
+ * Mars extension package roots.
  *
  * An "extension package root" is a directory configured via either
  * `extensions:` in user/project settings or the `--extension`/`-e` CLI flag
@@ -18,7 +18,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, isEnoent, logger, MAIN_CONFIG_FILENAMES, tryParseJson } from "@oh-my-pi/pi-utils";
+import { getAgentDir, isEnoent, logger, MAIN_CONFIG_FILENAMES, tryParseJson } from "@marsai-org/utils";
 import { YAML } from "bun";
 import { readDirEntries, readFile } from "../capability/fs";
 import type { ExtensionRootMode, LoadContext } from "../capability/types";
@@ -159,7 +159,7 @@ interface ScopeDirs {
 
 function scopeDirs(ctx: LoadContext): ScopeDirs {
 	return {
-		project: path.join(ctx.cwd, ".omp"),
+		project: path.join(ctx.cwd, ".mars"),
 		user: getAgentDir(),
 	};
 }
@@ -176,7 +176,7 @@ async function readSettingsExtensions(settingsPath: string): Promise<string[] | 
 	return readExtensionsArray(parsed?.extensions);
 }
 
-/** Project native config filename; matches the single `.omp/config.yml` the settings loader reads. */
+/** Project native config filename; matches the single `.mars/config.yml` the settings loader reads. */
 const PROJECT_CONFIG_FILENAMES = ["config.yml"] as const;
 
 interface YamlExtensions {
@@ -267,8 +267,8 @@ async function isDirectory(p: string): Promise<boolean> {
  *    `merge` mode. Its provenance (`configuredLevel`) is carried from
  *    `Settings` (the authority that merges every project provider, incl.
  *    `.claude/settings.json`, and honors overlays/overrides), never re-derived
- *    from a partial `.omp` disk scan; scopeless callers read the persisted
- *    `.omp` config, which supplies its own level.
+ *    from a partial `.mars` disk scan; scopeless callers read the persisted
+ *    `.mars` config, which supplies its own level.
  * 3. Installed npm/link plugins under `<plugins>/node_modules/`, added only in
  *    `merge` mode. Marketplace installs load via the `claude-plugins` provider.
  *
@@ -300,7 +300,7 @@ export async function listOmpExtensionRoots(ctx: LoadContext): Promise<OmpExtens
 		// `Settings` — the authority that merges every project provider (incl.
 		// `.claude/settings.json`) and honors overlays/overrides — so trust the
 		// carried `configuredLevel` verbatim. When no session value is present,
-		// read the persisted `.omp` config on disk, which is the authoritative
+		// read the persisted `.mars` config on disk, which is the authoritative
 		// source (and its own provenance) in that scopeless path.
 		const configuredEntries = ctx.extensionRoots?.configured ?? scopedRoots?.configuredExtensions;
 		const configured =
@@ -348,7 +348,7 @@ export async function listOmpExtensionRoots(ctx: LoadContext): Promise<OmpExtens
  * Marketplace installs also create runtime symlinks for enable-state persistence,
  * but their resources are discovered through the `claude-plugins` provider.
  * Filtering them here prevents `/status` from showing the same plugin under both
- * "Claude Code Marketplace" and "OMP Extension Packages".
+ * "Claude Code Marketplace" and "Mars Extension Packages".
  */
 async function realpathOrResolved(p: string): Promise<string> {
 	try {

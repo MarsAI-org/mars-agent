@@ -13,25 +13,25 @@
  */
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fsp from "node:fs/promises";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
+import { generateRoomKey, importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { CollabHost } from "@marsai-org/coding-agent/collab/host";
 import {
 	COLLAB_PROTO,
 	type CollabFrame,
 	type CollabSessionState,
 	formatCollabLink,
 	parseCollabLink,
-} from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@marsai-org/coding-agent/collab/protocol";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type {
 	ExtensionAskDialogQuestion,
 	ExtensionUIDialogOptions,
 	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "@oh-my-pi/pi-coding-agent/modes/types";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { ExtensionUiController } from "@marsai-org/coding-agent/modes/controllers/extension-ui-controller";
+import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "@marsai-org/coding-agent/modes/types";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 
 // In-memory transport: shared FakeWebSocket + InMemoryRelay harness (see

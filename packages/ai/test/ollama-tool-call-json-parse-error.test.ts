@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamOllama } from "@oh-my-pi/pi-ai/providers/ollama";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as AIError from "@marsai-org/ai/error";
+import { streamOllama } from "@marsai-org/ai/providers/ollama";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const model: Model<"ollama-chat"> = buildModel({
 	id: "qwen3.6-coder:27b",

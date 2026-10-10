@@ -4,7 +4,7 @@ import {
 	type AgentMessage,
 	isSyntheticToolResultMessage,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	AssistantMessage,
 	AssistantRetryRecovery,
@@ -17,15 +17,15 @@ import type {
 	ThinkingContent,
 	ToolChoice,
 	AnthropicFallbackCreditHandle,
-} from "@oh-my-pi/pi-ai";
-import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { fallbackCreditTargets } from "@oh-my-pi/pi-catalog/compat/fallback-credit";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { isFireworksFastModelId, toFireworksBaseModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { isUnexpectedSocketCloseMessage, logger, prompt, sleepLong } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { calculateRateLimitBackoffMs, parseRateLimitReason } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { extractProviderRetryHint } from "@marsai-org/ai/utils/retry-after";
+import { fallbackCreditTargets } from "@marsai-org/catalog/compat/fallback-credit";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { isFireworksFastModelId, toFireworksBaseModelId } from "@marsai-org/catalog/fireworks-model-id";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { isUnexpectedSocketCloseMessage, logger, prompt, sleepLong } from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelStringWithRouting, resolveModelOverride } from "../config/model-resolver";
 
@@ -42,8 +42,8 @@ import {
 	clampThinkingLevelToCeiling,
 	modelSupportsEffortCeiling,
 	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
-import type { EditMode } from "@oh-my-pi/pi-tui/tools/edit";
+} from "@marsai-org/tui/thinking";
+import type { EditMode } from "@marsai-org/tui/tools/edit";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ResetRecoveryResult } from "./codex-auto-reset";
 import type {
@@ -1683,7 +1683,7 @@ export class TurnRecovery {
 	 * Re-run fallback-chain validation once background discovery has settled and
 	 * reconcile `configWarnings`. Startup validation suppresses "unknown model"
 	 * warnings for selectors whose config-declared discovery provider had not yet
-	 * populated the registry (a cold cache after `omp update` bumps the discovery
+	 * populated the registry (a cold cache after `mars update` bumps the discovery
 	 * namespace, #10048). With discovery done, drop any startup warning discovery
 	 * resolved and surface warnings for selectors that stayed unknown.
 	 *

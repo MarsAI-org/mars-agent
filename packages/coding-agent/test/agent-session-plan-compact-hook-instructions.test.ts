@@ -16,17 +16,17 @@
  *   `CompactOptions.internalGuidance` instead.
  * - The `session_before_compact` hook event MUST see
  *   `customInstructions: undefined` for internal-guidance compactions.
- * - The native summarizer (invoked via `@oh-my-pi/pi-agent-core/compaction`)
+ * - The native summarizer (invoked via `@marsai-org/agent-core/compaction`)
  *   MUST still receive the plan guidance so the summary is directed.
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import * as compactionModule from "@marsai-org/agent-core/compaction";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { TempDir } from "@marsai-org/utils";
 import { ModelRegistry } from "../src/config/model-registry";
 import { Settings } from "../src/config/settings";
 import type { SessionBeforeCompactEvent } from "../src/extensibility/shared-events";

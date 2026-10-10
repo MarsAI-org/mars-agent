@@ -1,5 +1,5 @@
-import { type GeneratedProvider, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { type Model, modelKind } from "@oh-my-pi/pi-catalog/types";
+import { type GeneratedProvider, getBundledModels } from "@marsai-org/catalog/models";
+import { type Model, modelKind } from "@marsai-org/catalog/types";
 
 /** Select a bundled chat model by behavior so tests survive catalog roster changes. */
 export function getTestModel(provider: GeneratedProvider, matches?: (model: Model) => boolean): Model {

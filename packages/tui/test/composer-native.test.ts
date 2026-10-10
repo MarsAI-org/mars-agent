@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { TspKind } from "@oh-my-pi/pi-wire";
-import { describeWorkingRow, type WorkingRowSpec } from "@oh-my-pi/pi-tui/components/loader";
-import { SelectList } from "@oh-my-pi/pi-tui/components/select-list";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { COMPOSER_DEFAULTS, Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { type ComposerNativeState, CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { QueuedMessagesBand } from "@oh-my-pi/pi-tui/prompt/queued-messages";
-import { createStartupStatusLine } from "@oh-my-pi/pi-tui/status-line/startup";
-import { getEditorTheme, getSelectListTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { TspKind } from "@marsai-org/wire";
+import { describeWorkingRow, type WorkingRowSpec } from "@marsai-org/tui/components/loader";
+import { SelectList } from "@marsai-org/tui/components/select-list";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { COMPOSER_DEFAULTS, Composer } from "@marsai-org/tui/prompt/composer";
+import { type ComposerNativeState, CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { QueuedMessagesBand } from "@marsai-org/tui/prompt/queued-messages";
+import { createStartupStatusLine } from "@marsai-org/tui/status-line/startup";
+import { getEditorTheme, getSelectListTheme, initTheme } from "@marsai-org/tui/theme";
 import { VirtualTerminal } from "./virtual-terminal";
 
 const context = (kinds: readonly TspKind[] | "all"): DescribeContext => ({

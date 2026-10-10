@@ -3,8 +3,8 @@
  * Listing returns metadata only; capabilities travel over authenticated IPC
  * only when a caller requests a link.
  */
-import { formatAge } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { formatAge } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import {
 	COLLAB_REGISTRY_VERSION,
 	type CollabHostSnapshot,
@@ -13,8 +13,8 @@ import {
 	listCollabHosts,
 	resolveCollabHostLink,
 } from "../collab/registry";
-import { sanitizeDisplayLine } from "@oh-my-pi/pi-tui/overlays/extensions/display-text";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
+import { sanitizeDisplayLine } from "@marsai-org/tui/overlays/extensions/display-text";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
 
 export interface CollabListCommandArgs {
 	/** Emit deterministic machine-readable JSON. */
@@ -32,13 +32,13 @@ export interface CollabLinkCommandArgs {
 	registry?: CollabListOptions;
 }
 
-/** Versioned top-level JSON shape for `omp collab list --json`. */
+/** Versioned top-level JSON shape for `mars collab list --json`. */
 export interface CollabListJsonOutput {
 	version: number;
 	hosts: CollabHostSnapshot[];
 }
 
-/** Versioned capability response for `omp collab link --json`. */
+/** Versioned capability response for `mars collab link --json`. */
 export interface CollabLinkJsonOutput extends CollabResolvedLink {
 	version: number;
 }
@@ -83,7 +83,7 @@ export async function runCollabListCommand(
 		print(`${host.instanceId}  ${session}  ${chalk.dim(cwd)}`);
 		print(`  ${chalk.dim(details.join(" · "))}`);
 	}
-	print(chalk.dim("Get a link: omp collab link <instanceId|pid> [--view]"));
+	print(chalk.dim("Get a link: mars collab link <instanceId|pid> [--view]"));
 }
 
 export async function runCollabLinkCommand(

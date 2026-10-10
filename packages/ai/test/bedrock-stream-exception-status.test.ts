@@ -7,11 +7,11 @@
 // maps to its service-model status, so a transient frame classifies retriable
 // and a genuine validation rejection stays terminal.
 import { describe, expect, it, vi } from "bun:test";
-import { retriable } from "@oh-my-pi/pi-ai/error";
-import { bedrockStreamExceptionStatus, streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import { crc32 } from "@oh-my-pi/pi-ai/providers/aws-eventstream";
-import type { AssistantMessage, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { retriable } from "@marsai-org/ai/error";
+import { bedrockStreamExceptionStatus, streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import { crc32 } from "@marsai-org/ai/providers/aws-eventstream";
+import type { AssistantMessage, Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 function model(): Model<"bedrock-converse-stream"> {
 	return buildModel({

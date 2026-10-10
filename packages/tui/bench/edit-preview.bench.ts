@@ -13,7 +13,7 @@
  *
  * Run: bun packages/tui/bench/edit-preview.bench.ts
  */
-import { editInspect } from "@oh-my-pi/pi-natives";
+import { editInspect } from "@marsai-org/natives";
 import { getThemeByName } from "../src/theme";
 import { editToolRenderer } from "../src/tools/edit";
 

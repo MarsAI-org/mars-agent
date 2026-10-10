@@ -1,4 +1,4 @@
-import type { AskToolDetails, QuestionResult } from "@oh-my-pi/pi-tui/tools/ask";
+import type { AskToolDetails, QuestionResult } from "@marsai-org/tui/tools/ask";
 /**
  * Ask Tool - Interactive user prompting during execution
  *
@@ -16,16 +16,16 @@ import type { AskToolDetails, QuestionResult } from "@oh-my-pi/pi-tui/tools/ask"
  *   - Questions may time out and auto-select the recommended option (configurable, disabled in plan mode)
  */
 
-import { type as arkType } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import { type ImageContent, type TextContent, type ToolExample, validateToolArguments } from "@oh-my-pi/pi-ai";
-import { replaceTabs, TERMINAL, truncateToWidth } from "@oh-my-pi/pi-tui";
-import { isRecord, logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+import { type as arkType } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import { type ImageContent, type TextContent, type ToolExample, validateToolArguments } from "@marsai-org/ai";
+import { replaceTabs, TERMINAL, truncateToWidth } from "@marsai-org/tui";
+import { isRecord, logger, prompt, untilAborted } from "@marsai-org/utils";
 
 import type { ExtensionUISelectItem } from "../extensibility/extensions";
-import { formatKeyHint, formatKeyHints } from "@oh-my-pi/pi-tui/app-keybindings";
-import { editorKey, editorKeys } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { formatKeyHint, formatKeyHints } from "@marsai-org/tui/app-keybindings";
+import { editorKey, editorKeys } from "@marsai-org/tui/chrome/keybinding-hints";
+import { theme } from "@marsai-org/tui/theme";
 import askDescription from "../prompts/tools/ask.md" with { type: "text" };
 import { vocalizer } from "../tts/vocalizer";
 
@@ -34,8 +34,8 @@ import {
 	disambiguateDisplayLabels,
 	sanitizeCarriageReturns,
 	TRUNCATE_LENGTHS,
-} from "@oh-my-pi/pi-tui/render/render-utils";
-import { shiftImageMarkers } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
+} from "@marsai-org/tui/render/render-utils";
+import { shiftImageMarkers } from "@marsai-org/tui/prompt/composer-attachments";
 import { ToolAbortError } from "./tool-errors";
 
 import { sessionLocalProtocolOptions } from "../internal-urls/context";
@@ -587,7 +587,7 @@ export class AskTool implements AgentTool<typeof askSchema, AskToolDetails> {
 		const method = cfgAskNotify.get(this.session.settings);
 		if (method === "off") return;
 		TERMINAL.sendNotification({
-			title: "omp",
+			title: "mars",
 			body: "Waiting for input",
 			type: "ask",
 			urgency: "normal",

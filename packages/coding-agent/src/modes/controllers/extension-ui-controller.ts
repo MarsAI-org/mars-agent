@@ -1,8 +1,8 @@
-import type { Component, OverlayHandle, TUI } from "@oh-my-pi/pi-tui";
-import { Container, Spacer, Text } from "@oh-my-pi/pi-tui";
-import type { CollabUiRequestDraft, CollabUiSelectItem } from "@oh-my-pi/pi-wire";
+import type { Component, OverlayHandle, TUI } from "@marsai-org/tui";
+import { Container, Spacer, Text } from "@marsai-org/tui";
+import type { CollabUiRequestDraft, CollabUiSelectItem } from "@marsai-org/wire";
 import type { CollabHost } from "../../collab/host";
-import { formatKeyHint, formatKeyHints, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { formatKeyHint, formatKeyHints, KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 import type {
 	CompactOptions,
 	ExtensionActions,
@@ -29,16 +29,16 @@ import {
 	type AskDialogPromptValue,
 	AskDialogComponent,
 	normalizeDialogQuestions,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { installExtensionComposerShape } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import { boundPromptTitle, HookEditorComponent, type HookEditorOptions } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import { HookSelectorComponent, type HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/overlays/ask-dialog";
+import { installExtensionComposerShape } from "@marsai-org/tui/overlays/composer-shape-registry";
+import { EditorTopGap } from "@marsai-org/tui/prompt/editor-top-gap";
+import { boundPromptTitle, HookEditorComponent, type HookEditorOptions } from "@marsai-org/tui/overlays/hook-editor";
+import { HookInputComponent } from "@marsai-org/tui/overlays/hook-input";
+import { HookSelectorComponent, type HookSelectorSlider } from "@marsai-org/tui/overlays/hook-selector";
+import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@marsai-org/tui/theme";
 import type { InteractiveModeContext, InteractiveSelectorDialogOptions } from "../../modes/types";
 import { normalizeCustomMessagePayload, USER_INTERRUPT_LABEL } from "../../session/messages";
-import { disambiguateDisplayLabels, sanitizeCarriageReturns } from "@oh-my-pi/pi-tui/render/render-utils";
+import { disambiguateDisplayLabels, sanitizeCarriageReturns } from "@marsai-org/tui/render/render-utils";
 import { setExtensionTerminalTitle, setSessionTerminalTitle } from "../../utils/title-generator";
 import { getEditorCommand, openInEditor } from "../../utils/external-editor";
 

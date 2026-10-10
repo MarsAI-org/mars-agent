@@ -4,8 +4,8 @@
  * Uses the configured Codex Responses transport for proxy/API-key setups and
  * the official ChatGPT backend for OAuth logins.
  */
-import { type Api, type AuthStorage, type FetchImpl, type Model, withAuth, withOAuthAccess } from "@oh-my-pi/pi-ai";
-import { resolveCodexResponsesUrl } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import { type Api, type AuthStorage, type FetchImpl, type Model, withAuth, withOAuthAccess } from "@marsai-org/ai";
+import { resolveCodexResponsesUrl } from "@marsai-org/ai/providers/openai-codex-responses";
 import {
 	applyCodexResidencyHeader,
 	CODEX_BASE_URL,
@@ -13,8 +13,8 @@ import {
 	getCodexAccountId,
 	OPENAI_HEADER_VALUES,
 	OPENAI_HEADERS,
-} from "@oh-my-pi/pi-catalog/wire/codex";
-import { readSseJson, USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/wire/codex";
+import { readSseJson, USER_AGENT } from "@marsai-org/utils";
 import type { SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";
 import { formatQuery, GOOGLE_QUERY_SYNTAX, parseSearchQuery } from "../query";

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { YieldTool } from "@oh-my-pi/pi-coding-agent/tools/yield";
-import { attachIrcWakeTurnMonitor } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { YieldTool } from "@marsai-org/coding-agent/tools/yield";
+import { attachIrcWakeTurnMonitor } from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 function toolSession(overrides: Partial<ToolSession> = {}): ToolSession {

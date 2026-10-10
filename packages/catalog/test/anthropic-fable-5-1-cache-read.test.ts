@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 // Anthropic priced Fable 5.1 cache reads at $0.25/MTok, 0.025x its $10 input,
 // a 75% cut from Fable 5's $1.00. Every other current Claude model keeps the

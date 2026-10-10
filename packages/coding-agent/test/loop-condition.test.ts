@@ -1,11 +1,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	describeLoopCondition,
 	evaluateLoopCondition,
 	type LoopConditionVerdict,
-} from "@oh-my-pi/pi-coding-agent/modes/loop-condition";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/loop-condition";
+import { TempDir } from "@marsai-org/utils";
 
 describe("evaluateLoopCondition", () => {
 	let tempDir: TempDir;

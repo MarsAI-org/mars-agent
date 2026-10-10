@@ -1,12 +1,12 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { serializeCloudflareAiGatewayCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare-ai-gateway";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { GeminiProvider, searchGemini } from "@oh-my-pi/pi-coding-agent/web/search/providers/gemini";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { serializeCloudflareAiGatewayCredential } from "@marsai-org/catalog/wire/cloudflare-ai-gateway";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { GeminiProvider, searchGemini } from "@marsai-org/coding-agent/web/search/providers/gemini";
 
 const SSE_RESPONSE =
 	'data: {"response":{"candidates":[{"content":{"role":"model","parts":[{"text":"Gemini answer"}]}}],"modelVersion":"gemini-2.5-flash"}}\n\n';

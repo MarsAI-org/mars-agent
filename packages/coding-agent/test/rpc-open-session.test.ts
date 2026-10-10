@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { openRpcSession, type RpcOpenSessionSession } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getConfigRootDir, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { openRpcSession, type RpcOpenSessionSession } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { getConfigRootDir, setAgentDir } from "@marsai-org/utils";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 /** AgentSession stand-in whose session transitions run against a real SessionManager. */

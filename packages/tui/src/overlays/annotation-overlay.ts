@@ -16,7 +16,7 @@ import { wrapLiteralLine } from "../utils";
 import { appKey, editorKey } from "../chrome/keybinding-hints";
 import { formatKeyHint, formatKeyHints, type KeybindingsManager } from "../app-keybindings";
 import type { Keybinding } from "../keybindings";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { type Theme } from "../theme/theme";
 import type {
 	CodeReviewAnnotation,
@@ -155,7 +155,7 @@ function isTextSource(value: readonly ReviewDiffFile[] | TextReviewSource): valu
 	return !Array.isArray(value);
 }
 
-/** A fullscreen, annotated diff picker that only relies on public OMP APIs. */
+/** A fullscreen, annotated diff picker that only relies on public Mars APIs. */
 export class AnnotationOverlay implements Focusable {
 	focused = false;
 	#scrollView: ScrollView;

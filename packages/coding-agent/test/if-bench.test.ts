@@ -7,11 +7,11 @@ import type {
 	AssistantMessageEventStream,
 	Context,
 	Model,
-} from "@oh-my-pi/pi-ai";
-import type { BenchModelRegistry } from "@oh-my-pi/pi-coding-agent/cli/bench-runtime";
-import { runIfBenchCommand } from "@oh-my-pi/pi-coding-agent/if-bench";
-import { applyActions, initialArray, makeActions } from "@oh-my-pi/pi-coding-agent/if-bench/actions";
-import { assessResponse, buildTurnPrompt } from "@oh-my-pi/pi-coding-agent/if-bench/protocol";
+} from "@marsai-org/ai";
+import type { BenchModelRegistry } from "@marsai-org/coding-agent/cli/bench-runtime";
+import { runIfBenchCommand } from "@marsai-org/coding-agent/if-bench";
+import { applyActions, initialArray, makeActions } from "@marsai-org/coding-agent/if-bench/actions";
+import { assessResponse, buildTurnPrompt } from "@marsai-org/coding-agent/if-bench/protocol";
 
 const LENGTH = 24;
 const NYA_MAX = 8;

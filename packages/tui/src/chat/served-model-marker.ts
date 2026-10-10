@@ -1,5 +1,5 @@
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { classifyModel } from "@marsai-org/catalog/identity";
 import { MessageDividerComponent } from "../chrome/message-divider";
 import { theme } from "../theme";
 
