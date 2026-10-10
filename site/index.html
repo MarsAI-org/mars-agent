@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mars — A coding agent with the IDE wired in</title>
+  <link rel="icon" href="https://github.com/MarsAI-org.png">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --heading: #f0f6fc;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+      --code-bg: #1f242c;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: var(--heading);
+      margin-bottom: 10px;
+    }
+    p.tagline {
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-top: 0;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h2 {
+      font-size: 1.4rem;
+      color: var(--heading);
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      color: var(--heading);
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+      color: var(--accent-hover);
+    }
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: #8b949e;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Mars</h1>
+      <p class="tagline">A coding agent with the IDE wired in.</p>
+    </header>
+
+    <div class="card">
+      <h2>Install</h2>
+      <p>Install Mars quickly via the official install scripts:</p>
+      
+      <p><strong>macOS &amp; Linux:</strong></p>
+      <pre><code>curl -fsSL https://getmars.eu.cc/install | sh</code></pre>
+
+      <p><strong>Windows (PowerShell):</strong></p>
+      <pre><code>irm https://getmars.eu.cc/install.ps1 | iex</code></pre>
+
+      <p>Or download prebuilt release binaries directly from GitHub Releases:</p>
+      <p><a href="https://github.com/MarsAI-org/mars-agent/releases" target="_blank" rel="noopener">https://github.com/MarsAI-org/mars-agent/releases</a></p>
+    </div>
+
+    <div class="card">
+      <h2>Source Code &amp; Documentation</h2>
+      <p>Mars is free, open source, and continuously tuned for real-world software engineering:</p>
+      <p>Repository: <a href="https://github.com/MarsAI-org/mars-agent" target="_blank" rel="noopener">https://github.com/MarsAI-org/mars-agent</a></p>
+    </div>
+
+    <footer>
+      <p>Mars is a fork of oh-my-pi by can1357, which is a fork of Pi by Mario Zechner. Both are MIT licensed.</p>
+    </footer>
+  </div>
+</body>
+</html>
