@@ -517,7 +517,15 @@
 			"import": "./src/web/search/providers/*.ts"
 		},
 		"./prompts/*": "./src/prompts/*.md",
-		"./*.js": "./src/*.ts"
+		"./*.js": "./src/*.ts",
+		"./orchestrator": {
+			"types": "./src/orchestrator/index.ts",
+			"import": "./src/orchestrator/index.ts"
+		},
+		"./orchestrator/*": {
+			"types": "./src/orchestrator/*.ts",
+			"import": "./src/orchestrator/*.ts"
+		}
 	},
 	"scripts": {
 		"build": "bun scripts/build-binary.ts",
