@@ -38,8 +38,8 @@ This document is the continuous working handoff for engineering sessions across 
      - TUI design: 100+ column desktop grid view and <80 column narrow phone tabbed view.
      - Observability, testing strategy, and benchmark plan.
      - 5-milestone phased roadmap.
-     - Dedicated Android/Termux support section (Support Matrix: PRoot-distro Linux ARM64 primary + Remote Client fallback).
-     - Comprehensive Autonomous Decision Log (Section 16).
+     - Dedicated Android/Termux support section (Support Matrix: PRoot-distro Linux ARM64 primary + Remote Client fallback; every claim labeled VERIFIED with file:line evidence or UNVERIFIED with a validation path).
+     - Comprehensive Autonomous Decision Log (Section 16); router thresholds and concurrency/process caps are labeled initial defaults to be tuned by the benchmark, not verified values.
 3. **Implementation Next Steps & Ready-to-Paste Prompts**:
    - Written `ORCHESTRATOR_NEXT_STEPS.md` in repository root containing ready-to-paste prompts for Milestone 1 (Core Engine without UI) and Milestone 2 (Termux Feasibility Spike), plus manual mobile device test checklists.
 
@@ -48,13 +48,16 @@ This document is the continuous working handoff for engineering sessions across 
 ## 3. Autonomous Decisions Taken
 
 Full details are recorded in Section 16 of `ORCHESTRATOR_DESIGN.md`:
-- **DEC-01 (Concurrency)**: Default max concurrency set to 4 on desktop and 2 on Android/Termux (protecting thermals and the Android 12+ 32 phantom process cap).
+- **DEC-01 (Concurrency)**: Initial default max concurrency of 4 on desktop and 2 on Android/Termux (conservative defaults; platform process-kill thresholds are UNVERIFIED; to be tuned by the benchmark).
 - **DEC-02 (File Conflict Prevention)**: Pre-emptive path-based write leases with two-phase verification and commit (prevents wasting tokens on unmergeable work).
 - **DEC-03 (Permission Requirement)**: Child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than its parent's.
-- **DEC-04 (Termux Architecture)**: PRoot-distro Linux ARM64 chosen as the primary installation path (standard `linux-arm64` binary runs without Bun engine porting); Remote Client mode as fallback.
+- **DEC-04 (Termux Architecture)**: PRoot-distro Linux ARM64 chosen as the primary installation path (uses the existing `linux-arm64` artifact; upstream Bun Android/Bionic support is UNVERIFIED, so the conservative choice avoids depending on it); Remote Client mode as fallback. Device validation is the Milestone 2 spike.
 - **DEC-05 (Mobile TUI)**: Narrow terminal (<80 cols) falls back to single focused worker view with a tabbed worker switcher strip and touch-friendly single-key navigation.
 - **DEC-06 (Format Command Handling)**: Bun was absent on PATH in the audit container; manual verification was used instead of failing `bun run fmt:tools`.
 - **DEC-07 (Repo-local Git Identity)**: Configured repo-local `user.name` and `user.email` matching `robomarsx` without modifying global configuration.
+- **DEC-08 (Evidence Labeling Policy)**: Platform/Termux claims are VERIFIED only with file:line evidence from this repository; all behavioral claims (PRoot execution, Remote Mode, upstream Bun Bionic, Android process-kill thresholds) are UNVERIFIED pending Milestone 2 device validation.
+- **DEC-09 (Numeric Thresholds)**: Router thresholds, concurrency/process caps, and budgets are initial defaults to be tuned by the benchmark, not settled values.
+- **DEC-10 (Smoke-Test Flag)**: `mars --smoke-test` verified to exist in the CLI source (`packages/coding-agent/src/cli.ts:541`); kept in the device checklist with the note that it spawns the full worker set and a reduced mobile probe is a Milestone 2 task.
 
 ---
 

@@ -100,9 +100,9 @@ The existing Mars codebase already provides foundational primitives for tasks, i
   - `packages/tui/src/tools/task.ts:1350-1420` renders framed tool cards, live spinners (33ms ticks), agent progress rows, and aggregate execution statistics.
 
 ### 2.6 Session, Persistence, and Telemetry
-- Sessions persist as JSONL streams in `~/.mars/agent/sessions/` (`packages/coding-agent/src/session/session-manager.ts:400-420`).
+- Sessions persist as JSONL streams written to a timestamped `.jsonl` session file under the agent session directory (`packages/coding-agent/src/session/session-manager.ts:1989-1992`); the config root is `~/.mars` (`packages/utils/src/dirs.ts:120`).
 - Global agent registry and lifecycle are managed in `packages/coding-agent/src/registry/agent-registry.ts:1-20` and `packages/coding-agent/src/registry/agent-lifecycle.ts`.
-- Logs write to `~/.mars/logs/mars.YYYY-MM-DD.log` via the centralized logger in `packages/utils/src/logger.ts` and directory resolver in `packages/utils/src/dirs.ts:807`.
+- Logs are written by the centralized logger to a rotating `~/.mars/logs/mars.<DATE>.<PID>.log` (`packages/utils/src/logger.ts:4`).
 
 ### 2.7 Testing Infrastructure & Mocking
 - Deterministic mock sessions and mock model drivers are established in `packages/coding-agent/test/task/executor-yield-loop.test.ts:47` and `packages/coding-agent/test/context-consolidation.test.ts:34`, allowing testing of complex subagent flows, prompt turns, and tool calls without network requests or live API keys.
@@ -125,11 +125,11 @@ The existing Mars codebase already provides foundational primitives for tasks, i
   - Built with Rust (`crates/pi-natives/Cargo.toml:1-70`) and linked via `napi`.
   - Process management in `crates/pi-shell/src/process.rs:19` uses `#[cfg(target_os = "linux")]` with `open_pidfd` and `/proc/{pid}/task`.
   - **VERIFIED**: In Rust, `target_os = "android"` is distinct from `target_os = "linux"`. Compiling for Android requires updating target gates to `#[cfg(any(target_os = "linux", target_os = "android"))]`.
-  - Clipboard (`crates/pi-natives/src/clipboard.rs:1-70`) uses `arboard`, which lacks native Android clipboard support without X11 or Wayland.
-- **Hardcoded Path Assumptions**:  
-  - `packages/utils/src/procmgr.ts:127` hardcodes search paths: `["/bin", "/usr/bin", "/usr/local/bin", "/opt/homebrew/bin"]`, omitting Termux's `$PREFIX/bin` (`/data/data/com.termux/files/usr/bin`).
-  - `packages/coding-agent/src/config/resolve-config-value.ts:132` hardcodes `["/bin/sh", "-c", command]`. On Android/Termux, `/bin/sh` does not exist without root.
-  - `packages/tui/src/status-line/segments.ts:143` hardcodes `/tmp` in scratch roots. In Termux, temporary storage is located at `$PREFIX/tmp`.
+  - Clipboard (`crates/pi-natives/src/clipboard.rs:1-70`) uses `arboard` (VERIFIED); whether `arboard` supports an Android clipboard backend without X11 or Wayland is UNVERIFIED and must be checked in Milestone 2.
+- **Hardcoded Path Assumptions** (code facts VERIFIED from the cited lines; the Termux-specific expectations attached to them are platform knowledge, UNVERIFIED from this repository):  
+  - `packages/utils/src/procmgr.ts:127` hardcodes search paths: `["/bin", "/usr/bin", "/usr/local/bin", "/opt/homebrew/bin"]` — Termux's `$PREFIX/bin` is not among them.
+  - `packages/coding-agent/src/config/resolve-config-value.ts:132` hardcodes `["/bin/sh", "-c", command]` (UNVERIFIED expectation: on Android/Termux `/bin/sh` is assumed absent without root).
+  - `packages/tui/src/status-line/segments.ts:143` hardcodes `/tmp` in scratch roots (UNVERIFIED expectation: Termux temporary storage is assumed located under `$PREFIX/tmp`).
 - **Install Script Behavior (`mars-site/install`)**:  
   - `mars-site/install:77-90, 220-239` inspects `uname -s` (returns `Linux`) and `uname -m` (returns `aarch64` -> `arm64`).
   - It selects `linux-arm64` (glibc).
@@ -512,7 +512,7 @@ export interface WorkerBackendAdapter {
 
 ## 10. Observability
 
-1. **Structured Log Files**: All orchestration lifecycle events write to `~/.mars/logs/mars.YYYY-MM-DD.log` with `{ correlationId: planId, workerId }`.
+1. **Structured Log Files**: All orchestration lifecycle events write to the rotating daily log `~/.mars/logs/mars.<DATE>.<PID>.log` (`packages/utils/src/logger.ts:4`) with `{ correlationId: planId, workerId }`.
 2. **Replay & Export Artifact**: At the conclusion of a run, the orchestrator exports `~/.mars/agent/sessions/<id>/orchestration-run.jsonl` recording:
    - Full dependency DAG.
    - Per-worker tool calls, token usage, and durations.
@@ -615,7 +615,7 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
    Detect Termux via `[ -n "$PREFIX" ] && [ -d "$PREFIX" ]`. When detected, advise or bootstrap PRoot-distro setup.
 
 ### 15.3 Install & Update Flow in Termux
-- Binaries and configuration reside strictly within Termux home (`$HOME/.mars`), never on external shared storage (`/sdcard`), avoiding Android scoped storage restrictions and permission errors.
+- Binaries and configuration reside within Termux home (`$HOME/.mars`), never on external shared storage (`/sdcard`) — a standard Android practice to avoid scoped-storage restrictions (environment behavior UNVERIFIED).
 - Checksums (`SHA256`) are verified before installation.
 - Self-updater issues clear hints matching the PRoot or native environment.
 
@@ -658,8 +658,11 @@ Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone
 |---|---|---|---|---|---|
 | **DEC-01** | Orchestrator Concurrency Default | 1, 4, 8, 32 | **Initial defaults: Desktop 4; Mobile 2** | Default 32 in current settings (`packages/coding-agent/src/task/settings.ts:280-301`) is too high for orchestrator fan-out; 4 gives desktop parallelism without provider rate-limit exhaustion; 2 is a conservative mobile default. All values UNVERIFIED — tune via the Section 12 benchmark. | User can adjust via `orchestrator.maxConcurrency`; benchmark may revise both defaults. |
 | **DEC-02** | File Collision Prevention | Git 3-way merge resolution vs Pre-emptive Write Leases | **Pre-emptive Write Leases with 2PC Merge** | Preventing conflicts before workers spend tokens editing is intended to be faster and cleaner than post-hoc merge conflicts (assumption UNVERIFIED; benchmark conflict metrics will test it). | If subtasks require collaborative editing of the same file, introduce diff-hunk leasing. |
-| **DEC-03** | Subagent Approval Inheritance | Inherit "yolo" vs User prompt per tool vs Parent Approval Tier Clamping | **Permission Intersection Rule**: child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than the parent's. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit if explicit parent-authorized privilege elevation is designed. |
+| **DEC-03** | Subagent Approval Inheritance | Inherit auto-approval vs User prompt per tool vs Parent Approval Tier Clamping | **Permission Intersection Rule**: child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than the parent's. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit if explicit parent-authorized privilege elevation is designed. |
 | **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite | **PRoot Linux ARM64 (Primary) + Remote Mode (Fallback)** | This repo's build matrix has no Android/Bionic target (VERIFIED) and upstream Bun Android support is UNVERIFIED, so the conservative choice avoids depending on it. A Node-only rewrite would require polyfilling hundreds of `bun:sqlite` / Bun API call sites (many VERIFIED call sites). Whether the `linux-arm64` artifact runs under PRoot on a phone is UNVERIFIED — that is exactly what Milestone 2 tests. | Revisit when upstream Bun releases official Android Bionic support or the PRoot path fails on device. |
 | **DEC-05** | Narrow Terminal Mobile TUI Layout | Mini-grid (2 columns) vs Tabbed Single-Panel View | **Tabbed Single-Panel View with Worker Switcher Strip** (initial default below 80 columns; threshold tunable) | 2-column grid is expected to be unreadable at 45 columns. Tabbed single-panel preserves readability while giving full status visibility. | If terminal width >= 80, automatically upgrade to multi-column grid; adjust the 80-column threshold based on device feedback. |
 | **DEC-06** | Test Runner Availability in Audit Session | Run `bun run check:tools` / `fmt:tools` | **Omit Bun execution; verify code and formatting manually** | Bun binary is not pre-installed in the current execution container. Commands fail with code 127. | Subsequent implementation sessions with Bun environment will run automated format checks. |
 | **DEC-07** | Git Author Identity | Leave unset vs Set repo-locally | **Set repo-locally (`robomarsx`)** | Repo-local configuration complies with project guidelines without touching global git configuration. | Revisit if team provides distinct author credentials. |
+| **DEC-08** | Evidence Labeling Policy for Platform Claims | Mark Termux/Android claims VERIFIED on plausibility vs require file:line evidence | **VERIFIED only with file:line evidence from this repository**; every Termux/Android behavioral claim (PRoot execution of the `linux-arm64` binary, Remote Mode on a phone, upstream Bun Bionic support, Android process-kill thresholds, Termux tool behavior) is labeled UNVERIFIED with a validation path (Milestone 2 device check). | The document is public; unmeasured or non-code-derived claims must never read as facts. | Claims graduate to VERIFIED only when a real device test or a repository code reference backs them. |
+| **DEC-09** | Numeric Thresholds and Caps Status | Present router thresholds, concurrency, process caps, and budgets as settled values vs initial defaults | **Initial defaults to be tuned by the Section 12 benchmark**; each carries an UNVERIFIED-style note where no code evidence exists. | Speed-first positioning requires data-driven tuning, not invented constants. | Revise values once benchmark metrics exist. |
+| **DEC-10** | `mars --smoke-test` in the Manual Checklist | Replace the flag vs keep it with evidence | **Keep with evidence**: the flag exists (VERIFIED, `packages/coding-agent/src/cli.ts:541`, handler `runSmokeTest` at `packages/coding-agent/src/cli.ts:137`) but spawns the full worker set, so phone success is UNVERIFIED and a reduced mobile probe is a Milestone 2 task. | The command is real; replacing it would weaken the checklist. | Milestone 2 defines a reduced mobile probe. |
