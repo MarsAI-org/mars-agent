@@ -3,6 +3,7 @@ import {
 	$envExact,
 	directoryIsEnterable,
 	getProjectDir,
+	isAndroid,
 	logger,
 	procmgr,
 	ptree,
@@ -137,7 +138,10 @@ export async function runShellCommand(
 			return trimmed.length > 0 ? trimmed : undefined;
 		}
 
-		const shellBinary = procmgr.resolveBasicShell() ?? "/bin/sh";
+		// Keep the historical /bin/sh everywhere it exists; resolve the shell
+		// from PATH only on Android/Termux, where /bin/sh is absent. Behavior on
+		// linux-x64, macOS, and Windows is therefore unchanged.
+		const shellBinary = isAndroid() ? (procmgr.resolveBasicShell() ?? "/bin/sh") : "/bin/sh";
 		const result = await ptree.exec([shellBinary, "-c", command], {
 			cwd,
 			timeout: timeoutMs,
