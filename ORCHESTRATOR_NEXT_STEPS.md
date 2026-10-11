@@ -186,3 +186,62 @@ smoke test is the deliverable.
 
 Then: gates, squash merge, pull main, rebuild.
 ```
+
+---
+
+## Release workflow and prerelease (after the npm bootstrap publish)
+
+```markdown
+Read HANDOFF.md first, especially §7 (npm publish state) and §8 (human-only tasks).
+
+Branch: chore/release-prerelease.
+
+The repository already has `.github/workflows/release.yml` (tag `v*` + workflow_dispatch with a
+`dry_run` input; matrix over every platform/arch `scripts/ci-release-build-binaries.ts` supports;
+SHA256 checksums; `softprops/action-gh-release` with `contents: write`; per-platform smoke tests).
+Reuse it — do NOT add a second release workflow. `ci.yml` also carries `release_binary` /
+`release_smoke` / `release_native_leaves` / `release_npm` / `release_brew`, all disabled with
+`if: github.repository == 'MarsAI-org/mars-agent' && false`; leave them disabled and say so.
+
+Steps:
+1. Inspect `release.yml` against the hygiene rules and fix only real gaps: actions pinned to full
+   SHAs, `contents: read` by default and `contents: write` only in the release job, no secret in a
+   build step, and every platform either built-and-smoke-tested or explicitly excluded (never
+   silently skipped).
+2. Run it with `gh workflow run release.yml -f dry_run=true`, watch it with `gh run watch`, and fix
+   what fails until the dry run is green on every platform you can build. Record any platform you
+   deliberately exclude and why.
+3. Only then tag a prerelease on `main` (`v<version>-rc.1`) and verify the assets with
+   `gh release view`. Do NOT create a stable release and do NOT move the npm `latest` dist-tag.
+
+Report: the workflow's state, the dry-run result per platform, the prerelease link, and anything
+still excluded.
+```
+
+---
+
+## Android PTY pipe fallback (no device needed)
+
+```markdown
+Read HANDOFF.md §7 (Android status) and ORCHESTRATOR_DESIGN.md §15.7 first.
+
+Branch: feat/android-pty-fallback.
+
+`crates/pi-natives/src/pty.rs` currently has no `target_os = "android"` path; DEC-14 deferred it
+because untested fallback code in the interactive-bash hot path is a correctness risk. Implement it
+now WITH tests that run on the host:
+
+1. Add the pipe-based fallback for `target_os = "android"` only, leaving every other platform's
+   code path byte-identical. Prove neutrality: the linux-x64 clippy run and the full TS suite must
+   stay green, and the new code must be behind the same kind of `cfg` gate Milestone 2 used.
+2. Cover it with simulated tests that do not need Android: drive the fallback through a seam the
+   tests can exercise on linux (e.g. a `cfg(test)`-visible constructor), and assert the observable
+   contract (spawn, stream both directions, exit-code propagation, EOF) rather than the
+   implementation.
+3. Extend the `cfg` gating elsewhere ONLY where the advisory cross-compile job
+   (`.github/workflows/android-cross-check.yml`) reports real errors. Do not pre-emptively widen it.
+4. Document every blocker that genuinely needs an NDK or a physical device; do not claim device
+   behaviour you cannot observe.
+
+Then: gates, squash merge, pull main, rebuild. Report what is simulated-tested vs UNVERIFIED.
+```
