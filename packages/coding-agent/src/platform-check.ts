@@ -131,6 +131,10 @@ function formatReport(report: PlatformCheckReport): string {
 		`shared storage in use: ${report.paths.onSharedStorage ? "YES — move config under the Termux home" : "no"}`,
 	);
 	lines.push(`worker host: ${report.workerHost.canSpawnWorkers ? "available" : "unavailable"}`);
+	if (report.platform.isTermux) {
+		lines.push("tip: run `termux-wake-lock` before long multi-worker runs so Android does not");
+		lines.push("     suspend the session; release it with `termux-wake-unlock` when finished.");
+	}
 	return lines.join("\n");
 }
 
