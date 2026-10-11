@@ -12,13 +12,18 @@ This document carries the ready-to-paste prompts for the milestones that remain.
 | A | Design PR (#16) | **MERGED** |
 | B | Milestone 1 — core orchestrator, no UI (#18) | **MERGED** |
 | C | Milestone 2 — native aarch64 Android/Termux, no proot (#19) | **MERGED** |
+| — | Baseline repair — stale compat rules + measured failure table (#27) | **MERGED** |
+| — | npm publish readiness (#28) + preflight (#29) + loop fix (#30) | **MERGED** |
+| — | Bootstrap publish to npm | **DONE (11/12 live; `ai` staged — see HANDOFF §7)** |
 | D | Milestone 3 — two-phase merge and verification pipeline | **NOT STARTED** |
 | E | Milestone 4 — external CLI backend adapter | **NOT STARTED** |
 | F | Milestone 5 — TUI (desktop grid + phone single-panel) | **NOT STARTED** |
 | G | Benchmark harness | **NOT STARTED** |
+| — | Android PTY pipe fallback (`target_os = "android"`) | **NOT STARTED** |
 
-Remaining order: **D → E → F → G** (core behaviour before presentation), with the
-Android follow-ups in `HANDOFF.md` §7 running in parallel as human work.
+Remaining order: **D → E → F → G**, with the Android PTY fallback and the
+release/prerelease work as separate tracks. `HANDOFF.md` is the entry point and
+carries the current state; read it before this file.
 
 ---
 
