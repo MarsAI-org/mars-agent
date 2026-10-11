@@ -283,7 +283,7 @@ async fn wait_for_exits(processes: &[proc_snapshot::ProcInfo]) {
 }
 
 /// Waits on a pidfd per process and returns the processes that need polling.
-#[cfg(target_os = "linux")]
+#[cfg(any(target_os = "linux", target_os = "android"))]
 async fn wait_for_watchable_exits(
 	processes: &[proc_snapshot::ProcInfo],
 ) -> Vec<&proc_snapshot::ProcInfo> {
@@ -335,7 +335,7 @@ async fn wait_for_watchable_exits(
 }
 
 /// No exit notification primitive is wired up here; every process is polled.
-#[cfg(not(any(target_os = "linux", windows)))]
+#[cfg(not(any(target_os = "linux", target_os = "android", windows)))]
 async fn wait_for_watchable_exits(
 	processes: &[proc_snapshot::ProcInfo],
 ) -> Vec<&proc_snapshot::ProcInfo> {
@@ -496,7 +496,7 @@ fn parse_proc_match_args(
 					options.signal = signal_number(value.unwrap_or_default())
 						.ok_or_else(|| (2, "invalid signal".to_string()))?;
 				},
-				"--queue" if mode == ProcMatchMode::Kill && cfg!(target_os = "linux") => {
+				"--queue" if mode == ProcMatchMode::Kill && cfg!(any(target_os = "linux", target_os = "android")) => {
 					options.queue = Some(
 						value
 							.unwrap_or_default()
@@ -523,7 +523,7 @@ fn parse_proc_match_args(
 					matches!(
 						option,
 						'P' | 'g' | 's' | 'u' | 'U' | 'G' | 't' | 'F' | 'p' | 'O' | 'r' | 'd'
-					) || (option == 'q' && mode == ProcMatchMode::Kill && cfg!(target_os = "linux"));
+					) || (option == 'q' && mode == ProcMatchMode::Kill && cfg!(any(target_os = "linux", target_os = "android")));
 				let owned_value;
 				let value = if takes_value {
 					if short_index + 1 < chars.len() {
@@ -582,7 +582,7 @@ fn parse_proc_match_args(
 						options.echo_command = true;
 					},
 					'l' => options.list_name = true,
-					'q' if mode == ProcMatchMode::Kill && cfg!(target_os = "linux") => {
+					'q' if mode == ProcMatchMode::Kill && cfg!(any(target_os = "linux", target_os = "android")) => {
 						options.queue = Some(
 							value
 								.parse()

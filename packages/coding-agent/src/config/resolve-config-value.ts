@@ -148,7 +148,7 @@ export async function runShellCommand(
 			allowNonZero: true,
 			allowAbort: true,
 			detached: true,
-			subreaper: process.platform === "linux",
+			subreaper: process.platform === "linux" || isAndroid(),
 		});
 		if (!result.ok || result.exitError?.aborted) return undefined;
 		const trimmed = result.stdout.trim();

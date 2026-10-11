@@ -55,6 +55,13 @@ describe("BudgetGuard", () => {
 		expect(budget.exhausted).toBe(false);
 	});
 
+	test("a zero limit means unlimited, matching the settings documentation", () => {
+		const budget = new BudgetGuard({ maxTokens: 0, maxRequests: 0, maxWallClockMs: 0 });
+		budget.charge({ totalTokens: 5_000_000, requests: 5_000 });
+		budget.refresh();
+		expect(budget.exhausted).toBe(false);
+	});
+
 	test("exhaustion is sticky and keeps its first reason", () => {
 		const budget = new BudgetGuard({ maxTokens: 10 });
 		budget.charge({ totalTokens: 50 });

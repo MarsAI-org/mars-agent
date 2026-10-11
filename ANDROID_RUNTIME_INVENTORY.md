@@ -16,18 +16,18 @@ alternative runtime can satisfy these APIs is **UNVERIFIED** until tested.
 | `Bun.hash()` | 145 | Fast hashing (xxHash/Wyhash); Node equivalent: `crypto` (slower) |
 | `Bun.file()` | 341 | Lazy file handles; Node equivalent: `fs` promises / `fs.open` |
 | `Bun.spawn()` | 67 | Process spawning; Node equivalent: `child_process.spawn` |
-| `bun:sqlite` | 58 | Native crypto; Node equivalent: `better-sqlite3`, `node:sqlite`, or WASM SQLite |
+| `bun:sqlite` | 58 | Embedded SQLite driver; Node equivalent: `node:sqlite`, `better-sqlite3`, or WASM SQLite |
 | `import "bun"` shell (`$`) | 49 | Bun Shell; Node equivalent: `execa`, `child_process` |
 | `Bun.stringWidth()` | 45 | Terminal text width; Node equivalent: `string-width` (npm) |
 | `Bun.JSONL` | 11 | JSONL parsing; Node equivalent: manual streaming `readline` |
 | `import.meta.main` | 11 | Entrypoint detection; Node equivalent: `require.main === module` |
-| `Bun.which()` | 6 | Executable lookup; Node equivalent: `which` (npm) |
+| `Bun.which()` | 7 | Executable lookup; Node equivalent: `which` (npm) |
 | `Bun.main` | 3 | Entry module path; Node equivalent: `process.argv[1]` |
 | `Bun.serve()` | 13 | HTTP server; Node equivalent: `node:http` / `node:https` |
 | `Bun.wrapAnsi()` | 3 | ANSI-aware wrapping; Node equivalent: `wrap-ansi` (npm) |
 | `Bun.JSON5()` | 1 | JSON5 parsing; Node equivalent: `json5` (npm) |
 
-**Total Bun-specific call sites: 1,253** (categories sum).
+**Total Bun-specific call sites: 1,254** (categories sum).
 
 ## 2. High-Impact Modules Requiring Abstraction
 
@@ -51,7 +51,7 @@ Used by `packages/utils/src/procmgr.ts`, process tree control, eval backends, sh
 snapshots. Node `child_process` covers the semantics with more boilerplate.
 
 ### 2.4 Native addons
-`packages/natives` links `pi_natives.linux-x64-gnu.node` (Rust N-API). Node-N-API
+`packages/natives` links a host-specific Rust N-API addon (`pi_natives.linux-x64-modern.node` for AVX2-capable x64 hosts, `-baseline` otherwise; see `packages/natives/src/loader-state.ts`). Node-N-API
 interop is compatible, but the addon must be compiled for `aarch64-linux-android`,
 which requires the Android NDK.
 
@@ -63,7 +63,7 @@ A thin runtime facade (`packages/utils/src/runtime.ts`) exposing:
 - `sleep(ms)`, `hash(input)`, `stringWidth(text)`
 - `sqlite.open(path)` backed by `bun:sqlite` or `node:sqlite`
 
-Given the inventory (**1,253 call sites**), a mechanical refactor of all callers is
+Given the inventory (**1,254 call sites**), a mechanical refactor of all callers is
 a multi-week effort with high regression risk across 2,000+ tests. A runtime shim
 that patches the globals (`globalThis.Bun = ...`) is a lower-effort path but carries
 subtle behavioral differences (file handle laziness, atomic write semantics, error

@@ -1,11 +1,11 @@
 /**
  * Offline platform self-check.
  *
- * A small, fast, network-free command that reports what a phone tester (or CI)
- * needs first: platform detection, glibc loader/runtime status, Mars config and
- * data paths, and a worker-host handshake probe. Emits human-readable text or
- * JSON (`--json`), and never exits non-zero for UNVERIFIED facts — only for a
- * broken installation.
+ * A small, fast command that reports what a phone tester (or CI) needs first:
+ * platform detection, glibc loader/runtime status, Mars config and data paths,
+ * and worker availability. Emits human-readable text or JSON (`--json`). It is a
+ * report, not a gate: it always exits 0 (a broken installation surfaces as
+ * `not found` / `YES` lines and a non-zero exit is left to callers).
  *
  * Design reference: ORCHESTRATOR_DESIGN.md section 15 (Android/Termux support).
  */
@@ -14,7 +14,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { APP_NAME, VERSION, getAgentDir, getBaseConfigRoot } from "@marsai-org/utils/dirs";
-import { getPlatformSummary } from "@marsai-org/utils/platform";
+import { getPlatformSummary, type PlatformEnvironment } from "@marsai-org/utils/platform";
 
 export interface PlatformCheckReport {
 	readonly command: "platform-check";
@@ -47,8 +47,8 @@ export interface PlatformCheckReport {
 	};
 }
 
-function resolveGlibcPaths(): { runner?: string; loader?: string } {
-	const prefix = process.env.PREFIX ?? "";
+function resolveGlibcPaths(env: Record<string, string | undefined>): { runner?: string; loader?: string } {
+	const prefix = env.PREFIX ?? "";
 	const runnerCandidates = ["grun", path.join(prefix, "glibc/bin/grun"), path.join(prefix, "glibc/bin/grun-termux")];
 	for (const candidate of runnerCandidates) {
 		const resolved = candidate === "grun" ? Bun.which(candidate) : fs.existsSync(candidate) ? candidate : undefined;
@@ -62,23 +62,26 @@ function resolveGlibcPaths(): { runner?: string; loader?: string } {
 /** Whether a path lives on Android shared storage, where Mars must not install. */
 export function isOnSharedStorage(absolutePath: string): boolean {
 	// Android shared storage roots; Mars must never place binaries or config here.
+	// Compare on path boundaries so `/sdcard2` is not mistaken for `/sdcard`.
 	const sharedRoots = ["/sdcard", "/storage/emulated", "/mnt/sdcard"];
-	return sharedRoots.some(root => absolutePath.startsWith(root));
+	const normalized = absolutePath.replace(/\/+$/, "");
+	return sharedRoots.some(root => normalized === root || normalized.startsWith(`${root}/`));
 }
 
 /** Build the report; pure reads only, so it is safe to call anywhere. */
-export function buildPlatformCheckReport(): PlatformCheckReport {
-	const summary = getPlatformSummary();
-	const glibc = resolveGlibcPaths();
+export function buildPlatformCheckReport(context: PlatformEnvironment = {}): PlatformCheckReport {
+	const env = context.env ?? process.env;
+	const summary = getPlatformSummary(context);
+	const glibc = resolveGlibcPaths(env);
 	const configRoot = getBaseConfigRoot();
-	const ldPreload = process.env.LD_PRELOAD ?? "";
+	const ldPreload = env.LD_PRELOAD ?? "";
 	return {
 		command: "platform-check",
 		version: VERSION,
 		appName: APP_NAME,
 		platform: {
-			reportedPlatform: process.platform,
-			arch: process.arch,
+			reportedPlatform: context.platform ?? process.platform,
+			arch: context.arch ?? process.arch,
 			isAndroid: summary.isAndroid,
 			isTermux: summary.isTermux,
 			termuxPrefix: summary.termuxPrefix,
@@ -99,9 +102,10 @@ export function buildPlatformCheckReport(): PlatformCheckReport {
 		},
 		workerHost: {
 			// Termux note: Android 12+ can kill background children; the cap and
-			// keep-alive strategy live in the orchestrator settings. This probe only
-			// reports whether the worker host is constructible in this process.
-			canSpawnWorkers: true,
+			// keep-alive strategy live in the orchestrator settings. This probes
+			// whether this runtime can construct workers at all (the same check the
+			// subagent machinery relies on).
+			canSpawnWorkers: typeof globalThis.Worker === "function",
 			workerHostEntry: process.execPath,
 		},
 	};

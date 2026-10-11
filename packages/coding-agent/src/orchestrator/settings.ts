@@ -181,12 +181,53 @@ export const cfgOrchestratorMaxWallClockMs = register({
 });
 
 /**
- * Effective worker concurrency: the configured value, clamped to the mobile
- * initial default on Android/Termux. Returns the configured value on other
- * platforms. The clamp is a conservative default (UNVERIFIED), tuned by the
- * benchmark milestone; it never widens what the user configured.
+ * Effective orchestration limits for the current platform.
+ *
+ * `concurrency` is the configured worker cap, narrowed to the mobile initial
+ * default on Android/Termux. `processCap` bounds the total child process tree
+ * on Android/Termux (parent host + workers + their tool children) and is
+ * `undefined` elsewhere. Both are conservative defaults (UNVERIFIED) tuned by
+ * the benchmark milestone.
  */
-export function resolveOrchestratorConcurrency(settings: Settings, configured: number): number {
-	if (!isAndroid()) return configured;
-	return Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID);
+export interface OrchestratorLimits {
+	readonly concurrency: number;
+	readonly processCap: number | undefined;
+}
+
+/** Read the configured limits and apply the platform-aware narrowing. */
+export function resolveOrchestratorLimits(settings: Settings): OrchestratorLimits {
+	const configured = Math.max(1, Math.trunc(Number(cfgOrchestratorMaxConcurrency.get(settings)) || 1));
+	if (!isAndroid()) return { concurrency: configured, processCap: undefined };
+	return {
+		concurrency: Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID),
+		processCap: Math.max(1, Math.trunc(Number(cfgOrchestratorAndroidProcessCap.get(settings)) || 1)),
+	};
+}
+
+/**
+ * Effective worker concurrency for the current platform: the configured value,
+ * narrowed to the mobile initial default on Android/Termux and never widened.
+ */
+export function resolveOrchestratorConcurrency(settings: Settings): number {
+	return resolveOrchestratorLimits(settings).concurrency;
+}
+
+/**
+ * Normalize a configured budget into engine limits: the settings document `0`
+ * as "unlimited", which the engine expresses as `undefined`.
+ */
+export function resolveOrchestratorBudget(settings: Settings): {
+	maxTokens: number | undefined;
+	maxRequests: number | undefined;
+	maxWallClockMs: number | undefined;
+} {
+	const positive = (value: unknown): number | undefined => {
+		const n = Math.trunc(Number(value) || 0);
+		return n > 0 ? n : undefined;
+	};
+	return {
+		maxTokens: positive(cfgOrchestratorMaxTokens.get(settings)),
+		maxRequests: positive(cfgOrchestratorMaxRequests.get(settings)),
+		maxWallClockMs: positive(cfgOrchestratorMaxWallClockMs.get(settings)),
+	};
 }

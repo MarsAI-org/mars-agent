@@ -16,14 +16,16 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 MARS_BIN="${MARS_BIN:-}"
 
 if [ -z "$MARS_BIN" ]; then
-	if [ -f "$SCRIPT_DIR/../../packages/coding-agent/binaries/mars-linux-arm64" ]; then
-		MARS_BIN="$SCRIPT_DIR/../../packages/coding-agent/binaries/mars-linux-arm64"
+	if [ -n "$PREFIX" ] && [ -f "$PREFIX/bin/mars-linux-arm64" ]; then
+		MARS_BIN="$PREFIX/bin/mars-linux-arm64"
 	elif [ -f "$HOME/.local/bin/mars-linux-arm64" ]; then
 		MARS_BIN="$HOME/.local/bin/mars-linux-arm64"
 	elif [ -f "$HOME/.mars/bin/mars-linux-arm64" ]; then
 		MARS_BIN="$HOME/.mars/bin/mars-linux-arm64"
 	elif [ -f "$SCRIPT_DIR/mars-linux-arm64" ]; then
 		MARS_BIN="$SCRIPT_DIR/mars-linux-arm64"
+	elif [ -f "$SCRIPT_DIR/../../packages/coding-agent/binaries/mars-linux-arm64" ]; then
+		MARS_BIN="$SCRIPT_DIR/../../packages/coding-agent/binaries/mars-linux-arm64"
 	fi
 fi
 
@@ -65,7 +67,7 @@ fi
 # a symbol mismatch. Unset or sanitize LD_PRELOAD before entering glibc userland.
 unset LD_PRELOAD
 
-# Set default memory/process parameters friendly to Android
+# Mark the platform for the binary's own detection (harmless when unread).
 export MARS_PLATFORM="android-termux"
 
 # Execute the binary through the glibc runner or loader, preserving all args and exit code
