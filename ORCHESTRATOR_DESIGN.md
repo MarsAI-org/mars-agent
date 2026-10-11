@@ -727,7 +727,28 @@ PRoot is **NOT** a supported path for Mars on Android/Termux. PRoot containeriza
 
 ---
 
-### 15.7 Unverified Claims Disclaimer
+### 15.7 Milestone 2 Implementation Status (what shipped vs what remains)
+
+This section records exactly what the Tier work delivered, so no claim outruns the code.
+
+**Shipped and covered by tests (VERIFIED in this repo):**
+- `packages/utils/src/platform.ts`: Termux/Android/arch detection, injectable for tests.
+- Path and shell normalization: `$PREFIX/bin` in the executable search path, shell resolution gated behind `isAndroid()` (so `/bin/sh` stays the desktop path), `$TMPDIR`/`$PREFIX/tmp` as scratch roots.
+- `scripts/android/mars-termux-launcher.sh`: glibc runner/loader verification, `LD_PRELOAD` clearing for the child, argument/signal/exit-code forwarding, exact `pkg install` remediation text. Covered by launcher tests.
+- `mars --platform-check [--json]`: offline report of platform, glibc loader, `LD_PRELOAD`, paths, shared-storage placement, worker availability.
+- Android-aware orchestrator limits: `resolveOrchestratorLimits` narrows concurrency and sets a process cap on Android/Termux; the engine enforces the cap by narrowing effective concurrency (`floor((cap - 1) / 2)`), and `resolveOrchestratorBudget` maps the documented `0` to "unlimited".
+- `pi-builtins` process path gated for `target_os = "android"` (`proc_snapshot::sys`, `proc_match`, `ps`, `kill`), which is the path `pi-shell`'s identity-pinned process control needs. Linux behaviour is unchanged: verified in the working environment by `cargo fmt --all -- --check`, `CI=1 bun run check:rs` (clippy `-D warnings`), and the full TS suite, all of which pass.
+- `.github/workflows/android-cross-check.yml`: **advisory** cross-compile job (`continue-on-error`, not a required check) that skips cleanly when no NDK is present.
+
+**Not shipped — explicit follow-ups (UNVERIFIED, no code claim):**
+- **Cross-compilation for `aarch64-linux-android` is NOT verified.** The rest of `pi-builtins` (cp/date/find/ls/sed/sort/tail/wc/mkdir) still carries `target_os = "linux"` gates, and `pi-natives` needs the NDK plus a cross-built Opus. The advisory CI job is the place this becomes visible.
+- **PTY pipe fallback (`crates/pi-natives/src/pty.rs`) is NOT implemented.** The design intent stands, but shipping untested PTY fallback code was rejected as the less safe option; it belongs with the Tier-2 runtime work.
+- **Tier 3 runtime abstraction is NOT implemented** (see `ANDROID_RUNTIME_INVENTORY.md` for the inventory and cost estimate).
+- **On-device behaviour is UNVERIFIED**: see `TERMUX_TEST_CHECKLIST.md`.
+
+
+### 15.8 Unverified Claims Disclaimer
+
 Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone 2 device check) or through external measurement:
 - **UNVERIFIED**: The `linux-arm64` binary runs without crash under Termux's `glibc-runner` across various Android OEM kernels.
 - **UNVERIFIED**: Direct `statx` syscall behavior on Android 10 and 11 devices under Bun's runtime.
@@ -753,3 +774,8 @@ Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone
 | **DEC-08** | Evidence Labeling Policy for Platform Claims | Mark Termux/Android claims VERIFIED on plausibility vs require file:line evidence | **VERIFIED only with file:line evidence from this repository**; every Termux/Android behavioral claim (PRoot execution of the `linux-arm64` binary, Remote Mode on a phone, upstream Bun Bionic support, Android process-kill thresholds, Termux tool behavior) is labeled UNVERIFIED with a validation path (Milestone 2 device check). | The document is public; unmeasured or non-code-derived claims must never read as facts. | Claims graduate to VERIFIED only when a real device test or a repository code reference backs them. |
 | **DEC-09** | Numeric Thresholds and Caps Status | Present router thresholds, concurrency, process caps, and budgets as settled values vs initial defaults | **Initial defaults to be tuned by the Section 12 benchmark**; each carries an UNVERIFIED-style note where no code evidence exists. | Speed-first positioning requires data-driven tuning, not invented constants. | Revise values once benchmark metrics exist. |
 | **DEC-10** | `mars --smoke-test` in the Manual Checklist | Replace the flag vs keep it with evidence | **Keep with evidence**: the flag exists (VERIFIED, `packages/coding-agent/src/cli.ts:541`, handler `runSmokeTest` at `packages/coding-agent/src/cli.ts:137`) but spawns the full worker set, so phone success is UNVERIFIED and a reduced mobile probe is a Milestone 2 task. | The command is real; replacing it would weaken the checklist. | Milestone 2 defines a reduced mobile probe. |
+| **DEC-11** | Android process cap and concurrency clamp wiring | Leave them as inert settings vs wire them into the engine | **Wired**: `resolveOrchestratorLimits` reads the settings, and `OrchestrationEngine` enforces `processCap` by narrowing effective concurrency to `floor((cap - 1) / 2)` (one worker + one tool child per slot, one slot for the parent host); `createNativeOrchestrationEngine` is the production construction point. | An inert setting would promise Android protection that does not exist; the cap must be enforced where workers actually start. | Revisit after on-device measurement of the real process ceiling. |
+| **DEC-12** | Budget `0` semantics | Treat `0` as a real limit vs as "unlimited" | **`0` = unlimited**, normalized in `BudgetGuard` and in `resolveOrchestratorBudget`, matching the settings' documented meaning. | A `0` limit would otherwise abort every run immediately the moment the settings were wired to the engine. | None; covered by tests. |
+| **DEC-13** | Scope of the Android `cfg` work in `pi-builtins` | Gate all 62 `target_os = "linux"` sites vs only the process path `pi-shell` needs | **Only the process path** (`proc_snapshot::sys`, `proc_match`, `ps`, `kill`), which uses `/proc` and pidfd — both present on Android. The rest (cp/date/find/ls/…) stays Linux-gated and is documented as a follow-up. | A blind 62-site change is unverifiable here and could silently break builtins; the scoped change is reviewable and provably neutral on Linux (clippy + full suite). | Widen once the advisory cross-compile job runs green for `aarch64-linux-android`. |
+| **DEC-14** | PTY pipe fallback (`crates/pi-natives/src/pty.rs`) | Ship an untested Bionic pipe fallback vs defer it | **Defer**, and say so explicitly in §15.7. | Untested fallback code in the hot path of interactive bash would be a correctness risk with no way to validate it in this environment. | Implement alongside the Tier-2 Bionic runtime, with a device test. |
+| **DEC-15** | Program sequencing under a finite budget | Attempt all of D–G vs stop at a phase boundary with a full handoff | **Stop cleanly after the merged milestones and hand off** with ready-to-paste prompts for the remaining phases, rather than half-implementing large UI/benchmark work. | The instruction requires a clean stop at a phase boundary over an unfinished phase, and a partial TUI or benchmark would be unverifiable. | Resume from `HANDOFF.md` §"Remaining work". |

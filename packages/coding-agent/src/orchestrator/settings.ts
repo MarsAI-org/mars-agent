@@ -8,6 +8,14 @@
  */
 
 import { register } from "../config/registry";
+import { isAndroid } from "@marsai-org/utils/platform";
+import type { Settings } from "../config/settings";
+
+/** Mobile initial default for concurrent workers (to be tuned by the benchmark). */
+export const ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID = 2;
+
+/** Initial default cap on the total child process tree on Android (to be tuned by the benchmark). */
+export const ORCHESTRATOR_ANDROID_PROCESS_CAP = 6;
 
 /** Master switch for the orchestrator. Off by default (single agent stays the default path). */
 export const cfgOrchestratorEnabled = register({
@@ -58,13 +66,34 @@ export const cfgOrchestratorMaxConcurrency = register({
 		tab: "tasks",
 		group: "Orchestrator",
 		label: "Max Concurrent Workers",
-		description: "Maximum number of orchestrator workers running at the same time",
+		description:
+			"Maximum number of orchestrator workers running at the same time (Android/Termux caps the effective value at 2)",
 		options: [
 			{ value: "1", label: "1 worker" },
 			{ value: "2", label: "2 workers" },
 			{ value: "4", label: "4 workers" },
 			{ value: "8", label: "8 workers" },
 			{ value: "16", label: "16 workers" },
+		],
+	},
+});
+
+/** Initial default cap on the total child process tree on Android; other platforms are unbounded by this knob. */
+export const cfgOrchestratorAndroidProcessCap = register({
+	id: "orchestrator.androidProcessCap",
+	protocolDefault: ["rpc", "acp"],
+	type: "number",
+	default: ORCHESTRATOR_ANDROID_PROCESS_CAP,
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Android Process Cap",
+		description:
+			"Total child processes an orchestration run may create on Android/Termux (parent host + workers + their tool children); protects against background-process reaping",
+		options: [
+			{ value: "4", label: "4 processes" },
+			{ value: "6", label: "6 processes" },
+			{ value: "8", label: "8 processes" },
 		],
 	},
 });
@@ -147,3 +176,47 @@ export const cfgOrchestratorMaxWallClockMs = register({
 		],
 	},
 });
+
+/**
+ * Effective orchestration limits for the current platform.
+ *
+ * `concurrency` is the configured worker cap, narrowed to the mobile initial
+ * default on Android/Termux. `processCap` bounds the total child process tree
+ * on Android/Termux (parent host + workers + their tool children) and is
+ * `undefined` elsewhere. Both are conservative defaults (UNVERIFIED) tuned by
+ * the benchmark milestone.
+ */
+export interface OrchestratorLimits {
+	readonly concurrency: number;
+	readonly processCap: number | undefined;
+}
+
+/** Read the configured limits and apply the platform-aware narrowing. */
+export function resolveOrchestratorLimits(settings: Settings): OrchestratorLimits {
+	const configured = Math.max(1, Math.trunc(Number(cfgOrchestratorMaxConcurrency.get(settings)) || 1));
+	if (!isAndroid()) return { concurrency: configured, processCap: undefined };
+	return {
+		concurrency: Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID),
+		processCap: Math.max(1, Math.trunc(Number(cfgOrchestratorAndroidProcessCap.get(settings)) || 1)),
+	};
+}
+
+/**
+ * Normalize a configured budget into engine limits: the settings document `0`
+ * as "unlimited", which the engine expresses as `undefined`.
+ */
+export function resolveOrchestratorBudget(settings: Settings): {
+	maxTokens: number | undefined;
+	maxRequests: number | undefined;
+	maxWallClockMs: number | undefined;
+} {
+	const positive = (value: unknown): number | undefined => {
+		const n = Math.trunc(Number(value) || 0);
+		return n > 0 ? n : undefined;
+	};
+	return {
+		maxTokens: positive(cfgOrchestratorMaxTokens.get(settings)),
+		maxRequests: positive(cfgOrchestratorMaxRequests.get(settings)),
+		maxWallClockMs: positive(cfgOrchestratorMaxWallClockMs.get(settings)),
+	};
+}

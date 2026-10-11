@@ -16,7 +16,8 @@ import type { Settings } from "../config/settings";
 import { runSubprocess } from "../task/executor";
 import type { AgentDefinition } from "../task/types";
 import type { ApprovalMode } from "../tools/approval";
-import type { EngineRunner, WorkerRunContext } from "./engine";
+import { OrchestrationEngine, type EngineRunner, type WorkerRunContext } from "./engine";
+import { resolveOrchestratorBudget, resolveOrchestratorLimits } from "./settings";
 import { requireWorkerSpawn } from "./worker-session";
 import type { OrchestratorTask, WorkerOutcome, WorkerSpec } from "./types";
 
@@ -79,4 +80,20 @@ export class NativeWorkerRunner implements EngineRunner {
 			usage: { totalTokens: result.tokens, requests: result.requests },
 		};
 	}
+}
+
+/**
+ * Build an orchestration engine wired to the native worker runner, with the
+ * platform-aware limits and budgets read from settings. This is the production
+ * construction point: the configured concurrency is narrowed on Android/Termux
+ * and the Android process cap is enforced by the engine.
+ */
+export function createNativeOrchestrationEngine(options: NativeWorkerRunnerOptions): OrchestrationEngine {
+	const limits = resolveOrchestratorLimits(options.settings);
+	return new OrchestrationEngine({
+		runner: new NativeWorkerRunner(options),
+		concurrency: limits.concurrency,
+		processCap: limits.processCap,
+		budget: resolveOrchestratorBudget(options.settings),
+	});
 }

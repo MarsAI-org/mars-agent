@@ -24,6 +24,13 @@ export interface BudgetOptions extends BudgetLimits {
 	readonly now?: () => number;
 }
 
+/** `0`, negative, or non-finite limits mean "unlimited" (undefined). */
+function positiveOrUndefined(value: number | undefined): number | undefined {
+	if (value === undefined) return undefined;
+	const n = Math.trunc(Number(value));
+	return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
 export class BudgetGuard {
 	readonly #limits: BudgetLimits;
 	readonly #now: () => number;
@@ -38,10 +45,12 @@ export class BudgetGuard {
 	#exhaustedReason: string | undefined;
 
 	constructor(options: BudgetOptions = {}) {
+		// The settings document `0` as "unlimited"; normalize it to `undefined`
+		// so a zero limit never fires.
 		this.#limits = {
-			maxTokens: options.maxTokens,
-			maxRequests: options.maxRequests,
-			maxWallClockMs: options.maxWallClockMs,
+			maxTokens: positiveOrUndefined(options.maxTokens),
+			maxRequests: positiveOrUndefined(options.maxRequests),
+			maxWallClockMs: positiveOrUndefined(options.maxWallClockMs),
 		};
 		this.#now = options.now ?? (() => Date.now());
 		this.#startedAt = this.#now();
