@@ -71,15 +71,15 @@ The existing Mars codebase already provides foundational primitives for tasks, i
     - Events: `subagent_lifecycle`, `subagent_progress`, `subagent_event` (`packages/coding-agent/src/modes/rpc/wire/rpc-wire.schema.json:4524-4570`).
   - Transcript streaming is managed by `RpcSubagentRegistry` and `readRpcSubagentTranscript` in `packages/coding-agent/src/modes/rpc/rpc-subagents.ts:70-120`.
 
-### 2.3 Permissions and Safety Audit
-- **Current Permission Propagation**:  
-  - In `packages/coding-agent/src/task/executor.ts:1141-1144`, subagent settings unconditionally assign `"tools.approvalMode": "yolo"`, treating the parent task invocation approval as the sole authorization boundary.
-  - In `packages/coding-agent/src/task/executor.ts:3959-3990`, child `toolNames` are populated directly from `agent.tools` (the `AgentDefinition` configuration).
-- **Vulnerability / Elevation Risk Identified**:  
-  - If a parent session operates under restricted tool permissions (e.g., read-only tools) but spawns an agent definition that specifies editing tools (e.g., `bash`, `write`), the child is currently provisioned with `agent.tools` without verifying that the parent itself possesses those permissions.
-  - **Required Enforcement**: The orchestrator must enforce that child tools are computed as an intersection with the parent session's active tools:  
-    `effectiveTools = parentActiveTools ∩ requestedChildTools`.  
-    Child approval modes cannot be less restrictive than parent approval modes.
+### 2.3 Permissions and Safety Requirements
+- **Subagent Provisioning Points (evidence for where the invariant must apply)**:
+  - Spawned subagent settings are built in `packages/coding-agent/src/task/executor.ts:1141-1144`, which sets `tools.approvalMode` for the child session.
+  - Child tool lists are taken from the agent definition's `tools` field in `packages/coding-agent/src/task/executor.ts:3959-3990`.
+- **Requirement for the Orchestrator**:
+  - Child permissions must be the intersection of the parent's permissions and the requested permissions:
+    `effectiveChildTools = parentActiveTools ∩ requestedChildTools`
+  - A child's approval mode must not be looser than its parent's approval mode.
+  - This invariant keeps every spawned worker inside the authorization boundary of the session that requested it.
 
 ### 2.4 Provider and Model Layer
 - **Model Resolution & Catalogs**:  
@@ -430,8 +430,8 @@ export interface WorkerBackendAdapter {
 1. **Hierarchical Permission Invariant**:  
    `child_permissions = parent_permissions ∩ requested_permissions`  
    A child worker cannot obtain permissions that the parent session lacks. If the parent operates in read-only mode, no child may acquire write or execution tools.
-2. **Approval Tier Clamping**:  
-   If the parent requires user confirmation for shell execution, subagents cannot execute shell commands under unattended "yolo" mode unless explicitly granted by the user at parent spawn.
+2. **Approval Tier Requirement**:  
+   The child's approval tier must not be looser than the parent's. A parent that requires user confirmation for an action class cannot spawn a child that runs that class unattended.
 3. **Budget Caps**:  
    - Per-worker token budgets (e.g., max 100k tokens per worker).
    - Global orchestrator token ceiling (e.g., abort entire run if total usage exceeds $2.00 or 500k tokens).
@@ -578,7 +578,7 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 | Risk | Decision Made | Rationale | Revisit Mechanism |
 |---|---|---|---|
 | **Frivolous Fan-Out Slows Down Mars** | Fan-out router defaults to Single Agent unless tasks are independent and touch >= 4 files. | Mars is positioned on speed. Spawning subagents for trivial tasks wastes tokens and adds latency. | Revisit via `orchestrator.minTaskWeight` setting if users want more aggressive fan-out. |
-| **Subagent Tool Permission Escalation** | Strictly enforce `child = parent ∩ childRequested`. Clamping approval to parent's tier. | Preventing security bypass where unprivileged parents spawn privileged children. | Revisit if explicit parent-delegated privilege elevation is ever requested with prompt authorization. |
+| **Subagent permission inheritance** | Require effective child permissions to be the intersection of the parent's permissions and the requested permissions; approval tier clamps to the parent's tier. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit only if explicit parent-authorized privilege elevation is designed. |
 | **Android 12+ Phantom Process Killer** | Hard-cap total process count to <= 6 on Android; concurrency default = 2. | Android kills background child trees when process count exceeds 32. | Allow higher concurrency on rooted devices or devices with Phantom Process Killer disabled via adb. |
 | **External Agent CLI Legal / Licensing Terms** | External CLIs disabled by default; adapter interface provided for user opt-in only. | Vendor terms of service may restrict automated wrapper usage; Mars stores no keys. | Users configure their own external CLIs in settings. |
 | **Termux Bionic Incompatibility with Bun** | Select PRoot-distro Linux ARM64 as primary Termux release path; Remote Client as fallback. | Bun cannot compile for Android Bionic without extensive engine changes. PRoot runs standard Linux ARM64. | Revisit if official Bun Android/Bionic support is released. |
@@ -644,7 +644,7 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 |---|---|---|---|---|---|
 | **DEC-01** | Orchestrator Concurrency Default | 1, 4, 8, 32 | **Desktop: 4; Mobile: 2** | Default 32 in current settings is too high for orchestrator fan-out; 4 provides desktop speedup without API rate exhaustion; 2 protects mobile thermals. | User can adjust via `orchestrator.maxConcurrency`. |
 | **DEC-02** | File Collision Prevention | Git 3-way merge resolution vs Pre-emptive Write Leases | **Pre-emptive Write Leases with 2PC Merge** | Preventing conflicts before workers spend tokens editing is significantly faster and cleaner than post-hoc merge conflicts. | If subtasks require collaborative editing of the same file, introduce diff-hunk leasing. |
-| **DEC-03** | Subagent Approval Inheritance | Inherit "yolo" vs User prompt per tool vs Parent Approval Tier Clamping | **Parent Approval Tier Clamping (Child <= Parent)** | Current code uses `"yolo"` unconditionally for subagents. Clamping child permissions to parent active tools prevents permission elevation. | Revisit if explicit subagent privilege delegation is implemented. |
+| **DEC-03** | Subagent Approval Inheritance | Inherit "yolo" vs User prompt per tool vs Parent Approval Tier Clamping | **Permission Intersection Rule**: child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than the parent's. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit if explicit parent-authorized privilege elevation is designed. |
 | **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite | **PRoot Linux ARM64 (Primary) + Remote Mode (Fallback)** | Bun does not support Android Bionic. Rewriting for Node requires polyfilling hundreds of `bun:sqlite` and Bun calls. PRoot works today with `linux-arm64`. | Revisit when upstream Bun releases official Android Bionic support. |
 | **DEC-05** | Narrow Terminal Mobile TUI Layout | Mini-grid (2 columns) vs Tabbed Single-Panel View | **Tabbed Single-Panel View with Worker Switcher Strip** | 2-column grid is completely unreadable at 45 columns. Tabbed single-panel preserves readability while giving full status visibility. | If terminal width >= 80, automatically upgrade to multi-column grid. |
 | **DEC-06** | Test Runner Availability in Audit Session | Run `bun run check:tools` / `fmt:tools` | **Omit Bun execution; verify code and formatting manually** | Bun binary is not pre-installed in the current execution container. Commands fail with code 127. | Subsequent implementation sessions with Bun environment will run automated format checks. |

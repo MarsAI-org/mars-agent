@@ -23,7 +23,7 @@ This document is the continuous working handoff for engineering sessions across 
 1. **System & Platform Audit**:
    - Comprehensive audit of subagent definitions, dynamic ArkType schemas, workpools, worktree isolation backends, and concurrency settings.
    - Comprehensive audit of inter-agent messaging (IRC bus, mailboxes, `agent://` / `history://` / `proc://` schemes), RPC wire schema (`rpc-wire.schema.json`), and subagent subscriptions.
-   - Security and permission propagation audit identifying that child subagent permissions must be clamped to parent active tools (`parentActiveTools ∩ requestedChildTools`).
+   - Permission audit recording the requirement for the orchestrator: child permissions must be the intersection of the parent's permissions and the requested permissions (`parentActiveTools ∩ requestedChildTools`), and a child's approval tier must not be looser than its parent's (evidence: `packages/coding-agent/src/task/executor.ts:1141-1144`, `packages/coding-agent/src/task/executor.ts:3959-3990`).
    - Platform audit of binary compilation, Bun runtime dependencies (`bun:sqlite`, `Bun.file`, `Bun.spawn`), native Rust crates (`pi-natives`, `pi-shell`), path resolution (`/bin/sh`, `/tmp`, `searchPaths`), and installer behavior.
 2. **Technical Design Document**:
    - Written `ORCHESTRATOR_DESIGN.md` in repository root covering:
@@ -50,7 +50,7 @@ This document is the continuous working handoff for engineering sessions across 
 Full details are recorded in Section 16 of `ORCHESTRATOR_DESIGN.md`:
 - **DEC-01 (Concurrency)**: Default max concurrency set to 4 on desktop and 2 on Android/Termux (protecting thermals and the Android 12+ 32 phantom process cap).
 - **DEC-02 (File Conflict Prevention)**: Pre-emptive path-based write leases with two-phase verification and commit (prevents wasting tokens on unmergeable work).
-- **DEC-03 (Permission Clamping)**: Enforce `child = parent ∩ requested` so child sessions cannot gain tools or looser approval modes than their parent.
+- **DEC-03 (Permission Requirement)**: Child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than its parent's.
 - **DEC-04 (Termux Architecture)**: PRoot-distro Linux ARM64 chosen as the primary installation path (standard `linux-arm64` binary runs without Bun engine porting); Remote Client mode as fallback.
 - **DEC-05 (Mobile TUI)**: Narrow terminal (<80 cols) falls back to single focused worker view with a tabbed worker switcher strip and touch-friendly single-key navigation.
 - **DEC-06 (Format Command Handling)**: Bun was absent on PATH in the audit container; manual verification was used instead of failing `bun run fmt:tools`.
