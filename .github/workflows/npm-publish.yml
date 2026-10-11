@@ -10,9 +10,12 @@ name: npm publish
 #
 # Credential hygiene: every install, build, and pack step runs BEFORE any
 # credential exists. `--pack-only` runs each package's `prepack` build, so it
-# must not see the token; the publish step that carries the token runs only
-# `npm publish` on the already-built tarballs — no repository script, no
-# lifecycle script. `--ignore-scripts` makes that explicit.
+# must not see the token; the steps that carry the token run only `npm whoami` /
+# `npm view` / `npm publish` on the already-built tarballs — no repository
+# script, no lifecycle script. `--ignore-scripts` makes that explicit.
+#
+# The preflight step always runs, including on a dry run, so an operator can see
+# whether the credential is configured before flipping `dry_run` to false.
 #
 # Triggers are `workflow_dispatch` and `v*` tag pushes only. A pull request can
 # never trigger it, and the job itself refuses to run outside main or a `v*` tag,
@@ -97,15 +100,25 @@ jobs:
             esac
           fi
       # Packing runs each package's `prepack` build, so it stays out of the
-      # credential step. The tarballs are written under $PACK_DIR.
+      # credential steps. The tarballs are written under $PACK_DIR.
       - name: Pack the packages (no credentials)
         env:
           DIST_TAG: ${{ steps.mode.outputs.dist_tag }}
         run: bun scripts/ci-release-publish.ts --pack-only "$PACK_DIR" --dist-tag "$DIST_TAG"
-      # The single step whose environment carries the credential. It runs only
-      # `npm publish` on the tarballs produced above, in dependency order,
-      # skipping versions that already exist so reruns are idempotent. It never
-      # prints the token — presence is reported with `test -n`.
+      # Always runs, including on a dry run, so the operator can see whether the
+      # credential is configured before flipping `dry_run`. Reports presence with
+      # `test -n` and prints `npm whoami` — never the token, never the environment.
+      - name: Preflight the publish credential
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        shell: bash
+        run: |
+          if [ -n "${NPM_TOKEN:-}" ]; then echo "NPM_TOKEN: present"; else echo "NPM_TOKEN: missing"; fi
+          echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
+      # The publish step. Runs only `npm publish` on the tarballs produced above,
+      # in dependency order, skipping versions that already exist so reruns are
+      # idempotent. No repository script and no lifecycle script run here.
       - name: Publish to npm
         if: steps.mode.outputs.dry_run != 'true'
         env:
@@ -114,8 +127,6 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
-          if [ -n "${NPM_TOKEN:-}" ]; then echo "NPM_TOKEN: present"; else echo "NPM_TOKEN: missing"; fi
-          echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
           if [ -z "${NPM_TOKEN:-}" ]; then
             echo "::warning title=npm publish skipped::NPM_TOKEN is missing, so nothing was published. Configure the secret and re-run."
             exit 0
