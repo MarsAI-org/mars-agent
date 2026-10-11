@@ -2,11 +2,33 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+import { astMatch } from "@marsai-org/natives";
 import { adaptSchemaForStrict, toolWireSchema } from "@marsai-org/ai/utils/schema";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { ToolChoiceQueue } from "@marsai-org/coding-agent/session/tool-choice-queue";
 import { createTools, type ToolSession } from "@marsai-org/coding-agent/tools";
 import { removeWithRetries } from "@marsai-org/utils";
+
+/**
+ * The TLA+ tree-sitter grammar landed after the last upstream npm release;
+ * PR CI may test against that older prebuilt addon via the npm fallback in
+ * the native_addons workflow, where tlaplus AST ops silently report zero
+ * replacements. Probe the shared grammar registry through the same native
+ * path so the grammar-dependent test runs when the grammar is present
+ * (main-built addons or published @marsai-org natives) and skips when not.
+ */
+async function hasTlaplusGrammar(): Promise<boolean> {
+	try {
+		const probe = await astMatch({
+			source: "---- MODULE Spec ----\nVARIABLE x\nInit == x = 0\n====",
+			lang: "tlaplus",
+			patterns: ["Init"],
+		});
+		return probe.totalMatches > 0;
+	} catch {
+		return false;
+	}
+}
 
 type InvokedToolResult = {
 	content: Array<{ type: string; text?: string }>;
@@ -248,6 +270,7 @@ describe("ast_edit tool schema", () => {
 	it("infers tlaplus from .tla files for AST edits", async () => {
 		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "ast-edit-tlaplus-"));
 		try {
+			if (!(await hasTlaplusGrammar())) return;
 			const filePath = path.join(tempDir, "Spec.tla");
 			await Bun.write(filePath, `---- MODULE Spec ----\nVARIABLE x\n\nInit == x = 0\n\nNext == x' = x + 1\n====\n`);
 			const queue = new ToolChoiceQueue();
