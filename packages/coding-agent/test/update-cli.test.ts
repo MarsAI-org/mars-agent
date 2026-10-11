@@ -451,7 +451,7 @@ describe("update-cli install target detection", () => {
 	);
 
 	it.skipIf(process.platform === "win32")(
-		"refuses a foreign native target that does not report an Mars version",
+		"refuses a foreign native target that does not report a Mars version",
 		async () => {
 			const dir = await makeTempDir();
 			const foreignPath = path.join(dir, "foreign");
@@ -471,7 +471,7 @@ describe("update-cli install target detection", () => {
 					fetchImpl,
 					validateExistingTarget: target.validateExistingTarget,
 				}),
-			).rejects.toThrow("does not report an Mars version when run directly");
+			).rejects.toThrow("does not report a Mars version when run directly");
 			expect(fetchImpl).not.toHaveBeenCalled();
 		},
 	);
