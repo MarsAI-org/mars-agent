@@ -224,7 +224,7 @@ mkdir -p "$TARBALL_APP_DIR"
       const typebox = Type.Object({ name: Type.String() }).assert({ name: "tb" });
       process.stdout.write(`${root.name}:${root.enabled}:${typebox.name}`);
    ')"
-   [ "$omptype_probe" = "omp:false:tb" ] || {
+   [ "$omptype_probe" = "mars:false:tb" ] || {
       echo "Unexpected @marsai-org/omptype probe result: $omptype_probe"
       exit 1
    }
