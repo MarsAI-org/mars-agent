@@ -30,22 +30,30 @@ AgentSession.prototype.generateTitle = (firstMessage: string): Promise<string | 
 AgentSession.prototype.prompt = async function (): Promise<boolean> {
 	// Drive the real event pipeline with synthetic events: a settled operator
 	// message records the title input, then the assistant reply starting flips
-	// the deferred-title gate and hits the stubbed generateTitle above.
-	if (agentEventHandler) {
-		await agentEventHandler({
-			type: "message_end",
-			message: {
-				role: "user",
-				attribution: "user",
-				content: [{ type: "text", text: "implement X" }],
-			},
-		});
-		await agentEventHandler({
-			type: "message_update",
-			assistantMessageEvent: { type: "text_start" },
-		});
+	// the deferred-title gate and hits the stubbed generateTitle above. The
+	// handlers run persistence work the probe's fake session cannot satisfy, so
+	// delivery errors must not prevent writing the probe output.
+	try {
+		if (agentEventHandler) {
+			await agentEventHandler({
+				type: "message_end",
+				message: {
+					role: "user",
+					attribution: "user",
+					content: [{ type: "text", text: "implement X" }],
+					timestamp: Date.now(),
+				},
+			});
+			await agentEventHandler({
+				type: "message_update",
+				assistantMessageEvent: { type: "text_start" },
+			});
+		}
+	} catch {
+		// Persistence may reject synthetic events; the title path is synchronous
+		// before any await, so generateTitle has already been invoked if wiring works.
 	}
-	await Bun.sleep(100);
+	await Bun.sleep(200);
 	await Bun.write(outputPath, JSON.stringify({ generatedFrom, sessionName: this.sessionName }));
 	process.exit(0);
 	return true;

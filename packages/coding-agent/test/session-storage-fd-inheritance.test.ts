@@ -56,6 +56,7 @@ test.skipIf(process.platform !== "linux")("bash tool children never inherit sess
 	const controlFd = fs.openSync(control, "a");
 	// Bun >= 1.4.3 sets O_CLOEXEC by default on fs.open*. Clear FD_CLOEXEC so
 	// this descriptor is deliberately inheritable across fork/exec as the control.
+	// Linux-only test (guarded above); libc is always loaded so dlopen finds fcntl.
 	try {
 		const { dlopen, FFIType } = await import("bun:ffi");
 		const libc = (
@@ -63,7 +64,7 @@ test.skipIf(process.platform !== "linux")("bash tool children never inherit sess
 				lib: unknown,
 				symbols: unknown,
 			) => { symbols: { fcntl: (fd: number, cmd: number, arg: number) => number } }
-		)(null, {
+		)("libc.so.6", {
 			fcntl: { args: [FFIType.i32, FFIType.i32, FFIType.i32], returns: FFIType.i32 },
 		});
 		libc.symbols.fcntl(controlFd, 2, 0);
