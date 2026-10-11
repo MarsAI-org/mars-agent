@@ -103,7 +103,7 @@ Task: Implement and verify Milestone 2 ("Termux Feasibility Spike") for Mars, va
    - Formulate exact patch for `mars-site/install` detection:
      `[ -n "$PREFIX" ] && [ -d "$PREFIX" ]` detecting Termux and routing to PRoot-distro setup. Note: mars-site is read-only for this repo; provide the patch in the report.
 4. **Mobile Resource Knobs**:
-   - Add platform detection for Android/Termux in `packages/coding-agent/src/task/settings.ts` to clamp default subagent concurrency to 2 and process tree to <= 6.
+   - Add platform detection for Android/Termux in `packages/coding-agent/src/task/settings.ts` to clamp default subagent concurrency to 2 and process tree to <= 6. Record these as initial defaults (UNVERIFIED) to be tuned by the Section 12 benchmark, not settled values.
 5. **CI Verification**:
    - Verify that all changes build and pass on Linux ARM64 (`ubuntu-24.04-arm`).
 

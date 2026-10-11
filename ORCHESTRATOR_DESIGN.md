@@ -368,6 +368,8 @@ To maintain Mars's speed advantage, the router evaluates four primary signals:
 | **Estimated Runtime** | < 15 seconds | > 60 seconds (parallelizable) |
 | **Platform Target** | Mobile / Phone (conservative) | High-core desktop / server |
 
+**These thresholds are initial defaults (UNVERIFIED), chosen to keep single-agent the default; they must be validated and tuned by the benchmark plan in Section 12 before being treated as settled values.**
+
 ### 6.2 Decision Matrix
 - **Trivial / Single-File Edits** (e.g., "make the login button blue", "fix typo in docs"):  
   -> **Single Agent (Zero Fan-Out)**. Cost: 1 call, zero isolation overhead, instantaneous delivery.
@@ -378,9 +380,9 @@ To maintain Mars's speed advantage, the router evaluates four primary signals:
 
 ### 6.3 Configuration & Overrides
 - `orchestrator.mode`: `"auto"` (router decides), `"single"` (force 1 worker), `"parallel"` (force fan-out when plausible).
-- Platform-aware defaults:
+- Platform-aware **initial defaults** (UNVERIFIED; to be tuned by the benchmark plan in Section 12):
   - Desktop / CI: `maxConcurrency = 8`
-  - Android / Termux: `maxConcurrency = 2` (hard-capped to protect thermals, battery, and process limits).
+  - Android / Termux: `maxConcurrency = 2` (conservative initial default to protect thermals, battery, and process limits).
 
 ---
 
@@ -432,15 +434,15 @@ export interface WorkerBackendAdapter {
    A child worker cannot obtain permissions that the parent session lacks. If the parent operates in read-only mode, no child may acquire write or execution tools.
 2. **Approval Tier Requirement**:  
    The child's approval tier must not be looser than the parent's. A parent that requires user confirmation for an action class cannot spawn a child that runs that class unattended.
-3. **Budget Caps**:  
+3. **Budget Caps** (example values are initial defaults, UNVERIFIED; to be tuned by the benchmark plan):  
    - Per-worker token budgets (e.g., max 100k tokens per worker).
    - Global orchestrator token ceiling (e.g., abort entire run if total usage exceeds $2.00 or 500k tokens).
    - Hard wall-clock timeout (`cfgTaskMaxRuntimeMs`, defaulting to 10 minutes on desktop, 5 minutes on mobile).
 4. **Global Stop Gesture**:  
-   A single abort gesture (`Ctrl+C` or `q`) sends `SIGTERM` / abort signals to all running workers, tears down worktrees, and releases repository locks within 500ms.
+   A single abort gesture (`Ctrl+C` or `q`) sends `SIGTERM` / abort signals to all running workers, tears down worktrees, and releases repository locks (500ms is the initial target, UNVERIFIED until measured).
 5. **Process Count Cap & Keepalive (Android)**:  
    - **UNVERIFIED platform assumption**: Android 12+ is reported to kill background child processes when a Termux session's process count grows high; the exact threshold is not derived from code and must be treated as unverified. Design to stay well under any plausible limit.
-   - Mars enforces a strict cap of **<= 6 total active processes** on Android (1 parent host + max 2 workers + max 1 shell/compiler per worker).
+   - Initial default cap (UNVERIFIED; to be tuned by the benchmark): **<= 6 total active processes** on Android (1 parent host + max 2 workers + max 1 shell/compiler per worker).
    - Integration with Termux wake-lock (`termux-wake-lock`) during active orchestration runs is intended to prevent system deep-sleep mid-task (environment behavior UNVERIFIED; `termux-wake-lock` is a Termux add-on assumed installed).
 
 ---
@@ -496,7 +498,7 @@ export interface WorkerBackendAdapter {
 ```
 
 ### 9.3 Narrow Terminal & Mobile Fallback Rules
-- When terminal width is `< 80` columns:
+- When terminal width is `< 80` columns (initial default breakpoint, tunable):
   - Multi-column grid is disabled.
   - The UI falls back to a **Single Focused Worker View** with a top tab bar (`TabBar`) indicating worker status.
   - Users cycle workers via `Tab`, number keys (`1`, `2`, `3`), or swipe/touch if terminal supports mouse events.
@@ -517,7 +519,7 @@ export interface WorkerBackendAdapter {
    - Complete inter-agent message logs.
    - Patch application diffs and verification outcomes.
 3. **Mobile Low-Overhead Mode**:
-   - In low-resource environments, live diff streaming is debounced to 250ms (from 33ms) to minimize CPU usage and thermal throttling.
+   - In low-resource environments, live diff streaming is debounced (initial default 250ms, down from the desktop 33ms spinner cadence; UNVERIFIED value to be tuned by the benchmark) to minimize CPU usage and thermal throttling.
 
 ---
 
@@ -532,7 +534,7 @@ export interface WorkerBackendAdapter {
 4. **Hierarchical Permission Downgrade Tests**:
    - Verify that spawning a worker from a read-only parent strips all mutating tools (`write`, `edit`, `bash`) regardless of worker definition.
 5. **Cancellation & Global Stop Tests**:
-   - Simulate `cancelAll()` and confirm all subprocesses receive termination signals and worktrees are cleaned up within 500ms.
+   - Simulate `cancelAll()` and confirm all subprocesses receive termination signals and worktrees are cleaned up (500ms is the initial target, UNVERIFIED until measured).
 6. **TUI Layout Snapshot Tests**:
    - Validate ASCII output formatting at 120 columns (Desktop Grid) and 45 columns (Mobile Phone View).
 7. **CI Android Coverage (options; recommended default first, none claimed as verified)**:
@@ -579,7 +581,7 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 
 | Risk | Decision Made | Rationale | Revisit Mechanism |
 |---|---|---|---|
-| **Frivolous Fan-Out Slows Down Mars** | Fan-out router defaults to Single Agent unless tasks are independent and touch >= 4 files. | Mars is positioned on speed. Spawning subagents for trivial tasks wastes tokens and adds latency. | Revisit via `orchestrator.minTaskWeight` setting if users want more aggressive fan-out. |
+| **Frivolous Fan-Out Slows Down Mars** | Fan-out router defaults to Single Agent unless tasks are independent and touch >= 4 files (initial default threshold, to be tuned by the benchmark). | Mars is positioned on speed. Spawning subagents for trivial tasks wastes tokens and adds latency. | Revisit via `orchestrator.minTaskWeight` setting if users want more aggressive fan-out. |
 | **Subagent permission inheritance** | Require effective child permissions to be the intersection of the parent's permissions and the requested permissions; approval tier clamps to the parent's tier. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit only if explicit parent-authorized privilege elevation is designed. |
 | **Android background process reaping** | Initial default: hard-cap total process count to <= 6 on Android; concurrency default = 2 (tunable). | Android is reported to kill background child process trees under memory/process pressure; the exact threshold is UNVERIFIED. | Tune via benchmark; allow higher concurrency on rooted devices after measurement. |
 | **External Agent CLI Legal / Licensing Terms** | External CLIs disabled by default; adapter interface provided for user opt-in only. | Vendor terms of service may restrict automated wrapper usage; Mars stores no keys. | Users configure their own external CLIs in settings. |
@@ -618,9 +620,9 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 - Self-updater issues clear hints matching the PRoot or native environment.
 
 ### 15.4 Runtime Behavior on Mobile Devices
-- **Concurrency**: Default max concurrency is clamped to **2**.
-- **Process Cap**: Total child process tree limited to **<= 6**.
-- **Wake Lock**: Acquires `termux-wake-lock` on task start and releases via `termux-wake-unlock` on task completion.
+- **Concurrency**: Initial default max concurrency of **2** (UNVERIFIED; tune by benchmark).
+- **Process Cap**: Initial default total child process tree of **<= 6** (UNVERIFIED; tune by benchmark).
+- **Wake Lock**: Acquires `termux-wake-lock` on task start and releases via `termux-wake-unlock` on task completion (tool availability and behavior UNVERIFIED).
 - **Network Resilience**: The orchestrator handles network drops by saving execution state to JSONL and resuming when connectivity returns.
 
 ### 15.5 Manual Checklist for Device Verification
@@ -654,10 +656,10 @@ Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone
 
 | ID | Topic / Question | Alternatives Considered | Choice Made | Rationale | Revisit Criteria |
 |---|---|---|---|---|---|
-| **DEC-01** | Orchestrator Concurrency Default | 1, 4, 8, 32 | **Desktop: 4; Mobile: 2** | Default 32 in current settings is too high for orchestrator fan-out; 4 provides desktop speedup without API rate exhaustion; 2 protects mobile thermals. | User can adjust via `orchestrator.maxConcurrency`. |
-| **DEC-02** | File Collision Prevention | Git 3-way merge resolution vs Pre-emptive Write Leases | **Pre-emptive Write Leases with 2PC Merge** | Preventing conflicts before workers spend tokens editing is significantly faster and cleaner than post-hoc merge conflicts. | If subtasks require collaborative editing of the same file, introduce diff-hunk leasing. |
+| **DEC-01** | Orchestrator Concurrency Default | 1, 4, 8, 32 | **Initial defaults: Desktop 4; Mobile 2** | Default 32 in current settings (`packages/coding-agent/src/task/settings.ts:280-301`) is too high for orchestrator fan-out; 4 gives desktop parallelism without provider rate-limit exhaustion; 2 is a conservative mobile default. All values UNVERIFIED — tune via the Section 12 benchmark. | User can adjust via `orchestrator.maxConcurrency`; benchmark may revise both defaults. |
+| **DEC-02** | File Collision Prevention | Git 3-way merge resolution vs Pre-emptive Write Leases | **Pre-emptive Write Leases with 2PC Merge** | Preventing conflicts before workers spend tokens editing is intended to be faster and cleaner than post-hoc merge conflicts (assumption UNVERIFIED; benchmark conflict metrics will test it). | If subtasks require collaborative editing of the same file, introduce diff-hunk leasing. |
 | **DEC-03** | Subagent Approval Inheritance | Inherit "yolo" vs User prompt per tool vs Parent Approval Tier Clamping | **Permission Intersection Rule**: child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than the parent's. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit if explicit parent-authorized privilege elevation is designed. |
-| **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite | **PRoot Linux ARM64 (Primary) + Remote Mode (Fallback)** | Bun does not support Android Bionic. Rewriting for Node requires polyfilling hundreds of `bun:sqlite` and Bun calls. PRoot works today with `linux-arm64`. | Revisit when upstream Bun releases official Android Bionic support. |
-| **DEC-05** | Narrow Terminal Mobile TUI Layout | Mini-grid (2 columns) vs Tabbed Single-Panel View | **Tabbed Single-Panel View with Worker Switcher Strip** | 2-column grid is completely unreadable at 45 columns. Tabbed single-panel preserves readability while giving full status visibility. | If terminal width >= 80, automatically upgrade to multi-column grid. |
+| **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite | **PRoot Linux ARM64 (Primary) + Remote Mode (Fallback)** | This repo's build matrix has no Android/Bionic target (VERIFIED) and upstream Bun Android support is UNVERIFIED, so the conservative choice avoids depending on it. A Node-only rewrite would require polyfilling hundreds of `bun:sqlite` / Bun API call sites (many VERIFIED call sites). Whether the `linux-arm64` artifact runs under PRoot on a phone is UNVERIFIED — that is exactly what Milestone 2 tests. | Revisit when upstream Bun releases official Android Bionic support or the PRoot path fails on device. |
+| **DEC-05** | Narrow Terminal Mobile TUI Layout | Mini-grid (2 columns) vs Tabbed Single-Panel View | **Tabbed Single-Panel View with Worker Switcher Strip** (initial default below 80 columns; threshold tunable) | 2-column grid is expected to be unreadable at 45 columns. Tabbed single-panel preserves readability while giving full status visibility. | If terminal width >= 80, automatically upgrade to multi-column grid; adjust the 80-column threshold based on device feedback. |
 | **DEC-06** | Test Runner Availability in Audit Session | Run `bun run check:tools` / `fmt:tools` | **Omit Bun execution; verify code and formatting manually** | Bun binary is not pre-installed in the current execution container. Commands fail with code 127. | Subsequent implementation sessions with Bun environment will run automated format checks. |
 | **DEC-07** | Git Author Identity | Leave unset vs Set repo-locally | **Set repo-locally (`robomarsx`)** | Repo-local configuration complies with project guidelines without touching global git configuration. | Revisit if team provides distinct author credentials. |
