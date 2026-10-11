@@ -220,6 +220,46 @@ still excluded.
 
 ---
 
+## Native leaf packages (unblocks CI `Fetch release native addons`)
+
+```markdown
+Read HANDOFF.md §7 and NPM_PUBLISH.md first.
+
+Branch: feat/publish-native-leaves.
+
+The 12 workspace packages are published, but the six platform packages
+`@marsai-org/natives-<linux-x64|linux-arm64|darwin-x64|darwin-arm64|win32-x64|win32-arm64>`
+are not, so `@marsai-org/natives` installs with no binary and CI's
+`Fetch release native addons (npm)` step keeps failing (it runs
+`npm view @marsai-org/natives-linux-x64@latest dist.tarball`).
+
+The building blocks already exist and must be reused, not reimplemented:
+- `packages/natives/scripts/gen-npm-packages.ts` (`generateNpmPackages`, `LEAF_TARGETS`) builds
+  each leaf package from the `.node` artifacts in `packages/natives/native/`.
+- `scripts/ci-release-publish.ts --native-leaf <tag>` publishes one leaf.
+- `.github/workflows/release.yml`'s `build_native` job already builds the six addons on the right
+  runners (`ubuntu-22.04`, `ubuntu-24.04-arm`, `macos-15-intel`, `macos-15`, `windows-2025`,
+  `windows-11-arm`) and uploads them as `native-<target_id>` artifacts.
+
+Deliver:
+1. A `workflow_dispatch`-only workflow (guard: main or a `v*` tag, never `pull_request`) that
+   builds the six addons in a matrix, downloads them into `packages/natives/native`, then
+   publishes the leaves with `--native-leaf <tag>` for each.
+2. Keep the credential hygiene the workspace workflow uses: build and pack in steps with no
+   credential; only `npm publish` runs in the step that carries `secrets.NPM_TOKEN`. If
+   `--native-leaf` cannot be split, add a pack-only mode for leaves (mirror `--pack-only`) rather
+   than running a repo script in the credentialed step. Log the decision.
+3. Reference the token by name only, pin every action to a full commit SHA, and pass
+   `--ignore-scripts` to every `npm publish`.
+4. After the leaves are live, remove the `Fetch release native addons (npm)` failure from the
+   pre-existing CI list in HANDOFF.md §4 if it is genuinely fixed, with evidence.
+
+Then: gates, squash merge, pull main, rebuild. Report per-leaf publish result and whether the CI
+step is now green.
+```
+
+---
+
 ## Android PTY pipe fallback (no device needed)
 
 ```markdown
