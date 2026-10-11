@@ -51,7 +51,7 @@ Used by `packages/utils/src/procmgr.ts`, process tree control, eval backends, sh
 snapshots. Node `child_process` covers the semantics with more boilerplate.
 
 ### 2.4 Native addons
-`packages/natives` links a host-specific Rust N-API addon (`pi_natives.linux-x64-modern.node` for AVX2-capable x64 hosts, `-baseline` otherwise; see `packages/natives/src/loader-state.ts`). Node-N-API
+`packages/natives` links a host-specific Rust N-API addon (`pi_natives.linux-x64-modern.node` for AVX2-capable x64 hosts, `-baseline` otherwise; the generated loader lives at `packages/natives/native/loader-state.js`). Node-N-API
 interop is compatible, but the addon must be compiled for `aarch64-linux-android`,
 which requires the Android NDK.
 

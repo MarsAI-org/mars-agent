@@ -737,7 +737,7 @@ This section records exactly what the Tier work delivered, so no claim outruns t
 - `scripts/android/mars-termux-launcher.sh`: glibc runner/loader verification, `LD_PRELOAD` clearing for the child, argument/signal/exit-code forwarding, exact `pkg install` remediation text. Covered by launcher tests.
 - `mars --platform-check [--json]`: offline report of platform, glibc loader, `LD_PRELOAD`, paths, shared-storage placement, worker availability.
 - Android-aware orchestrator limits: `resolveOrchestratorLimits` narrows concurrency and sets a process cap on Android/Termux; the engine enforces the cap by narrowing effective concurrency (`floor((cap - 1) / 2)`), and `resolveOrchestratorBudget` maps the documented `0` to "unlimited".
-- `pi-builtins` process path gated for `target_os = "android"` (`proc_snapshot::sys`, `proc_match`, `ps`, `kill`), which is the path `pi-shell`'s identity-pinned process control needs. Linux behaviour is unchanged (verified by `cargo fmt`/`clippy` and the full test suite).
+- `pi-builtins` process path gated for `target_os = "android"` (`proc_snapshot::sys`, `proc_match`, `ps`, `kill`), which is the path `pi-shell`'s identity-pinned process control needs. Linux behaviour is unchanged: verified in the working environment by `cargo fmt --all -- --check`, `CI=1 bun run check:rs` (clippy `-D warnings`), and the full TS suite, all of which pass.
 - `.github/workflows/android-cross-check.yml`: **advisory** cross-compile job (`continue-on-error`, not a required check) that skips cleanly when no NDK is present.
 
 **Not shipped — explicit follow-ups (UNVERIFIED, no code claim):**

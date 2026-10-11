@@ -46,6 +46,25 @@ describe("resolveOrchestratorLimits", () => {
 		if (process.platform === "android") return;
 		expect(resolveOrchestratorLimits(settings).processCap).toBeUndefined();
 	});
+
+	test("narrows concurrency and sets the process cap in a Termux environment", () => {
+		const previousPrefix = process.env.PREFIX;
+		const previousVersion = process.env.TERMUX_VERSION;
+		process.env.PREFIX = "/data/data/com.termux/files/usr";
+		process.env.TERMUX_VERSION = "0.118.0";
+		try {
+			const limits = resolveOrchestratorLimits(
+				Settings.isolated({ "orchestrator.maxConcurrency": 8, "orchestrator.androidProcessCap": 6 }),
+			);
+			// Mobile default narrows the configured 8 down to 2, and the cap applies.
+			expect(limits).toEqual({ concurrency: 2, processCap: 6 });
+		} finally {
+			if (previousPrefix === undefined) delete process.env.PREFIX;
+			else process.env.PREFIX = previousPrefix;
+			if (previousVersion === undefined) delete process.env.TERMUX_VERSION;
+			else process.env.TERMUX_VERSION = previousVersion;
+		}
+	});
 });
 
 describe("resolveOrchestratorBudget", () => {
@@ -83,7 +102,7 @@ describe("engine process cap", () => {
 		expect(engine.concurrency).toBe(2);
 
 		void engine.run(plan(["a", "b", "c", "d"], [worker("w1"), worker("w2"), worker("w3"), worker("w4")]));
-		await new Promise(resolve => setTimeout(resolve, 20));
+		await Bun.sleep(20);
 		// Only the capped number of workers may be in flight.
 		expect(runner.starts.length).toBe(2);
 		engine.stopAll("test done");

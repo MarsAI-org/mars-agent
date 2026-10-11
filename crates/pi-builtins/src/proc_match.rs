@@ -862,7 +862,7 @@ fn write_proc_match_help(
 	if mode == ProcMatchMode::Kill {
 		writeln!(output, "  -SIGNAL, --signal SIGNAL  choose signal (default TERM)")?;
 	}
-	#[cfg(target_os = "linux")]
+	#[cfg(any(target_os = "linux", target_os = "android"))]
 	if mode == ProcMatchMode::Kill {
 		writeln!(output, "  -q value, --queue value  send an integer with sigqueue")?;
 	}

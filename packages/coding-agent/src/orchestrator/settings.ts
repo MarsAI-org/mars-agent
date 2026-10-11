@@ -11,9 +11,6 @@ import { register } from "../config/registry";
 import { isAndroid } from "@marsai-org/utils/platform";
 import type { Settings } from "../config/settings";
 
-/** Desktop initial default for concurrent workers (to be tuned by the benchmark). */
-export const ORCHESTRATOR_DEFAULT_CONCURRENCY_DESKTOP = 4;
-
 /** Mobile initial default for concurrent workers (to be tuned by the benchmark). */
 export const ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID = 2;
 
@@ -202,14 +199,6 @@ export function resolveOrchestratorLimits(settings: Settings): OrchestratorLimit
 		concurrency: Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID),
 		processCap: Math.max(1, Math.trunc(Number(cfgOrchestratorAndroidProcessCap.get(settings)) || 1)),
 	};
-}
-
-/**
- * Effective worker concurrency for the current platform: the configured value,
- * narrowed to the mobile initial default on Android/Termux and never widened.
- */
-export function resolveOrchestratorConcurrency(settings: Settings): number {
-	return resolveOrchestratorLimits(settings).concurrency;
 }
 
 /**
