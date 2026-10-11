@@ -134,9 +134,12 @@ counts. Test paths below are package-relative, as the runner prints them.
 
 **Classification of the 39 files failing on `main`:**
 
-- **36 common** to both commits (pre-existing): `attachment-chips`,
-  `bash-autobg-timer`, `cli-resume-model-fallback`, `cli/update-cli`,
-  `cursor-discovery`, `desktop-notify`, `dry-balance-runtime`,
+- **36 common** to both commits (pre-existing). 35 are listed here;
+  `packages/catalog/test/compat-compile.test.ts` is the 36th and is broken out
+  in the "FIXED this session" table below because it was the one reproducible
+  failure. The 35: `attachment-chips`, `bash-autobg-timer`,
+  `cli-resume-model-fallback`, `cli/update-cli`, `cursor-discovery`,
+  `desktop-notify`, `dry-balance-runtime`,
   `extensibility/extension-load-notifications`, `extension-loader-process-exit`,
   `fatal-stderr-pty`, `issue-905-repro`, `judgment`, `main-initial-message-title`,
   `mcp-incremental-connect`, `mcp-print-readiness`,
@@ -162,12 +165,18 @@ counts. Test paths below are package-relative, as the runner prints them.
 |---|---|---|
 | `packages/catalog/test/compat-compile.test.ts` | Committed `packages/catalog/src/compat/rules.json` was stale after the rebrand rename (still `"omp"` where the compiler emits `"mars"`). | `bun run gen:compat`; the JSON diff is exactly 4 string values (one `originator`, two `login.instructions`, one `clientId`), no behavior values change. Test now 36/36. |
 
-**Environment-caused on `main`** (no TTY / no PTY / no compiled-binary context):
+**Environment-caused on `main`** (no TTY / no PTY / no compiled-binary context).
+These appeared in the measured `main` run and reproduce without a TTY:
 
-- `packages/tui/test/glyph-protocol.test.ts`, `terminal-info.test.ts`, `notifications.test.ts`, `desktop-notify.test.ts`
+- `packages/tui/test/notifications.test.ts`, `desktop-notify.test.ts`
 - `packages/coding-agent/test/fatal-stderr-pty.test.ts`, `utils/changelog.test.ts`, `utils/changelog-static-import.test.ts`
 - `packages/coding-agent/test/ssh-control-path.test.ts`, `runner-cache-restage.test.ts`
 - `packages/coding-agent/test/main-initial-message-title.test.ts`
+
+(`packages/tui/test/glyph-protocol.test.ts` and `terminal-info.test.ts` were
+listed in an earlier revision of this file but did **not** fail in either
+measured run this session; treat them as TTY-sensitive files to watch, not as
+confirmed failures.)
 
 **Load flakes** (all pass standalone): `attachment-chips`, `bash-autobg-timer`,
 `cli-resume-model-fallback`, `cursor-discovery`, `dry-balance-runtime`,
