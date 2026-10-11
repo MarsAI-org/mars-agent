@@ -43,13 +43,14 @@ session with no memory must be able to continue from this file alone.
 - **Phase 0 (baseline repair, #27)** — regenerated the stale `rules.json` (4 rebrand string values) and recorded the measured per-commit failure table in §5.
 - **Phase 1 (publish readiness, #28)** — `publishConfig.access=public` on all 12 publishable packages, `CREDITS.md` shipped with every package, `--dist-tag` / `--pack-only` on the publish script, the root `publish` scripts delegated to that script, two publish workflows (`npm-publish.yml`, `npm-publish-trusted.yml`), and `NPM_PUBLISH.md`. DEC-16…DEC-20 in `ORCHESTRATOR_DESIGN.md` §16.
 - **Phase 2 (bootstrap publish, #29 + #30)** — the workflow ran green on `main`; see §7 for what is live.
+- **Phase 3 (release)** — the release infrastructure **already existed and was reused**, not rebuilt; see §7. One gap against the release checklist was closed (#34: the per-platform smoke test now also runs `--platform-check --json`), and the full dry run was re-validated.
 
 ### Not started
 
 Milestone 3 (two-phase merge/verification), Milestone 4 (external CLI adapters),
 Milestone 5 (TUI), and the benchmark harness. Ready-to-paste prompts for each are
 in `ORCHESTRATOR_NEXT_STEPS.md` and §6 below. The Android PTY pipe fallback is
-also outstanding (§7).
+also outstanding, and the six native leaf packages are unpublished (§7).
 
 ---
 
@@ -253,7 +254,35 @@ with their own keys. Gates, merge.
 
 ---
 
-## 7. npm Publish State (Phase 2 result)
+## 7. Release State (npm packages and GitHub releases)
+
+### GitHub releases — already existed, reused
+
+The repository already had, before this session:
+
+- `.github/workflows/release.yml` — complete: tag `v*` + `workflow_dispatch` with `dry_run`
+  (default `true`); a matrix over every target `scripts/ci-release-build-binaries.ts` supports;
+  `SHA256SUMS.txt`; `softprops/action-gh-release` with `contents: write` only in the
+  `publish_release` job; per-platform smoke tests.
+- Installer tests — `scripts/install-tests/` plus the `install_methods` CI job.
+- A published **prerelease `v0.1.0-rc.1`** and a **stable `v0.1.0`** (marked Latest), each with all
+  eight binaries, `SHA256SUMS.txt` (covering all eight), and `LICENSE`.
+
+Per the program rule "if a binary release workflow, installer tests, or a release already exist,
+reuse them and skip what is done", this session **did not rebuild the release workflow and did not
+create a duplicate prerelease**. What it did:
+
+- Closed the one gap against the release checklist: the per-platform smoke test now also runs
+  `mars --platform-check --json` on POSIX, Alpine, and Windows (#34).
+- Re-validated the whole workflow with a dry run (`gh workflow run release.yml -f dry_run=true`):
+  all six native-addon builds, all eight binary builds, and all eight smoke tests passed, and
+  `Publish GitHub Release` was correctly skipped.
+- Verified the existing prerelease's assets with `gh release view v0.1.0-rc.1`.
+
+If a fresh prerelease for the current `main` is wanted, it is a single tag push
+(`v<version>-rc.N`), which triggers `release.yml`; the workflow is proven and needs no change.
+
+### npm packages
 
 `npm-publish.yml` ran green on `main` (run `38145212668`, dispatch `dry_run=false`,
 `dist_tag=next`). Registry state verified with `GET https://registry.npmjs.org/@marsai-org%2F<name>`:
@@ -275,7 +304,8 @@ with their own keys. Gates, merge.
   requires the release addon matrix. `@marsai-org/natives` declares them as
   `optionalDependencies`, so an install of the core package currently resolves no
   binary. This is also the remaining cause of the failing
-  `Fetch release native addons (npm)` CI step.
+  `Fetch release native addons (npm)` CI step. A ready-to-paste prompt for it is in
+  `ORCHESTRATOR_NEXT_STEPS.md` ("Native leaf packages", DEC-21).
 - `latest` was **not** moved by hand; npm set `latest` on the first publish of each
   name, and the workflow's `--tag next` added `next`. Moving `latest` remains a
   deliberate human action.
