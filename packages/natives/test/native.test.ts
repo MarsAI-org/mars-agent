@@ -38,6 +38,22 @@ import {
 
 const addonUrl = new URL("../native/index.js", import.meta.url).href;
 
+/**
+ * The emacs-lisp tree-sitter grammar was added after the last upstream npm
+ * release; PR CI may test against that older prebuilt addon via the npm
+ * fallback in the native_addons workflow, where grammar-dependent operations
+ * throw "grammar is not installed". Probe the shared grammar registry once at
+ * load so the emacs-lisp tests run when the grammar is present (main-built
+ * addons) and skip when it is not.
+ */
+const HAS_EMACS_LISP_GRAMMAR = (() => {
+	try {
+		return summarizeCode({ path: "probe.el", code: "(defun probe () t)\n" }).parsed === true;
+	} catch {
+		return false;
+	}
+})();
+
 describe("macOS spelling", () => {
 	it("reports platform capability and uses UTF-16 ranges", async () => {
 		const nonsense = "qzxvplmokn";
@@ -195,7 +211,7 @@ describe("pi-natives", () => {
 			expect(python.segments.at(-1)?.text).toContain("return");
 		});
 
-		it("summarizes Emacs Lisp function bodies through native inference", () => {
+		it.skipIf(!HAS_EMACS_LISP_GRAMMAR)("summarizes Emacs Lisp function bodies through native inference", () => {
 			for (const path of ["fixture.el", ".emacs"]) {
 				const result = summarizeCode({
 					path,
@@ -242,7 +258,7 @@ describe("pi-natives", () => {
 	});
 
 	describe("blockRangeAt", () => {
-		it("resolves Emacs Lisp macro-style top-level forms", () => {
+		it.skipIf(!HAS_EMACS_LISP_GRAMMAR)("resolves Emacs Lisp macro-style top-level forms", () => {
 			const range = blockRangeAt({
 				path: "init.el",
 				code: '(ert-deftest ogent-zen-test ()\n  "Doc."\n  (should t))\n',
@@ -1287,20 +1303,23 @@ console.log("ok");
 			expect(diff.totalMatches).toBe(0);
 		});
 
-		it("matches Emacs Lisp patterns with public aliases and metavariables", async () => {
-			const match = await astMatch({
-				source: ["(defun greet (name)", '  (message "Hello %s" name)', ")"].join("\n"),
-				lang: "emacs-lisp",
-				patterns: ["(defun $NAME $$$BODY)"],
-				includeMeta: true,
-			});
+		it.skipIf(!HAS_EMACS_LISP_GRAMMAR)(
+			"matches Emacs Lisp patterns with public aliases and metavariables",
+			async () => {
+				const match = await astMatch({
+					source: ["(defun greet (name)", '  (message "Hello %s" name)', ")"].join("\n"),
+					lang: "emacs-lisp",
+					patterns: ["(defun $NAME $$$BODY)"],
+					includeMeta: true,
+				});
 
-			expect(match.parseErrors).toBeUndefined();
-			expect(match.totalMatches).toBe(1);
-			expect(match.matches[0]?.metaVariables?.NAME).toBe("greet");
-		});
+				expect(match.parseErrors).toBeUndefined();
+				expect(match.totalMatches).toBe(1);
+				expect(match.matches[0]?.metaVariables?.NAME).toBe("greet");
+			},
+		);
 
-		it("rewrites Emacs Lisp source with astEdit aliases", async () => {
+		it.skipIf(!HAS_EMACS_LISP_GRAMMAR)("rewrites Emacs Lisp source with astEdit aliases", async () => {
 			const filePath = path.join(testDir, "emacs-ast-edit.el");
 			await fs.writeFile(filePath, '(defun greet (name)\n  (message "Hello %s" name))\n');
 
