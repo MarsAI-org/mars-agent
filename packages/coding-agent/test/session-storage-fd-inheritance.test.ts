@@ -59,7 +59,7 @@ test.skipIf(process.platform !== "linux")("bash tool children never inherit sess
 	try {
 		const { dlopen, FFIType } = await import("bun:ffi");
 		const libc = (
-			dlopen as (
+			dlopen as unknown as (
 				lib: unknown,
 				symbols: unknown,
 			) => { symbols: { fcntl: (fd: number, cmd: number, arg: number) => number } }
