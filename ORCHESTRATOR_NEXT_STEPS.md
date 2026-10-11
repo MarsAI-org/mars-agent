@@ -108,12 +108,15 @@ Task: Implement and verify Milestone 2 ("Termux Feasibility Spike") for Mars, va
    - Verify that all changes build and pass on Linux ARM64 (`ubuntu-24.04-arm`).
 
 ## Manual Device Testing Checklist (To Be Run on Real Android Hardware)
+
+> Environment assumptions (UNVERIFIED from this repository): `pkg`, `proot-distro`, and `termux-wake-lock` are standard Termux/proot-distro tools assumed present after install; they cannot be verified from the Mars codebase. CLI flags below were checked against the CLI source: `mars --version` and `mars --smoke-test` exist (VERIFIED: `packages/coding-agent/src/cli.ts:535-544`).
+
 - [ ] Install Termux from F-Droid on an ARM64 Android device.
 - [ ] Run `pkg update && pkg install proot-distro git curl`.
 - [ ] Run `proot-distro install ubuntu` and log in via `proot-distro login ubuntu`.
 - [ ] Download latest `mars-linux-arm64` binary release inside PRoot Ubuntu.
 - [ ] Run `mars --version` and verify execution without linker or libc errors.
-- [ ] Run `mars --smoke-test` and verify worker subprocess communication.
+- [ ] Run `mars --smoke-test` and verify worker subprocess communication. Note: the flag exists (VERIFIED: `packages/coding-agent/src/cli.ts:541`, handler `runSmokeTest` at `packages/coding-agent/src/cli.ts:137`) but spawns the full worker set (stats sync, stats activity, tiny title, STT, JS eval, computer worker, TTS, mnemopi embed, daemon broker, LSP mux, IDA host, blob broker, terminal output worker, text predict daemon), so success on a phone is UNVERIFIED and a reduced mobile probe is a Milestone 2 task.
 - [ ] Run a test coding session in a sample Git repo; verify git commit and file edits succeed.
 - [ ] Verify that opening/closing virtual touch keyboard (SIGWINCH resize) does not crash the TUI.
 - [ ] Run `termux-wake-lock` and verify session survives phone screen lock.
