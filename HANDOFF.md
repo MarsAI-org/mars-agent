@@ -115,43 +115,79 @@ cd packages/utils && bun test ./test/platform.test.ts ./test/termux-launcher.tes
 
 ---
 
-## 5. Known Pre-Existing Failures (not regressions)
+## 5. Baseline: Full-Suite Failures per Commit (measured, with evidence)
 
-The suite is large and the CI runner buckets it heavily; **many failures are load
-flakes that pass when run alone**. Verified this session: every file below was
-re-run in isolation and passed **except** `compat-compile`.
+The suite is large and the runner buckets it heavily; **most failures are load
+flakes that pass when run alone**. Two full runs were measured in this
+environment (Bun 1.4.3, linux-x64, same lockfile):
 
-Real, reproducible failure on `main` (pre-existing, unrelated to this program):
+| Commit | Chunks passed | Test files failing |
+|---|---|---|
+| rebrand merge `5c2144b14e` | 161 / 202 | 56 |
+| `main` `51729c3257` (post-Milestone 2) | 174 / 203 | 39 |
 
-| Test | Cause |
-|---|---|
-| `packages/catalog/test/compat-compile.test.ts` | Committed `packages/catalog/src/compat/rules.json` is stale relative to the KDL rules (it still says `"omp"` where the compiler now emits `"mars"`). Fix would be `bun run gen:compat` + commit, which is out of scope here. |
+Method: the rebrand run used a separate worktree (`/tmp/opencode/mars-rebrand`)
+with `node_modules` symlinked from the main checkout (identical `bun.lock`) and a
+full `bun run build` before testing; `main` was run in place. Run-to-run variance
+is dominated by machine load, so the comparison is between failure *sets*, not
+counts. Test paths below are package-relative, as the runner prints them.
 
-Environment-caused (no TTY / no PTY / no compiled-binary context), reproduced on `main`:
+**Classification of the 39 files failing on `main`:**
 
-- `packages/tui/test/glyph-protocol.test.ts`, `terminal-info.test.ts`, `notifications.test.ts`, `desktop-notify.test.ts`
+- **36 common** to both commits (pre-existing). 35 are listed here;
+  `packages/catalog/test/compat-compile.test.ts` is the 36th and is broken out
+  in the "FIXED this session" table below because it was the one reproducible
+  failure. The 35: `attachment-chips`, `bash-autobg-timer`,
+  `cli-resume-model-fallback`, `cli/update-cli`, `cursor-discovery`,
+  `desktop-notify`, `dry-balance-runtime`,
+  `extensibility/extension-load-notifications`, `extension-loader-process-exit`,
+  `fatal-stderr-pty`, `issue-905-repro`, `judgment`, `main-initial-message-title`,
+  `mcp-incremental-connect`, `mcp-print-readiness`,
+  `mcp-resource-templates-missing`, `mcp-server-tool-ownership`, `native/blobs`,
+  `notifications`, `oauth-flow`, `prompt-action-autocomplete`, `rpc-client.start`,
+  `rpc-compatible-primitives`, `rpc`, `runner-cache-restage`,
+  `session-storage-fd-inheritance`, `ssh-control-path`, `tools/browser-tern-tab`,
+  `tools/eval-timeout`, `tools/lsp-regressions`, `tools/write-special-files`,
+  `ttsr-incremental-match`, `update-cli`, `utils/changelog-static-import`,
+  `utils/changelog`.
+- **3 new on `main` vs the rebrand commit** — `mcp-http-transport`,
+  `sdk-credential-disabled-bridge`, `tools/read-directory-range`. Each was
+  re-run in isolation on `main` and **passed** (`mcp-http-transport` 23/23,
+  `sdk-credential-disabled-bridge` 9/9, `tools/read-directory-range` 6/6). Their
+  full-run failures are timing/ordering artefacts of the parallel runner (a 50 ms
+  request-timeout assertion, a concurrent-listener assertion, and a directory
+  listing assertion). **No Milestone 1 or 2 code path is involved — they are load
+  flakes, not regressions.**
+
+**Real, reproducible failure — FIXED this session (branch `fix/baseline-repair`):**
+
+| Test | Cause | Fix |
+|---|---|---|
+| `packages/catalog/test/compat-compile.test.ts` | Committed `packages/catalog/src/compat/rules.json` was stale after the rebrand rename (still `"omp"` where the compiler emits `"mars"`). | `bun run gen:compat`; the JSON diff is exactly 4 string values (one `originator`, two `login.instructions`, one `clientId`), no behavior values change. Test now 36/36. |
+
+**Environment-caused on `main`** (no TTY / no PTY / no compiled-binary context).
+These appeared in the measured `main` run and reproduce without a TTY:
+
+- `packages/tui/test/notifications.test.ts`, `desktop-notify.test.ts`
 - `packages/coding-agent/test/fatal-stderr-pty.test.ts`, `utils/changelog.test.ts`, `utils/changelog-static-import.test.ts`
 - `packages/coding-agent/test/ssh-control-path.test.ts`, `runner-cache-restage.test.ts`
 - `packages/coding-agent/test/main-initial-message-title.test.ts`
 
-Load flakes observed under a full parallel run (all pass standalone): `attachment-chips`,
-`autocomplete`, `bash-autobg-timer`, `cli-goal-flag`, `cli-non-tty-launch`,
-`cli-resume-model-fallback`, `collab/chunked-welcome`, `command-report-text-mode`,
-`config-cli`, `cursor-discovery`, `dry-balance-*`, `eval/completion-bridge`,
-`eval/judgment-batch-bridge`, `extension-loader-process-exit`,
-`extensibility/extension-load-notifications`, `issue-905-repro`,
-`issue-12281-lm-studio-placeholder-auth`, `judgment`, `mcp-*`, `memory-tools`,
-`modes/noninteractive-dispose`, `native/blobs`, `native` (natives package),
-`openai-codex-stream` (ai package), `oauth-flow`, `prompt-action-autocomplete`,
-`rpc*`, `session-storage-fd-inheritance`, `stream/publisher`,
-`token-mcp-oauth-refresh`, `tools/browser-tern-tab`, `tools/eval-timeout`,
-`tools/lsp-regressions`, `tools/write-special-files`, `ttsr-incremental-match`,
-`update-cli`, `worker-selector`.
+(`packages/tui/test/glyph-protocol.test.ts` and `terminal-info.test.ts` were
+listed in an earlier revision of this file but did **not** fail in either
+measured run this session; treat them as TTY-sensitive files to watch, not as
+confirmed failures.)
 
-Observed full-suite results on the merged `main` after Milestone 2: 176/203
-bucketed commands passed; the 38 failing test files were all in the
-pre-existing/environment/flake categories above (each re-run in isolation and
-passed, except `compat-compile`).
+**Load flakes** (all pass standalone): `attachment-chips`, `bash-autobg-timer`,
+`cli-resume-model-fallback`, `cursor-discovery`, `dry-balance-runtime`,
+`extension-loader-process-exit`, `extensibility/extension-load-notifications`,
+`issue-905-repro`, `judgment`, `mcp-*` (including `mcp-http-transport`),
+`native/blobs`, `oauth-flow`, `prompt-action-autocomplete`, `rpc*`
+(including `rpc-client.start`, `rpc-compatible-primitives`),
+`sdk-credential-disabled-bridge`, `session-storage-fd-inheritance`,
+`tools/browser-tern-tab`, `tools/eval-timeout`, `tools/lsp-regressions`,
+`tools/read-directory-range`, `tools/write-special-files`,
+`ttsr-incremental-match`, `update-cli`, `cli/update-cli`.
 
 If a full run shows a failure not in the lists above, re-run it in isolation
 first: if it passes alone it is a load flake, otherwise investigate.
