@@ -321,7 +321,7 @@ jobs:
            shell: bash
            run: |
               set -euo pipefail
-              tarball="$(npm view @marsai-org/natives-linux-x64@latest dist.tarball)"
+              tarball="$(npm view @marsai-org/natives-linux-x64@latest dist.tarball 2>/dev/null || npm view @oh-my-pi/pi-natives-linux-x64@latest dist.tarball)"
               echo "Fetching $tarball"
               curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
               mkdir -p ci-natives/natives-linux-x64-baseline ci-natives/natives-linux-x64-modern
