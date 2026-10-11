@@ -4,11 +4,16 @@ import * as os from "node:os";
 import * as path from "node:path";
 import {
 	createKeyedMutex,
+	distTagFromArgs,
 	legalPayloadFiles,
 	npmDistTag,
+	orderByDependencies,
+	packOnlyDirFromArgs,
 	type PublishJob,
 	packages,
 	prepareNativeCorePackage,
+	publishFlags,
+	resolveDistTag,
 	rewriteManifest,
 	runPublishJobs,
 	stageLegalPayloads,
@@ -19,6 +24,71 @@ describe("npm dist-tags", () => {
 		expect(npmDistTag("0.13.0-canary.2")).toBe("canary");
 		expect(npmDistTag("0.13.0")).toBe("latest");
 		expect(() => npmDistTag("0.13.0-rc.1")).toThrow("Unsupported prerelease version");
+	});
+
+	it("lets the workflow dist-tag input override the version default", () => {
+		// The bootstrap publish runs a stable version but must land on `next`,
+		// never on `latest`: the human moves `latest` deliberately.
+		expect(resolveDistTag("18.8.6", "next")).toBe("next");
+		// Without an override a prerelease is still rejected rather than
+		// silently published on the stable channel.
+		expect(resolveDistTag("18.8.6", null)).toBe("latest");
+		expect(() => resolveDistTag("18.8.6-rc.1", null)).toThrow("Unsupported prerelease version");
+		expect(resolveDistTag("18.8.6-rc.1", "next")).toBe("next");
+	});
+});
+
+describe("publish invocation hygiene", () => {
+	it("never runs lifecycle scripts in the credentialed publish step", () => {
+		const flags = publishFlags("next");
+		expect(flags).toContain("--ignore-scripts");
+		expect(flags).toContain("--access");
+		expect(flags).toContain("public");
+		expect(flags).toEqual(expect.arrayContaining(["--tag", "next"]));
+	});
+
+	it("parses both --dist-tag forms and rejects an empty value", () => {
+		expect(distTagFromArgs(["--dist-tag", "next"])).toBe("next");
+		expect(distTagFromArgs(["--dist-tag=canary"])).toBe("canary");
+		expect(distTagFromArgs(["--dry-run"])).toBeNull();
+		// An empty value must throw, not silently publish on the version default.
+		expect(() => distTagFromArgs(["--dist-tag="])).toThrow("--dist-tag requires a value");
+		expect(() => distTagFromArgs(["--dist-tag"])).toThrow("--dist-tag requires a value");
+	});
+
+	it("parses --pack-only and rejects an empty directory", () => {
+		expect(packOnlyDirFromArgs(["--pack-only", "/tmp/x"])).toBe("/tmp/x");
+		expect(packOnlyDirFromArgs(["--pack-only=/tmp/y"])).toBe("/tmp/y");
+		expect(packOnlyDirFromArgs(["--dry-run"])).toBeNull();
+		expect(() => packOnlyDirFromArgs(["--pack-only="])).toThrow("--pack-only requires a directory");
+	});
+});
+
+describe("publish manifest ordering", () => {
+	const row = (name: string, dependsOn: string[]) => ({
+		name,
+		version: "1.0.0",
+		tag: "next",
+		tarball: `/tmp/${name}.tgz`,
+		dependsOn,
+	});
+
+	it("orders a dependency before every package that needs it", () => {
+		// coding-agent depends on tui, which depends on utils; declared in the
+		// reverse order so the sort has real work to do.
+		const ordered = orderByDependencies([
+			row("@x/coding-agent", ["@x/tui"]),
+			row("@x/tui", ["@x/utils"]),
+			row("@x/utils", []),
+		]).map(entry => entry.name);
+		expect(ordered).toEqual(["@x/utils", "@x/tui", "@x/coding-agent"]);
+	});
+
+	it("ignores dependencies outside the packed set and stays acyclic-safe", () => {
+		const ordered = orderByDependencies([row("@x/a", ["@x/not-packed", "@x/b"]), row("@x/b", [])]).map(
+			entry => entry.name,
+		);
+		expect(ordered).toEqual(["@x/b", "@x/a"]);
 	});
 });
 
@@ -140,7 +210,7 @@ describe("concurrent publish runner", () => {
 
 describe("published legal payloads", () => {
 	it("selects the exact payload for MIT packages", () => {
-		expect(legalPayloadFiles("MIT")).toEqual(["LICENSE", "THIRD-PARTY-NOTICES.txt"]);
+		expect(legalPayloadFiles("MIT")).toEqual(["LICENSE", "CREDITS.md", "THIRD-PARTY-NOTICES.txt"]);
 		expect(() => legalPayloadFiles("MIT OR Apache-2.0")).toThrow("Unsupported package license: MIT OR Apache-2.0");
 		expect(() => legalPayloadFiles(undefined)).toThrow("Unsupported package license: <missing>");
 	});
@@ -152,13 +222,15 @@ describe("published legal payloads", () => {
 		try {
 			await Promise.all([
 				Bun.write(path.join(root, "LICENSE"), "root MIT\n"),
+				Bun.write(path.join(root, "CREDITS.md"), "credits\n"),
 				Bun.write(path.join(root, "THIRD-PARTY-NOTICES.txt"), "notices\n"),
 				Bun.write(path.join(pkgDir, "LICENSE"), "package MIT\n"),
 			]);
 
 			const files = await stageLegalPayloads(pkgDir, "MIT", true, root);
-			expect(files).toEqual(["LICENSE", "THIRD-PARTY-NOTICES.txt"]);
+			expect(files).toEqual(["LICENSE", "CREDITS.md", "THIRD-PARTY-NOTICES.txt"]);
 			expect(await Bun.file(path.join(pkgDir, "LICENSE")).text()).toBe("package MIT\n");
+			expect(await Bun.file(path.join(pkgDir, "CREDITS.md")).text()).toBe("credits\n");
 			expect(await Bun.file(path.join(pkgDir, "THIRD-PARTY-NOTICES.txt")).text()).toBe("notices\n");
 		} finally {
 			await fs.rm(root, { recursive: true, force: true });
@@ -197,6 +269,7 @@ describe("published legal payloads", () => {
 				"native/embedded-addon.js",
 				"README.md",
 				"LICENSE",
+				"CREDITS.md",
 				"THIRD-PARTY-NOTICES.txt",
 			]);
 		} finally {
@@ -242,7 +315,7 @@ describe("published manifest topology", () => {
 		if (!pkg) throw new Error("utils missing from publish set");
 
 		const manifest = await rewriteManifest(pkg, false);
-		expect(manifest.files).toEqual(expect.arrayContaining(["LICENSE", "THIRD-PARTY-NOTICES.txt"]));
+		expect(manifest.files).toEqual(expect.arrayContaining(["LICENSE", "CREDITS.md", "THIRD-PARTY-NOTICES.txt"]));
 		expect(manifest.main).toBe("./src/index.ts");
 		expect(manifest.exports).toEqual({
 			".": {
