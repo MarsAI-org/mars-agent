@@ -91,13 +91,17 @@ interface PackageManifest {
 const repoRoot = path.join(import.meta.dir, "..");
 const isDryRun = process.argv.includes("--dry-run");
 const MIT_LICENSE = "LICENSE";
+const CREDITS = "CREDITS.md";
 const THIRD_PARTY_NOTICES = "THIRD-PARTY-NOTICES.txt";
 
 /** Selects the legal payload contract for a publishable first-party package. */
 export function legalPayloadFiles(license: string | undefined): string[] {
 	switch (license) {
 		case "MIT":
-			return [MIT_LICENSE, THIRD_PARTY_NOTICES];
+			// LICENSE carries the Mars and upstream copyright lines; CREDITS.md
+			// names the fork lineage; THIRD-PARTY-NOTICES.txt holds the full
+			// dependency attribution. All three ship with every package.
+			return [MIT_LICENSE, CREDITS, THIRD_PARTY_NOTICES];
 		default:
 			throw new Error(`Unsupported package license: ${license ?? "<missing>"}`);
 	}
@@ -140,7 +144,27 @@ function nativeLeafTagFromArgs(argv: readonly string[]): string | null {
 	return null;
 }
 
+/** `--dist-tag <tag>` overrides the version-derived npm dist-tag (e.g. `next`). */
+function distTagFromArgs(argv: readonly string[]): string | null {
+	for (let i = 0; i < argv.length; i++) {
+		const arg = argv[i];
+		if (arg === "--dist-tag") {
+			const tag = argv[i + 1];
+			if (!tag) throw new Error("--dist-tag requires a value");
+			return tag;
+		}
+		if (arg.startsWith("--dist-tag=")) return arg.slice("--dist-tag=".length);
+	}
+	return null;
+}
+
 const nativeLeafTag = nativeLeafTagFromArgs(process.argv.slice(2));
+const distTagOverride = distTagFromArgs(process.argv.slice(2));
+/**
+ * `--provenance` needs an OIDC-capable CI runner, so it is opt-in via the
+ * environment and enabled by the publish workflows, never by default.
+ */
+const provenanceEnabled = Bun.env.MARS_PUBLISH_PROVENANCE === "1";
 /**
  * Choose npm's dist-tag from a package manifest version. Unknown prereleases
  * are rejected rather than accidentally publishing them on the stable channel.
@@ -151,6 +175,22 @@ export function npmDistTag(version: string): string {
 		throw new Error(`Unsupported prerelease version for npm publish: ${version}`);
 	}
 	return "latest";
+}
+
+/** The dist-tag a package publishes under: the CLI override wins over the version default. */
+export function resolveDistTag(version: string, override: string | null = distTagOverride): string {
+	return override ?? npmDistTag(version);
+}
+
+/**
+ * Flags shared by every `npm publish` invocation. `--ignore-scripts` keeps
+ * lifecycle scripts from running in the step that holds the registry
+ * credential; packing already ran each package's `prepack` before this point.
+ */
+export function publishFlags(tag: string): string[] {
+	const flags = ["--access", "public", "--tag", tag, "--ignore-scripts"];
+	if (provenanceEnabled) flags.push("--provenance");
+	return flags;
 }
 
 /**
@@ -430,7 +470,7 @@ function publishTargetJob(target: PublishTarget, packLocks: KeyedMutex): Publish
 		async pack(log) {
 			if (isDryRun) {
 				log(
-					`DRY RUN bun pm pack && npm publish --access public --tag ${npmDistTag(version)} (${path.relative(repoRoot, dir)})`,
+					`DRY RUN bun pm pack && npm publish ${publishFlags(resolveDistTag(version)).join(" ")} (${path.relative(repoRoot, dir)})`,
 				);
 				return;
 			}
@@ -458,7 +498,7 @@ function publishTargetJob(target: PublishTarget, packLocks: KeyedMutex): Publish
 			if (isDryRun) return;
 			if (!packed) throw new Error(`${name} was not packed`);
 			try {
-				const tag = npmDistTag(packed.version);
+				const tag = resolveDistTag(packed.version);
 				// Preflight the exact packed version so reruns skip deterministically.
 				// Fail open on lookup errors; only a confirmed published version may skip publishing.
 				const preflight = await $`npm view ${`${packed.name}@${packed.version}`} version`.quiet().nothrow();
@@ -467,7 +507,7 @@ function publishTargetJob(target: PublishTarget, packLocks: KeyedMutex): Publish
 					return;
 				}
 				log(`Publishing ${packed.name}…`);
-				const result = await $`npm publish ${packed.path} --access public --tag ${tag}`.quiet().nothrow();
+				const result = await $`npm publish ${packed.path} ${publishFlags(tag)}`.quiet().nothrow();
 				const output = `${result.stdout.toString()}${result.stderr.toString()}`.trim();
 				if (output) log(output);
 				if (result.exitCode !== 0) {
