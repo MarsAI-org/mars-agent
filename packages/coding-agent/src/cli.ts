@@ -545,7 +545,7 @@ export async function runCli(argv: string[]): Promise<void> {
 	}
 
 	if (resolvedArgv[0] === "--platform-check") {
-		await runPlatformCheck();
+		await runPlatformCheck(resolvedArgv);
 		return;
 	}
 

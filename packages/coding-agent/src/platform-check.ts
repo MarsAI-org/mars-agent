@@ -143,10 +143,9 @@ function formatReport(report: PlatformCheckReport): string {
 }
 
 /** Entry point for `mars --platform-check` (and `--platform-check --json`). */
-export async function runPlatformCheck(): Promise<void> {
+export async function runPlatformCheck(argv: readonly string[] = process.argv): Promise<void> {
 	const report = buildPlatformCheckReport();
-	const wantsJson = process.argv.includes("--json");
-	if (wantsJson) {
+	if (argv.includes("--json")) {
 		process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
 		return;
 	}
