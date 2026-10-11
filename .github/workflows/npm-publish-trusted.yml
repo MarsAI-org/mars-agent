@@ -106,9 +106,10 @@ jobs:
               continue
             fi
             echo "Publishing ${name}@${version} (tag ${tag})"
-            out="$(npm publish "$tarball" --access public --tag "$tag" --ignore-scripts 2>&1)"
-            rc=$?
-            [ -n "$out" ] && echo "$out"
+            # `|| rc=$?` keeps `bash -e` from aborting before the error is read.
+            rc=0
+            out="$(npm publish "$tarball" --access public --tag "$tag" --ignore-scripts 2>&1)" || rc=$?
+            if [ -n "$out" ]; then echo "$out"; fi
             if [ "$rc" -ne 0 ]; then
               if printf '%s' "$out" | grep -qiE "E409|EPUBLISHCONFLICT|cannot publish over"; then
                 echo "Skipping ${name}@${version} (already published)"
