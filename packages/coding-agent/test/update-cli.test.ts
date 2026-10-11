@@ -1610,9 +1610,9 @@ describe("update-cli script-shim takeover", () => {
 	}
 
 	const shims: Record<string, string> = {
-		omp: "#!/bin/sh\nnode omp.js\n",
-		"omp.cmd": "@node omp.js %*\n",
-		"omp.ps1": "node omp.js @args\n",
+		mars: "#!/bin/sh\nnode mars.js\n",
+		"mars.cmd": "@node mars.js %*\n",
+		"mars.ps1": "node mars.js @args\n",
 	};
 
 	async function writeShims(dir: string): Promise<void> {
@@ -1623,7 +1623,7 @@ describe("update-cli script-shim takeover", () => {
 
 	/**
 	 * The fake release binaries are `#!/bin/sh` scripts, which Windows cannot
-	 * launch as `omp.exe`. There, "run" the explicit path the takeover verifies
+	 * launch as `mars.exe`. There, "run" the explicit path the takeover verifies
 	 * by reading the version the script echoes; POSIX hosts execute it for real.
 	 */
 	const verifyBinary =
@@ -1635,7 +1635,7 @@ describe("update-cli script-shim takeover", () => {
 				}
 			: undefined;
 
-	it("installs omp.exe beside the shims and retires them", async () => {
+	it("installs mars.exe beside the shims and retires them", async () => {
 		const dir = await makeTempDir();
 		await writeShims(dir);
 		// Real executable, no injected verifier: the takeover must verify the
@@ -1643,14 +1643,14 @@ describe("update-cli script-shim takeover", () => {
 		// renamed away, so a PATH re-resolution would fail here.
 		const exe = `#!/bin/sh\necho mars/${version}\n`;
 
-		await updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {
+		await updateViaShimTakeover(path.join(dir, "mars.cmd"), version, {
 			binaryName,
 			fetchImpl: makeFetch(exe),
 			githubToken: "test-token",
 			verifyBinary,
 		});
 
-		expect(await Bun.file(path.join(dir, "omp.exe")).text()).toBe(exe);
+		expect(await Bun.file(path.join(dir, "mars.exe")).text()).toBe(exe);
 		for (const name in shims) {
 			expect(await Bun.file(path.join(dir, name)).exists()).toBe(false);
 		}
@@ -1666,25 +1666,25 @@ describe("update-cli script-shim takeover", () => {
 		// A canary release is published as a prerelease: without opt-in the
 		// takeover refuses the asset and leaves the shims intact.
 		await expect(
-			updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {
+			updateViaShimTakeover(path.join(dir, "mars.cmd"), version, {
 				binaryName,
 				fetchImpl: makeFetch(exe, true),
 				githubToken: "test-token",
 				verifyBinary,
 			}),
 		).rejects.toThrow("is a prerelease");
-		expect(await Bun.file(path.join(dir, "omp.exe")).exists()).toBe(false);
+		expect(await Bun.file(path.join(dir, "mars.exe")).exists()).toBe(false);
 
 		// allowPrerelease threads through to the asset resolver, so the canary
 		// exe installs and the shims are retired.
-		await updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {
+		await updateViaShimTakeover(path.join(dir, "mars.cmd"), version, {
 			binaryName,
 			fetchImpl: makeFetch(exe, true),
 			allowPrerelease: true,
 			githubToken: "test-token",
 			verifyBinary,
 		});
-		expect(await Bun.file(path.join(dir, "omp.exe")).text()).toBe(exe);
+		expect(await Bun.file(path.join(dir, "mars.exe")).text()).toBe(exe);
 	});
 
 	it("drops bun's launcher metadata when the standalone binary takes the .exe over", async () => {
@@ -1737,7 +1737,7 @@ describe("update-cli script-shim takeover", () => {
 		const exe = "#!/bin/sh\necho mars/17.2.12\n";
 
 		await expect(
-			updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {
+			updateViaShimTakeover(path.join(dir, "mars.cmd"), version, {
 				binaryName,
 				fetchImpl: makeFetch(exe),
 				githubToken: "test-token",
@@ -1745,7 +1745,7 @@ describe("update-cli script-shim takeover", () => {
 			}),
 		).rejects.toThrow(/still reports 17\.2\.12 \(expected 18\.0\.0\); restored previous mars launcher/);
 
-		expect(await Bun.file(path.join(dir, "omp.exe")).exists()).toBe(false);
+		expect(await Bun.file(path.join(dir, "mars.exe")).exists()).toBe(false);
 		for (const name in shims) {
 			expect(await Bun.file(path.join(dir, name)).text()).toBe(shims[name]);
 		}
@@ -1756,7 +1756,7 @@ describe("update-cli script-shim takeover", () => {
 	function renameLockingPs1(): Mock<typeof nodeFs.promises.rename> {
 		const realRename = nodeFs.promises.rename;
 		return spyOn(nodeFs.promises, "rename").mockImplementation(async (from, to) => {
-			if (path.basename(String(from)) === "omp.ps1") {
+			if (path.basename(String(from)) === "mars.ps1") {
 				throw Object.assign(new Error("EPERM: file is locked"), { code: "EPERM" });
 			}
 			return await realRename(from, to);
@@ -1769,7 +1769,7 @@ describe("update-cli script-shim takeover", () => {
 		const exe = `#!/bin/sh\necho mars/${version}\n`;
 		const renameSpy = renameLockingPs1();
 		try {
-			await updateViaShimTakeover(path.join(dir, "omp.cmd"), version, {
+			await updateViaShimTakeover(path.join(dir, "mars.cmd"), version, {
 				binaryName,
 				fetchImpl: makeFetch(exe),
 				githubToken: "test-token",
@@ -1779,12 +1779,12 @@ describe("update-cli script-shim takeover", () => {
 			renameSpy.mockRestore();
 		}
 
-		expect(await Bun.file(path.join(dir, "omp.exe")).text()).toBe(exe);
+		expect(await Bun.file(path.join(dir, "mars.exe")).text()).toBe(exe);
 		expect(await Bun.file(path.join(dir, "mars")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "omp.cmd")).exists()).toBe(false);
+		expect(await Bun.file(path.join(dir, "mars.cmd")).exists()).toBe(false);
 		// PowerShell resolves .ps1 before .exe: the locked shim must now exec
 		// the new binary instead of keeping its old body.
-		expect(await Bun.file(path.join(dir, "omp.ps1")).text()).toContain('& "$PSScriptRoot\\omp.exe" @args');
+		expect(await Bun.file(path.join(dir, "mars.ps1")).text()).toContain('& "$PSScriptRoot\\mars.exe" @args');
 	});
 
 	it("restores a forwarded shim's original body when verification fails", async () => {
@@ -1805,7 +1805,7 @@ describe("update-cli script-shim takeover", () => {
 			renameSpy.mockRestore();
 		}
 
-		expect(await Bun.file(path.join(dir, "omp.exe")).exists()).toBe(false);
+		expect(await Bun.file(path.join(dir, "mars.exe")).exists()).toBe(false);
 		for (const name in shims) {
 			expect(await Bun.file(path.join(dir, name)).text()).toBe(shims[name]);
 		}
