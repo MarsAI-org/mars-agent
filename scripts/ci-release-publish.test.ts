@@ -4,8 +4,11 @@ import * as os from "node:os";
 import * as path from "node:path";
 import {
 	createKeyedMutex,
+	distTagFromArgs,
 	legalPayloadFiles,
 	npmDistTag,
+	orderByDependencies,
+	packOnlyDirFromArgs,
 	type PublishJob,
 	packages,
 	prepareNativeCorePackage,
@@ -42,6 +45,50 @@ describe("publish invocation hygiene", () => {
 		expect(flags).toContain("--access");
 		expect(flags).toContain("public");
 		expect(flags).toEqual(expect.arrayContaining(["--tag", "next"]));
+	});
+
+	it("parses both --dist-tag forms and rejects an empty value", () => {
+		expect(distTagFromArgs(["--dist-tag", "next"])).toBe("next");
+		expect(distTagFromArgs(["--dist-tag=canary"])).toBe("canary");
+		expect(distTagFromArgs(["--dry-run"])).toBeNull();
+		// An empty value must throw, not silently publish on the version default.
+		expect(() => distTagFromArgs(["--dist-tag="])).toThrow("--dist-tag requires a value");
+		expect(() => distTagFromArgs(["--dist-tag"])).toThrow("--dist-tag requires a value");
+	});
+
+	it("parses --pack-only and rejects an empty directory", () => {
+		expect(packOnlyDirFromArgs(["--pack-only", "/tmp/x"])).toBe("/tmp/x");
+		expect(packOnlyDirFromArgs(["--pack-only=/tmp/y"])).toBe("/tmp/y");
+		expect(packOnlyDirFromArgs(["--dry-run"])).toBeNull();
+		expect(() => packOnlyDirFromArgs(["--pack-only="])).toThrow("--pack-only requires a directory");
+	});
+});
+
+describe("publish manifest ordering", () => {
+	const row = (name: string, dependsOn: string[]) => ({
+		name,
+		version: "1.0.0",
+		tag: "next",
+		tarball: `/tmp/${name}.tgz`,
+		dependsOn,
+	});
+
+	it("orders a dependency before every package that needs it", () => {
+		// coding-agent depends on tui, which depends on utils; declared in the
+		// reverse order so the sort has real work to do.
+		const ordered = orderByDependencies([
+			row("@x/coding-agent", ["@x/tui"]),
+			row("@x/tui", ["@x/utils"]),
+			row("@x/utils", []),
+		]).map(entry => entry.name);
+		expect(ordered).toEqual(["@x/utils", "@x/tui", "@x/coding-agent"]);
+	});
+
+	it("ignores dependencies outside the packed set and stays acyclic-safe", () => {
+		const ordered = orderByDependencies([row("@x/a", ["@x/not-packed", "@x/b"]), row("@x/b", [])]).map(
+			entry => entry.name,
+		);
+		expect(ordered).toEqual(["@x/b", "@x/a"]);
 	});
 });
 

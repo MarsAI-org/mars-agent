@@ -5,9 +5,12 @@ the workspace packages. It is written for a human at a keyboard; the automated
 paths live in `.github/workflows/npm-publish.yml` (token bootstrap) and
 `.github/workflows/npm-publish-trusted.yml` (OIDC trusted publishing).
 
-Nothing in this repository ever reads, prints, or stores a registry credential.
-Every workflow references the token by name only (`secrets.NPM_TOKEN`) and the
-publish step is the only step whose environment carries it.
+The publish workflows never read, print, or store a registry credential: the
+token is referenced by name only (`secrets.NPM_TOKEN`), and it is in scope for
+exactly one step, which runs nothing but `npm publish` on tarballs that were
+built and packed in earlier steps. (The coding agent's own runtime reads
+`_authToken` from a user's `~/.npmrc` for registry features — that is unrelated
+to publishing and untouched here.)
 
 ---
 
@@ -142,18 +145,30 @@ any version that a registry `GET` already reports, so re-runs are idempotent.
 `workflow_dispatch` only (plus `v*` tag pushes on `main`); never triggered by a
 pull request. Inputs: `dry_run` (default `true`) and `dist_tag` (default `next`).
 
-The job runs only from `main` or a `v*` tag. Install, native build, and workspace
-build run first, with no secret in their environment. A single publish step then
-reports `NPM_TOKEN: present|missing` (a `test -n`, never the value) and
-`npm whoami`, and publishes with
-`--provenance --access public --tag <dist_tag> --ignore-scripts`.
+The job runs only from `main` or a `v*` tag. Steps run in this order:
+
+1. **No credential in scope:** checkout, toolchain, `bun install`, build the
+   native addon, then `bun scripts/ci-release-publish.ts --pack-only "$PACK_DIR"
+   --dist-tag <dist_tag>`. Packing runs each package's `prepack` build (the
+   coding-agent CLI bundle, the stats dashboard client), writes the tarballs to
+   `$PACK_DIR`, and records them in `$PACK_DIR/publish-manifest.tsv` in
+   dependency order.
+2. **Credential in scope (one step):** reports `NPM_TOKEN: present|missing` (a
+   `test -n`, never the value) and `npm whoami`, then walks the manifest running
+   `npm publish <tarball> --provenance --access public --tag <dist_tag>
+   --ignore-scripts` per entry, skipping versions that already exist. This step
+   runs no repository script and no lifecycle script.
+
+If `NPM_TOKEN` is missing the step warns and exits 0, so the workflow never fails
+the repository just because the secret is not configured yet.
 
 ### Trusted publishing — `.github/workflows/npm-publish-trusted.yml`
 
 `workflow_dispatch` only, **no token at all**: authentication is the GitHub OIDC
 token (`id-token: write`). Requires npm ≥ 11.5.1 and Node ≥ 22.14; provenance is
-generated automatically. This workflow is **inactive until a human configures a
-Trusted Publisher for each package** on npmjs.com (package → Settings → Trusted
+generated automatically. Same pack-then-publish split, but the publish step has
+no secret in its environment. This workflow is **inactive until a human configures
+a Trusted Publisher for each package** on npmjs.com (package → Settings → Trusted
 publishing): organization `MarsAI-org`, repository `mars-agent`, workflow
 filename `npm-publish-trusted.yml`.
 
@@ -183,9 +198,17 @@ filename `npm-publish-trusted.yml`.
 - **The root `publish` / `publish:dry` scripts now delegate** to
   `scripts/ci-release-publish.ts`. The previous `npm publish -ws` invocation
   bypassed the manifest rewrite and would have packed
-  `packages/natives/native/*.node` (a ~225 MB addon) and unbuilt TypeScript
-  sources into the published tarballs.
-- **Package sizes** were measured with `bun pm pack --dry-run`. After the publish
-  rewrite the largest payloads are the `coding-agent` CLI bundle (~30 MB
-  unpacked) and `catalog`'s `models.json` (~12 MB). No package contains a secret,
-  a test fixture, `node_modules`, or a stray `.env`.
+  `packages/natives/native/*.node` (the linux-x64 addon alone is ~219 MB) and
+  unbuilt TypeScript sources into the published tarballs.
+- **`--pack-only` mutates the working tree.** Like the rest of
+  `scripts/ci-release-publish.ts`, it rewrites each `package.json` in place
+  (types repointed to `dist/types`, `files` extended) and stages the legal
+  payload beside it. That is intended in CI, where the checkout is disposable;
+  after a local run, `git restore packages/*/package.json` and remove the staged
+  `LICENSE` / `CREDITS.md` / `THIRD-PARTY-NOTICES.txt` files.
+- **Package sizes** were measured with `bun pm pack --dry-run` and a real
+  `--pack-only` run. After the publish rewrite the largest payloads are the
+  `coding-agent` CLI bundle (~30 MB unpacked) and `catalog`'s `models.json`
+  (~12 MB). No package contains a secret, a test fixture, `node_modules`, or a
+  stray `.env`; the native core ships no `.node` file (the platform leaves carry
+  those).

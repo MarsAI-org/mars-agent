@@ -8,6 +8,12 @@ name: npm publish
 # package; this workflow is the path for the first publish, where no package has
 # a trusted publisher yet.
 #
+# Credential hygiene: every install, build, and pack step runs BEFORE any
+# credential exists. `--pack-only` runs each package's `prepack` build, so it
+# must not see the token; the publish step that carries the token runs only
+# `npm publish` on the already-built tarballs — no repository script, no
+# lifecycle script. `--ignore-scripts` makes that explicit.
+#
 # Triggers are `workflow_dispatch` and `v*` tag pushes only. A pull request can
 # never trigger it, and the job itself refuses to run outside main or a `v*` tag,
 # so a branch push cannot publish.
@@ -21,7 +27,7 @@ on:
         type: boolean
         default: true
       dist_tag:
-        description: "npm dist-tag to publish under (CI never moves `latest` on its own)"
+        description: "npm dist-tag to publish under (never moves `latest` on its own)"
         required: true
         type: string
         default: next
@@ -55,16 +61,16 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
           package-manager-cache: false
-      # The release script shells out to `npm publish`, and npm 12 needs a newer
-      # Node than Bun 1.3 emulates. Pin a version that supports provenance.
+      # npm runs under Bun when the release tooling shells out to it; pin a
+      # version that supports provenance and OIDC.
       - name: Install a publishing npm
         run: npm install -g npm@11.17.0
-      # Everything up to the publish step runs with no credential in scope.
+      # ---- Everything below runs with no credential in scope. ----
       - name: Install dependencies
         run: bun install --frozen-lockfile
       # coding-agent's `prepack` loads the Linux x64 addon, so it must exist
-      # before publishing. Built from source: this workflow is standalone and has
-      # no native-artifact job to download from.
+      # before packing. Built from source: this workflow is standalone and has no
+      # native-artifact job to download from.
       - name: Build the native addon
         env:
           MARS_NATIVE_CARGO_PROFILE: ci
@@ -72,43 +78,70 @@ jobs:
       - name: Resolve publish mode
         id: mode
         shell: bash
+        env:
+          DISPATCH_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          DISPATCH_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.dist_tag || 'next' }}
         run: |
+          echo "PACK_DIR=$RUNNER_TEMP/mars-npm-pack" >> "$GITHUB_ENV"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "dry_run=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
-            echo "dist_tag=${{ inputs.dist_tag }}" >> "$GITHUB_OUTPUT"
+            echo "dry_run=$DISPATCH_DRY_RUN" >> "$GITHUB_OUTPUT"
+            echo "dist_tag=$DISPATCH_DIST_TAG" >> "$GITHUB_OUTPUT"
           else
-            # A `v*` tag publishes for real: stable tags target `latest`,
-            # prerelease tags target `next` so a release candidate cannot move
-            # `latest` on its own.
+            # A `v*` tag publishes for real. Stable tags target `latest`;
+            # prerelease tags target `next`, so a release candidate can never
+            # move `latest` on its own.
             echo "dry_run=false" >> "$GITHUB_OUTPUT"
             case "${GITHUB_REF_NAME}" in
               *-*) echo "dist_tag=next" >> "$GITHUB_OUTPUT" ;;
               *)   echo "dist_tag=latest" >> "$GITHUB_OUTPUT" ;;
             esac
           fi
-      # The single step whose environment carries the credential. It reports
-      # presence with `test -n` and prints `npm whoami` — never the token, and
-      # never the environment. The publish script passes `--ignore-scripts`, so
-      # no package lifecycle script runs while the token is in scope.
+      # Packing runs each package's `prepack` build, so it stays out of the
+      # credential step. The tarballs are written under $PACK_DIR.
+      - name: Pack the packages (no credentials)
+        env:
+          DIST_TAG: ${{ steps.mode.outputs.dist_tag }}
+        run: bun scripts/ci-release-publish.ts --pack-only "$PACK_DIR" --dist-tag "$DIST_TAG"
+      # The single step whose environment carries the credential. It runs only
+      # `npm publish` on the tarballs produced above, in dependency order,
+      # skipping versions that already exist so reruns are idempotent. It never
+      # prints the token — presence is reported with `test -n`.
       - name: Publish to npm
+        if: steps.mode.outputs.dry_run != 'true'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          MARS_PUBLISH_PROVENANCE: "1"
-          DRY_RUN: ${{ steps.mode.outputs.dry_run }}
-          DIST_TAG: ${{ steps.mode.outputs.dist_tag }}
         shell: bash
         run: |
           set -uo pipefail
           if [ -n "${NPM_TOKEN:-}" ]; then echo "NPM_TOKEN: present"; else echo "NPM_TOKEN: missing"; fi
           echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
-          if [ "${DRY_RUN}" = "true" ]; then
-            echo "Dry run: packing and validating only, nothing is published."
-            bun scripts/ci-release-publish.ts --dry-run --dist-tag "$DIST_TAG"
-            exit $?
-          fi
           if [ -z "${NPM_TOKEN:-}" ]; then
             echo "::warning title=npm publish skipped::NPM_TOKEN is missing, so nothing was published. Configure the secret and re-run."
             exit 0
           fi
-          bun scripts/ci-release-publish.ts --dist-tag "$DIST_TAG"
+          manifest="$PACK_DIR/publish-manifest.tsv"
+          if [ ! -f "$manifest" ]; then
+            echo "::error title=npm publish::publish manifest not found at $manifest"
+            exit 1
+          fi
+          failed=0
+          while IFS=$'\t' read -r name version tag tarball; do
+            [ -n "$name" ] || continue
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "Skipping ${name}@${version} (already published)"
+              continue
+            fi
+            echo "Publishing ${name}@${version} (tag ${tag})"
+            if ! npm publish "$tarball" --access public --tag "$tag" --ignore-scripts --provenance; then
+              echo "::error title=npm publish::failed to publish ${name}@${version}"
+              failed=1
+            fi
+          done < "$manifest"
+          exit "$failed"
+      - name: Report dry run
+        if: steps.mode.outputs.dry_run == 'true'
+        run: |
+          echo "Dry run: packages were built and packed but nothing was published."
+          echo "Manifest written to $PACK_DIR/publish-manifest.tsv"
+          cat "$PACK_DIR/publish-manifest.tsv"

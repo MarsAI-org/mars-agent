@@ -145,7 +145,7 @@ function nativeLeafTagFromArgs(argv: readonly string[]): string | null {
 }
 
 /** `--dist-tag <tag>` overrides the version-derived npm dist-tag (e.g. `next`). */
-function distTagFromArgs(argv: readonly string[]): string | null {
+export function distTagFromArgs(argv: readonly string[]): string | null {
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
 		if (arg === "--dist-tag") {
@@ -153,13 +153,41 @@ function distTagFromArgs(argv: readonly string[]): string | null {
 			if (!tag) throw new Error("--dist-tag requires a value");
 			return tag;
 		}
-		if (arg.startsWith("--dist-tag=")) return arg.slice("--dist-tag=".length);
+		if (arg.startsWith("--dist-tag=")) {
+			const tag = arg.slice("--dist-tag=".length);
+			if (!tag) throw new Error("--dist-tag requires a value");
+			return tag;
+		}
+	}
+	return null;
+}
+
+/**
+ * `--pack-only <dir>` builds and packs every package into `<dir>` and writes a
+ * publish manifest, without contacting the registry. Split from publishing so
+ * the build (which runs each package's `prepack`) can run in a step that holds
+ * no registry credential.
+ */
+export function packOnlyDirFromArgs(argv: readonly string[]): string | null {
+	for (let i = 0; i < argv.length; i++) {
+		const arg = argv[i];
+		if (arg === "--pack-only") {
+			const dir = argv[i + 1];
+			if (!dir) throw new Error("--pack-only requires a directory");
+			return dir;
+		}
+		if (arg.startsWith("--pack-only=")) {
+			const dir = arg.slice("--pack-only=".length);
+			if (!dir) throw new Error("--pack-only requires a directory");
+			return dir;
+		}
 	}
 	return null;
 }
 
 const nativeLeafTag = nativeLeafTagFromArgs(process.argv.slice(2));
 const distTagOverride = distTagFromArgs(process.argv.slice(2));
+const packOnlyDir = packOnlyDirFromArgs(process.argv.slice(2));
 /**
  * `--provenance` needs an OIDC-capable CI runner, so it is opt-in via the
  * environment and enabled by the publish workflows, never by default.
@@ -396,9 +424,12 @@ export async function prepareNativeCorePackage(pkgDir: string, write: boolean): 
  * has no OIDC support (oven-sh/bun#22423). In CI with `id-token: write` granted
  * and `NODE_AUTH_TOKEN` set, npm tries OIDC per package and silently falls back
  * to the configured token when the package has no matching trusted publisher —
- * which also covers a package's first-ever publish. npm auto-enables provenance
- * only on the OIDC path, so we never pass `--provenance` (it would hard-fail the
- * token fallback).
+ * which also covers a package's first-ever publish.
+ *
+ * `--provenance` is opt-in via `MARS_PUBLISH_PROVENANCE=1`, which the publish
+ * workflows set. It requires `id-token: write` and a public source repository,
+ * both of which hold here; it is off by default so a local run cannot fail on a
+ * missing OIDC context.
  */
 export interface PackedTarball {
 	name: string;
@@ -676,13 +707,15 @@ function workspaceDependencies(manifest: PackageManifest): string[] {
 
 /**
  * Prepare every package serially in declared order — manifest rewrites change
- * what later packages' type emits resolve — then pack and publish
- * concurrently, each package only after the workspace packages it depends on
- * published. Any prepare failure publishes nothing: an unprepared package's
- * dependents would otherwise ship against a missing version. Returns the
- * failed package names/dirs.
+ * what later packages' type emits resolve — and record each package's workspace
+ * dependencies. Returns the prepared entries plus any package that failed to
+ * prepare; a prepare failure publishes nothing, because an unprepared package's
+ * dependents would otherwise ship against a missing version.
  */
-async function publishWorkspacePackages(): Promise<string[]> {
+async function prepareAllPackages(): Promise<{
+	prepared: { target: PublishTarget; prepack: boolean; manifest: PackageManifest }[];
+	failed: string[];
+}> {
 	const failed: string[] = [];
 	const prepared: { target: PublishTarget; prepack: boolean; manifest: PackageManifest }[] = [];
 	for (const pkg of packages) {
@@ -707,12 +740,102 @@ async function publishWorkspacePackages(): Promise<string[]> {
 	}
 	if (failed.length > 0) {
 		console.error("Publishing nothing: every package must prepare before any publishes.");
-		return failed;
+		return { prepared: [], failed };
 	}
 	const publishing = new Set(prepared.map(({ target }) => target.name));
 	for (const entry of prepared) {
 		entry.target.dependsOn = workspaceDependencies(entry.manifest).filter(name => publishing.has(name));
 	}
+	return { prepared, failed };
+}
+
+/** One packed tarball plus the workspace packages it must publish after. */
+interface PackedManifestRow {
+	name: string;
+	version: string;
+	tag: string;
+	tarball: string;
+	dependsOn: readonly string[];
+}
+
+/** Dependency-first order for packed rows; unknown dependency names are ignored. */
+export function orderByDependencies(rows: readonly PackedManifestRow[]): PackedManifestRow[] {
+	const byName = new Map(rows.map(row => [row.name, row]));
+	const ordered: PackedManifestRow[] = [];
+	const seen = new Set<string>();
+	const visit = (row: PackedManifestRow): void => {
+		if (seen.has(row.name)) return;
+		seen.add(row.name);
+		for (const dep of row.dependsOn) {
+			const dependency = byName.get(dep);
+			if (dependency) visit(dependency);
+		}
+		ordered.push(row);
+	};
+	for (const row of rows) visit(row);
+	return ordered;
+}
+
+/**
+ * Prepare and pack every package into `outDir`, then write
+ * `outDir/publish-manifest.tsv` listing each tarball in dependency order. Runs
+ * each package's `prepack` build, so it must run in a step that holds no
+ * registry credential; the publish step then only runs `npm publish` on the
+ * produced tarballs. Returns the failed package names/dirs.
+ */
+async function packWorkspaceInto(outDir: string): Promise<string[]> {
+	const { prepared, failed } = await prepareAllPackages();
+	if (failed.length > 0) return failed;
+	await fs.mkdir(outDir, { recursive: true });
+	const packLocks = createKeyedMutex();
+	const rows: PackedManifestRow[] = [];
+	// Pack largest-prepack packages first; the shared stats/coding-agent lock
+	// already keeps the two overlapping packs from racing.
+	const packingOrder = prepared.toSorted((a, b) => Number(b.prepack) - Number(a.prepack));
+	for (const { target } of packingOrder) {
+		const result = await packLocks(target.packLock, () =>
+			$`bun pm pack --quiet --destination ${outDir}`.cwd(target.dir).quiet().nothrow(),
+		);
+		const output = `${result.stdout.toString()}${result.stderr.toString()}`.trim();
+		if (result.exitCode !== 0) {
+			console.error(`FAILED packing ${target.name}: ${output}`);
+			return [target.name];
+		}
+		const tarball = output
+			.split("\n")
+			.map(line => line.trim())
+			.findLast(line => line.endsWith(".tgz"));
+		if (!tarball) {
+			console.error(`FAILED packing ${target.name}: bun pm pack printed no tarball path (${output})`);
+			return [target.name];
+		}
+		rows.push({
+			name: target.name,
+			version: target.version,
+			tag: resolveDistTag(target.version),
+			tarball,
+			dependsOn: target.dependsOn ?? [],
+		});
+	}
+	const ordered = orderByDependencies(rows);
+	const manifest = ordered.map(row => [row.name, row.version, row.tag, row.tarball].join("\t")).join("\n");
+	await Bun.write(path.join(outDir, "publish-manifest.tsv"), `${manifest}\n`);
+	console.log(`Packed ${rows.length} package(s) into ${outDir}; manifest: publish-manifest.tsv`);
+	for (const row of ordered) console.log(`  ${row.name}@${row.version} (tag ${row.tag}) -> ${row.tarball}`);
+	return [];
+}
+
+/**
+ * Prepare every package serially in declared order — manifest rewrites change
+ * what later packages' type emits resolve — then pack and publish
+ * concurrently, each package only after the workspace packages it depends on
+ * published. Any prepare failure publishes nothing: an unprepared package's
+ * dependents would otherwise ship against a missing version. Returns the
+ * failed package names/dirs.
+ */
+async function publishWorkspacePackages(): Promise<string[]> {
+	const { prepared, failed } = await prepareAllPackages();
+	if (failed.length > 0) return failed;
 	// Packages with a prepack build (coding-agent's CLI bundle) dominate wall time; start them first.
 	const ordered = prepared.toSorted((a, b) => Number(b.prepack) - Number(a.prepack));
 	const packLocks = createKeyedMutex();
@@ -723,7 +846,11 @@ async function publishWorkspacePackages(): Promise<string[]> {
 }
 
 if (import.meta.main) {
-	const failed = nativeLeafTag ? await publishNativeLeafPackage(nativeLeafTag) : await publishWorkspacePackages();
+	const failed = packOnlyDir
+		? await packWorkspaceInto(packOnlyDir)
+		: nativeLeafTag
+			? await publishNativeLeafPackage(nativeLeafTag)
+			: await publishWorkspacePackages();
 	if (failed.length > 0) {
 		console.error(`Failed to publish ${failed.length} package(s): ${failed.join(", ")}`);
 		process.exit(1);
