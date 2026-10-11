@@ -9,6 +9,9 @@
     "Abdias J"
   ],
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MarsAI-org/mars-agent.git",
