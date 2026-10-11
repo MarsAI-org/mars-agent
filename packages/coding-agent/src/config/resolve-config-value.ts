@@ -1,5 +1,14 @@
 import { executeShell } from "@marsai-org/natives";
-import { $envExact, directoryIsEnterable, getProjectDir, logger, ptree, untilAborted } from "@marsai-org/utils";
+import {
+	$envExact,
+	directoryIsEnterable,
+	getProjectDir,
+	isAndroid,
+	logger,
+	procmgr,
+	ptree,
+	untilAborted,
+} from "@marsai-org/utils";
 
 const COMMAND_FAILURE_RETRY_MS = 30_000;
 const commandResultCache = new Map<string, string>();
@@ -129,13 +138,17 @@ export async function runShellCommand(
 			return trimmed.length > 0 ? trimmed : undefined;
 		}
 
-		const result = await ptree.exec(["/bin/sh", "-c", command], {
+		// Keep the historical /bin/sh everywhere it exists; resolve the shell
+		// from PATH only on Android/Termux, where /bin/sh is absent. Behavior on
+		// linux-x64, macOS, and Windows is therefore unchanged.
+		const shellBinary = isAndroid() ? (procmgr.resolveBasicShell() ?? "/bin/sh") : "/bin/sh";
+		const result = await ptree.exec([shellBinary, "-c", command], {
 			cwd,
 			timeout: timeoutMs,
 			allowNonZero: true,
 			allowAbort: true,
 			detached: true,
-			subreaper: process.platform === "linux",
+			subreaper: process.platform === "linux" || isAndroid(),
 		});
 		if (!result.ok || result.exitError?.aborted) return undefined;
 		const trimmed = result.stdout.trim();

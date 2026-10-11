@@ -55,6 +55,13 @@ export interface OrchestrationEngineOptions {
 	readonly runner: EngineRunner;
 	readonly transport?: MessageTransport;
 	readonly concurrency?: number;
+	/**
+	 * Upper bound on the total child process tree (parent host + workers + their
+	 * tool children). Android uses this to stay under the platform's
+	 * background-process limits; when set it narrows the effective concurrency to
+	 * `floor((processCap - 1) / 2)` (one worker plus its tool child per slot).
+	 */
+	readonly processCap?: number;
 	readonly budget?: BudgetLimits;
 	readonly now?: () => number;
 }
@@ -90,6 +97,7 @@ export class OrchestrationEngine {
 	readonly #transport: MessageTransport | undefined;
 	readonly #messages = new OrchestratorMessageLog();
 	readonly #concurrency: number;
+	readonly #processCap: number | undefined;
 	readonly #listeners = new Set<OrchestratorEventListener>();
 	readonly #running = new Map<string, RunningEntry>();
 	readonly #settled: Array<{ taskId: string; outcome: WorkerOutcome | undefined; error?: string }> = [];
@@ -101,9 +109,28 @@ export class OrchestrationEngine {
 	constructor(options: OrchestrationEngineOptions) {
 		this.#runner = options.runner;
 		this.#transport = options.transport;
-		this.#concurrency = Math.max(1, Math.trunc(options.concurrency ?? 4));
+		const requested = Math.max(1, Math.trunc(options.concurrency ?? 4));
+		// A process cap reserves one slot for the parent host and two processes
+		// per worker (the worker plus one tool child), so it can narrow the
+		// worker count below the configured concurrency.
+		const capSlots =
+			options.processCap !== undefined && options.processCap > 0
+				? Math.max(1, Math.floor((Math.trunc(options.processCap) - 1) / 2))
+				: Number.POSITIVE_INFINITY;
+		this.#concurrency = Math.max(1, Math.min(requested, capSlots));
+		this.#processCap = options.processCap;
 		this.#leases = new FileLeaseManager({ now: options.now });
 		this.#budget = new BudgetGuard({ ...options.budget, now: options.now });
+	}
+
+	/** Effective worker concurrency after the configured cap was applied. */
+	get concurrency(): number {
+		return this.#concurrency;
+	}
+
+	/** The configured child-process ceiling, when one applies (Android/Termux). */
+	get processCap(): number | undefined {
+		return this.#processCap;
 	}
 
 	/** Subscribe to engine events; returns an unsubscribe function. */
@@ -150,6 +177,11 @@ export class OrchestrationEngine {
 				planId: plan.id,
 				taskCount: plan.tasks.length,
 				workerCount: plan.workers.length,
+			});
+			logger.debug("orchestration run started", {
+				planId: plan.id,
+				concurrency: this.#concurrency,
+				processCap: this.#processCap,
 			});
 			await this.#schedule(plan);
 		} finally {

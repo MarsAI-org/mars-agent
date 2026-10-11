@@ -1,0 +1,80 @@
+name: Android cross-check (advisory)
+
+# Advisory only. This job is NOT required by branch protection and is marked
+# continue-on-error so it can never block a merge. It exists to surface
+# aarch64-linux-android regressions early; promote it to required only after it
+# has been green for a while.
+#
+# The Android NDK is expected on GitHub-hosted ubuntu runners, but this job does
+# NOT assume that: when no NDK is discoverable it prints a notice and exits 0
+# instead of failing. No secrets, no third-party downloads.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - ".cargo/**"
+      - ".github/workflows/android-cross-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-cross-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cross_check:
+    name: cargo check (aarch64-linux-android)
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        with:
+          targets: aarch64-linux-android
+      - name: Locate the Android NDK
+        id: ndk
+        shell: bash
+        run: |
+          NDK="${ANDROID_NDK_LATEST_HOME:-${ANDROID_NDK_HOME:-${ANDROID_NDK_ROOT:-}}}"
+          if [ -z "$NDK" ] || [ ! -d "$NDK" ]; then
+            # Fall back to the conventional SDK layout used by the runner images.
+            for candidate in "$ANDROID_HOME"/ndk/* "$ANDROID_SDK_ROOT"/ndk/*; do
+              if [ -d "$candidate" ]; then NDK="$candidate"; break; fi
+            done
+          fi
+          if [ -z "$NDK" ] || [ ! -d "$NDK" ]; then
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Android NDK not found::Skipping the aarch64-linux-android cross-check. Tracked as a follow-up; this job is advisory only."
+            exit 0
+          fi
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "path=$NDK" >> "$GITHUB_OUTPUT"
+          echo "Using NDK at $NDK"
+      - name: Configure the Android linker
+        if: steps.ndk.outputs.found == 'true'
+        shell: bash
+        run: |
+          NDK="${{ steps.ndk.outputs.path }}"
+          TOOLCHAIN="$(ls -d "$NDK"/toolchains/llvm/prebuilt/* | head -n1)"
+          BIN="$TOOLCHAIN/bin"
+          API=24
+          echo "CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$BIN/aarch64-linux-android${API}-clang" >> "$GITHUB_ENV"
+          # The cc/cmake crates discover cross compilers through these vars.
+          echo "CC_aarch64_linux_android=$BIN/aarch64-linux-android${API}-clang" >> "$GITHUB_ENV"
+          echo "CXX_aarch64_linux_android=$BIN/aarch64-linux-android${API}-clang++" >> "$GITHUB_ENV"
+          echo "AR_aarch64_linux_android=$BIN/llvm-ar" >> "$GITHUB_ENV"
+          echo "$BIN" >> "$GITHUB_PATH"
+      - name: Cross-check the workspace
+        if: steps.ndk.outputs.found == 'true'
+        shell: bash
+        run: |
+          # pi-natives is excluded: it needs cmake + a bundled Opus build, which
+          # is documented as a follow-up in HANDOFF.md.
+          cargo check --workspace --exclude pi-natives --target aarch64-linux-android

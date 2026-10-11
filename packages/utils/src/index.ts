@@ -41,6 +41,7 @@ export * from "./tls-fetch";
 export * from "./type-guards";
 export * from "./version";
 export * from "./which";
+export * from "./platform";
 export * from "./yaml-config";
 
 function isPlainObject(val: object): val is Record<string, unknown> {
