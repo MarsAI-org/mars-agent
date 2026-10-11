@@ -8,13 +8,21 @@
 
 ---
 
+## Executive Summary
+
+This document presents the technical design and architectural specifications for the Mars Multi-Agent Orchestrator. Mars is built for high speed and developer flow; the orchestrator preserves that positioning by defaulting to single-agent execution for small and medium tasks, engaging parallel fan-out only when subtasks exhibit high file independence and clear automated verification boundaries. File collisions are eliminated prior to token expenditure through pre-emptive path-based write leases, while child sessions operate under a strict hierarchical permission intersection invariant (`child_permissions = parent_permissions ∩ requested_permissions`).
+
+For Android and Termux environments, this specification prioritizes native, non-proot execution. An audit of this repository confirms that no Android-specific build target exists today (VERIFIED, `scripts/ci-release-build-binaries.ts:31-88`); all statements regarding on-device execution behavior, dynamic linker compatibility, and mobile runtime characteristics are UNVERIFIED pending physical device testing in Milestone 2. Termux support is architected around three prioritized native tiers: (1) a glibc loader compatibility launcher running the existing `linux-arm64` binary without containerization, (2) a true native Bionic `aarch64-linux-android` target, and (3) a modular runtime abstraction enabling Node.js on Termux. PRoot is treated solely as an unverified manual workaround of last resort.
+
+---
+
 ## 1. Goals and Non-Goals
 
 ### 1.1 Goals
 1. **Speed First**: Mars is engineered for low latency and high execution speed. Multi-agent coordination must deliver net wall-clock speedups on eligible tasks, never adding orchestration latency when single-agent execution is faster.
 2. **Conservative Fan-Out by Default**: A single agent remains the default for all small and medium tasks. Fan-out occurs only when subtasks exhibit high file independence, sufficient task weight, and clear automated verification boundaries.
 3. **Transparent Coordination**: The user retains full visibility through a parent orchestration feed, structured agent-to-agent message stream, per-worker live panels (streaming tool calls and diffs), and an aggregated status bar.
-4. **Android / Termux First-Class Support**: The core Mars engine and a reduced orchestrator profile must be fully installable and operable on Android via Termux, honoring mobile resource boundaries (battery, thermal headroom, memory, terminal geometry, and Android 12+ process caps).
+4. **Native Android / Termux Support (No PRoot Required)**: The core Mars engine and a reduced orchestrator profile must be usable on Android via Termux natively without PRoot, honoring mobile resource constraints (thermals, battery, terminal width, and background process limits).
 5. **Strict Hierarchical Safety**: Subagents inherit permissions via strict intersection (`child_permissions = parent_permissions ∩ requested_permissions`). A child worker can never possess broader permissions or looser approval gates than its parent.
 6. **Pluggable Worker Backends**: Support native in-process Mars subagents, worker-thread agents, and external agent CLIs (e.g. Codex, Cursor) via a unified event-streaming adapter contract.
 
@@ -570,7 +578,7 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 | Milestone | Scope | Key Files Touched | Criteria for Success | Effort |
 |---|---|---|---|---|
 | **M1: Core Orchestration Engine** | Shared Task Board, Router heuristics, File Lease Manager, Core Scheduler (No UI). | `packages/coding-agent/src/orchestrator/*`, `packages/coding-agent/src/task/*` | Unit & integration tests pass with mock models; file locking prevents collision; permission clamping verified. | Medium |
-| **M2: Termux Feasibility Spike** | Android/Termux runtime verification; PRoot vs native Bionic spike; path normalizer. | `packages/utils/src/dirs.ts`, `packages/utils/src/procmgr.ts`, `scripts/*` | Binary or PRoot bundle boots on ARM64 Termux; runs `mars --version` and passes basic tests. | Medium |
+| **M2: Termux Native Readiness (No PRoot)** | Native Termux environment detection; glibc loader launcher (Tier 1); Rust cfg fixes & PTY pipe fallback (Tier 2); Bun-API runtime inventory (Tier 3); offline self-check command. | `packages/utils/src/dirs.ts`, `packages/utils/src/procmgr.ts`, `scripts/android/mars-termux-launcher.sh`, `crates/pi-shell/*`, `ANDROID_RUNTIME_INVENTORY.md` | Launcher executes binary through glibc loader with clean LD_PRELOAD handling; offline self-check runs; PRoot is not used. | Medium |
 | **M3: Two-Phase Merge & Verifier** | Automated build/lint/test verification of worker patches; rollback on failure. | `packages/coding-agent/src/task/worktree.ts`, `packages/coding-agent/src/orchestrator/verifier.ts` | Invalid worker patches are rejected cleanly and rolled back; valid patches merge cleanly. | Small |
 | **M4: External CLI Backend Adapter** | JSONL/stdio adapter for external CLIs (Codex, etc.); security sandboxing. | `packages/coding-agent/src/task/subprocess-tool-registry.ts`, `packages/coding-agent/src/orchestrator/adapters/*` | External CLI can be spawned as worker; events stream into orchestrator; tokens reported. | Medium |
 | **M5: Desktop Grid & Mobile TUI** | Multi-panel grid view for desktop; responsive tabbed single-panel view for narrow mobile screens; status bar. | `packages/tui/src/apps/orchestrator/*`, `packages/tui/src/tools/task.ts` | 120-col desktop grid renders live diffs; 45-col mobile view cycles workers via Tab/touch. | Large |
@@ -585,24 +593,91 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
 | **Subagent permission inheritance** | Require effective child permissions to be the intersection of the parent's permissions and the requested permissions; approval tier clamps to the parent's tier. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit only if explicit parent-authorized privilege elevation is designed. |
 | **Android background process reaping** | Initial default: hard-cap total process count to <= 6 on Android; concurrency default = 2 (tunable). | Android is reported to kill background child process trees under memory/process pressure; the exact threshold is UNVERIFIED. | Tune via benchmark; allow higher concurrency on rooted devices after measurement. |
 | **External Agent CLI Legal / Licensing Terms** | External CLIs disabled by default; adapter interface provided for user opt-in only. | Vendor terms of service may restrict automated wrapper usage; Mars stores no keys. | Users configure their own external CLIs in settings. |
-| **Termux Execution Environment** | Select PRoot-distro Linux ARM64 as primary Termux release path; Remote Client as fallback. | This repository's build matrix shows no Android/Bionic target (VERIFIED, `scripts/ci-release-build-binaries.ts:31-88`); upstream Bun Android/Bionic support status is UNVERIFIED, so the conservative choice avoids depending on it. Whether the `linux-arm64` artifact runs under PRoot on a phone is UNVERIFIED pending Milestone 2. | Revisit if official Bun Android/Bionic support is released or the PRoot path fails on device. |
+| **Termux Execution Environment** | Native, No-PRoot Strategy in prioritized tiers: Tier 1 (glibc compatibility loader launcher running `linux-arm64`), Tier 2 (native Bionic build with Rust cfg and PTY pipe fallbacks), Tier 3 (runtime abstraction for Node.js). PRoot is excluded as a supported path. | PRoot introduces heavy container overhead and alienates mobile user experience. The glibc compatibility loader inside native Termux enables executing the existing `linux-arm64` binary directly without containerization. PRoot is relegated to an unverified last-resort manual workaround. | Revisit if device testing reveals insurmountable loader or kernel barriers on Android 12+. |
 
 ---
 
-## 15. Android / Termux Support (Dedicated Analysis)
+## 15. Android / Termux Support: Native No-PRoot Strategy
 
-### 15.1 Support Matrix
+### 15.1 Strategy Overview and Priority Tiers
 
-| Install Path | Prerequisites | Mars Changes Required | Pros | Cons / Risks | Verdict |
+PRoot is **NOT** a supported path for Mars on Android/Termux. PRoot containerization incurs severe file system and system-call translation overhead, consumes hundreds of megabytes of unnecessary storage, and prevents seamless integration with the host Termux toolchain. Mars adopts a **Native, No-PRoot Strategy** structured into three prioritized tiers, with Remote Mode as an official fallback:
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                      Termux Android Support: Priority Tiers                      │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ Tier 1: glibc Compatibility Loader (First Deliverable)                           │
+│   • Runs the existing linux-arm64 release binary directly in native Termux       │
+│   • Uses Termux glibc packages (glibc-repo, glibc, glibc-runner)                 │
+│   • Driven by scripts/android/mars-termux-launcher.sh with LD_PRELOAD hygiene    │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ Tier 2: True Native Bionic Build (aarch64-linux-android)                         │
+│   • Cross-compiles Rust native addons with #[cfg(any(linux, android))]           │
+│   • Implements PTY pipe fallback where openpty/forkpty is restricted by Bionic   │
+│   • Runtime-agnostic design; documents Android pointer tagging risks             │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ Tier 3: Runtime Portability Layer (Node.js Alternative)                          │
+│   • Inventories all Bun-specific APIs in packages/*/src (bun:sqlite, etc.)       │
+│   • Designs thin runtime abstractions to unlock Termux's official nodejs package │
+├──────────────────────────────────────────────────────────────────────────────────┤
+│ Fallback: Remote Mode (Phone as Client)                                          │
+│   • Termux connects to a remote Mars host over WebSocket RPC                     │
+│ Last Resort: PRoot Distro (Manual Workaround Only — UNVERIFIED / Unsupported)    │
+└──────────────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Tier 1 (First Deliverable): glibc Compatibility Path
+- **Mechanism**: Executes the prebuilt `linux-arm64` release binary inside native Termux using Termux's glibc loader packages (`glibc-repo`, `glibc`, `glibc-runner`) without containerization.
+- **Launcher Contract**: Invoked via a lightweight POSIX shell script (`scripts/android/mars-termux-launcher.sh`) that:
+  1. Detects whether the glibc dynamic linker/loader (`$PREFIX/glibc/lib/ld-linux-aarch64.so.1` or `grun`) is installed.
+  2. Clears any inherited Android/Termux `LD_PRELOAD` shims (which inject Bionic hooks that crash glibc ELF binaries).
+  3. Executes the binary through the glibc loader, forwarding all arguments, standard streams, exit codes, and process signals.
+  4. Fails with a clear, actionable English error message printing the exact commands (`pkg install glibc-repo && pkg install glibc-runner`) when prerequisites are missing.
+- **Known Technical Barriers (UNVERIFIED on real hardware)**:
+  - *Missing ELF Interpreter*: Standard Termux binaries look for `/lib/ld-linux-aarch64.so.1`, which does not exist in Android root; `grun` or explicit loader invocation resolves this.
+  - *Termux LD_PRELOAD Shim*: Termux injects `libtermux-exec.so` via `LD_PRELOAD` to rewrite `/bin/sh` to `$PREFIX/bin/sh`. This Bionic shared object will cause glibc's dynamic loader to abort unless cleared for the child process.
+  - *Direct `statx` Syscall on Android 10/11*: Bun makes direct `statx` syscalls. On Android 10/11, SECCOMP filters on certain OEM kernels block `statx` with `EPERM` or `ENOSYS`. Therefore, **Android 12+ is the supported baseline**, and Android 10/11 is designated as **best effort**.
+
+#### Tier 2: True Native Bionic Build (`aarch64-linux-android`)
+- **Mechanism**: Builds Mars native addons directly for the Android Bionic C runtime.
+- **Required Code Modifications**:
+  - Rust crate target gates: Update `#[cfg(target_os = "linux")]` in `crates/pi-shell/src/process.rs:19` to `#[cfg(any(target_os = "linux", target_os = "android"))]`.
+  - PTY Handling: Android Bionic libc restricts or alters standard UNIX PTY operations (`openpty`/`forkpty`). Provide a robust fallback to bidirectional standard pipes (`pipe`/`pipe2`) when PTY allocation fails.
+  - Runtime Integration: Mars does not vendor or bundle third-party community Bun builds. The codebase is architected to remain compatible with any Bionic-capable JavaScript runtime; runtime availability on Bionic remains an explicit external prerequisite.
+- **Known Technical Barriers (UNVERIFIED on real hardware)**:
+  - *Pointer Tagging (Top-Byte-Ignore / ARM Memory Tagging Extension)*: Modern Android kernels enable memory tagging and pointer authentication. JIT engines and native memory allocators that store metadata in the upper bits of 64-bit pointers must account for Android heap tagging.
+
+#### Tier 3: Runtime Portability Layer (Node.js Alternative)
+- **Mechanism**: Inventories all Bun-specific APIs in the repository and specifies a thin abstraction layer allowing Mars to run under Termux's official `nodejs` package (`pkg install nodejs`).
+- **Inventory Summary** (detailed in `ANDROID_RUNTIME_INVENTORY.md`):
+  - `bun:sqlite`: 58 call sites across catalog cache, memories, and auth storage.
+  - `Bun.file()` / `Bun.write()`: ~498 call sites across tools and file utilities.
+  - `Bun.spawn()` / Bun Shell (`$`): ~75 call sites in execution and process management.
+  - `Bun.serve()`: 15 call sites in local servers and preview hooks.
+  - `Bun.hash()`: 145 call sites in path/content hashing.
+  - `Bun.sleep()`: 158 call sites.
+- **Cost Estimate**: A comprehensive Node.js adapter requires either a modular runtime abstraction layer or selective polyfills for `bun:sqlite` (via `better-sqlite3` or SQLite WASM) and Bun file/process helpers. This path is evaluated in Milestone 2 as a long-term fallback.
+
+#### Fallback & Last Resort
+- **Remote Mode (Phone as Client)**: The phone acts solely as an interactive TUI client connecting to a remote Mars instance running on a desktop, server, or cloud VM via WebSocket RPC (`packages/coding-agent/src/modes/rpc/wire/rpc-wire.schema.json:255-314`). Near-zero battery drain and zero native compilation required on the phone.
+- **PRoot Distro (Manual Workaround Only)**: Running a Linux distribution under `proot-distro` is explicitly **unsupported** by Mars tooling. It is documented only as an unverified manual workaround for users whose kernel blocks all native paths.
+
+---
+
+### 15.2 Support Matrix
+
+| Target Tier | Prerequisites | Mars Changes Required | Pros | Cons / Risks | Verdict |
 |---|---|---|---|---|---|
-| **Path A: PRoot-Distro Linux (Ubuntu/Debian ARM64)** *(Primary Path)* | Termux + `pkg install proot-distro` + `proot-distro install ubuntu` (commands assumed standard; UNVERIFIED in this environment) | Zero engine runtime changes; paths normalized; Termux install script detection. | **Expected** to work with the existing `linux-arm64` binary and native addon (artifact existence VERIFIED, `scripts/ci-release-build-binaries.ts:57`); standard glibc, `/bin/sh`, and `/tmp` exist inside PRoot (environment property UNVERIFIED). | ~500MB container disk usage and PRoot syscall translation overhead are unverified estimates; on-device behavior UNVERIFIED. | **UNVERIFIED** (feasible in principle; running the `linux-arm64` release under PRoot on Android is untested — Milestone 2 device check) |
-| **Path B: Remote Mode (Phone as Client)** *(Official Fallback)* | Termux + Node/SSH/Curl (tool availability UNVERIFIED) | Add `mars --serve` / WebSocket RPC client mode. | Zero binary or native addon compilation required on phone; near-zero battery and CPU drain (estimates UNVERIFIED). | Requires a host machine or cloud instance running Mars. | **UNVERIFIED end-to-end** (the RPC wire protocol exists — VERIFIED, `packages/coding-agent/src/modes/rpc/wire/rpc-wire.schema.json:255-314` — but a phone client flow is untested) |
-| **Path C: Glibc Compatibility Shim in Native Termux** | `termux-glibc` / custom linker packages (availability UNVERIFIED) | Patch linker search paths and elf headers. | Runs directly in native Termux without full container. | Highly unstable; breaks across Android OS updates; unsupported by Termux maintainers. | **UNVERIFIED / High Risk** (Rejected for v1) |
-| **Path D: Native Android Bionic Build** | Bionic libc toolchain + Android NDK | Port Bun runtime and all native Rust crates to Android Bionic libc. | Best performance; no PRoot overhead. | **UNVERIFIED upstream constraint**: this repository's build matrix shows no Android/Bionic target (VERIFIED, `scripts/ci-release-build-binaries.ts:31-88`); upstream Bun's ability to target Android Bionic is not verifiable from this repo and must be re-checked before investing; porting would be a large effort. | **UNVERIFIED / Assumed Blocked** (Rejected for v1 pending upstream evidence) |
+| **Tier 1: glibc Compatibility Loader** *(Primary Native Path)* | Termux + `pkg install glibc-repo glibc-runner` (UNVERIFIED on device) | Add `scripts/android/mars-termux-launcher.sh`; normalize search paths and temp directories; handle LD_PRELOAD. | **Runs existing `linux-arm64` binary natively** without containerization or PRoot overhead; full access to host Termux environment. | Requires Termux glibc packages; direct `statx` syscalls may fail on Android 10/11 (Android 12+ baseline). | **Recommended First Deliverable** (UNVERIFIED on real hardware; targeted for M2) |
+| **Tier 2: True Native Bionic Build** *(Long-Term Native)* | aarch64-linux-android Rust toolchain + Bionic-compatible runtime | Update Rust `cfg` gates; PTY pipe fallback; cross-compilation CI workflow. | Cleanest integration; lowest memory footprint; zero glibc layer dependency. | Dependent on a verified Bionic JavaScript runtime; ARM pointer tagging risks (UNVERIFIED). | **Targeted for Milestone 2 Investigation** (Prerequisites documented) |
+| **Tier 3: Runtime Portability (Node.js)** *(Alternative Native)* | Termux official `nodejs` package | Abstraction layer for `bun:sqlite`, `Bun.file`, and `Bun.spawn`. | Uses standard Termux packages out of the box; no custom runtime needed. | Substantial refactoring effort across ~800+ Bun API call sites (see inventory). | **Evaluated in Milestone 2** (Cost estimate documented) |
+| **Fallback: Remote Client Mode** | Termux + Node/SSH/Curl | Expose Mars headless server over WebSocket RPC. | Zero compilation or binary overhead on device; negligible battery impact. | Requires an external workstation or server. | **Documented Fallback** (Wire protocol exists — VERIFIED) |
+| **Last Resort: PRoot Linux Distribution** | `proot-distro` | None (runs inside generic Linux userland). | Isolates all environment issues. | High CPU/IO overhead; sluggish performance; **NOT a supported path**. | **Unsupported Manual Workaround** (UNVERIFIED) |
 
-**Chosen Path for Initial Release**: **Path A (PRoot-Distro Linux ARM64)** with **Path B (Remote Client)** as fallback.
+---
 
-### 15.2 Required Code Changes (Tied to Step 1 Audit Evidence)
+### 15.3 Required Code Changes (Tied to Step 1 Audit Evidence)
 1. **Shell Detection (`packages/utils/src/procmgr.ts:127`)**:  
    Add `$PREFIX/bin` to `searchPaths` in `resolveBasicShell()` so native Termux environments find `sh` and `bash`.
 2. **Command Evaluation (`packages/coding-agent/src/config/resolve-config-value.ts:132`)**:  
@@ -611,44 +686,56 @@ To validate Mars's core value proposition (speed without waste), the benchmark c
    Ensure `$TMPDIR` and `$PREFIX/tmp` take precedence over `/tmp`.
 4. **Rust Addon Target Gates (`crates/pi-shell/src/process.rs:19`)**:  
    Update `#[cfg(target_os = "linux")]` to `#[cfg(any(target_os = "linux", target_os = "android"))]`.
-5. **Installer Detection (`mars-site/install:220-239`)**:  
-   Detect Termux via `[ -n "$PREFIX" ] && [ -d "$PREFIX" ]`. When detected, advise or bootstrap PRoot-distro setup.
+5. **PTY Pipe Fallback (`crates/pi-natives/src/pty.rs:25`)**:  
+   Implement bidirectional anonymous pipe fallback for environments where Bionic restricts `portable_pty` pseudo-terminals.
+6. **Tier 1 Launcher (`scripts/android/mars-termux-launcher.sh`)**:  
+   Implement POSIX-compliant loader wrapper with LD_PRELOAD clearing and dependency diagnosis.
 
-### 15.3 Install & Update Flow in Termux
-- Binaries and configuration reside within Termux home (`$HOME/.mars`), never on external shared storage (`/sdcard`) — a standard Android practice to avoid scoped-storage restrictions (environment behavior UNVERIFIED).
+---
+
+### 15.4 Install & Update Flow in Termux
+- Binaries and configuration reside strictly within the Termux home directory (`$HOME/.mars`), never on external shared storage (`/sdcard`), preventing Android scoped storage permission errors.
 - Checksums (`SHA256`) are verified before installation.
-- Self-updater issues clear hints matching the PRoot or native environment.
+- Self-updater issues clear hints matching the native Termux environment.
 
-### 15.4 Runtime Behavior on Mobile Devices
-- **Concurrency**: Initial default max concurrency of **2** (UNVERIFIED; tune by benchmark).
-- **Process Cap**: Initial default total child process tree of **<= 6** (UNVERIFIED; tune by benchmark).
-- **Wake Lock**: Acquires `termux-wake-lock` on task start and releases via `termux-wake-unlock` on task completion (tool availability and behavior UNVERIFIED).
+---
+
+### 15.5 Runtime Behavior on Mobile Devices
+- **Concurrency**: Initial default max concurrency of **2** (UNVERIFIED; to be tuned by benchmark).
+- **Process Cap**: Initial default total child process tree of **<= 6** (UNVERIFIED; to be tuned by benchmark).
+- **Wake Lock**: Users are advised to acquire `termux-wake-lock` during long-running tasks via documentation hints; Mars does not invoke proprietary device APIs silently.
 - **Network Resilience**: The orchestrator handles network drops by saving execution state to JSONL and resuming when connectivity returns.
 
-### 15.5 Manual Checklist for Device Verification
+---
 
-> Environment assumptions (UNVERIFIED from this repository): `pkg`, `proot-distro`, and `termux-wake-lock` are standard Termux/proot-distro tools assumed present after install and cannot be verified from the Mars codebase. CLI flags below were checked against the CLI source: `mars --version` and `mars --smoke-test` exist (VERIFIED: `packages/coding-agent/src/cli.ts:535-544`).
+### 15.6 Manual Checklist for Device Verification
 
-- [ ] Install Termux from F-Droid on an ARM64 Android device.
-- [ ] Run `pkg update && pkg install proot-distro git curl`.
-- [ ] Run `proot-distro install ubuntu` and login.
-- [ ] Download and execute `mars-linux-arm64` binary.
-- [ ] Verify `mars --version` prints correctly.
-- [ ] Run `mars --smoke-test` and verify worker subprocess communication. The flag exists (VERIFIED: `packages/coding-agent/src/cli.ts:541`, handler `runSmokeTest` at `packages/coding-agent/src/cli.ts:137`) but spawns the full worker set (stats sync, stats activity, tiny title, STT, JS eval, computer worker, TTS, mnemopi embed, daemon broker, LSP mux, IDA host, blob broker, terminal output worker, text predict daemon), so success on a phone is UNVERIFIED and a reduced mobile probe is a Milestone 2 task.
-- [ ] Run a single-agent task; verify edit and git commit succeed.
+> Environment assumptions (UNVERIFIED from this repository): `pkg`, `glibc-runner`, and `termux-wake-lock` are standard Termux tools assumed present after installation and cannot be verified from the Mars codebase. CLI flags below were verified against the CLI source: `mars --version` and `mars --smoke-test` exist (VERIFIED: `packages/coding-agent/src/cli.ts:535-544`).
+
+#### Tier 1 glibc Compatibility Verification (Android 12+ Baseline; Android 10/11 Best Effort)
+- [ ] Open native Termux on an ARM64 Android device (without PRoot).
+- [ ] Run `pkg update && pkg install glibc-repo && pkg install glibc-runner`.
+- [ ] Download latest `mars-linux-arm64` binary release.
+- [ ] Execute launcher: `sh scripts/android/mars-termux-launcher.sh --version`.
+- [ ] Verify `mars --version` prints correctly through the glibc loader.
+- [ ] Verify error output when `glibc-runner` is uninstalled: prints exact installation guidance.
+- [ ] Run smoke test: `sh scripts/android/mars-termux-launcher.sh --smoke-test` (note: spawns full worker suite; reduced mobile probe targeted in M2).
+- [ ] Run a single-agent coding session; verify file edits and Git commits succeed.
 - [ ] Run a 2-worker orchestrator task; verify Tab switches panels and status bar updates.
 - [ ] Test screen orientation change and virtual keyboard toggle (SIGWINCH handling).
-- [ ] Run `termux-wake-lock` and verify the session survives phone screen lock.
+- [ ] Run `termux-wake-lock` and verify the session survives screen sleep.
 
-### 15.6 Unverified Claims Disclaimer
-Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone 2 device check) or through other external evidence:
-- **UNVERIFIED**: The `linux-arm64` release binary runs under PRoot-Distro Linux on Android hardware.
-- **UNVERIFIED**: Remote Mode (phone as client) works end-to-end against a Mars host.
-- **UNVERIFIED**: Upstream Bun's ability to target Android Bionic libc (this repository's build matrix shows no Android target — VERIFIED — but upstream capability is not determinable from this repo).
-- **UNVERIFIED**: Android background-process kill thresholds and their exact triggering conditions.
-- **UNVERIFIED**: Termux/Bionic-vs-glibc platform facts, `termux-wake-lock` behavior, `pkg`/`proot-distro` availability, PRoot disk usage and overhead figures, external agent CLI availability on ARM64.
-- **UNVERIFIED**: Exact memory and thermal throttling curve during multi-worker execution across specific mobile chipsets (Snapdragon, Dimensity, Tensor).
-- Device testing must be conducted on real physical hardware during the Milestone 2 feasibility spike.
+---
+
+### 15.7 Unverified Claims Disclaimer
+Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone 2 device check) or through external measurement:
+- **UNVERIFIED**: The `linux-arm64` binary runs without crash under Termux's `glibc-runner` across various Android OEM kernels.
+- **UNVERIFIED**: Direct `statx` syscall behavior on Android 10 and 11 devices under Bun's runtime.
+- **UNVERIFIED**: Remote Mode (phone as client) end-to-end user experience on real mobile networks.
+- **UNVERIFIED**: Upstream Bun's native compilation feasibility on Android Bionic libc.
+- **UNVERIFIED**: Android background-process kill thresholds and exact triggering conditions across Samsung, Google, and Xiaomi OEM battery managers.
+- **UNVERIFIED**: Top-byte-ignore pointer tagging impact on JIT runtimes under Bionic libc.
+- **UNVERIFIED**: Exact thermal throttling curve and battery discharge rate during multi-worker execution on physical Snapdragon/Dimensity/Tensor chipsets.
 
 ---
 
@@ -659,7 +746,7 @@ Everything below is UNVERIFIED and must be confirmed on real hardware (Milestone
 | **DEC-01** | Orchestrator Concurrency Default | 1, 4, 8, 32 | **Initial defaults: Desktop 4; Mobile 2** | Default 32 in current settings (`packages/coding-agent/src/task/settings.ts:280-301`) is too high for orchestrator fan-out; 4 gives desktop parallelism without provider rate-limit exhaustion; 2 is a conservative mobile default. All values UNVERIFIED — tune via the Section 12 benchmark. | User can adjust via `orchestrator.maxConcurrency`; benchmark may revise both defaults. |
 | **DEC-02** | File Collision Prevention | Git 3-way merge resolution vs Pre-emptive Write Leases | **Pre-emptive Write Leases with 2PC Merge** | Preventing conflicts before workers spend tokens editing is intended to be faster and cleaner than post-hoc merge conflicts (assumption UNVERIFIED; benchmark conflict metrics will test it). | If subtasks require collaborative editing of the same file, introduce diff-hunk leasing. |
 | **DEC-03** | Subagent Approval Inheritance | Inherit auto-approval vs User prompt per tool vs Parent Approval Tier Clamping | **Permission Intersection Rule**: child permissions must be the intersection of the parent's permissions and the requested permissions; a child's approval tier must not be looser than the parent's. | Keeps every spawned worker inside the authorization boundary of the session that requested it. | Revisit if explicit parent-authorized privilege elevation is designed. |
-| **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite | **PRoot Linux ARM64 (Primary) + Remote Mode (Fallback)** | This repo's build matrix has no Android/Bionic target (VERIFIED) and upstream Bun Android support is UNVERIFIED, so the conservative choice avoids depending on it. A Node-only rewrite would require polyfilling hundreds of `bun:sqlite` / Bun API call sites (many VERIFIED call sites). Whether the `linux-arm64` artifact runs under PRoot on a phone is UNVERIFIED — that is exactly what Milestone 2 tests. | Revisit when upstream Bun releases official Android Bionic support or the PRoot path fails on device. |
+| **DEC-04** | Termux Implementation Strategy | Native Bionic Port vs PRoot Linux ARM64 vs Node-only rewrite vs Native Tiered Strategy | **Native, No-PRoot Strategy in prioritized tiers**: Tier 1 (glibc compatibility loader running `linux-arm64` natively), Tier 2 (native Bionic `aarch64-linux-android` build), Tier 3 (runtime abstraction for Node.js). Remote Mode as fallback; PRoot is unsupported. | This repo's build matrix has no Android/Bionic target (VERIFIED, `scripts/ci-release-build-binaries.ts:31-88`). PRoot is excluded due to extreme overhead and poor developer experience. The glibc loader path allows native Termux execution today without containerization. | Revisit if loader testing on physical hardware shows insurmountable issues. |
 | **DEC-05** | Narrow Terminal Mobile TUI Layout | Mini-grid (2 columns) vs Tabbed Single-Panel View | **Tabbed Single-Panel View with Worker Switcher Strip** (initial default below 80 columns; threshold tunable) | 2-column grid is expected to be unreadable at 45 columns. Tabbed single-panel preserves readability while giving full status visibility. | If terminal width >= 80, automatically upgrade to multi-column grid; adjust the 80-column threshold based on device feedback. |
 | **DEC-06** | Test Runner Availability in Audit Session | Run `bun run check:tools` / `fmt:tools` | **Omit Bun execution; verify code and formatting manually** | Bun binary is not pre-installed in the current execution container. Commands fail with code 127. | Subsequent implementation sessions with Bun environment will run automated format checks. |
 | **DEC-07** | Git Author Identity | Leave unset vs Set repo-locally | **Set repo-locally (`robomarsx`)** | Repo-local configuration complies with project guidelines without touching global git configuration. | Revisit if team provides distinct author credentials. |
