@@ -86,8 +86,8 @@ jobs:
         env:
           DIST_TAG: ${{ steps.mode.outputs.dist_tag }}
         run: bun scripts/ci-release-publish.ts --pack-only "$PACK_DIR" --dist-tag "$DIST_TAG"
-      # No secret is referenced here. The step runs only `npm publish`; the
-      # OIDC token is minted by the runner, not read from the environment.
+      # No secret is referenced here. The step runs only `npm publish`; the OIDC
+      # token is minted by the runner, not read from the environment.
       - name: Publish to npm with OIDC
         if: steps.mode.outputs.dry_run != 'true'
         shell: bash
