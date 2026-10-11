@@ -195,6 +195,7 @@ jobs:
           chmod +x bin/${{ matrix.binary_name }}
           bin/${{ matrix.binary_name }} --version
           bin/${{ matrix.binary_name }} --help
+          bin/${{ matrix.binary_name }} --platform-check --json
       - name: Test (Alpine Docker)
         if: matrix.alpine
         shell: bash
@@ -204,6 +205,7 @@ jobs:
             apk add --no-cache libstdc++ libgcc >/dev/null
             mars --version
             mars --help
+            mars --platform-check --json
           '
       - name: Test (Windows)
         if: runner.os == 'Windows'
@@ -211,6 +213,7 @@ jobs:
         run: |
           & .\bin\${{ matrix.binary_name }} --version
           & .\bin\${{ matrix.binary_name }} --help
+          & .\bin\${{ matrix.binary_name }} --platform-check --json
 
   publish_release:
     name: Publish GitHub Release
