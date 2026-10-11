@@ -28,7 +28,7 @@ import type { Color, KittyEvent, KittyTerminal } from "kitty-vt-wasm";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-/** Minimal slice of the host schema builder (`omp.zod`) this tool uses. */
+/** Minimal slice of the host schema builder (`mars.zod`) this tool uses. */
 interface Schema {
 	describe(text: string): Schema;
 	optional(): Schema;
@@ -977,7 +977,7 @@ const factory = (mars: ToolHost) => {
 		const file = params.bin ? undefined : (params.file ?? "packages/coding-agent/src/cli.ts");
 		const target = file ?? params.bin ?? "";
 		const command = file
-			? [process.execPath, resolve(omp.cwd, file), ...(params.args ?? [])]
+			? [process.execPath, resolve(mars.cwd, file), ...(params.args ?? [])]
 			: [target, ...(params.args ?? [])];
 
 		const rows = params.rows ?? 30;
@@ -993,7 +993,7 @@ const factory = (mars: ToolHost) => {
 		let proc: Child;
 		try {
 			const spawned = Bun.spawn(gated(gatePath, command), {
-				cwd: omp.cwd,
+				cwd: mars.cwd,
 				env: {
 					...process.env,
 					MARS_TUI_DEBUG: sockPath,
@@ -1110,65 +1110,65 @@ const factory = (mars: ToolHost) => {
 			"resize) return an after-screenshot of the resulting display (quiet:true " +
 			"skips it). Sessions persist across calls; injected input rides the " +
 			"app's real input path.",
-		parameters: omp.zod.object({
-			op: omp.zod
+		parameters: mars.zod.object({
+			op: mars.zod
 				.string()
 				.describe(
 					"operation: start | stop | list | text | screen | shot | frame | tree | values | info | keys | type | paste | mouse | send | resize | raw",
 				),
-			name: omp.zod
+			name: mars.zod
 				.string()
 				.optional()
 				.describe("session name (default: main)"),
-			file: omp.zod
+			file: mars.zod
 				.string()
 				.optional()
 				.describe("start: TS/JS entry path relative to cwd (default: packages/coding-agent/src/cli.ts — mars itself)"),
-			bin: omp.zod
+			bin: mars.zod
 				.string()
 				.optional()
 				.describe("start: executable name or path"),
-			args: omp.zod
-				.array(omp.zod.string())
+			args: mars.zod
+				.array(mars.zod.string())
 				.optional()
 				.describe("start: program argv"),
-			rows: omp.zod
+			rows: mars.zod
 				.number()
 				.optional()
 				.describe("start/resize: pty rows (default 30)"),
-			cols: omp.zod
+			cols: mars.zod
 				.number()
 				.optional()
 				.describe("start/resize: pty cols (default 100)"),
-			keys: omp.zod
+			keys: mars.zod
 				.string()
 				.optional()
 				.describe("keys: spec, e.g. \"tab tab enter C-c pgdn 'hello'\""),
-			text: omp.zod
+			text: mars.zod
 				.string()
 				.optional()
 				.describe("type/paste/send: payload text"),
-			x: omp.zod.number().optional().describe("mouse: zero-based column"),
-			y: omp.zod.number().optional().describe("mouse: zero-based viewport row"),
-			action: omp.zod
+			x: mars.zod.number().optional().describe("mouse: zero-based column"),
+			y: mars.zod.number().optional().describe("mouse: zero-based viewport row"),
+			action: mars.zod
 				.string()
 				.optional()
 				.describe("mouse: gesture (default click)"),
-			peek: omp.zod
+			peek: mars.zod
 				.number()
 				.optional()
 				.describe(
 					"screen: scrollback lines to include; raw: tail bytes (default 2000)",
 				),
-			clear: omp.zod
+			clear: mars.zod
 				.boolean()
 				.optional()
 				.describe("raw: reset capture after reading"),
-			quiet: omp.zod
+			quiet: mars.zod
 				.boolean()
 				.optional()
 				.describe("input ops: skip the after-screenshot"),
-			timeout: omp.zod
+			timeout: mars.zod
 				.number()
 				.optional()
 				.describe("start: socket wait seconds (default 15)"),

@@ -101,7 +101,7 @@ export function buildLeafManifest({ tag, os, cpu, files, version }: BuildLeafMan
 		// TODO(rebrand): no Mars domain decided — see HANDOFF.md
 		repository: {
 			type: "git",
-			url: "git+https://github.com/can1357/oh-my-pi.git",
+			url: "git+https://github.com/MarsAI-org/mars-agent.git",
 			directory: "packages/natives",
 		},
 		engines: {

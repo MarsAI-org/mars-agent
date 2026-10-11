@@ -72,7 +72,7 @@ $EDITOR .env
 openssl rand -hex 32              # ROBOMP_GH_PROXY_HMAC_KEY
 openssl rand -hex 32              # GITHUB_WEBHOOK_SECRET
 
-bun run pi:image                  # build oh-my-pi/pi:dev (one-time / on pi change)
+bun run pi:image                  # build mars/agent:dev (one-time / on mars change)
 bun run robomp:build && bun run robomp:up
 curl -fsS http://localhost:8080/healthz
 ```
@@ -84,7 +84,7 @@ comment out `ROBOMP_GH_PROXY_URL` / `ROBOMP_GH_PROXY_HMAC_KEY` and set
 rejects a `.env` setting both).
 
 Build invalidation is bounded: editing roboomp Python touches only the
-runtime layer; editing pi source rebuilds `oh-my-pi/pi:dev`, which
+runtime layer; editing mars source rebuilds `mars/agent:dev`, which
 roboomp's `Dockerfile.robomp` extends via `FROM ${PI_BASE}`.
 
 ### Public URL

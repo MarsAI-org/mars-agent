@@ -1218,13 +1218,13 @@ jobs:
            env:
               GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
            run: |
-              bun scripts/ci-update-brew-formula.ts "${{ needs.release_metadata.outputs.release-tag }}" --out homebrew-tap/Formula/omp.rb
+              bun scripts/ci-update-brew-formula.ts "${{ needs.release_metadata.outputs.release-tag }}" --out homebrew-tap/Formula/mars.rb
               cd homebrew-tap
-              if git diff --quiet -- Formula/omp.rb; then
+              if git diff --quiet -- Formula/mars.rb; then
                 echo "formula already up to date for ${{ needs.release_metadata.outputs.release-tag }}"
                 exit 0
               fi
               git -c user.name="github-actions[bot]" \
                   -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-                  commit -m "omp ${{ needs.release_metadata.outputs.release-tag }}" -- Formula/omp.rb
+                  commit -m "mars ${{ needs.release_metadata.outputs.release-tag }}" -- Formula/mars.rb
               git push origin HEAD:main
