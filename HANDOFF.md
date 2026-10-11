@@ -134,11 +134,17 @@ Load flakes observed under a full parallel run (all pass standalone): `attachmen
 `eval/judgment-batch-bridge`, `extension-loader-process-exit`,
 `extensibility/extension-load-notifications`, `issue-905-repro`,
 `issue-12281-lm-studio-placeholder-auth`, `judgment`, `mcp-*`, `memory-tools`,
-`modes/noninteractive-dispose`, `native/blobs`, `oauth-flow`,
-`prompt-action-autocomplete`, `rpc*`, `session-storage-fd-inheritance`,
-`stream/publisher`, `token-mcp-oauth-refresh`, `tools/browser-tern-tab`,
-`tools/eval-timeout`, `tools/lsp-regressions`, `tools/write-special-files`,
-`ttsr-incremental-match`, `update-cli`, `worker-selector`.
+`modes/noninteractive-dispose`, `native/blobs`, `native` (natives package),
+`openai-codex-stream` (ai package), `oauth-flow`, `prompt-action-autocomplete`,
+`rpc*`, `session-storage-fd-inheritance`, `stream/publisher`,
+`token-mcp-oauth-refresh`, `tools/browser-tern-tab`, `tools/eval-timeout`,
+`tools/lsp-regressions`, `tools/write-special-files`, `ttsr-incremental-match`,
+`update-cli`, `worker-selector`.
+
+Observed full-suite results on the merged `main` after Milestone 2: 176/203
+bucketed commands passed; the 38 failing test files were all in the
+pre-existing/environment/flake categories above (each re-run in isolation and
+passed, except `compat-compile`).
 
 If a full run shows a failure not in the lists above, re-run it in isolation
 first: if it passes alone it is a load flake, otherwise investigate.
