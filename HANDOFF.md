@@ -21,13 +21,20 @@ session with no memory must be able to continue from this file alone.
 |---|---|---|---|
 | #16 | Design: multi-agent orchestrator | `7e24911a43` | MERGED |
 | #18 | feat(orchestrator): core orchestration engine without UI (Milestone 1) | `2614504d3d` | MERGED |
-| #19 | feat(platform): native aarch64 Android/Termux support without proot (Milestone 2) | see §7 | MERGED (this session) |
+| #19 | feat(platform): native aarch64 Android/Termux support without proot (Milestone 2) | `30692fa737` | MERGED |
+
+### CI reality in this repository (read before trusting `gh pr checks`)
+
+- Branch protection on `main` has **no required status checks** (`required_status_checks: null`, `required_reviews: 0`, `enforce_admins: false`).
+- The `Build native addons (bazel)` job **fails on every branch including `main`** at the step `Fetch release native addons (npm)`, because the `@marsai-org/*` packages are not published to npm yet (tracked as issue #9). This is pre-existing infrastructure, not a regression from the orchestrator work.
+- CI runs on `main` from earlier merges were **cancelled** or left queued (the repo's Bazel-based CI does not complete in this environment).
+- Consequence: gate 2 (build/check/test) is evidenced by running the commands locally in the working environment (see §4), and gate 7 is satisfied vacuously because no check is required. Do not read a red non-required job as a blocker; do read a locally failing test as one.
 
 ### Not started
 
 Milestone 3 (two-phase merge/verification), Milestone 4 (external CLI adapters),
 Milestone 5 (TUI), and the benchmark harness. Ready-to-paste prompts for each are
-in §6.
+in `ORCHESTRATOR_NEXT_STEPS.md` and §6 below.
 
 ---
 
@@ -197,12 +204,16 @@ with their own keys. Gates, merge.
 
 ## 7. Human-Only Tasks
 
-1. **Real-device Termux testing** per tier — `TERMUX_TEST_CHECKLIST.md` (Android 12+ baseline; Android 10/11 best effort). Record `--platform-check --json` output.
-2. **`mars-site/install` changes** — `MARS_SITE_CHANGES.md` (different repo; not modified here).
-3. **Run the real-model benchmark** with your own keys once the harness exists.
-4. **Produce and verify an `android-arm64` release artifact** — the release workflow still has no Android target; adding one is a release decision, not done here.
+Issues created for these: **#23** (real-device Termux testing), **#24** (`mars-site`
+install path), **#25** (deferred Android artifact + Bionic follow-ups). #13 already
+tracks the speed benchmark.
+
+1. **Real-device Termux testing** per tier — `TERMUX_TEST_CHECKLIST.md` (Android 12+ baseline; Android 10/11 best effort). Record `--platform-check --json` output. → issue #23
+2. **`mars-site/install` changes** — `MARS_SITE_CHANGES.md` (different repo; not modified here). → issue #24
+3. **Run the real-model benchmark** with your own keys once the harness exists. → issue #13
+4. **Produce and verify an `android-arm64` release artifact** — the release workflow still has no Android target; adding one is a release decision, not done here. → issue #25
 5. **Revoke any temporary tokens** used during this program.
-6. **Watch the advisory Android cross-compile job** (`.github/workflows/android-cross-check.yml`); promote it to required only after it has been green for a while.
+6. **Watch the advisory Android cross-compile job** (`.github/workflows/android-cross-check.yml`); promote it to required only after it has been green for a while. → issue #25
 7. Optional: fix `compat-compile.test.ts` by running `bun run gen:compat` and committing `rules.json`.
 
 ---
