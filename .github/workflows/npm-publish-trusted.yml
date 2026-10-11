@@ -1,0 +1,86 @@
+name: npm publish (trusted publishing)
+
+# OIDC trusted publishing: there is no long-lived token anywhere in this
+# workflow. Authentication is the GitHub OIDC identity (`id-token: write`), and
+# npm generates provenance automatically for OIDC publishes from GitHub Actions.
+#
+# INACTIVE until a human configures a Trusted Publisher for every package on
+# npmjs.com (package -> Settings -> Trusted publishing):
+#   Organization or user: MarsAI-org
+#   Repository:           mars-agent
+#   Workflow filename:    npm-publish-trusted.yml
+#   Allowed actions:      at least `npm publish`; enable `npm dist-tag` too if
+#                         this workflow should manage dist-tags
+# A newly created configuration expires unless it completes its first successful
+# publish within 2 days, so configure it when you are ready to publish.
+#
+# Requirements: npm >= 11.5.1 and Node >= 22.14. Only `workflow_dispatch` is
+# wired up, so nothing runs until a maintainer starts it deliberately.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Pack and validate without publishing"
+        required: true
+        type: boolean
+        default: true
+      dist_tag:
+        description: "npm dist-tag to publish under"
+        required: true
+        type: string
+        default: next
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-trusted-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish @marsai-org packages (OIDC)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      # The OIDC identity npm exchanges for a short-lived publish token.
+      id-token: write
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      # `registry-url` is what npm's trusted-publishing guide uses; no token is
+      # provided, so npm authenticates with the OIDC token.
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      # 11.21.0 is the floor for dist-tags over OIDC (11.5.1 for publishing).
+      - name: Install an OIDC-capable npm
+        run: npm install -g npm@11.21.0
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      # coding-agent's `prepack` loads the Linux x64 addon, so it must exist
+      # before publishing. Built from source: this workflow is standalone.
+      - name: Build the native addon
+        env:
+          MARS_NATIVE_CARGO_PROFILE: ci
+        run: bun --cwd=packages/natives run build:bindings
+      # No secret is referenced here. The publish script passes
+      # `--ignore-scripts` so no package lifecycle script runs during publish.
+      - name: Publish to npm with OIDC
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          DIST_TAG: ${{ inputs.dist_tag }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          if [ "${DRY_RUN}" = "true" ]; then
+            echo "Dry run: packing and validating only, nothing is published."
+            bun scripts/ci-release-publish.ts --dry-run --dist-tag "$DIST_TAG"
+            exit $?
+          fi
+          bun scripts/ci-release-publish.ts --dist-tag "$DIST_TAG"
