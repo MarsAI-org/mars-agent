@@ -13,9 +13,9 @@ if (!outputPath) {
  * starts streaming, which the real pipeline signals via a
  * message_update(text_start) event — neither happens under a stubbed prompt.
  */
-let agentEventHandler: ((event: unknown) => Promise<void>) | undefined;
+let agentEventHandler: ((event: any) => Promise<void>) | undefined;
 const originalSubscribe = Agent.prototype.subscribe;
-Agent.prototype.subscribe = function (this: Agent, fn: (event: unknown) => Promise<void>) {
+(Agent.prototype as any).subscribe = function (this: Agent, fn: (event: any) => Promise<void>) {
 	agentEventHandler = fn;
 	return originalSubscribe.call(this, fn as never);
 };

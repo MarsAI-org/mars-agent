@@ -58,7 +58,12 @@ test.skipIf(process.platform !== "linux")("bash tool children never inherit sess
 	// this descriptor is deliberately inheritable across fork/exec as the control.
 	try {
 		const { dlopen, FFIType } = await import("bun:ffi");
-		const libc = dlopen(null, {
+		const libc = (
+			dlopen as (
+				lib: unknown,
+				symbols: unknown,
+			) => { symbols: { fcntl: (fd: number, cmd: number, arg: number) => number } }
+		)(null, {
 			fcntl: { args: [FFIType.i32, FFIType.i32, FFIType.i32], returns: FFIType.i32 },
 		});
 		libc.symbols.fcntl(controlFd, 2, 0);
