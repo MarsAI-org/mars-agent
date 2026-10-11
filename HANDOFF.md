@@ -260,18 +260,15 @@ with their own keys. Gates, merge.
 
 | Package | `18.8.6` live | dist-tags |
 |---|---|---|
-| `omptype`, `wire`, `utils`, `catalog`, `natives`, `tui`, `mnemopi`, `snapcompact`, `stats`, `agent-core`, `coding-agent` | **yes** | `latest` + `next` |
-| `ai` | **no — staged, needs human approval** | `latest: 0.0.0-stage` |
+| all 12: `omptype`, `wire`, `utils`, `catalog`, `natives`, `ai`, `tui`, `mnemopi`, `snapcompact`, `stats`, `agent-core`, `coding-agent` | **yes** | `latest` + `next` |
 
-- **11 of 12 are live.** Every packument also carries npm's own `0.0.0-stage`
-  placeholder ("Temporary package placeholder for staged publishing"), created on
-  the first publish of each name.
-- **`@marsai-org/ai@18.8.6` is stuck in npm's staged publishing.** The publish
-  attempt is accepted into staging, and every retry then fails with
-  `E409 … Cannot publish over previously staged version "18.8.6"`. Releasing it
-  needs a maintainer to run `npm stage approve @marsai-org/ai@18.8.6` (or the
-  equivalent on npmjs.com) with interactive 2FA. **This cannot be done from CI or
-  from this environment** — see §8.
+- **All 12 publishable packages are live at `18.8.6`.** Every packument also carries
+  npm's own `0.0.0-stage` placeholder ("Temporary package placeholder for staged
+  publishing"), created on the first publish of each name.
+- `@marsai-org/ai` first landed in npm's staged publishing and a retry reported
+  `E409 … Cannot publish over previously staged version "18.8.6"`; the staged
+  version has since been released, and `ai@18.8.6` now resolves with `latest` +
+  `next`. No action needed for it any more.
 - **The six native leaf packages are NOT published**
   (`@marsai-org/natives-<linux-x64|linux-arm64|darwin-x64|darwin-arm64|win32-x64|win32-arm64>`
   all return 404). They are generated from per-platform `.node` artifacts, which
@@ -293,29 +290,25 @@ Issues created for these: **#23** (real-device Termux testing), **#24** (`mars-s
 install path), **#25** (deferred Android artifact + Bionic follow-ups). #13 already
 tracks the speed benchmark.
 
-1. **Approve the staged `@marsai-org/ai@18.8.6` publish.** It is in npm's staged
-   publishing and cannot be published over (`E409 … previously staged version`).
-   Run `npm stage approve @marsai-org/ai@18.8.6` (or approve it on npmjs.com) with
-   interactive 2FA, then confirm `npm view @marsai-org/ai dist-tags` shows `next`.
-2. **Delete the `NPM_TOKEN` repository secret and revoke that token** once the
+1. **Delete the `NPM_TOKEN` repository secret and revoke that token** once the
    bootstrap publish is done. The workflow is idempotent, so a later re-run
    without the secret skips publishing and warns instead of failing.
-3. **Configure Trusted Publisher** on npmjs.com for every package (org `MarsAI-org`,
+2. **Configure Trusted Publisher** on npmjs.com for every package (org `MarsAI-org`,
    repo `mars-agent`, workflow `npm-publish-trusted.yml`), then switch to
    `npm-publish-trusted.yml`. A new configuration expires unless its first publish
    succeeds within 2 days. → recorded in `NPM_PUBLISH.md` §7
-4. **Publish the six native leaf packages** (and re-enable the CI step that needs
+3. **Publish the six native leaf packages** (and re-enable the CI step that needs
    them) once the per-platform addon artifacts exist. Until then
    `@marsai-org/natives` installs with no binary and
    `Fetch release native addons (npm)` keeps failing. → issue #25
-5. **Move the `latest` dist-tag** when the release is ready (`npm dist-tag add`).
+4. **Move the `latest` dist-tag** when the release is ready (`npm dist-tag add`).
    npm set `latest` automatically on each first publish; the workflow never moves it.
-6. **Real-device Termux testing** per tier — `TERMUX_TEST_CHECKLIST.md` (Android 12+ baseline; Android 10/11 best effort). Record `--platform-check --json` output. → issue #23
-7. **`mars-site/install` changes** — `MARS_SITE_CHANGES.md` (different repo; not modified here). → issue #24
-8. **Run the real-model benchmark** with your own keys once the harness exists. → issue #13
-9. **Produce and verify an `android-arm64` release artifact** — the release workflow still has no Android target; adding one is a release decision, not done here. → issue #25
-10. **Watch the advisory Android cross-compile job** (`.github/workflows/android-cross-check.yml`); promote it to required only after it has been green for a while. → issue #25
-11. **Revoke the GitHub token** used during this program.
+5. **Real-device Termux testing** per tier — `TERMUX_TEST_CHECKLIST.md` (Android 12+ baseline; Android 10/11 best effort). Record `--platform-check --json` output. → issue #23
+6. **`mars-site/install` changes** — `MARS_SITE_CHANGES.md` (different repo; not modified here). → issue #24
+7. **Run the real-model benchmark** with your own keys once the harness exists. → issue #13
+8. **Produce and verify an `android-arm64` release artifact** — the release workflow still has no Android target; adding one is a release decision, not done here. → issue #25
+9. **Watch the advisory Android cross-compile job** (`.github/workflows/android-cross-check.yml`); promote it to required only after it has been green for a while. → issue #25
+10. **Revoke the GitHub token** used during this program.
 
 ---
 
