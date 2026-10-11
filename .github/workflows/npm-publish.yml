@@ -133,9 +133,18 @@ jobs:
               continue
             fi
             echo "Publishing ${name}@${version} (tag ${tag})"
-            if ! npm publish "$tarball" --access public --tag "$tag" --ignore-scripts --provenance; then
-              echo "::error title=npm publish::failed to publish ${name}@${version}"
-              failed=1
+            out="$(npm publish "$tarball" --access public --tag "$tag" --ignore-scripts --provenance 2>&1)"
+            rc=$?
+            [ -n "$out" ] && echo "$out"
+            if [ "$rc" -ne 0 ]; then
+              # A concurrent publisher may win after the preflight above; that is
+              # not a failure. Any other error is.
+              if printf '%s' "$out" | grep -qiE "E409|EPUBLISHCONFLICT|cannot publish over"; then
+                echo "Skipping ${name}@${version} (already published)"
+              else
+                echo "::error title=npm publish::failed to publish ${name}@${version}"
+                failed=1
+              fi
             fi
           done < "$manifest"
           exit "$failed"

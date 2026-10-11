@@ -189,6 +189,12 @@ const nativeLeafTag = nativeLeafTagFromArgs(process.argv.slice(2));
 const distTagOverride = distTagFromArgs(process.argv.slice(2));
 const packOnlyDir = packOnlyDirFromArgs(process.argv.slice(2));
 /**
+ * `--pack-only` always writes the rewritten manifests and staged legal payloads:
+ * its whole point is to produce the exact tarballs the publish step will ship,
+ * so a dry-run-style no-write would pack the wrong contents.
+ */
+const writeManifests = !isDryRun || packOnlyDir !== null;
+/**
  * `--provenance` needs an OIDC-capable CI runner, so it is opt-in via the
  * environment and enabled by the publish workflows, never by default.
  */
@@ -344,7 +350,7 @@ async function preparePackage(pkg: PublishPackage): Promise<PackageManifest> {
 		await $`bun x tsgo -p tsconfig.publish.js.json`.cwd(pkgDir);
 	}
 	const sourceManifest = (await Bun.file(path.join(pkgDir, "package.json")).json()) as PackageManifest;
-	await stageLegalPayloads(pkgDir, sourceManifest.license, !isDryRun);
+	await stageLegalPayloads(pkgDir, sourceManifest.license, writeManifests);
 	// Both emits run under `moduleResolution: "Bundler"`, so relative
 	// specifiers land extensionless — unresolvable for a `nodenext` consumer
 	// (types) and for Node ESM at runtime (js). Rewrite them to explicit `.js`.
@@ -352,7 +358,7 @@ async function preparePackage(pkg: PublishPackage): Promise<PackageManifest> {
 	if (pkg.publishJs) {
 		await fixEmitExtensions(path.join(pkgDir, "dist/js"), ".js");
 	}
-	return rewriteManifest(pkg, !isDryRun);
+	return rewriteManifest(pkg, writeManifests);
 }
 
 /**
@@ -426,10 +432,12 @@ export async function prepareNativeCorePackage(pkgDir: string, write: boolean): 
  * to the configured token when the package has no matching trusted publisher —
  * which also covers a package's first-ever publish.
  *
- * `--provenance` is opt-in via `MARS_PUBLISH_PROVENANCE=1`, which the publish
- * workflows set. It requires `id-token: write` and a public source repository,
- * both of which hold here; it is off by default so a local run cannot fail on a
- * missing OIDC context.
+ * `--provenance` is opt-in via `MARS_PUBLISH_PROVENANCE=1`, which the local and
+ * `ci.yml` combined paths do not set. It requires `id-token: write` and a public
+ * source repository, both of which hold here; it is off by default so a local run
+ * cannot fail on a missing OIDC context. The standalone publish workflows do not
+ * go through this function — they call `npm publish` directly, passing
+ * `--provenance` themselves (and OIDC generates it automatically).
  */
 export interface PackedTarball {
 	name: string;
@@ -669,7 +677,7 @@ async function publishNativeLeafPackage(tag: string): Promise<string[]> {
 	const pkgDir = path.join(repoRoot, pkg.dir);
 	const coreManifest = (await Bun.file(path.join(pkgDir, "package.json")).json()) as PackageManifest;
 	if (typeof coreManifest.version !== "string") throw new Error(`Missing version in ${pkg.dir}/package.json`);
-	await stageLegalPayloads(pkgDir, coreManifest.license ?? "MIT", !isDryRun);
+	await stageLegalPayloads(pkgDir, coreManifest.license ?? "MIT", writeManifests);
 	const leaves = await generateNpmPackages({
 		packageDir: pkgDir,
 		dryRun: isDryRun,
@@ -683,7 +691,7 @@ async function publishNativeLeafPackage(tag: string): Promise<string[]> {
 }
 
 async function prepareNativePackage(pkg: PublishPackage): Promise<PackageManifest> {
-	const manifest = await prepareNativeCorePackage(path.join(repoRoot, pkg.dir), !isDryRun);
+	const manifest = await prepareNativeCorePackage(path.join(repoRoot, pkg.dir), writeManifests);
 	if (isDryRun) {
 		console.log(`DRY RUN native core manifest rewrite (${pkg.dir})`);
 		console.log(
@@ -846,6 +854,10 @@ async function publishWorkspacePackages(): Promise<string[]> {
 }
 
 if (import.meta.main) {
+	if (packOnlyDir !== null && nativeLeafTag !== null) {
+		console.error("--pack-only and --native-leaf are mutually exclusive");
+		process.exit(2);
+	}
 	const failed = packOnlyDir
 		? await packWorkspaceInto(packOnlyDir)
 		: nativeLeafTag
