@@ -8,6 +8,17 @@
  */
 
 import { register } from "../config/registry";
+import { isAndroid } from "@marsai-org/utils/platform";
+import type { Settings } from "../config/settings";
+
+/** Desktop initial default for concurrent workers (to be tuned by the benchmark). */
+export const ORCHESTRATOR_DEFAULT_CONCURRENCY_DESKTOP = 4;
+
+/** Mobile initial default for concurrent workers (to be tuned by the benchmark). */
+export const ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID = 2;
+
+/** Initial default cap on the total child process tree on Android (to be tuned by the benchmark). */
+export const ORCHESTRATOR_ANDROID_PROCESS_CAP = 6;
 
 /** Master switch for the orchestrator. Off by default (single agent stays the default path). */
 export const cfgOrchestratorEnabled = register({
@@ -58,13 +69,34 @@ export const cfgOrchestratorMaxConcurrency = register({
 		tab: "tasks",
 		group: "Orchestrator",
 		label: "Max Concurrent Workers",
-		description: "Maximum number of orchestrator workers running at the same time",
+		description:
+			"Maximum number of orchestrator workers running at the same time (Android/Termux caps the effective value at 2)",
 		options: [
 			{ value: "1", label: "1 worker" },
 			{ value: "2", label: "2 workers" },
 			{ value: "4", label: "4 workers" },
 			{ value: "8", label: "8 workers" },
 			{ value: "16", label: "16 workers" },
+		],
+	},
+});
+
+/** Initial default cap on the total child process tree on Android; other platforms are unbounded by this knob. */
+export const cfgOrchestratorAndroidProcessCap = register({
+	id: "orchestrator.androidProcessCap",
+	protocolDefault: ["rpc", "acp"],
+	type: "number",
+	default: ORCHESTRATOR_ANDROID_PROCESS_CAP,
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Android Process Cap",
+		description:
+			"Total child processes an orchestration run may create on Android/Termux (parent host + workers + their tool children); protects against background-process reaping",
+		options: [
+			{ value: "4", label: "4 processes" },
+			{ value: "6", label: "6 processes" },
+			{ value: "8", label: "8 processes" },
 		],
 	},
 });
@@ -147,3 +179,14 @@ export const cfgOrchestratorMaxWallClockMs = register({
 		],
 	},
 });
+
+/**
+ * Effective worker concurrency: the configured value, clamped to the mobile
+ * initial default on Android/Termux. Returns the configured value on other
+ * platforms. The clamp is a conservative default (UNVERIFIED), tuned by the
+ * benchmark milestone; it never widens what the user configured.
+ */
+export function resolveOrchestratorConcurrency(settings: Settings, configured: number): number {
+	if (!isAndroid()) return configured;
+	return Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID);
+}

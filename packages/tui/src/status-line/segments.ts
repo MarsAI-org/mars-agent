@@ -142,6 +142,9 @@ const NORMALIZED_SCRATCH_ROOTS: readonly string[] = (() => {
 	} else {
 		roots.add("/tmp");
 		roots.add("/var/tmp");
+		const { TMPDIR, PREFIX } = process.env;
+		if (TMPDIR) roots.add(TMPDIR);
+		if (PREFIX) roots.add(path.join(PREFIX, "tmp"));
 		if (process.platform === "darwin") {
 			roots.add("/private/tmp");
 			roots.add("/private/var/tmp");

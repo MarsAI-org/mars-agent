@@ -29,6 +29,7 @@ import {
 
 import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@marsai-org/utils/worker-host";
 import { extractProfileFlags } from "./cli/profile-bootstrap";
+import { runPlatformCheck } from "./platform-check";
 import {
 	BLOB_BROKER_WORKER_ARG,
 	COMPUTER_WORKER_ARG,
@@ -540,6 +541,11 @@ export async function runCli(argv: string[]): Promise<void> {
 
 	if (resolvedArgv[0] === "--smoke-test") {
 		await runSmokeTest();
+		return;
+	}
+
+	if (resolvedArgv[0] === "--platform-check") {
+		await runPlatformCheck();
 		return;
 	}
 

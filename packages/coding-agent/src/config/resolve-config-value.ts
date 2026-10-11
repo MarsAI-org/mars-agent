@@ -1,5 +1,13 @@
 import { executeShell } from "@marsai-org/natives";
-import { $envExact, directoryIsEnterable, getProjectDir, logger, ptree, untilAborted } from "@marsai-org/utils";
+import {
+	$envExact,
+	directoryIsEnterable,
+	getProjectDir,
+	logger,
+	procmgr,
+	ptree,
+	untilAborted,
+} from "@marsai-org/utils";
 
 const COMMAND_FAILURE_RETRY_MS = 30_000;
 const commandResultCache = new Map<string, string>();
@@ -129,7 +137,8 @@ export async function runShellCommand(
 			return trimmed.length > 0 ? trimmed : undefined;
 		}
 
-		const result = await ptree.exec(["/bin/sh", "-c", command], {
+		const shellBinary = procmgr.resolveBasicShell() ?? "/bin/sh";
+		const result = await ptree.exec([shellBinary, "-c", command], {
 			cwd,
 			timeout: timeoutMs,
 			allowNonZero: true,
