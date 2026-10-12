@@ -1,22 +1,22 @@
-# Asset / artwork TODO (rebrand)
+# Asset / artwork inventory (rebrand)
 
 Brand artwork deliverable: **`Mars`** (CLI `mars`, npm `@marsai-org`,
 GitHub `MarsAI-org/mars-agent`).
 
-**Nothing in here may be committed to `main` without review.** Two placeholder
-files were created so that asset paths resolve and nothing renders as a broken
-image. They contain **no artwork** — no logo, no wordmark, no design — and every
-one of them must be replaced before release. `HANDOFF.md` (Phase 5) tracks the
-same requirement.
+**Final artwork delivered:** The placeholders have been replaced with the Mars
+brand mark suite (faceted geometric "M" crest with IDE bridge in `#ea580c` to
+`#ff6b4a` on `#0d1117`). Branch `design/mars-brand-mark` tracks the deliverables.
 
 ---
 
 ## 1. Placeholders created by this change
 
-| File | Format | What it actually is | Replace with |
+| File | Format | Replaced with | Status |
 | --- | --- | --- | --- |
-| `assets/mars-logo.png` | PNG, 600×200, grayscale, flat fill | A single neutral gray rectangle (every pixel `#f2f2f2`) plus a `tEXt` chunk whose `Description` reads `PLACEHOLDER - NOT FINAL ARTWORK...`. No drawing, no glyphs. | Final Mars README hero / banner art (see §2.1) |
-| `assets/mars-logo.svg` | SVG, viewBox `0 0 240 240` | One neutral gray `rect` plus four monospace `PLACEHOLDER`/`MARS LOGO PENDING` text elements, and a leading SVG comment stating it is a placeholder. No logo geometry. | Final Mars brand mark, vector source (see §2.2) |
+| `assets/mars-logo.png` | PNG, 1200×360, dark palette | Mars README hero banner (emblem + MARS wordmark + tagline) | **Replaced** |
+| `assets/mars-logo.svg` | SVG, viewBox `0 0 240 240` | Master Mars vector mark (faceted "M" crest, gradient fill) | **Replaced** |
+| `assets/icon.svg` | SVG, viewBox `0 0 240 240` | Mars dark app tile mark (replaces legacy Pi symbol) | **Replaced** |
+| `packages/collab-web/public/*` | Multi-format ladder | Full favicon ladder (16–512px, .ico, .svg) + 1200×630 `og-image.png` | **Replaced** |
 
 Why these two extensions and no third:
 
