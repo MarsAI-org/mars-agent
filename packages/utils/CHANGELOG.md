@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Pointed the Mars base URL at the official `getmars.eu.cc` domain; set `MARS_APP_URL` to override it.
+
 ## [18.8.1] - 2026-10-07
 
 ### Added

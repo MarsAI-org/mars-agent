@@ -417,7 +417,7 @@ export function makeOpenRouterRewriter(opts: OpenRouterOptions): RewriteChunk {
 					headers: {
 						Authorization: `Bearer ${opts.apiKey}`,
 						"Content-Type": "application/json",
-						"HTTP-Referer": "https://omp.sh/",
+						"HTTP-Referer": "https://getmars.eu.cc/",
 						"X-Title": "mars",
 					},
 					body,

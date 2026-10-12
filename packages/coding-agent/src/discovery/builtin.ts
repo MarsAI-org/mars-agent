@@ -402,7 +402,7 @@ async function loadRules(ctx: LoadContext): Promise<LoadResult<Rule>> {
 	}
 
 	// Top-level RULES.md is a sticky always-apply rule. Documented in
-	// https://omp.sh/docs/context-files: its full body is carried on every
+	// https://getmars.eu.cc/docs/context-files: its full body is carried on every
 	// request (system-prompt text, or image frames under snapcompact
 	// system-prompt imaging) so it keeps its hold across long sessions.
 	// User scope:    <agentDir>/RULES.md (~/.mars/agent/RULES.md by default)
