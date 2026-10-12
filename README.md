@@ -25,8 +25,8 @@
 Continuously tuned by real-world use — complete out of the box, open all the
 way down.
 
-**60+** providers · **31** built-in tools · **14** lsp ops · **28** dap ops ·
-**~80k** lines of Rust core.
+**75** providers · **36** built-in tools · **~290k** lines of Rust core ·
+**~70k** more vendored in-process.
 
 > [!NOTE]
 > Pull requests are **temporarily open to everyone** as a trial. We previously
@@ -220,7 +220,7 @@ Other agents shell out to rg, grep, find, and bash. On many machines those
 binaries don't exist, and on the ones where they do, every call costs a
 fork-exec round-trip. Mars links the real implementations into the process.
 ripgrep, glob, find: in-process. brush is the bash — with sessions that survive
-across calls, and 58 command-line utilities (ls, sed, sort, xargs, even jq)
+across calls, and the common command-line utilities (ls, sed, sort, xargs, jq)
 ported into the builtins crate and run in-process. The same `mars` binary runs
 on macOS, Linux, and Windows — no WSL bridge.
 
@@ -535,16 +535,16 @@ Vuln lookups answer with vendor data, not blog summaries.
 
 [`web_search` reference →](docs/tools/web_search.md)
 
-## Roughly **~80,000** lines of Rust, doing the work other harnesses shell out for.
+## Roughly **290,000** lines of Rust, doing the work other harnesses shell out for.
 
-Six crates, one platform-tagged N-API addon. Search, shell, AST, highlight,
-PTY, desktop control, image decode, BPE counting — all in-process on the libuv
-pool, with no fork/exec on the hot path. Another ~80k lines ride along vendored:
-the brush bash fork, plus 58 command-line utilities — coreutils, findutils, sed,
-jq, ripgrep-backed grep, fd, diff, moreutils — ported into the builtins crate
-and compiled straight into the shell.
+Eleven crates, one platform-tagged N-API addon. Search, shell, AST, highlight,
+PTY, desktop control, image decode, BPE counting, prediction, VCS, voice — all
+in-process on the libuv pool, with no fork/exec on the hot path. Another ~70k
+lines ride along vendored: the brush bash fork, plus the common command-line
+utilities — coreutils, findutils, sed, jq, ripgrep-backed grep, fd, diff,
+moreutils — ported into the builtins crate and compiled straight into the shell.
 
-- Crates: `pi-natives`, `pi-shell`, `pi-ast`, `pi-iso`, `pi-voice`, `pi-walker`
+- Crates: `pi-natives`, `pi-shell`, `pi-ast`, `pi-iso`, `pi-voice`, `pi-walker`, `pi-edit`, `pi-vcs`, `pi-diff`, `pi-vfs`, `pi-predict`, `pi-builtins`
 - Platforms: `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`, `win32-x64`, `win32-arm64` — x64 ships dual AVX2 and baseline binaries
 
 Per crate, code lines only:
