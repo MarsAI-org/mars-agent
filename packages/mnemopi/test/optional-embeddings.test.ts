@@ -133,7 +133,7 @@ describe("optional embeddings", () => {
 				requests += 1;
 				expect(request.headers.get("content-type")).toBe("application/json");
 				expect(request.headers.get("user-agent")).toBe(`mars/${packageJson.version}`);
-				expect(request.headers.get("http-referer")).toBe("https://omp.sh/");
+				expect(request.headers.get("http-referer")).toBe("https://getmars.eu.cc/");
 				expect(request.headers.get("x-openrouter-title")).toBe("mars");
 				expect(request.headers.get("x-openrouter-categories")).toBe("cli-agent");
 				expect(request.headers.get("x-title")).toBeNull();

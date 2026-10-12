@@ -22,7 +22,7 @@ const BIZ_BASE = env("ZAI_BIZ_BASE") ?? "https://api.z.ai";
 /** Business-login endpoint: exchanges the OAuth access token for a biz token. */
 const BUSINESS_LOGIN_URL = env("ZAI_BUSINESS_LOGIN_URL") ?? "https://api.z.ai/api/auth/z/login";
 /** Mars's own key name so sign-in never mutates ZCode's `zcode-api-key`. */
-const KEY_NAME = "oh-my-pi";
+const KEY_NAME = "mars";
 
 /**
  * Z.ai's `{ code, msg, data, success }` envelope. The OAuth token endpoint

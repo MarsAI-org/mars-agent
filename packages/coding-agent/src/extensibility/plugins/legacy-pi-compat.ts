@@ -760,7 +760,7 @@ async function loadBundledModule(moduleKey: string): Promise<BundledModule> {
 	const existing = loadedBundledModules[moduleKey];
 	if (existing) return existing;
 	const loaders = await ensureBundledModuleLoadersLoaded();
-	const loader = loaders[moduleKey];
+	const loader = loaders[moduleKey] ?? loaders[moduleKey.replace("/pi-", "/")];
 	if (!loader) {
 		throw new Error(`mars:legacy-pi-shim: no bundled module registered for ${moduleKey}`);
 	}
@@ -1010,7 +1010,7 @@ const TYPEBOX_SHIM_PATH = __resolveTypeBoxShimPath(USE_BUNDLED_PI_MODULES, sourc
 // imports such as `@marsai-org/ai/oauth` continue to resolve directly
 // against the bundled pi-ai package.
 const LEGACY_PI_AI_SHIM_PATH = USE_BUNDLED_PI_MODULES
-	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/pi-ai`)
+	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/ai`)
 	: sourceShimPath("legacy-pi-ai-shim.ts");
 
 // The coding-agent's own `./src/index.ts` cannot be listed as an extra
@@ -1021,14 +1021,14 @@ const LEGACY_PI_AI_SHIM_PATH = USE_BUNDLED_PI_MODULES
 // source shim whose distinct file path avoids the #1474 collision
 // while still re-exporting the canonical package surface.
 const LEGACY_PI_CODING_AGENT_SHIM_PATH = USE_BUNDLED_PI_MODULES
-	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/pi-coding-agent`)
+	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/coding-agent`)
 	: sourceShimPath("legacy-pi-coding-agent-shim.ts");
 
 // Legacy pi-tui exported `decodeKittyPrintable` from its package root. The
 // canonical TUI replaced it with the broader `decodePrintableKey`; route only
 // legacy root imports through a sibling shim that preserves the old name.
 const LEGACY_PI_TUI_SHIM_PATH = USE_BUNDLED_PI_MODULES
-	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/pi-tui`)
+	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/tui`)
 	: sourceShimPath("legacy-pi-tui-shim.ts");
 
 // Package-root overrides. Shim entries (`pi-ai`, `pi-coding-agent`, `pi-tui`)

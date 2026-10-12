@@ -166,8 +166,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  * release that no longer supports it.
  */
 export function resolveReleaseDist(manifest: unknown): ReleaseDist | undefined {
-	if (!isRecord(manifest) || !isRecord(manifest.omp)) return undefined;
-	const dist = manifest.omp.dist;
+	if (!isRecord(manifest)) return undefined;
+	const section = isRecord(manifest.mars) ? manifest.mars : isRecord(manifest.omp) ? manifest.omp : undefined;
+	if (!section) return undefined;
+	const dist = section.dist;
 	if (dist === undefined) return undefined;
 	return dist === "npm" ? "npm" : "binary";
 }
@@ -190,8 +192,10 @@ export function resolveReleaseDist(manifest: unknown): ReleaseDist | undefined {
  * "already up to date" against the running build).
  */
 export function resolveReleaseRename(manifest: unknown): ReleaseRename | undefined {
-	if (!isRecord(manifest) || !isRecord(manifest.omp)) return undefined;
-	const rename = manifest.omp.rename;
+	if (!isRecord(manifest)) return undefined;
+	const section = isRecord(manifest.mars) ? manifest.mars : isRecord(manifest.omp) ? manifest.omp : undefined;
+	if (!section) return undefined;
+	const rename = section.rename;
 	if (!isRecord(rename) || typeof rename.package !== "string" || rename.package.length === 0) return undefined;
 	const natives = rename.natives;
 	return {

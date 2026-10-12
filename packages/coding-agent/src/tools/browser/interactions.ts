@@ -525,7 +525,7 @@ export async function highlightElement(
 			const rect = element.getBoundingClientRect();
 			const overlay = page.document.createElement("div");
 			overlay.id = overlayId;
-			overlay.dataset.ompHighlightOverlay = "";
+			overlay.dataset.marsHighlightOverlay = "";
 			overlay.setAttribute("aria-hidden", "true");
 			overlay.setAttribute("role", "presentation");
 			overlay.inert = true;

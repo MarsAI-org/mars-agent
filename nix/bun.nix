@@ -393,6 +393,22 @@
     url = "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz";
     hash = "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==";
   };
+  "@marsai-org/agent-core" = copyPathToStore ../packages/agent;
+  "@marsai-org/ai" = copyPathToStore ../packages/ai;
+  "@marsai-org/browser-relay" = copyPathToStore ../packages/browser-relay;
+  "@marsai-org/catalog" = copyPathToStore ../packages/catalog;
+  "@marsai-org/coding-agent" = copyPathToStore ../packages/coding-agent;
+  "@marsai-org/collab-web" = copyPathToStore ../packages/collab-web;
+  "@marsai-org/metaharness" = copyPathToStore ../packages/metaharness;
+  "@marsai-org/mnemopi" = copyPathToStore ../packages/mnemopi;
+  "@marsai-org/natives" = copyPathToStore ../packages/natives;
+  "@marsai-org/omptype" = copyPathToStore ../packages/omptype;
+  "@marsai-org/snapcompact" = copyPathToStore ../packages/snapcompact;
+  "@marsai-org/stats" = copyPathToStore ../packages/stats;
+  "@marsai-org/tui" = copyPathToStore ../packages/tui;
+  "@marsai-org/typescript-edit-benchmark" = copyPathToStore ../packages/typescript-edit-benchmark;
+  "@marsai-org/utils" = copyPathToStore ../packages/utils;
+  "@marsai-org/wire" = copyPathToStore ../packages/wire;
   "@napi-rs/cli@3.7.2" = fetchurl {
     url = "https://registry.npmjs.org/@napi-rs/cli/-/cli-3.7.2.tgz";
     hash = "sha512-shDW0Td/XZQpP04Yy+OsMt1ILMKGGkoLcy1zVAsSAK0fLfWm0Upgkmfs/NOV2ZhMQwkgpR3ZEdyHmTwgrUDQuA==";
@@ -657,22 +673,6 @@
     url = "https://registry.npmjs.org/@octokit/types/-/types-18.0.0.tgz";
     hash = "sha512-l6bAF43PNxkJp6g+W4PjoUSSkxHomXw2nOum5CTftJz1NlV3vu93NImgOYtLf6CbBUb5j+fiuzW0PPQ5JTSvZA==";
   };
-  "@marsai-org/browser-relay" = copyPathToStore ../packages/browser-relay;
-  "@marsai-org/collab-web" = copyPathToStore ../packages/collab-web;
-  "@marsai-org/stats" = copyPathToStore ../packages/stats;
-  "@marsai-org/omptype" = copyPathToStore ../packages/omptype;
-  "@marsai-org/agent-core" = copyPathToStore ../packages/agent;
-  "@marsai-org/ai" = copyPathToStore ../packages/ai;
-  "@marsai-org/catalog" = copyPathToStore ../packages/catalog;
-  "@marsai-org/coding-agent" = copyPathToStore ../packages/coding-agent;
-  "@marsai-org/metaharness" = copyPathToStore ../packages/metaharness;
-  "@marsai-org/mnemopi" = copyPathToStore ../packages/mnemopi;
-  "@marsai-org/natives" = copyPathToStore ../packages/natives;
-  "@marsai-org/tui" = copyPathToStore ../packages/tui;
-  "@marsai-org/utils" = copyPathToStore ../packages/utils;
-  "@marsai-org/wire" = copyPathToStore ../packages/wire;
-  "@marsai-org/snapcompact" = copyPathToStore ../packages/snapcompact;
-  "@marsai-org/typescript-edit-benchmark" = copyPathToStore ../packages/typescript-edit-benchmark;
   "@opentelemetry/api-logs@0.220.0" = fetchurl {
     url = "https://registry.npmjs.org/@opentelemetry/api-logs/-/api-logs-0.220.0.tgz";
     hash = "sha512-CmVa4ImJ+ynfrPMNaAXHET6Bhb44SwzmfyVJFq9ni2jgXJR/l7C6gfVFddNmHP+ZOkP9cf4f9DBe68qVLTHc9w==";

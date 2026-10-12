@@ -31,10 +31,11 @@ describe("prompt action autocomplete", () => {
 	beforeAll(async () => {
 		await initTheme();
 		// The coding-agent internal-url router installs the real host; here a stub
-		// proves the fall-through contract without the router.
+		// proves the fall-through contract without the router. The scheme stays
+		// `omp` — the omp:// internal URL scheme is kept on purpose by the rebrand.
 		setInternalUrlCompletionHost({
-			completionSchemes: () => ["mars"],
-			resolveCompletions: async scheme => (scheme === "mars" ? [{ value: "docs", label: "docs" }] : null),
+			completionSchemes: () => ["omp"],
+			resolveCompletions: async scheme => (scheme === "omp" ? [{ value: "docs", label: "docs" }] : null),
 		});
 	});
 

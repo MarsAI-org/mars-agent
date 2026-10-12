@@ -15,7 +15,10 @@
  * secrets before a row leaves the session process.
  */
 
-/** Default stream server; its host route derives the channel from the bearer identity. */
+/**
+ * Default stream server; its host route derives the channel from the bearer identity.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const DEFAULT_STREAM_URL = "https://live.omp.sh";
 
 /** Protocol version carried in `hello`/`snapshot`; the server rejects mismatches. */

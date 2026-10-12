@@ -422,10 +422,16 @@ export const ROOM_KEY_BYTES = 32;
  */
 export const WRITE_TOKEN_BYTES = 16;
 
-/** Default public relay; bare `<roomId>.<key>` links resolve against it. */
+/**
+ * Default public relay; bare `<roomId>.<key>` links resolve against it.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const DEFAULT_RELAY_URL = "wss://my.omp.sh";
 
-/** Default share viewer/upload base; `/share` links resolve against `<base>/<id>#<key>`. */
+/**
+ * Default share viewer/upload base; `/share` links resolve against `<base>/<id>#<key>`.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const DEFAULT_SHARE_URL = "https://my.omp.sh/s";
 
 export interface ParsedCollabLink {
