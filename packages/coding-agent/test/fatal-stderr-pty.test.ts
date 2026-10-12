@@ -22,7 +22,7 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				const written = Promise.withResolvers<void>();
 				screenWritten = written.promise;
 				screen.write(data, () => {
-					if (terminalLines(screen).includes("╰─")) composerSeen.resolve();
+					if (terminalLines(screen).some(line => line?.includes("╰─") === true)) composerSeen.resolve();
 					written.resolve();
 				});
 			},
@@ -70,7 +70,7 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				expect(exitCode).toBe(1);
 
 				const lines = terminalLines(screen);
-				const composerRow = lines.indexOf("╰─");
+				const composerRow = lines.findIndex(line => line?.includes("╰─") === true);
 				const errorRow = lines.findIndex(line => line?.includes("error: fatal PTY fixture") === true);
 
 				expect(composerRow).toBeGreaterThanOrEqual(0);
