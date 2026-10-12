@@ -13,7 +13,8 @@ import { useGuestSnapshot } from "./lib/use-guest";
 import type { ToolRenderHost } from "./tool-render";
 import "./components/shell/shell.css";
 
-const NAME_KEY = "omp.collab.name";
+const NAME_KEY = "mars.collab.name";
+const LEGACY_NAME_KEY = "omp.collab.name";
 
 interface Creds {
 	link: string;
@@ -22,7 +23,7 @@ interface Creds {
 
 function storedName(): string {
 	try {
-		return localStorage.getItem(NAME_KEY) ?? "guest";
+		return localStorage.getItem(NAME_KEY) ?? localStorage.getItem(LEGACY_NAME_KEY) ?? "guest";
 	} catch {
 		return "guest";
 	}

@@ -1165,7 +1165,7 @@ const kit = {
 		const rect = requireFirst(sel).getBoundingClientRect();
 		const overlay = document.createElement("div");
 		overlay.id = String(id);
-		overlay.dataset.ompHighlightOverlay = "";
+		overlay.dataset.marsHighlightOverlay = "";
 		overlay.setAttribute(OVERLAY_ATTR, String(id));
 		overlay.setAttribute("aria-hidden", "true");
 		overlay.setAttribute("role", "presentation");

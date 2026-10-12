@@ -25,8 +25,7 @@ describe("generated native npm leaf packages", () => {
 		expect(manifest.license).toBe("MIT");
 		expect(manifest.repository).toEqual({
 			type: "git",
-			// TODO(rebrand): no Mars domain decided — see HANDOFF.md
-			url: "git+https://github.com/can1357/oh-my-pi.git",
+			url: "git+https://github.com/MarsAI-org/mars-agent.git",
 			directory: "packages/natives",
 		});
 		expect("exports" in manifest).toBe(false);

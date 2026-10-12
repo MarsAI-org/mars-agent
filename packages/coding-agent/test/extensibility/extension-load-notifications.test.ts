@@ -16,7 +16,7 @@ describe("extension load startup notifications", () => {
 		]);
 
 		expect(message).toBeDefined();
-		expect(message?.startsWith("Failed to load extension ~/omp-notification-fixture/plugin")).toBe(true);
+		expect(message?.startsWith("Failed to load extension ~/mars-notification-fixture/plugin")).toBe(true);
 		expect(message).toContain("name/extension.ts: SyntaxError: Missing named export at extension loader");
 		expect(message).not.toContain(homeDir);
 		expect(message).not.toContain("\n");

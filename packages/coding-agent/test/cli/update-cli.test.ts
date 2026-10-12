@@ -74,7 +74,7 @@ describe("getLatestRelease rename pointers", () => {
 		expect(release.packages).toEqual({ pkg: "@new/mars", natives: "@new/natives" });
 		expect(urls).toEqual([
 			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
-			"https://registry.npmjs.org/@new%2fomp/latest",
+			"https://registry.npmjs.org/@new%2fmars/latest",
 		]);
 	});
 	it("fetches the canary dist-tag when checking the canary channel", async () => {
