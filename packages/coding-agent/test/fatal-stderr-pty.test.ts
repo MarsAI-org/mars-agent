@@ -3,6 +3,7 @@ import { Terminal as VirtualTerminal } from "@marsai-org/utils/vterm";
 
 const COLUMNS = 120;
 const ROWS = 30;
+const COMPOSER_BOUNDARY = "╰─";
 
 function terminalLines(terminal: VirtualTerminal): (string | undefined)[] {
 	const buffer = terminal.buffer.active;
@@ -14,6 +15,12 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 		const screen = new VirtualTerminal({ cols: COLUMNS, rows: ROWS, scrollback: 100 });
 		const closed = Promise.withResolvers<void>();
 		const composerSeen = Promise.withResolvers<void>();
+		// Row of the composer boundary as it was actually painted, captured before the
+		// fatal write. Re-scanning for it after the fact cannot work: the postmortem code
+		// frame quotes the fixture's own source line (`input.prompt = "╰─ "`), which lands on
+		// that row. Matching it post-hoc would also make the assertion vacuous, because the
+		// code frame carries the glyph whether or not the composer ever painted.
+		let paintedComposerRow: number | undefined;
 		let screenWritten = Promise.resolve();
 		await using terminal = new Bun.Terminal({
 			cols: COLUMNS,
@@ -22,7 +29,12 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				const written = Promise.withResolvers<void>();
 				screenWritten = written.promise;
 				screen.write(data, () => {
-					if (terminalLines(screen).includes("╰─")) composerSeen.resolve();
+					const rows = terminalLines(screen);
+					const row = rows.indexOf(COMPOSER_BOUNDARY);
+					if (row >= 0) {
+						paintedComposerRow = row;
+						composerSeen.resolve();
+					}
 					written.resolve();
 				});
 			},
@@ -70,11 +82,12 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				expect(exitCode).toBe(1);
 
 				const lines = terminalLines(screen);
-				const composerRow = lines.indexOf("╰─");
 				const errorRow = lines.findIndex(line => line?.includes("error: fatal PTY fixture") === true);
 
-				expect(composerRow).toBeGreaterThanOrEqual(0);
-				expect(errorRow).toBeGreaterThan(composerRow);
+				// Assert against the row captured while painting, not a post-hoc scan: after the
+				// fatal write the composer row holds the postmortem code frame instead.
+				expect(paintedComposerRow ?? -1).toBeGreaterThanOrEqual(0);
+				expect(errorRow).toBeGreaterThan(paintedComposerRow ?? -1);
 			} finally {
 				if (proc.exitCode === null) proc.kill();
 				await proc.exited;
