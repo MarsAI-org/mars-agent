@@ -2,7 +2,7 @@
  * `mars install <target>` — top-level convenience over `mars plugin install` /
  * `mars plugin link`.
  *
- * The docs (omp.sh/docs/extension-authoring) advertise
+ * The docs (getmars.eu.cc/docs/extension-authoring) advertise
  *
  *   mars install ./my-extension
  *

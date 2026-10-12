@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://omp.sh/"
+Homepage = "https://getmars.eu.cc/"
 Repository = "https://github.com/MarsAI-org/mars-agent"
 Documentation = "https://github.com/MarsAI-org/mars-agent/blob/main/docs/rpc.md"
 

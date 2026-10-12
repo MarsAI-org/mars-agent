@@ -110,4 +110,23 @@ describe("dated log path", () => {
 		if (proc.exitCode !== 0) console.error(proc.stderr.toString());
 		expect(proc.exitCode).toBe(0);
 	});
+
+	it("resolves APP_URL to getmars.eu.cc by default with a trailing slash", async () => {
+		const { APP_URL } = await import("@marsai-org/utils/dirs");
+		expect(APP_URL).toBe("https://getmars.eu.cc/");
+	});
+
+	it("honors MARS_APP_URL override and ensures trailing slash", () => {
+		const proc = Bun.spawnSync(
+			[process.execPath, "-e", 'import { APP_URL } from "./src/dirs"; console.log(APP_URL);'],
+			{
+				cwd: path.resolve(import.meta.dir, ".."),
+				env: { ...process.env, MARS_APP_URL: "https://custom.mars.dev" },
+				stdout: "pipe",
+				stderr: "pipe",
+			},
+		);
+		expect(proc.exitCode).toBe(0);
+		expect(proc.stdout.toString().trim()).toBe("https://custom.mars.dev/");
+	});
 });
