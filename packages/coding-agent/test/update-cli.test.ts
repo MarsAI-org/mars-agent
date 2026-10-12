@@ -800,7 +800,9 @@ describe("migrateRenamedInstall transaction", () => {
 		const { steps, calls } = scriptedSteps({ install: [0, 0], verify: [false, false] });
 
 		await withPlatformAsync("linux", async () => {
-			await expect(migrateRenamedInstall(release, steps)).rejects.toThrow("curl -fsSL https://omp.sh/install");
+			await expect(migrateRenamedInstall(release, steps)).rejects.toThrow(
+				"curl -fsSL https://getmars.eu.cc/install",
+			);
 		});
 		expect(calls).toEqual(["install", "removeOld", "verify", "install", "verify"]);
 	});
@@ -813,7 +815,7 @@ describe("migrateRenamedInstall transaction", () => {
 		try {
 			const { steps } = scriptedSteps({ install: [0, 0], verify: [false, false] });
 			const promise = migrateRenamedInstall(release, steps);
-			await expect(promise).rejects.toThrow("irm https://omp.sh/install.ps1");
+			await expect(promise).rejects.toThrow("irm https://getmars.eu.cc/install.ps1");
 			await expect(promise).rejects.not.toThrow("| sh");
 		} finally {
 			Object.defineProperty(process, "platform", platformDescriptor);
