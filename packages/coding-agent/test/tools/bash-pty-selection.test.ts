@@ -3,6 +3,7 @@ import { canUseInteractiveBashPty } from "@marsai-org/coding-agent/tools/bash-pt
 
 const originalPlatform = process.platform;
 const originalNoPty = Bun.env.PI_NO_PTY;
+const originalMarsNoPty = Bun.env.MARS_NO_PTY;
 
 function setPlatform(platform: NodeJS.Platform): void {
 	Object.defineProperty(process, "platform", {
@@ -28,6 +29,14 @@ function setNoPty(value: string | undefined): void {
 	Bun.env.PI_NO_PTY = value;
 }
 
+function setMarsNoPty(value: string | undefined): void {
+	if (value === undefined) {
+		delete Bun.env.MARS_NO_PTY;
+		return;
+	}
+	Bun.env.MARS_NO_PTY = value;
+}
+
 function interactiveContext() {
 	return { hasUI: true, ui: {} };
 }
@@ -36,6 +45,7 @@ describe("bash PTY selection", () => {
 	afterEach(() => {
 		restorePlatform();
 		setNoPty(originalNoPty);
+		setMarsNoPty(originalMarsNoPty);
 	});
 
 	it("allows interactive PTY on Windows when requested with UI", () => {
@@ -54,6 +64,14 @@ describe("bash PTY selection", () => {
 		expect(canUseInteractiveBashPty(true, undefined)).toBe(false);
 
 		setNoPty("1");
+		expect(canUseInteractiveBashPty(true, interactiveContext())).toBe(false);
+	});
+
+	it("honors the canonical MARS_NO_PTY name", () => {
+		setPlatform("linux");
+		setNoPty(undefined);
+		setMarsNoPty("1");
+
 		expect(canUseInteractiveBashPty(true, interactiveContext())).toBe(false);
 	});
 });

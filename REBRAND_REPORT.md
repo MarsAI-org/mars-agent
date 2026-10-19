@@ -85,8 +85,8 @@ The following tokens remain in the codebase deliberately and must **not** be mod
 | `crates/pi-*` crate names | Cargo crate names (`pi-natives`, `pi-shell`, `pi-ast`, etc.) and internal C-ABI symbols. |
 | Original LICENSE text & authors | Upstream copyright notices for Mario Zechner, Can Bölük, and Stencil Labs, Inc. are required by the MIT license. |
 | CHANGELOG history | All existing `packages/*/CHANGELOG.md` records prior releases under the original names; past history is immutable. |
-| Wire contracts | Protocol values including `ORIGINATOR_CODEX`, gitlab `serverName: "omp"`, `x-omp-*` headers, `application/x-omp-status`, `OMP-Auth-Broker-Capabilities`, `RECORDING_EXTENSION = ".ompcast"`, `header.ompcast`, `--omp-profile-boundary` CLI flag, and `/.well-known/omp-blob-health`. |
-| Manifest lookup keys | `pkg.omp ?? pkg.pi` in plugin loaders (`directory-resolution.ts`, `loader.ts`, `manager.ts`) to ensure existing extensions load without modification. |
+| Wire contracts | Protocol values including `ORIGINATOR_CODEX`, gitlab `serverName: "omp"`, `x-omp-*` headers, `application/x-omp-status`, `OMP-Auth-Broker-Capabilities`, `--omp-profile-boundary` CLI flag, and `/.well-known/omp-blob-health`. Recordings now use `.marscast`/`header.marscast`; `.ompcast`/`header.ompcast` stay read-only compatibility inputs. |
+| Manifest lookup keys | `mars` is canonical; `pkg.omp ?? pkg.pi` remains as a fallback in plugin loaders (`directory-resolution.ts`, `loader.ts`, `manager.ts`) so existing extensions load without modification. |
 | Upstream service URLs | `my.omp.sh`, `live.omp.sh`, `qa.omp.sh`, `skills.omp.sh`, and `omp.sh` left with TODO markers pending a domain decision. |
 | `PI_*` env vars | Preserved for backwards compatibility with existing tooling and developer setups. |
 | `can1357/tap/omp` | Homebrew formula reference left as-is; repointing to an unverified tap would break installation. |

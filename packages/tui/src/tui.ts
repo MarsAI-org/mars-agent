@@ -16,6 +16,7 @@ import * as fs from "node:fs";
 import { performance } from "node:perf_hooks";
 import { getDebugLogPath } from "@marsai-org/utils/dirs";
 import { $flag } from "@marsai-org/utils/env";
+import { readCompatEnv } from "@marsai-org/utils";
 import * as logger from "@marsai-org/utils/logger";
 import * as postmortem from "@marsai-org/utils/postmortem";
 import type { TspFrame, TspNode, TspText } from "@marsai-org/wire";
@@ -1402,7 +1403,7 @@ export class TUI extends Container {
 		this.#debugPaint = undefined;
 		this.#debugServer?.stop();
 		this.#debugServer = undefined;
-		const debugPath = process.env.MARS_TUI_DEBUG;
+		const debugPath = readCompatEnv("MARS_TUI_DEBUG");
 		if (debugPath !== undefined && debugPath.length > 0) {
 			this.#debugServer = new TuiDebugServer(this, debugPath);
 			this.#debugServer.start();

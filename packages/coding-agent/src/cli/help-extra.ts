@@ -62,14 +62,18 @@ export function getExtraHelpText(): string {
   TYPESAFE_API_KEY           - TypeSafe System One judgments (auto thinking, unexpected-stop, AI staging, eval judge())
 
   ${chalk.dim("# Configuration")}
-  MARS_PROFILE                 - Named profile for isolated agent state (same as --profile)
+  MARS_PROFILE               - Named profile for isolated agent state (same as --profile)
   Use \`mars --profile <name> --alias <command>\` to create a shell shortcut for a profile
-  PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
-  PI_PACKAGE_DIR             - Override package directory (for Nix/Guix store paths)
-  PI_SMOL_MODEL              - Override smol/fast model (see --smol)
-  PI_SLOW_MODEL              - Override slow/reasoning model (see --slow)
-  PI_PLAN_MODEL              - Override planning model (see --plan)
-  PI_NO_PTY                  - Disable PTY-based interactive bash execution
+  MARS_CODING_AGENT_DIR      - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
+  MARS_CONFIG_DIR            - Config root directory name under home (default: ${CONFIG_DIR_NAME})
+  MARS_PACKAGE_DIR           - Override package directory (for Nix/Guix store paths)
+  MARS_SMOL_MODEL            - Override smol/fast model (see --smol)
+  MARS_SLOW_MODEL            - Override slow/reasoning model (see --slow)
+  MARS_PLAN_MODEL            - Override planning model (see --plan)
+  MARS_NO_PTY                - Disable PTY-based interactive bash execution
+  ${chalk.dim("Legacy PI_* names (PI_CODING_AGENT_DIR, PI_PACKAGE_DIR, PI_SMOL_MODEL, PI_SLOW_MODEL,")}
+  ${chalk.dim("PI_PLAN_MODEL, PI_NO_PTY) and their OMP_* spellings are still honored as fallbacks")}
+  ${chalk.dim("but are deprecated and print a one-time notice.")}
   For complete environment variable reference, see:
   ${chalk.dim("docs/environment-variables.md")}
 ${chalk.bold("Available Tools (default-enabled unless noted):")}

@@ -3,8 +3,9 @@
 The compiled macOS `mars` binaries shipped on GitHub Releases can be signed with a
 **Developer ID Application** certificate and **notarized** by Apple. This makes
 them eligible for Gatekeeper acceptance when the notarization ticket is
-available. The repository also maintains a Homebrew tap; formula installs
-have different quarantine behavior from browser downloads (see below).
+available. Mars does not publish a Homebrew tap or formula, so release
+automation must not push a formula anywhere; the quarantine notes below still
+describe how a future formula install would behave.
 
 Like every other release build, the macOS binaries are built and signed on
 Linux: the Darwin legs of the `release_binary` matrix
@@ -37,9 +38,9 @@ script signs with the Developer ID and notarizes; with none, it signs ad hoc
 4. `release_github_verify` re-downloads the published arm64 asset, runs
    `codesign --verify --strict` and both launch checks, and—when signing secrets
    are configured—also asserts that the signature is not ad-hoc.
-5. For non-canary releases, `release_brew` regenerates and pushes the tap formula
-   after published-binary verification. It skips when
-   `HOMEBREW_TAP_DEPLOY_KEY` is absent; that secret is separate from signing.
+5. There is no Homebrew step: Mars publishes no tap. `scripts/ci-update-brew-formula.ts`
+   can render a formula for a future Mars-owned tap, but no CI job runs it and it
+   must never target an upstream tap.
 
 ### Why the entitlements are mandatory
 

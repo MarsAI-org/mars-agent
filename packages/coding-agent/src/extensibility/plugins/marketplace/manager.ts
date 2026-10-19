@@ -12,7 +12,7 @@ import * as path from "node:path";
 
 import { isEnoent, logger, pathIsWithin } from "@marsai-org/utils";
 import { expandTilde } from "../../../tools/path-utils";
-import { normalizePluginRuntimeConfig } from "../runtime-config";
+import { migrateLegacyPluginsLockfile, normalizePluginRuntimeConfig } from "../runtime-config";
 import type { PluginRuntimeConfig, PluginRuntimeState } from "../types";
 
 import { cachePlugin, getCachedPluginPath, isValidVersionForCache } from "./cache";
@@ -903,17 +903,16 @@ export class MarketplaceManager {
 		return path.join(this.#runtimeRoot(scope), "node_modules");
 	}
 
-	#runtimeLockPath(scope: "user" | "project"): string {
-		return path.join(this.#runtimeRoot(scope), "omp-plugins.lock.json");
-	}
-
 	async #loadRuntimeConfig(scope: "user" | "project"): Promise<PluginRuntimeConfig> {
+		// Migrate a pre-rebrand lock file in this scope exactly once, so reads and
+		// writes always target the canonical name and no second file is left behind.
+		const lockPath = await migrateLegacyPluginsLockfile(this.#runtimeRoot(scope));
 		try {
-			return normalizePluginRuntimeConfig(await Bun.file(this.#runtimeLockPath(scope)).json());
+			return normalizePluginRuntimeConfig(await Bun.file(lockPath).json());
 		} catch (err) {
 			if (isEnoent(err)) return normalizePluginRuntimeConfig({});
 			logger.warn("Failed to load marketplace plugin runtime config", {
-				path: this.#runtimeLockPath(scope),
+				path: lockPath,
 				error: String(err),
 			});
 			return normalizePluginRuntimeConfig({});
@@ -921,7 +920,10 @@ export class MarketplaceManager {
 	}
 
 	async #writeRuntimeConfig(scope: "user" | "project", config: PluginRuntimeConfig): Promise<void> {
-		await Bun.write(this.#runtimeLockPath(scope), JSON.stringify(config, null, 2));
+		// Callers load first, but migrating here too keeps a write from ever
+		// creating a second lock file next to an unmigrated legacy one.
+		const lockPath = await migrateLegacyPluginsLockfile(this.#runtimeRoot(scope));
+		await Bun.write(lockPath, JSON.stringify(config, null, 2));
 	}
 
 	async #resolvePluginPackageName(installPath: string, fallbackName: string): Promise<string> {

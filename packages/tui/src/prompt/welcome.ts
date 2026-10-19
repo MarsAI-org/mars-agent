@@ -408,17 +408,22 @@ export class WelcomeComponent implements Component {
 	}
 }
 
-/** Block-grid brand mark shared by the welcome and setup surfaces. */
-export const PI_LOGO = ["████████████", "   ██  ██   ", "   ██  ██   ", "   ▒▒  ██   ", "       ██   "];
+/**
+ * Block-grid Mars mark shared by the welcome and setup surfaces: the `M` from
+ * `assets/mars-logo.svg` — two legs, the central valley, and the crossbar —
+ * reduced to a 12×10 half-block grid.
+ */
+export const MARS_LOGO = ["▄███    ███▄", "███▀████▀███", "███ ▀██▀ ███", "███      ███", "███▀▀▀▀▀▀███"];
 
-/** Columns of {@link PI_LOGO}. */
-const LOGO_WIDTH = Math.max(...PI_LOGO.map(row => row.length));
+/** Columns of {@link MARS_LOGO}. */
+const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
 
 /**
- * The `Mars` wordmark in half-blocks, set beside {@link PI_LOGO} from its second
- * row: the `p` descends into the fourth, the version takes the fifth.
+ * The `mars` wordmark in half-blocks, set beside {@link MARS_LOGO} from its
+ * second row: the letters sit in the first two rows and the version takes the
+ * third.
  */
-const WORDMARK = ["▄▀▀▄ █▀▄▀▄ █▀▀▄", "▀▄▄▀ █ █ █ █▄▄▀", "           █"];
+const WORDMARK = ["█▄█ ▄▀▄ █▀▄ ▄▀▀", "█ █ █▀█ █    ▀▄", "▀ ▀ ▀ ▀ ▀   ▀▀ "];
 
 /** Columns of {@link WORDMARK}. */
 const WORDMARK_WIDTH = Math.max(...WORDMARK.map(row => row.length));
@@ -578,11 +583,11 @@ function introLogoFrame(progress: number): string[] {
 	const phase = ((((1 - eased) * INTRO_SWEEPS) % 1) + 1) % 1;
 	const shinePos = (((progress * INTRO_SHINE_TRAVERSALS) % 1) + 1) % 1;
 	const shineStrength = (1 - eased) ** 1.5;
-	return gradientLogo(PI_LOGO, phase, {
+	return gradientLogo(MARS_LOGO, phase, {
 		strength: shineStrength,
 		pos: shinePos,
 	});
 }
 
 /** Resting gradient frame, cached for re-renders outside of the intro. */
-const REST_FRAME = gradientLogo(PI_LOGO, 0);
+const REST_FRAME = gradientLogo(MARS_LOGO, 0);

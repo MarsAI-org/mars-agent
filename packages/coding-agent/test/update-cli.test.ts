@@ -7,13 +7,13 @@ import * as pluginCli from "@marsai-org/coding-agent/cli/plugin-cli";
 import * as updateCli from "@marsai-org/coding-agent/cli/update-cli";
 import {
 	buildBunInstallArgs,
-	buildHomebrewUpdateArgs,
 	buildMiseForceInstallArgs,
 	buildMiseUpdateEnv,
 	buildMiseUpgradeArgs,
 	buildNpmInstallArgs,
 	buildRenameCleanupPackages,
 	downloadVerifiedBinary,
+	homebrewUpdateRefusal,
 	type InstalledVersionVerification,
 	isMuslLinuxForTest,
 	type ManagerUpdateSteps,
@@ -577,9 +577,15 @@ describe("update-cli install target detection", () => {
 });
 
 describe("update-cli package manager commands", () => {
-	it("targets the Homebrew tap formula and switches to reinstall for forced updates", () => {
-		expect(buildHomebrewUpdateArgs(false)).toEqual(["upgrade", "can1357/tap/omp"]);
-		expect(buildHomebrewUpdateArgs(true)).toEqual(["reinstall", "can1357/tap/omp"]);
+	it("refuses Homebrew self-update and names the supported install channels", () => {
+		const message = homebrewUpdateRefusal();
+
+		expect(message).toContain("not distributed through Homebrew");
+		expect(message).toContain("bun install -g @marsai-org/coding-agent");
+		// Regression: the updater must never reference the upstream tap, which
+		// would install oh-my-pi over Mars.
+		expect(message).not.toContain("can1357");
+		expect(message).not.toContain("omp");
 	});
 
 	it("targets the mise GitHub backend and overrides release-age settings for attended updates", () => {
@@ -683,6 +689,16 @@ describe("update-cli npm rename contract", () => {
 		expect(resolveReleaseRename({ mars: { rename: "@new/mars" } })).toBeUndefined();
 		expect(resolveReleaseRename({ mars: {} })).toBeUndefined();
 		expect(resolveReleaseRename(undefined)).toBeUndefined();
+	});
+
+	it("refuses a rename pointer that targets upstream oh-my-pi packages", () => {
+		// Regression: a manifest must never be able to redirect the updater at
+		// the upstream project, which would install oh-my-pi over Mars.
+		for (const pkg of ["@oh-my-pi/pi-coding-agent", "oh-my-pi", "omp"]) {
+			expect(() => resolveReleaseRename({ mars: { rename: { package: pkg } } })).toThrow(
+				"Refusing to migrate mars to upstream package",
+			);
+		}
 	});
 
 	it("installs renamed package names in lock-step, with no old-name leftovers in the argv", () => {
@@ -1306,8 +1322,8 @@ describe("update-cli release binary integrity", () => {
 				return new Response(null, { status: 404, statusText: "Not Found" });
 			}
 			if (requestUrl.includes("/releases?")) {
-				// Older than the running version: installing it would be a downgrade.
-				return new Response(JSON.stringify([publishedRelease("17.1.2", content)]));
+				// Older than every real Mars release: installing it would be a downgrade.
+				return new Response(JSON.stringify([publishedRelease("0.0.0", content)]));
 			}
 			throw new Error(`Unexpected request: ${requestUrl}`);
 		};

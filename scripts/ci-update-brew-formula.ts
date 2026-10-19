@@ -5,6 +5,10 @@
 // (mars-<platform>-<arch>); this reads their sha256 digests straight from the
 // release metadata so the formula never drifts from the shipped assets.
 //
+// Mars does not publish a Homebrew tap yet, so no CI job invokes this script.
+// It is kept ready for a future Mars-owned tap; never point it at an upstream
+// tap, which would publish a Mars formula into someone else's repository.
+//
 // Usage:
 //   bun scripts/ci-update-brew-formula.ts <tag> --out <path/to/Formula/mars.rb>
 //   bun scripts/ci-update-brew-formula.ts v15.10.3        # prints to stdout
@@ -65,7 +69,7 @@ export function renderFormula(version: string, sums: Record<string, string>): st
 	// the writable staging dir so `generate_completions_from_executable` does
 	// not touch the real `/Users/<user>/.mars` (denied by Homebrew's sandbox
 	// profile, which would otherwise fail the popen).
-	return `class Omp < Formula
+	return `class Mars < Formula
   desc "${DESC}"
   homepage "${HOMEPAGE}"
   version "${version}"

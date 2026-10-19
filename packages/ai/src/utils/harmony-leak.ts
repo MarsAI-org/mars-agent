@@ -7,6 +7,7 @@
  * hashline DSL form. Other tools and surfaces fall through to
  * abort-and-retry handled by the agent loop.
  */
+import { readCompatEnv } from "@marsai-org/utils";
 import type { AssistantMessage, Model, ToolCall } from "../types";
 
 // Single source of truth for the marker pattern. `M` in the errata.
@@ -371,7 +372,7 @@ export function createHarmonyAuditEvent(params: {
 		removedLen: params.removed.length,
 		removedSha8: sha8(params.removed),
 		removedPreview: redactedJunkPreview(params.removed),
-		removedBlob: Bun.env.MARS_HARMONY_DEBUG === "1" ? params.removed : undefined,
+		removedBlob: readCompatEnv("MARS_HARMONY_DEBUG", Bun.env) === "1" ? params.removed : undefined,
 	};
 }
 
