@@ -233,10 +233,9 @@ export function flagCompatEnv(
  * {@link reportLegacyEnvAliases} once at startup so a legacy value is reported
  * even when the feature that consumes it only runs much later.
  */
-export const USER_FACING_ENV_ALIASES: readonly (readonly [canonical: string, legacy: string])[] =
-	Object.entries(LEGACY_ENV_ALIASES).flatMap(([canonical, legacyNames]) =>
-		legacyNames.map(name => [canonical, name] as const),
-	);
+export const USER_FACING_ENV_ALIASES: readonly (readonly [canonical: string, legacy: string])[] = Object.entries(
+	LEGACY_ENV_ALIASES,
+).flatMap(([canonical, legacyNames]) => legacyNames.map(name => [canonical, name] as const));
 
 /** Queue a notice for every legacy name the user actually set. */
 export function reportLegacyEnvAliases(env: Record<string, string | undefined> = process.env): void {

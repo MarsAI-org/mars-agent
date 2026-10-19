@@ -29,9 +29,7 @@ describe("resolveEnvAlias", () => {
 		const env = { PI_SMOL_MODEL: "old" };
 		expect(resolveEnvAlias("MARS_SMOL_MODEL", "PI_SMOL_MODEL", { env })).toBe("old");
 		expect(resolveEnvAlias("MARS_SMOL_MODEL", "PI_SMOL_MODEL", { env })).toBe("old");
-		expect(__takeEnvAliasNoticesForTests()).toEqual([
-			envAliasNotice("PI_SMOL_MODEL", "MARS_SMOL_MODEL"),
-		]);
+		expect(__takeEnvAliasNoticesForTests()).toEqual([envAliasNotice("PI_SMOL_MODEL", "MARS_SMOL_MODEL")]);
 	});
 
 	it("treats empty and whitespace values as unset", () => {

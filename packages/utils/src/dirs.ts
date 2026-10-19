@@ -617,11 +617,7 @@ export function setProfile(profile: string | undefined): void {
 		// explicit override. Subsequent profile switches keep the original
 		// snapshot — the "pre-profile" baseline is the state before profiles
 		// entered the picture, not the state between two activations.
-		preProfileAgentDirEnv = resolvePreProfileAgentDir(
-			undefined,
-			readAgentDirEnv(),
-			readPiProfileFromEnvSafe(),
-		);
+		preProfileAgentDirEnv = resolvePreProfileAgentDir(undefined, readAgentDirEnv(), readPiProfileFromEnvSafe());
 	}
 	activeProfile = next;
 	if (activeProfile) {

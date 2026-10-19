@@ -231,10 +231,7 @@ describe("branding contract", () => {
 		expect(changelog).not.toBe(withoutAttribution.replace(migration, ""));
 
 		const upstreamName = findLeaks(withoutAttribution, /oh-my-pi/i);
-		expect(
-			upstreamName.count,
-			leakMessage("packages/coding-agent/CHANGELOG.md", /oh-my-pi/i, upstreamName),
-		).toBe(0);
+		expect(upstreamName.count, leakMessage("packages/coding-agent/CHANGELOG.md", /oh-my-pi/i, upstreamName)).toBe(0);
 
 		// The npm bundle copies the changelog into dist/. When a build is present,
 		// the shipped copy must be clean too; a missing dist/ is not a failure.

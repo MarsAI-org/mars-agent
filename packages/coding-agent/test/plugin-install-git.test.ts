@@ -595,7 +595,11 @@ describe("PluginManager.install with git sources", () => {
 	test("reports a git plugin on a moving ref as changed when only the bun.lock pin moves", async () => {
 		await Bun.write(
 			pluginsPkgJson,
-			JSON.stringify({ name: "mars-plugins", private: true, dependencies: { "ida-mcp": "github:foo/ida-mcp#main" } }),
+			JSON.stringify({
+				name: "mars-plugins",
+				private: true,
+				dependencies: { "ida-mcp": "github:foo/ida-mcp#main" },
+			}),
 		);
 		const seedDir = path.join(pluginsNodeModules, "ida-mcp");
 		await fs.mkdir(seedDir, { recursive: true });
