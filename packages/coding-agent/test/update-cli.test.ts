@@ -1306,8 +1306,8 @@ describe("update-cli release binary integrity", () => {
 				return new Response(null, { status: 404, statusText: "Not Found" });
 			}
 			if (requestUrl.includes("/releases?")) {
-				// Older than the running version: installing it would be a downgrade.
-				return new Response(JSON.stringify([publishedRelease("17.1.2", content)]));
+				// Older than every real Mars release: installing it would be a downgrade.
+				return new Response(JSON.stringify([publishedRelease("0.0.0", content)]));
 			}
 			throw new Error(`Unexpected request: ${requestUrl}`);
 		};
