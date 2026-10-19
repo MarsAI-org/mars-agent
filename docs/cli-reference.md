@@ -101,9 +101,9 @@ or `--fork`.
 | Flag | Description |
 | --- | --- |
 | `--model <id-or-role>` | Model or configured role to use (role: `slow` or `@slow`; fuzzy model match: `opus`, `gpt-5.2`, or `openai/gpt-5.2`). |
-| `--smol <id>` | Smol/fast model for lightweight tasks (or `PI_SMOL_MODEL`). |
-| `--slow <id>` | Slow/reasoning model for thorough analysis (or `PI_SLOW_MODEL`). |
-| `--plan <id>` | Plan model for architectural planning (or `PI_PLAN_MODEL`). |
+| `--smol <id>` | Smol/fast model for lightweight tasks (or `MARS_SMOL_MODEL`; legacy `PI_SMOL_MODEL`). |
+| `--slow <id>` | Slow/reasoning model for thorough analysis (or `MARS_SLOW_MODEL`; legacy `PI_SLOW_MODEL`). |
+| `--plan <id>` | Plan model for architectural planning (or `MARS_PLAN_MODEL`; legacy `PI_PLAN_MODEL`). |
 | `--models <a,b,c>` | Comma-separated model patterns for `Ctrl+P` cycling. |
 | `--provider <name>` | Provider to use (legacy; prefer `--model`). |
 | `--api-key <key>` | API key (defaults to env vars). |

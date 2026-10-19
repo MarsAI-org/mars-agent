@@ -2,6 +2,9 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { CONFIG_DIR_NAME, getConfigAgentDirName, getProjectDir } from "@marsai-org/utils";
+// Side-effect-free module: importing `@marsai-org/utils/env` here would load
+// dotenv before the CLI applies --profile.
+import { resolveEnvAlias } from "@marsai-org/utils/env-alias";
 import { isUserSourceEnabled } from "./capability";
 import { resolveClaudePaths } from "./config/claude-paths";
 import { expandTilde } from "./tools/path-utils";
@@ -43,8 +46,9 @@ export function walkUpForPackageDir(startDir: string): string | undefined {
 /**
  * Get the base directory for resolving optional package assets (docs, examples, CHANGELOG.md).
  *
- * Honors the `PI_PACKAGE_DIR` override (useful for Nix/Guix store paths);
- * otherwise walks up from `import.meta.dir` looking for a `package.json`.
+ * Honors the `MARS_PACKAGE_DIR` override (useful for Nix/Guix store paths),
+ * falling back to the legacy `PI_PACKAGE_DIR`; otherwise walks up from
+ * `import.meta.dir` looking for a `package.json`.
  * Returns `undefined` when no owning package is locatable — notably inside
  * `bun --compile` binaries where `import.meta.dir` resolves to `/$bunfs/root`
  * and the walk hits the filesystem root with nothing found.
@@ -55,7 +59,7 @@ export function walkUpForPackageDir(startDir: string): string | undefined {
  * project's `CHANGELOG.md` rendered as mars's startup changelog).
  */
 export function getPackageDir(): string | undefined {
-	const envDir = process.env.PI_PACKAGE_DIR;
+	const envDir = resolveEnvAlias("MARS_PACKAGE_DIR", "PI_PACKAGE_DIR");
 	if (envDir) {
 		return expandTilde(envDir);
 	}
