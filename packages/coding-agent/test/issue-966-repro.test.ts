@@ -27,10 +27,10 @@ try {
 	// tmpdir, so the second read is served the pre-stage index and commitCreate
 	// reports "nothing to commit, working tree clean". Pushing the index mtime
 	// forward after every mutation makes that staleness check fire every time.
-	// PR CI runs against the published natives addon rather than a locally built
-	// one (.github/workflows/ci.yml: "PRs never build"), so the pi-vcs-side fix in
-	// #10132 cannot green this job until it ships in a release. Drop this helper
-	// once a natives release carrying #10132 is the default for PR runs.
+	// PR CI builds the natives addon from the checked-out sources when no exact
+	// addon cache entry exists (.github/workflows/ci.yml: native_addons), so the
+	// pi-vcs-side fix in #10132 greens this job only once it is part of the
+	// sources under test. Drop this helper once the fix is merged there.
 	// The tick keeps each bump strictly greater than the previous one even if two
 	// bumps land in the same millisecond, so the comparison can never tie.
 	const indexPath = path.join(dir, ".git", "index");
