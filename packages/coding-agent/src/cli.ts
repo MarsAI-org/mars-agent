@@ -26,7 +26,7 @@ import {
 	setProfile,
 	VERSION,
 } from "@marsai-org/utils/dirs";
-import { readCompatEnv } from "@marsai-org/utils";
+import { readCompatEnv } from "@marsai-org/utils/env-compat";
 
 import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@marsai-org/utils/worker-host";
 import { extractProfileFlags } from "./cli/profile-bootstrap";
