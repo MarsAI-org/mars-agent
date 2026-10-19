@@ -222,8 +222,19 @@ describe("branding contract", () => {
 			leakMessage("packages/coding-agent/CHANGELOG.md", /can1357\/oh-my-pi/i, upstreamLinks),
 		).toBe(0);
 
-		const upstreamName = findLeaks(changelog, /oh-my-pi/i);
-		expect(upstreamName.count, leakMessage("packages/coding-agent/CHANGELOG.md", /oh-my-pi/i, upstreamName)).toBe(0);
+		// Two mentions are legitimate: the fork lineage (MIT attribution) and the
+		// migration entry that names the old npm scope it replaced. Anything else
+		// would be upstream branding presented as this project's own.
+		const attribution = /fork of\s*\n?oh-my-pi by can1357/i;
+		const migration = /Renamed the npm scope from `@oh-my-pi\/\*`/i;
+		const withoutAttribution = changelog.replace(attribution, "").replace(migration, "");
+		expect(changelog).not.toBe(withoutAttribution.replace(migration, ""));
+
+		const upstreamName = findLeaks(withoutAttribution, /oh-my-pi/i);
+		expect(
+			upstreamName.count,
+			leakMessage("packages/coding-agent/CHANGELOG.md", /oh-my-pi/i, upstreamName),
+		).toBe(0);
 
 		// The npm bundle copies the changelog into dist/. When a build is present,
 		// the shipped copy must be clean too; a missing dist/ is not a failure.

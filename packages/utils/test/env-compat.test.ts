@@ -22,7 +22,9 @@ describe("readCompatEnv", () => {
 	test("falls back to the legacy OMP_ name and warns once", () => {
 		const env = { OMP_MCP_TIMEOUT_MS: "2000" };
 		expect(readCompatEnv("MARS_MCP_TIMEOUT_MS", env)).toBe("2000");
-		expect(takeLegacyEnvWarnings()).toEqual(["OMP_MCP_TIMEOUT_MS is deprecated; use MARS_MCP_TIMEOUT_MS instead."]);
+		expect(takeLegacyEnvWarnings()).toEqual([
+			"mars: OMP_MCP_TIMEOUT_MS is deprecated and will be removed in a future release; use MARS_MCP_TIMEOUT_MS instead.\n",
+		]);
 		// Second read still resolves, but must not queue a second warning.
 		expect(readCompatEnv("MARS_MCP_TIMEOUT_MS", env)).toBe("2000");
 		expect(takeLegacyEnvWarnings()).toEqual([]);
@@ -70,11 +72,16 @@ describe("pickCompatEnv", () => {
 });
 
 describe("LEGACY_ENV_ALIASES", () => {
-	test("every legacy name keeps the OMP_ prefix", () => {
-		for (const [canonical, legacy] of Object.entries(LEGACY_ENV_ALIASES)) {
+	test("every canonical name maps to OMP_ and PI_ spellings of the same key", () => {
+		for (const [canonical, legacyNames] of Object.entries(LEGACY_ENV_ALIASES)) {
 			expect(canonical.startsWith("MARS_")).toBe(true);
-			expect(legacy.startsWith("OMP_")).toBe(true);
-			expect(legacy.slice(4)).toBe(canonical.slice(5));
+			expect(legacyNames.length).toBeGreaterThan(0);
+			for (const legacy of legacyNames) {
+				expect(legacy === `OMP_${canonical.slice(5)}` || legacy === `PI_${canonical.slice(5)}`).toBe(true);
+			}
+			// The newer rename is consulted first, so a shell exporting both keeps
+			// resolving through the OMP_ spelling.
+			expect(legacyNames[0]).toBe(`OMP_${canonical.slice(5)}`);
 		}
 	});
 });
