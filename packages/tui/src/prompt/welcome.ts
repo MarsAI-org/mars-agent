@@ -409,11 +409,18 @@ export class WelcomeComponent implements Component {
 }
 
 /**
- * Block-grid Mars mark shared by the welcome and setup surfaces: the `M` from
- * `assets/mars-logo.svg` — two legs, the central valley, and the crossbar —
- * reduced to a 12×10 half-block grid.
+ * Block-grid Mars mark shared by the welcome and setup surfaces: the pixel-art
+ * mark from `assets/mars-logo.svg` — the round body, two eyes, and the legs —
+ * reduced to a 12×12 half-block grid.
  */
-export const MARS_LOGO = ["▄███    ███▄", "███▀████▀███", "███ ▀██▀ ███", "███      ███", "███▀▀▀▀▀▀███"];
+export const MARS_LOGO = [
+	"  ▄██████▄  ",
+	" ██████████ ",
+	"████▀██▀▀███",
+	"▀██████████▀",
+	" ▀████████▀ ",
+	"  ▄█▀▀▀▀█▄  ",
+];
 
 /** Columns of {@link MARS_LOGO}. */
 const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));

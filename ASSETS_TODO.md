@@ -4,8 +4,9 @@ Brand artwork deliverable: **`Mars`** (CLI `mars`, npm `@marsai-org`,
 GitHub `MarsAI-org/mars-agent`).
 
 **Final artwork delivered:** The placeholders have been replaced with the Mars
-brand mark suite (faceted geometric "M" crest with IDE bridge in `#ea580c` to
-`#ff6b4a` on `#0d1117`). Branch `design/mars-brand-mark` tracks the deliverables.
+brand mark suite: a pixel-art mark (round body, two eyes, and legs, in `#d64a28`
+with `#983018` shading on `#0d1117`), traced to a 37×37 vector grid so every
+derived raster stays crisp.
 
 ---
 
@@ -13,9 +14,10 @@ brand mark suite (faceted geometric "M" crest with IDE bridge in `#ea580c` to
 
 | File | Format | Replaced with | Status |
 | --- | --- | --- | --- |
-| `assets/mars-logo.png` | PNG, 1200×360, dark palette | Mars README hero banner (emblem + MARS wordmark + tagline) | **Replaced** |
-| `assets/mars-logo.svg` | SVG, viewBox `0 0 240 240` | Master Mars vector mark (faceted "M" crest, gradient fill) | **Replaced** |
-| `assets/icon.svg` | SVG, viewBox `0 0 240 240` | Mars dark app tile mark (replaces legacy Pi symbol) | **Replaced** |
+| `assets/mars-logo.png` | PNG, 1200×360, dark palette | Mars README hero banner (pixel mark + MARS wordmark + tagline) | **Replaced** |
+| `assets/mars-logo.svg` | SVG, viewBox `0 0 37 37` | Master Mars vector mark (pixel-art body, eyes, and legs, two-tone fill) | **Replaced** |
+| `assets/mars-mark.png` | PNG, 1024×1024, transparent | Square mark for avatars and social previews | **Replaced** |
+| `assets/icon.svg` | SVG, viewBox `0 0 37 37` | Mars app tile mark (replaces legacy Pi symbol) | **Replaced** |
 | `packages/collab-web/public/*` | Multi-format ladder | Full favicon ladder (16–512px, .ico, .svg) + 1200×630 `og-image.png` | **Replaced** |
 
 Why these two extensions and no third:
@@ -53,12 +55,12 @@ Why these two extensions and no third:
   exists as the named master asset for the brand mark.
 - Consumer: docs, this placeholder slot, and the source for every derived
   raster in §2.3–§2.6 once one designer owns it.
-- Required size: 120×120 minimum viewBox, rectangular mark preferred so the
-  square favicon set can crop/scale without re-drawing. Vector required.
-- Required format: SVG (the current file is a placeholder with a 240×240
-  viewBox).
+- Required format: SVG. The mark is a 37×37 pixel-art grid, so every edge is
+  axis-aligned and the file stays a small set of unit rectangles.
 - Expectation: works at 16 px and at 240 px; survives a monochrome one-color
   reproduction (terminal, footer, small favicon) without losing the shape.
+  Render derived rasters with nearest-neighbour scaling so the pixel edges stay
+  crisp.
 
 ### 2.3 `assets/mars-logo.svg` → GitHub social preview
 
