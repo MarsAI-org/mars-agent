@@ -248,7 +248,7 @@ Run `mars <command> --help` for each command's own flags and examples.
 | `browser-relay` | Run the local CDP relay used by Eval's browser API to drive your own Chrome tabs. | [computer use](./computer-use.md) |
 | `cleanse` | Detect and fix project diagnostics with weighted parallel subagents. | |
 | `collab` | List active local Collab hosts without exposing URLs; `collab link <instanceId\|pid>` retrieves a control link (`--view` for view-only). | [collab](./collab.md) |
-| `clip` | Upload a `/record` recording to live.omp.sh as a public clip and print its URL. | |
+| `clip` | Upload a `/record` recording to the configured stream server (`stream.serverUrl`) as a public clip and print its URL. | |
 | `commit` | Generate a commit message and update changelogs. | |
 | `completions` | Print a shell completion script (bash, zsh, or fish). | |
 | `compress` | Rewrite a text file into the dense prompt register, reporting what it drops. | |
@@ -276,7 +276,7 @@ Run `mars <command> --help` for each command's own flags and examples.
 | `shell` | Interactive shell console. | |
 | `read` | Show what the read tool will return for a path, URL, or internal URI. (The [`read` tool](./tools/read.md) is a separate agent tool.) | |
 | `render` | Draw a session's entire thread through the production transcript pipeline (with repaint timing). | |
-| `skill`, `skills` | Install, search, publish, and manage skills on skills.omp.sh. | [skills](./skills.md) |
+| `skill`, `skills` | Install, search, publish, and manage skills on the configured Skillshare registry (`skills.registryUrl`). | [skills](./skills.md) |
 | `ssh` | Manage SSH host configurations. | |
 | `stats` | View usage statistics. | |
 | `stream` | Broadcast local Mars session screens and chat to a public live channel. | |
@@ -294,8 +294,9 @@ Run `mars <command> --help` for each command's own flags and examples.
 > command, and so on). The table lists each as it is registered in
 > `packages/coding-agent/src/cli-commands.ts`.
 
-> **TODO(rebrand):** the `clip`/`stream` live service (`https://live.omp.sh`) and the
-> skills registry (`https://skills.omp.sh`) are still hosted upstream; no Mars
-> domain has been decided. See HANDOFF.md.
+> **TODO(rebrand):** Mars does not operate the live-stream/clip service or the
+> skills registry. Their defaults remain the upstream hosts (`stream.serverUrl`,
+> `skills.registryUrl`); no Mars domain exists for them, so they are described
+> by setting rather than by host. See HANDOFF.md.
 
 `__complete` is an internal, hidden subcommand used by shell completion scripts.
