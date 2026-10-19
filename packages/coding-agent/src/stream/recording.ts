@@ -5,10 +5,10 @@
  * normalized, redacted screen frames {@link StreamPaintEncoder} produces for
  * live viewers, stamped with their offset from the start of the recording.
  *
- * File format (`.ompcast`, JSON Lines, asciicast-like):
+ * File format (`.marscast`, JSON Lines, asciicast-like):
  *
  * ```text
- * {"ompcast":1,"cols":120,"rows":40,"title":"pi","createdAt":"2026-09-22T10:00:00.000Z"}
+ * {"marscast":1,"cols":120,"rows":40,"title":"pi","createdAt":"2026-09-22T10:00:00.000Z"}
  * [0,{"t":"viewport","rows":["…","…"]}]
  * [51,{"t":"patch","ops":[[39,"…"]],"rows":40}]
  * [880,{"t":"history","rows":["…"]}]
@@ -17,6 +17,11 @@
  * Line 1 is the header; every following line is `[ms, frame]` where `frame` is
  * a {@link StreamScreenFrame}. A truncated final line (recorder killed
  * mid-write) is ignored on load.
+ *
+ * Backward compatibility: recordings written before the rebrand use the
+ * `.ompcast` extension and a `{"ompcast":1,...}` header. Both are still read;
+ * the parsed header normalizes the version field to `marscast`, so callers see
+ * one shape regardless of which format produced the file.
  */
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
@@ -28,11 +33,19 @@ import { isDimension, isSessionFrame, type StreamScreenFrame } from "./protocol"
 import type { StreamRedactor } from "./redactor";
 
 export const RECORDING_VERSION = 1;
-export const RECORDING_EXTENSION = ".ompcast";
+/** Extension for new recordings. */
+export const RECORDING_EXTENSION = ".marscast";
+/** Pre-rebrand extension; still recognized so existing recordings keep playing. */
+export const LEGACY_RECORDING_EXTENSION = ".ompcast";
+/** Every extension a recording may use on disk. */
+export const RECORDING_EXTENSIONS: readonly string[] = [RECORDING_EXTENSION, LEGACY_RECORDING_EXTENSION];
 
 /** First line of a recording file. */
 export interface RecordingHeader {
-	ompcast: number;
+	/** Format version. Written by new recordings. */
+	marscast: number;
+	/** Pre-rebrand version field, accepted on read only. */
+	ompcast?: number;
 	cols: number;
 	rows: number;
 	title: string;
@@ -59,7 +72,7 @@ export function recordingsDir(): string {
 	return path.join(os.tmpdir(), "mars-recordings");
 }
 
-/** Fresh, sortable recording path for one session: `<recordingsDir>/<utc-stamp>-<session>.ompcast`. */
+/** Fresh, sortable recording path for one session: `<recordingsDir>/<utc-stamp>-<session>.marscast`. */
 export function newRecordingPath(sessionId: string): string {
 	const stamp = new Date()
 		.toISOString()
@@ -80,7 +93,7 @@ export async function latestRecording(): Promise<string | null> {
 	}
 	let latest: { file: string; mtimeMs: number } | null = null;
 	for (const name of names) {
-		if (!name.endsWith(RECORDING_EXTENSION)) continue;
+		if (!RECORDING_EXTENSIONS.some(extension => name.endsWith(extension))) continue;
 		const file = path.join(dir, name);
 		const { mtimeMs } = await fs.stat(file);
 		if (!latest || mtimeMs > latest.mtimeMs) latest = { file, mtimeMs };
@@ -97,9 +110,12 @@ export async function latestRecording(): Promise<string | null> {
 export function parseRecording(text: string): Recording {
 	const { values, error } = Bun.JSONL.parseChunk(text);
 	if (error) throw new Error(`malformed recording: ${error.message}`);
-	const [header, ...lines] = values;
-	if (!isRecordingHeader(header)) throw new Error("not a Mars recording (unrecognized header)");
-	if (header.ompcast !== RECORDING_VERSION) throw new Error(`unsupported recording version ${header.ompcast}`);
+	const [rawHeader, ...lines] = values;
+	const header = normalizeRecordingHeader(rawHeader);
+	if (!header) throw new Error("not a Mars recording (unrecognized header)");
+	if (header.marscast !== RECORDING_VERSION) {
+		throw new Error(`unsupported recording version ${header.marscast}`);
+	}
 	const events: RecordingEvent[] = [];
 	for (const [index, line] of lines.entries()) {
 		if (
@@ -117,16 +133,27 @@ export function parseRecording(text: string): Recording {
 	return { header, events };
 }
 
-function isRecordingHeader(value: unknown): value is RecordingHeader {
-	if (!value || typeof value !== "object") return false;
+/**
+ * Accept both header shapes and normalize the version field to `marscast`.
+ *
+ * A pre-rebrand header keeps its `ompcast` field in the returned object so
+ * re-serializing it (clip upload) stays byte-compatible with servers that
+ * still read the old field.
+ */
+function normalizeRecordingHeader(value: unknown): RecordingHeader | null {
+	if (!value || typeof value !== "object") return null;
 	const header = value as Record<string, unknown>;
-	return (
-		typeof header.ompcast === "number" &&
-		isDimension(header.cols) &&
-		isDimension(header.rows) &&
-		typeof header.title === "string" &&
-		typeof header.createdAt === "string"
-	);
+	const version = typeof header.marscast === "number" ? header.marscast : header.ompcast;
+	if (
+		typeof version !== "number" ||
+		!isDimension(header.cols) ||
+		!isDimension(header.rows) ||
+		typeof header.title !== "string" ||
+		typeof header.createdAt !== "string"
+	) {
+		return null;
+	}
+	return { ...(header as unknown as RecordingHeader), marscast: version };
 }
 
 export interface SessionRecorderOptions {
@@ -137,7 +164,7 @@ export interface SessionRecorderOptions {
 	path: string;
 }
 
-/** Records one interactive session's painted screen to an `.ompcast` file. */
+/** Records one interactive session's painted screen to a `.marscast` file. */
 export class SessionRecorder {
 	readonly path: string;
 	readonly #encoder: StreamPaintEncoder;
@@ -159,7 +186,7 @@ export class SessionRecorder {
 		this.#encoder = new StreamPaintEncoder(size, options.redactor);
 		this.#writer = Bun.file(options.path).writer();
 		const header: RecordingHeader = {
-			ompcast: RECORDING_VERSION,
+			marscast: RECORDING_VERSION,
 			cols: size.columns,
 			rows: size.rows,
 			title: options.title,

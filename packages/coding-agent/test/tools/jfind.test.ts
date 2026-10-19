@@ -290,64 +290,77 @@ describe("jfind cascade", () => {
 			await removeWithRetries(dir);
 		}
 	});
-	it("resolves URL scopes in place and rejects unknown docs and range selectors before judging", async () => {
-		const filesystem = urlFs(process.cwd());
-		expect(await resolveSearchRoot(filesystem, "omp://", process.cwd())).toEqual({
-			path: "omp://",
-			type: "directory",
-		});
-		expect(await resolveSearchRoot(filesystem, "omp://tools/read.md", process.cwd())).toMatchObject({
-			path: "omp://tools/read.md",
-			type: "file",
-		});
-		await expect(resolveSearchRoot(filesystem, "omp://nope.md", process.cwd())).rejects.toThrow(
-			"Path not found: omp://nope.md",
-		);
-		await expect(resolveSearchRoot(filesystem, "omp://tools/read.md:1-10", process.cwd())).rejects.toThrow(
-			"line-range selectors are not supported",
-		);
-	});
+	it.each(["mars", "omp"] as const)(
+		"resolves %s:// URL scopes in place and rejects unknown docs and range selectors before judging",
+		async scheme => {
+			const filesystem = urlFs(process.cwd());
+			expect(await resolveSearchRoot(filesystem, `${scheme}://`, process.cwd())).toEqual({
+				path: `${scheme}://`,
+				type: "directory",
+			});
+			expect(await resolveSearchRoot(filesystem, `${scheme}://tools/read.md`, process.cwd())).toMatchObject({
+				path: `${scheme}://tools/read.md`,
+				type: "file",
+			});
+			await expect(resolveSearchRoot(filesystem, `${scheme}://nope.md`, process.cwd())).rejects.toThrow(
+				`Path not found: ${scheme}://nope.md`,
+			);
+			await expect(resolveSearchRoot(filesystem, `${scheme}://tools/read.md:1-10`, process.cwd())).rejects.toThrow(
+				"line-range selectors are not supported",
+			);
+		},
+	);
 
-	it("searches a single omp doc in place and reports hits as its URL", async () => {
-		const filesystem = urlFs(process.cwd());
-		const root = await resolveSearchRoot(filesystem, "omp://tools/read.md", process.cwd());
-		const result = await runCascade({
-			root,
-			filesystem,
-			query: "read the contents of a file by path",
-			extraKeywords: ["read"],
-			judge: new FakeJudge(() => 0.9),
-			includeHidden: false,
-		});
-		expect(result.stats.listed).toBe(1);
-		expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual(["omp://tools/read.md"]);
-	});
+	it.each(["mars", "omp"] as const)(
+		"searches a single %s:// doc in place and reports hits as its URL",
+		async scheme => {
+			const filesystem = urlFs(process.cwd());
+			const root = await resolveSearchRoot(filesystem, `${scheme}://tools/read.md`, process.cwd());
+			const result = await runCascade({
+				root,
+				filesystem,
+				query: "read the contents of a file by path",
+				extraKeywords: ["read"],
+				judge: new FakeJudge(() => 0.9),
+				includeHidden: false,
+			});
+			expect(result.stats.listed).toBe(1);
+			expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual([
+				`${scheme}://tools/read.md`,
+			]);
+		},
+	);
 
-	it("walks the omp root in place: every embedded doc is listed and hits resolve to doc URLs", async () => {
-		const completions = (await InternalUrlRouter.instance().complete("omp", "")) ?? [];
-		const docs = new Set(completions.map(completion => completion.value));
-		const filesystem = urlFs(process.cwd());
-		const root = await resolveSearchRoot(filesystem, "omp://", process.cwd());
-		const judge = new FakeJudge((request, key) => {
-			const state = stateOf(request);
-			if ("tree" in state) return String(state.tree).includes(`${key} read.md`) ? 0.9 : 0.1;
-			if ("files" in state) {
-				const [fileKey] = (state.passages as Record<string, [string, string]>)[key]!;
-				return (state.files as Record<string, string>)[fileKey] === "tools/read.md" ? 0.9 : 0.1;
-			}
-			return state.file === "tools/read.md" ? 0.95 : 0.1;
-		});
-		const result = await runCascade({
-			root,
-			filesystem,
-			query: "read the contents of a file by path",
-			extraKeywords: ["read"],
-			judge,
-			includeHidden: false,
-		});
-		expect(result.stats.listed).toBe(docs.size);
-		expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual(["omp://tools/read.md"]);
-	});
+	it.each(["mars", "omp"] as const)(
+		"walks the %s:// root in place: every embedded doc is listed and hits resolve to doc URLs",
+		async scheme => {
+			const completions = (await InternalUrlRouter.instance().complete(scheme, "")) ?? [];
+			const docs = new Set(completions.map(completion => completion.value));
+			const filesystem = urlFs(process.cwd());
+			const root = await resolveSearchRoot(filesystem, `${scheme}://`, process.cwd());
+			const judge = new FakeJudge((request, key) => {
+				const state = stateOf(request);
+				if ("tree" in state) return String(state.tree).includes(`${key} read.md`) ? 0.9 : 0.1;
+				if ("files" in state) {
+					const [fileKey] = (state.passages as Record<string, [string, string]>)[key]!;
+					return (state.files as Record<string, string>)[fileKey] === "tools/read.md" ? 0.9 : 0.1;
+				}
+				return state.file === "tools/read.md" ? 0.95 : 0.1;
+			});
+			const result = await runCascade({
+				root,
+				filesystem,
+				query: "read the contents of a file by path",
+				extraKeywords: ["read"],
+				judge,
+				includeHidden: false,
+			});
+			expect(result.stats.listed).toBe(docs.size);
+			expect(result.hits.map(hit => resolveSearchResultPath(root.path, hit.rel))).toEqual([
+				`${scheme}://tools/read.md`,
+			]);
+		},
+	);
 
 	it("rejects a missing scope path or a line selector before spending any judgment", async () => {
 		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "jfind-scope-"));

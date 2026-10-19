@@ -21,9 +21,10 @@
 //!   regardless of `RUST_BACKTRACE`.
 //! - The crash log path mirrors the JS side (`packages/utils/src/dirs.ts`):
 //!   `$XDG_STATE_HOME/mars/logs/` on Linux / macOS when the user has migrated
-//!   to XDG (i.e. that directory already exists and `PI_CODING_AGENT_DIR` isn't
-//!   pointed somewhere custom), otherwise `<home>/<PI_CONFIG_DIR>/logs/`
-//!   (defaulting to `~/.mars/logs/`).
+//!   to XDG (i.e. that directory already exists and `MARS_CODING_AGENT_DIR` isn't
+//!   pointed somewhere custom), otherwise `<home>/<MARS_CONFIG_DIR>/logs/`
+//!   (defaulting to `~/.mars/logs/`). The pre-rename `PI_*` names are honored
+//!   as a fallback.
 //! - Hook installation is idempotent across repeated module loads.
 
 use std::{
@@ -45,7 +46,7 @@ use std::{
 };
 
 /// Default directory name for Mars's per-user state (overridable via
-/// `PI_CONFIG_DIR`, matching `packages/utils/src/dirs.ts`).
+/// `MARS_CONFIG_DIR`, matching `packages/utils/src/dirs.ts`).
 const DEFAULT_CONFIG_DIR: &str = ".mars";
 
 /// App name used as the XDG-root subdirectory (`$XDG_STATE_HOME/mars/`),
@@ -266,9 +267,21 @@ fn build_crash_log_path(dir: &Path, kind: CrashKind, pid: u32, now_ms: u128) -> 
 
 fn logs_dir() -> Option<PathBuf> {
 	let home = home_dir()?;
-	let config_override = std::env::var_os("PI_CONFIG_DIR");
+	let config_override = config_dir_override();
 	let xdg_logs = xdg_state_logs_from_env(&home, config_override.as_deref());
 	Some(resolve_logs_dir(&home, config_override.as_deref(), xdg_logs))
+}
+
+/// Read the config-root override, preferring canonical `MARS_CONFIG_DIR` and
+/// falling back to the legacy `PI_CONFIG_DIR` (matching the JS resolver).
+fn config_dir_override() -> Option<std::ffi::OsString> {
+	std::env::var_os("MARS_CONFIG_DIR").or_else(|| std::env::var_os("PI_CONFIG_DIR"))
+}
+
+/// Read the agent-directory override, preferring canonical
+/// `MARS_CODING_AGENT_DIR` and falling back to the legacy name.
+fn agent_dir_override() -> Option<std::ffi::OsString> {
+	std::env::var_os("MARS_CODING_AGENT_DIR").or_else(|| std::env::var_os("PI_CODING_AGENT_DIR"))
 }
 
 fn resolve_logs_dir(
@@ -295,7 +308,7 @@ fn resolve_logs_dir(
 #[cfg(any(target_os = "linux", target_os = "macos"))]
 fn xdg_state_logs_from_env(home: &Path, config_dir_override: Option<&OsStr>) -> Option<PathBuf> {
 	let default_agent_dir = default_agent_dir(home, config_dir_override);
-	let agent_override = std::env::var_os("PI_CODING_AGENT_DIR");
+	let agent_override = agent_dir_override();
 	let xdg_state_home = std::env::var_os("XDG_STATE_HOME");
 	xdg_state_logs(
 		xdg_state_home.as_deref(),

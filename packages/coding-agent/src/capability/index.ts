@@ -47,6 +47,37 @@ let unboundEnabledProviders = new Set<string>();
 const cfgDisabledProviderSet = cfgDisabledProviders.map(ids => new Set(ids));
 const cfgEnabledProviderSet = cfgEnabledProviders.map(ids => new Set(ids));
 
+/**
+ * Canonical provider id -> ids still accepted from persisted user config.
+ *
+ * Renaming a provider must not silently re-enable a surface the user disabled
+ * under its old name, so every switch lookup consults the aliases too.
+ */
+const PROVIDER_ID_ALIASES: Record<string, readonly string[]> = {
+	"mars-plugins": ["omp-plugins"],
+};
+
+/**
+ * The provider id plus every id in its alias group, in both directions: a
+ * caller may name either the canonical id or a legacy one.
+ */
+function providerIdsFor(providerId: string): readonly string[] {
+	for (const [canonical, aliases] of Object.entries(PROVIDER_ID_ALIASES)) {
+		if (canonical === providerId || aliases.includes(providerId)) {
+			return [canonical, ...aliases];
+		}
+	}
+	return [providerId];
+}
+
+/** Whether `set` contains `providerId` or one of its accepted legacy ids. */
+function providerSetHas(set: ReadonlySet<string>, providerId: string): boolean {
+	for (const id of providerIdsFor(providerId)) {
+		if (set.has(id)) return true;
+	}
+	return false;
+}
+
 /** Foreign tools whose user-level (~/...) configs are opt-in */
 const FOREIGN_USER_PROVIDERS: Record<string, true> = {
 	cursor: true,
@@ -301,15 +332,15 @@ async function loadImpl<T>(
  */
 function filterProviders<T>(capability: Capability<T>, options: LoadOptions<T>): Provider<T>[] {
 	const disabled = disabledProviders();
-	let providers = (capability.providers as Provider<T>[]).filter(p => !disabled.has(p.id));
+	let providers = (capability.providers as Provider<T>[]).filter(p => !providerSetHas(disabled, p.id));
 
 	if (options.providers) {
 		const allowed = new Set(options.providers);
-		providers = providers.filter(p => allowed.has(p.id));
+		providers = providers.filter(p => providerIdsFor(p.id).some(id => allowed.has(id)));
 	}
 	if (options.excludeProviders) {
 		const excluded = new Set(options.excludeProviders);
-		providers = providers.filter(p => !excluded.has(p.id));
+		providers = providers.filter(p => !providerIdsFor(p.id).some(id => excluded.has(id)));
 	}
 
 	return providers;
@@ -406,7 +437,10 @@ export function disableProvider(providerId: string): void {
  * Enable a previously disabled provider.
  */
 export function enableProvider(providerId: string): void {
-	setDisabledProviders([...disabledProviders()].filter(id => id !== providerId));
+	// Clear the legacy ids too, so enabling a renamed provider also lifts a
+	// switch the user persisted under its old name.
+	const ids = new Set(providerIdsFor(providerId));
+	setDisabledProviders([...disabledProviders()].filter(id => !ids.has(id)));
 }
 
 /**
@@ -415,7 +449,7 @@ export function enableProvider(providerId: string): void {
  * {@link isUserSourceEnabled}.
  */
 export function isProviderEnabled(providerId: string): boolean {
-	return !disabledProviders().has(providerId);
+	return !providerSetHas(disabledProviders(), providerId);
 }
 
 /**
@@ -522,7 +556,7 @@ export function getProviderInfo(providerId: string): ProviderInfo | undefined {
 		description: meta.description,
 		priority,
 		capabilities: Array.from(caps),
-		enabled: !disabledProviders().has(providerId),
+		enabled: !providerSetHas(disabledProviders(), providerId),
 	};
 }
 

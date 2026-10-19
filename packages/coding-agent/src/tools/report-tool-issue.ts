@@ -22,7 +22,8 @@
  * the dialog for headless environments.
  *
  * When the user grants consent, push is automatically active against the
- * bundled endpoint (`dev.autoqaPush.endpoint`, default `qa.omp.sh`). Each
+ * bundled endpoint (`dev.autoqaPush.endpoint`, an upstream collector that Mars
+ * does not operate; an empty value disables pushing). Each
  * insert schedules a background flush that POSTs pending rows and marks them
  * pushed on HTTP 2xx. Rows the collector permanently refuses (400/413/422) are
  * isolated by bisecting the batch and parked with the server's error, so a

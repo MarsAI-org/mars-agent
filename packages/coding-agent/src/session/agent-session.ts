@@ -9173,7 +9173,7 @@ export class AgentSession implements SettingsScope {
 	}
 
 	#scheduleReplanTitleRefresh(): void {
-		if ($env.PI_NO_TITLE) return;
+		if ($env.MARS_NO_TITLE || $env.PI_NO_TITLE) return;
 		// Headless subagent sessions have no operator-visible title, so a todo-init
 		// replan refresh only burns a tiny-model call whose result lands in JSONL
 		// and is never shown (issue #5910). In an interactive host the operator can
@@ -9204,7 +9204,7 @@ export class AgentSession implements SettingsScope {
 
 	/** Record an operator message as the title source while an auto-titled session is unnamed. */
 	#noteTitleInput(message: AgentMessage): void {
-		if (!this.#autoTitle || this.sessionName || $env.PI_NO_TITLE) return;
+		if (!this.#autoTitle || this.sessionName || $env.MARS_NO_TITLE || $env.PI_NO_TITLE) return;
 		const text = operatorTitleText(message);
 		if (!text || isLowSignalTitleInput(text)) return;
 		this.#titleInput = { sessionId: this.sessionManager.getSessionId(), text, replied: false, tried: false };
@@ -9387,7 +9387,7 @@ export class AgentSession implements SettingsScope {
 		deferred[step] = true;
 		if (!deferred.declined || !deferred.replied) return;
 		this.#deferredTitle = undefined;
-		if (this.#titleGenerationInFlightFor === sessionId || $env.PI_NO_TITLE) return;
+		if (this.#titleGenerationInFlightFor === sessionId || $env.MARS_NO_TITLE || $env.PI_NO_TITLE) return;
 		const context = this.#buildReplanTitleContext();
 		if (!context || isLowSignalTitleInput(context)) return;
 		this.#startAutoTitle(context, sessionId);

@@ -1,5 +1,6 @@
 /**
- * Terminal playback for `.ompcast` session recordings (`omp play`).
+ * Terminal playback for `.marscast` session recordings (`mars play`), including
+ * legacy `.ompcast` files.
  *
  * Plays on the normal screen, like the recorded session itself: the recorded
  * viewport occupies the bottom rows of the terminal and recorded `history`

@@ -94,6 +94,53 @@ describe("InternalUrlRouter.register invariants", () => {
 		expect(router.isBuiltin("fixture")).toBe(false);
 		expect(router.isBuiltin("LOCAL")).toBe(true);
 	});
+
+	it("registers aliases that share the canonical handler and spec", () => {
+		const router = InternalUrlRouter.instance();
+		router.register({
+			...fixture({ backing: "virtual", selectors: "lines", immutable: true }),
+			aliases: ["fixture-alias"],
+		});
+		expect(router.canHandle("fixture://x")).toBe(true);
+		expect(router.canHandle("fixture-alias://x")).toBe(true);
+		expect(router.getHandler("fixture-alias")).toBe(router.getHandler("fixture"));
+		expect(router.spec("fixture-alias")).toEqual(router.spec("fixture"));
+	});
+
+	it("registers constructor-time aliases as built-ins and advertises only the canonical scheme", () => {
+		const router = InternalUrlRouter.instance();
+		expect(router.isBuiltin("mars")).toBe(true);
+		expect(router.isBuiltin("OMP")).toBe(true);
+		const lines = router.describe({
+			skillUriAccess: false,
+			ruleCount: 0,
+			securityEnabled: false,
+			settingsApproval: false,
+		});
+		expect(lines.some(line => line.startsWith("`mars://`"))).toBe(true);
+		expect(lines.some(line => line.startsWith("`omp://`"))).toBe(false);
+	});
+
+	it("refuses an alias that is already registered", () => {
+		const router = InternalUrlRouter.instance();
+		expect(() =>
+			router.register({
+				...fixture({ backing: "virtual", selectors: "lines", immutable: true }),
+				aliases: ["local"],
+			}),
+		).toThrow("local:// is already registered");
+	});
+
+	it("unregisters every alias with its canonical scheme", () => {
+		const router = InternalUrlRouter.instance();
+		router.register({
+			...fixture({ backing: "virtual", selectors: "lines", immutable: true }),
+			aliases: ["fixture-alias"],
+		});
+		expect(router.unregister("fixture")).toBe(true);
+		expect(router.canHandle("fixture://x")).toBe(false);
+		expect(router.canHandle("fixture-alias://x")).toBe(false);
+	});
 });
 
 describe("InternalUrlRouter URL shape", () => {

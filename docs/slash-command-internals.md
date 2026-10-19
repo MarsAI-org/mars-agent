@@ -37,7 +37,7 @@ The capability registry loads enabled providers in parallel, consumes their resu
 Current slash-command providers and priorities:
 
 1. `native` (Mars) — priority `100`
-2. `omp-plugins` (extension packages) — priority `90`
+2. `mars-plugins` (extension packages) — priority `90`
 3. `claude` — priority `80`
 4. `claude-plugins` — priority `70`
 5. `agents` (`.agent`/`.agents` standard dirs) — priority `70`
@@ -83,7 +83,7 @@ Search roots come from `.mars` directories:
 `getConfigDirs()` returns project first, then user, so **project native commands beat user native commands** when names collide.
 The default paths above can be relocated by `PI_CONFIG_DIR`, the default-profile `PI_CODING_AGENT_DIR`, or an SDK discovery `agentDir`; the project directory remains `.mars`.
 
-## `omp-plugins` provider (`omp-plugins.ts`)
+## `mars-plugins` provider (`omp-plugins.ts`)
 
 Scans `commands/*.md` in explicit extension-package directories, the effective `extensions` setting, and enabled npm/link plugins, in that order. The configured array follows settings replacement precedence; project and user arrays are not concatenated. Session-supplied effective roots are reused on reload. Explicit-only discovery omits configured and installed roots, and file entrypoints contribute no subdirectory resources. Marketplace roots are excluded here to avoid duplicate discovery and are handled by `claude-plugins`.
 

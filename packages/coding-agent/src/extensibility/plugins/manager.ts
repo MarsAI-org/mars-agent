@@ -21,16 +21,18 @@ import { resolvePluginManifestEntries } from "./loader";
 import { getInstalledPluginsRegistryPath, readInstalledPluginsRegistry } from "./marketplace/registry";
 import { parsePluginId } from "./marketplace/types";
 import { extractPackageName, parsePluginSpec } from "./parser";
-import { normalizePluginRuntimeConfig } from "./runtime-config";
-import type {
-	DoctorCheck,
-	DoctorOptions,
-	InstalledPlugin,
-	InstallOptions,
-	PluginManifest,
-	PluginRuntimeConfig,
-	PluginSettingSchema,
-	ProjectPluginOverrides,
+import { migrateLegacyPluginsLockfile, normalizePluginRuntimeConfig } from "./runtime-config";
+import {
+	type DoctorCheck,
+	type DoctorOptions,
+	type InstalledPlugin,
+	type InstallOptions,
+	type PluginManifest,
+	type PluginManifestCarrier,
+	type PluginRuntimeConfig,
+	type PluginSettingSchema,
+	type ProjectPluginOverrides,
+	resolvePluginManifest,
 } from "./types";
 
 // =============================================================================
@@ -122,11 +124,9 @@ interface PluginPackageSnapshot {
 	readonly backupPath: string;
 }
 
-interface RuntimePackageJson {
+interface RuntimePackageJson extends PluginManifestCarrier {
 	name?: unknown;
 	version: string;
-	omp?: PluginManifest;
-	pi?: PluginManifest;
 }
 // =============================================================================
 // Plugin Manager
@@ -155,7 +155,8 @@ export class PluginManager {
 	}
 
 	async #loadRuntimeConfig(): Promise<PluginRuntimeConfig> {
-		return this.#readRuntimeConfigAt(getPluginsLockfile());
+		const lockPath = await migrateLegacyPluginsLockfile(path.dirname(getPluginsLockfile()));
+		return this.#readRuntimeConfigAt(lockPath);
 	}
 
 	async #ensureConfigLoaded(): Promise<PluginRuntimeConfig> {
@@ -200,7 +201,7 @@ export class PluginManager {
 					pkgJsonPath,
 					JSON.stringify(
 						{
-							name: "omp-plugins",
+							name: "mars-plugins",
 							private: true,
 							dependencies: {},
 						},
@@ -273,7 +274,7 @@ export class PluginManager {
 		}
 
 		const name = typeof pluginPkg.name === "string" && pluginPkg.name.length > 0 ? pluginPkg.name : fallbackName;
-		const manifest: PluginManifest = pluginPkg.omp || pluginPkg.pi || { version: pluginPkg.version };
+		const manifest: PluginManifest = resolvePluginManifest(pluginPkg) ?? { version: pluginPkg.version };
 		manifest.version = pluginPkg.version;
 		const runtimeState = config.plugins[name] || {
 			version: pluginPkg.version,
@@ -630,7 +631,7 @@ export class PluginManager {
 			}
 
 			const pkgPath = path.join(getPluginsNodeModules(), actualName, "package.json");
-			let pkg: { name: string; version: string; omp?: PluginManifest; pi?: PluginManifest };
+			let pkg: { name: string; version: string } & PluginManifestCarrier;
 			try {
 				pkg = await Bun.file(pkgPath).json();
 			} catch (err) {
@@ -639,7 +640,7 @@ export class PluginManager {
 				}
 				throw err;
 			}
-			const manifest: PluginManifest = pkg.omp || pkg.pi || { version: pkg.version };
+			const manifest: PluginManifest = resolvePluginManifest(pkg) ?? { version: pkg.version };
 			manifest.version = pkg.version;
 
 			// Resolve enabled features
@@ -831,7 +832,7 @@ export class PluginManager {
 	 * (`<anchor>/.mars/plugins`). Project npm/link/marketplace installs all record
 	 * their runtime state and `node_modules` symlink there — invisible to the
 	 * user-root lookup — so this reads the project's own `package.json`
-	 * dependencies plus `omp-plugins.lock.json`, and resolves the package from
+	 * dependencies plus `mars-plugins.lock.json`, and resolves the package from
 	 * the project `node_modules`. Returns undefined when there is no active
 	 * project, when it coincides with the user root, or when the package is not
 	 * installed there.
@@ -846,7 +847,7 @@ export class PluginManager {
 		if (normalizePathForComparison(projectRoot) === normalizePathForComparison(getPluginsDir())) return undefined;
 		const [projectDeps, projectConfig] = await Promise.all([
 			this.#readDeps(path.join(projectRoot, "package.json")),
-			this.#readRuntimeConfigAt(path.join(projectRoot, "omp-plugins.lock.json")),
+			migrateLegacyPluginsLockfile(projectRoot).then(lockPath => this.#readRuntimeConfigAt(lockPath)),
 		]);
 		if (!this.#collectInstalledNames(projectDeps, projectConfig).has(name)) return undefined;
 		return this.#resolvePlugin(name, path.join(projectRoot, "node_modules", name), projectConfig, projectOverrides);
@@ -891,7 +892,7 @@ export class PluginManager {
 		const absolutePath = path.resolve(this.#cwd, localPath);
 
 		const pkgFilePath = path.join(absolutePath, "package.json");
-		let pkg: { name?: string; version: string; omp?: PluginManifest; pi?: PluginManifest };
+		let pkg: { name?: string; version: string } & PluginManifestCarrier;
 		try {
 			pkg = await Bun.file(pkgFilePath).json();
 		} catch (err) {
@@ -921,7 +922,7 @@ export class PluginManager {
 		// link in marketplace/manager.ts).
 		await fs.promises.symlink(absolutePath, linkPath, process.platform === "win32" ? "junction" : "dir");
 
-		const manifest: PluginManifest = pkg.omp || pkg.pi || { version: pkg.version };
+		const manifest: PluginManifest = resolvePluginManifest(pkg) ?? { version: pkg.version };
 		manifest.version = pkg.version;
 
 		// Add to runtime config
@@ -1099,7 +1100,7 @@ export class PluginManager {
 			const pluginPkgPath = path.join(pluginPath, "package.json");
 			const fromDependencies = name in deps;
 
-			let pluginPkg: { version: string; description?: string; omp?: PluginManifest; pi?: PluginManifest };
+			let pluginPkg: { version: string; description?: string } & PluginManifestCarrier;
 			try {
 				pluginPkg = await Bun.file(pluginPkgPath).json();
 			} catch (err) {
@@ -1159,15 +1160,15 @@ export class PluginManager {
 				}
 			}
 
-			const hasManifest = !!(pluginPkg.omp || pluginPkg.pi);
-			const manifest: PluginManifest | undefined = pluginPkg.omp || pluginPkg.pi;
+			const manifest = resolvePluginManifest(pluginPkg);
+			const hasManifest = manifest !== undefined;
 
 			checks.push({
 				name: `plugin:${name}`,
 				status: hasManifest ? "ok" : "warning",
 				message: hasManifest
 					? `v${pluginPkg.version}${pluginPkg.description ? ` - ${pluginPkg.description}` : ""}`
-					: `v${pluginPkg.version} - No omp/pi manifest (not a Mars plugin)`,
+					: `v${pluginPkg.version} - No mars/omp/pi manifest (not a Mars plugin)`,
 			});
 
 			// Check tools path exists if specified

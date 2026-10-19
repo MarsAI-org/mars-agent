@@ -30,6 +30,12 @@ describe("renderFormula", () => {
 	// Regression: completions generation must run with HOME redirected so the
 	// popened binary doesn't touch the real `~/.mars` (denied by Homebrew's
 	// sandbox profile) during the build (issue #2398).
+	// The formula must declare the Mars class, never the upstream `Omp` class.
+	it("declares the Mars formula class", () => {
+		expect(formula).toMatch(/^class Mars < Formula$/m);
+		expect(formula).not.toMatch(/\bOmp\b/);
+	});
+
 	it("wraps `generate_completions_from_executable` with a HOME redirect to buildpath", () => {
 		expect(formula).toMatch(
 			/with_env\(HOME: buildpath\) do\n\s+generate_completions_from_executable\(bin\/"mars", "completions", shells: \[:bash, :zsh, :fish\]\)\n\s+end/,

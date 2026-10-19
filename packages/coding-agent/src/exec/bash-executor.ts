@@ -532,6 +532,7 @@ export async function executeBash(command: string, options?: BashExecutorOptions
 		options?.useUserShell === true &&
 		!bashShell &&
 		supportsAutoUserShell(shell) &&
+		$env.MARS_NO_PTY !== "1" &&
 		$env.PI_NO_PTY !== "1" &&
 		!isPersistentShellCdCommand(command);
 	const minimizer = buildMinimizerOptions(cfgShellMinimizer.get(settings));

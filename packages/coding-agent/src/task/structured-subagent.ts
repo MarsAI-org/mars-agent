@@ -306,7 +306,7 @@ const inflightDiscovery = new Map<string, { fn: typeof discoverAgents; promise: 
 function discoverAgentsShared(cwd: string, extensionRoots?: EffectiveExtensionRoots): Promise<DiscoveryResult> {
 	const fn = discoverAgents;
 	const policy = [
-		isProviderEnabled("omp-plugins"),
+		isProviderEnabled("mars-plugins"),
 		isProviderEnabled("claude-plugins"),
 		isUserSourceEnabled("claude-plugins"),
 		isUserSourceEnabled("claude"),

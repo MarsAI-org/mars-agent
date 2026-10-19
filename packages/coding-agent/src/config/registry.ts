@@ -23,7 +23,7 @@
  * Declaration order is significant: the settings panel lists a tab's settings in registration order
  * (sections follow `TAB_GROUPS`), and `config/all-settings.ts` imports every domain in that order.
  */
-import { logger, parseFlag } from "@marsai-org/utils";
+import { logger, parseFlag, readCompatEnv } from "@marsai-org/utils";
 import type { AnyUiMetadata, SubmenuOption, UiBase } from "@marsai-org/tui/overlays/settings-defs";
 import type { SettingProvenance, Settings } from "./settings";
 
@@ -513,7 +513,9 @@ export class Setting<T, Id extends string = string> extends Derived<T> {
 	/** Value supplied by the environment variable, or `undefined` when unset or unparseable. */
 	envValue(): T | undefined {
 		if (!this.envName || !this.#parseEnv) return undefined;
-		const raw = Bun.env[this.envName];
+		// `readCompatEnv` resolves the declared name first and then its legacy
+		// OMP_ alias, so settings keep reading `MARS_*` while old shells work.
+		const raw = readCompatEnv(this.envName, Bun.env);
 		if (raw === undefined) return undefined;
 		if (raw !== this.#envRaw) {
 			this.#envParsed = this.#parseEnv(raw) as T | undefined;

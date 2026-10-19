@@ -1,8 +1,9 @@
 /**
  * Centralized path helpers for Mars config directories.
  *
- * Uses PI_CONFIG_DIR (default ".mars") for the config root and
- * PI_CODING_AGENT_DIR to override the agent directory.
+ * Uses MARS_CONFIG_DIR (default ".mars") for the config root and
+ * MARS_CODING_AGENT_DIR to override the agent directory. The pre-rename
+ * PI_CONFIG_DIR / PI_CODING_AGENT_DIR names remain accepted as a fallback.
  *
  * On Linux, if XDG_DATA_HOME / XDG_STATE_HOME / XDG_CACHE_HOME environment
  * variables are set, paths are redirected to XDG-compliant locations under
@@ -16,7 +17,9 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { expandWindowsLongPath } from "@marsai-org/natives/path";
 import { engines, version } from "../package.json" with { type: "json" };
+import { noteInternalEnvWrite, resolveEnvAlias } from "./env-alias";
 import { isEnoent, isEnotdir } from "./fs-error";
+import { readCompatEnv } from "./env-compat";
 
 /** App name (e.g. "mars"). Also names the XDG subdirectory under $XDG_*_HOME. */
 export const APP_NAME: string = "mars";
@@ -30,8 +33,8 @@ export const APP_NAME: string = "mars";
  * pending dedicated backend deployment and retain their TODO(rebrand) markers.
  */
 export const APP_URL: string = (
-	(typeof process !== "undefined" && process.env?.MARS_APP_URL?.trim()) ||
-	(typeof Bun !== "undefined" && Bun.env?.MARS_APP_URL?.trim()) ||
+	(typeof process !== "undefined" && readCompatEnv("MARS_APP_URL", process.env)?.trim()) ||
+	(typeof Bun !== "undefined" && readCompatEnv("MARS_APP_URL", Bun.env)?.trim()) ||
 	"https://getmars.eu.cc/"
 ).replace(/\/?$/, "/");
 
@@ -103,7 +106,11 @@ export function resolveProfileEnv(mars: string | undefined, pi: string | undefin
 }
 
 function getProfileFromEnv(): string | undefined {
-	return resolveProfileEnv(process.env.MARS_PROFILE, process.env.PI_PROFILE);
+	// Precedence: MARS_PROFILE, then the legacy OMP_PROFILE (pre-rebrand name),
+	// then the older PI_PROFILE. `readCompatEnv` already reports the OMP_
+	// fallback once; it preserves the explicitly-empty MARS_PROFILE semantics
+	// because it only consults OMP_PROFILE when MARS_PROFILE is undefined.
+	return resolveProfileEnv(readCompatEnv("MARS_PROFILE"), process.env.PI_PROFILE);
 }
 
 /**
@@ -134,6 +141,10 @@ function getProfileConfigRoot(profile: string | undefined): string {
 
 function readPiProfileFromEnvSafe(): string | undefined {
 	try {
+		// Deliberately reads PI_PROFILE only: this guards `PI_CODING_AGENT_DIR`
+		// values that a parent process derived from a profile. A user-set
+		// OMP_PROFILE does not produce a profile-derived agent dir, so it must
+		// not suppress a genuine `PI_CODING_AGENT_DIR` override.
 		return normalizeProfileName(process.env.PI_PROFILE);
 	} catch {
 		return undefined;
@@ -314,12 +325,12 @@ export function getSafeProjectCwd(): string {
 	return os.homedir();
 }
 
-/** Get the config directory name relative to home (e.g. ".mars" or PI_CONFIG_DIR override). */
+/** Get the config directory name relative to home (e.g. ".mars" or MARS_CONFIG_DIR override). */
 export function getConfigDirName(): string {
-	return process.env.PI_CONFIG_DIR || CONFIG_DIR_NAME;
+	return resolveEnvAlias("MARS_CONFIG_DIR", "PI_CONFIG_DIR") || CONFIG_DIR_NAME;
 }
 
-/** Get the config agent directory name relative to home (e.g. ".mars/agent" or PI_CONFIG_DIR + "/agent"). */
+/** Get the config agent directory name relative to home (e.g. ".mars/agent" or MARS_CONFIG_DIR + "/agent"). */
 export function getConfigAgentDirName(): string {
 	const profile = getActiveProfile();
 	return profile ? path.join(getConfigDirName(), "profiles", profile, "agent") : `${getConfigDirName()}/agent`;
@@ -460,7 +471,16 @@ class DirResolver {
 }
 
 /**
- * Decide which `PI_CODING_AGENT_DIR` value to capture as the pre-profile
+ * Read the agent-directory override, preferring canonical `MARS_CODING_AGENT_DIR`
+ * and falling back to the legacy `PI_CODING_AGENT_DIR`. The fallback is
+ * reported once per process when it is actually used.
+ */
+function readAgentDirEnv(): string | undefined {
+	return resolveEnvAlias("MARS_CODING_AGENT_DIR", "PI_CODING_AGENT_DIR");
+}
+
+/**
+ * Decide which `MARS_CODING_AGENT_DIR` value to capture as the pre-profile
  * baseline. A value equal to a profile's derived agent dir is profile-derived
  * (propagated by a parent's `setProfile`), so it must NOT be snapshotted as the
  * default-mode baseline — otherwise default mode would resolve to the profile's
@@ -482,14 +502,14 @@ let activeProfile = readProfileFromEnvSafe();
 /**
  * Resolve the agent-dir override for the current `activeProfile` from the live
  * environment. A named profile derives its own agent dir (no override); default
- * mode honors a non-profile `PI_CODING_AGENT_DIR` (see
+ * mode honors a non-profile `MARS_CODING_AGENT_DIR` (see
  * {@link resolvePreProfileAgentDir}). Shared by the module-load resolver and
  * {@link refreshDirsFromEnv} so both apply identical logic.
  */
 function resolveActiveAgentDirOverride(): string | undefined {
 	return activeProfile
 		? undefined
-		: resolvePreProfileAgentDir(undefined, process.env.PI_CODING_AGENT_DIR, readPiProfileFromEnvSafe());
+		: resolvePreProfileAgentDir(undefined, readAgentDirEnv(), readPiProfileFromEnvSafe());
 }
 
 let dirs = new DirResolver({
@@ -497,10 +517,10 @@ let dirs = new DirResolver({
 	profile: activeProfile,
 });
 /**
- * Snapshot of `PI_CODING_AGENT_DIR` from before the first named-profile
+ * Snapshot of `MARS_CODING_AGENT_DIR` from before the first named-profile
  * activation. Reset paths restore this value (or its absence) instead of
  * unconditionally deleting the env var. Without the snapshot, a process started
- * with `PI_CODING_AGENT_DIR=/custom` then `setProfile("work")` then
+ * with `MARS_CODING_AGENT_DIR=/custom` then `setProfile("work")` then
  * `setProfile(undefined)` would silently lose `/custom` and fall back to
  * `~/.mars/agent`. Captured at module load — ignoring a profile-derived value
  * inherited from a parent's `setProfile` (see {@link resolvePreProfileAgentDir})
@@ -509,7 +529,7 @@ let dirs = new DirResolver({
  */
 let preProfileAgentDirEnv: string | undefined = resolvePreProfileAgentDir(
 	activeProfile,
-	process.env.PI_CODING_AGENT_DIR,
+	readAgentDirEnv(),
 	activeProfile ?? readPiProfileFromEnvSafe(),
 );
 // Anchor home for the resolver. Captured at module load to stay stable across
@@ -548,7 +568,12 @@ export function getConfigRootDir(): string {
 export function setAgentDir(dir: string): void {
 	activeProfile = undefined;
 	dirs = new DirResolver({ agentDirOverride: dir });
+	// Internal propagation writes only the legacy name, exactly as before the
+	// rename: children and workers read it, and the user's own canonical
+	// `MARS_CODING_AGENT_DIR` stays authoritative. The write is marked internal
+	// so reading it back does not warn about a variable the user never set.
 	process.env.PI_CODING_AGENT_DIR = dir;
+	noteInternalEnvWrite("PI_CODING_AGENT_DIR", dir);
 	preProfileAgentDirEnv = dir;
 	for (const key of PROFILE_ENV_KEYS) {
 		delete process.env[key];
@@ -556,7 +581,7 @@ export function setAgentDir(dir: string): void {
 }
 
 /**
- * Test-only: reset the pre-profile `PI_CODING_AGENT_DIR` snapshot to whatever
+ * Test-only: reset the pre-profile `MARS_CODING_AGENT_DIR` snapshot to whatever
  * the current environment looks like. Cross-suite test pollution can otherwise
  * leak a stale snapshot through `setAgentDir` and corrupt `setProfile(undefined)`
  * restore semantics. Production code MUST NOT call this — the snapshot's
@@ -566,7 +591,7 @@ export function setAgentDir(dir: string): void {
 export function __resetProfileSnapshotForTests(): void {
 	preProfileAgentDirEnv = resolvePreProfileAgentDir(
 		activeProfile,
-		process.env.PI_CODING_AGENT_DIR,
+		readAgentDirEnv(),
 		activeProfile ?? readPiProfileFromEnvSafe(),
 	);
 }
@@ -588,30 +613,32 @@ export function setProfile(profile: string | undefined): void {
 	const next = normalizeProfileName(profile);
 	if (next && !activeProfile) {
 		// First activation of a named profile in this process: snapshot the
-		// current PI_CODING_AGENT_DIR so a later reset can restore the user's
+		// current MARS_CODING_AGENT_DIR so a later reset can restore the user's
 		// explicit override. Subsequent profile switches keep the original
 		// snapshot — the "pre-profile" baseline is the state before profiles
 		// entered the picture, not the state between two activations.
-		preProfileAgentDirEnv = resolvePreProfileAgentDir(
-			undefined,
-			process.env.PI_CODING_AGENT_DIR,
-			readPiProfileFromEnvSafe(),
-		);
+		preProfileAgentDirEnv = resolvePreProfileAgentDir(undefined, readAgentDirEnv(), readPiProfileFromEnvSafe());
 	}
 	activeProfile = next;
 	if (activeProfile) {
 		dirs = new DirResolver({ profile: activeProfile });
 		process.env.MARS_PROFILE = activeProfile;
 		process.env.PI_PROFILE = activeProfile;
+		// Children (workers, subprocesses, the user's shell) still read the
+		// legacy name, so profile propagation keeps writing it — and only it,
+		// leaving any canonical value the user exported authoritative.
 		process.env.PI_CODING_AGENT_DIR = dirs.agentDir;
+		noteInternalEnvWrite("PI_CODING_AGENT_DIR", dirs.agentDir);
 	} else {
 		for (const key of PROFILE_ENV_KEYS) {
 			delete process.env[key];
 		}
 		if (preProfileAgentDirEnv === undefined) {
 			delete process.env.PI_CODING_AGENT_DIR;
+			noteInternalEnvWrite("PI_CODING_AGENT_DIR", undefined);
 		} else {
 			process.env.PI_CODING_AGENT_DIR = preProfileAgentDirEnv;
+			noteInternalEnvWrite("PI_CODING_AGENT_DIR", preProfileAgentDirEnv);
 		}
 		dirs = new DirResolver({ agentDirOverride: preProfileAgentDirEnv });
 	}
@@ -694,7 +721,7 @@ export function getPluginsPackageJson(home?: string): string {
 	return path.join(getPluginsDir(home), "package.json");
 }
 
-/** Plugin lock file (~/.mars/plugins/omp-plugins.lock.json). */
+/** Plugin lock file (~/.mars/plugins/mars-plugins.lock.json). */
 export function getPluginsLockfile(home?: string): string {
 	return path.join(getPluginsDir(home), `${APP_NAME}-plugins.lock.json`);
 }
@@ -750,7 +777,9 @@ export function setWorktreesDir(dir: string | undefined): string | undefined {
  * ignored and resolution falls through.
  */
 export function getWorktreesDir(): string {
-	return resolveAbsoluteDir(process.env.MARS_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
+	return (
+		resolveAbsoluteDir(readCompatEnv("MARS_WORKTREE_DIR")) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data")
+	);
 }
 
 /** Get the SSH control socket directory (~/.mars/ssh-control). */
@@ -821,7 +850,7 @@ export function getWorktreeDir(segment: string): string {
  * cache file without touching the rest of the config root.
  */
 export function getGithubCacheDbPath(): string {
-	const override = process.env.MARS_GITHUB_CACHE_DB;
+	const override = readCompatEnv("MARS_GITHUB_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "github-cache.db"), "cache");
 }
@@ -830,7 +859,7 @@ export function getGithubCacheDbPath(): string {
  * Honors `MARS_COMMIT_CACHE_DB` so tests and operators can isolate the cache.
  */
 export function getCommitCacheDbPath(): string {
-	const override = process.env.MARS_COMMIT_CACHE_DB;
+	const override = readCompatEnv("MARS_COMMIT_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "commit-inference.db"), "cache");
 }
@@ -840,7 +869,7 @@ export function getCommitCacheDbPath(): string {
  * Honors `MARS_JUDGMENT_CACHE_DB` so tests and operators can isolate the cache.
  */
 export function getJudgmentCacheDbPath(): string {
-	const override = process.env.MARS_JUDGMENT_CACHE_DB;
+	const override = readCompatEnv("MARS_JUDGMENT_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "judgment-cache.db"), "cache");
 }
@@ -856,7 +885,7 @@ export function getLegacyPiExtensionCacheDbPath(): string {
  * operators can isolate or relocate the cache file.
  */
 export function getAuthBrokerSnapshotCachePath(): string {
-	const override = process.env.MARS_AUTH_BROKER_SNAPSHOT_CACHE;
+	const override = readCompatEnv("MARS_AUTH_BROKER_SNAPSHOT_CACHE");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "auth-broker-snapshot.enc"), "cache");
 }
@@ -1084,7 +1113,7 @@ const LEGACY_CONFIG_DIR_NAME = ".omp";
  * the wording is owned by the same module that performs the copy and consumers
  * print the same bytes every time.
  */
-export const LEGACY_CONFIG_MIGRATION_NOTICE = `Copied your existing ${LEGACY_CONFIG_DIR_NAME} configuration to ${CONFIG_DIR_NAME}; the old directory was left untouched.\n`;
+export const LEGACY_CONFIG_MIGRATION_NOTICE = `Copied your legacy configuration from ${LEGACY_CONFIG_DIR_NAME} to ${CONFIG_DIR_NAME}; the old directory was left untouched.\n`;
 
 let legacyConfigMigrationEvaluated = false;
 let pendingLegacyConfigMigrationNotice: string | undefined;
@@ -1101,10 +1130,11 @@ let pendingLegacyConfigMigrationNotice: string | undefined;
  * keeps reading it.
  *
  * Returns true only when this process performed the copy. Skipped entirely when
- * `PI_CONFIG_DIR` overrides the config root, because that root is unrelated to
- * the renamed default. Any failure (lost rename race, unwritable target, home
- * that does not exist) falls back to fresh state at the new path rather than
- * throwing: the copy is a convenience, not a start-up requirement.
+ * `MARS_CONFIG_DIR` (or the legacy `PI_CONFIG_DIR`) overrides the config root,
+ * because that root is unrelated to the renamed default. Any failure (lost
+ * rename race, unwritable target, home that does not exist) falls back to fresh
+ * state at the new path rather than throwing: the copy is a convenience, not a
+ * start-up requirement.
  *
  * Evaluated at most once per process — later calls are a no-op returning false
  * — so a notice can fire exactly once no matter how many consumers ask.
@@ -1113,7 +1143,7 @@ export function maybeMigrateLegacyConfigDir(): boolean {
 	if (legacyConfigMigrationEvaluated) return false;
 	legacyConfigMigrationEvaluated = true;
 	// An explicit root is a deliberate location, not one the rename owns.
-	if (process.env.PI_CONFIG_DIR) return false;
+	if (process.env.MARS_CONFIG_DIR || process.env.PI_CONFIG_DIR) return false;
 	const home = os.homedir();
 	const legacyRoot = path.join(home, LEGACY_CONFIG_DIR_NAME);
 	const currentRoot = path.join(home, CONFIG_DIR_NAME);
@@ -1259,7 +1289,7 @@ const INSTALL_ID_FILE = "install-id";
  * app X use" instead of folding everything into one install-wide bucket.
  */
 export function getAppName(): string {
-	const value = process.env.MARS_APP_NAME?.trim();
+	const value = readCompatEnv("MARS_APP_NAME")?.trim();
 	return value ? value : APP_NAME;
 }
 

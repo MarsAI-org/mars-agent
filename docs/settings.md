@@ -23,7 +23,7 @@ Settings are stored as plain YAML mappings. Every key, its type, default, and en
 
 The global paths above describe the default profile. `mars --profile work` selects `~/.mars/profiles/work/agent` instead, isolating settings, auth, sessions, and caches. `MARS_PROFILE` also selects a profile; `PI_PROFILE` is its compatibility fallback only when `MARS_PROFILE` is absent. An explicit `--profile` wins over both, and `--profile default` selects the default profile.
 
-`PI_CODING_AGENT_DIR` relocates the default profile's agent directory, including `config.yml` and its agent data. Named profiles derive their own agent directory and ignore this override. Use `mars config path` (or `mars --profile work config path`) to print the active settings directory.
+`MARS_CODING_AGENT_DIR` (legacy `PI_CODING_AGENT_DIR`) relocates the default profile's agent directory, including `config.yml` and its agent data. Named profiles derive their own agent directory and ignore this override. Use `mars config path` (or `mars --profile work config path`) to print the active settings directory.
 
 On Linux and macOS, configured `XDG_DATA_HOME`, `XDG_STATE_HOME`, and `XDG_CACHE_HOME` can redirect data/state/cache when the corresponding `mars` directories exist. Named profiles require the corresponding `mars/profiles/<name>` directory. This does not move `config.yml`: it stays under the active agent directory, while `agent.db` and other categorized data may live elsewhere. `mars config init-xdg` creates the base directories but does not migrate files or set environment variables.
 
@@ -69,7 +69,7 @@ This only controls the startup splash animation. It does not rerun setup or chan
 | `mars config get <key>`         | Print the effective value of one key. Unknown keys exit non-zero. `--json` emits `{ key, value, type, description }`. This is an explicit single-key request, so credential values are returned unmasked.                                                                                         |
 | `mars config set <key> <value>` | Parse `<value>` against the key's schema type, write it to the global main YAML file, and print the value written. When another source still supplies the effective value, it says which instead (`--json`: `overriddenBy` is the env var name, or `project`, `overlay`, or `runtime`; `fallbackEnv` names a fallback env var used while the saved value is blank). |
 | `mars config reset <key>`       | Delete the global key, allowing another configured layer or the schema default to apply. Prints the resulting effective value, masking non-empty credentials as `********`; JSON omits a credential's `value` and emits `{ key, redacted: true }`. |
-| `mars config path`              | Print the active agent directory (honors `PI_CODING_AGENT_DIR`).                                                                                                                                                                                                                                  |
+| `mars config path`              | Print the active agent directory (honors `MARS_CODING_AGENT_DIR`, legacy `PI_CODING_AGENT_DIR`).                                                                                                                                                                                                                                  |
 | `mars config init-xdg`          | On Linux and macOS, create the `mars` directories under the effective XDG data, state, and cache homes. It does not move existing files or set the XDG environment variables. Other platforms exit non-zero.                                                                                       |
 
 `mars config` with no subcommand lists settings. `--help` or `-h` displays command help. The `--json` flag is accepted by `list`, `get`, `set`, and `reset`.
@@ -130,21 +130,21 @@ A key that is unset at every layer resolves to its default at read time.
 
 ### Environment overrides
 
-Environment variables are never written back to `config.yml`. Variables declared on a setting definition form the top layer described above; others are read directly by the feature that owns the value (`PI_NO_PTY`) or applied as runtime overrides (`PI_SMOL_MODEL` sets the `smol` model role for the process). Relevant setting overrides and configuration selectors:
+Environment variables are never written back to `config.yml`. Variables declared on a setting definition form the top layer described above; others are read directly by the feature that owns the value (`MARS_NO_PTY`, legacy `PI_NO_PTY`) or applied as runtime overrides (`MARS_SMOL_MODEL` sets the `smol` model role for the process). Relevant setting overrides and configuration selectors:
 
 | Env var                 | Overrides setting           | Notes                                                                                             |
 | ----------------------- | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| `PI_SMOL_MODEL`         | `modelRoles.smol`           | Also exposed as `--smol`.                                                                         |
-| `PI_SLOW_MODEL`         | `modelRoles.slow`           | Also exposed as `--slow`.                                                                         |
-| `PI_PLAN_MODEL`         | `modelRoles.plan`           | Also exposed as `--plan`.                                                                         |
-| `PI_NO_PTY=1`           | (disables PTY bash)         | Equivalent to `--no-pty` for the process.                                                         |
+| `MARS_SMOL_MODEL`       | `modelRoles.smol`           | Also exposed as `--smol`. Legacy fallback: `PI_SMOL_MODEL`.                                       |
+| `MARS_SLOW_MODEL`       | `modelRoles.slow`           | Also exposed as `--slow`. Legacy fallback: `PI_SLOW_MODEL`.                                       |
+| `MARS_PLAN_MODEL`       | `modelRoles.plan`           | Also exposed as `--plan`. Legacy fallback: `PI_PLAN_MODEL`.                                       |
+| `MARS_NO_PTY=1`         | (disables PTY bash)         | Equivalent to `--no-pty` for the process. Legacy fallback: `PI_NO_PTY`.                           |
 | `PI_PY`                 | `eval.py`                   | `PI_PY=0` disables the Python eval backend.                                                       |
 | `PI_JS`                 | `eval.js`                   | `PI_JS=0` disables the JavaScript eval backend.                                                   |
 | `PI_TINY_DEVICE`        | `providers.tinyModelDevice` | ONNX execution provider or `mlx` backend for local tiny models.                                   |
 | `PI_TINY_DTYPE`         | `providers.tinyModelDtype`  | ONNX precision for local tiny models.                                                             |
 | `MARS_AUTH_BROKER_URL`   | `auth.broker.url`           | Env value takes precedence over config.                                                           |
 | `MARS_AUTH_BROKER_TOKEN` | `auth.broker.token`         | Env value takes precedence over config.                                                           |
-| `PI_CODING_AGENT_DIR`   | (relocates default-profile agent dir) | Named profiles ignore this override. |
+| `MARS_CODING_AGENT_DIR` | (relocates default-profile agent dir) | Named profiles ignore this override. Legacy fallback: `PI_CODING_AGENT_DIR`. |
 | `MARS_PROFILE` / `PI_PROFILE` | (selects profile) | `MARS_PROFILE` wins when present; `--profile` wins over env. |
 | `PI_EDIT_VARIANT` | `edit.mode` | `apply_patch`, `hashline`, `patch`, `replace`, or `sloppy`; `auto` is unset. |
 | `PI_EDIT_FUZZY` | `edit.fuzzyMatch` | Exact lowercase `1`/`true` enables; `0`/`false` disables; other text defers to config. |
@@ -1062,7 +1062,7 @@ Arrays replace; they do not append. If a project sets `disabledProviders`, `enab
 
 ### `mars config set` changed the wrong file
 
-`mars config set` and `mars config reset` write the main global YAML file (`config.yml`, or the existing compatible `config.yaml`) under the active agent/profile directory. Run `mars config path` to print that directory and check `--profile`, `MARS_PROFILE`, and `PI_CODING_AGENT_DIR`. For project-local keys, edit `<repo>/.mars/config.yml` directly.
+`mars config set` and `mars config reset` write the main global YAML file (`config.yml`, or the existing compatible `config.yaml`) under the active agent/profile directory. Run `mars config path` to print that directory and check `--profile`, `MARS_PROFILE`, and `MARS_CODING_AGENT_DIR` (legacy `PI_CODING_AGENT_DIR`). For project-local keys, edit `<repo>/.mars/config.yml` directly.
 
 ### A `--config` overlay fails at startup
 

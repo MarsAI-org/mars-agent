@@ -26,7 +26,7 @@ export default class Clip extends Command {
 	static examples = [
 		"mars clip",
 		'mars clip -t "Streaming the lexer" -d "Rewrote the tokenizer live"',
-		"mars clip /tmp/mars-recordings/2026-09-22T10-00-00-1a2b3c4d.ompcast",
+		"mars clip /tmp/mars-recordings/2026-09-22T10-00-00-1a2b3c4d.marscast",
 	];
 
 	async run(): Promise<void> {

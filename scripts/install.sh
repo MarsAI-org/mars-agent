@@ -12,7 +12,7 @@ set -e
 
 REPO="MarsAI-org/mars-agent"
 PACKAGE="@marsai-org/coding-agent"
-INSTALL_DIR="${PI_INSTALL_DIR:-$HOME/.local/bin}"
+INSTALL_DIR="${MARS_INSTALL_DIR:-${PI_INSTALL_DIR:-$HOME/.local/bin}}"
 MIN_BUN_VERSION="1.3.14"
 
 # Parse arguments

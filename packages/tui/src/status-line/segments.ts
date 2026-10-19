@@ -225,8 +225,8 @@ const piSegment: StatusLineSegment = {
 		const content =
 			ctx.turnElapsedMs != null
 				? `${brandSpinnerFrame(ctx.now?.getTime())} ${brandTimer(ctx.turnElapsedMs)}`
-				: theme.icon.omp
-					? theme.icon.omp
+				: theme.icon.mars
+					? theme.icon.mars
 					: "";
 		return { content: `${fgAnsi}${content}\x1b[39m`, visible: true };
 	},

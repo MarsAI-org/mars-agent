@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Minimal mars extension example",
   "homepage": "https://github.com/MarsAI-org/mars-agent",
-  "omp": {
+  "mars": {
     "extensions": ["./index.ts"]
   }
 }

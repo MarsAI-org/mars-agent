@@ -7,7 +7,7 @@
  */
 import type { AgentMessage } from "@marsai-org/agent-core";
 import type { ImageContent } from "@marsai-org/ai";
-import { $flag, logger, postmortem, sanitizeText } from "@marsai-org/utils";
+import { $compatFlag, logger, postmortem, sanitizeText } from "@marsai-org/utils";
 import type { MCPManager } from "../mcp/manager";
 import { resolveMCPTimeoutMs } from "../mcp/timeout";
 import { type AgentSession, type AgentSessionEvent, SHUTDOWN_CONSOLIDATE_BUDGET_MS } from "../session/agent-session";
@@ -262,7 +262,7 @@ async function runPrintModeCore(
 				`Warning: MCP server "${server}" failed to connect: ${singleLine(error)}; its tools are unavailable for this run.`,
 			);
 		}
-		if ($flag("MARS_MCP_REQUIRE_READY") && unavailable.length > 0) {
+		if ($compatFlag("MARS_MCP_REQUIRE_READY") && unavailable.length > 0) {
 			writeStderrLine(`Error: MCP servers not ready: ${unavailable.join(", ")}`);
 			strictMCPFailure = true;
 		}

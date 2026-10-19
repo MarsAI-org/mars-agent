@@ -1416,6 +1416,10 @@ export function buildResumeArgs(cfg: Config, jobDir: string): string[] {
 }
 
 const FORWARD_ENV_DENYLIST = new Set([
+	"MARS_CODING_AGENT_DIR",
+	"MARS_CONFIG_DIR",
+	"MARS_PROFILE",
+	"MARS_PACKAGE_DIR",
 	"PI_CODING_AGENT_DIR",
 	"PI_CONFIG_DIR",
 	"PI_PROFILE",
@@ -1429,14 +1433,17 @@ const FORWARD_ENV_DENYLIST = new Set([
 ]);
 
 /**
- * Env vars injected into the in-container mars run: every host `PI_*` knob (minus
- * container-hostile dir/profile/session keys) plus explicit `--env` entries,
- * which always win and bypass the denylist.
+ * Env vars injected into the in-container mars run: every host `MARS_*` knob
+ * and every legacy `PI_*` knob (minus container-hostile dir/profile/session
+ * keys) plus explicit `--env` entries, which always win and bypass the
+ * denylist.
  */
 export function collectForwardEnv(cfg: Config): Record<string, string> {
 	const out: Record<string, string> = {};
 	for (const [k, v] of Object.entries(process.env)) {
-		if (v === undefined || !k.startsWith("PI_") || FORWARD_ENV_DENYLIST.has(k)) continue;
+		if (v === undefined || !(k.startsWith("MARS_") || k.startsWith("PI_")) || FORWARD_ENV_DENYLIST.has(k)) {
+			continue;
+		}
 		out[k] = v;
 	}
 	for (const [k, v] of Object.entries(cfg.env)) out[k] = v;

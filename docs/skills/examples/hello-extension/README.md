@@ -38,4 +38,4 @@ After loading, type `/hello` or `/hello Ada` in the mars prompt. The command sen
 - `pi.on("session_start", ...)` — session lifecycle hook
 - `pi.registerCommand(...)` — slash command registration
 - `ctx.ui.notify(...)` — user-facing notification
-- `package.json` with `omp.extensions` manifest field
+- `package.json` with `mars.extensions` manifest field

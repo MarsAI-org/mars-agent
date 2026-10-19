@@ -19,6 +19,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { isPromise } from "node:util/types";
 import { APP_NAME, getLogsDir, localDay } from "./dirs";
+import { readCompatEnv } from "./env-compat";
 import { RotatingFileSink } from "./logger/rotating-file";
 import { setStderrRedirectTarget } from "./stderr-guard";
 import { drainModuleLoadEvents } from "./timing-buffer";
@@ -324,7 +325,7 @@ const IMMEDIATE_FLUSH_RANK = LOG_LEVEL_RANK.warn;
  * (error|warn|info|debug, case-insensitive), default `debug` (everything).
  */
 function resolveFileLevelRank(): number {
-	const requested = process.env.MARS_LOG_LEVEL?.trim().toLowerCase();
+	const requested = readCompatEnv("MARS_LOG_LEVEL")?.trim().toLowerCase();
 	return requested && Object.hasOwn(LOG_LEVEL_RANK, requested)
 		? LOG_LEVEL_RANK[requested as LogLevel]
 		: LOG_LEVEL_RANK.debug;

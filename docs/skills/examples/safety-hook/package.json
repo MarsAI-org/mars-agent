@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "mars extension example: block rm -rf / via tool_call hook",
   "homepage": "https://github.com/MarsAI-org/mars-agent",
-  "omp": {
+  "mars": {
     "extensions": ["./index.ts"]
   }
 }

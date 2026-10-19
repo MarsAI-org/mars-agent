@@ -22,7 +22,7 @@ export default class Read extends Command {
 		"mars read src/foo.ts:50-100",
 		"mars read src/foo.ts:raw",
 		"mars read https://example.com",
-		"`mars read omp://`",
+		"`mars read mars://`",
 		"mars read issue://123",
 		"mars read path/to/archive.zip:dir/file.ts",
 		"mars read path/to/db.sqlite:users:42",

@@ -71,7 +71,7 @@ export interface InjectOmpExtensionCliRootOptions {
 	/**
 	 * `explicit-only` exposes only roots named by this CLI invocation. Use it
 	 * with `--no-extensions` so configured and installed packages cannot
-	 * contribute sibling capabilities through the `omp-plugins` provider.
+	 * contribute sibling capabilities through the `mars-plugins` provider.
 	 */
 	mode?: OmpExtensionRootMode;
 	/** Replace roots from an earlier invocation instead of extending them. */

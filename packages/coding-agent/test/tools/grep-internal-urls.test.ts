@@ -350,40 +350,45 @@ describe("GrepTool internal URL resolution", () => {
 		);
 	});
 
-	it("expands omp:// root to grep embedded documentation files", async () => {
+	it.each(["mars", "omp"] as const)("expands %s:// root to grep embedded documentation files", async scheme => {
 		const session = createSession();
 		const tool = new GrepTool(session);
 
 		const result = await tool.execute("test-call", {
 			pattern: "Grep file contents with a regex across files",
-			path: "omp://",
+			path: `${scheme}://`,
 		});
 
 		const text = getResultText(result);
-		expect(text).toContain("# omp://tools/grep.md");
+		expect(text).toContain(`# ${scheme}://tools/grep.md`);
 		expect(text).toContain("Grep file contents with a regex across files");
 	});
 
-	it("walks an omp:// docs subdirectory and names hits by URL without edit anchors", async () => {
-		const session = createSession({ hasEditTool: true });
-		const tool = new GrepTool(session);
+	it.each(["mars", "omp"] as const)(
+		"walks a %s:// docs subdirectory and names hits by URL without edit anchors",
+		async scheme => {
+			const session = createSession({ hasEditTool: true });
+			const tool = new GrepTool(session);
 
-		const result = await tool.execute("test-call", {
-			pattern: "Read files, directories, archives",
-			path: "omp://tools",
-		});
+			const result = await tool.execute("test-call", {
+				pattern: "Read files, directories, archives",
+				path: `${scheme}://tools`,
+			});
 
-		const text = getResultText(result);
-		expect(result.details?.files).toContain("omp://tools/read.md");
-		expect(text).toContain("Read files, directories, archives");
-		expect(text).not.toMatch(/mars:\/\/tools\/read\.md#[0-9A-F]{4}/);
-	});
+			const text = getResultText(result);
+			expect(result.details?.files).toContain(`${scheme}://tools/read.md`);
+			expect(text).toContain("Read files, directories, archives");
+			expect(text).not.toMatch(/mars:\/\/tools\/read\.md#[0-9A-F]{4}/);
+		},
+	);
 
-	it("globs omp:// docs by URL pattern", async () => {
-		const text = getResultText(await new GlobTool(createSession()).execute("glob-omp", { path: "omp://tools/*.md" }));
+	it.each(["mars", "omp"] as const)("globs %s:// docs by URL pattern", async scheme => {
+		const text = getResultText(
+			await new GlobTool(createSession()).execute("glob-docs", { path: `${scheme}://tools/*.md` }),
+		);
 
-		expect(text).toContain("omp://tools/read.md");
-		expect(text).toContain("omp://tools/grep.md");
+		expect(text).toContain(`${scheme}://tools/read.md`);
+		expect(text).toContain(`${scheme}://tools/grep.md`);
 	});
 
 	it("suppresses hashline anchors when searching immutable artifact:// sources", async () => {

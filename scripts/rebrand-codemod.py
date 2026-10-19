@@ -129,10 +129,11 @@ class Rule:
     def applies_to(self, rel: str) -> bool:
         if is_protected(rel) or is_deferred(rel):
             return False
-        # The internal docs URI scheme stays `omp://` (rule 5 of the task).
+        # The internal docs URI scheme (`mars://`, alias `omp://`) is owned by
+        # the rebrand itself; never rewrite its handler or prompt doc.
         if rel.endswith("src/internal-urls/omp-protocol.ts"):
             return False
-        if rel.endswith("src/internal-urls/omp.md"):
+        if rel.endswith("src/internal-urls/mars.md"):
             return False
         if self.path_contains and not any(p in rel for p in self.path_contains):
             return False

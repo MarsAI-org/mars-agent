@@ -537,7 +537,7 @@ export function classifyAgentPluginRoot(rootPath: string): Promise<AgentPluginRo
 }
 
 /**
- * Whether a legacy plugin provider (claude-plugins, omp-plugins) may process a
+ * Whether a legacy plugin provider (claude-plugins, mars-plugins) may process a
  * root for the given surface. Roots governed by the Agent Plugins standard keep
  * their portable components (`skills`, `mcp`) exclusive to the standard loader,
  * while client-specific surfaces (commands, hooks, tools, …) still load from

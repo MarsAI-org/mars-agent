@@ -2330,7 +2330,7 @@ export class InteractiveMode implements InteractiveModeContext {
 		// block, bash command preview, or file diff does not stall the render thread.
 		setImmediate(() => {
 			void warmHighlighter();
-			if (!$env.PI_NO_TITLE && !this.sessionManager.getSessionName()) {
+			if (!$env.MARS_NO_TITLE && !$env.PI_NO_TITLE && !this.sessionManager.getSessionName()) {
 				this.#inputController.prewarmTinyTitleModel();
 			}
 		});
@@ -7000,7 +7000,7 @@ export class InteractiveMode implements InteractiveModeContext {
 		await this.ui.terminal.drainInput(1000);
 		// Stop the run-state spinner interval BEFORE restoring the shell title, so a
 		// pending tick cannot re-emit an OSC title after `popTerminalTitle` hands the
-		// terminal back (which would leave the parent shell with a `π ⠋ …` tab).
+		// terminal back (which would leave the parent shell with a `mars ⠋ …` tab).
 		disposeTerminalTitleState();
 		popTerminalTitle();
 		this.stop();

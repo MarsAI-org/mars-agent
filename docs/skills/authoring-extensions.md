@@ -82,7 +82,7 @@ mars loads extension modules from these sources:
    - `~/.mars/agent/extensions/`
    - legacy extension paths listed in `.mars/settings.json#extensions` or `~/.mars/agent/settings.json#extensions`
 2. Discovered JavaScript/TypeScript hook factories (`hooks/pre/` and `hooks/post/`), bound through the extension runner.
-3. Enabled installed plugins under `~/.mars/plugins/node_modules` or a project plugin root — including npm, marketplace, and `mars plugin link` installs — via their `omp.extensions`/`pi.extensions` manifests.
+3. Enabled installed plugins under `~/.mars/plugins/node_modules` or a project plugin root — including npm, marketplace, and `mars plugin link` installs — via their `mars.extensions`/`pi.extensions` manifests.
 4. Explicit configured paths passed by the CLI (`mars --extension ./my-ext.ts`, also `-e`; `--hook` is treated as an alias) and by the `extensions:` setting in config.
 
 The runtime de-duplicates by resolved absolute path — first seen wins.
@@ -93,17 +93,28 @@ The user directory is the active profile's agent directory: the default is `~/.m
 
 When a path points to a directory, mars resolves the entry point in this order:
 
-1. `package.json` with `omp.extensions` (or legacy `pi.extensions`) field
+1. `package.json` with `mars.extensions` (or legacy `pi.extensions`) field
 2. `index.ts`
 3. `index.js`
 
 When scanning an `extensions/` directory, mars also loads direct `*.ts`/`*.js` files and one-level subdirectories that have `index.ts`, `index.js`, or a manifest.
 
-Extension packages can also bundle sibling capability directories. When a package is loaded through `extensions:` or `--extension`/`-e`, the `omp-plugins` provider discovers its `skills/`, `hooks/pre|post/`, `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json`.
+Extension packages can also bundle sibling capability directories. When a package is loaded through `extensions:` or `--extension`/`-e`, the `mars-plugins` provider discovers its `skills/`, `hooks/pre|post/`, `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json`.
 
 ## package.json manifest
 
-To package an extension as an installable plugin, add an `omp` field to `package.json`:
+To package an extension as an installable plugin, add a `mars` field to `package.json`:
+
+```json
+{
+  "name": "my-mars-extension",
+  "mars": {
+    "extensions": ["./src/main.ts"]
+  }
+}
+```
+
+The pre-rebrand `omp` key is also accepted, so existing packages keep loading without edits:
 
 ```json
 {
@@ -114,7 +125,7 @@ To package an extension as an installable plugin, add an `omp` field to `package
 }
 ```
 
-The legacy `pi` key is also accepted for backwards compatibility:
+The original `pi` key remains accepted for backwards compatibility:
 
 ```json
 {
@@ -128,7 +139,7 @@ Multiple entry points are supported:
 
 ```json
 {
-  "omp": {
+  "mars": {
     "extensions": ["./src/safety.ts", "./src/tools.ts"]
   }
 }

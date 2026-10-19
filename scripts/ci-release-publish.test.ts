@@ -29,12 +29,12 @@ describe("npm dist-tags", () => {
 	it("lets the workflow dist-tag input override the version default", () => {
 		// The bootstrap publish runs a stable version but must land on `next`,
 		// never on `latest`: the human moves `latest` deliberately.
-		expect(resolveDistTag("18.8.6", "next")).toBe("next");
+		expect(resolveDistTag("0.1.0", "next")).toBe("next");
 		// Without an override a prerelease is still rejected rather than
 		// silently published on the stable channel.
-		expect(resolveDistTag("18.8.6", null)).toBe("latest");
-		expect(() => resolveDistTag("18.8.6-rc.1", null)).toThrow("Unsupported prerelease version");
-		expect(resolveDistTag("18.8.6-rc.1", "next")).toBe("next");
+		expect(resolveDistTag("0.1.0", null)).toBe("latest");
+		expect(() => resolveDistTag("0.1.0-rc.1", null)).toThrow("Unsupported prerelease version");
+		expect(resolveDistTag("0.1.0-rc.1", "next")).toBe("next");
 	});
 });
 

@@ -34,8 +34,9 @@ export const collabHelp = {
 } satisfies CommandMetadata;
 
 export const clipHelp = {
-	// TODO(rebrand): no Mars domain decided — see HANDOFF.md
-	description: "Upload a /record recording to live.omp.sh as a public clip and print its URL",
+	// TODO(rebrand): Mars does not operate a clip host. The default server is
+	// still the upstream one (`stream.serverUrl`); do not present it as Mars's.
+	description: "Upload a /record recording to the configured stream server as a public clip and print its URL",
 } satisfies CommandMetadata;
 
 export const commitHelp = { description: "Generate a commit message and update changelogs" } satisfies CommandMetadata;
@@ -133,8 +134,9 @@ export const setupHelp = {
 export const shellHelp = { description: "Interactive shell console" } satisfies CommandMetadata;
 
 export const skillHelp = {
-	// TODO(rebrand): no Mars domain decided — see HANDOFF.md
-	description: "Install, search, publish, and manage skills on the Skillshare registry (skills.omp.sh)",
+	// TODO(rebrand): Mars does not operate a skill registry. The default registry
+	// is still the upstream one (`skills.registryUrl`); do not present it as Mars's.
+	description: "Install, search, publish, and manage skills on the configured Skillshare registry",
 } satisfies CommandMetadata;
 
 export const sshHelp = { description: "Manage SSH host configurations" } satisfies CommandMetadata;

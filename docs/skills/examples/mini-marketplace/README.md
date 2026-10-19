@@ -24,7 +24,7 @@ Run these paths from the repository root. Start or reload `mars` after CLI insta
 - Relative path plugin source using `./` prefix (`"source": "./my-plugin"`)
 - Plugin bundled inside the same directory tree as the marketplace catalog
 - Marketplace description in `metadata.description`
-- `package.json` with `omp.extensions` loads the bundled TypeScript factory after installation
+- `package.json` with `mars.extensions` loads the bundled TypeScript factory after installation
 
 ## Structure
 
@@ -34,7 +34,7 @@ mini-marketplace/
     marketplace.json      ← catalog
   README.md
   my-plugin/
-    package.json          ← omp.extensions manifest
+    package.json          ← mars.extensions manifest
     index.ts              ← extension entry point
 ```
 

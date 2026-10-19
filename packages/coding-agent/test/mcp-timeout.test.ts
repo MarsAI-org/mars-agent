@@ -63,6 +63,28 @@ describe("MCP timeout configuration", () => {
 			warn.mockRestore();
 		}
 	});
+
+	test("honors the legacy OMP_MCP_TIMEOUT_MS fallback", () => {
+		delete process.env.MARS_MCP_TIMEOUT_MS;
+		process.env.OMP_MCP_TIMEOUT_MS = "45000";
+
+		try {
+			expect(resolveMCPTimeoutMs()).toBe(45_000);
+		} finally {
+			delete process.env.OMP_MCP_TIMEOUT_MS;
+		}
+	});
+
+	test("prefers MARS_MCP_TIMEOUT_MS over the legacy alias", () => {
+		process.env.MARS_MCP_TIMEOUT_MS = "1000";
+		process.env.OMP_MCP_TIMEOUT_MS = "45000";
+
+		try {
+			expect(resolveMCPTimeoutMs()).toBe(1_000);
+		} finally {
+			delete process.env.OMP_MCP_TIMEOUT_MS;
+		}
+	});
 });
 
 describe("createMCPTimeout abort-source tracking", () => {

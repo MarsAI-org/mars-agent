@@ -44,9 +44,9 @@ export const GLYPH_BUNDLE: GlyphBundle = bundle;
 
 /**
  * Codepoint the handshake queries after registration to confirm the bundle
- * was accepted: the omp mark (`icon.omp`), which the status line always shows.
+ * was accepted: the Mars mark (`icon.mars`), which the status line always shows.
  */
-export const GLYPH_CONFIRMATION_CODEPOINT = 0xf0d57;
+export const GLYPH_CONFIRMATION_CODEPOINT = 0xf222;
 
 /** Terminal reply to any Glyph Protocol verb, decoded from its APC body. */
 export type GlyphProtocolReply =
