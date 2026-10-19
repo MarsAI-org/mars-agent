@@ -22,6 +22,7 @@ import {
 	VERSION,
 } from "@marsai-org/utils/dirs";
 import { $env, isBunTestRuntime, setInteractiveHost } from "@marsai-org/utils/env";
+import { takeLegacyEnvWarnings } from "@marsai-org/utils";
 import * as logger from "@marsai-org/utils/logger";
 import * as postmortem from "@marsai-org/utils/postmortem";
 import { fuzzyFilter } from "@marsai-org/tui/fuzzy";
@@ -1759,6 +1760,9 @@ export async function runRootCommand(
 		// the `--version`/`--export` exits so their output stays byte-exact.
 		const legacyConfigMigrationNotice = takeLegacyConfigMigrationNotice();
 		if (legacyConfigMigrationNotice) writeStartupNotice(parsedArgs, legacyConfigMigrationNotice);
+		// Legacy OMP_* variables are still honoured; say so once per variable,
+		// through the same notice sink so the TUI/RPC/ACP streams stay clean.
+		for (const warning of takeLegacyEnvWarnings()) writeStartupNotice(parsedArgs, `${warning}\n`);
 
 		if ((parsedArgs.mode === "rpc" || parsedArgs.mode === "rpc-ui") && parsedArgs.fileArgs.length > 0) {
 			process.stderr.write(`${chalk.red("Error: @file arguments are not supported in RPC mode")}\n`);

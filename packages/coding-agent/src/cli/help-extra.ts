@@ -63,6 +63,7 @@ export function getExtraHelpText(): string {
 
   ${chalk.dim("# Configuration")}
   MARS_PROFILE                 - Named profile for isolated agent state (same as --profile)
+OMP_PROFILE                  - Deprecated alias for MARS_PROFILE
   Use \`mars --profile <name> --alias <command>\` to create a shell shortcut for a profile
   PI_CODING_AGENT_DIR        - Session storage directory (default: ~/${CONFIG_DIR_NAME}/agent)
   PI_PACKAGE_DIR             - Override package directory (for Nix/Guix store paths)

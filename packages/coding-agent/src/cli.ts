@@ -26,6 +26,7 @@ import {
 	setProfile,
 	VERSION,
 } from "@marsai-org/utils/dirs";
+import { readCompatEnv } from "@marsai-org/utils";
 
 import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@marsai-org/utils/worker-host";
 import { extractProfileFlags } from "./cli/profile-bootstrap";
@@ -451,7 +452,7 @@ export async function runCli(argv: string[]): Promise<void> {
 			// validation here turns `MARS_PROFILE=.. mars --version` into a clean error;
 			// calling setProfile keeps every later path helper on the env-selected
 			// profile instead of the default agent directory.
-			setProfile(resolveProfileEnv(process.env.MARS_PROFILE, process.env.PI_PROFILE));
+			setProfile(resolveProfileEnv(readCompatEnv("MARS_PROFILE"), process.env.PI_PROFILE));
 		}
 		if (extracted.aliasName !== undefined) {
 			// Command boundary: shell/path setup is used only by --alias.

@@ -2,7 +2,7 @@ import { Database, type SQLQueryBindings } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as vcs from "@marsai-org/natives/vcs";
-import { getAutoresearchDbPath, getAutoresearchProjectDir, logger } from "@marsai-org/utils";
+import { getAutoresearchDbPath, getAutoresearchProjectDir, logger, readCompatEnv } from "@marsai-org/utils";
 import type { ASIData, ExperimentStatus, MetricDirection, NumericMetricMap } from "@marsai-org/tui/tools/autoresearch";
 
 /**
@@ -572,7 +572,7 @@ export async function openAutoresearchStorageIfExists(cwd: string): Promise<Auto
 }
 
 async function resolveAutoresearchPaths(cwd: string): Promise<{ dbPath: string; projectDir: string }> {
-	const override = process.env.MARS_AUTORESEARCH_DB_DIR;
+	const override = readCompatEnv("MARS_AUTORESEARCH_DB_DIR");
 	const repoRoot = vcs.repo(cwd)?.root() ?? cwd;
 	const encoded = encodeProjectKey(repoRoot);
 	if (override) {
