@@ -25,8 +25,8 @@
 Continuously tuned by real-world use — complete out of the box, open all the
 way down.
 
-**75** providers · **36** built-in tools · **~290k** lines of Rust core ·
-**~70k** more vendored in-process.
+**75** providers · **36** built-in tools · **~240k** lines of Rust core ·
+**~50k** more vendored in-process.
 
 > [!NOTE]
 > Pull requests are **temporarily open to everyone** as a trial. We previously
@@ -535,28 +535,36 @@ Vuln lookups answer with vendor data, not blog summaries.
 
 [`web_search` reference →](docs/tools/web_search.md)
 
-## Roughly **290,000** lines of Rust, doing the work other harnesses shell out for.
+## Roughly **240,000** lines of Rust, doing the work other harnesses shell out for.
 
-Eleven crates, one platform-tagged N-API addon. Search, shell, AST, highlight,
+Twelve crates, one platform-tagged N-API addon. Search, shell, AST, highlight,
 PTY, desktop control, image decode, BPE counting, prediction, VCS, voice — all
-in-process on the libuv pool, with no fork/exec on the hot path. Another ~70k
+in-process on the libuv pool, with no fork/exec on the hot path. Another ~50k
 lines ride along vendored: the brush bash fork, plus the common command-line
 utilities — coreutils, findutils, sed, jq, ripgrep-backed grep, fd, diff,
 moreutils — ported into the builtins crate and compiled straight into the shell.
 
+Line counts below are non-blank, non-comment lines under each crate's `src/`.
+
 - Crates: `pi-natives`, `pi-shell`, `pi-ast`, `pi-iso`, `pi-voice`, `pi-walker`, `pi-edit`, `pi-vcs`, `pi-diff`, `pi-vfs`, `pi-predict`, `pi-builtins`
 - Platforms: `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`, `win32-x64`, `win32-arm64` — x64 ships dual AVX2 and baseline binaries
 
-Per crate, code lines only:
+Per crate, code lines only (non-blank, non-comment lines under `src/`):
 
 | Crate         | What it does                                                                           |   ~LoC |
 | ------------- | -------------------------------------------------------------------------------------- | -----: |
-| pi-shell      | Embedded bash engine · persistent sessions · in-process coreutils dispatch · minimizer | 38,000 |
-| pi-natives    | The N-API surface — every module in the table below                                    | 25,000 |
-| pi-walker     | Parallel ignore-aware walker + scan cache shared by grep · glob · workspace · shell    |  5,200 |
-| pi-iso        | Workspace isolation · apfs · btrfs · zfs · reflink · overlayfs · projfs · rcopy        |  3,300 |
-| pi-ast        | tree-sitter + ast-grep matching, block resolution, structural summaries                |  2,900 |
-| pi-voice      | Audio capture/playback · Opus · live WebRTC                                            |  1,000 |
+| pi-builtins   | Bash builtins plus in-process coreutils, findutils, sed, jq, grep, fd, diff, moreutils | 77,700 |
+| pi-natives    | The N-API surface — every module in the table below                                    | 67,100 |
+| pi-shell      | Embedded bash engine · persistent sessions · in-process coreutils dispatch · minimizer | 32,200 |
+| pi-edit       | Edit engine · line-anchored patch/hashline modes · streaming previews · atomic apply    | 21,100 |
+| pi-vcs        | In-process git (gitoxide) and jj (jj-lib) behind one interface                          | 11,200 |
+| pi-predict    | Word-completion engines behind the prompt composer                                      |  6,500 |
+| pi-walker     | Parallel ignore-aware walker + scan cache shared by grep · glob · workspace · shell    |  5,800 |
+| pi-vfs        | Injectable async filesystem shared by the embedded shell and its coreutils             |  5,100 |
+| pi-iso        | Workspace isolation · apfs · btrfs · zfs · reflink · overlayfs · projfs · rcopy        |  3,800 |
+| pi-ast        | tree-sitter + ast-grep matching, block resolution, structural summaries                |  3,800 |
+| pi-voice      | Audio capture/playback · Opus · live WebRTC                                            |  3,000 |
+| pi-diff       | jsdiff-compatible diff primitives, Myers core, line/word/patch helpers                  |    900 |
 
 Inside `pi-natives`, the per-module breakdown (glue and tests omitted):
 

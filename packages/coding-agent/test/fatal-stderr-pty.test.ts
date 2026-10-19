@@ -10,6 +10,16 @@ function terminalLines(terminal: VirtualTerminal): (string | undefined)[] {
 	return Array.from({ length: buffer.length }, (_, row) => buffer.getLine(row)?.translateToString(true).trimEnd());
 }
 
+/**
+ * Rows are absolute buffer indexes that grow as output scrolls into scrollback,
+ * so a row captured at paint time is only comparable to a later scan if it is
+ * rebased by the same amount the buffer moved. `baseY` is the first row of the
+ * live screen, which makes it the exact measure of that movement.
+ */
+function rebaseRow(row: number, capturedBaseY: number, currentBaseY: number): number {
+	return row + (currentBaseY - capturedBaseY);
+}
+
 describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", () => {
 	it("keeps the composer boundary intact in a real PTY", async () => {
 		const screen = new VirtualTerminal({ cols: COLUMNS, rows: ROWS, scrollback: 100 });
@@ -21,6 +31,7 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 		// that row. Matching it post-hoc would also make the assertion vacuous, because the
 		// code frame carries the glyph whether or not the composer ever painted.
 		let paintedComposerRow: number | undefined;
+		let paintedComposerBaseY = 0;
 		let screenWritten = Promise.resolve();
 		await using terminal = new Bun.Terminal({
 			cols: COLUMNS,
@@ -31,8 +42,12 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				screen.write(data, () => {
 					const rows = terminalLines(screen);
 					const row = rows.indexOf(COMPOSER_BOUNDARY);
-					if (row >= 0) {
+					// Keep the first painted position: later chunks may repaint the
+					// composer on a different row, and the assertion is about where it
+					// was when the fatal write began.
+					if (row >= 0 && paintedComposerRow === undefined) {
 						paintedComposerRow = row;
+						paintedComposerBaseY = screen.buffer.active.baseY;
 						composerSeen.resolve();
 					}
 					written.resolve();
@@ -85,9 +100,13 @@ describe.skipIf(process.platform === "win32")("fatal stderr terminal handoff", (
 				const errorRow = lines.findIndex(line => line?.includes("error: fatal PTY fixture") === true);
 
 				// Assert against the row captured while painting, not a post-hoc scan: after the
-				// fatal write the composer row holds the postmortem code frame instead.
-				expect(paintedComposerRow ?? -1).toBeGreaterThanOrEqual(0);
-				expect(errorRow).toBeGreaterThan(paintedComposerRow ?? -1);
+				// fatal write the composer row holds the postmortem code frame instead. The
+				// captured row is rebased by the buffer's scroll movement so both sides are in
+				// the same coordinate space.
+				expect(paintedComposerRow).toBeDefined();
+				expect(errorRow).toBeGreaterThan(
+					rebaseRow(paintedComposerRow!, paintedComposerBaseY, screen.buffer.active.baseY),
+				);
 			} finally {
 				if (proc.exitCode === null) proc.kill();
 				await proc.exited;
