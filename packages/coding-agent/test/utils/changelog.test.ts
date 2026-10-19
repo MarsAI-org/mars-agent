@@ -261,7 +261,6 @@ describe("parseChangelog", () => {
 	test("reads current source release data and filters versions newer than the previous release", async () => {
 		const entries = await parseChangelog(undefined);
 		const latest = entries[0];
-		const previous = entries[1];
 
 		// A release with no user-facing coding-agent changes gets no changelog
 		// section (scripts/release.ts skips empty [Unreleased]), so the newest
@@ -270,10 +269,10 @@ describe("parseChangelog", () => {
 		const latestVersion = `${latest?.major}.${latest?.minor}.${latest?.patch}`;
 		expect(latest?.content).toContain(`## [${latestVersion}]`);
 		expect(getNewEntries(entries, VERSION)).toEqual([]);
-		expect(previous).toBeDefined();
 
-		const previousVersion = `${previous?.major}.${previous?.minor}.${previous?.patch}`;
-		expect(getNewEntries(entries, previousVersion)).toEqual([latest]);
+		// Mars starts its own changelog at 0.1.0, so an older release section may
+		// not exist yet. An older marker must still surface every entry.
+		expect(getNewEntries(entries, "0.0.0")).toEqual(entries);
 	});
 });
 
