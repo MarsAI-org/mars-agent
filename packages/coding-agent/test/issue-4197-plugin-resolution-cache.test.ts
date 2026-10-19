@@ -35,21 +35,21 @@ test("getEnabledPlugins caches repeated discovery for the same cwd and home unti
 	await fs.mkdir(path.dirname(pluginPackageJson), { recursive: true });
 	await fs.mkdir(cwd, { recursive: true });
 	await writeJson(path.join(pluginsDir, "package.json"), { dependencies: { "mars-cache-repro": "1.0.0" } });
-	await writeJson(path.join(pluginsDir, "omp-plugins.lock.json"), {
+	await writeJson(path.join(pluginsDir, "mars-plugins.lock.json"), {
 		plugins: { "mars-cache-repro": { version: "1.0.0", enabled: true, enabledFeatures: null } },
 		settings: {},
 	});
 	await writeJson(pluginPackageJson, {
 		name: "mars-cache-repro",
 		version: "1.0.0",
-		omp: { tools: "tools" },
+		mars: { tools: "tools" },
 	});
 
 	const [firstPlugin] = await getEnabledPlugins(cwd, { home });
 	await writeJson(pluginPackageJson, {
 		name: "mars-cache-repro",
 		version: "2.0.0",
-		omp: { tools: "tools" },
+		mars: { tools: "tools" },
 	});
 	const [cachedPlugin] = await getEnabledPlugins(cwd, { home });
 

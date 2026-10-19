@@ -19,8 +19,14 @@ import { getConfigDirPaths } from "../../config";
 import { registerPluginCacheInvalidator, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import { findExtensionDirectoryIndex, resolveExtensionDirectory } from "../extensions/directory-resolution";
 import { installLegacyPiSpecifierShim } from "./legacy-pi-compat";
-import { normalizePluginRuntimeConfig } from "./runtime-config";
-import type { InstalledPlugin, PluginManifest, PluginRuntimeConfig, ProjectPluginOverrides } from "./types";
+import { migrateLegacyPluginsLockfile, normalizePluginRuntimeConfig } from "./runtime-config";
+import {
+	type InstalledPlugin,
+	type PluginManifestCarrier,
+	type PluginRuntimeConfig,
+	type ProjectPluginOverrides,
+	resolvePluginManifest,
+} from "./types";
 
 /** Installed plugin plus the root scope that supplied its runtime metadata. */
 export interface ScopedInstalledPlugin extends InstalledPlugin {
@@ -48,13 +54,14 @@ registerPluginCacheInvalidator(clearEnabledPluginsCache);
 /**
  * Load plugin runtime config from lock file.
  *
- * `home` controls which `<plugins>/omp-plugins.lock.json` is read — pass it
+ * `home` controls which `<plugins>/mars-plugins.lock.json` is read — pass it
  * through whenever the caller is loading plugins for a tempdir-rooted
  * scenario (tests, discovery sub-surfaces that need to mirror an alternate
- * `LoadContext.home`).
+ * `LoadContext.home`). A pre-rebrand `omp-plugins.lock.json` in the same root
+ * is migrated in place the first time it is seen.
  */
 async function loadRuntimeConfig(home?: string): Promise<PluginRuntimeConfig> {
-	const lockPath = getPluginsLockfile(home);
+	const lockPath = await migrateLegacyPluginsLockfile(path.dirname(getPluginsLockfile(home)));
 	try {
 		return normalizePluginRuntimeConfig(await Bun.file(lockPath).json());
 	} catch (err) {
@@ -98,7 +105,7 @@ function isUnreadableRoot(err: unknown): boolean {
 
 /**
  * Per-root enumeration of plugins from `<root>/node_modules`,
- * `<root>/package.json#dependencies`, and `<root>/omp-plugins.lock.json#plugins`.
+ * `<root>/package.json#dependencies`, and `<root>/mars-plugins.lock.json#plugins`.
  * Honors `projectOverrides.disabled` and `projectOverrides.features`. Returns an
  * empty array when the root has no `node_modules` yet.
  */
@@ -127,7 +134,7 @@ async function collectPluginsAtRoot(
 		if (!isEnoent(err)) throw err;
 	}
 
-	const lockPath = path.join(root, "omp-plugins.lock.json");
+	const lockPath = await migrateLegacyPluginsLockfile(root);
 	let runtimeConfig: PluginRuntimeConfig;
 	try {
 		runtimeConfig = normalizePluginRuntimeConfig(await Bun.file(lockPath).json());
@@ -174,7 +181,7 @@ async function collectPluginsAtRoot(
 			continue;
 		}
 		const pluginPkgPath = path.join(nodeModulesPath, name, "package.json");
-		let pluginPkg: { version: string; omp?: PluginManifest; pi?: PluginManifest };
+		let pluginPkg: { version: string } & PluginManifestCarrier;
 		try {
 			pluginPkg = await Bun.file(pluginPkgPath).json();
 		} catch (err) {
@@ -191,7 +198,7 @@ async function collectPluginsAtRoot(
 			throw err;
 		}
 
-		const manifest: PluginManifest | undefined = pluginPkg.omp || pluginPkg.pi;
+		const manifest = resolvePluginManifest(pluginPkg);
 		if (!manifest) {
 			// Not a mars plugin, skip
 			continue;
@@ -233,7 +240,7 @@ async function collectPluginsAtRoot(
  * (`getPluginsDir(home)`) and, when a project anchor (`.mars/` or `.git/`)
  * exists at or above `cwd`, the project root
  * (`<projectAnchor>/.mars/plugins`). Each root contributes the union of its
- * `package.json#dependencies` and `omp-plugins.lock.json#plugins`. Project
+ * `package.json#dependencies` and `mars-plugins.lock.json#plugins`. Project
  * entries shadow user entries with the same package name, matching the
  * shadow semantics of `MarketplaceManager.listInstalledPlugins`.
  *

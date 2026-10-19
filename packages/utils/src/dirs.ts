@@ -725,7 +725,7 @@ export function getPluginsPackageJson(home?: string): string {
 	return path.join(getPluginsDir(home), "package.json");
 }
 
-/** Plugin lock file (~/.mars/plugins/omp-plugins.lock.json). */
+/** Plugin lock file (~/.mars/plugins/mars-plugins.lock.json). */
 export function getPluginsLockfile(home?: string): string {
 	return path.join(getPluginsDir(home), `${APP_NAME}-plugins.lock.json`);
 }
@@ -1117,7 +1117,7 @@ const LEGACY_CONFIG_DIR_NAME = ".omp";
  * the wording is owned by the same module that performs the copy and consumers
  * print the same bytes every time.
  */
-export const LEGACY_CONFIG_MIGRATION_NOTICE = `Copied your existing ${LEGACY_CONFIG_DIR_NAME} configuration to ${CONFIG_DIR_NAME}; the old directory was left untouched.\n`;
+export const LEGACY_CONFIG_MIGRATION_NOTICE = `Copied your legacy configuration from ${LEGACY_CONFIG_DIR_NAME} to ${CONFIG_DIR_NAME}; the old directory was left untouched.\n`;
 
 let legacyConfigMigrationEvaluated = false;
 let pendingLegacyConfigMigrationNotice: string | undefined;

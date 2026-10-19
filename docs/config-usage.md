@@ -217,7 +217,7 @@ Most non-core config loading flows through the capability registry (`src/capabil
 Providers are sorted by numeric priority (higher first). Full set:
 
 - Native Mars (`builtin.ts`): `100`
-- Mars plugins (`omp-plugins`): `90`
+- Mars plugins (`mars-plugins`): `90`
 - Claude: `80`
 - Agent Plugins standard (`agent-plugins`): `75`
 - Codex / agents / Claude plugins marketplace: `70`
@@ -235,7 +235,7 @@ Providers are sorted by numeric priority (higher first). Full set:
 Provider precedence (higher wins)
 
 native (.mars)           priority 100
-omp-plugins             priority  90
+mars-plugins            priority  90
 claude                  priority  80
 agent-plugins           priority  75
 codex / agents /

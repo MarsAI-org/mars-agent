@@ -80,6 +80,10 @@ describe("legacy ~/.omp → ~/.mars migration", () => {
 			"00000000-0000-4000-8000-000000000000\n",
 		);
 		expect(dirs.takeLegacyConfigMigrationNotice()).toBe(LEGACY_CONFIG_MIGRATION_NOTICE);
+		// The notice names the migration as legacy configuration and keeps `.omp`
+		// only as the factual source directory.
+		expect(LEGACY_CONFIG_MIGRATION_NOTICE).toContain("legacy configuration");
+		expect(LEGACY_CONFIG_MIGRATION_NOTICE).toContain("from .omp to .mars");
 		// Drained: further consumers in the same process get nothing.
 		expect(dirs.takeLegacyConfigMigrationNotice()).toBeUndefined();
 		// The legacy tree survives byte-for-byte: a copy, never a move.
