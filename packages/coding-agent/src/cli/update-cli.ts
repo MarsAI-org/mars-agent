@@ -33,7 +33,6 @@ import { cfgUpdateChannel } from "../modes/settings";
 
 const REPO = "MarsAI-org/mars-agent";
 const PACKAGE = "@marsai-org/coding-agent";
-const HOMEBREW_FORMULA = "can1357/tap/omp";
 const MISE_TOOL = "github:MarsAI-org/mars-agent";
 const NIX_STORE_DIR = "/nix/store";
 const GITHUB_API = "https://api.github.com";
@@ -197,11 +196,26 @@ export function resolveReleaseRename(manifest: unknown): ReleaseRename | undefin
 	if (!section) return undefined;
 	const rename = section.rename;
 	if (!isRecord(rename) || typeof rename.package !== "string" || rename.package.length === 0) return undefined;
+	const pkg = rename.package;
+	if (isUpstreamPackageName(pkg)) {
+		throw new Error(`Refusing to migrate ${APP_NAME} to upstream package ${pkg}; reinstall with: ${installerHint()}`);
+	}
 	const natives = rename.natives;
 	return {
-		pkg: rename.package,
+		pkg,
 		natives: typeof natives === "string" && natives.length > 0 ? natives : undefined,
 	};
+}
+
+/**
+ * Whether an npm package name belongs to the upstream oh-my-pi project.
+ *
+ * A release manifest must never be able to point the updater at upstream
+ * packages: following such a pointer would replace Mars with a different
+ * product.
+ */
+function isUpstreamPackageName(pkg: string): boolean {
+	return pkg === "oh-my-pi" || pkg === "omp" || pkg.startsWith("@oh-my-pi/");
 }
 
 function majorVersion(version: string): number {
@@ -217,8 +231,8 @@ function majorVersion(version: string): number {
  * runtime may have changed out from under the package layout, and the pinned
  * `@marsai-org/natives*` companions ({@link buildBunInstallArgs}) may not
  * exist at that version, which would strand bun/npm-managed installs behind a
- * hard install failure. Homebrew and mise installs are unaffected — both
- * already pull GitHub release binaries.
+ * hard install failure. mise installs are unaffected — it already pulls GitHub
+ * release binaries.
  */
 export function shouldForceBinaryUpdate(
 	release: { version: string; dist?: ReleaseDist },
@@ -543,14 +557,16 @@ async function getNpmGlobalBinDir(): Promise<string | undefined> {
 
 async function getHomebrewFormulaPrefix(): Promise<string | undefined> {
 	if (!$which("brew")) return undefined;
-	for (const formula of [HOMEBREW_FORMULA, APP_NAME]) {
-		try {
-			const result = await $`brew --prefix ${formula}`.quiet().nothrow();
-			if (result.exitCode !== 0) continue;
-			const output = result.text().trim();
-			if (output.length > 0) return output;
-		} catch {}
-	}
+	// Probe only a Mars-named formula. The upstream oh-my-pi formula
+	// (`can1357/tap/omp`) must never be resolved here: classifying a foreign
+	// install as Homebrew-managed would let the update path upgrade Mars into a
+	// different product.
+	try {
+		const result = await $`brew --prefix ${APP_NAME}`.quiet().nothrow();
+		if (result.exitCode !== 0) return undefined;
+		const output = result.text().trim();
+		if (output.length > 0) return output;
+	} catch {}
 	return undefined;
 }
 
@@ -852,8 +868,10 @@ export function resolveUpdateTargetFromPath(
  * valid. The `bun pm bin -g` / `npm prefix -g` probes are then skipped unless
  * the launcher is a symlink, whose bin dirs distinguish a manager launcher
  * (taken over in place) from a foreign symlink (resolved to its real binary).
- * Homebrew/mise detection always runs: both managers install GitHub release
- * binaries and stay valid regardless of how the release is distributed.
+ * Homebrew/mise detection always runs. mise installs GitHub release binaries
+ * and stays valid regardless of how the release is distributed; Homebrew is
+ * only detected so the update can refuse honestly, because Mars publishes no
+ * Homebrew formula of its own.
  */
 async function resolveUpdateTarget(options: { allowPackageManagers: boolean }): Promise<UpdateTarget> {
 	const homebrewPrefix = await getHomebrewFormulaPrefix();
@@ -1641,8 +1659,16 @@ export function buildNpmInstallArgs(
 	];
 }
 
-export function buildHomebrewUpdateArgs(force: boolean): string[] {
-	return [force ? "reinstall" : "upgrade", HOMEBREW_FORMULA];
+/**
+ * Explain why a Homebrew-managed Mars install cannot self-update.
+ *
+ * Mars does not publish a Homebrew tap or formula, so there is no Mars formula
+ * to upgrade. The only safe instruction is to reinstall through a supported
+ * channel; upgrading an upstream oh-my-pi formula would replace Mars with a
+ * different product.
+ */
+export function homebrewUpdateRefusal(): string {
+	return `Mars is not distributed through Homebrew; reinstall with the official installer (${installerHint()}) or \`bun install -g ${PACKAGE}\`.`;
 }
 
 /**
@@ -1925,23 +1951,6 @@ export async function updateViaManager(
 			`This install is no longer managed by ${steps.manager}. Removing the old global package may delete this launcher; if it does, reinstall with: ${installerHint()}`,
 		),
 	);
-}
-
-async function updateViaHomebrew(expectedVersion: string, force: boolean): Promise<void> {
-	console.log(chalk.dim("Updating Homebrew formulae..."));
-	const update = await $`brew update`.nothrow();
-	if (update.exitCode !== 0) {
-		throw new Error(`brew update failed with exit code ${update.exitCode}`);
-	}
-
-	console.log(chalk.dim("Updating via Homebrew..."));
-	const args = buildHomebrewUpdateArgs(force);
-	const result = await $`brew ${args}`.nothrow();
-	if (result.exitCode !== 0) {
-		throw new Error(`brew ${args[0]} failed with exit code ${result.exitCode}`);
-	}
-
-	await printVerification(expectedVersion);
 }
 
 async function updateViaMise(expectedVersion: string, force: boolean): Promise<void> {
@@ -2281,7 +2290,16 @@ export async function runUpdateCommand(opts: {
 		const forceBinary = shouldForceBinaryUpdate(release);
 		const allowPrerelease = channel === "canary";
 		const target = await resolveUpdateTarget({ allowPackageManagers: !forceBinary });
-		if (channel === "canary" && (target.method === "nix" || target.method === "brew" || target.method === "mise")) {
+		if (target.method === "brew") {
+			// Mars publishes no Homebrew formula. Refuse instead of upgrading an
+			// upstream formula, which would install a different product over Mars.
+			console.log(
+				chalk.yellow("This installation is managed by Homebrew, but Mars is not distributed through Homebrew."),
+			);
+			console.log(chalk.dim(homebrewUpdateRefusal()));
+			return;
+		}
+		if (channel === "canary" && (target.method === "nix" || target.method === "mise")) {
 			console.log(chalk.yellow("Canary updates are only supported for bun, npm, or binary installs."));
 			return;
 		}
@@ -2289,8 +2307,6 @@ export async function runUpdateCommand(opts: {
 			console.log(chalk.yellow("This installation is managed by Nix and cannot update itself."));
 			console.log(chalk.dim("Update the flake input or profile that provides Mars, then rebuild."));
 			return;
-		} else if (target.method === "brew") {
-			await updateViaHomebrew(release.version, opts.force);
 		} else if (target.method === "mise") {
 			await updateViaMise(release.version, opts.force);
 		} else if (target.method === "bun" || target.method === "npm") {

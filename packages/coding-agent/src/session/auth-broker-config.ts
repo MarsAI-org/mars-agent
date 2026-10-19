@@ -30,7 +30,7 @@ import {
 	resolveAuthBrokerConfig as resolveAuthBrokerConfigShared,
 } from "@marsai-org/ai/auth-broker/discover";
 import { MissingApiKeyError } from "@marsai-org/ai/error";
-import { getAgentDir, logger } from "@marsai-org/utils";
+import { getAgentDir, logger, readCompatEnv } from "@marsai-org/utils";
 import { combine, type ScopeLike } from "../config/registry";
 import { resolveConfigValue } from "../config/resolve-config-value";
 import { Settings } from "../config/settings";
@@ -103,7 +103,7 @@ let cachedConfigPromise: Promise<AuthBrokerClientConfig | null> | null = null;
  * retried. Concurrent callers share one in-flight resolution.
  */
 export function resolveAuthBrokerConfig(): Promise<AuthBrokerClientConfig | null> {
-	const key = `${process.env.MARS_AUTH_BROKER_URL ?? ""}\u0000${process.env.MARS_AUTH_BROKER_TOKEN ?? ""}\u0000${getAgentDir()}`;
+	const key = `${readCompatEnv("MARS_AUTH_BROKER_URL") ?? ""}\u0000${readCompatEnv("MARS_AUTH_BROKER_TOKEN") ?? ""}\u0000${getAgentDir()}`;
 	if (cachedConfigPromise && cachedConfigKey === key) return cachedConfigPromise;
 	const promise = resolveAuthBrokerConfigShared({
 		agentDir: getAgentDir(),

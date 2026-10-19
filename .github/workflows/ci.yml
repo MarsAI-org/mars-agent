@@ -112,8 +112,8 @@ jobs:
       outputs:
          is-release: ${{ steps.detect.outputs.is-release }}
          release-tag: ${{ steps.detect.outputs.release-tag }}
-         # Canary tags publish to npm's canary dist-tag (derived script-side), mark
-         # the GitHub release prerelease, and skip the stable-only brew tap.
+         # Canary tags publish to npm's canary dist-tag (derived script-side) and
+         # mark the GitHub release prerelease.
          channel: ${{ steps.detect.outputs.channel }}
       steps:
          # Only a main-branch run needs tags fetched, so `git tag --points-at
@@ -219,10 +219,11 @@ jobs:
               path: MODULE.bazel.lock
 
    # Rust validation (tests, clippy, rustfmt) runs on non-PR events only.
-   # Native-changing PRs are rare enough that they do not warrant PR-side
-   # Rust validation or a PR-side addon build (see native_addons): Rust is
-   # validated post-merge on main (kata remote cache, warm) and again at
-   # release. A skipped required check still satisfies branch protection.
+   # Rust is validated post-merge on main (kata remote cache, warm) and again
+   # at release. native_addons still builds the linux-x64 pair on a PR whose
+   # exact addon cache entry is missing, because the TS tests need a binary
+   # compiled from the checkout's own Rust sources. A skipped required check
+   # still satisfies branch protection.
    rust_validate:
       name: Validate Rust workspace (bazel)
       if: github.event_name != 'pull_request'
@@ -262,17 +263,19 @@ jobs:
 
    # Provides the linux-x64 addon pair every downstream TS job installs.
    #
-   # PRs never build. They restore the pair main built for the same native
-   # sources from actions/cache (key = hash of every native build input:
-   # toolchain and build settings plus crates/** and BUILD.bazel). With no
-   # exact entry (the PR changes native inputs, or main has not built this
-   # state yet) they take main's newest entry, and with no entry at all the
-   # latest npm release. The workspace loader skips its version sentinel for
-   # workspace loads, so any of these load under a newer checkout. Testing
-   # against main's build instead of the last release keeps merged-but-
-   # unreleased native fixes from failing every PR that did not touch Rust
-   # (a merged grep fix plus its TS test failed 75 PR runs against the
-   # 18.3.1 addon). Only main saves; see the save step for why.
+   # A PR restores the pair main built for the same native sources from
+   # actions/cache (key = hash of every native build input: toolchain and
+   # build settings plus crates/** and BUILD.bazel). An exact hit is the only
+   # reusable addon: any other binary was compiled from different Rust
+   # sources, so the TS suite would assert against a contract the checkout no
+   # longer has. When the exact entry is missing (the PR changes native
+   # inputs, or main has not built this state yet) the PR builds the pair
+   # itself, which costs ~10-15 min but keeps every test honest. A previous
+   # fallback fetched the last published npm addon and silently masked that
+   # mismatch: 18.12.2 returns `unreadableDirectories` from listWorkspace and
+   # takes a fourth encodeSixelAsync argument, so the TS tests failed against
+   # it while the Rust sources were correct. Only main saves; see the save
+   # step for why.
    #
    # Main (kata, cluster remote cache) builds only the pair here so the TS
    # fan-out starts as soon as it links; native_addons_cross builds every
@@ -302,11 +305,15 @@ jobs:
               echo "prefix=natives-linux-x64-v1-" >> "$GITHUB_OUTPUT"
               echo "key=natives-linux-x64-v1-$NATIVE_INPUTS_HASH" >> "$GITHUB_OUTPUT"
 
-         # ---- PR path: main-built addons from actions/cache, else npm ----
+         # ---- PR path: exact main-built addons, else build from source ----
          # `ci-natives` is a plain workspace-relative path on purpose: the
          # cache version hashes the literal path list, so kata (save) and
          # hosted (restore) must spell it identically, and upload-artifact
          # skips dot-directories by default.
+         #
+         # No restore-keys prefix: a non-exact entry was built from different
+         # native sources, so it would test the checkout against a contract it
+         # no longer has.
          - name: Restore main-built native addons
            id: natives-cache
            if: github.event_name == 'pull_request'
@@ -314,42 +321,27 @@ jobs:
            with:
               path: ci-natives
               key: ${{ steps.natives-key.outputs.key }}
-              restore-keys: |
-                 ${{ steps.natives-key.outputs.prefix }}
-         - name: Fetch release native addons (npm)
-           if: github.event_name == 'pull_request' && steps.natives-cache.outputs.cache-matched-key == ''
-           shell: bash
-           run: |
-              set -euo pipefail
-              tarball="$(npm view @marsai-org/natives-linux-x64@latest dist.tarball 2>/dev/null || npm view @oh-my-pi/pi-natives-linux-x64@latest dist.tarball)"
-              echo "Fetching $tarball"
-              curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
-              mkdir -p ci-natives/natives-linux-x64-baseline ci-natives/natives-linux-x64-modern
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-baseline.node" ci-natives/natives-linux-x64-baseline/
-              cp "$RUNNER_TEMP/package/pi_natives.linux-x64-modern.node" ci-natives/natives-linux-x64-modern/
-         # Make the addon source visible whenever it is not source-matched,
-         # instead of leaving a reviewer to wonder which addons the tests ran.
+         # Make the addon source visible instead of leaving a reviewer to
+         # wonder which addons the tests ran.
          - name: Report native addon source
            if: github.event_name == 'pull_request'
            shell: bash
            env:
               EXACT: ${{ steps.natives-cache.outputs.cache-hit }}
-              MATCHED: ${{ steps.natives-cache.outputs.cache-matched-key }}
+              KEY: ${{ steps.natives-key.outputs.key }}
            run: |
               if [ "$EXACT" = true ]; then
-                echo "Using main's addons for this exact native source state ($MATCHED)."
-              elif [ -n "$MATCHED" ]; then
-                echo "::notice title=Native addons not source-matched::No main build matches this PR's native sources; testing against main's newest addon build ($MATCHED). Native changes are validated post-merge on main and at release."
+                echo "Using main's addons for this exact native source state ($KEY)."
               else
-                echo "::notice title=Native addons from npm::No main-built addon cache entry is available; testing against the latest npm release addons."
+                echo "::notice title=Native addons built from source::No main-built addon cache entry matches this PR's native sources; building the addons from the checked-out sources."
               fi
 
-         # ---- main path: bazel build of the linux-x64 pair ----
+         # ---- bazel build of the linux-x64 pair (main, or a PR cache miss) ----
          - id: cache
-           if: github.event_name != 'pull_request'
+           if: github.event_name != 'pull_request' || steps.natives-cache.outputs.cache-hit != 'true'
            uses: ./.github/actions/bazel-cache
          - name: Build linux-x64 native addons
-           if: github.event_name != 'pull_request'
+           if: github.event_name != 'pull_request' || steps.natives-cache.outputs.cache-hit != 'true'
            run: |
               set -eo pipefail
               if [ "$(ulimit -Sn)" != unlimited ] && [ "$(ulimit -Sn)" -lt 65536 ]; then ulimit -Sn 65536 || true; fi
@@ -372,7 +364,7 @@ jobs:
          # thousands of actions is the failure mode that made CI slow — make
          # it visible in the run summary instead of discovering it weeks in.
          - name: Report bazel cache stats
-           if: github.event_name != 'pull_request'
+           if: github.event_name != 'pull_request' || steps.natives-cache.outputs.cache-hit != 'true'
            shell: bash
            run: |
               # Bazel runs with --color=yes (config=ci); strip ANSI before
@@ -1188,43 +1180,8 @@ jobs:
               NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
            run: bun run ci:release:publish
 
-   # Regenerate the Homebrew tap formula (can1357/homebrew-tap) from the freshly
-   # published release assets and push it. Gated on release_github_verify so the
-   # tap only cuts over to a release whose published binary was verified (matches
-   # how release_npm is gated). No-ops when HOMEBREW_TAP_DEPLOY_KEY is unset, so a
-   # release never blocks on tap access.
-   # Homebrew tap update disabled safely in MarsAI-org/mars-agent until Mars tap is configured
-   release_brew:
-      name: Update Homebrew tap
-      if: github.repository == 'MarsAI-org/mars-agent' && false
-      needs: [release_metadata, release_github_verify]
-      runs-on: ubuntu-22.04
-      env:
-         HAS_TAP_KEY: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY != '' }}
-      steps:
-         - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-           if: env.HAS_TAP_KEY == 'true'
-         - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
-           if: env.HAS_TAP_KEY == 'true'
-         - name: Check out the Homebrew tap
-           if: env.HAS_TAP_KEY == 'true'
-           uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-           with:
-              repository: can1357/homebrew-tap
-              ssh-key: ${{ secrets.HOMEBREW_TAP_DEPLOY_KEY }}
-              path: homebrew-tap
-         - name: Regenerate and push the formula
-           if: env.HAS_TAP_KEY == 'true'
-           env:
-              GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           run: |
-              bun scripts/ci-update-brew-formula.ts "${{ needs.release_metadata.outputs.release-tag }}" --out homebrew-tap/Formula/mars.rb
-              cd homebrew-tap
-              if git diff --quiet -- Formula/mars.rb; then
-                echo "formula already up to date for ${{ needs.release_metadata.outputs.release-tag }}"
-                exit 0
-              fi
-              git -c user.name="github-actions[bot]" \
-                  -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-                  commit -m "mars ${{ needs.release_metadata.outputs.release-tag }}" -- Formula/mars.rb
-              git push origin HEAD:main
+   # No Homebrew tap job: Mars does not publish a tap or formula. The previous
+   # job pushed a formula into the upstream can1357/homebrew-tap, which would
+   # distribute Mars under an upstream-owned tap and let upstream releases
+   # overwrite it. `scripts/ci-update-brew-formula.ts` stays ready for a future
+   # Mars-owned tap; re-add a job here only after that tap exists.

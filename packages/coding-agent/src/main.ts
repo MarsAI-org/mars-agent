@@ -21,7 +21,15 @@ import {
 	takeLegacyConfigMigrationNotice,
 	VERSION,
 } from "@marsai-org/utils/dirs";
-import { $env, isBunTestRuntime, setInteractiveHost } from "@marsai-org/utils/env";
+import {
+	$env,
+	flushEnvAliasNotices,
+	isBunTestRuntime,
+	noteInternalEnvWrite,
+	reportLegacyEnvAliases,
+	resolveEnvAlias,
+	setInteractiveHost,
+} from "@marsai-org/utils/env";
 import * as logger from "@marsai-org/utils/logger";
 import * as postmortem from "@marsai-org/utils/postmortem";
 import { fuzzyFilter } from "@marsai-org/tui/fuzzy";
@@ -1759,6 +1767,14 @@ export async function runRootCommand(
 		// the `--version`/`--export` exits so their output stays byte-exact.
 		const legacyConfigMigrationNotice = takeLegacyConfigMigrationNotice();
 		if (legacyConfigMigrationNotice) writeStartupNotice(parsedArgs, legacyConfigMigrationNotice);
+		// Renamed environment variables (both the OMP_* and PI_* generations) queued
+		// one deprecation line each. Queue the full user-facing set first (some
+		// features read their variable much later than this point), then flush
+		// through the same sink before the TUI owns the terminal. The sink decides
+		// whether notices are enabled (TTY-only by default, silent under tests and
+		// piped protocols).
+		reportLegacyEnvAliases($env);
+		flushEnvAliasNotices(text => process.stderr.write(text));
 
 		if ((parsedArgs.mode === "rpc" || parsedArgs.mode === "rpc-ui") && parsedArgs.fileArgs.length > 0) {
 			process.stderr.write(`${chalk.red("Error: @file arguments are not supported in RPC mode")}\n`);
@@ -1788,7 +1804,7 @@ export async function runRootCommand(
 		// sibling hooks/tools/commands/MCP content could be discovered implicitly.
 		if (!parsedArgs.trustedExtensions?.length) {
 			// Register CLI-provided extension package paths (`--extension`, `--hook`) so
-			// the `omp-plugins` discovery provider can surface their `skills/`, `hooks/`,
+			// the `mars-plugins` discovery provider can surface their `skills/`, `hooks/`,
 			// `tools/`, `commands/`, `rules/`, `prompts/`, and `.mcp.json` sub-trees.
 			// Explicit roots remain authorized under `--no-extensions`; only ambient
 			// extension discovery is disabled.
@@ -1895,7 +1911,12 @@ export async function runRootCommand(
 			modelRegistry.hydrateCredentialScopedModelCaches(),
 		);
 		if (parsedArgs.noPty || parsedArgs.mode === "rpc-ui") {
+			// Set both names: the canonical one is documented, the legacy one is
+			// still read by already-spawned workers and older child processes.
+			// Internal writes never produce a deprecation notice.
+			Bun.env.MARS_NO_PTY = "1";
 			Bun.env.PI_NO_PTY = "1";
+			noteInternalEnvWrite("PI_NO_PTY", "1");
 		}
 		if (
 			parsedArgs.noTitle ||
@@ -1903,16 +1924,18 @@ export async function runRootCommand(
 			parsedArgs.mode === "rpc-ui" ||
 			parsedArgs.mode === "acp"
 		) {
+			Bun.env.MARS_NO_TITLE = "1";
 			Bun.env.PI_NO_TITLE = "1";
+			noteInternalEnvWrite("PI_NO_TITLE", "1");
 		}
 
 		// Initialize discovery system with settings for provider persistence
 		logger.time("initializeWithSettings", initializeWithSettings, settingsInstance);
 
 		// Apply model role overrides from CLI args or env vars (ephemeral, not persisted)
-		const smolModel = parsedArgs.smol ?? $env.PI_SMOL_MODEL;
-		const slowModel = parsedArgs.slow ?? $env.PI_SLOW_MODEL;
-		const planModel = parsedArgs.plan ?? $env.PI_PLAN_MODEL;
+		const smolModel = parsedArgs.smol ?? resolveEnvAlias("MARS_SMOL_MODEL", "PI_SMOL_MODEL", { env: $env });
+		const slowModel = parsedArgs.slow ?? resolveEnvAlias("MARS_SLOW_MODEL", "PI_SLOW_MODEL", { env: $env });
+		const planModel = parsedArgs.plan ?? resolveEnvAlias("MARS_PLAN_MODEL", "PI_PLAN_MODEL", { env: $env });
 		if (smolModel || slowModel || planModel) {
 			settingsInstance.overrideModelRoles({
 				smol: smolModel,

@@ -3,7 +3,16 @@ import * as net from "node:net";
 import * as os from "node:os";
 import * as path from "node:path";
 import { FileLock, Process, type PtyRunResult, PtySession } from "@marsai-org/natives";
-import { isEnoent, isRecord, logger, postmortem, procmgr, sanitizeText, setProcessName } from "@marsai-org/utils";
+import {
+	isEnoent,
+	isRecord,
+	logger,
+	postmortem,
+	procmgr,
+	readCompatEnv,
+	sanitizeText,
+	setProcessName,
+} from "@marsai-org/utils";
 import { TerminalQueryResponder } from "@marsai-org/utils/vterm";
 import { hostHasInheritableConsole } from "../eval/py/spawn-options";
 import {
@@ -1557,8 +1566,9 @@ export async function startDaemonBrokerFromEnvironment(options: DaemonBrokerStar
 	if (!projectDir || !runtimeDir) throw new Error("Daemon broker environment is incomplete");
 	delete process.env[DAEMON_PROJECT_DIR_ENV];
 	delete process.env[DAEMON_RUNTIME_DIR_ENV];
-	const rawGrace = process.env[DAEMON_IDLE_GRACE_ENV];
+	const rawGrace = readCompatEnv(DAEMON_IDLE_GRACE_ENV);
 	delete process.env[DAEMON_IDLE_GRACE_ENV];
+	delete process.env.OMP_DAEMON_IDLE_GRACE_MS;
 	const parsedGrace = rawGrace === undefined ? DEFAULT_IDLE_GRACE_MS : Number.parseInt(rawGrace, 10);
 	const idleGraceMs = Number.isFinite(parsedGrace) && parsedGrace >= 0 ? parsedGrace : DEFAULT_IDLE_GRACE_MS;
 	const requestedRestartBackoffBaseMs = options.restartBackoffBaseMs ?? RESTART_BACKOFF_BASE_MS;

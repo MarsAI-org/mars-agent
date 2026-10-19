@@ -47,7 +47,7 @@ For Claude Code, Codex, Gemini CLI, Cursor, and Windsurf, the project entry is e
 
 ### Profiles
 
-Named profiles (`mars --profile <name>` or `MARS_PROFILE`/`PI_PROFILE`) isolate user-level MCP config. `mars --profile <name> --alias <command>` creates a shell shortcut that selects that profile. When a profile is active, the **user** scope resolves to the profile's agent directory instead of the default one:
+Named profiles (`mars --profile <name>` or `MARS_PROFILE`/`OMP_PROFILE`/`PI_PROFILE`) isolate user-level MCP config. `mars --profile <name> --alias <command>` creates a shell shortcut that selects that profile. When a profile is active, the **user** scope resolves to the profile's agent directory instead of the default one:
 
 - Default profile: `~/.mars/agent/mcp.json`
 - Profile `<name>`: `~/.mars/profiles/<name>/agent/mcp.json`
