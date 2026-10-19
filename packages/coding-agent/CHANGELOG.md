@@ -7,6 +7,21 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Changed
+
+- Harness documentation is now addressed as `mars://` in help text, prompts, and generated links; the existing `omp://` spelling keeps working as an alias.
+- Web search now tells the agent about its X post operators (`site:x.com`, `from:<handle>`) when you are logged in to xAI, so questions about reactions on X reach X search.
+- Reduced memory retained after merging unchanged discovered and cached models ([#14252](https://github.com/can1357/oh-my-pi/pull/14252) by [@iliaal](https://github.com/iliaal)).
+- The default `smol` model now prefers Claude Haiku 5.5 when it is available.
+- Automatic session titles now start when the agent's reply begins rather than when you submit, so a slow-thinking first reply gets a card title (icon and code) instead of a plain fallback title.
+
+### Fixed
+
+- Reduced memory growth after one-shot side requests without interrupting ongoing conversations ([#14334](https://github.com/can1357/oh-my-pi/pull/14334) by [@iliaal](https://github.com/iliaal)).
+- Fixed sessions staying untitled when you interrupted the first reply to send a queued steer message.
+
+## [18.8.6] - 2026-10-08
+
 ### Added
 
 - Added the multi-agent orchestrator core (Milestone 1): deterministic scheduling of a task DAG, a dependency-gated task board, exclusive file leases with all-or-nothing acquisition, a fan-out router that stays single-agent by default, child permissions intersected with the parent's active tools, token/request/wall-clock budget guards, a typed agent-to-agent message bus, and a native worker runner. It is opt-in through the `orchestrator.*` settings and disabled by default.

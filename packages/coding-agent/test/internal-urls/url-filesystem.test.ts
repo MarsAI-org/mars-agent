@@ -173,27 +173,30 @@ describe("InternalUrlFilesystem policy", () => {
 });
 
 describe("InternalUrlFilesystem rendered resources", () => {
-	it("serves omp:// as a read-only tree whose files hold the rendered bytes", async () => {
-		const filesystem = shellFs();
-		const listing = await filesystem.handle({ op: ShellFsOp.ReadDir, path: "omp://" });
-		const entry = listing.entries?.find(item => item.fileType === ShellFsFileType.File);
-		if (!entry) throw new Error("omp:// listed no documents");
-		const url = `omp://${entry.name}`;
+	it.each(["mars", "omp"] as const)(
+		"serves %s:// as a read-only tree whose files hold the rendered bytes",
+		async scheme => {
+			const filesystem = shellFs();
+			const listing = await filesystem.handle({ op: ShellFsOp.ReadDir, path: `${scheme}://` });
+			const entry = listing.entries?.find(item => item.fileType === ShellFsFileType.File);
+			if (!entry) throw new Error(`${scheme}:// listed no documents`);
+			const url = `${scheme}://${entry.name}`;
 
-		const opened = await filesystem.handle({ op: ShellFsOp.Open, path: url, open: READ });
-		const handle = opened.handle;
-		if (handle === undefined) throw new Error(`open ${url} returned no handle`);
-		const metadata = await filesystem.handle({ op: ShellFsOp.FileMetadata, handle });
-		const read = await filesystem.handle({ op: ShellFsOp.Read, handle, offset: 0n, length: 1 << 20 });
-		const rendered = await filesystem.handle({ op: ShellFsOp.Open, path: url, open: CREATE });
-		await filesystem.handle({ op: ShellFsOp.Close, handle });
+			const opened = await filesystem.handle({ op: ShellFsOp.Open, path: url, open: READ });
+			const handle = opened.handle;
+			if (handle === undefined) throw new Error(`open ${url} returned no handle`);
+			const metadata = await filesystem.handle({ op: ShellFsOp.FileMetadata, handle });
+			const read = await filesystem.handle({ op: ShellFsOp.Read, handle, offset: 0n, length: 1 << 20 });
+			const rendered = await filesystem.handle({ op: ShellFsOp.Open, path: url, open: CREATE });
+			await filesystem.handle({ op: ShellFsOp.Close, handle });
 
-		expect(metadata.metadata).toEqual({
-			fileType: ShellFsFileType.File,
-			size: read.data?.length ?? -1,
-			mode: 0o444,
-		});
-		expect(read.data?.length).toBeGreaterThan(0);
-		expect(rendered.error?.code).toBe("EROFS");
-	});
+			expect(metadata.metadata).toEqual({
+				fileType: ShellFsFileType.File,
+				size: read.data?.length ?? -1,
+				mode: 0o444,
+			});
+			expect(read.data?.length).toBeGreaterThan(0);
+			expect(rendered.error?.code).toBe("EROFS");
+		},
+	);
 });
