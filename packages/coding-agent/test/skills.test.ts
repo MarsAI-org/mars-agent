@@ -33,7 +33,7 @@ const expectedFixtureSkillOrder: string[] = [
 /**
  * Disable every named built-in skill source. Used by `loadSkills` option tests
  * that need to isolate a custom directory or assert "no built-in leakage".
- * Plugin providers (`omp-plugins`, `claude-plugins`, `agent-plugins`) have no
+ * Plugin providers (`mars-plugins`, `claude-plugins`, `agent-plugins`) have no
  * toggle; the file-wide isolated home below keeps the developer's real plugin
  * installs out of every assertion.
  */

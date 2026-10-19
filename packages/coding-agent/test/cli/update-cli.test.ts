@@ -63,7 +63,7 @@ describe("getLatestRelease rename pointers", () => {
 			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				omp: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
+				mars: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
 			},
 		});
 
@@ -87,11 +87,30 @@ describe("getLatestRelease rename pointers", () => {
 		expect(urls).toEqual(["https://registry.npmjs.org/@marsai-org%2fcoding-agent/canary"]);
 	});
 
+	it("still follows a pre-rebrand omp.rename pointer", async () => {
+		const urls = stubRegistry({
+			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
+			"@marsai-org/coding-agent": {
+				version: "999.0.0",
+				omp: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
+			},
+		});
+
+		const release = await getLatestRelease({ registries: npmjs });
+
+		expect(release.version).toBe("999.1.0");
+		expect(release.packages).toEqual({ pkg: "@new/mars", natives: "@new/natives" });
+		expect(urls).toEqual([
+			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
+			"https://registry.npmjs.org/@new%2fmars/latest",
+		]);
+	});
+
 	it("ignores a rename pointer that cycles back to an already-visited package", async () => {
 		const urls = stubRegistry({
 			"@marsai-org/coding-agent": {
 				version: "999.0.0",
-				omp: { rename: { package: "@marsai-org/coding-agent" } },
+				mars: { rename: { package: "@marsai-org/coding-agent" } },
 			},
 		});
 

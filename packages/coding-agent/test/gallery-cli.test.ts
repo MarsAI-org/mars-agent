@@ -10,6 +10,8 @@ import {
 } from "@marsai-org/coding-agent/cli/gallery-cli";
 import {
 	type GalleryFixture,
+	createGallerySegmentContext,
+	galleryFixtures,
 	getComposerGalleryInventory,
 	getSegmentGalleryInventory,
 } from "@marsai-org/coding-agent/cli/gallery-fixtures";
@@ -185,5 +187,17 @@ describe("gallery harness", () => {
 		expect(
 			writeToolRenderer.renderCall({ path: "proc://build-42/kill" }, { ...options, argsComplete: true }, theme),
 		).toBeDefined();
+	});
+
+	it("renders gallery fixtures under the Mars repository identity", () => {
+		const context = createGallerySegmentContext();
+		expect(context.activeRepo?.cwd).toBe("/workspace/mars-agent");
+		expect(context.activeRepo?.relativeRepoRoot).toBe("mars-agent");
+		expect(context.git?.pr?.url).toBe("https://github.com/MarsAI-org/mars-agent/pull/1842");
+
+		// No fixture may leak the upstream repository identity into the gallery.
+		const serialized = JSON.stringify(galleryFixtures);
+		expect(serialized).not.toContain("oh-my-pi");
+		expect(serialized).not.toContain("can1357");
 	});
 });

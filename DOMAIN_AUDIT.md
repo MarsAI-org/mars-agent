@@ -68,7 +68,7 @@ Per rebrand policy:
 | `packages/collab-web/scripts/local-relay.ts:3` | `wss://my.omp.sh` | Collab Relay | Local mock relay doc comment. |
 | `packages/wire/src/stream.ts:19` | `DEFAULT_STREAM_URL = "https://live.omp.sh"` | Mars Live | Twitch-style terminal streaming broadcast service. |
 | `packages/coding-agent/src/cli/command-help.ts:38` | `live.omp.sh` | Mars Live | CLI help description for `mars clip`. |
-| `packages/coding-agent/src/stream/clip-upload.ts:5` | `https://live.omp.sh` | Mars Live | Upload handler for public recordings (`.ompcast`). |
+| `packages/coding-agent/src/stream/clip-upload.ts:5` | `https://live.omp.sh` | Mars Live | Upload handler for public recordings (`.marscast`, legacy `.ompcast` accepted). |
 | `docs/stream.md:3,22,47,57,106,110,112` | `live.omp.sh` | Mars Live | Comprehensive live streaming docs. |
 | `packages/catalog/src/compat/rules/auth/stencil.kdl:2` | `live.omp.sh` | Mars Live / Stencil | Auth descriptor comment. |
 | `packages/coding-agent/src/tools/settings.ts:978,983` | `https://qa.omp.sh/v1/grievances` | Auto QA Grievances | Background grievance error reporting endpoint. |

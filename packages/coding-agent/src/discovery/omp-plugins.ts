@@ -40,7 +40,12 @@ import {
 import { listOmpExtensionRoots, type OmpExtensionRoot } from "./omp-extension-roots";
 import { resolvePluginStdioPaths } from "./substitute-plugin-root";
 
-const PROVIDER_ID = "omp-plugins";
+/**
+ * Canonical provider id. The pre-rebrand id `omp-plugins` stays accepted as an
+ * alias wherever persisted user config names a provider (see
+ * `PROVIDER_ID_ALIASES` in `../capability`).
+ */
+const PROVIDER_ID = "mars-plugins";
 const DISPLAY_NAME = "Mars Extension Packages";
 const DESCRIPTION =
 	"Sub-discovery (skills, hooks, tools, commands, rules, prompts, .mcp.json) inside extension packages";
@@ -311,8 +316,8 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 
 		const parsed = tryParseJson<{ mcpServers?: Record<string, unknown> }>(raw);
 		if (!parsed) {
-			warnings.push(`[omp-plugins] Invalid JSON in ${mcpPath}`);
-			logger.warn(`[omp-plugins] Invalid JSON in ${mcpPath}`);
+			warnings.push(`[mars-plugins] Invalid JSON in ${mcpPath}`);
+			logger.warn(`[mars-plugins] Invalid JSON in ${mcpPath}`);
 			continue;
 		}
 		const servers = expandEnvVarsDeep(parsed.mcpServers, {
@@ -325,7 +330,7 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 			if (!serverCfg || typeof serverCfg !== "object" || Array.isArray(serverCfg)) continue;
 			const cfg = serverCfg as RawMcpServer;
 			if (typeof cfg.command !== "string" && typeof cfg.url !== "string") {
-				warnings.push(`[omp-plugins] Skipping MCP server "${serverName}" in ${mcpPath}: missing command or url`);
+				warnings.push(`[mars-plugins] Skipping MCP server "${serverName}" in ${mcpPath}: missing command or url`);
 				continue;
 			}
 			// Root relative command/cwd at the plugin's config directory, not the
@@ -337,13 +342,13 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 			const requestIdFormat = parseRequestIdFormat(cfg.requestIdFormat);
 			if (requestIdFormat === undefined && cfg.requestIdFormat != null) {
 				logger.warn(
-					`[omp-plugins] MCP server "${serverName}" in ${mcpPath}: invalid requestIdFormat ${JSON.stringify(cfg.requestIdFormat)}, ignoring`,
+					`[mars-plugins] MCP server "${serverName}" in ${mcpPath}: invalid requestIdFormat ${JSON.stringify(cfg.requestIdFormat)}, ignoring`,
 				);
 			}
 			const instructions = typeof cfg.instructions === "boolean" ? cfg.instructions : undefined;
 			if (instructions === undefined && cfg.instructions != null) {
 				logger.warn(
-					`[omp-plugins] MCP server "${serverName}" in ${mcpPath}: invalid instructions ${JSON.stringify(cfg.instructions)}, ignoring`,
+					`[mars-plugins] MCP server "${serverName}" in ${mcpPath}: invalid instructions ${JSON.stringify(cfg.instructions)}, ignoring`,
 				);
 			}
 			items.push({

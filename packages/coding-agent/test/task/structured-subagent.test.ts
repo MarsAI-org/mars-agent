@@ -150,12 +150,12 @@ describe("structured subagent primitive", () => {
 
 	it("rescans agents when a plugin provider is disabled while an earlier discovery is in flight", async () => {
 		const previouslyDisabled = getDisabledProviders();
-		enableProvider("omp-plugins");
+		enableProvider("mars-plugins");
 		const firstEntered = Promise.withResolvers<void>();
 		const releaseFirst = Promise.withResolvers<void>();
 		let scans = 0;
 		vi.spyOn(discoveryModule, "discoverAgents").mockImplementation(async () => {
-			const pluginsEnabled = isProviderEnabled("omp-plugins");
+			const pluginsEnabled = isProviderEnabled("mars-plugins");
 			if (++scans === 1) {
 				firstEntered.resolve();
 				await releaseFirst.promise;
@@ -166,7 +166,7 @@ describe("structured subagent primitive", () => {
 		try {
 			const first = resolveEffectiveSubagentPolicy(request({ agent: "plugin-worker" }));
 			await firstEntered.promise;
-			disableProvider("omp-plugins");
+			disableProvider("mars-plugins");
 			const second = resolveEffectiveSubagentPolicy(request({ agent: "plugin-worker" }));
 			releaseFirst.resolve();
 
