@@ -3,8 +3,16 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
 import { getAgentDir, getConfigRootDir, getProjectDir, maybeMigrateLegacyConfigDir, refreshDirsFromEnv } from "./dirs";
+import { isBunTestRuntime } from "./env-alias";
 
 export * from "./worker-host";
+export {
+	flushEnvAliasNotices,
+	LEGACY_ENV_ALIASES,
+	noteInternalEnvWrite,
+	reportLegacyEnvAliases,
+	resolveEnvAlias,
+} from "./env-alias";
 
 const ENV_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -274,7 +282,8 @@ export function parseEnvFile(filePath: string): Record<string, string> {
 		// File doesn't exist or can't be read - return empty result
 	}
 
-	// MARS_ overrides PI_
+	// MARS_ overrides PI_. Mirroring keeps readers of the legacy name working
+	// for a dotenv that only sets the canonical one.
 	for (const k in result) {
 		if (k.startsWith("MARS_")) {
 			result[`PI_${k.slice(5)}`] = result[k];
@@ -306,8 +315,9 @@ for (const file of [projectEnv, agentEnv, piEnv, homeEnv]) {
 	}
 }
 
-// Directory-affecting keys (XDG_*_HOME, and in default mode PI_CODING_AGENT_DIR)
-// may have just arrived from the profile/agent `.env` applied above. The dirs
+// Directory-affecting keys (XDG_*_HOME, and in default mode MARS_CODING_AGENT_DIR
+// with its legacy PI_ alias) may have just arrived from the profile/agent `.env`
+// applied above. The dirs
 // resolver cached its paths at module load — before this file ran — so rebuild
 // it now from the updated env. `getAgentDir()` already located the `.env` from
 // the profile name + home, so this re-reads only the directory vars.
@@ -378,14 +388,7 @@ export function $envpos(name: string, defaultValue: number): number {
 	return parsed;
 }
 
-const BUN_TEST_ENTRY_PATTERN = /[._](?:test|spec)\.[cm]?[jt]sx?$/;
-
-/** True when the process is an explicitly marked test child or Bun is running a test entrypoint. */
-export function isBunTestRuntime(): boolean {
-	if (Bun.env.PI_TEST_RUNTIME === "1") return true;
-	const hasTestEnvironment = Bun.env.BUN_ENV === "test" || Bun.env.NODE_ENV === "test";
-	return hasTestEnvironment && BUN_TEST_ENTRY_PATTERN.test(Bun.main);
-}
+export { isBunTestRuntime };
 
 let terminalHeadless = isBunTestRuntime();
 

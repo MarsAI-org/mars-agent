@@ -2330,7 +2330,7 @@ export class InteractiveMode implements InteractiveModeContext {
 		// block, bash command preview, or file diff does not stall the render thread.
 		setImmediate(() => {
 			void warmHighlighter();
-			if (!$env.PI_NO_TITLE && !this.sessionManager.getSessionName()) {
+			if (!$env.MARS_NO_TITLE && !$env.PI_NO_TITLE && !this.sessionManager.getSessionName()) {
 				this.#inputController.prewarmTinyTitleModel();
 			}
 		});
