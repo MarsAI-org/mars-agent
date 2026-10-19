@@ -71,8 +71,9 @@ export function getExtraHelpText(): string {
   MARS_SLOW_MODEL            - Override slow/reasoning model (see --slow)
   MARS_PLAN_MODEL            - Override planning model (see --plan)
   MARS_NO_PTY                - Disable PTY-based interactive bash execution
-  ${chalk.dim("Legacy OMP_* and PI_* spellings of the names above are still honored as")}
-  ${chalk.dim("fallbacks, but they are deprecated and print a one-time notice.")}
+  ${chalk.dim("Legacy PI_* names (PI_CODING_AGENT_DIR, PI_PACKAGE_DIR, PI_SMOL_MODEL, PI_SLOW_MODEL,")}
+  ${chalk.dim("PI_PLAN_MODEL, PI_NO_PTY) and their OMP_* spellings are still honored as fallbacks")}
+  ${chalk.dim("but are deprecated and print a one-time notice.")}
   For complete environment variable reference, see:
   ${chalk.dim("docs/environment-variables.md")}
 ${chalk.bold("Available Tools (default-enabled unless noted):")}
