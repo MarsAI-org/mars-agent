@@ -2,7 +2,7 @@ import { type ClipUploadResponse, STREAM_ROUTES } from "@marsai-org/wire";
 import { parseRecording, type RecordingHeader } from "./recording";
 
 export interface ClipUploadOptions {
-	/** Stream server base URL (`stream.serverUrl`), e.g. https://live.omp.sh. */
+	/** Stream server base URL (`stream.serverUrl`, or the `--server` flag). */
 	serverUrl: string;
 	/** Stencil bearer (see `StencilCredential`); the clip belongs to its account. */
 	token: string;

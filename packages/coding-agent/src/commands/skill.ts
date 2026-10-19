@@ -1,5 +1,6 @@
 /**
- * Install, publish, and manage skills on a Skillshare registry (skills.omp.sh).
+ * Install, publish, and manage skills on a Skillshare registry
+ * (default: the upstream registry configured by `skills.registryUrl`).
  */
 import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import type { SkillSearchSort } from "@marsai-org/wire/skillshare";
