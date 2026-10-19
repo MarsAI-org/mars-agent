@@ -3,16 +3,16 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
 import { getAgentDir, getConfigRootDir, getProjectDir, maybeMigrateLegacyConfigDir, refreshDirsFromEnv } from "./dirs";
-import { isBunTestRuntime } from "./env-alias";
+import { flagCompatEnv, isBunTestRuntime } from "./env-compat";
 
 export * from "./worker-host";
 export {
 	flushEnvAliasNotices,
-	LEGACY_ENV_ALIASES,
 	noteInternalEnvWrite,
 	reportLegacyEnvAliases,
 	resolveEnvAlias,
-} from "./env-alias";
+	USER_FACING_ENV_ALIASES,
+} from "./env-compat";
 
 const ENV_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
 
@@ -491,6 +491,15 @@ export function parseFlag(value: string | undefined, def = false): boolean {
 
 export function $flag(name: string, def: boolean = false): boolean {
 	return parseFlag($env[name], def);
+}
+
+/**
+ * `$flag` for a canonical `MARS_*` name with its legacy `OMP_*` fallback.
+ * Kept here (rather than in `env-compat`) because the truthiness rules must
+ * stay identical to {@link $flag}; see `env-compat.ts` for the alias table.
+ */
+export function $compatFlag(name: string, def: boolean = false): boolean {
+	return flagCompatEnv(name, def, Bun.env);
 }
 
 // After the refresh, a `PI_CONFIG_DIR` arriving from a profile/agent `.env` is

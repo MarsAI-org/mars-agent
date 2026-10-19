@@ -377,7 +377,7 @@ async function main(): Promise<void> {
 	};
 	const destDir = options.dest ? path.resolve(options.dest) : path.join(repoRoot, "packages/natives/native");
 
-	const backend = Bun.env.MARS_NATIVE_BUILD_BACKEND?.trim();
+	const backend = (Bun.env.MARS_NATIVE_BUILD_BACKEND ?? Bun.env.OMP_NATIVE_BUILD_BACKEND)?.trim();
 	if (backend && backend !== "cargo" && backend !== "bazel") {
 		throw new Error(`Unknown MARS_NATIVE_BUILD_BACKEND "${backend}" (expected "cargo" or "bazel")`);
 	}
@@ -428,7 +428,7 @@ async function main(): Promise<void> {
 		}
 		// CI hands cache wiring (remote or disk) through a bazelrc fragment so
 		// endpoint composition stays in .github/actions/bazel-cache.
-		const rcPath = Bun.env.MARS_BAZEL_RC?.trim();
+		const rcPath = (Bun.env.MARS_BAZEL_RC ?? Bun.env.OMP_BAZEL_RC)?.trim();
 		const startupArgs = rcPath ? [`--bazelrc=${rcPath}`] : [];
 
 		const buildArgs = [...startupArgs, "build", ...options.bazelArgs, "--", ...labels];

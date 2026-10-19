@@ -19,6 +19,7 @@ import { expandWindowsLongPath } from "@marsai-org/natives/path";
 import { engines, version } from "../package.json" with { type: "json" };
 import { noteInternalEnvWrite, resolveEnvAlias } from "./env-alias";
 import { isEnoent, isEnotdir } from "./fs-error";
+import { readCompatEnv } from "./env-compat";
 
 /** App name (e.g. "mars"). Also names the XDG subdirectory under $XDG_*_HOME. */
 export const APP_NAME: string = "mars";
@@ -32,8 +33,8 @@ export const APP_NAME: string = "mars";
  * pending dedicated backend deployment and retain their TODO(rebrand) markers.
  */
 export const APP_URL: string = (
-	(typeof process !== "undefined" && process.env?.MARS_APP_URL?.trim()) ||
-	(typeof Bun !== "undefined" && Bun.env?.MARS_APP_URL?.trim()) ||
+	(typeof process !== "undefined" && readCompatEnv("MARS_APP_URL", process.env)?.trim()) ||
+	(typeof Bun !== "undefined" && readCompatEnv("MARS_APP_URL", Bun.env)?.trim()) ||
 	"https://getmars.eu.cc/"
 ).replace(/\/?$/, "/");
 
@@ -105,7 +106,11 @@ export function resolveProfileEnv(mars: string | undefined, pi: string | undefin
 }
 
 function getProfileFromEnv(): string | undefined {
-	return resolveProfileEnv(process.env.MARS_PROFILE, process.env.PI_PROFILE);
+	// Precedence: MARS_PROFILE, then the legacy OMP_PROFILE (pre-rebrand name),
+	// then the older PI_PROFILE. `readCompatEnv` already reports the OMP_
+	// fallback once; it preserves the explicitly-empty MARS_PROFILE semantics
+	// because it only consults OMP_PROFILE when MARS_PROFILE is undefined.
+	return resolveProfileEnv(readCompatEnv("MARS_PROFILE"), process.env.PI_PROFILE);
 }
 
 /**
@@ -136,6 +141,10 @@ function getProfileConfigRoot(profile: string | undefined): string {
 
 function readPiProfileFromEnvSafe(): string | undefined {
 	try {
+		// Deliberately reads PI_PROFILE only: this guards `PI_CODING_AGENT_DIR`
+		// values that a parent process derived from a profile. A user-set
+		// OMP_PROFILE does not produce a profile-derived agent dir, so it must
+		// not suppress a genuine `PI_CODING_AGENT_DIR` override.
 		return normalizeProfileName(process.env.PI_PROFILE);
 	} catch {
 		return undefined;
@@ -772,7 +781,9 @@ export function setWorktreesDir(dir: string | undefined): string | undefined {
  * ignored and resolution falls through.
  */
 export function getWorktreesDir(): string {
-	return resolveAbsoluteDir(process.env.MARS_WORKTREE_DIR) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data");
+	return (
+		resolveAbsoluteDir(readCompatEnv("MARS_WORKTREE_DIR")) ?? worktreesDirOverride ?? dirs.rootSubdir("wt", "data")
+	);
 }
 
 /** Get the SSH control socket directory (~/.mars/ssh-control). */
@@ -843,7 +854,7 @@ export function getWorktreeDir(segment: string): string {
  * cache file without touching the rest of the config root.
  */
 export function getGithubCacheDbPath(): string {
-	const override = process.env.MARS_GITHUB_CACHE_DB;
+	const override = readCompatEnv("MARS_GITHUB_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "github-cache.db"), "cache");
 }
@@ -852,7 +863,7 @@ export function getGithubCacheDbPath(): string {
  * Honors `MARS_COMMIT_CACHE_DB` so tests and operators can isolate the cache.
  */
 export function getCommitCacheDbPath(): string {
-	const override = process.env.MARS_COMMIT_CACHE_DB;
+	const override = readCompatEnv("MARS_COMMIT_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "commit-inference.db"), "cache");
 }
@@ -862,7 +873,7 @@ export function getCommitCacheDbPath(): string {
  * Honors `MARS_JUDGMENT_CACHE_DB` so tests and operators can isolate the cache.
  */
 export function getJudgmentCacheDbPath(): string {
-	const override = process.env.MARS_JUDGMENT_CACHE_DB;
+	const override = readCompatEnv("MARS_JUDGMENT_CACHE_DB");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "judgment-cache.db"), "cache");
 }
@@ -878,7 +889,7 @@ export function getLegacyPiExtensionCacheDbPath(): string {
  * operators can isolate or relocate the cache file.
  */
 export function getAuthBrokerSnapshotCachePath(): string {
-	const override = process.env.MARS_AUTH_BROKER_SNAPSHOT_CACHE;
+	const override = readCompatEnv("MARS_AUTH_BROKER_SNAPSHOT_CACHE");
 	if (override) return override;
 	return dirs.rootSubdir(path.join("cache", "auth-broker-snapshot.enc"), "cache");
 }
@@ -1282,7 +1293,7 @@ const INSTALL_ID_FILE = "install-id";
  * app X use" instead of folding everything into one install-wide bucket.
  */
 export function getAppName(): string {
-	const value = process.env.MARS_APP_NAME?.trim();
+	const value = readCompatEnv("MARS_APP_NAME")?.trim();
 	return value ? value : APP_NAME;
 }
 

@@ -1,4 +1,5 @@
 import type { ImageContent } from "@marsai-org/ai";
+import { readCompatEnv } from "@marsai-org/utils";
 import { shortenPath } from "@marsai-org/tui/render/render-utils";
 
 export interface ImageResizeOptions {
@@ -140,7 +141,7 @@ function readImageHeaderDimensions(buffer: Uint8Array): ImageHeaderDimensions | 
  * or `"0"` MUST be treated as disabled.
  */
 function isWebPExcluded(): boolean {
-	const raw = Bun.env.MARS_NO_WEBP;
+	const raw = readCompatEnv("MARS_NO_WEBP", Bun.env);
 	if (raw === undefined) return false;
 	const v = raw.toLowerCase();
 	return v === "1" || v === "true";

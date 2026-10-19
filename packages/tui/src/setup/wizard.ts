@@ -1,3 +1,4 @@
+import { readCompatEnv } from "@marsai-org/utils";
 import { CURRENT_SETUP_VERSION } from "./setup-version";
 import type { SetupHost } from "./scenes/types";
 import { composerSetupScene } from "./scenes/composer";
@@ -48,7 +49,7 @@ export async function selectSetupScenes(
 	if (!isTTY) return [];
 	if (!options.force) {
 		if (options.resuming) return [];
-		if (setupSkipEnvEnabled(options.skipEnv ?? Bun.env.MARS_SKIP_SETUP)) return [];
+		if (setupSkipEnvEnabled(options.skipEnv ?? readCompatEnv("MARS_SKIP_SETUP", Bun.env))) return [];
 		if (options.setupWizardEnabled === false) return [];
 	}
 

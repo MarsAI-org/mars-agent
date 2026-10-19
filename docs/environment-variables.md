@@ -24,6 +24,37 @@ The agent/root locations respect profiles, `MARS_CONFIG_DIR` (legacy `PI_CONFIG_
 
 Additional rule inside each `.env` file: every `MARS_*` key is mirrored to its `PI_*` alias, and that mirrored value replaces a same-file `PI_*` value. This mirroring applies to parsed dotenv files, not arbitrary variables inherited from the parent process.
 
+### Legacy `OMP_*` aliases
+
+`OMP_` was the pre-rebrand prefix. The documented names are `MARS_*`, and every `OMP_*` variable listed below is still read as a fallback so existing shells, service units, and dotenv files keep working. The canonical name always wins when it is defined, including when it is explicitly empty; the legacy name is consulted only when the canonical name is absent. Each fallback prints one deprecation warning per process (through the CLI startup notice, so the TUI, RPC, and ACP streams stay clean).
+
+| Legacy | Canonical |
+| --- | --- |
+| `OMP_APP_NAME` | `MARS_APP_NAME` |
+| `OMP_APP_URL` | `MARS_APP_URL` |
+| `OMP_AUTORESEARCH_DB_DIR` | `MARS_AUTORESEARCH_DB_DIR` |
+| `OMP_AUTH_BROKER_ACCOUNT_POOL_FILE` | `MARS_AUTH_BROKER_ACCOUNT_POOL_FILE` |
+| `OMP_AUTH_BROKER_SNAPSHOT_CACHE` | `MARS_AUTH_BROKER_SNAPSHOT_CACHE` |
+| `OMP_AUTH_BROKER_SNAPSHOT_TTL_MS` | `MARS_AUTH_BROKER_SNAPSHOT_TTL_MS` |
+| `OMP_AUTH_BROKER_TOKEN` | `MARS_AUTH_BROKER_TOKEN` |
+| `OMP_AUTH_BROKER_URL` | `MARS_AUTH_BROKER_URL` |
+| `OMP_COMMIT_CACHE_DB` | `MARS_COMMIT_CACHE_DB` |
+| `OMP_DAEMON_IDLE_GRACE_MS` | `MARS_DAEMON_IDLE_GRACE_MS` |
+| `OMP_GITHUB_CACHE_DB` | `MARS_GITHUB_CACHE_DB` |
+| `OMP_HARMONY_DEBUG` | `MARS_HARMONY_DEBUG` |
+| `OMP_JUDGMENT_CACHE_DB` | `MARS_JUDGMENT_CACHE_DB` |
+| `OMP_LOG_LEVEL` | `MARS_LOG_LEVEL` |
+| `OMP_MCP_REQUIRE_READY` | `MARS_MCP_REQUIRE_READY` |
+| `OMP_MCP_STARTUP_TIMEOUT_MS` | `MARS_MCP_STARTUP_TIMEOUT_MS` |
+| `OMP_MCP_TIMEOUT_MS` | `MARS_MCP_TIMEOUT_MS` |
+| `OMP_NO_WEBP` | `MARS_NO_WEBP` |
+| `OMP_PROFILE` | `MARS_PROFILE` (still also accepts the older `PI_PROFILE`) |
+| `OMP_SKIP_SETUP` | `MARS_SKIP_SETUP` |
+| `OMP_TUI_DEBUG` | `MARS_TUI_DEBUG` |
+| `OMP_WORKTREE_DIR` | `MARS_WORKTREE_DIR` |
+
+Internal variables passed between processes the app spawns (`MARS_DAEMON_*`, `MARS_LSP_MUX_*`, `MARS_TINY_WORKER_*`, `MARS_TEXT_PREDICT_*`, `MARS_BLOB_BROKER_*`) and test-only fixtures are not aliased: they are never user-set, and accepting both spellings would let a stale parent process silently drive a child after the contract changed. Those keep their single `MARS_` spelling in every release.
+
 Variables declared on a setting definition (see [settings precedence](./settings.md#precedence)) are parsed by the setting's type unless noted otherwise. Boolean ones (`PI_PY`, `PI_JS`, `PI_INTENT_TRACING`, `PI_AUTO_QA`, `HINDSIGHT_AUTO_RECALL`, …) follow `parseFlag`: an empty value is ignored, so the setting applies; `1`, `y`, `true`, `yes`, and `on` (all-lowercase or all-uppercase) mean true; any other non-empty value means false.
 
 ---

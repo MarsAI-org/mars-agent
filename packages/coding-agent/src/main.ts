@@ -1767,12 +1767,12 @@ export async function runRootCommand(
 		// the `--version`/`--export` exits so their output stays byte-exact.
 		const legacyConfigMigrationNotice = takeLegacyConfigMigrationNotice();
 		if (legacyConfigMigrationNotice) writeStartupNotice(parsedArgs, legacyConfigMigrationNotice);
-
-		// Renamed environment variables queued one deprecation line each. Queue the
-		// full user-facing set first (some features read their variable much later
-		// than this point), then flush through the same sink before the TUI owns
-		// the terminal. The sink decides whether notices are enabled (TTY-only by
-		// default, silent under tests and piped protocols).
+		// Renamed environment variables (both the OMP_* and PI_* generations) queued
+		// one deprecation line each. Queue the full user-facing set first (some
+		// features read their variable much later than this point), then flush
+		// through the same sink before the TUI owns the terminal. The sink decides
+		// whether notices are enabled (TTY-only by default, silent under tests and
+		// piped protocols).
 		reportLegacyEnvAliases($env);
 		flushEnvAliasNotices(text => process.stderr.write(text));
 
