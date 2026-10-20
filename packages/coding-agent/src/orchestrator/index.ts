@@ -17,3 +17,4 @@ export * from "./router";
 export * from "./settings";
 export * from "./task-board";
 export * from "./worker-session";
+export * from "./verifier";

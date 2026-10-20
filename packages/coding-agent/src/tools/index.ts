@@ -35,7 +35,9 @@ import type { CustomMessage } from "../session/messages";
 import type { UsageStatistics } from "../session/session-entries";
 import type { SessionManager } from "../session/session-manager";
 import type { ToolChoiceQueue } from "../session/tool-choice-queue";
+import { cfgOrchestratorEnabled } from "../orchestrator/settings";
 import { TaskTool } from "../task";
+import { OrchestrateTool } from "./orchestrate";
 import type { AgentOutputManager } from "../task/output-manager";
 import { type AgentDefinition, canSpawnAtDepth } from "../task/types";
 import { type StructuredSubagentSchemaMode } from "@marsai-org/tui/tools/task";
@@ -581,6 +583,7 @@ export const BUILTIN_TOOLS: Record<BuiltinToolName, ToolFactory> = {
 	context_notes: ContextNotesTool.createIf,
 	new_context: NewContextTool.createIf,
 	task: s => TaskTool.create(s),
+	orchestrate: s => OrchestrateTool.create(s),
 	wait: s => new WaitTool(s),
 	todo: s => new TodoTool(s),
 	web_search: s => new WebSearchTool(s),
@@ -797,6 +800,14 @@ export async function resolveBuiltinToolPlan(session: ToolSession, toolNames?: s
 		}
 		if (name === "task") {
 			return canSpawnAtDepth(cfgTaskMaxRecursionDepth.get(session.settings), session.taskDepth ?? 0);
+		}
+		if (name === "orchestrate") {
+			// Off by default: a default install keeps the single-agent path, and the
+			// engine is never constructed unless the user opts in.
+			return (
+				cfgOrchestratorEnabled.get(session.settings) &&
+				canSpawnAtDepth(cfgTaskMaxRecursionDepth.get(session.settings), session.taskDepth ?? 0)
+			);
 		}
 		return true;
 	};
