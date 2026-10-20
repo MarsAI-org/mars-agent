@@ -7,6 +7,12 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-20
+
+### Fixed
+
+- npm installs work again. 0.1.1 published the umbrella packages without the six `@marsai-org/natives-<tag>` leaf packages, so `npm i -g @marsai-org/coding-agent` installed cleanly and then failed with "Failed to load pi_natives native addon". The release pipeline now publishes the leaves and refuses to finish a release unless every advertised package resolves on npm.
+
 ## [0.1.1] - 2026-10-20
 
 ### Changed
