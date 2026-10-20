@@ -376,6 +376,87 @@ async function fetchReleaseMetadata(url: string, fetchImpl: Fetch, token: string
 /** Releases scanned when the requested tag has no GitHub release; one page spans months of releases. */
 const RELEASE_LISTING_PAGE_SIZE = 30;
 
+/**
+ * Newest version this project has actually published a release for.
+ *
+ * The npm registry and GitHub releases can disagree: a version can be
+ * published to the registry while its release is still uploading, or a
+ * registry entry can be left behind by an earlier, unrelated publish. Reading
+ * only the registry therefore advertises versions a user cannot install.
+ *
+ * The registry remains the fast path. This listing is the authority for
+ * "is this version installable", so the updater never announces a version it
+ * cannot deliver.
+ */
+export async function getLatestPublishedRelease(
+	fetchImpl: Fetch = fetch,
+	githubToken?: string,
+	allowPrerelease = false,
+): Promise<string | undefined> {
+	const token = githubToken ?? (await resolveGitHubToken());
+	const listing = await fetchReleaseMetadata(
+		`${GITHUB_API}/repos/${REPO}/releases?per_page=${RELEASE_LISTING_PAGE_SIZE}`,
+		fetchImpl,
+		token,
+	);
+	if (!listing.ok) return undefined;
+	const releases = await listing.json();
+	if (!Array.isArray(releases)) return undefined;
+	let newest: string | undefined;
+	for (const release of releases) {
+		if (!isRecord(release)) continue;
+		const tag = release.tag_name;
+		if (typeof tag !== "string" || !/^v\d/.test(tag)) continue;
+		if (release.draft !== false) continue;
+		if (release.prerelease === true && !allowPrerelease) continue;
+		const version = tag.slice(1);
+		if (newest === undefined || compareVersions(version, newest) > 0) newest = version;
+	}
+	return newest;
+}
+
+/**
+ * Pick the version to offer, reconciling the registry with what is published.
+ *
+ * - Registry version is newer than the running build and has a release: offer it.
+ * - Registry version has no release (upload in flight, or a stale entry): fall
+ *   back to the newest published release so the user is never told about a
+ *   version that cannot be installed.
+ * - Nothing newer is published: return the running version, which the caller
+ *   reports as "already up to date".
+ */
+export async function resolveUpdateVersion(
+	release: ReleaseInfo,
+	currentVersion: string,
+	options: { allowPrerelease?: boolean; fetchImpl?: Fetch; githubToken?: string } = {},
+): Promise<{ version: string; dist?: ReleaseDist; downgradeFromRegistry: boolean }> {
+	const registryIsNewer = compareVersions(release.version, currentVersion) > 0;
+	if (!registryIsNewer) {
+		return { version: release.version, dist: release.dist, downgradeFromRegistry: false };
+	}
+	let published: string | undefined;
+	try {
+		published = await getLatestPublishedRelease(options.fetchImpl, options.githubToken, options.allowPrerelease);
+	} catch {
+		// A listing outage must not turn a real update into a silent no-op. Trust
+		// the registry here and let the install path report its own failure.
+		return { version: release.version, dist: release.dist, downgradeFromRegistry: false };
+	}
+	if (published === undefined) {
+		// The listing could not be read at all; same reasoning as above.
+		return { version: release.version, dist: release.dist, downgradeFromRegistry: false };
+	}
+	if (compareVersions(published, release.version) >= 0) {
+		return { version: release.version, dist: release.dist, downgradeFromRegistry: false };
+	}
+	// The registry advertises a version with no release. Never offer it.
+	return {
+		version: compareVersions(published, currentVersion) > 0 ? published : currentVersion,
+		dist: release.dist,
+		downgradeFromRegistry: true,
+	};
+}
+
 async function getReleaseBinaryAsset(
 	expectedVersion: string,
 	binaryName: string,
@@ -2254,7 +2335,20 @@ export async function runUpdateCommand(opts: {
 		process.exit(1);
 	}
 
-	const comparison = compareVersions(release.version, VERSION);
+	// The registry can advertise a version whose release was never published (an
+	// in-flight upload, or a stale entry left by an earlier publish). Reconciling
+	// against the published releases keeps the updater from announcing, and then
+	// failing to install, a version that does not exist.
+	const resolved = await resolveUpdateVersion(release, VERSION, { allowPrerelease: channel === "canary" });
+	if (resolved.downgradeFromRegistry) {
+		console.log(
+			chalk.yellow(
+				`The registry advertises ${release.version}, but no release with that version is published; ignoring it.`,
+			),
+		);
+	}
+	const offeredVersion = resolved.version;
+	const comparison = compareVersions(offeredVersion, VERSION);
 
 	if (comparison <= 0 && !opts.force && !isChannelSwitch) {
 		const icon = theme?.status?.success ?? "✔";
@@ -2265,13 +2359,13 @@ export async function runUpdateCommand(opts: {
 	if (isChannelSwitch) {
 		console.log(
 			chalk.yellow(
-				`Switching to ${channel} ${release.version}${comparison <= 0 ? ` (downgrade from ${VERSION})` : ""}`,
+				`Switching to ${channel} ${offeredVersion}${comparison <= 0 ? ` (downgrade from ${VERSION})` : ""}`,
 			),
 		);
 	} else if (comparison > 0) {
-		console.log(chalk.cyan(`New version available: ${release.version}`));
+		console.log(chalk.cyan(`New version available: ${offeredVersion}`));
 	} else {
-		console.log(chalk.yellow(`Forcing reinstall of ${release.version}`));
+		console.log(chalk.yellow(`Forcing reinstall of ${offeredVersion}`));
 	}
 	if (release.packages.pkg !== PACKAGE) {
 		console.log(chalk.cyan(`The npm package moved to ${release.packages.pkg}; updating migrates this install.`));
@@ -2287,8 +2381,12 @@ export async function runUpdateCommand(opts: {
 	// symlink resolves to method "binary" and is replaced in place, keeping the
 	// same PATH entry live.
 	try {
-		const forceBinary = shouldForceBinaryUpdate(release);
+		const forceBinary = shouldForceBinaryUpdate({ version: offeredVersion, dist: resolved.dist });
 		const allowPrerelease = channel === "canary";
+		// Downstream steps read `version` off this object; keep it in sync with the
+		// reconciled version so a package-manager install never targets the
+		// registry's unbacked version.
+		const targetRelease: ReleaseInfo = { ...release, version: offeredVersion, tag: `v${offeredVersion}` };
 		const target = await resolveUpdateTarget({ allowPackageManagers: !forceBinary });
 		if (target.method === "brew") {
 			// Mars publishes no Homebrew formula. Refuse instead of upgrading an
@@ -2308,7 +2406,7 @@ export async function runUpdateCommand(opts: {
 			console.log(chalk.dim("Update the flake input or profile that provides Mars, then rebuild."));
 			return;
 		} else if (target.method === "mise") {
-			await updateViaMise(release.version, opts.force);
+			await updateViaMise(offeredVersion, opts.force);
 		} else if (target.method === "bun" || target.method === "npm") {
 			if (forceBinary) {
 				// Reachable in forced mode only through a Windows script
@@ -2316,7 +2414,7 @@ export async function runUpdateCommand(opts: {
 				// skipped), so the launcher path is always known.
 				if (!target.path) throw new Error(`Could not resolve ${APP_NAME} launcher path in PATH`);
 				console.log(chalk.dim("This release ships as a standalone binary; replacing the script launcher."));
-				await updateViaShimTakeover(target.path, release.version, { allowPrerelease });
+				await updateViaShimTakeover(target.path, offeredVersion, { allowPrerelease });
 				console.log(
 					chalk.yellow(
 						`This install is no longer managed by ${target.method}. Removing the old global package may delete this launcher; if it does, reinstall with: ${installerHint()}`,
@@ -2324,16 +2422,16 @@ export async function runUpdateCommand(opts: {
 				);
 			} else {
 				await updateViaManager(
-					release,
+					targetRelease,
 					target.path,
-					packageManagerUpdateSteps(target.method, release, allowPrerelease),
+					packageManagerUpdateSteps(target.method, targetRelease, allowPrerelease),
 				);
 			}
 		} else {
 			if (forceBinary && target.replacesSymlink) {
 				console.log(chalk.dim("Replacing the package-manager launcher with the standalone binary."));
 			}
-			await updateViaBinaryAt(target.path, release.version, {
+			await updateViaBinaryAt(target.path, offeredVersion, {
 				allowPrerelease,
 				validateExistingTarget: target.validateExistingTarget,
 			});
