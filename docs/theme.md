@@ -185,7 +185,7 @@ Auto theme slot selection uses terminal appearance in this order:
 
 Current defaults (definitions in `packages/coding-agent/src/modes/settings.ts`):
 
-- `theme.dark = "titanium"`
+- `theme.dark = "dark"`
 - `theme.light = "light"`
 - `symbolPreset = "unicode"`
 - `colorBlindMode = false`

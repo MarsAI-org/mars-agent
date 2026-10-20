@@ -58,7 +58,10 @@ export const cfgGitEnabled = register({
 export const cfgThemeDark = register({
 	id: "theme.dark",
 	type: "string",
-	default: "titanium",
+	// `dark` is the Mars brand theme (pixel-art orange on #0d1117). The previous
+	// default, `titanium`, is an electric-blue palette: a fresh install opened in
+	// another product's colors and never showed the Mars identity.
+	default: "dark",
 	ui: {
 		tab: "appearance",
 		group: "Theme",
@@ -160,6 +163,7 @@ export const cfgStatusLinePreset = register({
 		description: "Pre-built status line configurations",
 		options: [
 			{ value: "default", label: "Default", description: "Model, path, git, context, tokens, cost" },
+			{ value: "mars", label: "Mars", description: "Brand mark, model, mode, path, git, subagents, cost, context" },
 			{ value: "minimal", label: "Minimal", description: "Path and git only" },
 			{ value: "compact", label: "Compact", description: "Model, git, cost, context" },
 			{ value: "full", label: "Full", description: "All segments including time" },
