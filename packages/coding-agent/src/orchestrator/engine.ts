@@ -19,6 +19,7 @@ import { BudgetGuard, type BudgetLimits } from "./budget";
 import { FileLeaseManager } from "./lease-manager";
 import { OrchestratorMessageLog, type MessageTransport } from "./message-bus";
 import { TaskBoard, type TaskBoardListener } from "./task-board";
+import { type CheckResult, type VerificationCheck, type VerificationResult, type Verifier } from "./verifier";
 import type {
 	FileLease,
 	OrchestratorEvent,
@@ -64,6 +65,19 @@ export interface OrchestrationEngineOptions {
 	readonly processCap?: number;
 	readonly budget?: BudgetLimits;
 	readonly now?: () => number;
+	/**
+	 * Verifier run against a completed worker's tree before the task may settle
+	 * as completed. Defaults to a no-op verifier, which keeps the pre-verifier
+	 * behaviour for callers that have not configured checks.
+	 */
+	readonly verifier?: Verifier;
+	/** Check list handed to the verifier. Empty means "nothing to verify". */
+	readonly verificationChecks?: readonly VerificationCheck[];
+	/**
+	 * Directory the checks run in, normally the worker's isolation worktree.
+	 * Defaults to the process working directory.
+	 */
+	readonly verificationRoot?: string;
 }
 
 /** Outcome record for one task. */
@@ -98,9 +112,17 @@ export class OrchestrationEngine {
 	readonly #messages = new OrchestratorMessageLog();
 	readonly #concurrency: number;
 	readonly #processCap: number | undefined;
+	readonly #verifier: Verifier | undefined;
+	readonly #verificationChecks: readonly VerificationCheck[];
+	readonly #verificationRoot: string;
 	readonly #listeners = new Set<OrchestratorEventListener>();
 	readonly #running = new Map<string, RunningEntry>();
-	readonly #settled: Array<{ taskId: string; outcome: WorkerOutcome | undefined; error?: string }> = [];
+	readonly #settled: Array<{
+		taskId: string;
+		outcome: WorkerOutcome | undefined;
+		error?: string;
+		verification?: VerificationResult;
+	}> = [];
 	#wake: (() => void) | undefined;
 	#stopped = false;
 	#stoppedReason: string | undefined;
@@ -119,6 +141,9 @@ export class OrchestrationEngine {
 				: Number.POSITIVE_INFINITY;
 		this.#concurrency = Math.max(1, Math.min(requested, capSlots));
 		this.#processCap = options.processCap;
+		this.#verifier = options.verifier;
+		this.#verificationChecks = options.verificationChecks ?? [];
+		this.#verificationRoot = options.verificationRoot ?? process.cwd();
 		this.#leases = new FileLeaseManager({ now: options.now });
 		this.#budget = new BudgetGuard({ ...options.budget, now: options.now });
 	}
@@ -312,8 +337,14 @@ export class OrchestrationEngine {
 					return record;
 				},
 			});
-			this.#settled.push({ taskId: task.id, outcome });
-			this.#emit({ type: "worker_state", workerId: spec.id, taskId: task.id, state: "completed" });
+			const verification = await this.#verifyOutcome(task, outcome);
+			this.#settled.push({ taskId: task.id, outcome, verification });
+			this.#emit({
+				type: "worker_state",
+				workerId: spec.id,
+				taskId: task.id,
+				state: verification && !verification.ok ? "failed" : "completed",
+			});
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			logger.debug("orchestration worker failed", { taskId: task.id, workerId: spec.id, message });
@@ -331,6 +362,33 @@ export class OrchestrationEngine {
 		}
 	}
 
+	/**
+	 * Run the configured checks against a worker's output.
+	 *
+	 * Only a worker that exited zero is verified: a failed worker already has a
+	 * failure to report, and running checks on a tree it did not finish writing
+	 * would produce misleading diagnostics. An aborted run is skipped for the
+	 * same reason.
+	 */
+	async #verifyOutcome(task: OrchestratorTask, outcome: WorkerOutcome): Promise<VerificationResult | undefined> {
+		if (!this.#verifier) return undefined;
+		if (this.#verificationChecks.length === 0) return undefined;
+		if (outcome.exitCode !== 0) return undefined;
+		this.#emit({
+			type: "worker_state",
+			workerId: this.#board.workerOf(task.id) ?? task.id,
+			taskId: task.id,
+			state: "verifying" satisfies WorkerLifecycleState,
+		});
+		const result = await this.#verifier.verify(this.#verificationRoot, this.#verificationChecks);
+		logger.debug("orchestration verification finished", {
+			taskId: task.id,
+			ok: result.ok,
+			firstFailure: result.firstFailure,
+		});
+		return result;
+	}
+
 	/** Move settled worker runs onto the board and charge the budget. */
 	#drainSettled(): void {
 		while (this.#settled.length > 0) {
@@ -338,9 +396,11 @@ export class OrchestrationEngine {
 			if (settled.outcome) this.#budget.charge(settled.outcome.usage ?? {});
 			const state: TaskState = settled.error
 				? "failed"
-				: settled.outcome && settled.outcome.exitCode === 0
-					? "completed"
-					: "failed";
+				: settled.verification && !settled.verification.ok
+					? "failed"
+					: settled.outcome && settled.outcome.exitCode === 0
+						? "completed"
+						: "failed";
 			this.#board.transition(settled.taskId, state);
 		}
 	}
