@@ -2066,3 +2066,89 @@ describe("update-cli manager update recovery", () => {
 		);
 	});
 });
+
+describe("update-cli registry and release reconciliation", () => {
+	function releaseFixture(version: string): ReleaseInfo {
+		return {
+			tag: `v${version}`,
+			version,
+			dist: "npm",
+			packages: { pkg: "@marsai-org/coding-agent", natives: "@marsai-org/natives" },
+			registry: "https://registry.npmjs.org/",
+		};
+	}
+
+	function listingFetch(versions: string[], overrides: Record<string, unknown> = {}) {
+		return async (input: string | URL | Request): Promise<Response> => {
+			const requestUrl = String(input);
+			if (requestUrl.includes("/releases?")) {
+				return new Response(
+					JSON.stringify(
+						versions.map(version => ({
+							tag_name: `v${version}`,
+							draft: false,
+							prerelease: false,
+							assets: [],
+							...overrides,
+						})),
+					),
+				);
+			}
+			throw new Error(`Unexpected request: ${requestUrl}`);
+		};
+	}
+
+	it("ignores a registry version with no published release and reports up to date", async () => {
+		// The live failure: npm advertised 18.8.6 while the newest published
+		// release was v0.1.0, so `mars update` offered a version it could not install.
+		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("18.8.6"), "0.1.0", {
+			fetchImpl: listingFetch(["0.1.0"]),
+			githubToken: "test-token",
+		});
+		expect(resolved.version).toBe("0.1.0");
+		expect(resolved.downgradeFromRegistry).toBe(true);
+	});
+
+	it("offers a registry version that does have a published release", async () => {
+		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.2.0"), "0.1.0", {
+			fetchImpl: listingFetch(["0.1.0", "0.2.0"]),
+			githubToken: "test-token",
+		});
+		expect(resolved.version).toBe("0.2.0");
+		expect(resolved.downgradeFromRegistry).toBe(false);
+	});
+
+	it("falls back to the newest published release when the registry is ahead of it", async () => {
+		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.9.0"), "0.1.0", {
+			fetchImpl: listingFetch(["0.1.0", "0.3.0"]),
+			githubToken: "test-token",
+		});
+		expect(resolved.version).toBe("0.3.0");
+		expect(resolved.downgradeFromRegistry).toBe(true);
+	});
+
+	it("keeps the registry version when the listing cannot be read", async () => {
+		// A listing outage must not turn a real update into a silent no-op.
+		const fetchImpl = async () => new Response(null, { status: 500, statusText: "Server Error" });
+		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.2.0"), "0.1.0", {
+			fetchImpl,
+			githubToken: "test-token",
+		});
+		expect(resolved.version).toBe("0.2.0");
+		expect(resolved.downgradeFromRegistry).toBe(false);
+	});
+
+	it("reports the newest published release, skipping drafts and prereleases", async () => {
+		const fetchImpl = async (): Promise<Response> =>
+			new Response(
+				JSON.stringify([
+					{ tag_name: "v0.9.0", draft: true, prerelease: false, assets: [] },
+					{ tag_name: "v0.8.0", draft: false, prerelease: true, assets: [] },
+					{ tag_name: "v0.2.0", draft: false, prerelease: false, assets: [] },
+					{ tag_name: "v0.1.0", draft: false, prerelease: false, assets: [] },
+				]),
+			);
+		expect(await updateCli.getLatestPublishedRelease(fetchImpl, "test-token")).toBe("0.2.0");
+		expect(await updateCli.getLatestPublishedRelease(fetchImpl, "test-token", true)).toBe("0.8.0");
+	});
+});
