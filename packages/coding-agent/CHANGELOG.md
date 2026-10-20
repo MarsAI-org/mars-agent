@@ -7,6 +7,21 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-20
+
+### Fixed
+
+- npm installs work for real this time. The native leaf publish job lived in `ci.yml`, which only triggers on branch pushes and pull requests, so a `v*` tag never ran it and no release ever shipped `@marsai-org/natives-<tag>`. The job now lives in `release.yml`, and the GitHub Release is gated on it.
+
+### Added
+
+- `mars` status-line preset: brand mark, active subagents, context pressure, git, and cost in one line.
+- `/theme [list|preview|set] [name]`: sample a theme in place with a swatch block before committing.
+
+### Changed
+
+- Dark and light themes rebuilt around the Mars palette (orange `#f97316` on `#0d1117`), replacing the inherited VS Code Dark+ syntax colours with a single warm family.
+
 ## [0.1.2] - 2026-10-20
 
 ### Fixed
