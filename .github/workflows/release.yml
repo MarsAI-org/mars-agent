@@ -218,7 +218,11 @@ jobs:
   publish_native_leaves:
     name: Publish native leaf packages
     runs-on: ubuntu-22.04
-    needs: [release_metadata, build_native, smoke_test]
+    # Leaf publishing packages the addons `build_native` already produced; it has
+    # no dependency on the binary smoke tests. Requiring `smoke_test` here let a
+    # single flaky macOS runner (cancelled twice on v0.1.3) block every leaf
+    # package and, through the release gate, the GitHub Release as well.
+    needs: [release_metadata, build_native]
     if: needs.release_metadata.outputs.is_dry_run != 'true'
     permissions:
       contents: read
@@ -303,9 +307,24 @@ jobs:
             natives-darwin-x64 natives-darwin-arm64
             natives-win32-x64 natives-win32-arm64
           )
+          # npm is eventually consistent: a package published seconds ago can
+          # still 404 from `npm view` for a while. Poll before declaring a
+          # package missing, otherwise a successful publish reports as a failure
+          # (observed on v0.1.3, where all six leaves published and the gate
+          # still failed).
+          check() {
+            local p="$1" attempt
+            for attempt in 1 2 3 4 5 6 7 8 9 10; do
+              if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+                return 0
+              fi
+              sleep 6
+            done
+            return 1
+          }
           missing=()
           for p in "${pkgs[@]}"; do
-            if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+            if check "$p"; then
               echo "ok      @marsai-org/${p}@${version}"
             else
               echo "::error::missing @marsai-org/${p}@${version}"

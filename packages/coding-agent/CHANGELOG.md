@@ -7,6 +7,18 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-10-21
+
+### Added
+
+- **Multi-agent orchestrator is now usable.** `orchestrate` runs a task DAG across worker agents with exclusive file leases, a token budget, and dependency gating. Off by default; enable with `orchestrator.enabled`.
+- **Verification gate.** A worker exiting zero is no longer enough: a configured check list runs against its output, and a failing check fails the task and cancels its dependents.
+
+### Fixed
+
+- Native leaf packages publish again. The job depended on the binary smoke tests, so one cancelled macOS runner blocked every leaf and the GitHub Release. It now depends only on the native addon build.
+- The release gate no longer reports freshly published packages as missing while npm is still propagating them.
+
 ## [0.1.3] - 2026-10-20
 
 ### Fixed
