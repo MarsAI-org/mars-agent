@@ -15,6 +15,16 @@ import {
 import { Editor } from "@marsai-org/tui";
 import { getAgentDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
+/** `#rrggbb` to the three channel values an ANSI truecolor sequence carries. */
+function hexToRgb(hex: string): [number, number, number] {
+	const value = hex.replace("#", "");
+	return [
+		Number.parseInt(value.slice(0, 2), 16),
+		Number.parseInt(value.slice(2, 4), 16),
+		Number.parseInt(value.slice(4, 6), 16),
+	];
+}
+
 function createBaseThemes() {
 	const builtins = getBuiltinThemes();
 	const lightJson = builtins.light;
@@ -92,7 +102,10 @@ describe("empty foreground contrast", () => {
 			const surfaceColor = getEditorTheme().surfaceColor;
 			if (!surfaceColor) throw new Error("Editor surface color is unavailable");
 
-			expect(surfaceColor("typed")).toContain("\x1b[48;2;232;232;232m\x1b[38;2;0;0;0mtyped");
+			// Derive the expected ANSI from the theme instead of pinning the palette,
+			// so a brand refresh does not fail a behaviour test.
+			const [r, g, b] = hexToRgb(light.getBgHex("userMessageBg"));
+			expect(surfaceColor("typed")).toContain(`\x1b[48;2;${r};${g};${b}m\x1b[38;2;0;0;0mtyped`);
 		} finally {
 			setThemeInstance(dark);
 		}
@@ -138,8 +151,9 @@ describe("empty foreground contrast", () => {
 			if (!surfaceColor) throw new Error("Editor surface color is unavailable");
 
 			const styled = surfaceColor("before\x1b[39mafter-default\x1b[0mafter-full");
+			const [r, g, b] = hexToRgb(light.getBgHex("userMessageBg"));
 			expect(styled).toContain("\x1b[39m\x1b[38;2;0;0;0mafter-default");
-			expect(styled).toContain("\x1b[0m\x1b[48;2;232;232;232m\x1b[38;2;0;0;0mafter-full");
+			expect(styled).toContain(`\x1b[0m\x1b[48;2;${r};${g};${b}m\x1b[38;2;0;0;0mafter-full`);
 		} finally {
 			setThemeInstance(dark);
 		}

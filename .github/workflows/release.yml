@@ -215,10 +215,112 @@ jobs:
           & .\bin\${{ matrix.binary_name }} --help
           & .\bin\${{ matrix.binary_name }} --platform-check --json
 
+  publish_native_leaves:
+    name: Publish native leaf packages
+    runs-on: ubuntu-22.04
+    needs: [release_metadata, build_native, smoke_test]
+    if: needs.release_metadata.outputs.is_dry_run != 'true'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install a publishing npm
+        run: npm install -g npm@11.17.0
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      # Every addon this run built, one directory per target.
+      - name: Download native addons
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: native-*
+          path: native-artifacts
+          merge-multiple: false
+      # The generator reads packages/natives/native, so stage each target's
+      # addon there. musl reuses the linux filenames and has no leaf package.
+      - name: Stage native addons
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in native-artifacts/native-*; do
+            target="${dir#native-artifacts/native-}"
+            for f in "$dir"/*.node; do
+              [ -e "$f" ] || continue
+              cp "$f" "packages/natives/native/$(basename "$f")"
+            done
+            echo "staged $target"
+          done
+          ls -la packages/natives/native/*.node
+      - name: Publish native leaf packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -uo pipefail
+          logs="$RUNNER_TEMP/native-leaf-logs"
+          mkdir -p "$logs"
+          tags=(linux-x64 linux-arm64 darwin-x64 darwin-arm64 win32-x64 win32-arm64)
+          pids=()
+          for tag in "${tags[@]}"; do
+            bun run ci:release:publish-native-leaf "$tag" >"$logs/$tag.log" 2>&1 &
+            pids+=("$!")
+          done
+          failed=()
+          for i in "${!tags[@]}"; do
+            tag="${tags[$i]}"
+            if wait "${pids[$i]}"; then
+              status=ok
+            else
+              status="failed (exit $?)"
+              failed+=("$tag")
+            fi
+            echo "::group::$tag: $status"
+            cat "$logs/$tag.log"
+            echo "::endgroup::"
+          done
+          if [ "${#failed[@]}" -gt 0 ]; then
+            echo "::error title=Native leaf publish::failed: ${failed[*]}"
+            exit 1
+          fi
+      # A release is only usable if what it advertises can be installed. The
+      # umbrella package loads its addon from the platform leaf, so publishing
+      # the umbrella alone installs cleanly and then dies at runtime.
+      - name: Verify every published package is installable
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(bun -e 'console.log((await Bun.file("packages/coding-agent/package.json").json()).version)')"
+          echo "verifying npm packages for $version"
+          pkgs=(
+            utils wire omptype catalog ai natives tui mnemopi snapcompact stats
+            agent-core coding-agent
+            natives-linux-x64 natives-linux-arm64
+            natives-darwin-x64 natives-darwin-arm64
+            natives-win32-x64 natives-win32-arm64
+          )
+          missing=()
+          for p in "${pkgs[@]}"; do
+            if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+              echo "ok      @marsai-org/${p}@${version}"
+            else
+              echo "::error::missing @marsai-org/${p}@${version}"
+              missing+=("$p")
+            fi
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error title=Release incomplete::not on npm: ${missing[*]}"
+            exit 1
+          fi
+
   publish_release:
     name: Publish GitHub Release
     runs-on: ubuntu-22.04
-    needs: [release_metadata, smoke_test]
+    needs: [release_metadata, smoke_test, publish_native_leaves]
     if: needs.release_metadata.outputs.is_dry_run != 'true'
     permissions:
       contents: write
