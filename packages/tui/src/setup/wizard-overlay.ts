@@ -6,7 +6,7 @@ import { centerLine, padding } from "../utils";
 import { padToWidth } from "../render/utils";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../mouse";
 import { APP_NAME } from "@marsai-org/utils";
-import { gradientLogo, logoNode, MARS_LOGO } from "../prompt/welcome";
+import { gradientLogo, logoNode, MARS_LOGO, MARS_LOGO_COMPACT } from "../prompt/welcome";
 import { theme } from "../theme/theme";
 import { col, node, span, text } from "../native/describe";
 import type { NativeNode, NativeUiEvent } from "../native/node";
@@ -21,6 +21,8 @@ type WizardPhase = "splash" | "transition" | "scene" | "outro" | "done";
 
 const SCENE_MARGIN_X = 4;
 const MIN_CONTENT_WIDTH = 20;
+/** Below this height the wizard switches to the five-row mark so menus keep their last row. */
+const SHORT_TERMINAL_ROWS = 30;
 /** Cross-dissolve duration from the splash into the first scene. */
 const SCENE_TRANSITION_MS = 420;
 
@@ -249,29 +251,33 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 		const title = active?.title ?? scene?.title ?? "Setup";
 		const subtitle = active?.subtitle;
 		const footer = sceneFooterHint();
-		return this.#nativeScene.get([this.#sceneIndex, this.scenes.length, active, title, subtitle, footer], () => {
-			const heading: NativeNode[] = [text([span(title, "strong")])];
-			if (subtitle) heading.push(text([span(subtitle, "muted")]));
-			return col(
-				[
-					col(
-						[
-							logoNode(MARS_LOGO, false),
-							text([span(APP_NAME, "accent strong")], { wrap: "none" }),
-							text([span(`Setup step ${this.#sceneIndex + 1} of ${this.scenes.length}`, "muted")], {
-								wrap: "none",
-							}),
-						],
-						{ align: "center" },
-					),
-					col(heading),
-					// Keyed by scene so a new scene's nodes never reuse the previous one's ids.
-					node("col", { grow: 1 }, active ? [active] : [], `body:${scene?.id ?? this.#sceneIndex}`),
-					col([text([span(footer, "dim")])], { align: "center" }),
-				],
-				{ gap: "md", grow: 1, role: "omp.setup.scene" },
-			);
-		});
+		const rows = Math.max(1, this.ctx.ui.terminal.rows);
+		return this.#nativeScene.get(
+			[this.#sceneIndex, this.scenes.length, active, title, subtitle, footer, rows],
+			() => {
+				const heading: NativeNode[] = [text([span(title, "strong")])];
+				if (subtitle) heading.push(text([span(subtitle, "muted")]));
+				return col(
+					[
+						col(
+							[
+								logoNode(rows < SHORT_TERMINAL_ROWS ? MARS_LOGO_COMPACT : MARS_LOGO, false),
+								text([span(APP_NAME, "accent strong")], { wrap: "none" }),
+								text([span(`Setup step ${this.#sceneIndex + 1} of ${this.scenes.length}`, "muted")], {
+									wrap: "none",
+								}),
+							],
+							{ align: "center" },
+						),
+						col(heading),
+						// Keyed by scene so a new scene's nodes never reuse the previous one's ids.
+						node("col", { grow: 1 }, active ? [active] : [], `body:${scene?.id ?? this.#sceneIndex}`),
+						col([text([span(footer, "dim")])], { align: "center" }),
+					],
+					{ gap: "md", grow: 1, role: "omp.setup.scene" },
+				);
+			},
+		);
 	}
 
 	#renderScene(width: number, height: number): string[] {
@@ -279,7 +285,9 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 		const title = this.#activeScene?.title ?? scene?.title ?? "Setup";
 		const subtitle = this.#activeScene?.subtitle;
 		const contentWidth = Math.max(MIN_CONTENT_WIDTH, width - SCENE_MARGIN_X * 2);
-		const logo = gradientLogo(MARS_LOGO, 0);
+		// Short terminals cannot afford the sixth mark row: it would push one menu
+		// item out of the frame. Use the compact mark there.
+		const logo = gradientLogo(height < SHORT_TERMINAL_ROWS ? MARS_LOGO_COMPACT : MARS_LOGO, 0);
 		const header = [
 			"",
 			...logo.map(line => centerLine(line, width)),

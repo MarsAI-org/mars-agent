@@ -422,6 +422,13 @@ export const MARS_LOGO = [
 	"  ▄█▀▀▀▀█▄  ",
 ];
 
+/**
+ * Five-row form of {@link MARS_LOGO} for short terminals, where the extra row
+ * would push a menu item out of the frame. Same 12-column silhouette, sampled
+ * from a 10×10 grid instead of 12×12.
+ */
+export const MARS_LOGO_COMPACT = ["  ▄█████▄ ", "▄████████▄", "██████▄███", " ▀███████ ", "  ▄█▀▀▀█  "];
+
 /** Columns of {@link MARS_LOGO}. */
 const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
 
