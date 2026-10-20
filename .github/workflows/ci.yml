@@ -950,10 +950,14 @@ jobs:
    # validation passes and every binary built. Runs on one linux runner: leaf
    # publishing is platform-agnostic file packaging (gen-npm-packages reads
    # packages/natives/native), so no per-platform runners are needed.
-   # npm publish step disabled safely in MarsAI-org/mars-agent until npm org/tokens exist
+   #
+   # These leaves are not optional: `@marsai-org/natives` declares them as
+   # optionalDependencies and loads the addon from them at runtime, so a release
+   # that publishes the umbrella packages without the leaves installs cleanly
+   # and then fails with "Failed to load pi_natives native addon".
    release_native_leaves:
       name: Publish native leaf packages
-      if: github.repository == 'MarsAI-org/mars-agent' && false
+      if: github.repository == 'MarsAI-org/mars-agent'
       needs: [release_metadata, release_gate, release_binary, release_smoke]
       runs-on: ubuntu-22.04
       # id-token lets npm mint the OIDC token for trusted publishing; the
@@ -1032,6 +1036,38 @@ jobs:
               done
               if [ "${#failed[@]}" -gt 0 ]; then
                 echo "::error title=Native leaf publish::failed: ${failed[*]}"
+                exit 1
+              fi
+
+         # A release is only usable if the packages it advertises can actually be
+         # installed. `@marsai-org/natives` loads its addon from the platform leaf
+         # package, so publishing the umbrella without the leaves produces an
+         # install that succeeds and then dies at runtime. Assert both halves
+         # exist before the GitHub Release is created.
+         - name: Verify every published package is installable
+           shell: bash
+           run: |
+              set -euo pipefail
+              version="$(bun -e 'console.log((await Bun.file("packages/coding-agent/package.json").json()).version)')"
+              echo "verifying npm packages for $version"
+              pkgs=(
+                utils wire omptype catalog ai natives tui mnemopi snapcompact stats
+                agent-core coding-agent
+                natives-linux-x64 natives-linux-arm64
+                natives-darwin-x64 natives-darwin-arm64
+                natives-win32-x64 natives-win32-arm64
+              )
+              missing=()
+              for p in "${pkgs[@]}"; do
+                if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+                  echo "ok      @marsai-org/${p}@${version}"
+                else
+                  echo "::error::missing @marsai-org/${p}@${version}"
+                  missing+=("$p")
+                fi
+              done
+              if [ "${#missing[@]}" -gt 0 ]; then
+                echo "::error title=Release incomplete::not on npm: ${missing[*]}"
                 exit 1
               fi
 
