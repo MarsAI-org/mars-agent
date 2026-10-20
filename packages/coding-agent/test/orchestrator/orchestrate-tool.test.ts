@@ -50,23 +50,20 @@ describe("validatePlan", () => {
 
 describe("buildPlan", () => {
 	test("fills a default worker when none is supplied", () => {
-		const plan = buildPlan({ goal: "do it", tasks: [{ id: "a", title: "A", description: "a" }] }, "explore");
+		const plan = buildPlan({ goal: "do it", tasks: [{ id: "a", title: "A", description: "a" }] });
 		expect(plan.workers).toHaveLength(1);
-		expect(plan.workers[0]?.agent).toBe("explore");
+		expect(plan.workers[0]?.id).toBe("worker-1");
 		expect(plan.tasks[0]?.dependencies).toEqual([]);
 		expect(plan.tasks[0]?.targetFiles).toEqual([]);
 	});
 
 	test("carries explicit workers and per-task agents", () => {
-		const plan = buildPlan(
-			{
-				goal: "do it",
-				tasks: [{ id: "a", title: "A", description: "a", agent: "frontend" }],
-				workers: [{ id: "frontend", roleLabel: "Frontend" }],
-			},
-			"explore",
-		);
-		expect(plan.workers[0]).toMatchObject({ id: "frontend", roleLabel: "Frontend", agent: "explore" });
+		const plan = buildPlan({
+			goal: "do it",
+			tasks: [{ id: "a", title: "A", description: "a", agent: "frontend" }],
+			workers: [{ id: "frontend", roleLabel: "Frontend" }],
+		});
+		expect(plan.workers[0]).toMatchObject({ id: "frontend", roleLabel: "Frontend" });
 		expect(plan.tasks[0]?.agent).toBe("frontend");
 	});
 

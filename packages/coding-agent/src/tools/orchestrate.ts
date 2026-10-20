@@ -63,7 +63,7 @@ export interface OrchestrateDetails {
 }
 
 /** Build the engine plan from tool arguments, filling worker defaults. */
-export function buildPlan(params: OrchestrateParams, defaultAgent?: string): OrchestratorPlan {
+export function buildPlan(params: OrchestrateParams): OrchestratorPlan {
 	const workers: WorkerSpec[] =
 		params.workers && params.workers.length > 0
 			? params.workers.map(worker => ({
@@ -71,7 +71,6 @@ export function buildPlan(params: OrchestrateParams, defaultAgent?: string): Orc
 					roleLabel: worker.roleLabel ?? worker.id,
 					backend: "native" as const,
 					isolated: false,
-					agent: worker.agent ?? defaultAgent,
 				}))
 			: [
 					{
@@ -79,7 +78,6 @@ export function buildPlan(params: OrchestrateParams, defaultAgent?: string): Orc
 						roleLabel: "worker-1",
 						backend: "native" as const,
 						isolated: false,
-						agent: defaultAgent,
 					},
 				];
 
