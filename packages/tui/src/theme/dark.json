@@ -23,7 +23,8 @@
 		"toolPendingBg": "#141a21",
 		"toolSuccessBg": "#11181a",
 		"toolErrorBg": "#241417",
-		"customMsgBg": "#1d1724"
+		"customMsgBg": "#1d1724",
+		"fenceBorder": "#6e7681"
 	},
 	"colors": {
 		"accent": "marsOrange",
@@ -53,7 +54,7 @@
 		"mdLinkUrl": "dimGray",
 		"mdCode": "marsGlow",
 		"mdCodeBlock": "marsGlow",
-		"mdCodeBlockBorder": "darkGray",
+		"mdCodeBlockBorder": "fenceBorder",
 		"mdQuote": "gray",
 		"mdQuoteBorder": "darkGray",
 		"mdHr": "darkGray",
