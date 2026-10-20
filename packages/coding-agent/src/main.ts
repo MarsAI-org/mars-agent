@@ -49,7 +49,7 @@ import { buildInitialMessage } from "./cli/initial-message";
 import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
 import type { SessionPickerOptions } from "@marsai-org/tui/apps/session-picker";
 import { applyStartupCwd } from "./cli/startup-cwd";
-import { getLatestRelease } from "./cli/update-cli";
+import { getLatestRelease, resolveUpdateVersion } from "./cli/update-cli";
 import { findConfigFile } from "./config";
 import { ModelRegistry } from "./config/model-registry";
 import { formatModelSelectorValue } from "@marsai-org/tui/overlays/model-selector";
@@ -247,7 +247,14 @@ async function checkForNewVersion(currentVersion: string): Promise<string | unde
 	try {
 		const channel = cfgUpdateChannel.get(settings);
 		const release = await getLatestRelease({ timeoutMs: 5_000, channel });
-		return Bun.semver.order(release.version, currentVersion) > 0 ? release.version : undefined;
+		// Reconcile against the published releases before telling the user an
+		// update exists. The registry can advertise a version with no release
+		// (an in-flight upload, or a stale entry from an earlier publish), and
+		// announcing that leaves the user with an update that cannot install.
+		const resolved = await resolveUpdateVersion(release, currentVersion, {
+			allowPrerelease: channel === "canary",
+		});
+		return Bun.semver.order(resolved.version, currentVersion) > 0 ? resolved.version : undefined;
 	} catch {
 		return undefined;
 	}
