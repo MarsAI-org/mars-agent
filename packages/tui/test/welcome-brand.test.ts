@@ -58,7 +58,14 @@ describe("welcome brand artwork", () => {
 
 	it("draws the Mars mark from the logo asset's silhouette", async () => {
 		await initTheme(false);
-		expect(MARS_LOGO).toEqual(["▄███    ███▄", "███▀████▀███", "███ ▀██▀ ███", "███      ███", "███▀▀▀▀▀▀███"]);
+		expect(MARS_LOGO).toEqual([
+			"  ▄██████▄  ",
+			" ██████████ ",
+			"████▀██▀▀███",
+			"▀██████████▀",
+			" ▀████████▀ ",
+			"  ▄█▀▀▀▀█▄  ",
+		]);
 		expect(
 			new WelcomeComponent("1.0.0")
 				.render(32)

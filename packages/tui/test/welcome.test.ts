@@ -86,8 +86,11 @@ describe("WelcomeComponent", () => {
 		const indent = (row: string) => visibleWidth(row) - visibleWidth(row.trimStart());
 		const expectCentered = (left: number, right: number) => expect(Math.abs(left - right)).toBeLessThanOrEqual(1);
 
-		// The lockup is one block: the mark's top row starts it, the wordmark row ends it.
-		const bar = rows.find(row => row.includes("▄███    ███▄")) ?? "";
+		// The lockup is one block: the mark's widest row starts it, the wordmark row ends it.
+		// Measure the block's left edge from a row that begins at column 0 of the mark;
+		// the top row is narrower and carries its own padding, so its first glyph is not
+		// the block edge.
+		const bar = rows.find(row => row.includes("████▀██▀▀███")) ?? "";
 		const word = rows.find(row => row.includes("█▄█ ▄▀▄ █▀▄ ▄▀▀")) ?? "";
 		expectCentered(indent(bar), columns - visibleWidth(word));
 
@@ -111,11 +114,11 @@ describe("WelcomeComponent", () => {
 		const fits = rows(33);
 		const word = fits.find(row => row.includes("█▄█ ▄▀▄ █▀▄ ▄▀▀"));
 		const version = fits.find(row => row.includes("v1.0.0"));
-		expect(fits.some(row => row.includes("▄███    ███▄"))).toBe(true);
+		expect(fits.some(row => row.includes("  ▄██████▄  "))).toBe(true);
 		expect(version?.indexOf("v1.0.0")).toBe(word?.indexOf("█▄█ ▄▀▄ █▀▄ ▄▀▀"));
 
 		const narrow = rows(32).join("\n");
-		expect(narrow).toContain("▄███    ███▄");
+		expect(narrow).toContain("  ▄██████▄  ");
 		expect(narrow).not.toContain("█▄█ ▄▀▄ █▀▄ ▄▀▀");
 		expect(narrow).not.toContain("v1.0.0");
 	});
