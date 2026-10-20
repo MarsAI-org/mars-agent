@@ -7,6 +7,8 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-20
+
 ### Changed
 
 - Harness documentation is now addressed as `mars://` in help text, prompts, and generated links; the existing `omp://` spelling keeps working as an alias.

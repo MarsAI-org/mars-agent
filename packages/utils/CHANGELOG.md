@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-20
+
 ### Changed
 
 - Pointed the Mars base URL at the official `getmars.eu.cc` domain; set `MARS_APP_URL` to override it ([#36](https://github.com/MarsAI-org/mars-agent/pull/36) by [@robomarsx](https://github.com/robomarsx)).
