@@ -10,6 +10,7 @@ import chalk from "@marsai-org/utils/chalk";
 import { orderedSettings } from "../config/all-settings";
 import { type AnySetting, lookup } from "../config/registry";
 import { Settings, settings } from "../config/settings";
+import { isKnownTheme } from "../config/theme-names";
 import { theme } from "@marsai-org/tui/theme";
 import { initXdg } from "./commands/init-xdg";
 
@@ -41,6 +42,9 @@ type CliSettingDef = {
 
 /** Printed instead of a credential value in human output only. */
 const REDACTED = "********";
+
+/** Settings whose value names a theme, checked against the registry on write. */
+const THEME_SETTING_KEYS: ReadonlySet<string> = new Set(["theme.dark", "theme.light"]);
 
 function toSettingDef(setting: AnySetting): CliSettingDef {
 	const ui = setting.ui;
@@ -290,6 +294,16 @@ async function handleSet(key: string | undefined, value: string | undefined, fla
 	if (!def) {
 		console.error(chalk.red(`Unknown setting: ${key}`));
 		console.error(chalk.dim(`\nRun '${APP_NAME} config list' to see available keys`));
+		process.exit(1);
+	}
+
+	// A theme name is a free-form string, so the registry accepts any text. A
+	// typo would then be written, and `initTheme` falls back to the dark theme
+	// while logging only at debug level — a success message for a value that
+	// silently does nothing.
+	if (THEME_SETTING_KEYS.has(def.path) && !isKnownTheme(value)) {
+		console.error(chalk.red(`Unknown theme: ${value}`));
+		console.error(chalk.dim(`\nRun '${APP_NAME} config list' for the setting, or '/theme list' in a session.`));
 		process.exit(1);
 	}
 

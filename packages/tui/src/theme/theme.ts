@@ -20,7 +20,13 @@ import { isValidThemeBg, isValidThemeColor, type ThemeColor, type ThemeJson } fr
 import type { SymbolPreset } from "./symbols";
 import type { Theme } from "./theme-class";
 
-export { getAvailableThemes, getAvailableThemesWithPaths, getThemeByName, type ThemeInfo } from "./loader";
+export {
+	getAvailableThemes,
+	getAvailableThemesWithPaths,
+	getBuiltinThemes,
+	getThemeByName,
+	type ThemeInfo,
+} from "./loader";
 export { isValidThemeColor, type ThemeBg, type ThemeColor } from "./schema";
 export {
 	getAvailableSymbolPresets,

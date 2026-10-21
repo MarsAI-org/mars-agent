@@ -19,7 +19,7 @@ import { BudgetGuard, type BudgetLimits } from "./budget";
 import { FileLeaseManager } from "./lease-manager";
 import { OrchestratorMessageLog, type MessageTransport } from "./message-bus";
 import { TaskBoard, type TaskBoardListener } from "./task-board";
-import { type CheckResult, type VerificationCheck, type VerificationResult, type Verifier } from "./verifier";
+import { type VerificationCheck, type VerificationResult, type Verifier } from "./verifier";
 import type {
 	FileLease,
 	OrchestratorEvent,

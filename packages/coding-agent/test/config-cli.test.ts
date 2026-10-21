@@ -3,6 +3,7 @@ import * as path from "node:path";
 import { runConfigCommand } from "@marsai-org/coding-agent/cli/config-cli";
 import { resetSettingsForTest } from "@marsai-org/coding-agent/config/settings";
 import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { initTheme } from "@marsai-org/tui/theme";
 import { getConfigRootDir, setAgentDir, TempDir } from "@marsai-org/utils";
 
 let testAgentDir: TempDir | undefined;
@@ -159,6 +160,38 @@ describe("config CLI schema coverage", () => {
 		expect(console.error).toHaveBeenCalledWith(
 			expect.stringContaining('Unknown status line segment: "modle". Valid status line segments: pi, status, model'),
 		);
+	});
+	it("rejects an unknown theme name on write", async () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
+			throw new Error("process.exit");
+		}) as typeof process.exit);
+
+		await expect(
+			runConfigCommand({ action: "set", key: "theme.dark", value: "not-a-theme", flags: {} }),
+		).rejects.toThrow("process.exit");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+		expect(console.error).toHaveBeenCalledWith(expect.stringContaining("Unknown theme: not-a-theme"));
+	});
+
+	it("accepts a built-in theme name on write", async () => {
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+		await initTheme();
+		await runConfigCommand({ action: "set", key: "theme.dark", value: "dark-gruvbox", flags: {} });
+		expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("theme.dark"));
+	});
+
+	it("keeps commands working when config.yml already holds a stale theme name", async () => {
+		// A `validate` hook would have thrown here and taken every command down:
+		// the hook runs on load, not just on write.
+		if (!testAgentDir) throw new Error("Test agent directory was not initialized");
+		await Bun.write(path.join(testAgentDir.path(), "config.yml"), "theme:\n  dark: retired-theme\n");
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await runConfigCommand({ action: "get", key: "theme.dark", flags: {} });
+
+		expect(logSpy).toHaveBeenCalledWith(expect.stringContaining("retired-theme"));
 	});
 	it("sets numeric idle compaction settings from CLI values", async () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});

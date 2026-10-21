@@ -7,6 +7,20 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Changed
+
+- **The Mars theme is the default.** `theme.dark` was `titanium`, an electric-blue palette, so a fresh install opened in another product's colors and the restyled Mars theme was only reachable through the picker. The setup wizard now offers Mars as the curated dark choice.
+- The welcome logo, setup splash, and outro use the Mars ember gradient (`marsDeep → marsEmber → marsOrange → marsGlow`) instead of the inherited magenta/violet/cyan ramp.
+- The dark and light status-line tokens resolve through their own palette vars. Dark still carried raw xterm-256 indexes that no other token used.
+
+### Fixed
+
+- `dim` clears 4.5:1 on its own background in both themes (dark 4.12 → 5.07, light 4.36 → 5.02). This also fixes `mdLinkUrl`, `syntaxComment`, and the code-fence border, which alias it.
+- `mars completions bash|zsh|fish` no longer emits `_omp`-named shell functions. The generated script defined `_omp`, `_omp_root`, and `complete -F _omp mars` — in a file the user is told to source.
+- `config set theme.dark <typo>` is rejected with a clear error instead of printing a success. `initTheme` had been falling back to the dark theme and logging at debug level, leaving a value that silently does nothing.
+- `mars toks` sizes its table from the data. The models column was fixed at 22 characters, so `Sonnet/Fable 5+ · Haiku 5.5` pushed its token count out of alignment.
+- The release gate polls every package against one deadline instead of giving each a 60-second budget. On v0.1.4 five leaves appeared within seconds and `natives-linux-x64` took four minutes, so the gate failed a release that had published completely.
+
 ## [0.1.4] - 2026-10-21
 
 ### Added

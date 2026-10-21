@@ -307,29 +307,34 @@ jobs:
             natives-darwin-x64 natives-darwin-arm64
             natives-win32-x64 natives-win32-arm64
           )
-          # npm is eventually consistent: a package published seconds ago can
-          # still 404 from `npm view` for a while. Poll before declaring a
-          # package missing, otherwise a successful publish reports as a failure
-          # (observed on v0.1.3, where all six leaves published and the gate
-          # still failed).
-          check() {
-            local p="$1" attempt
-            for attempt in 1 2 3 4 5 6 7 8 9 10; do
-              if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
-                return 0
-              fi
-              sleep 6
-            done
-            return 1
-          }
+          # npm is eventually consistent, and the lag is not uniform: on v0.1.4
+          # five leaves appeared within seconds while natives-linux-x64 took four
+          # minutes. A per-package loop with a 60s budget declared that one
+          # missing and failed the whole release even though it had published.
+          #
+          # Poll every package together against one deadline, so a slow package
+          # never eats the budget of the ones after it.
+          deadline=$(( SECONDS + 900 ))
           missing=()
-          for p in "${pkgs[@]}"; do
-            if check "$p"; then
-              echo "ok      @marsai-org/${p}@${version}"
-            else
-              echo "::error::missing @marsai-org/${p}@${version}"
-              missing+=("$p")
+          pending=("${pkgs[@]}")
+          while [ "${#pending[@]}" -gt 0 ] && [ "$SECONDS" -lt "$deadline" ]; do
+            still=()
+            for p in "${pending[@]}"; do
+              if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+                echo "ok      @marsai-org/${p}@${version}"
+              else
+                still+=("$p")
+              fi
+            done
+            pending=("${still[@]+"${still[@]}"}")
+            if [ "${#pending[@]}" -gt 0 ]; then
+              echo "waiting on ${pending[*]} (${SECONDS}s elapsed)"
+              sleep 20
             fi
+          done
+          for p in "${pending[@]+"${pending[@]}"}"; do
+            echo "::error::missing @marsai-org/${p}@${version}"
+            missing+=("$p")
           done
           if [ "${#missing[@]}" -gt 0 ]; then
             echo "::error title=Release incomplete::not on npm: ${missing[*]}"
