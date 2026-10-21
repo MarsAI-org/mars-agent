@@ -7,25 +7,36 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-21
+
 ### Added
 
 - **Multi-pane orchestrator board (`packages/tui/src/apps/orchestrator-board.ts`).** Displays one live pane per worker with state, task, elapsed time, token count, isolation branch, and output tail. Wide terminals tile panes side by side; narrow terminals show the focused pane full-width with Tab navigation.
 - **Worktree isolation for orchestrated workers.** Workers can run with `isolated: true` in their own checkout (worktree or CoW clone), committing to their own temporary branch so parallel edits never collide.
 - **The `integrator` bundled agent (`packages/coding-agent/src/prompts/agents/integrator.md`).** Owns the merge phase: cherry-picks completed worker branches onto the target in plan order, resolves conflicts, verifies the combined tree, and cleans up temporary worktrees and branches.
+- **Speaker mark, completion glyph, and visible card edges in TUI.** Submitted user prompts open with `❯`, completed tool cards display `✓`, and card borders use visible `frameBorder` (`#484f58` dark, `#a8b1ba` light).
+- **Setup progress marks.** Setup wizard displays visual progress marks (`● ● ● ○ ○ ○ ○ 3/7`) instead of plain text.
 
 ### Changed
 
 - **The Mars theme is the default.** `theme.dark` was `titanium`, an electric-blue palette, so a fresh install opened in another product's colors and the restyled Mars theme was only reachable through the picker. The setup wizard now offers Mars as the curated dark choice.
 - The welcome logo, setup splash, and outro use the Mars ember gradient (`marsDeep → marsEmber → marsOrange → marsGlow`) instead of the inherited magenta/violet/cyan ramp.
 - The dark and light status-line tokens resolve through their own palette vars. Dark still carried raw xterm-256 indexes that no other token used.
+- Active "Thinking…" label now uses `accent` instead of `muted`.
 
 ### Fixed
 
 - `dim` clears 4.5:1 on its own background in both themes (dark 4.12 → 5.07, light 4.36 → 5.02). This also fixes `mdLinkUrl`, `syntaxComment`, and the code-fence border, which alias it.
 - `mars completions bash|zsh|fish` no longer emits `_omp`-named shell functions. The generated script defined `_omp`, `_omp_root`, and `complete -F _omp mars` — in a file the user is told to source.
-- `config set theme.dark <typo>` is rejected with a clear error instead of printing a success. `initTheme` had been falling back to the dark theme and logging at debug level, leaving a value that silently does nothing.
+- `config set theme.dark <typo>` is rejected with a clear error instead of printing a success.
+- `/theme set` now persists the chosen theme to config instead of only swapping in memory.
+- `/theme preview` now reverts to the theme that was previously active instead of hardcoding `dark`.
 - `mars toks` sizes its table from the data. The models column was fixed at 22 characters, so `Sonnet/Fable 5+ · Haiku 5.5` pushed its token count out of alignment.
 - The release gate polls every package against one deadline instead of giving each a 60-second budget. On v0.1.4 five leaves appeared within seconds and `natives-linux-x64` took four minutes, so the gate failed a release that had published completely.
+- CI on `main` now runs on GitHub-hosted runners (`ubuntu-22.04`) instead of unreachable `omp-kata`.
+- Android cross-check toolchain channel resolution in CI.
+- Mach-O load command parsing replaces missing `llvm-objdump` in cross-target verification.
+- Crash handler doc comment rewrapped to satisfy rustfmt.
 
 ## [0.1.4] - 2026-10-21
 
