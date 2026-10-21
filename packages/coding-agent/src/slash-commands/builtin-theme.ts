@@ -59,7 +59,11 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 					return usage(`Unknown theme "${name}". Available: ${available.join(", ")}`, runtime);
 				}
 
-				const { getThemeByName } = await import("@marsai-org/tui/theme");
+				const { getCurrentThemeName, getThemeByName } = await import("@marsai-org/tui/theme");
+				// Preview is a temporary swap, so the theme to come back to is
+				// whatever was live before it — not a hardcoded `dark`. A user on
+				// `dark-gruvbox` was being thrown back to the default palette.
+				const previous = getCurrentThemeName() ?? "dark";
 				const candidate = await getThemeByName(name);
 				const applied = await setTheme(name, false);
 				if (!applied.success) return usage(applied.error ?? `Could not apply ${name}`, runtime);
@@ -79,12 +83,12 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 					return commandConsumed();
 				}
 
-				lines.push(` (reverting in ${PREVIEW_MS / 1000}s — keep it with /theme set ${name})`);
+				lines.push(` (reverting to ${previous} in ${PREVIEW_MS / 1000}s — keep it with /theme set ${name})`);
 				await runtime.output(lines.join("\n"));
 
 				setTimeout(() => {
 					void (async () => {
-						await setTheme("dark", false);
+						await setTheme(previous, false);
 					})();
 				}, PREVIEW_MS).unref?.();
 			} catch (err) {
