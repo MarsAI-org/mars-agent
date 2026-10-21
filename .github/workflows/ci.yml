@@ -542,10 +542,13 @@ jobs:
               # on older macOS.
               grep -aqF OmpAppleFm "$addon" ||
                  { echo "::error::Darwin arm64 addon was built without the Apple Foundation Models bridge"; exit 1; }
-              dylibs="$(llvm-objdump --macho --dylibs-used "$addon")"
-              if grep -E 'libswift|FoundationModels' <<< "$dylibs"; then
-                 echo "::error::Darwin arm64 addon links the Swift runtime or FoundationModels directly"; exit 1
-              fi
+              # Reads the Mach-O load commands directly. The previous
+              # `llvm-objdump --macho --dylibs-used` is not installed on
+              # GitHub-hosted runners, so the whole job failed on exit 127 after
+              # the build had already succeeded (run 39547775300).
+              python3 scripts/check-macho-dylibs.py "$addon" \
+                 --forbid libswift \
+                 --forbid FoundationModels
          - name: Report bazel cache stats
            shell: bash
            run: |
