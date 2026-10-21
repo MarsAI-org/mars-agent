@@ -35,9 +35,31 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
-        with:
-          targets: aarch64-linux-android
+      - name: Install the pinned toolchain and the Android target
+        shell: bash
+        run: |
+          # rust-toolchain.toml pins the channel, and rustup applies it to every
+          # cargo invocation in this directory. Installing a separate `stable`
+          # toolchain here does not help: the pinned nightly wins, and it has no
+          # aarch64-linux-android std, so the check died with "can't find crate
+          # for `core`". Add the target to the toolchain that actually runs.
+          #
+          # The target deliberately stays out of rust-toolchain.toml: every
+          # local `cargo` call would then download an Android std it never uses.
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+              | sh -s -- -y --default-toolchain none --profile minimal
+            # shellcheck disable=SC1091
+            . "${CARGO_HOME:-$HOME/.cargo}/env"
+          fi
+          channel="$(sed -n 's/^channel *= *"\([^"]*\)".*/\1/p' rust-toolchain.toml)"
+          if [ -z "$channel" ]; then
+            echo "::error title=Missing channel::rust-toolchain.toml has no channel line."
+            exit 1
+          fi
+          echo "Pinned toolchain: $channel"
+          rustup toolchain install "$channel" --profile minimal --no-self-update
+          rustup target add --toolchain "$channel" aarch64-linux-android
       - name: Locate the Android NDK
         id: ndk
         shell: bash
