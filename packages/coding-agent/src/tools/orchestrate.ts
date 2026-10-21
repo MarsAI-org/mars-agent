@@ -40,10 +40,9 @@ const planWorkerSchema = type({
 	id: type("string").describe("stable worker id"),
 	"roleLabel?": type("string").describe("human label, e.g. `frontend`"),
 	"agent?": type("string").describe("agent definition name; defaults to the session agent"),
-	"isolated?":
-		type("boolean").describe(
-			"run this worker in its own worktree and merge its branch afterwards; use when parallel edits could collide",
-		),
+	"isolated?": type("boolean").describe(
+		"run this worker in its own worktree and merge its branch afterwards; use when parallel edits could collide",
+	),
 });
 
 const orchestrateSchema = type({

@@ -223,7 +223,7 @@ export class OrchestrationEngine {
 		if (this.#stopped) return;
 		this.#stopped = true;
 		this.#stoppedReason = reason;
-		for (const entry of [...this.#running.values()]) {
+		for (const entry of this.#running.values()) {
 			entry.controller.abort(reason);
 			void this.#runner.cancel?.(entry.workerId, entry.taskId, reason);
 		}
@@ -528,15 +528,6 @@ export class OrchestrationEngine {
 		}
 	}
 
-	#findSettled(taskId: string): SettledRecord | undefined {
-		// `#settled` is drained as the schedule advances, so the last record for a
-		// task is the one that decided its state.
-		for (let i = this.#settled.length - 1; i >= 0; i--) {
-			if (this.#settled[i]?.taskId === taskId) return this.#settled[i];
-		}
-		return undefined;
-	}
-
 	/** Isolation artifacts recorded for one task, for callers rendering a report. */
 	changesFor(taskId: string): WorkerChanges | undefined {
 		return this.#changes.get(taskId)?.changes;
@@ -616,7 +607,7 @@ export class OrchestrationEngine {
 	}
 
 	#emit(event: OrchestratorEvent): void {
-		for (const listener of [...this.#listeners]) listener(event);
+		for (const listener of this.#listeners) listener(event);
 	}
 }
 

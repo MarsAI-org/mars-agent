@@ -12,7 +12,6 @@ import {
 	type IntegrationReport,
 	type Integrator,
 	type PendingIntegration,
-	type WorkerRunContext,
 } from "../../src/orchestrator/engine";
 import type { OrchestratorPlan, WorkerChanges, WorkerOutcome, WorkerSpec } from "../../src/orchestrator/types";
 
