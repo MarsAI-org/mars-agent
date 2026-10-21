@@ -45,6 +45,7 @@ Each worker:
 | --- | --- | --- |
 | `id` | yes | Stable worker id. A task's `agent` matches this. |
 | `roleLabel` | no | Human label such as `frontend`. Defaults to `id`. |
+| `isolated` | no | Run this worker in its own checkout (worktree or CoW clone) and merge its branch afterwards. Defaults to `false`. |
 
 ## Validation
 
@@ -63,7 +64,8 @@ The plan is checked before any worker starts, so a malformed plan never spends b
 3. Concurrency is bounded by `orchestrator.concurrency`, and further narrowed on Android by `orchestrator.androidProcessCap` to `floor((cap - 1) / 2)`.
 4. A worker that exits zero is passed to the verifier. A worker that exits non-zero is never verified: its tree is incomplete, so check output would mislead.
 5. A task whose verification fails is marked `failed`, and anything depending on it is cancelled.
-6. Budget exhaustion stops the run before new workers start and is reported as `stoppedReason`.
+6. When workers ran with `isolated: true`, the **integrator** lands their branches onto the target checkout in plan order, cherry-picking each commit. A branch that fails to merge demotes its task to `failed`. Clean branches have their temporary worktree deleted; a conflicting branch keeps its worktree for inspection.
+7. Budget exhaustion stops the run before new workers start and is reported as `stoppedReason`.
 
 ## Output
 
@@ -76,4 +78,5 @@ Text summary plus structured details:
 ## Related
 
 - `task` — one delegated job. Simpler and cheaper; prefer it unless the work genuinely splits into independent pieces that touch different files.
+- `integrator` — the bundled agent that owns the merge and worktree cleanup.
 - `docs/ORCHESTRATOR_DESIGN.md` — full design.

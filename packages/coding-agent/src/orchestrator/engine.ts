@@ -28,6 +28,7 @@ import type {
 	OrchestratorTask,
 	TaskState,
 	UsageTotals,
+	WorkerChanges,
 	WorkerLifecycleState,
 	WorkerOutcome,
 	WorkerSpec,
@@ -50,6 +51,40 @@ export interface EngineRunner {
 	run(spec: WorkerSpec, task: OrchestratorTask, context: WorkerRunContext): Promise<WorkerOutcome>;
 	/** Best-effort cancellation hook; the abort signal in the context is the primary path. */
 	cancel?(workerId: string, taskId: string, reason: string): void | Promise<void>;
+}
+
+/** One worker branch the integrator has to land. */
+export interface PendingIntegration {
+	readonly taskId: string;
+	readonly workerId: string;
+	readonly branchName: string;
+	/** Base revision the branch was cut from, for the cherry-pick range. */
+	readonly baseSha?: string;
+	/** Files the task declared it would write; the integrator reads them as the review surface. */
+	readonly targetFiles: readonly string[];
+}
+
+/**
+ * Integrates finished worker branches into the parent checkout.
+ *
+ * Kept as a seam so the engine never imports git: production wires an
+ * integrator-agent runner, tests inject a fake that records the request.
+ */
+export interface Integrator {
+	/**
+	 * Land `pending` in dependency order. Returns the tasks whose branch made it
+	 * onto the target, and a human summary for the report.
+	 */
+	integrate(pending: readonly PendingIntegration[], signal: AbortSignal): Promise<IntegrationReport>;
+}
+
+export interface IntegrationReport {
+	/** Branch names that landed on the target. */
+	readonly merged: readonly string[];
+	/** Branch names that did not land (conflict, or never attempted). */
+	readonly failed: readonly string[];
+	/** Free-form summary from the integrator (conflicts hit, checks run). */
+	readonly summary?: string;
 }
 
 export interface OrchestrationEngineOptions {
@@ -78,6 +113,12 @@ export interface OrchestrationEngineOptions {
 	 * Defaults to the process working directory.
 	 */
 	readonly verificationRoot?: string;
+	/**
+	 * Lands worker branches after the plan settles. Omitted means workers ran in
+	 * the shared checkout (or the caller merges on its own), so the engine never
+	 * touches git.
+	 */
+	readonly integrator?: Integrator;
 }
 
 /** Outcome record for one task. */
@@ -97,6 +138,14 @@ export interface EngineReport {
 
 export type OrchestratorEventListener = (event: OrchestratorEvent) => void;
 
+/** One task's settlement record, kept until the scheduler consumes it. */
+interface SettledRecord {
+	readonly taskId: string;
+	readonly outcome: WorkerOutcome | undefined;
+	readonly error?: string;
+	readonly verification?: VerificationResult;
+}
+
 interface RunningEntry {
 	readonly taskId: string;
 	readonly workerId: string;
@@ -115,14 +164,16 @@ export class OrchestrationEngine {
 	readonly #verifier: Verifier | undefined;
 	readonly #verificationChecks: readonly VerificationCheck[];
 	readonly #verificationRoot: string;
+	readonly #integrator: Integrator | undefined;
 	readonly #listeners = new Set<OrchestratorEventListener>();
 	readonly #running = new Map<string, RunningEntry>();
-	readonly #settled: Array<{
-		taskId: string;
-		outcome: WorkerOutcome | undefined;
-		error?: string;
-		verification?: VerificationResult;
-	}> = [];
+	readonly #settled: SettledRecord[] = [];
+	/**
+	 * Isolation artifacts per task, kept after `#settled` drains: the integration
+	 * phase runs once at the end, long after each task's settlement record was
+	 * consumed by the scheduler.
+	 */
+	readonly #changes = new Map<string, { workerId: string; changes: WorkerChanges }>();
 	#wake: (() => void) | undefined;
 	#stopped = false;
 	#stoppedReason: string | undefined;
@@ -144,6 +195,7 @@ export class OrchestrationEngine {
 		this.#verifier = options.verifier;
 		this.#verificationChecks = options.verificationChecks ?? [];
 		this.#verificationRoot = options.verificationRoot ?? process.cwd();
+		this.#integrator = options.integrator;
 		this.#leases = new FileLeaseManager({ now: options.now });
 		this.#budget = new BudgetGuard({ ...options.budget, now: options.now });
 	}
@@ -171,7 +223,7 @@ export class OrchestrationEngine {
 		if (this.#stopped) return;
 		this.#stopped = true;
 		this.#stoppedReason = reason;
-		for (const entry of [...this.#running.values()]) {
+		for (const entry of this.#running.values()) {
 			entry.controller.abort(reason);
 			void this.#runner.cancel?.(entry.workerId, entry.taskId, reason);
 		}
@@ -209,6 +261,7 @@ export class OrchestrationEngine {
 				processCap: this.#processCap,
 			});
 			await this.#schedule(plan);
+			await this.#integrate(plan);
 		} finally {
 			unsubscribe();
 		}
@@ -338,6 +391,7 @@ export class OrchestrationEngine {
 				},
 			});
 			const verification = await this.#verifyOutcome(task, outcome);
+			if (outcome.changes) this.#changes.set(task.id, { workerId: spec.id, changes: outcome.changes });
 			this.#settled.push({ taskId: task.id, outcome, verification });
 			this.#emit({
 				type: "worker_state",
@@ -390,6 +444,95 @@ export class OrchestrationEngine {
 	}
 
 	/** Move settled worker runs onto the board and charge the budget. */
+	/**
+	 * Land the branches workers produced.
+	 *
+	 * Runs once, after the plan settles, and only for tasks that actually
+	 * committed something: a worker with no changes has nothing to merge, and a
+	 * failed or cancelled task's tree is incomplete. A failure here demotes the
+	 * task that failed to merge but leaves the others alone — one conflicting
+	 * branch must not discard the work of a sibling that merged cleanly.
+	 */
+	async #integrate(plan: OrchestratorPlan): Promise<void> {
+		const integrator = this.#integrator;
+		if (!integrator) return;
+
+		const pending: PendingIntegration[] = [];
+		for (const task of plan.tasks) {
+			const record = this.#board.state(task.id);
+			if (record !== "completed") continue;
+			const isolated = this.#changes.get(task.id);
+			if (!isolated?.changes.branchName) continue;
+			pending.push({
+				taskId: task.id,
+				workerId: isolated.workerId,
+				branchName: isolated.changes.branchName,
+				...(isolated.changes.baseSha === undefined ? {} : { baseSha: isolated.changes.baseSha }),
+				targetFiles: task.targetFiles,
+			});
+		}
+		if (pending.length === 0) return;
+
+		for (const entry of pending) {
+			this.#emit({
+				type: "integration_started",
+				taskId: entry.taskId,
+				workerId: entry.workerId,
+				branchName: entry.branchName,
+			});
+			this.#emit({ type: "worker_state", workerId: entry.workerId, taskId: entry.taskId, state: "merging" });
+		}
+
+		const controller = new AbortController();
+		let report: IntegrationReport;
+		try {
+			report = await integrator.integrate(pending, controller.signal);
+		} catch (error) {
+			const message = error instanceof Error ? error.message : String(error);
+			logger.warn("orchestration integration failed", { message, pending: pending.length });
+			for (const entry of pending) {
+				this.#board.transition(entry.taskId, "failed");
+				this.#emit({
+					type: "integration_finished",
+					taskId: entry.taskId,
+					workerId: entry.workerId,
+					merged: false,
+					detail: message,
+				});
+			}
+			return;
+		}
+
+		// `IntegrationReport` names branches, because that is what the integrator
+		// works with; map back to the task that owns each branch.
+		const merged = new Set(report.merged);
+		for (const entry of pending) {
+			const ok = merged.has(entry.branchName);
+			// A branch that did not land leaves its task failed: the code the task
+			// claimed to write is not on the target, so reporting it completed
+			// would tell the caller work exists that does not.
+			if (!ok) this.#board.transition(entry.taskId, "failed");
+			this.#emit({
+				type: "integration_finished",
+				taskId: entry.taskId,
+				workerId: entry.workerId,
+				merged: ok,
+				...(report.summary === undefined ? {} : { detail: report.summary }),
+			});
+			this.#emit({
+				type: "worker_state",
+				workerId: entry.workerId,
+				taskId: entry.taskId,
+				state: ok ? "completed" : "failed",
+			});
+		}
+	}
+
+	/** Isolation artifacts recorded for one task, for callers rendering a report. */
+	changesFor(taskId: string): WorkerChanges | undefined {
+		return this.#changes.get(taskId)?.changes;
+	}
+
 	#drainSettled(): void {
 		while (this.#settled.length > 0) {
 			const settled = this.#settled.shift()!;
@@ -464,7 +607,7 @@ export class OrchestrationEngine {
 	}
 
 	#emit(event: OrchestratorEvent): void {
-		for (const listener of [...this.#listeners]) listener(event);
+		for (const listener of this.#listeners) listener(event);
 	}
 }
 

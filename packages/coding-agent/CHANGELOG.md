@@ -7,6 +7,12 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Added
+
+- **Multi-pane orchestrator board (`packages/tui/src/apps/orchestrator-board.ts`).** Displays one live pane per worker with state, task, elapsed time, token count, isolation branch, and output tail. Wide terminals tile panes side by side; narrow terminals show the focused pane full-width with Tab navigation.
+- **Worktree isolation for orchestrated workers.** Workers can run with `isolated: true` in their own checkout (worktree or CoW clone), committing to their own temporary branch so parallel edits never collide.
+- **The `integrator` bundled agent (`packages/coding-agent/src/prompts/agents/integrator.md`).** Owns the merge phase: cherry-picks completed worker branches onto the target in plan order, resolves conflicts, verifies the combined tree, and cleans up temporary worktrees and branches.
+
 ### Changed
 
 - **The Mars theme is the default.** `theme.dark` was `titanium`, an electric-blue palette, so a fresh install opened in another product's colors and the restyled Mars theme was only reachable through the picker. The setup wizard now offers Mars as the curated dark choice.
