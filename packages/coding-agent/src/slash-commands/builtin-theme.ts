@@ -1,4 +1,5 @@
-import { getAvailableThemes, setTheme } from "@marsai-org/tui/theme";
+import { getAvailableThemes, isLightTheme, setTheme } from "@marsai-org/tui/theme";
+import { cfgThemeDark, cfgThemeLight } from "../modes/settings";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec, SubcommandDef } from "./types";
 
@@ -66,6 +67,13 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 				const lines = [` Theme: ${name}`, ...swatchLines(candidate)];
 
 				if (sub === "set") {
+					// `setTheme` only swaps the live instance. Persisting the name is
+					// what makes the choice survive the session; without it the next
+					// launch silently returned to the previous theme even though this
+					// command said "Theme set to <name>".
+					const slot = isLightTheme(name) ? cfgThemeLight : cfgThemeDark;
+					slot.set(runtime.settings, name);
+					await runtime.settings.flush();
 					await runtime.output(lines.join("\n"));
 					await runtime.output(`Theme set to ${name}.`);
 					return commandConsumed();
