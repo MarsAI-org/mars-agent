@@ -20,6 +20,8 @@ export type SymbolKey =
 	| "status.shadowed"
 	| "status.aborted"
 	| "status.done"
+	/** Leading mark on a submitted prompt in the transcript; mirrors the composer's gutter. */
+	| "user.prompt"
 	// Navigation
 	| "nav.cursor"
 	| "nav.selected"
@@ -400,7 +402,8 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"status.running": "⟳",
 	"status.shadowed": "○",
 	"status.aborted": "⏹",
-	"status.done": "•",
+	"status.done": "✓",
+	"user.prompt": "❯",
 	// Navigation
 	"nav.cursor": "❯",
 	"nav.selected": "➤",
@@ -711,8 +714,9 @@ const NERD_SYMBOLS: SymbolMap = {
 	"status.shadowed": "\uf10c",
 	// pick:  | alt:  
 	"status.aborted": "\uf04d",
-	// pick: • | alt: ● ·
-	"status.done": "•",
+	// pick:  (nf-fa-check, matches status.success) | alt: ✓ ✔
+	"status.done": "\uf00c",
+	"user.prompt": "\uf105",
 	// Navigation
 	// pick:  | alt:  
 	"nav.cursor": "\uf054",
@@ -1182,6 +1186,7 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"status.shadowed": "[/]",
 	"status.aborted": "[-]",
 	"status.done": "*",
+	"user.prompt": ">",
 	// Navigation
 	"nav.cursor": ">",
 	"nav.selected": "->",

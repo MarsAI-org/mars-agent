@@ -271,14 +271,21 @@ export class UserMessageComponent extends Container implements ReactionTarget {
 	}
 
 	/**
-	 * The top padding row: the live-steering marker left-aligned and the reaction
-	 * badge right-aligned, both inside the horizontal padding.
+	 * The top padding row: the prompt mark left-aligned, the live-steering marker
+	 * beside it, and the reaction badge right-aligned — all inside the horizontal
+	 * padding.
+	 *
+	 * The prompt mark is what makes a submitted prompt read as *yours*: without
+	 * it the bubble is an anonymous filled block, and the composer's own `❯`
+	 * gutter is the only thing in the session that names the speaker.
 	 */
 	#badgeRow(width: number): string {
+		const prompt = this.#synthetic ? "" : `${theme.fg("accent", theme.symbol("user.prompt"))} `;
 		const marker = this.#liveSteered ? theme.fg("accent", "*") : "";
 		const emoji = this.#reaction ?? "";
-		const gap = Math.max(0, width - 2 - visibleWidth(marker) - visibleWidth(emoji));
-		return applyBackgroundToLine(` ${marker}${padding(gap)}${emoji}`, width, this.#bgColor);
+		const lead = `${prompt}${marker}`;
+		const gap = Math.max(0, width - 2 - visibleWidth(lead) - visibleWidth(emoji));
+		return applyBackgroundToLine(` ${lead}${padding(gap)}${emoji}`, width, this.#bgColor);
 	}
 
 	override render(width: number): readonly string[] {
@@ -290,7 +297,9 @@ export class UserMessageComponent extends Container implements ReactionTarget {
 			return this.#zoneLines;
 		}
 		const wrapped = lines.slice();
-		if (this.#reaction !== undefined || this.#liveSteered) wrapped[0] = this.#badgeRow(width);
+		// Always repaint the top row: it carries the prompt mark, not only the
+		// optional badges.
+		wrapped[0] = this.#badgeRow(width);
 		wrapped[0] = OSC133_ZONE_START + wrapped[0];
 		wrapped[wrapped.length - 1] = wrapped[wrapped.length - 1] + OSC133_ZONE_CLOSE;
 		this.#zoneSource = lines;
