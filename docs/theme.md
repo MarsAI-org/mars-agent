@@ -185,7 +185,7 @@ Auto theme slot selection uses terminal appearance in this order:
 
 Current defaults (definitions in `packages/coding-agent/src/modes/settings.ts`):
 
-- `theme.dark = "dark"`
+- `theme.dark = "dark"` — the Mars brand theme: pixel-art orange on `#0d1117`
 - `theme.light = "light"`
 - `symbolPreset = "unicode"`
 - `colorBlindMode = false`
