@@ -527,10 +527,12 @@ function normalizeCutoff(cutoff: number | null | undefined): number | null {
 
 /**
  * Series bucket for a fact row. Day buckets are the local calendar date
- * (`YYYY-MM-DD` in the server's timezone, the viewer's for this localhost
- * tool), so a day matches the date the user sees. Rolled hours are attributed
- * by their start, so half-hour UTC offsets shift a day boundary by up to 30
- * minutes, as in {@link getProviderHourlyBurn}. Shorter buckets stay epoch-aligned.
+ * (`YYYY-MM-DD` in the server's timezone, the viewer's when both run on one
+ * machine; the client tolerates a mismatch by floor-matching, see
+ * `client/data/series.ts`), so a day matches the date the user sees. Rolled
+ * hours are attributed by their start, so half-hour UTC offsets shift a day
+ * boundary by up to 30 minutes, as in {@link getProviderHourlyBurn}. Shorter
+ * buckets stay epoch-aligned.
  */
 function seriesBucket(bucketMs: number): string {
 	if (bucketMs === DAY_MS) return "date(f.bucket / 1000, 'unixepoch', 'localtime')";

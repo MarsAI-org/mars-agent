@@ -3,6 +3,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { TempDir } from "@oh-my-pi/pi-utils";
 import { bucketAxis } from "../src/client/data/range";
+import { densify } from "../src/client/data/series";
 
 const HOUR = 60 * 60 * 1000;
 const at = (iso: string) => Date.parse(iso);
@@ -111,5 +112,18 @@ describe("client day axis", () => {
 		const buckets = bucketAxis("24h", [], undefined, now);
 		expect(buckets.at(-1)).toBe(Math.floor(now / HOUR) * HOUR);
 		expect(buckets[1] - buckets[0]).toBe(HOUR);
+	});
+
+	it("still charts a server whose timezone differs from the browser's", () => {
+		// Browser on Pacific time, server on UTC (e.g. `--host` or a container): the
+		// server's day buckets start at UTC midnight, not on any axis key.
+		process.env.TZ = "America/Los_Angeles";
+		const buckets = bucketAxis("7d", [], undefined, at("2026-10-21T03:56:00Z"));
+		const points = [
+			{ timestamp: at("2026-10-19T00:00:00Z"), requests: 3 },
+			{ timestamp: at("2026-10-20T00:00:00Z"), requests: 5 },
+		];
+		const daily = densify(points, buckets, p => p.requests);
+		expect(daily.reduce((sum, v) => sum + v, 0)).toBe(8);
 	});
 });

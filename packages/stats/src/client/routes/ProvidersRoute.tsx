@@ -15,7 +15,7 @@ import {
 } from "../data/formatters";
 import { type QueryResult, useQuery } from "../data/query";
 import { bucketAxis, formatBucket, formatTick, rangeMeta } from "../data/range";
-import { densify, pivotSeries } from "../data/series";
+import { bucketAt, densify, pivotSeries } from "../data/series";
 import type {
 	ProviderAggregate,
 	ProviderHourlyPoint,
@@ -939,23 +939,6 @@ function buildUtilization(accounts: UsageWindowSeries[], names: ReadonlyMap<stri
 	const span = last - first;
 	const bucketMs = UTIL_STEPS.find(step => span / step < MAX_UTIL_SLOTS) ?? DAY_MS;
 	const buckets = bucketAxis("all", [first], bucketMs, last);
-	// Day buckets start at local midnight (23/25-hour DST days), so find the last
-	// bucket at or before `ts` rather than dividing by `bucketMs`.
-	const index = (ts: number) => {
-		let lo = 0;
-		let hi = buckets.length - 1;
-		let found = -1;
-		while (lo <= hi) {
-			const mid = (lo + hi) >> 1;
-			if (buckets[mid] <= ts) {
-				found = mid;
-				lo = mid + 1;
-			} else {
-				hi = mid - 1;
-			}
-		}
-		return found;
-	};
 	const exhausted = buckets.map((): string[] => []);
 	let max = 0;
 
@@ -966,8 +949,9 @@ function buildUtilization(accounts: UsageWindowSeries[], names: ReadonlyMap<stri
 		const values: (number | null)[] = buckets.map(() => null);
 		const readAt: number[] = buckets.map(() => 0);
 		for (const p of account.points) {
-			const i = index(p.timestamp);
-			if (i < 0 || i >= buckets.length) continue;
+			// Floor search: day buckets start at local midnight, so they are not uniform.
+			const i = bucketAt(buckets, p.timestamp);
+			if (i < 0) continue;
 			if (p.exhausted && !exhausted[i].includes(nameOf(account))) exhausted[i].push(nameOf(account));
 			if (p.usedFraction === null || p.timestamp < readAt[i]) continue;
 			values[i] = p.usedFraction;
