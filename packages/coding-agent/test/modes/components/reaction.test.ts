@@ -4,7 +4,7 @@ import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/
 import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
 import { splitReaction } from "@marsai-org/tui/chat/reaction";
 import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
-import { initTheme } from "@marsai-org/tui/theme";
+import { initTheme, theme } from "@marsai-org/tui/theme";
 import { Container, Text } from "@marsai-org/tui";
 
 const W = 60;
@@ -78,6 +78,18 @@ describe("splitReaction", () => {
 });
 
 describe("agent reactions in the transcript", () => {
+	it("marks a submitted prompt with the composer's prompt glyph", () => {
+		const user = new UserMessageComponent("hello");
+		// The transcript has to name the speaker: without the mark the bubble is an
+		// anonymous filled block and only the composer's own gutter reads as "you".
+		expect(bubbleTopRow(user)).toStartWith(` ${theme.symbol("user.prompt")} `);
+	});
+
+	it("omits the prompt glyph on an agent-attributed (synthetic) bubble", () => {
+		const synthetic = new UserMessageComponent("injected", { synthetic: true });
+		expect(bubbleTopRow(synthetic)).not.toContain(theme.symbol("user.prompt"));
+	});
+
 	it("badges the user bubble on the opening emoji and strips it from the reply", () => {
 		const transcript = new Container();
 		const user = new UserMessageComponent("ship it?");
@@ -143,11 +155,13 @@ describe("agent reactions in the transcript", () => {
 		const transcript = new Container();
 		const user = new UserMessageComponent("use tabs", { liveSteered: true });
 		transcript.addChild(user);
-		expect(bubbleTopRow(user)).toStartWith(" *");
+		// The row opens with the prompt mark, then the steering marker; the mark is
+		// what names the speaker, so it stays leftmost.
+		expect(bubbleTopRow(user)).toStartWith(" ❯ *");
 
 		const reply = new AssistantMessageComponent(msg("👍 On it."));
 		reply.pickReactionTarget(transcript.children);
-		expect(bubbleTopRow(user)).toStartWith(" *");
+		expect(bubbleTopRow(user)).toStartWith(" ❯ *");
 		expect(bubbleTopRow(user)).toEndWith("👍 ");
 		expect(Bun.stringWidth(bubbleTopRow(user))).toBe(W);
 	});
