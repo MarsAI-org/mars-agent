@@ -1,5 +1,9 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { APP_NAME, getCustomThemesDir } from "@marsai-org/utils";
 import { combine, effect, register, type Setting } from "../config/registry";
 import { formatKeyHint, formatKeyHints } from "@marsai-org/tui/app-keybindings";
+import { getBuiltinThemes } from "@marsai-org/tui/theme";
 import { cfgReadToolResultPreview } from "../tools/settings";
 import { MAGIC_KEYWORDS, type MagicKeywordId } from "./magic-keywords";
 import { TREE_FILTER_MODES } from "@marsai-org/tui/overlays/tree-selector";
@@ -55,6 +59,23 @@ export const cfgGitEnabled = register({
 // ────────────────────────────────────────────────────────────────────────
 
 // Theme
+//
+// Both theme settings are free-form strings with runtime-populated pickers, so
+// nothing rejects a typo at write time. `initTheme` then falls back to the dark
+// theme and only logs at debug level, which made
+// `mars config set theme.dark bogus` print a success and silently do nothing.
+// `validate` runs on every write and every reload, so the typo fails loudly.
+function assertKnownTheme(name: unknown): void {
+	if (typeof name !== "string") return;
+	const builtin = Object.hasOwn(getBuiltinThemes(), name);
+	if (builtin) return;
+	const custom = path.join(getCustomThemesDir(), `${name}.json`);
+	if (fs.existsSync(custom)) return;
+	throw new Error(
+		`Unknown theme: ${name}. Run \`${APP_NAME} config list\` for the setting, or see the theme picker in /theme list.`,
+	);
+}
+
 export const cfgThemeDark = register({
 	id: "theme.dark",
 	type: "string",
@@ -62,6 +83,7 @@ export const cfgThemeDark = register({
 	// default, `titanium`, is an electric-blue palette: a fresh install opened in
 	// another product's colors and never showed the Mars identity.
 	default: "dark",
+	validate: assertKnownTheme,
 	ui: {
 		tab: "appearance",
 		group: "Theme",
@@ -76,6 +98,7 @@ export const cfgThemeLight = register({
 	id: "theme.light",
 	type: "string",
 	default: "light",
+	validate: assertKnownTheme,
 	ui: {
 		tab: "appearance",
 		group: "Theme",
