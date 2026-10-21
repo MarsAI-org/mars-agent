@@ -67,6 +67,24 @@ describe("buildPlan", () => {
 		expect(plan.tasks[0]?.agent).toBe("frontend");
 	});
 
+	test("defaults workers to the shared checkout", () => {
+		const plan = buildPlan({
+			goal: "do it",
+			tasks: [{ id: "a", title: "A", description: "a" }],
+			workers: [{ id: "w" }],
+		});
+		expect(plan.workers[0]?.isolated).toBe(false);
+	});
+
+	test("carries a worker's isolation request through to the plan", () => {
+		const plan = buildPlan({
+			goal: "do it",
+			tasks: [{ id: "a", title: "A", description: "a" }],
+			workers: [{ id: "w", isolated: true }],
+		});
+		expect(plan.workers[0]?.isolated).toBe(true);
+	});
+
 	test("preserves declared dependencies and write sets", () => {
 		const plan = buildPlan({
 			goal: "do it",
