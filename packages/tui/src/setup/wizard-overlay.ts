@@ -280,6 +280,22 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 		);
 	}
 
+	/**
+	 * Step progress as a row of marks rather than "Setup step 3 of 7": the count
+	 * is the same information, but the row answers "how much is left" at a glance
+	 * and puts the brand accent on the step you are on.
+	 */
+	#progressLine(): string {
+		const total = this.scenes.length;
+		if (total <= 0) return "";
+		const marks = this.scenes.map((_, index) => {
+			if (index < this.#sceneIndex) return theme.fg("muted", "●");
+			if (index === this.#sceneIndex) return theme.fg("accent", "●");
+			return theme.fg("dim", "○");
+		});
+		return `${marks.join(" ")} ${theme.fg("dim", `${this.#sceneIndex + 1}/${total}`)}`;
+	}
+
 	#renderScene(width: number, height: number): string[] {
 		const scene = this.scenes[this.#sceneIndex];
 		const title = this.#activeScene?.title ?? scene?.title ?? "Setup";
@@ -292,7 +308,7 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 			"",
 			...logo.map(line => centerLine(line, width)),
 			centerLine(theme.bold(theme.fg("accent", APP_NAME)), width),
-			centerLine(theme.fg("muted", `Setup step ${this.#sceneIndex + 1} of ${this.scenes.length}`), width),
+			centerLine(this.#progressLine(), width),
 			"",
 			indentLine(theme.bold(title), width, SCENE_MARGIN_X),
 		];
