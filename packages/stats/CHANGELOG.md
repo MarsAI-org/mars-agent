@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date
+
 ## [18.12.0] - 2026-10-17
 
 ### Fixed

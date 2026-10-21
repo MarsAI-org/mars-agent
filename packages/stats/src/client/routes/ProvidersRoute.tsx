@@ -939,7 +939,23 @@ function buildUtilization(accounts: UsageWindowSeries[], names: ReadonlyMap<stri
 	const span = last - first;
 	const bucketMs = UTIL_STEPS.find(step => span / step < MAX_UTIL_SLOTS) ?? DAY_MS;
 	const buckets = bucketAxis("all", [first], bucketMs, last);
-	const index = (ts: number) => Math.floor((ts - buckets[0]) / bucketMs);
+	// Day buckets start at local midnight (23/25-hour DST days), so find the last
+	// bucket at or before `ts` rather than dividing by `bucketMs`.
+	const index = (ts: number) => {
+		let lo = 0;
+		let hi = buckets.length - 1;
+		let found = -1;
+		while (lo <= hi) {
+			const mid = (lo + hi) >> 1;
+			if (buckets[mid] <= ts) {
+				found = mid;
+				lo = mid + 1;
+			} else {
+				hi = mid - 1;
+			}
+		}
+		return found;
+	};
 	const exhausted = buckets.map((): string[] => []);
 	let max = 0;
 
