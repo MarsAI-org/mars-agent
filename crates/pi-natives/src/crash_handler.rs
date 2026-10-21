@@ -21,10 +21,10 @@
 //!   regardless of `RUST_BACKTRACE`.
 //! - The crash log path mirrors the JS side (`packages/utils/src/dirs.ts`):
 //!   `$XDG_STATE_HOME/mars/logs/` on Linux / macOS when the user has migrated
-//!   to XDG (i.e. that directory already exists and `MARS_CODING_AGENT_DIR` isn't
-//!   pointed somewhere custom), otherwise `<home>/<MARS_CONFIG_DIR>/logs/`
-//!   (defaulting to `~/.mars/logs/`). The pre-rename `PI_*` names are honored
-//!   as a fallback.
+//!   to XDG (i.e. that directory already exists and `MARS_CODING_AGENT_DIR`
+//!   isn't pointed somewhere custom), otherwise
+//!   `<home>/<MARS_CONFIG_DIR>/logs/` (defaulting to `~/.mars/logs/`). The
+//!   pre-rename `PI_*` names are honored as a fallback.
 //! - Hook installation is idempotent across repeated module loads.
 
 use std::{
