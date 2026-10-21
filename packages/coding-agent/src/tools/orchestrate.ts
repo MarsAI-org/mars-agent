@@ -12,12 +12,14 @@
  * Design reference: ORCHESTRATOR_DESIGN.md sections 4, 5, 8.
  */
 
-import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import type { AgentTool, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
 import { type } from "@marsai-org/omptype";
 import { isRecord, logger, prompt } from "@marsai-org/utils";
 
 import orchestrateDescription from "../prompts/tools/orchestrate.md" with { type: "text" };
 import { cfgOrchestratorEnabled } from "../orchestrator/settings";
+import { BoardModel } from "../orchestrator/board-model";
+import type { WorkerPane } from "@marsai-org/tui/apps/orchestrator-board";
 import { discoverAgents, getAgent } from "../task/discovery";
 import { createNativeOrchestrationEngine } from "../orchestrator/native-runner";
 import type { OrchestratorPlan, OrchestratorTask, WorkerSpec } from "../orchestrator/types";
@@ -38,6 +40,9 @@ const planWorkerSchema = type({
 	id: type("string").describe("stable worker id"),
 	"roleLabel?": type("string").describe("human label, e.g. `frontend`"),
 	"agent?": type("string").describe("agent definition name; defaults to the session agent"),
+	"isolated?": type("boolean").describe(
+		"run this worker in its own worktree and merge its branch afterwards; use when parallel edits could collide",
+	),
 });
 
 const orchestrateSchema = type({
@@ -59,6 +64,8 @@ export interface OrchestrateDetails {
 		exitCode?: number;
 		error?: string;
 	}>;
+	/** Live pane snapshot, present on streamed updates while the run is in flight. */
+	readonly panes?: readonly WorkerPane[];
 	readonly error?: string;
 }
 
@@ -70,7 +77,7 @@ export function buildPlan(params: OrchestrateParams): OrchestratorPlan {
 					id: worker.id,
 					roleLabel: worker.roleLabel ?? worker.id,
 					backend: "native" as const,
-					isolated: false,
+					isolated: worker.isolated ?? false,
 				}))
 			: [
 					{
@@ -108,6 +115,26 @@ function renderReport(details: OrchestrateDetails): string {
 	}
 	if (details.usage) {
 		lines.push(`Usage: ${details.usage.totalTokens ?? 0} tokens across ${details.usage.requests ?? 0} request(s)`);
+	}
+	return lines.join("\n");
+}
+
+/** Streamed board repaints are throttled to this cadence while a run is live. */
+const BOARD_UPDATE_MS = 250;
+
+/** Render the pane snapshot as the plain-text body a non-TUI caller sees. */
+export function renderBoardText(panes: readonly WorkerPane[]): string {
+	if (panes.length === 0) return "No workers yet.";
+	const lines: string[] = [];
+	for (const pane of panes) {
+		const bits = [`[${pane.state}]`, pane.label];
+		if (pane.taskTitle ?? pane.taskId) bits.push(`· ${pane.taskTitle ?? pane.taskId}`);
+		if (pane.branchName) bits.push(`· ${pane.branchName}`);
+		if (pane.tokens !== undefined) bits.push(`· ${pane.tokens} tok`);
+		lines.push(bits.join(" "));
+		const tail = (pane.output ?? []).slice(-3);
+		for (const line of tail) lines.push(`    ${line}`);
+		if (pane.error) lines.push(`    ! ${pane.error}`);
 	}
 	return lines.join("\n");
 }
@@ -154,6 +181,7 @@ export class OrchestrateTool implements AgentTool<typeof orchestrateSchema, Orch
 		_toolCallId: string,
 		params: OrchestrateParams,
 		signal?: AbortSignal,
+		onUpdate?: AgentToolUpdateCallback<OrchestrateDetails>,
 	): Promise<AgentToolResult<OrchestrateDetails>> {
 		if (!cfgOrchestratorEnabled.get(this.session.settings)) {
 			return {
@@ -197,10 +225,30 @@ export class OrchestrateTool implements AgentTool<typeof orchestrateSchema, Orch
 			parentActiveTools: this.#activeToolNames(),
 			taskDepth: (this.session.taskDepth ?? 0) + 1,
 			parentAgentId: this.session.getAgentId?.() ?? undefined,
+			session: this.session,
 		});
 
 		const onAbort = (): void => engine.stopAll("cancelled by caller");
 		signal?.addEventListener("abort", onAbort, { once: true });
+
+		// Fold engine events into pane state and stream it out, so the caller's
+		// UI shows one live pane per worker instead of a single spinner.
+		const board = new BoardModel(plan);
+		board.annotateTasks(plan);
+		let lastUpdate = 0;
+		const unsubscribe = engine.subscribe(event => {
+			board.apply(event);
+			if (!onUpdate) return;
+			// Throttle: an event per token would repaint the whole board on every
+			// delta. 250ms is fast enough to read as live and cheap enough to keep.
+			const now = Date.now();
+			if (now - lastUpdate < BOARD_UPDATE_MS) return;
+			lastUpdate = now;
+			onUpdate({
+				content: [{ type: "text", text: renderBoardText(board.snapshot()) }],
+				details: { planId: plan.id, panes: board.snapshot() },
+			});
+		});
 
 		try {
 			logger.debug("orchestrate tool starting", { goal: plan.goal, tasks: plan.tasks.length });
@@ -225,6 +273,7 @@ export class OrchestrateTool implements AgentTool<typeof orchestrateSchema, Orch
 				details: { error: message },
 			};
 		} finally {
+			unsubscribe();
 			signal?.removeEventListener("abort", onAbort);
 		}
 	}

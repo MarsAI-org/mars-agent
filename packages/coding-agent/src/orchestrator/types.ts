@@ -113,12 +113,31 @@ export interface WorkerUsage {
 	readonly requests?: number;
 }
 
+/**
+ * What a worker's isolated checkout produced. Present only for workers that ran
+ * with `isolated: true`; the engine uses it to drive the integration phase.
+ */
+export interface WorkerChanges {
+	/** Temporary branch carrying the worker's commits, when it committed any. */
+	readonly branchName?: string;
+	/** Patch artifact written when the branch could not be created. */
+	readonly patchPath?: string;
+	/** Base revision the branch was cut from, for the cherry-pick range. */
+	readonly baseSha?: string;
+	/** True when the worker's tree differed from its baseline at all. */
+	readonly hasChanges: boolean;
+	/** Human summary of what the merge step did, when it ran. */
+	readonly mergeSummary?: string;
+}
+
 /** What a worker run reports back to the orchestrator. */
 export interface WorkerOutcome {
 	readonly exitCode: number;
 	readonly output: string;
 	readonly error?: string;
 	readonly usage?: WorkerUsage;
+	/** Isolation artifacts; absent for workers that ran in the shared checkout. */
+	readonly changes?: WorkerChanges;
 }
 
 /** Union of events the engine emits for the UI and for tests. */
@@ -150,6 +169,21 @@ export type OrchestratorEvent =
 			readonly paths: readonly string[];
 	  }
 	| { readonly type: "budget_exhausted"; readonly reason: string; readonly usage: UsageTotals }
+	| {
+			/** One worker's isolated changes are being integrated into the parent checkout. */
+			readonly type: "integration_started";
+			readonly taskId: string;
+			readonly workerId: string;
+			readonly branchName?: string;
+	  }
+	| {
+			/** The integration phase settled for one worker. */
+			readonly type: "integration_finished";
+			readonly taskId: string;
+			readonly workerId: string;
+			readonly merged: boolean;
+			readonly detail?: string;
+	  }
 	| {
 			readonly type: "plan_finished";
 			readonly planId: string;
