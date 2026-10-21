@@ -5,6 +5,31 @@
 ### Fixed
 
 - Fixed the stats dashboard serving index.html at /favicon.ico; it now returns the omp icon (image/x-icon), so dashboard tabs and bookmarks show a real icon ([#15162](https://github.com/can1357/oh-my-pi/pull/15162) by [@yuzu-octopus](https://github.com/yuzu-octopus)).
+- Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date ([#16605](https://github.com/can1357/oh-my-pi/pull/16605) by [@GarrettShrop](https://github.com/GarrettShrop))
+
+## [18.12.0] - 2026-10-17
+
+### Fixed
+
+- Fixed usage stats pricing Google Antigravity and MiniMax Token Plan models at $0 when their catalog rows carry no price; they now use the catalog's pricing peer, as `xai-oauth` already did ([#16092](https://github.com/can1357/oh-my-pi/pull/16092) by [@H4vC](https://github.com/H4vC))
+
+## [18.11.0] - 2026-10-14
+
+### Fixed
+
+- Providers → Subscription windows no longer mixes Codex 5-hour and 7-day quotas across plans: Team and weekly-only (ProLite) accounts now share the 7-day row, the 5-hour row counts only accounts that have one, and labels no longer flip with whichever account reported last ([#15664](https://github.com/can1357/oh-my-pi/issues/15664))
+
+## [18.10.4] - 2026-10-13
+
+### Fixed
+
+- Usage recorded at $0 for a model whose catalog price changes on a date (Gemini 4 Argon, Devin SWE-2) is now priced at the rate in force on the request's date, instead of staying $0 like peak/off-peak tariff usage ([#15620](https://github.com/can1357/oh-my-pi/pull/15620) by [@eggpeat](https://github.com/eggpeat))
+
+## [18.9.0] - 2026-10-11
+
+### Fixed
+
+- Fixed the stats dashboard favicon so dashboard tabs and bookmarks display the OMP icon correctly.
 
 ## [18.8.0] - 2026-10-07
 
