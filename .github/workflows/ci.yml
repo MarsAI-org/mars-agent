@@ -574,8 +574,8 @@ jobs:
       # a single shard on main would exceed the 25-minute ceiling.
       # Declared first among the test jobs so it is not the one left queued
       # when the runner pool is saturated.
-      # No required check keys on this job name (branch protection and
-      # rulesets are off for main/omp2), so the per-shard names are safe.
+      # No required check keys on the per-shard job name, so splitting the
+      # matrix across events is safe.
       strategy:
          fail-fast: false
          matrix:
