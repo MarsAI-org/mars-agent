@@ -4,7 +4,7 @@
 
 ### Fixed
 
-- Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date
+- Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date ([#16605](https://github.com/can1357/oh-my-pi/pull/16605) by [@GarrettShrop](https://github.com/GarrettShrop))
 
 ## [18.12.0] - 2026-10-17
 
