@@ -479,15 +479,21 @@ export function logoNode(lines: readonly string[], shimmer: boolean): NativeNode
 	);
 }
 
-/** Multi-stop palette for the diagonal gradient. */
+/**
+ * Multi-stop palette for the diagonal gradient: the Mars ember ramp, from the
+ * deep shadow of the mark through the brand orange to the glow on its rim.
+ * The previous palette was magenta → violet → cyan, which painted the orange
+ * brand mark in another product's colors.
+ */
 const GRADIENT_STOPS: ReadonlyArray<readonly [number, number, number]> = [
-	[248, 79, 204], // oklch(0.7 0.24 340)
-	[147, 98, 244], // oklch(0.62 0.21 295)
-	[0, 219, 228], // oklch(0.81 0.14 200)
+	[152, 48, 24], // marsDeep   #983018
+	[214, 74, 40], // marsEmber  #d64a28
+	[249, 115, 22], // marsOrange #f97316
+	[255, 171, 115], // marsGlow   #ffab73
 ];
 
-/** 256-color ramp fallback when truecolor isn't available. */
-const GRADIENT_RAMP_256 = [206, 170, 134, 99, 69, 74, 44];
+/** 256-color ramp fallback when truecolor isn't available: the same ember ramp. */
+const GRADIENT_RAMP_256 = [88, 130, 166, 202, 208, 214, 216];
 
 /** Half-width of the shine highlight band, expressed in gradient-t units. */
 const SHINE_HALF_WIDTH = 0.18;

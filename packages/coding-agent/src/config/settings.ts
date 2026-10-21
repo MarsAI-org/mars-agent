@@ -4,7 +4,7 @@
  * (see `./registry`), declared next to their domain and collected by `./all-settings`:
  *
  *   cfgCompactionEnabled.get(settings);         // sync read
- *   cfgThemeDark.set(settings, "titanium");     // sync write, saves in background
+ *   cfgThemeDark.set(settings, "dark");         // sync write, saves in background
  *
  * For tests:
  *   const isolated = Settings.isolated({ "compaction.enabled": false });

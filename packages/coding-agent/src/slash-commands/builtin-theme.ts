@@ -1,4 +1,5 @@
-import { getAvailableThemes, setTheme } from "@marsai-org/tui/theme";
+import { getAvailableThemes, isLightTheme, setTheme } from "@marsai-org/tui/theme";
+import { cfgThemeDark, cfgThemeLight } from "../modes/settings";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec, SubcommandDef } from "./types";
 
@@ -58,7 +59,11 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 					return usage(`Unknown theme "${name}". Available: ${available.join(", ")}`, runtime);
 				}
 
-				const { getThemeByName } = await import("@marsai-org/tui/theme");
+				const { getCurrentThemeName, getThemeByName } = await import("@marsai-org/tui/theme");
+				// Preview is a temporary swap, so the theme to come back to is
+				// whatever was live before it — not a hardcoded `dark`. A user on
+				// `dark-gruvbox` was being thrown back to the default palette.
+				const previous = getCurrentThemeName() ?? "dark";
 				const candidate = await getThemeByName(name);
 				const applied = await setTheme(name, false);
 				if (!applied.success) return usage(applied.error ?? `Could not apply ${name}`, runtime);
@@ -66,17 +71,24 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 				const lines = [` Theme: ${name}`, ...swatchLines(candidate)];
 
 				if (sub === "set") {
+					// `setTheme` only swaps the live instance. Persisting the name is
+					// what makes the choice survive the session; without it the next
+					// launch silently returned to the previous theme even though this
+					// command said "Theme set to <name>".
+					const slot = isLightTheme(name) ? cfgThemeLight : cfgThemeDark;
+					slot.set(runtime.settings, name);
+					await runtime.settings.flush();
 					await runtime.output(lines.join("\n"));
 					await runtime.output(`Theme set to ${name}.`);
 					return commandConsumed();
 				}
 
-				lines.push(` (reverting in ${PREVIEW_MS / 1000}s — keep it with /theme set ${name})`);
+				lines.push(` (reverting to ${previous} in ${PREVIEW_MS / 1000}s — keep it with /theme set ${name})`);
 				await runtime.output(lines.join("\n"));
 
 				setTimeout(() => {
 					void (async () => {
-						await setTheme("dark", false);
+						await setTheme(previous, false);
 					})();
 				}, PREVIEW_MS).unref?.();
 			} catch (err) {
