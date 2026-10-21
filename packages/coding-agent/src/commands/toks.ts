@@ -98,12 +98,17 @@ export default class Toks extends Command {
 
 		const baseline = rows.find(row => row.encoding === natives.Encoding.O200kBase)?.tokens ?? 0;
 		const label = source.kind === "file" ? path.relative(process.cwd(), source.path) || source.path : "text";
+		// Column widths follow the data: a fixed 22 was narrower than the longest
+		// model list (`Sonnet/Fable 5+ · Haiku 5.5`), so that row pushed the token
+		// count out of its column and the table read as a ragged line.
+		const encodingWidth = Math.max("encoding".length, ...rows.map(row => row.name.length)) + 2;
+		const modelsWidth = Math.max("models".length, ...rows.map(row => row.models.length)) + 2;
 		const out = [
 			`${chalk.dim("input")}  ${label}`,
 			`${chalk.dim("size")}   ${formatBytes(bytes)} · ${count(chars, "char")} · ${count(lines, "line")}`,
 			"",
 			chalk.dim(
-				`${"encoding".padEnd(18)}${"models".padEnd(22)}${"tokens".padStart(10)}${"chars/tok".padStart(11)}${"vs o200k".padStart(10)}`,
+				`${"encoding".padEnd(encodingWidth)}${"models".padEnd(modelsWidth)}${"tokens".padStart(10)}${"chars/tok".padStart(11)}${"vs o200k".padStart(10)}`,
 			),
 		];
 		for (const row of rows) {
@@ -113,7 +118,7 @@ export default class Toks extends Command {
 					? "—"
 					: `${row.tokens >= baseline ? "+" : ""}${(((row.tokens - baseline) / baseline) * 100).toFixed(1)}%`;
 			out.push(
-				`${row.name.padEnd(18)}${chalk.dim(row.models.padEnd(22))}${chalk.bold(int(row.tokens).padStart(10))}${ratio.padStart(11)}${delta.padStart(10)}`,
+				`${row.name.padEnd(encodingWidth)}${chalk.dim(row.models.padEnd(modelsWidth))}${chalk.bold(int(row.tokens).padStart(10))}${ratio.padStart(11)}${delta.padStart(10)}`,
 			);
 		}
 		process.stdout.write(`${out.join("\n")}\n`);
