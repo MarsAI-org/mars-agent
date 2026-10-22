@@ -14,12 +14,9 @@
 	},
 	"license": "MIT",
 	"publishConfig": {
-		"access": "public"
+	  "access": "public"
 	},
-	"author": {
-		"name": "Stencil Labs, Inc.",
-		"url": "https://stencil.so"
-	},
+	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MarsAI-org/mars-agent.git",
