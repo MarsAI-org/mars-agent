@@ -121,6 +121,18 @@ export function validateAddProviderOptions(options: AddProviderOptions): string 
 	return undefined;
 }
 
+/** Replace the models config atomically, creating its directory when needed. */
+async function writeModelsConfigAtomically(configPath: string, text: string): Promise<void> {
+	await fs.promises.mkdir(path.dirname(configPath), { recursive: true });
+	const tempPath = `${configPath}.${process.pid}.${crypto.randomUUID()}.tmp`;
+	try {
+		await fs.promises.writeFile(tempPath, text, { encoding: "utf-8", mode: 0o600 });
+		await replaceFileAtomically(tempPath, configPath);
+	} finally {
+		await fs.promises.rm(tempPath, { force: true }).catch(() => {});
+	}
+}
+
 /**
  * Edit the models config: validate, write, and re-read through the real loader.
  *
@@ -147,14 +159,7 @@ export async function addProvider(options: AddProviderOptions): Promise<AddProvi
 	const providers = listProviderBlocks(text);
 	if (options.dryRun) return { path: configPath, providers, replaced: existed, text };
 
-	await fs.promises.mkdir(path.dirname(configPath), { recursive: true });
-	const tempPath = `${configPath}.${process.pid}.${crypto.randomUUID()}.tmp`;
-	try {
-		await fs.promises.writeFile(tempPath, text, { encoding: "utf-8", mode: 0o600 });
-		await replaceFileAtomically(tempPath, configPath);
-	} finally {
-		await fs.promises.rm(tempPath, { force: true }).catch(() => {});
-	}
+	await writeModelsConfigAtomically(configPath, text);
 	return { path: configPath, providers, replaced: existed };
 }
 
@@ -178,13 +183,7 @@ export async function removeProvider(
 	const providers = listProviderBlocks(text);
 	if (options.dryRun) return { path: configPath, providers, removed, text };
 
-	const tempPath = `${configPath}.${process.pid}.${crypto.randomUUID()}.tmp`;
-	try {
-		await fs.promises.writeFile(tempPath, text, { encoding: "utf-8", mode: 0o600 });
-		await replaceFileAtomically(tempPath, configPath);
-	} finally {
-		await fs.promises.rm(tempPath, { force: true }).catch(() => {});
-	}
+	await writeModelsConfigAtomically(configPath, text);
 	return { path: configPath, providers, removed };
 }
 
