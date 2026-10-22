@@ -14,11 +14,11 @@ export default class Models extends Command {
 	static description = commandHelp.description;
 	static args = {
 		action: Args.string({
-			description: "ls (default) | find | refresh | <provider>",
+			description: "ls (default) | find | refresh | add-provider | remove-provider | providers | <provider>",
 			required: false,
 		}),
 		pattern: Args.string({
-			description: "Filter/search substring, or provider name (required for find)",
+			description: "Filter/search substring, or provider name",
 			required: false,
 		}),
 	};
@@ -42,6 +42,41 @@ export default class Models extends Command {
 			description: "Load an extra config.yml-style overlay for this run (repeatable)",
 			multiple: true,
 		}),
+		endpoint: Flags.string({
+			description: "Custom endpoint/baseUrl for add-provider",
+		}),
+		"base-url": Flags.string({
+			description: "Alias for --endpoint",
+		}),
+		token: Flags.string({
+			description: "API key or environment variable name for add-provider",
+		}),
+		"api-key": Flags.string({
+			description: "Alias for --token",
+		}),
+		api: Flags.string({
+			description: "Wire API for add-provider (openai-completions, openai-responses, anthropic-messages, etc.)",
+		}),
+		discovery: Flags.string({
+			description: "Discovery mode for add-provider (openai-models-list, proxy, litellm, none)",
+		}),
+		models: Flags.string({
+			description: "Comma-separated model IDs for add-provider (when discovery is none)",
+		}),
+		header: Flags.string({
+			char: "H",
+			description: "Custom request header for add-provider (Name: value, repeatable)",
+			multiple: true,
+		}),
+		path: Flags.string({
+			description: "Custom models.yml path for add-provider / remove-provider",
+		}),
+		overwrite: Flags.boolean({
+			description: "Overwrite existing provider block in models.yml",
+		}),
+		"dry-run": Flags.boolean({
+			description: "Validate and display models.yml without writing",
+		}),
 	};
 
 	static examples = [
@@ -50,6 +85,10 @@ export default class Models extends Command {
 		`# List one provider's models (any provider name works)\n  ${APP_NAME} models openai-codex`,
 		`# Find models by substring\n  ${APP_NAME} models find minimax`,
 		`# Force a fresh catalog fetch (replaces rm -rf ~/.mars/models.db)\n  ${APP_NAME} models refresh`,
+		`# Add a custom provider interactively to models.yml\n  ${APP_NAME} models add-provider`,
+		`# Add a custom provider with flags\n  ${APP_NAME} models add-provider my-proxy --endpoint https://proxy.example.com/v1 --discovery openai-models-list`,
+		`# List custom providers defined in models.yml\n  ${APP_NAME} models providers`,
+		`# Remove a custom provider from models.yml\n  ${APP_NAME} models remove-provider my-proxy`,
 		`# Machine-readable output\n  ${APP_NAME} models --json`,
 	];
 
@@ -66,6 +105,15 @@ export default class Models extends Command {
 				extensions: flags.extension,
 				noExtensions: flags["no-extensions"],
 				config: flags.config,
+				endpoint: flags.endpoint ?? flags["base-url"],
+				token: flags.token ?? flags["api-key"],
+				api: flags.api,
+				discovery: flags.discovery,
+				models: flags.models,
+				header: flags.header,
+				path: flags.path,
+				overwrite: flags.overwrite,
+				dryRun: flags["dry-run"],
 			},
 		});
 	}

@@ -7,6 +7,12 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Added
+
+- **`providers.endpoints` setting.** A provider → base URL record in `config.yml` retargets any provider, built-in or custom, without editing `models.yml`. It applies to the models' requests and to their model discovery, and can be set per provider with `mars config set providers.endpoints.openai https://my-proxy/v1`. A `baseUrl` pinned for the same provider in `models.yml` still wins.
+- **`mars models add-provider`, `remove-provider`, and `providers`.** Add a custom provider interactively or entirely from flags (`--endpoint`, `--api`, `--token`, `--models`, `--discovery`, `--header`), list the custom blocks, and remove one. Edits are spliced into `models.yml` so comments and unrelated keys survive, validated through the real loader before the file is replaced atomically.
+- **`mars config get|set|reset` accepts record subkeys**, so a single entry of a record setting can be read or changed without replacing the whole JSON value.
+
 ## [0.1.5] - 2026-10-21
 
 ### Added
