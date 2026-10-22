@@ -122,15 +122,19 @@ export async function pickIndex(rl: readline.Interface, title: string, labels: r
 export async function pickOAuthProvider(
 	rl: readline.Interface,
 	providers: readonly OAuthProviderInfo[],
+	options: { allowCustom?: boolean } = {},
 ): Promise<string> {
 	if (providers.length === 0) {
 		throw new Error("No OAuth providers registered");
 	}
-	const index = await pickIndex(
-		rl,
-		"Select a provider:",
-		providers.map(p => p.name),
-	);
+	const allowCustom = options.allowCustom ?? true;
+	const labels = allowCustom
+		? [...providers.map(p => p.name), "+ Custom Endpoint / Provider..."]
+		: providers.map(p => p.name);
+	const index = await pickIndex(rl, "Select a provider:", labels);
+	if (allowCustom && index === providers.length) {
+		return "custom";
+	}
 	return providers[index].id;
 }
 

@@ -630,6 +630,11 @@ export const BUILTIN_SESSION_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 			const manualInput = runtime.ctx.oauthManualInput;
 			const args = command.args.trim();
 			if (args.length > 0) {
+				if (args === "custom" || args === "endpoint" || args === "custom-endpoint") {
+					void runtime.ctx.showCustomEndpointWizard();
+					clearSubmittedText(runtime);
+					return;
+				}
 				const matchedProvider = getOAuthProviders().find(provider => provider.id === args);
 				if (matchedProvider) {
 					if (manualInput.hasPending()) {
@@ -666,6 +671,16 @@ export const BUILTIN_SESSION_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 			}
 
 			void runtime.ctx.showOAuthSelector("login");
+			clearSubmittedText(runtime);
+		},
+	},
+	{
+		name: "endpoint",
+		icon: "host",
+		description: "Configure custom provider endpoint or proxy",
+		allowArgs: false,
+		handleTui: (_command, runtime) => {
+			void runtime.ctx.showCustomEndpointWizard();
 			clearSubmittedText(runtime);
 		},
 	},

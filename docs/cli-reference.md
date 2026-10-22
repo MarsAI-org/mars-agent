@@ -264,7 +264,7 @@ Run `mars <command> --help` for each command's own flags and examples.
 | `images`, `img` | Inspect, diagnose, probe, and purge image publication backends. | |
 | `install` | Install or link an extension package (alias of `plugin install` / `plugin link`). | [extensions](./extensions.md) |
 | `join` | Join a shared collab session (same as `/join`). | [collab](./collab.md) |
-| `login` | Log in to a model provider from the terminal (counterpart of `/login`). | |
+| `login` | Log in to a model provider from the terminal (counterpart of `/login`). `mars login custom` configures a custom provider or endpoint instead. | [models](./models.md) |
 | `models` | List, search, and refresh available models. Subcommands `add-provider`, `remove-provider`, and `providers` edit custom provider blocks in `models.yml`. | [models](./models.md) |
 | `plugin`, `plugins` | Manage plugins (install, uninstall, list, etc.). | [extensions](./extensions.md), [marketplace](./marketplace.md) |
 | `play` | Replay a `/record` recording in the terminal; Space pauses and `q` quits. | |

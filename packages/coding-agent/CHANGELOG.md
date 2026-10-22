@@ -7,6 +7,14 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Added
+
+- **Custom endpoint wizard in the TUI.** `/login` now lists `+ Custom Endpoint / Provider...` as its last row, and `/endpoint` opens the same wizard directly. It asks whether you are retargeting a built-in provider (writes `providers.endpoints` in `config.yml`, keeping its models and credentials) or registering a new one (writes a `models.yml` block), then collects the URL, wire format, credential, and model list, validating each answer as it goes. `mars login custom` opens the terminal equivalent.
+
+### Changed
+
+- The terminal `mars login` picker gained the same `+ Custom Endpoint / Provider...` row, so an endpoint can be configured without knowing the `mars models add-provider` flags.
+
 ## [0.1.6] - 2026-10-22
 
 ### Added

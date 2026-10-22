@@ -54,6 +54,8 @@ mars models providers
 mars models remove-provider my-proxy
 ```
 
+Inside a session, the same two flows are reachable without leaving the TUI: `/login` lists **`+ Custom Endpoint / Provider...`** as its last row, and `/endpoint` opens the wizard directly. The wizard asks whether you are overriding a built-in provider or registering a new one, then walks through the URL, wire format, credential, and model list. From the terminal, `mars login custom` opens the same add-provider flow.
+
 For built-in providers (OpenAI, Anthropic, Gemini, Ollama, etc.), custom endpoints can also be configured without editing `models.yml` via the `providers.endpoints` setting in `config.yml`:
 
 ```bash
