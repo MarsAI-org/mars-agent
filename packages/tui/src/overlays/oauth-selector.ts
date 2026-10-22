@@ -1,6 +1,6 @@
 import type { CredentialsApi, KeysApi } from "@marsai-org/ai";
 import { getOAuthProviders } from "@marsai-org/ai/oauth";
-import type { OAuthProviderInfo } from "@marsai-org/ai/oauth/types";
+import type { OAuthProviderId, OAuthProviderInfo } from "@marsai-org/ai/oauth/types";
 import {
 	Container,
 	extractPrintableText,
@@ -152,13 +152,19 @@ export class OAuthSelectorComponent extends OverlayPanel {
 			// stores credentials under is disabled, so alias logins (e.g.
 			// `openai-codex-device` ⇒ `openai-codex`) disappear alongside the
 			// model provider they authenticate.
-			this.#menu.setItems(
-				providers.filter(
-					provider =>
-						!disabled.has(provider.id) &&
-						!(provider.storeCredentialsAs && disabled.has(provider.storeCredentialsAs)),
-				),
+			const items = providers.filter(
+				provider =>
+					!disabled.has(provider.id) &&
+					!(provider.storeCredentialsAs && disabled.has(provider.storeCredentialsAs)),
 			);
+			this.#menu.setItems([
+				...items,
+				{
+					id: "custom" as OAuthProviderId,
+					name: "+ Custom Endpoint / Provider...",
+					available: true,
+				},
+			]);
 		}
 	}
 
@@ -169,6 +175,7 @@ export class OAuthSelectorComponent extends OverlayPanel {
 
 		let pending = 0;
 		for (const provider of this.#menu.items) {
+			if (provider.id === "custom") continue;
 			if (!this.#hasSelectableAuth(provider.id)) {
 				this.#authState.delete(provider.id);
 				continue;
@@ -238,6 +245,7 @@ export class OAuthSelectorComponent extends OverlayPanel {
 	 * the list distinguishes a real login from an env var aliasing the provider.
 	 */
 	#getSourceLabel(providerId: string): string {
+		if (providerId === "custom") return "";
 		const origin = this.#authStorage.keys.source(providerId);
 		if (!origin) return "";
 		const detail = origin.kind === "env" && origin.envVar ? `env: ${origin.envVar}` : ORIGIN_LABELS[origin.kind];
@@ -245,6 +253,7 @@ export class OAuthSelectorComponent extends OverlayPanel {
 	}
 
 	#getStatusIndicator(providerId: string): string {
+		if (providerId === "custom") return "";
 		const state = this.#authState.get(providerId);
 		const source = this.#getSourceLabel(providerId);
 		if (state === "checking") {
@@ -279,6 +288,9 @@ export class OAuthSelectorComponent extends OverlayPanel {
 	}
 
 	#getProviderSearchText(provider: OAuthProviderInfo): string {
+		if (provider.id === "custom") {
+			return `${provider.name} custom endpoint provider baseurl proxy local url`;
+		}
 		let text = `${provider.name} ${provider.id}`;
 		const origin = this.#authStorage.keys.source(provider.id);
 		if (origin) {

@@ -7972,6 +7972,10 @@ export class InteractiveMode implements InteractiveModeContext {
 		return this.#selectorController.showOAuthSelector(mode, providerId);
 	}
 
+	showCustomEndpointWizard(initialMode?: "override" | "custom"): Promise<void> {
+		return this.#selectorController.showCustomEndpointWizard(initialMode);
+	}
+
 	showSessionPinSelector(): Promise<void> {
 		return this.#selectorController.showSessionPinSelector();
 	}

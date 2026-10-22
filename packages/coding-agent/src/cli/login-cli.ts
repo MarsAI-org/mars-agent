@@ -15,6 +15,7 @@ import { Settings } from "../config/settings";
 import { discoverAuthStorage, loadCliExtensionProviders } from "../sdk";
 import { resolveAuthBrokerConfig } from "../session/auth-broker-config";
 import { formatLoginIdentity, pickOAuthProvider, runTerminalOAuthLogin } from "./oauth-terminal";
+import { runAddProviderCommand } from "./models-provider-cli";
 
 /**
  * Log in to `provider`, or to one picked interactively when omitted.
@@ -34,6 +35,11 @@ export async function runLoginCommand(provider: string | undefined): Promise<voi
 
 		const providers = getOAuthProviders().filter(p => p.available);
 		const providerId = provider ?? (await pickOAuthProvider(rl, providers));
+		if (providerId === "custom" || providerId === "endpoint" || providerId === "custom-provider") {
+			rl.close();
+			await runAddProviderCommand({ flags: {} });
+			return;
+		}
 		const info = providers.find(p => p.id === providerId);
 		if (!info) {
 			throw new Error(`Unknown OAuth provider '${providerId}'. Run \`${APP_NAME} login\` to pick one.`);

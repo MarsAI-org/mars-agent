@@ -135,6 +135,8 @@ import type { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-o
 import { cfgAdvisorSyncBacklog } from "../../advisor/settings";
 import { cfgBranchSummaryEnabled } from "../../session/context-settings";
 import { cfgCycleOrder, cfgDisabledProviders, cfgModelRoleStorage } from "../../config/model-settings";
+import { cfgProvidersEndpoints } from "../../config/provider-endpoint-settings";
+import { addProvider } from "../../cli/models-provider-cli";
 import { cfgDefaultThinkingLevel, cfgRetryFallbackChains } from "../../session/settings";
 import {
 	cfgStatusLineCompactThinkingLevel,
@@ -2191,7 +2193,11 @@ export class SelectorController {
 					selector.stopValidation();
 					done();
 					if (mode === "login") {
-						await this.#handleOAuthLogin(selectedProviderId);
+						if (selectedProviderId === "custom") {
+							await this.showCustomEndpointWizard();
+						} else {
+							await this.#handleOAuthLogin(selectedProviderId);
+						}
 					} else {
 						await this.#showOAuthLogoutAccountSelector(selectedProviderId);
 					}
@@ -2216,6 +2222,58 @@ export class SelectorController {
 				},
 			);
 			return { component: selector, focus: selector };
+		});
+	}
+
+	async showCustomEndpointWizard(initialMode?: "override" | "custom"): Promise<void> {
+		const { CustomEndpointWizardComponent } = require("@marsai-org/tui/overlays/custom-endpoint-wizard.js");
+		this.showSelector(done => {
+			const wizard = new CustomEndpointWizardComponent(
+				async (result: any) => {
+					done();
+					try {
+						if (result.kind === "override") {
+							const current = { ...cfgProvidersEndpoints.get(this.ctx.session.settings) };
+							current[result.provider] = result.baseUrl;
+							cfgProvidersEndpoints.set(this.ctx.session.settings, current);
+							await this.ctx.session.settings.flush();
+							if (result.apiKey && result.apiKey.trim().length > 0) {
+								this.ctx.session.modelRegistry.authStorage.keys.setConfig(
+									result.provider,
+									result.apiKey.trim(),
+								);
+							}
+							await this.ctx.session.modelRegistry.refresh("online");
+							this.ctx.showStatus(`✓ Custom endpoint set for ${result.provider}: ${result.baseUrl}`);
+						} else {
+							await addProvider({
+								id: result.provider,
+								baseUrl: result.baseUrl,
+								api: result.api,
+								apiKey: result.apiKey,
+								discovery: result.discovery,
+								models: result.models,
+							});
+							await this.ctx.session.modelRegistry.refresh("online");
+							this.ctx.showStatus(`✓ Added custom provider "${result.provider}" (${result.baseUrl})`);
+						}
+					} catch (error) {
+						this.ctx.showError(
+							`Failed to configure custom endpoint: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+					this.ctx.ui.requestRender();
+				},
+				() => {
+					done();
+					this.ctx.ui.requestRender();
+				},
+				() => {
+					this.ctx.ui.requestRender();
+				},
+				initialMode,
+			);
+			return { component: wizard, focus: wizard };
 		});
 	}
 

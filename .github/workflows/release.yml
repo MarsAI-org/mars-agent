@@ -313,8 +313,9 @@ jobs:
           # missing and failed the whole release even though it had published.
           #
           # Poll every package together against one deadline, so a slow package
-          # never eats the budget of the ones after it.
-          deadline=$(( SECONDS + 900 ))
+          # never eats the budget of the ones after it. Large native leaf
+          # packages (~190 MB) can take 15+ minutes to replicate across npm.
+          deadline=$(( SECONDS + 1200 ))
           missing=()
           pending=("${pkgs[@]}")
           while [ "${#pending[@]}" -gt 0 ] && [ "$SECONDS" -lt "$deadline" ]; do
