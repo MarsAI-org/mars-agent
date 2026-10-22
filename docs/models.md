@@ -32,6 +32,42 @@ Legacy behavior still present:
 - If both YAML files are missing and `models.json` exists at the same location, it is migrated to `models.yml`.
 - Explicit `.json` / `.jsonc` config paths are still supported when passed programmatically to `ModelRegistry`.
 
+## Managing custom providers via CLI
+
+Mars provides CLI helpers to inspect, add, and remove custom providers directly in `models.yml`:
+
+```bash
+# Interactively add a custom provider (prompts for endpoint, wire API, key, models/discovery)
+mars models add-provider
+
+# Add a provider with flags (non-interactive / scriptable)
+mars models add-provider my-proxy \
+  --endpoint https://proxy.example.com/v1 \
+  --api openai-completions \
+  --api-key MY_PROXY_KEY \
+  --discovery openai-models-list
+
+# List custom providers defined in models.yml
+mars models providers
+
+# Remove a custom provider
+mars models remove-provider my-proxy
+```
+
+For built-in providers (OpenAI, Anthropic, Gemini, Ollama, etc.), custom endpoints can also be configured without editing `models.yml` via the `providers.endpoints` setting in `config.yml`:
+
+```bash
+# Override a built-in provider endpoint via config CLI
+mars config set providers.endpoints.openai https://my-openai-proxy.com/v1
+mars config set providers.endpoints.anthropic https://api.my-anthropic-gateway.org
+
+# View or reset
+mars config get providers.endpoints.openai
+mars config reset providers.endpoints.openai
+```
+
+An explicit `baseUrl` defined for that provider in `models.yml` takes precedence over `providers.endpoints`.
+
 ## `models.yml` / `models.yaml` shape
 
 ```yaml

@@ -38,6 +38,7 @@ type CliSettingDef = {
 	type: string;
 	description: string;
 	tab: string;
+	subKey?: string;
 };
 
 /** Printed instead of a credential value in human output only. */
@@ -57,10 +58,26 @@ function toSettingDef(setting: AnySetting): CliSettingDef {
 	};
 }
 
-/** Find setting definition by path */
+/** Find setting definition by path, including nested record subkeys (e.g. providers.endpoints.openai). */
 function findSettingDef(path: string): CliSettingDef | undefined {
 	const setting = lookup(path);
-	return setting ? toSettingDef(setting) : undefined;
+	if (setting) return toSettingDef(setting);
+	const dotIndex = path.lastIndexOf(".");
+	if (dotIndex > 0) {
+		const parentPath = path.slice(0, dotIndex);
+		const subKey = path.slice(dotIndex + 1);
+		const parentSetting = lookup(parentPath);
+		if (parentSetting && parentSetting.type === "record" && subKey.length > 0) {
+			const def = toSettingDef(parentSetting);
+			return {
+				...def,
+				path,
+				subKey,
+				type: "string",
+			};
+		}
+	}
+	return undefined;
 }
 
 // =============================================================================
@@ -273,7 +290,8 @@ function handleGet(key: string | undefined, flags: { json?: boolean }): void {
 		process.exit(1);
 	}
 
-	const value = def.setting.get(settings);
+	const rawValue = def.setting.get(settings);
+	const value = def.subKey ? (isRecord(rawValue) ? rawValue[def.subKey] : undefined) : rawValue;
 
 	if (flags.json) {
 		console.log(JSON.stringify({ key: def.path, value, type: def.type, description: def.description }, null, 2));
@@ -308,7 +326,16 @@ async function handleSet(key: string | undefined, value: string | undefined, fla
 	}
 
 	try {
-		def.setting.set(settings, def.setting.parse(value));
+		if (def.subKey) {
+			// Read the global layer, not the effective value: a project layer or
+			// overlay entry must not be copied into the user's global config.
+			const raw = globalValue(def.setting);
+			const current = isRecord(raw) ? { ...raw } : {};
+			current[def.subKey] = value;
+			def.setting.set(settings, current);
+		} else {
+			def.setting.set(settings, def.setting.parse(value));
+		}
 		await settings.flush();
 	} catch (err) {
 		console.error(chalk.red(String(err)));
@@ -317,7 +344,8 @@ async function handleSet(key: string | undefined, value: string | undefined, fla
 
 	// Report the value written to config.yml. When another layer or an environment variable still
 	// supplies the effective value, say which instead of echoing its value as if it had been set.
-	const saved = globalValue(def.setting);
+	const rawSaved = globalValue(def.setting);
+	const saved = def.subKey ? (isRecord(rawSaved) ? rawSaved[def.subKey] : undefined) : rawSaved;
 	const shadow = shadowingSource(def.setting);
 
 	if (flags.json) {
@@ -388,8 +416,15 @@ async function handleReset(key: string | undefined, flags: { json?: boolean }): 
 	}
 
 	try {
-		// Remove the key rather than writing the default, so later default changes still apply.
-		def.setting.unset(settings);
+		if (def.subKey) {
+			const raw = globalValue(def.setting);
+			const current = isRecord(raw) ? { ...raw } : {};
+			delete current[def.subKey];
+			def.setting.set(settings, current);
+		} else {
+			// Remove the key rather than writing the default, so later default changes still apply.
+			def.setting.unset(settings);
+		}
 		await settings.flush();
 	} catch (err) {
 		console.error(chalk.red(String(err)));
@@ -397,7 +432,8 @@ async function handleReset(key: string | undefined, flags: { json?: boolean }): 
 	}
 
 	// The effective value may now come from another layer or the environment: never echo a credential.
-	const value = def.setting.get(settings);
+	const rawValue = def.setting.get(settings);
+	const value = def.subKey ? (isRecord(rawValue) ? rawValue[def.subKey] : undefined) : rawValue;
 	const redacted = def.setting.isCredential && !!value;
 	if (flags.json) {
 		console.log(JSON.stringify(redacted ? { key: def.path, redacted: true } : { key: def.path, value }));

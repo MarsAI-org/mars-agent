@@ -27,12 +27,13 @@ import { SessionManager } from "../session/session-manager";
 import { EventBus } from "../utils/event-bus";
 
 import { cfgDisabledExtensions, cfgExtensions } from "../extensibility/settings";
+import { runAddProviderCommand, runListProvidersCommand, runRemoveProviderCommand } from "./models-provider-cli";
 
-export type ModelsAction = "ls" | "find" | "refresh";
+export type ModelsAction = "ls" | "find" | "refresh" | "add-provider" | "remove-provider" | "providers";
 
 export interface ModelsCommandArgs {
 	action: ModelsAction;
-	/** Search substring for `find`, or optional filter for `ls`. */
+	/** Search substring for `find`, or optional filter for `ls`, or provider id for `add-provider`/`remove-provider`. */
 	pattern?: string;
 	flags: {
 		json?: boolean;
@@ -44,6 +45,24 @@ export interface ModelsCommandArgs {
 		noExtensions?: boolean;
 		/** Extra `config.yml` overlays to apply for this invocation. */
 		config?: string[];
+		/** Base URL for add-provider (`--endpoint` / `--base-url`). */
+		endpoint?: string;
+		/** Credential for add-provider (`--token` / `--api-key`). */
+		token?: string;
+		/** Wire API for add-provider. */
+		api?: string;
+		/** Discovery mode for add-provider. */
+		discovery?: string;
+		/** Model IDs (comma-separated) for add-provider. */
+		models?: string;
+		/** Custom headers for add-provider. */
+		header?: string[];
+		/** Path to models.yml for provider operations. */
+		path?: string;
+		/** Overwrite existing provider in models.yml. */
+		overwrite?: boolean;
+		/** Dry run validation without writing to models.yml. */
+		dryRun?: boolean;
 	};
 }
 
@@ -57,6 +76,9 @@ const KNOWN_ACTIONS: Record<string, ModelsAction> = {
 	list: "ls",
 	find: "find",
 	refresh: "refresh",
+	"add-provider": "add-provider",
+	"remove-provider": "remove-provider",
+	providers: "providers",
 };
 
 /** Resolve the two positional args into an action + filter (provider names fall through to `ls`). */
@@ -384,6 +406,49 @@ export async function runModelsCommand(command: ModelsCommandArgs): Promise<void
 	const { action, pattern } = command;
 	const json = command.flags.json ?? false;
 	const kind = command.flags.kind ?? "chat";
+
+	if (action === "add-provider") {
+		await runAddProviderCommand({
+			id: pattern,
+			flags: {
+				baseUrl: command.flags.endpoint,
+				api: command.flags.api,
+				token: command.flags.token,
+				models: command.flags.models,
+				discovery: command.flags.discovery,
+				header: command.flags.header,
+				path: command.flags.path,
+				overwrite: command.flags.overwrite,
+				dryRun: command.flags.dryRun,
+				json: command.flags.json,
+			},
+		});
+		return;
+	}
+
+	if (action === "remove-provider") {
+		if (!pattern || pattern.trim().length === 0) {
+			process.stderr.write(
+				"`mars models remove-provider` requires a provider id, e.g. `mars models remove-provider acme`\n",
+			);
+			process.exitCode = 1;
+			return;
+		}
+		await runRemoveProviderCommand(pattern.trim(), {
+			path: command.flags.path,
+			dryRun: command.flags.dryRun,
+			json: command.flags.json,
+		});
+		return;
+	}
+
+	if (action === "providers") {
+		runListProvidersCommand({
+			path: command.flags.path,
+			json: command.flags.json,
+		});
+		return;
+	}
 
 	if (action === "find" && (!pattern || pattern.trim().length === 0)) {
 		process.stderr.write("`mars models find` requires a search substring, e.g. `mars models find minimax`\n");

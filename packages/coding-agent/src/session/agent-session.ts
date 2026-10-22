@@ -473,6 +473,7 @@ import { cfgInterruptMode } from "../modes/settings";
 import { cfgFollowUpMode } from "../modes/settings";
 import { cfgSteeringMode } from "../modes/settings";
 import { cfgDisabledProviders, cfgModelRoles } from "../config/model-settings";
+import { cfgProvidersEndpoints } from "../config/provider-endpoint-settings";
 import { cfgEvalToolsEnabled } from "../eval/settings";
 import { cfgExtensions, type SkillsSettings } from "../extensibility/settings";
 import {
@@ -2435,6 +2436,9 @@ export class AgentSession implements SettingsScope {
 	 */
 	#watchModelAvailabilitySettings(): void {
 		cfgDisabledProviders.listen(this, () => this.#modelRegistry.reapplyModelPolicies());
+		// A new endpoint changes both the models' base URLs and where discovery
+		// looks, so the catalog has to be rebuilt the same way a provider toggle does.
+		cfgProvidersEndpoints.listen(this, () => this.#modelRegistry.reapplyModelPolicies());
 		if (this.#agentKind !== "main") return;
 		cfgPrewalkEnabled.listen(this, enabled => {
 			if (!enabled) {
