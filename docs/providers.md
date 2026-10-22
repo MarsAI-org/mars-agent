@@ -379,6 +379,18 @@ providers:
         maxTokens: 8192
 ```
 
+`mars models add-provider` writes this block for you, interactively or from flags, and validates it through the same loader the registry uses before replacing the file. `mars models providers` lists the blocks, and `mars models remove-provider <id>` removes one. See [Model and Provider Configuration](./models.md#managing-custom-providers-via-cli).
+
+### Changing a built-in provider's endpoint
+
+Built-in providers take a custom endpoint from the `providers.endpoints` setting in `config.yml`, without a `models.yml` block:
+
+```bash
+mars config set providers.endpoints.openai https://my-openai-proxy.com/v1
+```
+
+The override applies to requests and to model discovery. A `baseUrl` pinned for the same provider in `models.yml` still wins. See [Settings](./settings.md) for the full record semantics.
+
 ### Zhipu BigModel account-balance keys
 
 `/login zai` targets the global Z.AI Coding Plan endpoint, and `/login zhipu-coding-plan` targets the domestic Zhipu Coding Plan endpoint. Neither flow configures the general pay-as-you-go BigModel endpoint at `https://open.bigmodel.cn/api/paas/v4`.
