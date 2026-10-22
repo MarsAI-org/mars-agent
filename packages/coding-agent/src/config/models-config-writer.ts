@@ -247,12 +247,3 @@ export async function findModelsConfigProblem(
 		await fs.promises.rm(scratch, { force: true }).catch(() => {});
 	}
 }
-
-/** Parse the file text; `undefined` when it is empty or not a YAML mapping. */
-export function parseModelsConfigText(text: string): Record<string, unknown> | undefined {
-	if (text.trim().length === 0) return undefined;
-	const parsed: unknown = YAML.parse(text);
-	return parsed && typeof parsed === "object" && !Array.isArray(parsed)
-		? (parsed as Record<string, unknown>)
-		: undefined;
-}
