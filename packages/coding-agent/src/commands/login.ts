@@ -11,7 +11,7 @@ export default class Login extends Command {
 	static description = commandHelp.description;
 	static args = {
 		provider: Args.string({
-			description: "OAuth provider id (e.g. anthropic, openai-codex); omit to pick interactively",
+			description: "OAuth provider id (e.g. anthropic, openai-codex, custom); omit to pick interactively",
 			required: false,
 		}),
 	};
@@ -19,6 +19,7 @@ export default class Login extends Command {
 	static examples = [
 		`# Pick a provider interactively\n  ${APP_NAME} login`,
 		`# Log in to a specific provider\n  ${APP_NAME} login anthropic`,
+		`# Configure a custom provider or endpoint\n  ${APP_NAME} login custom`,
 	];
 
 	async run(): Promise<void> {

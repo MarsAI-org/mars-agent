@@ -300,13 +300,22 @@ jobs:
          - name: Compute native addon cache key
            id: natives-key
            shell: bash
-           env:
-              # Must stay identical on every event: PRs look up the entry main
-              # saved for the same inputs.
-              NATIVE_INPUTS_HASH: ${{ hashFiles('Cargo.toml', 'Cargo.lock', 'MODULE.bazel', 'MODULE.bazel.lock', 'rust-toolchain.toml', 'rustfmt.toml', '.bazelrc', '.bazelignore', '.bazelversion', 'bazel/**', 'crates/**', 'BUILD.bazel') }}
            run: |
-              echo "prefix=natives-linux-x64-v1-" >> "$GITHUB_OUTPUT"
-              echo "key=natives-linux-x64-v1-$NATIVE_INPUTS_HASH" >> "$GITHUB_OUTPUT"
+              # Content hash over the native build inputs. `Cargo.toml` and
+              # `Cargo.lock` are normalized to drop workspace package versions:
+              # the addon's release identity is stamped into the binary
+              # post-link (`scripts/stamp-native-version.ts`), so a release
+              # version bump never changes the compiled artifact. Hashing the
+              # raw files instead made every release rebuild the linux-x64 pair
+              # from scratch (~38 min uncached on a hosted runner).
+              #
+              # MODULE.bazel.lock is deliberately excluded: it caches the
+              # crate_universe result keyed by Cargo.toml/Cargo.lock, so it
+              # changes with them but never alters the compiled addon.
+              echo "prefix=natives-linux-x64-v2-" >> "$GITHUB_OUTPUT"
+              hash="$(python3 scripts/native_inputs_hash.py)"
+              echo "native inputs hash: $hash"
+              echo "key=natives-linux-x64-v2-$hash" >> "$GITHUB_OUTPUT"
 
          # ---- PR path: exact main-built addons, else build from source ----
          # `ci-natives` is a plain workspace-relative path on purpose: the
