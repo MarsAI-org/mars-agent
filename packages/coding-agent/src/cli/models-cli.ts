@@ -77,10 +77,7 @@ const KNOWN_ACTIONS: Record<string, ModelsAction> = {
 	find: "find",
 	refresh: "refresh",
 	"add-provider": "add-provider",
-	add: "add-provider",
 	"remove-provider": "remove-provider",
-	remove: "remove-provider",
-	rm: "remove-provider",
 	providers: "providers",
 };
 
