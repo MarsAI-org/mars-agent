@@ -7,6 +7,8 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-10-22
+
 ### Added
 
 - **`providers.endpoints` setting.** A provider → base URL record in `config.yml` retargets any provider, built-in or custom, without editing `models.yml`. It applies to the models' requests and to their model discovery, and can be set per provider with `mars config set providers.endpoints.openai https://my-proxy/v1`. A `baseUrl` pinned for the same provider in `models.yml` still wins.
