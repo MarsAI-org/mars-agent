@@ -126,6 +126,56 @@ describe("config CLI schema coverage", () => {
 		);
 	});
 
+	it("sets and gets one entry of a record setting by subkey", async () => {
+		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await runConfigCommand({
+			action: "set",
+			key: "providers.endpoints.openai",
+			value: "https://my-proxy.example.com/v1",
+			flags: { json: true },
+		});
+		await runConfigCommand({ action: "get", key: "providers.endpoints.openai", flags: { json: true } });
+
+		const payload = logSpy.mock.calls.at(-1)?.[0];
+		const parsed = JSON.parse(String(payload)) as { key: string; value: unknown };
+		expect(parsed.key).toBe("providers.endpoints.openai");
+		expect(parsed.value).toBe("https://my-proxy.example.com/v1");
+
+		// The sibling entries of the record survive a subkey write.
+		await runConfigCommand({
+			action: "set",
+			key: "providers.endpoints.anthropic",
+			value: "https://claude-gateway.example.com",
+			flags: { json: true },
+		});
+		await runConfigCommand({ action: "get", key: "providers.endpoints", flags: { json: true } });
+		const whole = JSON.parse(String(logSpy.mock.calls.at(-1)?.[0])) as { value: unknown };
+		expect(whole.value).toEqual({
+			openai: "https://my-proxy.example.com/v1",
+			anthropic: "https://claude-gateway.example.com",
+		});
+	});
+
+	it("rejects a subkey write that is not an absolute URL", async () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
+			throw new Error("process.exit");
+		}) as typeof process.exit);
+
+		await expect(
+			runConfigCommand({
+				action: "set",
+				key: "providers.endpoints.openai",
+				value: "not-a-url",
+				flags: { json: true },
+			}),
+		).rejects.toThrow("process.exit");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+		expect(console.error).toHaveBeenCalledWith(expect.stringContaining("must be absolute URLs"));
+	});
+
 	it("sets and gets array settings as JSON arrays", async () => {
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 		const arrayValue = '["claude-opus-4-6","gpt-5.3-codex"]';

@@ -136,6 +136,7 @@ import {
 } from "./models-config";
 import type { ModelOverride, ModelsConfig, ProviderAuthMode } from "./models-config-schema";
 import { type Settings, settings } from "./settings";
+import { cfgProvidersEndpoints, normalizeProviderEndpoints } from "./provider-endpoint-settings";
 
 import { cfgDisabledProviders } from "./model-settings";
 import { cfgExtendedContext } from "../session/context-settings";
@@ -209,6 +210,19 @@ function getDisabledProviderIdsFromSettings(settingsInstance?: Settings): Set<st
 		return new Set(cfgDisabledProviders.get(settingsInstance ?? settings));
 	} catch {
 		return new Set();
+	}
+}
+
+/**
+ * `providers.endpoints` as a provider → base URL map. A settings source that is
+ * unavailable (SDK embedding without settings, early boot) yields no overrides,
+ * matching every other settings-driven provider policy here.
+ */
+function getProviderEndpointOverridesFromSettings(settingsInstance?: Settings): Record<string, string> {
+	try {
+		return normalizeProviderEndpoints(cfgProvidersEndpoints.get(settingsInstance ?? settings));
+	} catch {
+		return {};
 	}
 }
 
@@ -930,10 +944,13 @@ export class ModelRegistry {
 		this.#keylessProviders = keylessProviders;
 		this.#discoverableProviders = discoverableProviders;
 		this.#customModelOverlays = customModels;
-		this.#providerOverrides = overrides;
+		this.#providerOverrides = this.#applyEndpointSettingOverrides(overrides);
 		this.#modelOverrides = modelOverrides;
 
 		this.#addImplicitDiscoverableProviders(configuredProviders);
+		// After the implicit local providers exist: an endpoint override for ollama,
+		// llama.cpp, or lm-studio has to retarget their discovery probe too.
+		this.#discoverableProviders = this.#applyEndpointSettingDiscovery(this.#discoverableProviders);
 		const configuredDiscoveryProviders = new Set(this.#discoverableProviders.map(provider => provider.provider));
 		this.#pendingStandardCacheProviders = new Set(
 			STARTUP_MODEL_CACHE_PROVIDER_IDS.filter(
@@ -960,6 +977,61 @@ export class ModelRegistry {
 		this.#internedStaticModels.clear();
 		this.#providerLookupSnapshots.clear();
 		this.#commandConfigsByProvider.clear();
+	}
+
+	/**
+	 * Fold `providers.endpoints` settings into the `models.yml` provider
+	 * overrides.
+	 *
+	 * `models.yml` wins for a provider that already pins a `baseUrl` there — the
+	 * file is the more specific, per-model-aware declaration, and discovery
+	 * normalizers (litellm, bare openai-models-list) have already shaped it.
+	 * Every other provider gets the configured endpoint, provider-wide, which is
+	 * what a built-in provider needs: bundled models carry their catalog host and
+	 * have no `models.yml` block to override.
+	 *
+	 * Configured discovery providers pick the endpoint up in
+	 * {@link #applyEndpointSettingDiscovery}, so their model list is fetched from
+	 * the same host their requests go to.
+	 */
+	#applyEndpointSettingOverrides(overrides: Map<string, ProviderOverride>): Map<string, ProviderOverride> {
+		if (this.#ignoreLocalModelConfig) return overrides;
+		const endpoints = getProviderEndpointOverridesFromSettings(this.#settings);
+		const providerIds = Object.keys(endpoints);
+		if (providerIds.length === 0) return overrides;
+		const merged = new Map(overrides);
+		for (const providerId of providerIds) {
+			const existing = merged.get(providerId);
+			if (existing?.baseUrl !== undefined) continue;
+			const endpoint = endpoints[providerId];
+			merged.set(providerId, {
+				...existing,
+				baseUrl: endpoint,
+				// Provider-wide: a bundled model keeps its own api, so a scoped
+				// override built from a custom model list would miss it.
+				baseUrlApis: undefined,
+			});
+		}
+		return merged;
+	}
+
+	/**
+	 * Point configured (`models.yml`) discovery at the `providers.endpoints`
+	 * override. The discovery config carries its own `baseUrl`, so the provider
+	 * override alone would list models from the catalog host while requests go to
+	 * the configured one.
+	 */
+	#applyEndpointSettingDiscovery(providers: DiscoveryProviderConfig[]): DiscoveryProviderConfig[] {
+		if (this.#ignoreLocalModelConfig) return providers;
+		const endpoints = getProviderEndpointOverridesFromSettings(this.#settings);
+		if (Object.keys(endpoints).length === 0) return providers;
+		return providers.map(providerConfig => {
+			const endpoint = endpoints[providerConfig.provider];
+			if (endpoint === undefined) return providerConfig;
+			// `models.yml` already names the host for this provider; keep it.
+			if (providerConfig.baseUrl !== undefined) return providerConfig;
+			return { ...providerConfig, baseUrl: endpoint };
+		});
 	}
 
 	#knownStaticProviders(): string[] {
@@ -1530,15 +1602,22 @@ export class ModelRegistry {
 
 	#addImplicitDiscoverableProviders(configuredProviders: Set<string>): void {
 		const disabledProviders = getDisabledProviderIdsFromSettings(this.#settings);
+		const endpoints = getProviderEndpointOverridesFromSettings(this.#settings);
+		// An implicit local server carries a default host, so a configured endpoint
+		// has to replace it here rather than in the generic pass below, which only
+		// fills providers that name no host at all.
+		const implicitBaseUrl = (provider: string, fallback: string): string => endpoints[provider] ?? fallback;
+		const hasEndpoint = (provider: string): boolean => endpoints[provider] !== undefined;
 		for (const provider of ["local", "web"]) {
 			if (!disabledProviders.has(provider)) this.#keylessProviders.add(provider);
 		}
-		const hasOllamaEndpointOverride = Boolean(Bun.env.OLLAMA_BASE_URL?.trim() || Bun.env.OLLAMA_HOST?.trim());
+		const hasOllamaEndpointOverride =
+			hasEndpoint("ollama") || Boolean(Bun.env.OLLAMA_BASE_URL?.trim() || Bun.env.OLLAMA_HOST?.trim());
 		if (!configuredProviders.has("ollama") && !disabledProviders.has("ollama")) {
 			this.#discoverableProviders.push({
 				provider: "ollama",
 				api: "openai-responses",
-				baseUrl: getImplicitOllamaBaseUrl(),
+				baseUrl: implicitBaseUrl("ollama", getImplicitOllamaBaseUrl()),
 				discovery: { type: "ollama" },
 				optional: !hasOllamaEndpointOverride,
 			});
@@ -1548,9 +1627,9 @@ export class ModelRegistry {
 			this.#discoverableProviders.push({
 				provider: "llama.cpp",
 				api: "openai-responses",
-				baseUrl: Bun.env.LLAMA_CPP_BASE_URL || "http://127.0.0.1:8080",
+				baseUrl: implicitBaseUrl("llama.cpp", Bun.env.LLAMA_CPP_BASE_URL || "http://127.0.0.1:8080"),
 				discovery: { type: "llama.cpp" },
-				optional: !Bun.env.LLAMA_CPP_BASE_URL,
+				optional: !hasEndpoint("llama.cpp") && !Bun.env.LLAMA_CPP_BASE_URL,
 			});
 			// Only mark as keyless if no API key is configured
 			if (this.authStorage.keys.source("llama.cpp") === undefined) {
@@ -1566,7 +1645,7 @@ export class ModelRegistry {
 			this.#discoverableProviders.push({
 				provider: "apple",
 				api: "apple-foundation-models",
-				baseUrl: "local://apple-foundation-models",
+				baseUrl: implicitBaseUrl("apple", "local://apple-foundation-models"),
 				discovery: { type: "apple-foundation-models" },
 				optional: true,
 			});
@@ -1576,9 +1655,9 @@ export class ModelRegistry {
 			this.#discoverableProviders.push({
 				provider: "lm-studio",
 				api: "openai-completions",
-				baseUrl: Bun.env.LM_STUDIO_BASE_URL || "http://127.0.0.1:1234/v1",
+				baseUrl: implicitBaseUrl("lm-studio", Bun.env.LM_STUDIO_BASE_URL || "http://127.0.0.1:1234/v1"),
 				discovery: { type: "lm-studio" },
-				optional: !Bun.env.LM_STUDIO_BASE_URL,
+				optional: !hasEndpoint("lm-studio") && !Bun.env.LM_STUDIO_BASE_URL,
 			});
 			this.#keylessProviders.add("lm-studio");
 		}
