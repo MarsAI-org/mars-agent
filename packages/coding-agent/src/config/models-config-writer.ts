@@ -119,7 +119,14 @@ function expandInlineProviders(text: string, lines: string[], section: { header:
 	const inline = (PROVIDERS_ROOT.exec(headerLine)?.[1] ?? "").trim();
 	if (inline.length === 0 || inline.startsWith("#")) return undefined;
 
-	const parsed: unknown = YAML.parse(headerLine);
+	let parsed: unknown;
+	try {
+		parsed = YAML.parse(headerLine);
+	} catch {
+		// A multi-line flow mapping does not parse from its header alone; leave the
+		// text as it is and let the post-edit validation refuse an invalid result.
+		return undefined;
+	}
 	const providers =
 		parsed && typeof parsed === "object" && !Array.isArray(parsed)
 			? (parsed as Record<string, unknown>).providers
@@ -128,7 +135,11 @@ function expandInlineProviders(text: string, lines: string[], section: { header:
 
 	const expanded: string[] = ["providers:"];
 	for (const [id, config] of Object.entries(providers as Record<string, unknown>)) {
-		if (!config || typeof config !== "object" || Array.isArray(config)) continue;
+		if (!config || typeof config !== "object" || Array.isArray(config)) {
+			// Expanding would drop this entry, which is worse than refusing the edit:
+			// the caller keeps its file and sees why.
+			throw new Error(`providers.${id} in the inline map is not a mapping; rewrite the file as block YAML first.`);
+		}
 		expanded.push(...renderProviderBlock(id, config as Record<string, unknown>, 2));
 	}
 	lines.splice(section.header, 1, ...expanded);
