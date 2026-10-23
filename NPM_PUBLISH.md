@@ -194,6 +194,20 @@ Hard limits, all checked before anything is deleted:
 
 Inputs: `version`, `ref`, `dry_run` (default `true`), `confirm_unpublish`.
 
+**`NPM_TOKEN` must be a classic Automation token.** Granular access tokens can
+publish but npm refuses them for unpublish:
+
+```
+403 Forbidden — Granular access tokens that bypass two-factor authentication
+may not perform this action.
+```
+
+No scope or package selection changes that, so an unpublish run with a granular
+token fails on the first package and stops. Create the token as *Automation*
+(Account → Access Tokens → Generate New Token → Automation) and replace the
+secret. Trusted publishing (OIDC) is not a workaround either: `npm unpublish`
+needs a token.
+
 Order is asymmetric so nothing ever depends on a version that already vanished:
 leaves first, then packages in reverse dependency order on the way out; packages
 in dependency order, then leaves, on the way back in. **`latest` points at an

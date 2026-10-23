@@ -220,6 +220,7 @@ jobs:
           # Leaves first, then core in reverse dependency order, so nothing is
           # ever left depending on a version that has already disappeared.
           failed=0
+          token_broken=0
           for name in $LEAVES $(printf '%s\n' $CORE | tac); do
             full="@marsai-org/${name}@${VERSION}"
             if ! npm view "$full" version >/dev/null 2>&1; then
@@ -233,8 +234,21 @@ jobs:
             out="$(npm unpublish "$full" --force 2>&1)" || rc=$?
             if [ -n "$out" ]; then echo "$out"; fi
             if [ "$rc" -ne 0 ]; then
+              # The one error an operator will actually hit: npm requires a
+              # classic Automation token here. Granular tokens may publish but
+              # may not unpublish, however many scopes they carry.
+              if printf '%s' "$out" | grep -qiE "Granular access tokens"; then
+                echo "::error::npm refused the token. NPM_TOKEN must be a classic Automation token to unpublish; granular tokens cannot."
+                token_broken=1
+              fi
               echo "::error::failed to unpublish $full"
               failed=1
+            fi
+            # A token that cannot unpublish fails on every package; stop at the
+            # first rather than printing the same 403 eighteen times.
+            if [ "$token_broken" -ne 0 ]; then
+              echo "nothing was removed; replace NPM_TOKEN and re-run."
+              exit 1
             fi
           done
           if [ "$failed" -ne 0 ]; then
