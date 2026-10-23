@@ -106,6 +106,48 @@ describe("SignInScene", () => {
 		}
 	});
 
+	it("hands the custom endpoint row to the host instead of an OAuth login", async () => {
+		const authStorage = {
+			credentials: { has: (_providerId: string) => false },
+			keys: { source: (_providerId: string) => undefined },
+			oauth: {
+				async login(provider: OAuthProviderId): Promise<void> {
+					throw new Error(`Unknown OAuth provider: ${provider}`);
+				},
+			},
+		} as unknown as AuthStorage;
+
+		let openCalls = 0;
+		const host = {
+			ctx: {
+				authStorage,
+				disabledProviders: [],
+				copyToClipboard: async () => {},
+				refreshProvider: async () => {},
+				openInBrowser(): void {},
+				openCustomEndpoint(): void {
+					openCalls += 1;
+				},
+			},
+			requestRender(): void {},
+			finish(): void {},
+			setFocus(): void {},
+			restoreFocus(): void {},
+		} as unknown as SetupSceneHost;
+
+		const tab = new SignInScene(host);
+		try {
+			for (const char of "custom endpoint") tab.handleInput(char);
+			tab.handleInput("\n");
+
+			expect(openCalls).toBe(1);
+			// The scene must stay on the picker, not enter a (failing) login state.
+			expect(tab.render(120).join("\n")).not.toContain("Login failed");
+		} finally {
+			tab.dispose();
+		}
+	});
+
 	it("clears manual input after a native callback path settles", async () => {
 		const url = "https://example.com/oauth/authorize?client_id=mars&state=native";
 		const loginCompleted = Promise.withResolvers<void>();
