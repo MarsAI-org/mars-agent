@@ -10,6 +10,9 @@
  * 2. **Custom** — register a brand-new provider in `models.yml`, either from a
  *    declared model list or from the endpoint's own `/models` catalog.
  *
+ * Both can also set a provider-wide prompt window (`providers.contextWindows`),
+ * for gateways that advertise no window or a smaller one than they accept.
+ *
  * Reached from `/login` (the picker's last row) and `/endpoint`.
  */
 import { Container, matchesKey, replaceTabs, Spacer, Text, truncateToWidth } from "../index";
@@ -25,13 +28,14 @@ import { WizardStep } from "../components/wizard-step";
 
 /** What the wizard hands back once the user confirms. */
 export type CustomEndpointWizardResult =
-	| { kind: "override"; provider: string; baseUrl: string; apiKey?: string }
+	| { kind: "override"; provider: string; baseUrl: string; apiKey?: string; maxContext?: number }
 	| {
 			kind: "custom";
 			provider: string;
 			baseUrl: string;
 			api: string;
 			apiKey?: string;
+			maxContext?: number;
 			discovery?: string;
 			models?: string[];
 	  };
@@ -47,6 +51,7 @@ type WizardStepName =
 	| "api-key"
 	| "discovery-mode"
 	| "manual-models"
+	| "max-context"
 	| "confirm";
 
 interface WizardChoice {
@@ -151,6 +156,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 	#api = "openai-completions";
 	#discovery = "openai-models-list";
 	#models = "";
+	#maxContext = "";
 	#validationError: string | null = null;
 
 	readonly #onCompleteCallback: (result: CustomEndpointWizardResult) => void;
@@ -248,6 +254,9 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 				break;
 			case "manual-models":
 				this.#renderManualModelsStep();
+				break;
+			case "max-context":
+				this.#renderMaxContextStep();
 				break;
 			case "confirm":
 				this.#renderConfirmStep();
@@ -425,7 +434,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			secret: true,
 			onSubmit: value => {
 				this.#apiKey = value;
-				this.#goTo(this.#mode === "override" ? "confirm" : "discovery-mode");
+				this.#goTo(this.#mode === "override" ? "max-context" : "discovery-mode");
 			},
 		});
 	}
@@ -447,6 +456,36 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 					return;
 				}
 				this.#models = value;
+				this.#goTo("max-context");
+			},
+		});
+	}
+
+	/**
+	 * Optional provider-wide prompt window. Applies to every model of the
+	 * provider that declares none of its own, which is the gateway case: the
+	 * host advertises no window, or a smaller one than it accepts.
+	 */
+	#renderMaxContextStep(): void {
+		this.#inputStep({
+			heading: `Context window for ${this.#providerId}`,
+			prompt: "Max context (tokens):",
+			initial: this.#maxContext,
+			details: [
+				"Replaces the advertised window on every chat model of this provider.",
+				"Leave blank to keep the provider's advertised or default window.",
+			],
+			optional: true,
+			onSubmit: value => {
+				if (value.length > 0) {
+					const window = Number(value);
+					if (!Number.isSafeInteger(window) || window <= 0) {
+						this.#validationError = "Enter a whole number of tokens, for example 200000.";
+						this.#rerender();
+						return;
+					}
+				}
+				this.#maxContext = value;
 				this.#goTo("confirm");
 			},
 		});
@@ -478,6 +517,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			);
 		}
 		rows.push(`${theme.fg("muted", "credential")} ${this.#apiKey ? "provided" : "inherited"}`);
+		rows.push(`${theme.fg("muted", "context")}    ${this.#maxContext ? `${this.#maxContext} tokens` : "unchanged"}`);
 		for (const row of rows) intro.addChild(new Text(`  ${row}`, 0, 0));
 
 		this.#choiceStep({
@@ -513,7 +553,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			}
 			case "discovery-mode": {
 				this.#discovery = choice.id;
-				this.#goTo(choice.id === "none" ? "manual-models" : "confirm");
+				this.#goTo(choice.id === "none" ? "manual-models" : "max-context");
 				return;
 			}
 			case "confirm": {
@@ -525,12 +565,14 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 	}
 
 	#submit(): void {
+		const maxContext = this.#maxContext.length > 0 ? Number(this.#maxContext) : undefined;
 		if (this.#mode === "override") {
 			this.#onCompleteCallback({
 				kind: "override",
 				provider: this.#providerId,
 				baseUrl: this.#baseUrl,
 				apiKey: this.#apiKey.length > 0 ? this.#apiKey : undefined,
+				maxContext,
 			});
 			return;
 		}
@@ -547,6 +589,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			baseUrl: this.#baseUrl,
 			api: this.#api,
 			apiKey: this.#apiKey.length > 0 ? this.#apiKey : undefined,
+			maxContext,
 			discovery: this.#discovery === "none" ? undefined : this.#discovery,
 			models,
 		});

@@ -7,6 +7,10 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+### Added
+
+- **Context window in the custom endpoint flow.** The wizard, `mars login custom`, and `mars models add-provider` gained an optional max-context prompt/`--max-context` flag. An overridden provider gets `providers.contextWindows.<id>` in `config.yml`; a new provider gets a per-model `contextWindow` when its models are declared, or the same setting when the catalog is discovered. `mars config set providers.contextWindows.<id> <tokens>` sets one without the wizard, and a `contextWindow` in `models.yml` still wins.
+
 ## [0.1.7] - 2026-10-23
 
 ### Added
