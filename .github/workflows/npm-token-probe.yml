@@ -4,18 +4,19 @@ name: npm token probe
 #
 # The full republish builds six native addons before it touches npm, so a token
 # that cannot unpublish costs half an hour to discover. This probes a single
-# leaf package and reports. It is safe to run at any time: the package it
-# removes is one the next republish run skips anyway.
+# leaf package and reports.
+#
+# It changes npm: the probed leaf version is removed and its `latest` dist-tag
+# goes with it, so run the republish afterwards. That is not extra damage —
+# the republish removes every package at the version anyway and skips the ones
+# already gone. If you probe and then decide not to republish, re-publish just
+# that leaf (`bun run ci:release:publish-native-leaf <tag>`) to restore it.
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Published version to test against"
-        required: true
-        type: string
-      ref:
-        description: "Ref to run from"
+        description: "Published version to test against, e.g. 0.1.7"
         required: true
         type: string
 
@@ -45,6 +46,10 @@ jobs:
             echo "::error title=NPM_TOKEN missing::no credential configured"
             exit 1
           fi
+          if ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version must be a bare X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
           echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
           target="@marsai-org/natives-linux-x64@${VERSION}"
           if ! npm view "$target" version >/dev/null 2>&1; then
@@ -57,10 +62,16 @@ jobs:
           if [ -n "$out" ]; then echo "$out"; fi
           if [ "$rc" -ne 0 ]; then
             if printf '%s' "$out" | grep -qiE "Granular access tokens"; then
-              echo "::error title=Token cannot unpublish::NPM_TOKEN is a granular token; create a classic Automation token and replace the secret."
+              echo "::error title=Token cannot unpublish::NPM_TOKEN is a granular access token. npm only unpublishes with a classic Automation token; create one (Account -> Access Tokens -> Generate New Token -> Automation) and replace the secret."
+            elif printf '%s' "$out" | grep -qiE "E404|not found"; then
+              echo "::error title=Unpublish failed::npm cannot see $target. Check that the version exists and that the token has access to the @marsai-org scope."
             else
               echo "::error title=Unpublish failed::see npm's message above."
             fi
             exit 1
           fi
-          echo "::notice title=Token OK::it can unpublish. natives-linux-x64@$VERSION is now removed; the full republish run skips it."
+          if npm view "$target" version >/dev/null 2>&1; then
+            echo "::error title=Unpublish did not take::npm reported success but $target is still published (registry replication lag?). Re-check in a minute before trusting the token."
+            exit 1
+          fi
+          echo "::notice title=Token OK::it can unpublish. natives-linux-x64@$VERSION is now removed and its latest dist-tag with it; run the republish to restore it."

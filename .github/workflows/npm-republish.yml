@@ -18,8 +18,9 @@ name: npm republish
 # The `latest` dist-tag points at an older version for the whole window between
 # the two, so run this when a broken install is worse than a missing one.
 #
-# Credential handling copies npm-publish.yml: NPM_TOKEN is referenced by name
-# only, and no step that runs a repository script also sees it.
+# CREDENTIAL: NPM_TOKEN is referenced by name only, never printed. Unlike
+# npm-publish.yml there is no credential-free pack phase — this workflow packs
+# and publishes in one step — so the token sits in the publish steps' env.
 
 on:
   workflow_dispatch:
@@ -54,6 +55,11 @@ env:
   # npm refuses unpublish outside this window, so check it up front rather than
   # half-way through a run.
   UNPUBLISH_WINDOW_HOURS: 72
+  # Packages in publish (dependency) order; unpublish walks it reversed. Leaves
+  # are separate: they are consumed by the umbrella at install time, so they go
+  # last on publish and first on unpublish.
+  CORE: omptype wire utils catalog natives ai snapcompact mnemopi tui stats agent-core coding-agent
+  LEAVES: natives-linux-x64 natives-linux-arm64 natives-darwin-x64 natives-darwin-arm64 natives-win32-x64 natives-win32-arm64
 
 jobs:
   validate:
@@ -113,18 +119,68 @@ jobs:
             echo "::error title=NPM_TOKEN missing::cannot unpublish without a registry credential"
             exit 1
           fi
-          meta="$(npm view "@marsai-org/coding-agent@${VERSION}" --json 2>/dev/null || true)"
-          if [ -z "$meta" ]; then
-            echo "::error::@marsai-org/coding-agent@$VERSION is not published"
+          # A resumed run has already removed the earliest packages, so probe
+          # every name still on npm instead of one fixed package.
+          # `npm view --json` writes an error document to stdout on a 404, so
+          # the exit code is the only trustworthy "does it exist" signal.
+          stamps=""
+          published=0
+          for name in $CORE $LEAVES; do
+            meta=""
+            if ! meta="$(npm view "@marsai-org/${name}@${VERSION}" time --json 2>/dev/null)"; then
+              meta=""
+            fi
+            if [ -z "$meta" ]; then
+              continue
+            fi
+            # `time` maps every version to its publish timestamp; stringifying
+            # the whole object gives "[object Object]", which Date.parse()
+            # turns into NaN - and `NaN > 72` is false, so the window was
+            # never actually enforced.
+            at="$(printf '%s' "$meta" | bun -e '
+              try {
+                console.log(JSON.parse(await Bun.stdin.text())[process.argv[1]] ?? "")
+              } catch {
+                console.log("")
+              }
+            ' "$VERSION")"
+            # No entry means this package never had the version; the
+            # all-packages check below catches a version nobody has.
+            if [ -z "$at" ]; then
+              continue
+            fi
+            stamps="${stamps}${at}"$'\n'
+            published=$((published + 1))
+          done
+          total="$(printf '%s\n' $CORE $LEAVES | wc -l)"
+          if [ "$published" -eq 0 ]; then
+            echo "::error title=Version not published::no @marsai-org package is published at $VERSION; nothing to replace"
             exit 1
           fi
-          published_at="$(printf '%s' "$meta" | bun -e 'console.log(JSON.parse(await Bun.stdin.text()).time ?? "")')"
-          age_hours="$(bun -e 'console.log(((Date.now() - new Date(process.argv[1]).getTime()) / 3_600_000).toFixed(1))' "$published_at")"
-          echo "published $published_at (${age_hours}h ago)"
+          echo "$published of $total packages are still published"
+          # The earliest publish of the version is the binding limit.
+          window=""
+          if ! window="$(printf '%s' "$stamps" | bun -e '
+            const times = (await Bun.stdin.text())
+              .trim()
+              .split("\n")
+              .filter(Boolean)
+              .map(Date.parse)
+            if (times.some(t => !Number.isFinite(t))) process.exit(1)
+            const first = Math.min(...times)
+            console.log(new Date(first).toISOString())
+            console.log(((Date.now() - first) / 3_600_000).toFixed(1))
+          ')"; then
+            echo "::error title=Unreadable publish time::npm returned a timestamp the run cannot parse; check the registry output for @marsai-org/*@$VERSION"
+            exit 1
+          fi
+          published_at="$(printf '%s\n' "$window" | sed -n 1p)"
+          age_hours="$(printf '%s\n' "$window" | sed -n 2p)"
+          echo "first published $published_at (${age_hours}h ago)"
           if bun -e 'process.exit(Number(process.argv[1]) > Number(process.argv[2]) ? 1 : 0)' "$age_hours" "$UNPUBLISH_WINDOW_HOURS"; then
             echo "inside the ${UNPUBLISH_WINDOW_HOURS}h window"
           else
-            echo "::error::outside npm's ${UNPUBLISH_WINDOW_HOURS}h unpublish window; release a new version instead"
+            echo "::error title=Outside the unpublish window::first published ${age_hours}h ago, npm allows unpublish only for ${UNPUBLISH_WINDOW_HOURS}h; release a new version instead"
             exit 1
           fi
 
@@ -192,20 +248,7 @@ jobs:
         with:
           pattern: native-*
           path: native-artifacts
-          merge-multiple: true
-
-      - name: Plan the run
-        id: plan
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Packages in publish (dependency) order; unpublish walks it reversed.
-          # Leaves are separate: they are consumed by the umbrella at install
-          # time, so they go last on publish and first on unpublish.
-          core="omptype wire utils catalog natives ai snapcompact mnemopi tui stats agent-core coding-agent"
-          leaves="natives-linux-x64 natives-linux-arm64 natives-darwin-x64 natives-darwin-arm64 natives-win32-x64 natives-win32-arm64"
-          echo "core=$core" >> "$GITHUB_OUTPUT"
-          echo "leaves=$leaves" >> "$GITHUB_OUTPUT"
+          merge-multiple: false
 
       - name: Unpublish
         if: inputs.dry_run != true
@@ -213,14 +256,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ inputs.version }}
-          LEAVES: ${{ steps.plan.outputs.leaves }}
-          CORE: ${{ steps.plan.outputs.core }}
         run: |
           set -uo pipefail
           # Leaves first, then core in reverse dependency order, so nothing is
           # ever left depending on a version that has already disappeared.
           failed=0
-          token_broken=0
           for name in $LEAVES $(printf '%s\n' $CORE | tac); do
             full="@marsai-org/${name}@${VERSION}"
             if ! npm view "$full" version >/dev/null 2>&1; then
@@ -235,20 +275,15 @@ jobs:
             if [ -n "$out" ]; then echo "$out"; fi
             if [ "$rc" -ne 0 ]; then
               # The one error an operator will actually hit: npm requires a
-              # classic Automation token here. Granular tokens may publish but
-              # may not unpublish, however many scopes they carry.
+              # classic Automation token here, and a token that cannot unpublish
+              # fails on all eighteen packages. Stop at the first instead of
+              # printing the same 403 eighteen times.
               if printf '%s' "$out" | grep -qiE "Granular access tokens"; then
-                echo "::error::npm refused the token. NPM_TOKEN must be a classic Automation token to unpublish; granular tokens cannot."
-                token_broken=1
+                echo "::error title=NPM_TOKEN cannot unpublish::npm requires a classic Automation token. Replace the secret and re-run; packages removed so far stay removed."
+                exit 1
               fi
               echo "::error::failed to unpublish $full"
               failed=1
-            fi
-            # A token that cannot unpublish fails on every package; stop at the
-            # first rather than printing the same 403 eighteen times.
-            if [ "$token_broken" -ne 0 ]; then
-              echo "nothing was removed; replace NPM_TOKEN and re-run."
-              exit 1
             fi
           done
           if [ "$failed" -ne 0 ]; then
@@ -257,11 +292,15 @@ jobs:
             exit 1
           fi
 
+      # `--provenance` (opt-in inside ci-release-publish.ts) keeps the rebuilt
+      # tarballs attested; without it a republish silently downgrades packages
+      # that the normal publish path attested. The job already has id-token.
       - name: Publish workspace packages
         if: inputs.dry_run != true
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          MARS_PUBLISH_PROVENANCE: "1"
         run: bun scripts/ci-release-publish.ts
 
       - name: Publish native leaves
@@ -269,9 +308,8 @@ jobs:
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          LEAVES: ${{ steps.plan.outputs.leaves }}
+          MARS_PUBLISH_PROVENANCE: "1"
         run: |
-          set -uo pipefail
           # The leaf generator reads the .node for the requested tag out of
           # packages/natives/native/; stage each platform's addon into that slot
           # right before publishing it.
@@ -279,7 +317,7 @@ jobs:
           for name in $LEAVES; do
             tag="${name#natives-}"
             rm -f packages/natives/native/*.node
-            cp "native-artifacts/$tag"/*.node packages/natives/native/ || exit 1
+            cp "native-artifacts/native-$tag"/*.node packages/natives/native/ || exit 1
             echo "publish @marsai-org/${name}"
             if ! bun scripts/ci-release-publish.ts --native-leaf "$tag"; then
               echo "::error::failed to publish $name"
@@ -296,8 +334,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ inputs.version }}
-          LEAVES: ${{ steps.plan.outputs.leaves }}
-          CORE: ${{ steps.plan.outputs.core }}
         run: |
           set -uo pipefail
           missing=""
