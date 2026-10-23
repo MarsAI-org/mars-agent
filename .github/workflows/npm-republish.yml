@@ -227,7 +227,12 @@ jobs:
               continue
             fi
             echo "unpublish $full"
-            if ! npm unpublish "$full" --force >/dev/null 2>&1; then
+            # Keep npm's own message: the reason (replication lag, a dependent
+            # version still published, a stale token) is what a rerun needs.
+            rc=0
+            out="$(npm unpublish "$full" --force 2>&1)" || rc=$?
+            if [ -n "$out" ]; then echo "$out"; fi
+            if [ "$rc" -ne 0 ]; then
               echo "::error::failed to unpublish $full"
               failed=1
             fi
