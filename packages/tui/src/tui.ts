@@ -3454,28 +3454,6 @@ export class TUI extends Container {
 			marker !== undefined && rows > 0
 				? this.#targetHardwareCursorState({ row: newTop + Math.min(marker.row, rows - 1), col: marker.col }, height)
 				: null;
-		// A frame that rewrites no row and leaves the cursor exactly where it
-		// already is would only re-arm synchronized output: terminals honoring
-		// DEC 2026 recomposite the screen for it, so a steady stream of them
-		// reads as a permanent refresh with nothing changing. Drop the write and
-		// refresh the diff bookkeeping instead, so the next real frame still
-		// compares against the rows actually on screen.
-		if (
-			buffer === this.#paintBeginSequence &&
-			!this.#forceViewportRepaintOnNextRender &&
-			this.#cursorPaintUnchanged(target, mutableTop)
-		) {
-			this.#providerWindow = mutablePreparedLines;
-			this.#providerPreparedRows = mutablePreparedRows;
-			this.#providerViewportTop = mutableTop;
-			this.#previousWidth = width;
-			this.#previousHeight = height;
-			this.#previousFrameLength = mutablePreparedLines.length;
-			this.#clearScrollbackOnNextRender = false;
-			this.#forceViewportRepaintOnNextRender = false;
-			this.#hasEverRendered = true;
-			return;
-		}
 		if (target) {
 			buffer += `\x1b[${target.row + 1};${target.col + 1}H${target.visible ? "\x1b[?25h" : "\x1b[?25l"}`;
 			this.#parkedViewportOffset = Math.max(0, target.row - mutableTop);
@@ -3508,10 +3486,8 @@ export class TUI extends Container {
 			this.#resizeAltExitFused = false;
 			setAltScreenActive(false);
 		}
-		// A hidden cursor is parked on the viewport's top row; remember that so
-		// the next frame can tell an unchanged paint from a moved one.
 		if (target) this.#recordHardwareCursorState(target);
-		else this.#recordHardwareCursorState({ row: mutableTop, col: 0, visible: false });
+		else this.#recordHardwareCursorHidden();
 		this.#providerWindow = mutablePreparedLines;
 		this.#providerPreparedRows = mutablePreparedRows;
 		this.#providerViewportTop = mutableTop;
@@ -4151,17 +4127,6 @@ export class TUI extends Container {
 	#recordHardwareCursorHidden(): void {
 		if (!this.#hardwareCursorState) return;
 		this.#hardwareCursorState = { ...this.#hardwareCursorState, visible: false };
-	}
-	/**
-	 * Whether the cursor paint a frame would emit is already on screen, so a
-	 * frame that rewrites no row can be dropped whole. `parkedRow` is the
-	 * hidden-cursor parking row used when no cursor marker landed.
-	 */
-	#cursorPaintUnchanged(target: HardwareCursorState | null, parkedRow: number): boolean {
-		const state = this.#hardwareCursorState;
-		if (!state) return false;
-		if (target === null) return !state.visible && state.row === parkedRow && state.col === 0;
-		return state.visible === target.visible && state.row === target.row && state.col === target.col;
 	}
 
 	#forgetHardwareCursorState(): void {

@@ -69,13 +69,6 @@ For every frame the TUI:
 5. Parks the hardware cursor at the real content position inside the
    synchronized-output frame.
 
-A frame that rewrites no viewport row and leaves the cursor exactly where it
-already is writes nothing at all. Re-emitting the paint markers for it would
-only re-arm DEC 2026 synchronized output, and a terminal honoring that mode
-recomposites the screen for every such frame — a stream of empty frames reads as
-a display that never settles. The renderer drops the write and still refreshes
-its diff ledger, so the next real frame compares against the rows on screen.
-
 History and viewport have deliberately different update rules. History is an
 ordered append stream; viewport rows are replaceable and diffed against the
 previous viewport. A replay is one atomic exception: the renderer moves the
