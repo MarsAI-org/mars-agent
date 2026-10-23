@@ -37,6 +37,12 @@ export interface SetupHost extends SetupUiHost {
 	saveSymbolPreset(preset: SymbolPreset): void;
 	saveColorBlindMode(enabled: boolean): void;
 	saveTheme(mode: "dark" | "light", name: string): void;
+	/**
+	 * Open the custom-endpoint flow from the sign-in scene. The host owns the
+	 * overlay because the setup wizard already occupies the screen, so the
+	 * scene cannot reuse the in-session editor slot.
+	 */
+	openCustomEndpoint(): void;
 	captureBrowserSession(request: OAuthBrowserSessionRequest, signal?: AbortSignal): Promise<string>;
 	copyToClipboard(text: string): Promise<void>;
 	openInBrowser(url: string): void;

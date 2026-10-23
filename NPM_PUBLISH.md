@@ -175,6 +175,41 @@ filename `npm-publish-trusted.yml`.
 > A new trusted-publisher configuration expires if it does not complete its first
 > successful publish within 2 days. Configure it when you are ready to publish.
 
+### Replacing a published version — `.github/workflows/npm-republish.yml`
+
+npm cannot overwrite a version, so replacing one means unpublishing it and
+publishing the same version again from a newer commit. Use it when the shipped
+artifacts are *wrong* (a broken first-run flow, a crash); for ordinary
+follow-ups release a new version instead, which costs nothing but a number.
+
+Hard limits, all checked before anything is deleted:
+
+- **72 hours.** npm only allows unpublish inside that window; the run refuses
+  later. The window starts at the first publish of the version.
+- **Whole version, never a subset.** All 12 publishable packages and 6 native
+  leaves are replaced together. A subset leaves installs resolving a mix.
+- **The ref must already declare the version.** The workflow refuses a checkout
+  whose `packages/coding-agent/package.json` says something else.
+- **`confirm_unpublish` must repeat the version** whenever `dry_run` is false.
+
+Inputs: `version`, `ref`, `dry_run` (default `true`), `confirm_unpublish`.
+
+Order is asymmetric so nothing ever depends on a version that already vanished:
+leaves first, then packages in reverse dependency order on the way out; packages
+in dependency order, then leaves, on the way back in. **`latest` points at an
+older version for the whole middle of the run**, so readers installing during
+the window get an older release rather than a missing one. Every step skips work
+it finds already done, so a half-finished run is resumed by running it again.
+
+Run it in this order:
+
+1. `dry_run: true` — validates the version, the ref, the window, and the
+   confirmation without touching npm.
+2. `dry_run: false` with `confirm_unpublish` set to the version.
+3. Verify every package, then edit the GitHub Release if its binaries changed
+   (delete the release and tag, re-tag the same commit, let `release.yml`
+   rebuild). `npm-republish.yml` does not touch GitHub Releases.
+
 ## 7. Human steps after the first publish
 
 1. **Verify** each package: `npm view @marsai-org/<name> dist-tags versions`.

@@ -324,6 +324,12 @@ export class SignInScene implements SetupSceneController {
 
 	async #login(providerId: string): Promise<void> {
 		if (this.#loggingInProvider || this.#disposed) return;
+		// The custom row is not an OAuth provider: hand it to the host, which
+		// owns the flow as an overlay because the wizard already holds the screen.
+		if (providerId === "custom") {
+			this.#host.ctx.openCustomEndpoint();
+			return;
+		}
 		const useManualInput = PASTE_CODE_LOGIN_PROVIDERS.has(providerId);
 		this.#selector.stopValidation();
 		this.#loggingInProvider = providerId;

@@ -1,0 +1,298 @@
+name: npm republish
+
+# Replace an already-published release version in place.
+#
+# npm cannot overwrite a version, so "re-releasing 0.1.7" means: unpublish every
+# package at that version, then publish the same version again from a newer
+# commit. That is only worth it inside npm's 72-hour unpublish window, and only
+# for a version whose artifacts are wrong rather than merely incomplete — the
+# normal path is a new version.
+#
+# Scope: the 12 publishable workspace packages and the 6 native leaves, all at
+# one version. Unpublishing a subset would leave installs resolving a mix.
+#
+# Ordering matters and is not symmetric:
+#   1. unpublish leaves, then packages in reverse dependency order;
+#   2. publish packages in dependency order (the publish script enforces it),
+#      then leaves.
+# The `latest` dist-tag points at an older version for the whole window between
+# the two, so run this when a broken install is worse than a missing one.
+#
+# Credential handling copies npm-publish.yml: NPM_TOKEN is referenced by name
+# only, and no step that runs a repository script also sees it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Published version to replace, e.g. 0.1.7"
+        required: true
+        type: string
+      ref:
+        description: "Commit or branch to rebuild from (must already declare that version)"
+        required: true
+        type: string
+      dry_run:
+        description: "List what would be unpublished without changing npm"
+        required: true
+        type: boolean
+        default: true
+      confirm_unpublish:
+        description: "Type the version again to confirm deleting it from npm"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-republish-${{ inputs.version }}
+  cancel-in-progress: false
+
+env:
+  # npm refuses unpublish outside this window, so check it up front rather than
+  # half-way through a run.
+  UNPUBLISH_WINDOW_HOURS: 72
+
+jobs:
+  validate:
+    name: Validate inputs
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Check the version, the ref, and the confirmation
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          CONFIRM: ${{ inputs.confirm_unpublish }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version must be a bare X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
+          # The checkout has to be the release being replaced, or the republished
+          # tarballs would carry a different version than the one being removed.
+          declared="$(bun -e 'console.log((await Bun.file("packages/coding-agent/package.json").json()).version)')"
+          if [ "$declared" != "$VERSION" ]; then
+            echo "::error::ref declares $declared, not $VERSION. Pass a ref that already has the bump."
+            exit 1
+          fi
+          echo "republishing $VERSION from $(git rev-parse --short HEAD)"
+          # Dispatcher confirmation is the last gate before an irreversible step.
+          if [ "$DRY_RUN" != "true" ] && [ "$CONFIRM" != "$VERSION" ]; then
+            echo "::error::confirm_unpublish must repeat the version ($VERSION) when dry_run is false"
+            exit 1
+          fi
+
+  window:
+    name: Check the unpublish window
+    runs-on: ubuntu-22.04
+    needs: [validate]
+    steps:
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Refuse outside npm's window
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ needs.validate.outputs.version }}
+        run: |
+          set -euo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error title=NPM_TOKEN missing::cannot unpublish without a registry credential"
+            exit 1
+          fi
+          meta="$(npm view "@marsai-org/coding-agent@${VERSION}" --json 2>/dev/null || true)"
+          if [ -z "$meta" ]; then
+            echo "::error::@marsai-org/coding-agent@$VERSION is not published"
+            exit 1
+          fi
+          published_at="$(printf '%s' "$meta" | bun -e 'console.log(JSON.parse(await Bun.stdin.text()).time ?? "")')"
+          age_hours="$(bun -e 'console.log(((Date.now() - new Date(process.argv[1]).getTime()) / 3_600_000).toFixed(1))' "$published_at")"
+          echo "published $published_at (${age_hours}h ago)"
+          if bun -e 'process.exit(Number(process.argv[1]) > Number(process.argv[2]) ? 1 : 0)' "$age_hours" "$UNPUBLISH_WINDOW_HOURS"; then
+            echo "inside the ${UNPUBLISH_WINDOW_HOURS}h window"
+          else
+            echo "::error::outside npm's ${UNPUBLISH_WINDOW_HOURS}h unpublish window; release a new version instead"
+            exit 1
+          fi
+
+  build_native:
+    name: "Build native addon: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [validate]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+          - os: macos-15-intel
+            target_id: darwin-x64
+          - os: macos-15
+            target_id: darwin-arm64
+          - os: windows-2025
+            target_id: win32-x64
+          - os: windows-11-arm
+            target_id: win32-arm64
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      # Same command and profile the tag release uses, so the republished addons
+      # are byte-identical to what a normal release of this commit would ship.
+      - name: Build native addon
+        env:
+          MARS_NATIVE_CARGO_PROFILE: ci
+        run: bun --cwd=packages/natives run build:bindings
+      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: native-${{ matrix.target_id }}
+          path: packages/natives/native/*.node
+
+  republish:
+    name: Republish ${{ inputs.version }}
+    runs-on: ubuntu-22.04
+    needs: [validate, window, build_native]
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install a publishing npm
+        run: npm install -g npm@11.17.0
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: native-*
+          path: native-artifacts
+          merge-multiple: true
+
+      - name: Plan the run
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Packages in publish (dependency) order; unpublish walks it reversed.
+          # Leaves are separate: they are consumed by the umbrella at install
+          # time, so they go last on publish and first on unpublish.
+          core="omptype wire utils catalog natives ai snapcompact mnemopi tui stats agent-core coding-agent"
+          leaves="natives-linux-x64 natives-linux-arm64 natives-darwin-x64 natives-darwin-arm64 natives-win32-x64 natives-win32-arm64"
+          echo "core=$core" >> "$GITHUB_OUTPUT"
+          echo "leaves=$leaves" >> "$GITHUB_OUTPUT"
+
+      - name: Unpublish
+        if: inputs.dry_run != true
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ inputs.version }}
+          LEAVES: ${{ steps.plan.outputs.leaves }}
+          CORE: ${{ steps.plan.outputs.core }}
+        run: |
+          set -uo pipefail
+          # Leaves first, then core in reverse dependency order, so nothing is
+          # ever left depending on a version that has already disappeared.
+          failed=0
+          for name in $LEAVES $(printf '%s\n' $CORE | tac); do
+            full="@marsai-org/${name}@${VERSION}"
+            if ! npm view "$full" version >/dev/null 2>&1; then
+              echo "skip   $full (not published)"
+              continue
+            fi
+            echo "unpublish $full"
+            if ! npm unpublish "$full" --force >/dev/null 2>&1; then
+              echo "::error::failed to unpublish $full"
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "::error title=Republish incomplete::could not unpublish every package"
+            echo "Re-run this workflow; already-removed packages are skipped."
+            exit 1
+          fi
+
+      - name: Publish workspace packages
+        if: inputs.dry_run != true
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun scripts/ci-release-publish.ts
+
+      - name: Publish native leaves
+        if: inputs.dry_run != true
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          LEAVES: ${{ steps.plan.outputs.leaves }}
+        run: |
+          set -uo pipefail
+          # The leaf generator reads the .node for the requested tag out of
+          # packages/natives/native/; stage each platform's addon into that slot
+          # right before publishing it.
+          failed=0
+          for name in $LEAVES; do
+            tag="${name#natives-}"
+            rm -f packages/natives/native/*.node
+            cp "native-artifacts/$tag"/*.node packages/natives/native/ || exit 1
+            echo "publish @marsai-org/${name}"
+            if ! bun scripts/ci-release-publish.ts --native-leaf "$tag"; then
+              echo "::error::failed to publish $name"
+              failed=1
+            fi
+          done
+          if [ "$failed" -ne 0 ]; then
+            echo "::error title=Republish incomplete::could not publish every leaf"
+            exit 1
+          fi
+
+      - name: Verify npm state
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ inputs.version }}
+          LEAVES: ${{ steps.plan.outputs.leaves }}
+          CORE: ${{ steps.plan.outputs.core }}
+        run: |
+          set -uo pipefail
+          missing=""
+          for name in $CORE $LEAVES; do
+            if npm view "@marsai-org/${name}@${VERSION}" version >/dev/null 2>&1; then
+              echo "ok @marsai-org/${name}@${VERSION}"
+            else
+              missing="$missing $name"
+            fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error title=Republish incomplete::missing on npm:$missing"
+            exit 1
+          fi
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "dry run: nothing was unpublished or published"
+          fi
