@@ -23,6 +23,12 @@ on:
 permissions:
   contents: read
 
+# Shared with npm-republish.yml: both remove the same leaf, so they must not
+# overlap on one version.
+concurrency:
+  group: npm-version-${{ inputs.version }}
+  cancel-in-progress: false
+
 jobs:
   probe:
     name: Probe token

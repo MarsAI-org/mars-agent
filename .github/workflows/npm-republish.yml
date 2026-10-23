@@ -47,8 +47,10 @@ on:
 permissions:
   contents: read
 
+# Shared with npm-token-probe.yml: both remove the same packages, so they must
+# not overlap on one version.
 concurrency:
-  group: npm-republish-${{ inputs.version }}
+  group: npm-version-${{ inputs.version }}
   cancel-in-progress: false
 
 env:
