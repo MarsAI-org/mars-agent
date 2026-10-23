@@ -7,6 +7,8 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-10-23
+
 ### Added
 
 - **Custom endpoint wizard in the TUI.** `/login` now lists `+ Custom Endpoint / Provider...` as its last row, and `/endpoint` opens the same wizard directly. It asks whether you are retargeting a built-in provider (writes `providers.endpoints` in `config.yml`, keeping its models and credentials) or registering a new one (writes a `models.yml` block), then collects the URL, wire format, credential, and model list, validating each answer as it goes. `mars login custom` opens the terminal equivalent.
@@ -14,6 +16,8 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 ### Changed
 
 - The terminal `mars login` picker gained the same `+ Custom Endpoint / Provider...` row, so an endpoint can be configured without knowing the `mars models add-provider` flags.
+- A release version bump no longer rebuilds the native addons. The CI cache key hashes `Cargo.toml`/`Cargo.lock` with workspace versions normalized (`scripts/native_inputs_hash.py`), because the addon's release identity is stamped post-link. Releases previously spent ~38 minutes rebuilding the linux-x64 pair uncached.
+- The npm publish gate waits 20 minutes instead of 15. Two ~190 MB native leaves have twice replicated just past the old deadline (v0.1.4 and v0.1.6), failing a release whose packages had in fact published.
 
 ## [0.1.6] - 2026-10-22
 
