@@ -194,6 +194,10 @@ Hard limits, all checked before anything is deleted:
 
 Inputs: `version`, `ref`, `dry_run` (default `true`), `confirm_unpublish`.
 
+Republished tarballs are attested (`--provenance`), same as the normal publish
+path, so replacing a version does not downgrade it from attested to plain. The
+job already holds `id-token: write`.
+
 **`NPM_TOKEN` must be a classic Automation token.** Granular access tokens can
 publish but npm refuses them for unpublish:
 
@@ -208,6 +212,14 @@ token fails on the first package and stops. Create the token as *Automation*
 secret. Trusted publishing (OIDC) is not a workaround either: `npm unpublish`
 needs a token.
 
+**Probe the token first.** `.github/workflows/npm-token-probe.yml` (Actions →
+npm token probe) takes two minutes instead of the half hour the native builds
+cost, and answers the same question: it unpublishes
+`@marsai-org/natives-linux-x64@<version>`. It does change npm — the probed leaf
+and its `latest` dist-tag are removed — which costs nothing if the republish
+runs next, since that removes every package at the version regardless and skips
+ones already gone.
+
 Order is asymmetric so nothing ever depends on a version that already vanished:
 leaves first, then packages in reverse dependency order on the way out; packages
 in dependency order, then leaves, on the way back in. **`latest` points at an
@@ -217,10 +229,11 @@ it finds already done, so a half-finished run is resumed by running it again.
 
 Run it in this order:
 
-1. `dry_run: true` — validates the version, the ref, the window, and the
+1. The token probe, with the version. If it fails, fix the token and stop.
+2. `dry_run: true` — validates the version, the ref, the window, and the
    confirmation without touching npm.
-2. `dry_run: false` with `confirm_unpublish` set to the version.
-3. Verify every package, then edit the GitHub Release if its binaries changed
+3. `dry_run: false` with `confirm_unpublish` set to the version.
+4. Verify every package, then edit the GitHub Release if its binaries changed
    (delete the release and tag, re-tag the same commit, let `release.yml`
    rebuild). `npm-republish.yml` does not touch GitHub Releases.
 

@@ -432,12 +432,13 @@ export async function prepareNativeCorePackage(pkgDir: string, write: boolean): 
  * to the configured token when the package has no matching trusted publisher —
  * which also covers a package's first-ever publish.
  *
- * `--provenance` is opt-in via `MARS_PUBLISH_PROVENANCE=1`, which the local and
- * `ci.yml` combined paths do not set. It requires `id-token: write` and a public
- * source repository, both of which hold here; it is off by default so a local run
- * cannot fail on a missing OIDC context. The standalone publish workflows do not
- * go through this function — they call `npm publish` directly, passing
- * `--provenance` themselves (and OIDC generates it automatically).
+ * `--provenance` is opt-in via `MARS_PUBLISH_PROVENANCE=1`, which only
+ * `npm-republish.yml` sets; a local run (and the disabled `ci.yml` release job)
+ * does not. It requires `id-token: write` and a public source repository, both
+ * of which hold here; it is off by default so a local run cannot fail on a
+ * missing OIDC context. The standalone publish workflows do not go through this
+ * function — they call `npm publish` directly, passing `--provenance`
+ * themselves (and OIDC generates it automatically).
  */
 export interface PackedTarball {
 	name: string;
