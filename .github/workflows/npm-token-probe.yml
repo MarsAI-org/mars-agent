@@ -1,0 +1,66 @@
+name: npm token probe
+
+# Two-minute answer to one question: may the configured NPM_TOKEN unpublish?
+#
+# The full republish builds six native addons before it touches npm, so a token
+# that cannot unpublish costs half an hour to discover. This probes a single
+# leaf package and reports. It is safe to run at any time: the package it
+# removes is one the next republish run skips anyway.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Published version to test against"
+        required: true
+        type: string
+      ref:
+        description: "Ref to run from"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    name: Probe token
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install a publishing npm
+        run: npm install -g npm@11.17.0
+      - name: Probe
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -uo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error title=NPM_TOKEN missing::no credential configured"
+            exit 1
+          fi
+          echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
+          target="@marsai-org/natives-linux-x64@${VERSION}"
+          if ! npm view "$target" version >/dev/null 2>&1; then
+            echo "::error::$target is not published; pass a version that is"
+            exit 1
+          fi
+          echo "attempting unpublish $target"
+          rc=0
+          out="$(npm unpublish "$target" --force 2>&1)" || rc=$?
+          if [ -n "$out" ]; then echo "$out"; fi
+          if [ "$rc" -ne 0 ]; then
+            if printf '%s' "$out" | grep -qiE "Granular access tokens"; then
+              echo "::error title=Token cannot unpublish::NPM_TOKEN is a granular token; create a classic Automation token and replace the secret."
+            else
+              echo "::error title=Unpublish failed::see npm's message above."
+            fi
+            exit 1
+          fi
+          echo "::notice title=Token OK::it can unpublish. natives-linux-x64@$VERSION is now removed; the full republish run skips it."
