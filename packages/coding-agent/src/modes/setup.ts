@@ -12,6 +12,7 @@ import type { Settings } from "../config/settings";
 import { captureBrowserSession } from "../utils/browser-session";
 import { copyToClipboard } from "../utils/clipboard";
 import { createModelBrowserSource } from "./model-browser-source";
+import { applyCustomEndpointResult } from "./custom-endpoint-apply";
 import type { InteractiveModeContext } from "./types";
 
 import {
@@ -77,6 +78,38 @@ export function createSetupHost(ctx: InteractiveModeContext): SetupHost {
 		},
 		saveTheme: (mode, name) => {
 			(mode === "dark" ? cfgThemeDark : cfgThemeLight).set(ctx.settings, name);
+		},
+		openCustomEndpoint: () => {
+			// The setup wizard owns the screen, so the flow opens as an overlay on
+			// top of it rather than replacing the (absent) editor slot.
+			const { CustomEndpointWizardComponent } =
+				require("@marsai-org/tui/overlays/custom-endpoint-wizard.js") as typeof import("@marsai-org/tui/overlays/custom-endpoint-wizard");
+			let handle: { hide(): void } | undefined;
+			const close = () => {
+				handle?.hide();
+				handle = undefined;
+				ctx.ui.requestRender();
+			};
+			const wizard = new CustomEndpointWizardComponent(
+				async result => {
+					close();
+					try {
+						const message = await applyCustomEndpointResult(result, {
+							settings: ctx.settings,
+							authStorage: ctx.session.modelRegistry.authStorage,
+							modelRegistry: ctx.session.modelRegistry,
+						});
+						ctx.showStatus(`✓ ${message}`);
+					} catch (error) {
+						ctx.showError(
+							`Failed to configure custom endpoint: ${error instanceof Error ? error.message : String(error)}`,
+						);
+					}
+				},
+				close,
+				() => ctx.ui.requestRender(),
+			);
+			handle = ctx.ui.showOverlay(wizard);
 		},
 		captureBrowserSession,
 		copyToClipboard,
