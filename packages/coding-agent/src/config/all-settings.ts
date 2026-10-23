@@ -9,6 +9,7 @@ import * as sessionSettings from "../session/settings";
 import * as advisorSettings from "../advisor/settings";
 import * as configModelSettings from "./model-settings";
 import * as providerEndpointSettings from "./provider-endpoint-settings";
+import * as providerContextWindowSettings from "./provider-context-window-settings";
 import * as sessionContextSettings from "../session/context-settings";
 import * as memoryBackendSettings from "../memory-backend/settings";
 import * as memoriesSettings from "../memories/settings";
@@ -47,6 +48,7 @@ import * as telemetrySettings from "../telemetry-settings";
 const DOMAINS: readonly Readonly<Record<string, unknown>>[] = [
 	configModelSettings,
 	providerEndpointSettings,
+	providerContextWindowSettings,
 	modesSettings,
 	sessionSettings,
 	telemetrySettings,

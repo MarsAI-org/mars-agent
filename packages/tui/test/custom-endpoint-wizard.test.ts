@@ -67,6 +67,8 @@ describe("CustomEndpointWizardComponent", () => {
 		type(wizard, "https://proxy.example.com/v1");
 		wizard.handleInput(ENTER); // URL accepted
 		wizard.handleInput(ENTER); // blank credential
+		type(wizard, "200000");
+		wizard.handleInput(ENTER); // context window
 		wizard.handleInput(ENTER); // "save"
 
 		expect(onComplete).toHaveBeenCalledTimes(1);
@@ -75,6 +77,7 @@ describe("CustomEndpointWizardComponent", () => {
 			provider: "openai",
 			baseUrl: "https://proxy.example.com/v1",
 			apiKey: undefined,
+			maxContext: 200000,
 		});
 	});
 
@@ -94,6 +97,8 @@ describe("CustomEndpointWizardComponent", () => {
 		wizard.handleInput(ENTER);
 		type(wizard, "chat-v1, code-v2");
 		wizard.handleInput(ENTER); // model ids
+		type(wizard, "64000");
+		wizard.handleInput(ENTER); // context window
 		wizard.handleInput(ENTER); // save
 
 		expect(onComplete).toHaveBeenCalledTimes(1);
@@ -103,6 +108,7 @@ describe("CustomEndpointWizardComponent", () => {
 			baseUrl: "https://acme.example.com/v1",
 			api: "openai-completions",
 			apiKey: "ACME_KEY",
+			maxContext: 64000,
 			discovery: undefined,
 			models: ["chat-v1", "code-v2"],
 		});
@@ -120,6 +126,7 @@ describe("CustomEndpointWizardComponent", () => {
 		wizard.handleInput(ENTER); // wire format
 		wizard.handleInput(ENTER); // no credential
 		wizard.handleInput(ENTER); // discovery: endpoint list
+		wizard.handleInput(ENTER); // blank context window
 		wizard.handleInput(ENTER); // save
 
 		expect(onComplete.mock.calls[0]?.[0]).toEqual({
@@ -128,6 +135,7 @@ describe("CustomEndpointWizardComponent", () => {
 			baseUrl: "https://gw.example.com/v1",
 			api: "openai-completions",
 			apiKey: undefined,
+			maxContext: undefined,
 			discovery: "openai-models-list",
 			models: undefined,
 		});
@@ -179,6 +187,7 @@ describe("CustomEndpointWizardComponent", () => {
 		wizard.handleInput(ENTER);
 		wizard.handleInput(ENTER);
 		wizard.handleInput(ENTER);
+		wizard.handleInput(ENTER);
 
 		expect(onComplete.mock.calls[0]?.[0]).toMatchObject({ provider: "anthropic" });
 	});
@@ -195,7 +204,25 @@ describe("CustomEndpointWizardComponent", () => {
 		wizard.handleInput(ENTER);
 		wizard.handleInput(ENTER);
 		wizard.handleInput(ENTER);
+		wizard.handleInput(ENTER); // context window, then save
 
 		expect(onComplete.mock.calls[0]?.[0]).toMatchObject({ provider: "llama.cpp" });
+	});
+
+	it("rejects a window that is not a positive whole number", () => {
+		setThemeInstance(darkTheme!);
+		setKeybindings(KeybindingsManager.inMemory());
+		const { wizard, onComplete } = mount("override");
+
+		wizard.handleInput(ENTER); // OpenAI
+		for (let i = 0; i < 40; i++) wizard.handleInput("\x7f");
+		type(wizard, "https://proxy.example.com/v1");
+		wizard.handleInput(ENTER); // URL accepted
+		wizard.handleInput(ENTER); // blank credential
+		type(wizard, "0");
+		wizard.handleInput(ENTER);
+
+		expect(onComplete).not.toHaveBeenCalled();
+		expect(render(wizard)).toContain("Enter a whole number of tokens");
 	});
 });

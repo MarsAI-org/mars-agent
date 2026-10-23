@@ -63,6 +63,10 @@ export default class Models extends Command {
 		models: Flags.string({
 			description: "Comma-separated model IDs for add-provider (when discovery is none)",
 		}),
+		"max-context": Flags.integer({
+			description:
+				"Context window in tokens: stamped on every id in --models, or set provider-wide when discovering",
+		}),
 		header: Flags.string({
 			char: "H",
 			description: "Custom request header for add-provider (Name: value, repeatable)",
@@ -87,6 +91,8 @@ export default class Models extends Command {
 		`# Force a fresh catalog fetch (replaces rm -rf ~/.mars/models.db)\n  ${APP_NAME} models refresh`,
 		`# Add a custom provider interactively to models.yml\n  ${APP_NAME} models add-provider`,
 		`# Add a custom provider with flags\n  ${APP_NAME} models add-provider my-proxy --endpoint https://proxy.example.com/v1 --discovery openai-models-list`,
+		`# Add a provider whose gateway takes a 200k window\n  ${APP_NAME} models add-provider my-proxy --endpoint https://proxy.example.com/v1 --models chat-v1 --max-context 200000`,
+		`# Same window for a discovered catalog (stored in providers.contextWindows)\n  ${APP_NAME} models add-provider my-proxy --endpoint https://proxy.example.com/v1 --discovery openai-models-list --max-context 200000`,
 		`# List custom providers defined in models.yml\n  ${APP_NAME} models providers`,
 		`# Remove a custom provider from models.yml\n  ${APP_NAME} models remove-provider my-proxy`,
 		`# Machine-readable output\n  ${APP_NAME} models --json`,
@@ -111,6 +117,7 @@ export default class Models extends Command {
 				discovery: flags.discovery,
 				models: flags.models,
 				header: flags.header,
+				maxContext: flags["max-context"],
 				path: flags.path,
 				overwrite: flags.overwrite,
 				dryRun: flags["dry-run"],

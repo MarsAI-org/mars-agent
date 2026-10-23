@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- The custom endpoint wizard asks for an optional context window and shows it on the confirmation step.
+
 ## [0.1.1] - 2026-10-20
 
 ### Fixed

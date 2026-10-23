@@ -21,6 +21,8 @@ import {
 	removeProviderBlock,
 	upsertProviderBlock,
 } from "../config/models-config-writer";
+import { cfgProvidersContextWindows } from "../config/provider-context-window-settings";
+import { type Settings, settings } from "../config/settings";
 import { replaceFileAtomically } from "../utils/atomic-file";
 
 /** Wires a `models.yml` provider block can name. Only chat transports are offered. */
@@ -54,6 +56,13 @@ export interface AddProviderOptions {
 	models?: string[];
 	/** How the provider advertises its catalog. Defaults to `none` (models are declared). */
 	discovery?: CustomProviderDiscovery;
+	/**
+	 * Context window in tokens for the provider, for gateways whose own metadata
+	 * states none or a smaller one. Stamped on every id in `models`; for a
+	 * discovered catalog it goes to `providers.contextWindows` instead, since
+	 * there are no ids at write time.
+	 */
+	maxContext?: number;
 	/** Extra request headers, sent with every model of the provider. */
 	headers?: Record<string, string>;
 	/** Filesystem path of the models config to edit. Defaults to the agent's own. */
@@ -62,6 +71,11 @@ export interface AddProviderOptions {
 	overwrite?: boolean;
 	/** Validate the edited file and report it; does not write. */
 	dryRun?: boolean;
+	/**
+	 * Settings store for the `providers.contextWindows` write of a discovered
+	 * catalog. Defaults to the process-wide settings.
+	 */
+	settings?: Settings;
 }
 
 export interface AddProviderResult {
@@ -88,7 +102,9 @@ export function buildProviderConfig(options: AddProviderOptions): Record<string,
 	if (options.headers && Object.keys(options.headers).length > 0) config.headers = { ...options.headers };
 	const discovery = options.discovery ?? "none";
 	if (discovery !== "none") config.discovery = { type: discovery };
-	const models = (options.models ?? []).map(id => ({ id }));
+	const models = (options.models ?? []).map(id =>
+		options.maxContext === undefined ? { id } : { id, contextWindow: options.maxContext },
+	);
 	if (models.length > 0) config.models = models;
 	return config;
 }
@@ -117,6 +133,12 @@ export function validateAddProviderOptions(options: AddProviderOptions): string 
 	const discovery = options.discovery ?? "none";
 	if ((options.models ?? []).length === 0 && discovery === "none") {
 		return "Declare at least one model id, or enable discovery so the endpoint's model list is fetched.";
+	}
+	if (options.maxContext !== undefined) {
+		if (!Number.isSafeInteger(options.maxContext)) {
+			return `Context window must be a whole number of tokens, got "${options.maxContext}".`;
+		}
+		if (options.maxContext <= 0) return "Context window must be greater than zero.";
 	}
 	return undefined;
 }
@@ -153,6 +175,7 @@ export async function addProvider(options: AddProviderOptions): Promise<AddProvi
 	}
 
 	const text = upsertProviderBlock(current, id, buildProviderConfig(options));
+	const discovered = (options.models ?? []).length === 0;
 	const invalid = await findModelsConfigProblem(text, configPath);
 	if (invalid) throw new Error(`Refusing to write an invalid ${path.basename(configPath)}: ${invalid}`);
 
@@ -160,6 +183,13 @@ export async function addProvider(options: AddProviderOptions): Promise<AddProvi
 	if (options.dryRun) return { path: configPath, providers, replaced: existed, text };
 
 	await writeModelsConfigAtomically(configPath, text);
+	// A discovered catalog has no ids to attach the window to yet, so it goes
+	// provider-wide and every row picked up at load inherits it.
+	if (discovered && options.maxContext !== undefined) {
+		const target = options.settings ?? settings;
+		cfgProvidersContextWindows.set(target, { ...cfgProvidersContextWindows.get(target), [id]: options.maxContext });
+		await target.flush();
+	}
 	return { path: configPath, providers, replaced: existed };
 }
 
@@ -228,6 +258,17 @@ async function ask(
 	}
 }
 
+/** Ask for an optional positive integer token window; a blank answer yields `undefined`. */
+async function askWindow(rl: readline.Interface, question: string): Promise<number | undefined> {
+	for (;;) {
+		const answer = await ask(rl, question);
+		if (answer.length === 0) return undefined;
+		const window = Number(answer);
+		if (Number.isSafeInteger(window) && window > 0) return window;
+		process.stdout.write(chalk.yellow("  Enter a whole number of tokens, for example 200000.\n"));
+	}
+}
+
 /** Interactive prompts for a provider block; used when required flags are missing. */
 async function promptForProvider(seed: Partial<AddProviderOptions>): Promise<AddProviderOptions> {
 	if (!process.stdin.isTTY) {
@@ -265,6 +306,14 @@ async function promptForProvider(seed: Partial<AddProviderOptions>): Promise<Add
 						defaultValue: "openai-models-list",
 					})
 				: "none")) as CustomProviderDiscovery;
+		process.stdout.write(
+			chalk.dim(
+				models === undefined
+					? "  Context window: applies to every chat model discovered under this provider. Leave blank to use the provider's own.\n"
+					: "  Context window: tokens every declared model accepts. Leave blank to use the provider's own.\n",
+			),
+		);
+		const maxContext = seed.maxContext ?? (await askWindow(rl, "Context window in tokens:"));
 		return {
 			...seed,
 			id,
@@ -273,6 +322,7 @@ async function promptForProvider(seed: Partial<AddProviderOptions>): Promise<Add
 			apiKey: credential && credential.length > 0 ? credential : undefined,
 			models,
 			discovery,
+			maxContext,
 		};
 	} finally {
 		rl.close();
@@ -289,6 +339,8 @@ export interface AddProviderCommandArgs {
 		token?: string;
 		models?: string;
 		discovery?: string;
+		/** Context window in tokens for every declared model. */
+		maxContext?: number;
 		header?: string[];
 		path?: string;
 		overwrite?: boolean;
@@ -311,26 +363,18 @@ export async function runAddProviderCommand(args: AddProviderCommandArgs): Promi
 	let options: AddProviderOptions;
 	try {
 		const headers = parseHeaderFlags(flags.header);
-		if (args.id === undefined) {
-			options = await promptForProvider({
-				baseUrl: flags.baseUrl ?? "",
-				api: flags.api as CustomProviderApi | undefined,
-				apiKey: flags.token,
-				models: splitList(flags.models),
-				discovery: flags.discovery as CustomProviderDiscovery | undefined,
-				headers,
-			});
-		} else {
-			options = {
-				id: args.id,
-				baseUrl: flags.baseUrl ?? "",
-				api: flags.api as CustomProviderApi | undefined,
-				apiKey: flags.token,
-				models: splitList(flags.models),
-				discovery: flags.discovery as CustomProviderDiscovery | undefined,
-				headers,
-			};
-		}
+		// Only flags the caller passed seed a prompt: an empty string would read as
+		// an answer and skip the question.
+		const seed: Partial<AddProviderOptions> = {
+			...(flags.baseUrl === undefined ? {} : { baseUrl: flags.baseUrl }),
+			...(flags.api === undefined ? {} : { api: flags.api as CustomProviderApi }),
+			apiKey: flags.token,
+			models: splitList(flags.models),
+			discovery: flags.discovery as CustomProviderDiscovery | undefined,
+			headers,
+			maxContext: flags.maxContext,
+		};
+		options = args.id === undefined ? await promptForProvider(seed) : { id: args.id, baseUrl: "", ...seed };
 		options.path = flags.path;
 		options.overwrite = flags.overwrite;
 		options.dryRun = flags.dryRun;
@@ -352,6 +396,11 @@ export async function runAddProviderCommand(args: AddProviderCommandArgs): Promi
 		);
 		describe(result);
 		const modelIds = options.models ?? [];
+		if (options.maxContext !== undefined && modelIds.length === 0) {
+			process.stdout.write(
+				`${chalk.dim("window")} ${options.maxContext} tokens via providers.contextWindows.${options.id}\n`,
+			);
+		}
 		const hint =
 			modelIds.length > 0
 				? `${APP_NAME} models ${options.id}`

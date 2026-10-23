@@ -152,6 +152,19 @@ describe("buildProviderConfig", () => {
 		expect(config.discovery).toEqual({ type: "openai-models-list" });
 		expect(config.models).toBeUndefined();
 	});
+
+	test("stamps the context window on every declared model", () => {
+		const config = buildProviderConfig({
+			id: "acme",
+			baseUrl: "https://api.acme.test/v1",
+			models: ["chat-v1", "code-v2"],
+			maxContext: 64000,
+		});
+		expect(config.models).toEqual([
+			{ id: "chat-v1", contextWindow: 64000 },
+			{ id: "code-v2", contextWindow: 64000 },
+		]);
+	});
 });
 
 describe("validateAddProviderOptions", () => {
@@ -184,5 +197,22 @@ describe("validateAddProviderOptions", () => {
 				models: ["acme-chat"],
 			}),
 		).toBeUndefined();
+	});
+
+	test("accepts a window with discovery and no declared models", () => {
+		expect(
+			validateAddProviderOptions({
+				id: "acme",
+				baseUrl: "https://acme.test/v1",
+				discovery: "openai-models-list",
+				maxContext: 64000,
+			}),
+		).toBeUndefined();
+	});
+
+	test("rejects a non-positive or fractional window", () => {
+		const base = { id: "acme", baseUrl: "https://acme.test/v1", models: ["chat-v1"] };
+		expect(validateAddProviderOptions({ ...base, maxContext: 0 })).toContain("greater than zero");
+		expect(validateAddProviderOptions({ ...base, maxContext: 1.5 })).toContain("whole number");
 	});
 });

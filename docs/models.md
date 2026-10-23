@@ -37,7 +37,7 @@ Legacy behavior still present:
 Mars provides CLI helpers to inspect, add, and remove custom providers directly in `models.yml`:
 
 ```bash
-# Interactively add a custom provider (prompts for endpoint, wire API, key, models/discovery)
+# Interactively add a custom provider (prompts for endpoint, wire API, key, models/discovery, context window)
 mars models add-provider
 
 # Add a provider with flags (non-interactive / scriptable)
@@ -47,6 +47,14 @@ mars models add-provider my-proxy \
   --api-key MY_PROXY_KEY \
   --discovery openai-models-list
 
+# Declare models with a 200k window
+mars models add-provider my-proxy \
+  --endpoint https://proxy.example.com/v1 \
+  --api openai-completions \
+  --api-key MY_PROXY_KEY \
+  --models chat-v1,code-v2 \
+  --max-context 200000
+
 # List custom providers defined in models.yml
 mars models providers
 
@@ -54,7 +62,7 @@ mars models providers
 mars models remove-provider my-proxy
 ```
 
-Inside a session, the same two flows are reachable without leaving the TUI: `/login` lists **`+ Custom Endpoint / Provider...`** as its last row, and `/endpoint` opens the wizard directly. The wizard asks whether you are overriding a built-in provider or registering a new one, then walks through the URL, wire format, credential, and model list. From the terminal, `mars login custom` opens the same add-provider flow.
+Inside a session, the same two flows are reachable without leaving the TUI: `/login` lists **`+ Custom Endpoint / Provider...`** as its last row, and `/endpoint` opens the wizard directly. The wizard asks whether you are overriding a built-in provider or registering a new one, then walks through the URL, wire format, credential, model list, and an optional context window. From the terminal, `mars login custom` opens the same add-provider flow.
 
 For built-in providers (OpenAI, Anthropic, Gemini, Ollama, etc.), custom endpoints can also be configured without editing `models.yml` via the `providers.endpoints` setting in `config.yml`:
 
@@ -69,6 +77,14 @@ mars config reset providers.endpoints.openai
 ```
 
 An explicit `baseUrl` defined for that provider in `models.yml` takes precedence over `providers.endpoints`.
+
+Both flows can replace the provider's advertised prompt window, for gateways whose catalog metadata describes the host model rather than the gateway's limit. The override flow stores it in `providers.contextWindows`; the new-provider flow writes `contextWindow` on each declared model, or the same setting when the catalog is discovered later:
+
+```bash
+mars config set providers.contextWindows.anthropic-proxy 200000
+```
+
+A `contextWindow` set on the same model in `models.yml` still wins.
 
 ## `models.yml` / `models.yaml` shape
 

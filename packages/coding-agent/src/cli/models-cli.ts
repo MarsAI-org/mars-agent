@@ -55,6 +55,8 @@ export interface ModelsCommandArgs {
 		discovery?: string;
 		/** Model IDs (comma-separated) for add-provider. */
 		models?: string;
+		/** Context window in tokens for every id in `models` (add-provider). */
+		maxContext?: number;
 		/** Custom headers for add-provider. */
 		header?: string[];
 		/** Path to models.yml for provider operations. */
@@ -408,6 +410,9 @@ export async function runModelsCommand(command: ModelsCommandArgs): Promise<void
 	const kind = command.flags.kind ?? "chat";
 
 	if (action === "add-provider") {
+		// The window of a discovered catalog is written to config.yml, so the
+		// settings store has to exist before the writer runs.
+		await Settings.init({ cwd: getProjectDir(), configFiles: command.flags.config });
 		await runAddProviderCommand({
 			id: pattern,
 			flags: {
@@ -417,6 +422,7 @@ export async function runModelsCommand(command: ModelsCommandArgs): Promise<void
 				models: command.flags.models,
 				discovery: command.flags.discovery,
 				header: command.flags.header,
+				maxContext: command.flags.maxContext,
 				path: command.flags.path,
 				overwrite: command.flags.overwrite,
 				dryRun: command.flags.dryRun,

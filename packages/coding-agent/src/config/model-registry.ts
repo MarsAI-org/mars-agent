@@ -137,6 +137,7 @@ import {
 import type { ModelOverride, ModelsConfig, ProviderAuthMode } from "./models-config-schema";
 import { type Settings, settings } from "./settings";
 import { cfgProvidersEndpoints, normalizeProviderEndpoints } from "./provider-endpoint-settings";
+import { cfgProvidersContextWindows, normalizeProviderContextWindows } from "./provider-context-window-settings";
 
 import { cfgDisabledProviders } from "./model-settings";
 import { cfgExtendedContext } from "../session/context-settings";
@@ -147,6 +148,8 @@ setCodexAttestationProvider(generateCodexAttestation);
 
 /** One built-in discovery pass rewriting more payload rows than this is debug-logged. */
 const MODEL_CACHE_REWRITE_LOG_THRESHOLD = 5;
+/** Kinds a provider-wide context window applies to: only these send a prompt. */
+const PROMPT_CONTEXT_KIND_LOOKUP: Readonly<Record<string, true>> = { chat: true, tiny: true, judge: true };
 const BUILT_IN_MODEL_MANAGER_PROVIDER_IDS: Readonly<Record<string, true>> = Object.freeze(
 	Object.fromEntries(
 		[...PROVIDER_DESCRIPTORS.map(descriptor => descriptor.providerId), ...SPECIAL_MODEL_MANAGER_PROVIDER_IDS].map(
@@ -221,6 +224,18 @@ function getDisabledProviderIdsFromSettings(settingsInstance?: Settings): Set<st
 function getProviderEndpointOverridesFromSettings(settingsInstance?: Settings): Record<string, string> {
 	try {
 		return normalizeProviderEndpoints(cfgProvidersEndpoints.get(settingsInstance ?? settings));
+	} catch {
+		return {};
+	}
+}
+
+/**
+ * `providers.contextWindows` as a provider → window map, with the same
+ * tolerance for a missing settings source as the endpoint reader.
+ */
+function getProviderContextWindowsFromSettings(settingsInstance?: Settings): Record<string, number> {
+	try {
+		return normalizeProviderContextWindows(cfgProvidersContextWindows.get(settingsInstance ?? settings));
 	} catch {
 		return {};
 	}
@@ -1198,9 +1213,41 @@ export class ModelRegistry {
 			withConfigModels,
 			selectProviderModels(this.#runtimeModelOverlays, providerFilter),
 		);
-		const withModelOverrides = this.#applyModelOverrides(collapseBuiltVariants(combined), this.#modelOverrides);
+		const withModelOverrides = this.#applyModelOverrides(
+			this.#applyProviderContextWindows(collapseBuiltVariants(combined)),
+			this.#modelOverrides,
+		);
 		const withProviderBedrock = this.#applyProviderBedrockOverrides(withModelOverrides);
 		return this.#applyDiscoveryPolicies(this.#applyRuntimeProviderOverrides(withProviderBedrock));
+	}
+
+	/**
+	 * Apply `providers.contextWindows` provider-wide. Runs before
+	 * `modelOverrides`, so an explicit per-model `contextWindow` in config still
+	 * wins, and after custom overlays, so a `models` entry that declares its own
+	 * window is left alone. Only prompt-carrying kinds are touched: an image or
+	 * embedding row has no prompt window.
+	 */
+	#applyProviderContextWindows(models: Model<Api>[]): Model<Api>[] {
+		if (this.#ignoreLocalModelConfig) return models;
+		const windows = getProviderContextWindowsFromSettings(this.#settings);
+		if (Object.keys(windows).length === 0) return models;
+		const declared = new Set(
+			[...this.#customModelOverlays, ...this.#runtimeModelOverlays]
+				.filter(overlay => overlay.contextWindow !== undefined)
+				.map(overlay => `${overlay.provider}\u0000${overlay.id}`),
+		);
+		return models.map(model => {
+			const window = windows[model.provider];
+			if (window === undefined || model.contextWindow === window) return model;
+			// An absent kind is chat, so only an explicit non-prompt kind skips.
+			if (model.kind !== undefined && !PROMPT_CONTEXT_KIND_LOOKUP[model.kind]) return model;
+			if (declared.has(`${model.provider}\u0000${model.id}`)) return model;
+			return applyModelOverride(model, {
+				contextWindow: window,
+				...(model.maxTokens !== null && model.maxTokens > window ? { maxTokens: window } : {}),
+			});
+		});
 	}
 
 	#composeStaticModels(providerFilter?: ReadonlySet<string>): Model<Api>[] {

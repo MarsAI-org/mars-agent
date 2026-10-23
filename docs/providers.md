@@ -391,6 +391,16 @@ mars config set providers.endpoints.openai https://my-openai-proxy.com/v1
 
 The override applies to requests and to model discovery. A `baseUrl` pinned for the same provider in `models.yml` still wins. See [Settings](./settings.md) for the full record semantics.
 
+### Provider-wide context window
+
+A gateway may advertise no window, or a smaller one than it accepts, for every model behind it. Set the window once per provider rather than once per model:
+
+```bash
+mars config set providers.contextWindows.my-openai-compatible 200000
+```
+
+The value replaces the advertised window of every chat, tiny, and judge model behind that provider — right for a gateway whose catalog metadata describes the host model rather than the gateway's real limit. A `contextWindow` on the model in `models.yml`, and a `modelOverrides` entry for it, still win. The wizard's context step writes the same setting for an override and for a discovered catalog; for declared models it writes `contextWindow` on each entry instead.
+
 ### Zhipu BigModel account-balance keys
 
 `/login zai` targets the global Z.AI Coding Plan endpoint, and `/login zhipu-coding-plan` targets the domestic Zhipu Coding Plan endpoint. Neither flow configures the general pay-as-you-go BigModel endpoint at `https://open.bigmodel.cn/api/paas/v4`.
