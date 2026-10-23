@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@marsai-org/omptype",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "ArkType-compatible runtime schema validation with lazy JIT compilation",
   "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
