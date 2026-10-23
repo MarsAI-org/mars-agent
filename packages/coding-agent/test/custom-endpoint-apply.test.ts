@@ -3,8 +3,9 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { applyCustomEndpointResult } from "@marsai-org/coding-agent/modes/custom-endpoint-apply";
 import { cfgProvidersEndpoints } from "@marsai-org/coding-agent/config/provider-endpoint-settings";
-import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgProvidersContextWindows } from "@marsai-org/coding-agent/config/provider-context-window-settings";
 import { TempDir, setAgentDir } from "@marsai-org/utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 
 let tempDir: TempDir;
 let settings: Settings;
@@ -49,6 +50,27 @@ describe("applyCustomEndpointResult", () => {
 		expect(fs.existsSync(path.join(tempDir.path(), "models.yml"))).toBe(false);
 	});
 
+	it("stores an override's context window provider-wide", async () => {
+		const message = await applyCustomEndpointResult(
+			{ kind: "override", provider: "openai", baseUrl: "https://proxy.example.com/v1", maxContext: 300000 },
+			targets(),
+		);
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ openai: 300000 });
+		expect(message).toContain("300000");
+		expect(fs.existsSync(path.join(tempDir.path(), "models.yml"))).toBe(false);
+	});
+
+	it("keeps a sibling provider's window when the field is blank", async () => {
+		cfgProvidersContextWindows.set(settings, { openai: 128000 });
+		await applyCustomEndpointResult(
+			{ kind: "override", provider: "anthropic", baseUrl: "https://b.example.com" },
+			targets(),
+		);
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ openai: 128000 });
+	});
+
 	it("keeps sibling endpoints when adding another", async () => {
 		await applyCustomEndpointResult(
 			{ kind: "override", provider: "openai", baseUrl: "https://a.example.com/v1" },
@@ -91,6 +113,41 @@ describe("applyCustomEndpointResult", () => {
 		expect(written).toContain("https://acme.example.com/v1");
 		expect(refresh).toHaveBeenCalledWith("online");
 		expect(message).toContain("acme");
+	});
+
+	it("writes a declared model's context window into models.yml", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "custom",
+				provider: "acme",
+				baseUrl: "https://acme.example.com/v1",
+				api: "openai-completions",
+				models: ["chat-v1"],
+				maxContext: 64000,
+			},
+			targets(),
+		);
+
+		const written = fs.readFileSync(path.join(tempDir.path(), "models.yml"), "utf-8");
+		expect(written).toContain("contextWindow: 64000");
+		// The catalog is declared, so nothing is duplicated in settings.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+	});
+
+	it("keeps a discovered catalog's window in settings", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "custom",
+				provider: "acme",
+				baseUrl: "https://acme.example.com/v1",
+				api: "openai-completions",
+				maxContext: 200000,
+			},
+			targets(),
+		);
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ acme: 200000 });
+		expect(fs.readFileSync(path.join(tempDir.path(), "models.yml"), "utf-8")).not.toContain("contextWindow");
 	});
 
 	it("propagates a validation failure", async () => {
