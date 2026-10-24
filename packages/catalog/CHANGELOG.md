@@ -2,12 +2,6 @@
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-10-20
-
-### Fixed
-
-- Fixed Claude Haiku 5.5 thinking Off to request explicitly disabled thinking on every host serving its adaptive thinking ([#14996](https://github.com/can1357/oh-my-pi/pull/14996) by [@bse-ai](https://github.com/bse-ai)).
-
 ## [18.8.6] - 2026-10-08
 
 ### Added
@@ -1899,3 +1893,9 @@
 ### Removed
 
 - Removed the runtime enrichment layer: `enrichModelThinking` (and its non-enumerable memo-slot cache), `refreshModelThinking`, `modelOmitsReasoningEffort`, and the `model-thinking` re-exports of generator-only policies. Thinking metadata is resolved exactly once inside `buildModel`; runtime helpers (`getSupportedEfforts`, `clampThinkingLevelForModel`, `requireSupportedEffort`, the effort mappers) are pure field reads.
+
+## [0.1.1] - 2026-10-20
+
+### Fixed
+
+- Fixed Claude Haiku 5.5 thinking Off to request explicitly disabled thinking on every host serving its adaptive thinking ([#14996](https://github.com/can1357/oh-my-pi/pull/14996) by [@bse-ai](https://github.com/bse-ai)).

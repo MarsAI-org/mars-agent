@@ -1,11 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
 Mars is developed at [MarsAI-org/mars-agent](https://github.com/MarsAI-org/mars-agent). It is a fork of
 oh-my-pi by can1357, which is itself a fork of Pi by Mario Zechner; both upstream projects are MIT
 licensed, and their copyright notices are preserved in [LICENSE](./LICENSE) alongside the Mars line.
 See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's own changes.
 
-## [Unreleased]
+## [0.2.0] - 2026-10-24
 
 ### Added
 
@@ -121,10 +123,18 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 - Web search now tells the agent about its X post operators (`site:x.com`, `from:<handle>`) when you are logged in to xAI, so questions about reactions on X reach X search.
 - The default `smol` model now prefers Claude Haiku 5.5 when it is available.
 - Automatic session titles now start when the agent's reply begins rather than when you submit, so a slow-thinking first reply gets a card title (icon and code) instead of a plain fallback title.
+- Pointed `APP_URL` at `https://getmars.eu.cc/` and added a `MARS_APP_URL` override, so inference-gateway attribution and the installer, schema, SARIF, and package links no longer reference the upstream domain.
+- Prepared the npm publish path: `publishConfig.access=public` on all twelve publishable packages, `--dist-tag` and `--pack-only` on the publish script, a token workflow plus an OIDC trusted-publishing workflow, and an operator guide in `NPM_PUBLISH.md`. `CREDITS.md` now ships in every package so the fork lineage travels with the tarball.
+- Regenerated the catalog compatibility rules after the rebrand so the committed originator and login strings match the compiler output.
 
 ### Fixed
 
 - Fixed sessions staying untitled when you interrupted the first reply to send a queued steer message.
+- Fixed a runtime `ReferenceError` in `.mars/tools/tui.ts` caused by leftover `omp.cwd` and `omp.zod` references.
+- Fixed residual upstream names in the installer hints, the Z.ai OAuth key name, the HTML-export selectors and theme storage key, and the extension manifest loader, which now also accepts a `mars` key.
+- Fixed the publish loop aborting under `bash -e` before it could report the npm error, and moved the credential preflight into an always-on step.
+- Fixed the PTY test that read the composer row after the fatal write instead of the painted frame.
+- Corrected stale README metrics to the measured values.
 
 ### Added
 
@@ -132,20 +142,6 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 - Added native aarch64 Android/Termux support without PRoot (Milestone 2): a single platform-detection module, shell resolution through `$PREFIX/bin`, an offline `mars --platform-check [--json]` self-check, a POSIX glibc-compatibility launcher, pidfd-based process control on Android, an advisory cross-compile workflow, and Android-aware orchestrator defaults.
 - Added the final Mars artwork suite: the master vector mark, the README hero banner, the app icon, the collab-web favicon ladder, and the OpenGraph preview image.
 - Added CODEOWNERS for the repository.
-
-### Changed
-
-- Pointed `APP_URL` at `https://getmars.eu.cc/` and added a `MARS_APP_URL` override, so inference-gateway attribution and the installer, schema, SARIF, and package links no longer reference the upstream domain.
-- Prepared the npm publish path: `publishConfig.access=public` on all twelve publishable packages, `--dist-tag` and `--pack-only` on the publish script, a token workflow plus an OIDC trusted-publishing workflow, and an operator guide in `NPM_PUBLISH.md`. `CREDITS.md` now ships in every package so the fork lineage travels with the tarball.
-- Regenerated the catalog compatibility rules after the rebrand so the committed originator and login strings match the compiler output.
-
-### Fixed
-
-- Fixed a runtime `ReferenceError` in `.mars/tools/tui.ts` caused by leftover `omp.cwd` and `omp.zod` references.
-- Fixed residual upstream names in the installer hints, the Z.ai OAuth key name, the HTML-export selectors and theme storage key, and the extension manifest loader, which now also accepts a `mars` key.
-- Fixed the publish loop aborting under `bash -e` before it could report the npm error, and moved the credential preflight into an always-on step.
-- Fixed the PTY test that read the composer row after the fatal write instead of the painted frame.
-- Corrected stale README metrics to the measured values.
 
 ## [0.1.0] - 2026-10-10
 
