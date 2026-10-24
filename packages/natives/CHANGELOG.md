@@ -2,12 +2,6 @@
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-10-20
-
-### Changed
-
-- Reduced syntax-highlighting startup work by bundling the complete precompiled grammar set ([#14104](https://github.com/can1357/oh-my-pi/pull/14104) by [@iliaal](https://github.com/iliaal)).
-
 ## [18.8.4] - 2026-10-08
 
 ### Fixed
@@ -1742,3 +1736,9 @@
 ### Fixed
 
 - Fixed potential crashes when updating native binaries by using safe copy strategy that avoids overwriting in-memory binaries
+
+## [0.1.1] - 2026-10-20
+
+### Changed
+
+- Reduced syntax-highlighting startup work by bundling the complete precompiled grammar set ([#14104](https://github.com/can1357/oh-my-pi/pull/14104) by [@iliaal](https://github.com/iliaal)).

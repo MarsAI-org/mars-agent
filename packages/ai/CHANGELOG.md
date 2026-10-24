@@ -2,16 +2,6 @@
 
 ## [Unreleased]
 
-## [0.1.1] - 2026-10-20
-
-### Added
-
-- Added routing-session cleanup for OpenAI Responses and Codex while preserving shared provider fallbacks ([#14334](https://github.com/can1357/oh-my-pi/pull/14334) by [@iliaal](https://github.com/iliaal)).
-
-### Fixed
-
-- Fixed Claude Haiku 5.5 requests silently enabling adaptive thinking when reasoning is off, on native Bedrock (main and helper calls) and the Anthropic API; conversations whose earlier effort controls rule out disabled thinking fall back to lowest-effort adaptive thinking instead of failing ([#14996](https://github.com/can1357/oh-my-pi/pull/14996) by [@bse-ai](https://github.com/bse-ai)).
-
 ## [18.8.6] - 2026-10-08
 
 ### Fixed
@@ -2350,5 +2340,15 @@
 - Fixed Google Gemini tool calls with `toolChoice: "auto"` serializing an explicit `toolConfig` AUTO mode, which can cause Gemini-3 models to leak raw planning JSON instead of executing tools. ([#2776](https://github.com/can1357/oh-my-pi/issues/2776))
 - Fixed OpenAI-compatible Ollama completions that return empty `finish_reason:length` after filling `num_ctx` so they surface an actionable context-window error instead of an empty length stop. ([#2774](https://github.com/can1357/oh-my-pi/issues/2774))
 - Fixed Codex browser login issuing credentials for the `opencode` OAuth originator while OMP requests identify as `pi`, which could make the first authenticated Codex request return 401 ([#2696](https://github.com/can1357/oh-my-pi/issues/2696)).
+
+## [0.1.1] - 2026-10-20
+
+### Added
+
+- Added routing-session cleanup for OpenAI Responses and Codex while preserving shared provider fallbacks ([#14334](https://github.com/can1357/oh-my-pi/pull/14334) by [@iliaal](https://github.com/iliaal)).
+
+### Fixed
+
+- Fixed Claude Haiku 5.5 requests silently enabling adaptive thinking when reasoning is off, on native Bedrock (main and helper calls) and the Anthropic API; conversations whose earlier effort controls rule out disabled thinking fall back to lowest-effort adaptive thinking instead of failing ([#14996](https://github.com/can1357/oh-my-pi/pull/14996) by [@bse-ai](https://github.com/bse-ai)).
 
 Older entries are archived in [packages/ai/CHANGELOG.md@0dd6aff5f282](https://github.com/can1357/oh-my-pi/blob/0dd6aff5f2821aec1e5b54c6a458e323667a949b/packages/ai/CHANGELOG.md).

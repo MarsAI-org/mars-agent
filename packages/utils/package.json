@@ -1,6 +1,6 @@
 {
 	"name": "@marsai-org/utils",
-	"version": "0.1.7",
+	"version": "0.2.0",
 	"description": "Shared utilities for Mars packages",
 	"keywords": [
 		"cli",
