@@ -40,17 +40,22 @@ export function normalizeProviderEndpoints(value: unknown): Record<string, strin
  *
  * @throws Error naming every provider whose endpoint is not an absolute URL on
  * a supported protocol. A bare host such as `api.example.com/v1` is rejected
- * here: the request layer would otherwise treat it as a relative path.
+ * here: the request layer would otherwise treat it as a relative path. A
+ * `null`/blank entry means "no override" — YAML writes `null` for a key left
+ * without a value — and is dropped like the normalize half drops it, rather
+ * than failing the whole config load.
  */
 export function validateProviderEndpoints(value: unknown): Record<string, string> {
 	if (isEndpointRecord(value)) {
 		const invalid: string[] = [];
 		for (const provider in value) {
 			const endpoint = value[provider];
-			if (typeof endpoint !== "string" || endpoint.trim().length === 0) {
+			if (endpoint === null || endpoint === undefined) continue;
+			if (typeof endpoint !== "string") {
 				invalid.push(provider);
 				continue;
 			}
+			if (endpoint.trim().length === 0) continue;
 			let protocol: string;
 			try {
 				protocol = new URL(endpoint.trim()).protocol;

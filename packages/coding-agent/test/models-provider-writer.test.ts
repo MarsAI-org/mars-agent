@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { YAML } from "bun";
-import { buildProviderConfig, validateAddProviderOptions } from "@marsai-org/coding-agent/cli/models-provider-cli";
+import {
+	addProvider,
+	buildProviderConfig,
+	removeProvider,
+	validateAddProviderOptions,
+} from "@marsai-org/coding-agent/cli/models-provider-cli";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import {
 	defaultModelsConfigPath,
 	findModelsConfigProblem,
@@ -10,18 +16,28 @@ import {
 	removeProviderBlock,
 	upsertProviderBlock,
 } from "@marsai-org/coding-agent/config/models-config-writer";
+import { cfgProvidersContextWindows } from "@marsai-org/coding-agent/config/provider-context-window-settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import { setAgentDir, TempDir } from "@marsai-org/utils";
 
 let tempDir: TempDir;
 let originalAgentDir: string;
+let settings: Settings;
+let authStorage: AuthStorage;
 
-beforeEach(() => {
+beforeEach(async () => {
 	originalAgentDir = process.env.PI_CODING_AGENT_DIR ?? "";
 	tempDir = TempDir.createSync("@mars-models-writer-");
 	setAgentDir(tempDir.path());
+	resetSettingsForTest();
+	settings = Settings.isolated();
+	authStorage = await AuthStorage.create(":memory:");
 });
 
 afterEach(async () => {
+	authStorage.close();
+	resetSettingsForTest();
 	if (originalAgentDir) process.env.PI_CODING_AGENT_DIR = originalAgentDir;
 	else delete process.env.PI_CODING_AGENT_DIR;
 	await tempDir.remove().catch(() => {});
@@ -214,5 +230,87 @@ describe("validateAddProviderOptions", () => {
 		const base = { id: "acme", baseUrl: "https://acme.test/v1", models: ["chat-v1"] };
 		expect(validateAddProviderOptions({ ...base, maxContext: 0 })).toContain("greater than zero");
 		expect(validateAddProviderOptions({ ...base, maxContext: 1.5 })).toContain("whole number");
+	});
+});
+
+describe("providers.contextWindows bookkeeping", () => {
+	const modelsPath = () => path.join(tempDir.path(), "models.yml");
+
+	/** Window the registry would serve for one declared model of the file at `modelsPath`. */
+	function servedWindow(settingsInstance: Settings): number | null | undefined {
+		const registry = new ModelRegistry(authStorage, modelsPath(), {
+			settings: settingsInstance,
+			cacheDbPath: path.join(tempDir.path(), "models.db"),
+			fetch: () => Promise.reject(new Error("network disabled in this test")),
+		});
+		return registry.find("acme", "chat-v1")?.contextWindow;
+	}
+
+	test("removing a provider drops the window it stored provider-wide", async () => {
+		await addProvider({
+			id: "acme",
+			baseUrl: "https://acme.test/v1",
+			discovery: "openai-models-list",
+			maxContext: 200000,
+			settings,
+		});
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ acme: 200000 });
+
+		await removeProvider("acme", { settings });
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+		// Re-adding the id must not inherit the window the first provider had.
+		await addProvider({ id: "acme", baseUrl: "https://acme.test/v1", models: ["chat-v1"], settings });
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+		expect(servedWindow(settings)).not.toBe(200000);
+	});
+
+	test("overwriting a discovered provider with declared models drops the stale window", async () => {
+		await addProvider({
+			id: "acme",
+			baseUrl: "https://acme.test/v1",
+			discovery: "openai-models-list",
+			maxContext: 200000,
+			settings,
+		});
+
+		await addProvider({
+			id: "acme",
+			baseUrl: "https://acme.test/v1",
+			models: ["chat-v1"],
+			maxContext: 64000,
+			overwrite: true,
+			settings,
+		});
+
+		// The declared model carries its own window; the provider-wide one would
+		// otherwise outlive the discovered ids it was written for.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+		expect(servedWindow(settings)).toBe(64000);
+	});
+
+	test("a dry run leaves models.yml and the window record untouched", async () => {
+		await addProvider({
+			id: "acme",
+			baseUrl: "https://acme.test/v1",
+			models: ["chat-v1"],
+			maxContext: 64000,
+			settings,
+		});
+		cfgProvidersContextWindows.set(settings, { acme: 200000 });
+		const before = fs.readFileSync(modelsPath(), "utf-8");
+
+		await addProvider({
+			id: "acme",
+			baseUrl: "https://acme.test/v1",
+			models: ["chat-v1"],
+			overwrite: true,
+			dryRun: true,
+			settings,
+		});
+		await removeProvider("acme", { dryRun: true, settings });
+
+		expect(fs.readFileSync(modelsPath(), "utf-8")).toBe(before);
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ acme: 200000 });
 	});
 });

@@ -1,14 +1,19 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { Agent } from "@marsai-org/agent-core";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { cfgProvidersContextWindows } from "@marsai-org/coding-agent/config/provider-context-window-settings";
 import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
 import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import { TempDir } from "@marsai-org/utils";
 
 let tempDir: TempDir;
 let modelsPath: string;
 let authStorage: AuthStorage;
+let session: AgentSession | undefined;
 
 beforeEach(async () => {
 	resetSettingsForTest();
@@ -18,8 +23,11 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
+	await session?.dispose();
+	session = undefined;
 	authStorage.close();
 	resetSettingsForTest();
+	vi.restoreAllMocks();
 	await tempDir.remove().catch(() => {});
 });
 
@@ -133,5 +141,31 @@ describe("providers.contextWindows", () => {
 		const model = registry.find("acme", "acme-chat");
 		expect(model?.contextWindow).toBe(16000);
 		expect(model?.maxTokens).toBe(16000);
+	});
+
+	test("a window written mid-session rebuilds the live catalog", async () => {
+		// The registry is built outside the session (as the CLI does), so a later
+		// setting change only reaches the models through the session's listener.
+		const settings = Settings.isolated();
+		const registry = registryWith(settings);
+		const model = registry.find("openai", "gpt-5.4");
+		if (!model) throw new Error("Expected bundled model openai/gpt-5.4");
+		expect(model.contextWindow).not.toBe(123456);
+		session = new AgentSession({
+			agent: new Agent({ initialState: { model, systemPrompt: ["Test"], tools: [], messages: [] } }),
+			sessionManager: SessionManager.inMemory(),
+			settings,
+			modelRegistry: registry,
+		});
+		// The listener fires on a microtask and its rebuild is async; spy first so
+		// the test awaits the exact rebuild this change starts.
+		const reapply = vi.spyOn(registry, "reapplyModelPolicies");
+
+		cfgProvidersContextWindows.set(settings, { openai: 123456 });
+		await Promise.resolve();
+		expect(reapply).toHaveBeenCalled();
+		await Promise.all(reapply.mock.results.map(result => result.value));
+
+		expect(registry.find("openai", "gpt-5.4")?.contextWindow).toBe(123456);
 	});
 });
