@@ -85,24 +85,34 @@ Verified for every publishable package:
 
 ---
 
-## 3. Version policy (decision DEC-16)
+## 3. Version policy
 
-**One version for the whole workspace, kept at the inherited `18.8.6`.**
+**One version for the whole workspace.** Every publishable manifest, the root
+`package.json` catalog pins, `Cargo.toml`, and `bun.lock` carry the same value;
+the current one is `0.1.7`.
 
-The requirement is a single consistent version across all packages, which the
-workspace already satisfies. Resetting to `0.1.0` was considered and rejected:
+Decision DEC-16 originally kept the inherited upstream version `18.8.6` instead
+of resetting, because a reset is not mechanically free. That reasoning still
+constrains *how* the version may move, even though the reset has since happened:
 
 - `packages/natives/package.json#version` is stamped into the compiled addon at
   link time (`scripts/stamp-native-version.ts`, slot read by
   `__piNativesBuildVersion()`). Changing the version without rebuilding every
   addon leaves the shipped binaries carrying the old identity.
 - The version also appears in `Cargo.toml`, the root `package.json` catalog pins,
-  all twelve manifests, and `bun.lock` — a wide, mechanical change for no
-  functional gain.
-- Nothing in the test suite asserts the version, so a reset would not be caught
-  by tests either way.
+  all twelve manifests, and `bun.lock` — a wide, mechanical change.
+- Nothing in the test suite asserts the version, so a mistake would not be caught
+  by tests. `bun scripts/release.ts <version>` rewrites every surface at once —
+  manifests, lockfile, changelog, commit, tag — so do not hand-edit a single
+  manifest; running the script is the only consistency guard that exists.
 
-A future deliberate renumbering should be its own change with a native rebuild.
+### `18.8.6` is still live on npm
+
+The registry is append-only, so the pre-reset `18.8.6` release remains published
+for all twelve packages, and the bootstrap publish left its `next` dist-tag
+pointing at it. `next` therefore resolves to a pre-rebrand build; `latest`
+correctly resolves to the current version. Moving or removing that tag is a
+registry change, not a repository change — see issue #76.
 
 ---
 
