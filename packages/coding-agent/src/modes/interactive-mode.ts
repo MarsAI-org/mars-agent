@@ -215,6 +215,7 @@ import {
 	reportTernSession,
 	setSessionTerminalTitle,
 	setTerminalSessionSource,
+	setTerminalTitleEnabled,
 	setTerminalTitlePullRequest,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleStateEnabled,
@@ -378,6 +379,7 @@ import {
 	cfgTuiResizeScrollback,
 	cfgTuiTextSizing,
 	cfgTuiTight,
+	cfgTuiTitle,
 	cfgTuiTitleSpinner,
 	cfgTuiTitleState,
 	cfgTuiVimMode,
@@ -444,6 +446,7 @@ const cfgLiveUiSettings = combine({
 	"tui.textSizing": cfgTuiTextSizing,
 	"tui.tight": cfgTuiTight,
 	"tui.hyperlinks": cfgTuiHyperlinks,
+	"tui.title": cfgTuiTitle,
 	"tui.titleState": cfgTuiTitleState,
 	"tui.titleSpinner": cfgTuiTitleSpinner,
 	"statusLine.preset": cfgStatusLinePreset,
@@ -1239,6 +1242,13 @@ export class InteractiveMode implements InteractiveModeContext {
 	#todoPhasesOwner?: AgentSession;
 	#todoHudHidden = false;
 	hideThinkingBlock = false;
+	/**
+	 * Ctrl+O's transient visibility override: `true` while the transcript is
+	 * expanded, `false` while it is collapsed, `undefined` outside an expansion
+	 * gesture. Never persisted, so the Ctrl+T preference in
+	 * {@link hideThinkingBlock} survives an expand/collapse cycle.
+	 */
+	thinkingExpanded: boolean | undefined = undefined;
 	#sessionsWithDisplayableThinkingContent = new WeakSet<AgentSession>();
 	/** Whether the visible session has produced thinking content the user can reveal. */
 	get hasDisplayableThinkingContent(): boolean {
@@ -1253,15 +1263,16 @@ export class InteractiveMode implements InteractiveModeContext {
 		return true;
 	}
 	/**
-	 * Effective thinking-block visibility: hidden when the user's setting is on,
-	 * or while thinking is "off" before the session has actually produced
-	 * displayable thinking content. Some providers return thinking blocks without
-	 * advertising reasoning support, so observed content unlocks the visibility
-	 * toggle.
+	 * Effective thinking-block visibility: hidden while thinking is "off" before
+	 * the session has actually produced displayable thinking content, else per the
+	 * Ctrl+O expansion override when one is set, else the user's {@link hideThinkingBlock}
+	 * preference. Some providers return thinking blocks without advertising
+	 * reasoning support, so observed content unlocks the visibility toggle.
 	 */
 	get effectiveHideThinkingBlock(): boolean {
 		const thinkingOff = (this.viewSession?.thinkingLevel ?? ThinkingLevel.Off) === ThinkingLevel.Off;
-		return this.hideThinkingBlock || (thinkingOff && !this.hasDisplayableThinkingContent);
+		if (thinkingOff && !this.hasDisplayableThinkingContent) return true;
+		return !(this.thinkingExpanded ?? !this.hideThinkingBlock);
 	}
 	proseOnlyThinking = true;
 	expandThinkingBlocks = false;
@@ -2241,6 +2252,10 @@ export class InteractiveMode implements InteractiveModeContext {
 		// that releases the teardown latch, so a late async `setSessionTerminalTitle`
 		// after shutdown can never write into the parent shell's tab.
 		initTerminalTitleState();
+		// `tui.title` gates the sink itself, before the state/style wiring below
+		// emits its first title: with titles off, none of them may reach the
+		// emulator.
+		setTerminalTitleEnabled(cfgTuiTitle.get(this.settings));
 		setTerminalTitleStateEnabled(cfgTuiTitleState.get(this.settings));
 		setTerminalTitleSpinnerStyle(cfgTuiTitleSpinner.get(this.settings));
 		setTerminalSessionSource({
@@ -3497,6 +3512,9 @@ export class InteractiveMode implements InteractiveModeContext {
 		const hideThinkingBlock = cfgHideThinkingBlock.get(this.settings);
 		if (any("hideThinkingBlock") && hideThinkingBlock !== this.hideThinkingBlock) {
 			this.hideThinkingBlock = hideThinkingBlock;
+			// An explicit preference change (/settings, `config set`, Ctrl+T) outranks
+			// whatever Ctrl+O last left on screen: a stale expansion must not mask it.
+			this.thinkingExpanded = undefined;
 			for (const child of this.chatContainer.children) {
 				if (child instanceof AssistantMessageComponent) child.setHideThinkingBlock(this.effectiveHideThinkingBlock);
 			}
@@ -3555,6 +3573,7 @@ export class InteractiveMode implements InteractiveModeContext {
 			this.ui.invalidate();
 			this.ui.requestRender();
 		}
+		if (any("tui.title")) setTerminalTitleEnabled(cfgTuiTitle.get(this.settings));
 		if (any("tui.titleState")) setTerminalTitleStateEnabled(cfgTuiTitleState.get(this.settings));
 		if (any("tui.titleSpinner")) setTerminalTitleSpinnerStyle(cfgTuiTitleSpinner.get(this.settings));
 

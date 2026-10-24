@@ -10,6 +10,24 @@ See [CREDITS.md](./CREDITS.md) for the full lineage. Entries below cover Mars's 
 ### Added
 
 - **Context window in the custom endpoint flow.** The wizard, `mars login custom`, and `mars models add-provider` gained an optional max-context prompt/`--max-context` flag. An overridden provider gets `providers.contextWindows.<id>` in `config.yml`; a new provider gets a per-model `contextWindow` when its models are declared, or the same setting when the catalog is discovered. `mars config set providers.contextWindows.<id> <tokens>` sets one without the wizard, and a `contextWindow` in `models.yml` still wins.
+- **Thinking blocks are hidden until you expand the transcript.** They are out of the way by default; Ctrl+O shows them together with tool output, and the same key hides them again without touching your Ctrl+T preference.
+- **`tui.title` setting.** Turn it off to stop mars rewriting the terminal's tab/window title while it runs, leaving the title your shell set in place.
+
+### Changed
+
+- `providers.contextWindows` applies the moment it changes, from `/settings`, `mars config set`, or any in-process write — the catalog is rebuilt like a provider toggle instead of waiting for a restart.
+- `config set <record>.<key>` stores the value the argument spells: an object/array or number literal is written as that JSON value, so `config set modelPresets.mine '{"modelRoles":{...}}'` produces a usable preset and `config set providers.maxInFlightRequests.openai 3` stores a number. A malformed object/array argument fails instead of being stored as text.
+- `mars models remove-provider` drops the provider's `providers.contextWindows` entry, so a later provider reusing the id does not inherit a window set for the old one. Overwriting a discovered provider with declared models drops it too.
+- The HTML export header counts only the conversation the viewer lands on, and reports a provider's own cost total, so a rewound branch or a total-only price no longer inflates `Cost:`/`Tokens:`.
+
+### Fixed
+
+- Raw HTML, `javascript:` links, and non-image `data:` sources in a transcript can no longer execute in the HTML export or the shared session viewer; they render as text.
+- A blank entry inside `providers.contextWindows` or `providers.endpoints` is treated as unset instead of failing every command, including the `mars config reset` that would have removed it.
+- `grep` says so when the per-file match cap discarded matches, naming the files, instead of letting the caller read a trimmed list as complete.
+- A multi-range `read` discloses each range the 3000-line cap cut and names the line to continue from.
+- `glob` and `read` stop reporting a result set of exactly `limit` items as truncated, and the archive/table listing notice no longer advises a `limit=` argument `read` does not accept.
+- `read` no longer ends each line of a CRLF file with a stray carriage return; `:raw` still returns the bytes verbatim.
 
 ## [0.1.7] - 2026-10-23
 

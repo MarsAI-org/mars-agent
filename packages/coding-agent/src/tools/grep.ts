@@ -388,6 +388,28 @@ function lineRangeFetchCap(pathSpecs: readonly GrepPathSpec[], perFileKeep: numb
 	return Math.min(cap, NATIVE_GREP_MAX_FILE_BYTES);
 }
 
+/** Capped files a per-file-cap notice names before collapsing the rest into a count. */
+const PER_FILE_CAP_NOTICE_PATHS = 3;
+
+/**
+ * Model-facing notice for a search whose per-file cap trimmed matches.
+ *
+ * Rendered matches alone cannot reveal this: a capped file simply stops at the
+ * cap and looks complete. Naming the cap and the affected paths is what tells
+ * the caller to narrow the pattern or read a file for the matches past it.
+ *
+ * The counts stay qualitative. Native grep is asked for `cap + 1` matches per
+ * file, so a trimmed file's true total is never known here and any "N more"
+ * figure would be a guess.
+ */
+function formatPerFileCapNotice(cap: number, cappedPaths: readonly string[]): string {
+	if (cappedPaths.length === 0) return "";
+	const named = cappedPaths.slice(0, PER_FILE_CAP_NOTICE_PATHS).join(", ");
+	const rest = cappedPaths.length - PER_FILE_CAP_NOTICE_PATHS;
+	const restLabel = rest > 0 ? `, and ${rest} other file${rest === 1 ? "" : "s"}` : "";
+	return `Per-file match cap of ${cap} reached: ${named}${restLabel} had more matches. Narrow the pattern, or read a file to see all of its matches.`;
+}
+
 type SearchParams = typeof searchSchema.infer;
 
 /**
@@ -792,6 +814,11 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 				const fileGroups = new Map<string, { count: number; list?: GrepMatch[] }>();
 				const windowLists: GrepMatch[][] = [];
 				let perFileLimitReached = false;
+				// Files whose rendered match list the per-file cap trimmed. Only
+				// in-window files are tracked: a file that was never paged in dropped
+				// nothing the caller could otherwise have seen, and its absence is the
+				// pagination notice's job.
+				const cappedPaths = new Set<string>();
 				for (const match of result.matches) {
 					const group = fileGroups.get(match.path);
 					if (!group) {
@@ -804,6 +831,7 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 					group.count++;
 					if (group.count > perFileMatchCap) {
 						perFileLimitReached = true;
+						if (group.list) cappedPaths.add(match.path);
 						continue;
 					}
 					group.list?.push(match);
@@ -840,6 +868,10 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 				const limitMessage = fileLimitReached
 					? `Showing files ${skipFiles + 1}-${nextSkip} of ${totalFilesLabel}. Use skip=${nextSkip} for the next page, or narrow paths/pattern.`
 					: "";
+				// A trimmed file's rendered list simply ends at the cap, so nothing in
+				// the match output tells the caller it was cut. Name the cap and the
+				// affected files, or the caller reads a partial file as complete.
+				const perFileCapMessage = formatPerFileCapNotice(perFileMatchCap, [...cappedPaths].map(formatPath));
 				const { record: recordFile, list: fileList } = createFileRecorder();
 				const fileMatchCounts = new Map<string, number>();
 				// Detect explicit file targets that exceed the native grep size cap.
@@ -1004,6 +1036,9 @@ export class GrepTool implements AgentTool<typeof searchSchema, GrepToolDetails>
 				displayLines.push(...matchOutput.display);
 				if (limitMessage) {
 					outputLines.push("", limitMessage);
+				}
+				if (perFileCapMessage) {
+					outputLines.push("", perFileCapMessage);
 				}
 				if (warningNote) {
 					outputLines.push("", warningNote);

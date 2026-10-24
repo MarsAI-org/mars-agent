@@ -2707,6 +2707,10 @@ export class InputController {
 			return;
 		}
 		this.setToolsExpanded(!this.ctx.toolOutputExpanded);
+		// The same gesture shows thinking blocks: expanding reveals them with the
+		// tool output, collapsing hides them again. This is display state, so the
+		// persisted Ctrl+T preference is neither read nor written by it.
+		this.setThinkingExpanded(this.ctx.toolOutputExpanded);
 		this.ctx.showStatus(`Tool output expansion: ${this.ctx.toolOutputExpanded ? "enabled" : "disabled"}`);
 	}
 
@@ -2714,8 +2718,13 @@ export class InputController {
 		this.ctx.hideToolActivity = !this.ctx.hideToolActivity;
 		cfgDisplayHideToolActivity.set(this.ctx.settings, this.ctx.hideToolActivity);
 
+		// Revealing tool activity starts it collapsed, so the Ctrl+O expansion — and
+		// the transient thinking visibility that travels with it — resets to the
+		// persisted preference.
+		const releasedThinkingOverride = !this.ctx.hideToolActivity && this.ctx.thinkingExpanded !== undefined;
 		if (!this.ctx.hideToolActivity) {
 			this.ctx.toolOutputExpanded = false;
+			this.ctx.thinkingExpanded = undefined;
 		}
 
 		for (const child of this.ctx.chatContainer.children) {
@@ -2726,6 +2735,7 @@ export class InputController {
 				child.setExpanded(false);
 			} else if (child instanceof AssistantMessageComponent) {
 				child.setToolResultImagesVisible(!this.ctx.hideToolActivity);
+				if (releasedThinkingOverride) child.setHideThinkingBlock(this.ctx.hideThinkingBlock);
 			}
 		}
 		this.ctx.chatContainer.setToolActivityVisible(!this.ctx.hideToolActivity);
@@ -2748,6 +2758,50 @@ export class InputController {
 		this.ctx.ui.requestRender(true);
 	}
 
+	/**
+	 * Push a thinking-block visibility into every live and retired row: settled
+	 * assistant blocks, the streaming block, and the stable-emission ledger the
+	 * scrollback clear replays from.
+	 */
+	#applyThinkingVisibility(hide: boolean): void {
+		for (const child of this.ctx.chatContainer.children) {
+			if (child instanceof AssistantMessageComponent) {
+				child.setHideThinkingBlock(hide);
+			}
+		}
+
+		if (this.ctx.streamingComponent && this.ctx.streamingMessage) {
+			this.ctx.streamingComponent.setHideThinkingBlock(hide);
+			this.ctx.streamingComponent.updateContent(this.ctx.streamingMessage);
+		}
+
+		// This is an explicit user display gesture: rebuild native history so the
+		// visibility change also applies to rows already retired from the viewport.
+		// Append-only thinking heads emitted their stable rows to scrollback while
+		// streaming (visible); forget that emission ledger so the paired scrollback
+		// clear re-renders them under the new visibility instead of replaying the
+		// captured reasoning (#10177).
+		this.ctx.chatContainer.resetStableEmission();
+		this.ctx.ui.resetDisplay();
+	}
+
+	/**
+	 * Set the transient visibility owned by the Ctrl+O expansion gesture, leaving
+	 * the persisted `hideThinkingBlock` preference untouched. Expanding reveals
+	 * thinking, collapsing hides it — including under a preference that shows it,
+	 * since a collapsed transcript is what the user asked for. Nothing repaints
+	 * when the expansion changes nothing the rows render.
+	 */
+	setThinkingExpanded(expanded: boolean): void {
+		if (this.ctx.thinkingExpanded === expanded) return;
+		// What the rows render right now, before the override flips.
+		const wasHidden =
+			this.ctx.thinkingExpanded === undefined ? Boolean(this.ctx.hideThinkingBlock) : !this.ctx.thinkingExpanded;
+		this.ctx.thinkingExpanded = expanded;
+		if (wasHidden === !expanded) return;
+		this.#applyThinkingVisibility(!expanded);
+	}
+
 	toggleThinkingBlockVisibility(): void {
 		// When thinking is "off" and the session has not produced reasoning
 		// content, thinking blocks stay auto-hidden; the toggle would only corrupt
@@ -2760,28 +2814,14 @@ export class InputController {
 			this.ctx.showStatus("Thinking is off — enable thinking to show blocks");
 			return;
 		}
+		// Ctrl+T sets the persisted preference, so it releases the transient
+		// override: the explicit choice must not be masked by an expanded
+		// transcript left over from an earlier Ctrl+O.
+		this.ctx.thinkingExpanded = undefined;
 		this.ctx.hideThinkingBlock = !this.ctx.hideThinkingBlock;
 		cfgHideThinkingBlock.set(this.ctx.settings, this.ctx.hideThinkingBlock);
 
-		for (const child of this.ctx.chatContainer.children) {
-			if (child instanceof AssistantMessageComponent) {
-				child.setHideThinkingBlock(this.ctx.hideThinkingBlock);
-			}
-		}
-
-		if (this.ctx.streamingComponent && this.ctx.streamingMessage) {
-			this.ctx.streamingComponent.setHideThinkingBlock(this.ctx.hideThinkingBlock);
-			this.ctx.streamingComponent.updateContent(this.ctx.streamingMessage);
-		}
-
-		// This is an explicit user display gesture: rebuild native history so the
-		// visibility change also applies to rows already retired from the viewport.
-		// Append-only thinking heads emitted their stable rows to scrollback while
-		// streaming (visible); forget that emission ledger so the paired scrollback
-		// clear re-renders them under the new visibility instead of replaying the
-		// captured reasoning (#10177).
-		this.ctx.chatContainer.resetStableEmission();
-		this.ctx.ui.resetDisplay();
+		this.#applyThinkingVisibility(this.ctx.hideThinkingBlock);
 
 		this.ctx.showStatus(`Thinking blocks: ${this.ctx.hideThinkingBlock ? "hidden" : "visible"}`);
 	}

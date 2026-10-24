@@ -474,6 +474,7 @@ import { cfgFollowUpMode } from "../modes/settings";
 import { cfgSteeringMode } from "../modes/settings";
 import { cfgDisabledProviders, cfgModelRoles } from "../config/model-settings";
 import { cfgProvidersEndpoints } from "../config/provider-endpoint-settings";
+import { cfgProvidersContextWindows } from "../config/provider-context-window-settings";
 import { cfgEvalToolsEnabled } from "../eval/settings";
 import { cfgExtensions, type SkillsSettings } from "../extensibility/settings";
 import {
@@ -2429,8 +2430,10 @@ export class AgentSession implements SettingsScope {
 	}
 
 	/**
-	 * `disabledProviders`: reads filter at use time; the catalog rebuild re-seeds
-	 * re-enabled providers (implicit local servers, cached discoveries).
+	 * `disabledProviders`, `providers.endpoints`, and `providers.contextWindows`
+	 * all reshape the catalog, so each change rebuilds it (`disabledProviders`
+	 * reads filter at use time; the rebuild re-seeds re-enabled providers such
+	 * as implicit local servers and cached discoveries).
 	 * `prewalk.enabled` (top-level sessions): arms the default hand-off or drops a
 	 * pending one, effective from the next turn.
 	 */
@@ -2439,6 +2442,9 @@ export class AgentSession implements SettingsScope {
 		// A new endpoint changes both the models' base URLs and where discovery
 		// looks, so the catalog has to be rebuilt the same way a provider toggle does.
 		cfgProvidersEndpoints.listen(this, () => this.#modelRegistry.reapplyModelPolicies());
+		// A provider-wide window rewrites every chat row of that provider, so the
+		// catalog has to be rebuilt like a provider toggle does.
+		cfgProvidersContextWindows.listen(this, () => this.#modelRegistry.reapplyModelPolicies());
 		if (this.#agentKind !== "main") return;
 		cfgPrewalkEnabled.listen(this, enabled => {
 			if (!enabled) {

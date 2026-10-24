@@ -46,6 +46,19 @@ describe("provider-context-window-settings", () => {
 		expect(() => validateProviderContextWindows({ google: 1.5 })).toThrow("positive integers");
 	});
 
+	test("drops blank entries instead of failing the whole config load", () => {
+		// A hand-edited `gw:` parses as null; rejecting it would fail
+		// `Settings.init()` and take every command — including the `config reset`
+		// that repairs the file — down with it.
+		expect(validateProviderContextWindows({ gw: null, ok: 4000 })).toEqual({ ok: 4000 });
+		expect(validateProviderContextWindows({ gw: undefined, ok: 4000 })).toEqual({ ok: 4000 });
+		expect(validateProviderContextWindows({ gw: "  ", ok: 4000 })).toEqual({ ok: 4000 });
+		resetSettingsForTest();
+		const s = Settings.isolated({ "providers.contextWindows": { gw: null, ok: 4000 } });
+
+		expect(cfgProvidersContextWindows.get(s)).toEqual({ ok: 4000 });
+	});
+
 	test("integrates with Settings.isolated", () => {
 		resetSettingsForTest();
 		const s = Settings.isolated({ "providers.contextWindows": { openai: 200000 } });

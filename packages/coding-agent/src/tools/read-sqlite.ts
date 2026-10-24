@@ -125,7 +125,14 @@ export async function readSqlite(
 				const resultBuilder = toolResult<ReadToolDetails>(details)
 					.text(truncation.content)
 					.sourcePath(resolvedSqlitePath.absolutePath)
-					.limits({ resultLimit: listLimit.meta.resultLimit?.reached });
+					// `read` has no `limit=` parameter for table listings, so report the
+					// reached count without advising an argument the caller cannot pass.
+					.limits({
+						resultLimit:
+							listLimit.meta.resultLimit === undefined
+								? undefined
+								: { reached: listLimit.meta.resultLimit.reached, suggestion: null },
+					});
 				if (truncation.truncated) {
 					resultBuilder.truncation(truncation, { direction: "head" });
 				}

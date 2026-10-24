@@ -13,6 +13,7 @@ import { SessionManager } from "@marsai-org/coding-agent/session/session-manager
 import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import { BashTool } from "@marsai-org/coding-agent/tools/bash";
 import { wrapToolWithMetaNotice } from "@marsai-org/coding-agent/tools/output-meta";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
 import { ReadTool } from "@marsai-org/coding-agent/tools/read";
 import * as toolTimeouts from "@marsai-org/coding-agent/tools/tool-timeouts";
 import { WriteTool } from "@marsai-org/coding-agent/tools/write";
@@ -1340,6 +1341,28 @@ describe("Coding Agent Tools", () => {
 			expect(output).toContain("pkg/");
 			expect(output).toContain("top.txt");
 			expect(result.details?.isDirectory).toBe(true);
+		});
+
+		it("reports an archive directory cap without advising a `limit=` argument read cannot take", async () => {
+			// `read` has no `limit=` parameter, so the archive listing's cap notice
+			// has to stand on its own: a reached count the caller can act on by
+			// reading the sub-path, and no pointer at an argument that does not exist.
+			const archivePath = path.join(testDir, "capped-dir.tar");
+			fs.writeFileSync(
+				archivePath,
+				createTarArchive(
+					Array.from({ length: 505 }, (_, i) => ({
+						path: `dir/entry-${String(i).padStart(3, "0")}.txt`,
+						content: "x\n",
+					})),
+				),
+			);
+
+			const result = await readTool.execute("test-call-tar-dir-cap", { path: `${archivePath}:dir` });
+			const notice = formatOutputNotice(result.details?.meta);
+
+			expect(notice).toContain("500 results limit reached");
+			expect(notice).not.toContain("Use limit=");
 		});
 
 		it("should read tar.gz members with UTF-8 ustar prefixes", async () => {
@@ -3109,6 +3132,49 @@ function b() {
 			const hotCount = result.details?.fileMatches?.find(entry => entry.path.endsWith("hot.txt"))?.count ?? 0;
 			expect(hotCount).toBe(MULTI_FILE_PER_FILE_MATCHES);
 			expect(result.details?.perFileLimitReached).toBe(MULTI_FILE_PER_FILE_MATCHES);
+		});
+
+		it("tells the model when the per-file cap discarded matches", async () => {
+			// The rendered match list of a capped file just stops at the cap, so
+			// without a notice the caller reads 20 of 50 hits as the whole file.
+			const concDir = path.join(testDir, "per-file-cap-notice");
+			fs.mkdirSync(concDir, { recursive: true });
+			const dropped = 30;
+			fs.writeFileSync(
+				path.join(concDir, "hot.txt"),
+				Array.from({ length: MULTI_FILE_PER_FILE_MATCHES + dropped }, (_, i) => `needle ${i + 1}`).join("\n"),
+			);
+
+			const result = await searchTool.execute("test-call-14-per-file-cap-notice", {
+				pattern: "needle",
+				path: concDir,
+			});
+
+			const output = getTextOutput(result);
+			expect(output).toMatch(
+				new RegExp(`Per-file match cap of ${MULTI_FILE_PER_FILE_MATCHES} reached: .*hot\\.txt`),
+			);
+		});
+
+		it("omits the per-file cap notice when nothing was discarded", async () => {
+			// Exactly at the cap is complete: the file's matches all fit, and a
+			// notice here would claim truncation that never happened.
+			const exactDir = path.join(testDir, "per-file-cap-exact");
+			fs.mkdirSync(exactDir, { recursive: true });
+			fs.writeFileSync(
+				path.join(exactDir, "exact.txt"),
+				Array.from({ length: MULTI_FILE_PER_FILE_MATCHES }, (_, i) => `needle ${i + 1}`).join("\n"),
+			);
+			fs.writeFileSync(path.join(exactDir, "under.txt"), "needle under");
+
+			const result = await searchTool.execute("test-call-14-per-file-cap-exact", {
+				pattern: "needle",
+				path: exactDir,
+			});
+
+			const output = getTextOutput(result);
+			expect(output).toContain("needle under");
+			expect(output).not.toContain("Per-file match cap");
 		});
 
 		it("should let a single-file scope exceed the multi-file per-file cap", async () => {

@@ -22,7 +22,7 @@ import {
 	upsertProviderBlock,
 } from "../config/models-config-writer";
 import { cfgProvidersContextWindows } from "../config/provider-context-window-settings";
-import { type Settings, settings } from "../config/settings";
+import { Settings, settings } from "../config/settings";
 import { replaceFileAtomically } from "../utils/atomic-file";
 
 /** Wires a `models.yml` provider block can name. Only chat transports are offered. */
@@ -72,8 +72,9 @@ export interface AddProviderOptions {
 	/** Validate the edited file and report it; does not write. */
 	dryRun?: boolean;
 	/**
-	 * Settings store for the `providers.contextWindows` write of a discovered
-	 * catalog. Defaults to the process-wide settings.
+	 * Settings store for the `providers.contextWindows` bookkeeping of this
+	 * write — the provider-wide window a discovered catalog needs, or the stale
+	 * one a declared model list replaces. Defaults to the process-wide settings.
 	 */
 	settings?: Settings;
 }
@@ -156,6 +157,18 @@ async function writeModelsConfigAtomically(configPath: string, text: string): Pr
 }
 
 /**
+ * Drop a provider's provider-wide context window.
+ *
+ * A discovered catalog has no ids at write time, so its window is stored
+ * provider-wide; once that provider is removed or re-declares its models with
+ * their own windows, the entry would apply to models the user never set it for.
+ */
+async function dropProviderContextWindow(target: Settings, id: string): Promise<void> {
+	cfgProvidersContextWindows.setEntry(target, id, undefined);
+	await target.flush();
+}
+
+/**
  * Edit the models config: validate, write, and re-read through the real loader.
  *
  * The file is replaced atomically so an interrupted write can never leave a
@@ -183,20 +196,30 @@ export async function addProvider(options: AddProviderOptions): Promise<AddProvi
 	if (options.dryRun) return { path: configPath, providers, replaced: existed, text };
 
 	await writeModelsConfigAtomically(configPath, text);
+	const target = options.settings ?? settings;
 	// A discovered catalog has no ids to attach the window to yet, so it goes
 	// provider-wide and every row picked up at load inherits it.
 	if (discovered && options.maxContext !== undefined) {
-		const target = options.settings ?? settings;
 		cfgProvidersContextWindows.set(target, { ...cfgProvidersContextWindows.get(target), [id]: options.maxContext });
 		await target.flush();
+	} else if (existed && !discovered && options.maxContext !== undefined) {
+		// The new block declares its models with the window on each of them, so a
+		// provider-wide entry left by an earlier discovered write would outlive
+		// the discovered ids it was meant for.
+		await dropProviderContextWindow(target, id);
 	}
 	return { path: configPath, providers, replaced: existed };
 }
 
-/** Remove a provider block. Reports whether one was there. */
+/**
+ * Remove a provider block. Reports whether one was there.
+ *
+ * The provider's `providers.contextWindows` entry goes with it: left behind, it
+ * would silently apply to a later provider that happens to reuse the id.
+ */
 export async function removeProvider(
 	id: string,
-	options: { path?: string; dryRun?: boolean } = {},
+	options: { path?: string; dryRun?: boolean; settings?: Settings } = {},
 ): Promise<{
 	path: string;
 	providers: string[];
@@ -214,6 +237,10 @@ export async function removeProvider(
 	if (options.dryRun) return { path: configPath, providers, removed, text };
 
 	await writeModelsConfigAtomically(configPath, text);
+	// A store that was never initialized cannot hold an entry to drop, so an
+	// embedded caller without settings still gets the block removed.
+	const target = options.settings ?? (await Settings.current);
+	if (target) await dropProviderContextWindow(target, id);
 	return { path: configPath, providers, removed };
 }
 
@@ -418,7 +445,11 @@ export async function runRemoveProviderCommand(
 	flags: { path?: string; dryRun?: boolean; json?: boolean },
 ): Promise<void> {
 	try {
-		const result = await removeProvider(id, { path: flags.path, dryRun: flags.dryRun });
+		// The provider's window lives in config.yml, so the settings store has to
+		// exist before the removal can drop it — the same bootstrap `add-provider`
+		// gets. A dry run writes nothing, so it must not open the store.
+		const target = flags.dryRun ? undefined : await Settings.init();
+		const result = await removeProvider(id, { path: flags.path, dryRun: flags.dryRun, settings: target });
 		if (flags.json) {
 			process.stdout.write(`${JSON.stringify(result, null, 2)}\n`);
 			return;

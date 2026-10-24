@@ -187,3 +187,30 @@ describe("HTML export Markdown", () => {
 		expect(document.querySelector("#messages")?.textContent).toContain("root");
 	});
 });
+
+describe("HTML export Markdown sanitization", () => {
+	test("renders raw HTML as text instead of live markup", () => {
+		const rendered = renderMarkdown('<img src=x onerror="window.__pwned=1"> <script>window.__pwned2=1</script>');
+
+		expect(rendered.querySelector("img")).toBeNull();
+		expect(rendered.querySelector("script")).toBeNull();
+		expect(rendered.textContent).toContain("<img src=x");
+		expect(rendered.textContent).toContain("<script>");
+	});
+
+	test("drops links and images whose scheme is not navigable", () => {
+		const rendered = renderMarkdown("[click](javascript:window.__clicked=1) ![i](javascript:alert(2))");
+
+		const anchors = [...rendered.querySelectorAll("a")];
+		expect(anchors).toHaveLength(0);
+		expect(rendered.querySelectorAll("img")).toHaveLength(0);
+		expect(rendered.textContent).toContain("click");
+	});
+
+	test("keeps http, https, and mailto links as anchors", () => {
+		const rendered = renderMarkdown("[a](https://example.com/x) [b](mailto:x@example.com)");
+
+		const hrefs = [...rendered.querySelectorAll("a")].map(anchor => anchor.getAttribute("href"));
+		expect(hrefs).toEqual(["https://example.com/x", "mailto:x@example.com"]);
+	});
+});

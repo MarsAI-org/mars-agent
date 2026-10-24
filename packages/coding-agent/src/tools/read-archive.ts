@@ -176,7 +176,12 @@ async function readArchiveDirectory(
 	const truncation = truncateHead(text, { maxLines: Number.MAX_SAFE_INTEGER });
 	const directoryDetails: ReadToolDetails = { ...details, isDirectory: true };
 	const resultBuilder = toolResult<ReadToolDetails>(directoryDetails).text(truncation.content);
-	resultBuilder.sourcePath(archivePath).limits({ resultLimit: limitMeta.resultLimit?.reached });
+	// `read` has no `limit=` parameter: the directory caps are fixed, so the
+	// notice reports the reached count without advising an unusable argument.
+	resultBuilder.sourcePath(archivePath).limits({
+		resultLimit:
+			limitMeta.resultLimit === undefined ? undefined : { reached: limitMeta.resultLimit.reached, suggestion: null },
+	});
 	if (truncation.truncated) {
 		directoryDetails.truncation = toReadTruncationStats(truncation);
 		resultBuilder.truncation(truncation, { direction: "head" });

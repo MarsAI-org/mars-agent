@@ -23,7 +23,10 @@ export function applyListLimit<T>(items: T[], options: ListLimitOptions): ListLi
 	let limited = items;
 	let limitReached: number | undefined;
 
-	if (effectiveLimit !== undefined && items.length >= effectiveLimit) {
+	// Strict: a result set holding exactly `limit` items is complete, not clipped.
+	// A caller that needs to distinguish "exactly limit" from "more than limit"
+	// must fetch one past the cap (see `glob`'s native maxResults).
+	if (effectiveLimit !== undefined && items.length > effectiveLimit) {
 		limited = items.slice(0, effectiveLimit);
 		limitReached = effectiveLimit;
 		const suggestion = effectiveLimit * 2;

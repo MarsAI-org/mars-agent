@@ -47,6 +47,40 @@ const REDACTED = "********";
 /** Settings whose value names a theme, checked against the registry on write. */
 const THEME_SETTING_KEYS: ReadonlySet<string> = new Set(["theme.dark", "theme.light"]);
 
+/** Decimal literal `config set` stores as a number rather than as text. */
+const NUMBER_LITERAL = /^-?(?:\d+(?:\.\d+)?|\.\d+)$/;
+
+/**
+ * Value one `config set <record>.<key>` argument denotes.
+ *
+ * A record entry is untyped at the CLI boundary, so the argument is stored as
+ * the JSON-like value it spells: an object or array literal becomes that
+ * structure (a malformed one fails instead of being stored as text), and a
+ * numeric or boolean literal becomes a number or boolean. Everything else
+ * stays a string, so `providers.endpoints.openai https://gw/v1` writes the URL.
+ *
+ * @throws Error when the text starts an object/array literal that is not valid JSON.
+ */
+function recordEntryValue(text: string): unknown {
+	const trimmed = text.trim();
+	if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(trimmed);
+		} catch {
+			throw new Error(`Invalid JSON object or array: ${text}`);
+		}
+		if (typeof parsed !== "object" || parsed === null) {
+			throw new Error(`Invalid JSON object or array: ${text}`);
+		}
+		return parsed;
+	}
+	if (trimmed === "true") return true;
+	if (trimmed === "false") return false;
+	if (NUMBER_LITERAL.test(trimmed) && Number.isFinite(Number(trimmed))) return Number(trimmed);
+	return text;
+}
+
 function toSettingDef(setting: AnySetting): CliSettingDef {
 	const ui = setting.ui;
 	return {
@@ -331,7 +365,7 @@ async function handleSet(key: string | undefined, value: string | undefined, fla
 			// overlay entry must not be copied into the user's global config.
 			const raw = globalValue(def.setting);
 			const current = isRecord(raw) ? { ...raw } : {};
-			current[def.subKey] = value;
+			current[def.subKey] = recordEntryValue(value);
 			def.setting.set(settings, current);
 		} else {
 			def.setting.set(settings, def.setting.parse(value));
@@ -472,11 +506,18 @@ ${chalk.bold("Examples:")}
   ${APP_NAME} config set theme catppuccin-mocha
   ${APP_NAME} config set compaction.enabled false
   ${APP_NAME} config set defaultThinkingLevel medium
+  ${APP_NAME} config set providers.endpoints.openai https://my-proxy/v1
+  ${APP_NAME} config set providers.contextWindows.openai 200000
+  ${APP_NAME} config set modelPresets.mine '{"modelRoles":{"default":"anthropic/claude-sonnet-4-5"}}'
   ${APP_NAME} config reset steeringMode
   ${APP_NAME} config list --json
   ${APP_NAME} config init-xdg
 
 ${chalk.bold("Boolean Values:")}
   true, false, yes, no, on, off, 1, 0
+
+${chalk.bold("Record Entries:")}
+  ${APP_NAME} config set <record>.<key> stores the argument as the value it
+  spells: a JSON object or array, a number, a boolean, or else plain text.
 `);
 }

@@ -207,11 +207,21 @@ export interface InteractiveModeContext {
 	loopLimit?: LoopLimitRuntime;
 	loopCondition?: LoopConditionConfig;
 	planModePlanFilePath?: string;
+	/** The persisted `hideThinkingBlock` preference, mirrored from the setting. */
 	hideThinkingBlock: boolean;
 	/**
-	 * Effective thinking-block visibility: true when hidden by user setting OR
-	 * thinking level is "off" before the session has produced displayable
-	 * thinking content.
+	 * Ctrl+O's transient thinking visibility: `true` while the transcript is
+	 * expanded (thinking shows even under a hiding preference), `false` while it
+	 * is collapsed (thinking hides even under a revealing one), `undefined`
+	 * outside an expansion gesture. Not persisted, so the Ctrl+T preference
+	 * survives an expand/collapse cycle untouched.
+	 */
+	thinkingExpanded: boolean | undefined;
+	/**
+	 * Effective thinking-block visibility: true while the thinking level is "off"
+	 * before the session has produced displayable thinking content, else the
+	 * Ctrl+O expansion override when one is set, else
+	 * {@link hideThinkingBlock}.
 	 */
 	readonly effectiveHideThinkingBlock: boolean;
 	readonly assistantImagesVisible: boolean;

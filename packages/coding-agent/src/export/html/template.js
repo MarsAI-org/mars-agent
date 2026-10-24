@@ -1368,11 +1368,38 @@
       // HEADER / STATS
       // ============================================================
 
+      /**
+       * Entries whose model calls belong to the conversation a reader sees:
+       * the root-to-leaf path the viewer starts on, and nothing after the
+       * latest compaction boundary (that turn's messages are represented by
+       * the summary, exactly as the live session counts them). Sibling
+       * branches and rewound tails are deliberately excluded — summing them
+       * would report cost for replies the transcript no longer shows.
+       */
+      function activeConversationEntries(entryList, rootToLeaf) {
+        let startIndex = 0;
+        for (let index = rootToLeaf.length - 1; index >= 0; index--) {
+          const entry = rootToLeaf[index];
+          if (entry.type === 'reset_boundary') {
+            startIndex = index + 1;
+            break;
+          }
+          if (entry.type === 'compaction') {
+            const keptIndex = rootToLeaf.findIndex(candidate => candidate.id === entry.firstKeptEntryId);
+            startIndex = keptIndex >= 0 ? keptIndex : index + 1;
+            break;
+          }
+        }
+        return rootToLeaf.slice(startIndex);
+      }
+
       function computeStats(entryList) {
         let userMessages = 0, developerMessages = 0, assistantMessages = 0, toolResults = 0;
         let customMessages = 0, compactions = 0, branchSummaries = 0, toolCalls = 0;
         const tokens = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
-        const cost = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };
+        // `total` is the provider's own figure; `componentSum` is the fallback for
+        // rows that only carry per-bucket prices (older exports, synthetic rows).
+        const cost = { total: 0, componentSum: 0 };
         const models = new Set();
 
         for (const entry of entryList) {
@@ -1389,10 +1416,13 @@
                 tokens.cacheRead += msg.usage.cacheRead || 0;
                 tokens.cacheWrite += msg.usage.cacheWrite || 0;
                 if (msg.usage.cost) {
-                  cost.input += msg.usage.cost.input || 0;
-                  cost.output += msg.usage.cost.output || 0;
-                  cost.cacheRead += msg.usage.cost.cacheRead || 0;
-                  cost.cacheWrite += msg.usage.cost.cacheWrite || 0;
+                  const bucketSum =
+                    (msg.usage.cost.input || 0) +
+                    (msg.usage.cost.output || 0) +
+                    (msg.usage.cost.cacheRead || 0) +
+                    (msg.usage.cost.cacheWrite || 0);
+                  cost.total += msg.usage.cost.total || bucketSum;
+                  cost.componentSum += bucketSum;
                 }
               }
               toolCalls += msg.content.filter(c => c.type === 'toolCall').length;
@@ -1410,10 +1440,12 @@
         return { userMessages, developerMessages, assistantMessages, toolResults, customMessages, compactions, branchSummaries, toolCalls, tokens, cost, models: Array.from(models) };
       }
 
-      const globalStats = computeStats(entries);
+      // The header describes the conversation the reader lands on, not the whole
+      // journal: branches the user rewound away must not inflate cost or tokens.
+      const globalStats = computeStats(activeConversationEntries(entries, getPath(leafId)));
 
       function renderHeader() {
-        const totalCost = globalStats.cost.input + globalStats.cost.output + globalStats.cost.cacheRead + globalStats.cost.cacheWrite;
+        const totalCost = globalStats.cost.total > 0 ? globalStats.cost.total : globalStats.cost.componentSum;
 
         const tokenParts = [];
         if (globalStats.tokens.input) tokenParts.push(`↑${formatTokens(globalStats.tokens.input)}`);
@@ -1561,7 +1593,39 @@
         return text.replace(/<(?=[a-zA-Z\/])/g, '&lt;');
       }
 
-      // Configure marked with syntax highlighting and HTML escaping for text
+      /**
+       * A link/image destination that a browser will treat as navigation or
+       * fetch, or null. The scheme is resolved exactly as the browser will
+       * (the URL parser strips leading C0 controls and embedded tab/newline
+       * that a text check would carry through), so `jav&#x61;script:` and
+       * `java\tscript:` never survive as a live scheme.
+       */
+      function safeHref(href) {
+        if (typeof href !== 'string') return null;
+        const trimmed = href.trim();
+        if (!trimmed) return null;
+        let protocol;
+        try {
+          protocol = new URL(trimmed, 'https://relative.invalid/').protocol;
+        } catch {
+          return null;
+        }
+        if (protocol === 'https:' || protocol === 'http:' || protocol === 'mailto:') return trimmed;
+        return null;
+      }
+
+      /** `data:` image sources an exported transcript may legitimately carry. */
+      function isInlineImageSrc(src) {
+        return /^data:image\/(?!svg)[a-z0-9.+-]+;base64,[a-z0-9+/=\s]*$/i.test(src);
+      }
+
+      /**
+       * Configure marked. Every construct that reaches the DOM through
+       * `innerHTML` must escape or validate here: the transcript is untrusted
+       * input (a shared session is a link anyone can open, and a prompt or
+       * tool result can contain any markup), so raw HTML, unknown link
+       * schemes, and non-image data URLs never become live markup.
+       */
       marked.use({
         breaks: true,
         gfm: true,
@@ -1595,6 +1659,23 @@
           // Inline code: escape HTML
           codespan(token) {
             return `<code>${escapeHtml(token.text)}</code>`;
+          },
+          // Raw HTML in the source is shown as text, never parsed as markup.
+          html(token) {
+            return escapeHtml(token.text);
+          },
+          link(token) {
+            const inner = this.parser.parseInline(token.tokens);
+            const url = safeHref(token.href);
+            if (url === null) return inner;
+            const title = token.title ? ` title="${escapeHtml(token.title)}"` : '';
+            return `<a href="${escapeHtml(url)}"${title} target="_blank" rel="noopener noreferrer">${inner}</a>`;
+          },
+          image(token) {
+            const src = safeHref(token.href) ?? (isInlineImageSrc(token.href) ? token.href : null);
+            if (src === null) return escapeHtml(token.text || '');
+            const title = token.title ? ` title="${escapeHtml(token.title)}"` : '';
+            return `<img src="${escapeHtml(src)}" alt="${escapeHtml(token.text || '')}"${title}>`;
           }
         }
       });
