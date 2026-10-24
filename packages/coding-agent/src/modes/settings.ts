@@ -501,6 +501,19 @@ export const cfgTuiCodexResetFireworks = register({
 	},
 });
 
+export const cfgTuiTitle = register({
+	id: "tui.title",
+	type: "boolean",
+	default: true,
+	ui: {
+		tab: "appearance",
+		group: "Display",
+		label: "Terminal Title",
+		description:
+			"Let mars write the terminal's title (tab/window) while it runs; turning this off leaves the title your shell set untouched",
+	},
+});
+
 export const cfgTuiTitleState = register({
 	id: "tui.titleState",
 	type: "boolean",
