@@ -1,0 +1,156 @@
+name: npm dist-tag fix
+
+# One-shot registry repair for the stale `next` dist-tag (issue #76): the
+# bootstrap publish ran with `dist_tag=next`, and every later release published
+# under `latest` while leaving existing tags alone, so `next` still resolves to
+# the pre-rebrand 18.8.6 build on all twelve packages.
+#
+# Nothing in the repository, the docs, or the release workflow consumes
+# `@next`, so `remove` is the default: with no `next` channel in use today the
+# tag only misleads. `repoint` is offered for the case where a channel is
+# wanted before the publish script is asked to own it explicitly.
+#
+# Registry-only: it never touches the repository. It needs the same credential
+# the publish uses (secrets.NPM_TOKEN), which is why it runs here and not
+# locally — a granular token that can publish may still be rejected on tag
+# writes (E403), and this job reports that outcome instead of hiding it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "remove: delete the stale next tag. repoint: move next to the current latest."
+        required: true
+        default: remove
+        type: choice
+        options:
+          - remove
+          - repoint
+      version:
+        description: "Version to point next at (repoint only; defaults to npm's current latest)"
+        required: false
+        type: string
+      dry_run:
+        description: "Report what would change without writing to npm"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+# Same version-scoped group as the publish/republish workflows: a tag write must
+# not race a release that is publishing these packages.
+concurrency:
+  group: npm-dist-tag
+  cancel-in-progress: false
+
+jobs:
+  dist-tag:
+    name: Repair the next dist-tag
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install a publishing npm
+        # dist-tag writes under a granular token need npm >= 11.21.0.
+        run: npm install -g npm@11.17.0
+      - name: Dist-tag
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          ACTION: ${{ inputs.action }}
+          VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -uo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error title=NPM_TOKEN missing::no credential configured"
+            exit 1
+          fi
+          if [ -z "$DRY_RUN" ]; then DRY_RUN="true"; fi
+          echo "action=$ACTION dry_run=$DRY_RUN"
+          echo "npm whoami: $(npm whoami 2>&1 || echo '<failed>')"
+
+          packages=(
+            wire omptype natives utils catalog ai mnemopi snapcompact stats
+            agent-core tui coding-agent
+          )
+
+          if [ "$ACTION" = "repoint" ] && [ -z "$VERSION" ]; then
+            VERSION="$(npm view @marsai-org/coding-agent dist-tags.latest 2>/dev/null || true)"
+            if [ -z "$VERSION" ]; then
+              echo "::error::could not read the current latest version"
+              exit 1
+            fi
+            echo "resolved target version: $VERSION"
+          fi
+          if [ "$ACTION" = "repoint" ] && ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::version must be a bare X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
+
+          failures=0
+          changed=0
+          for leaf in "${packages[@]}"; do
+            pkg="@marsai-org/${leaf}"
+            before="$(npm view "$pkg" dist-tags --json 2>/dev/null || echo '{}')"
+            next_before="$(printf '%s' "$before" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const t=JSON.parse(s||"{}");process.stdout.write(t.next??"")}catch{process.stdout.write("")}})')"
+            if [ -z "$next_before" ] && [ "$ACTION" = "remove" ]; then
+              echo "$pkg: no next tag, nothing to do"
+              continue
+            fi
+
+            if [ "$DRY_RUN" = "true" ]; then
+              if [ "$ACTION" = "remove" ]; then
+                echo "$pkg: would remove next (currently $next_before)"
+              else
+                echo "$pkg: would point next at $VERSION (currently ${next_before:-<none>})"
+              fi
+              changed=$((changed + 1))
+              continue
+            fi
+
+            rc=0
+            out=""
+            if [ "$ACTION" = "remove" ]; then
+              out="$(npm dist-tag rm "$pkg" next 2>&1)" || rc=$?
+            else
+              out="$(npm dist-tag add "$pkg@${VERSION}" next 2>&1)" || rc=$?
+            fi
+            if [ -n "$out" ]; then echo "$out"; fi
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$out" | grep -qiE "E403|granular access tokens"; then
+                echo "::error title=Token cannot write dist-tags::$pkg was rejected with E403. npm only manages dist-tags for a granular token that carries read/write on this package (or a classic Automation token). Update secrets.NPM_TOKEN, then re-run this workflow."
+              else
+                echo "::error title=dist-tag failed::see npm's message for $pkg above."
+              fi
+              failures=$((failures + 1))
+              continue
+            fi
+
+            after="$(npm view "$pkg" dist-tags --json 2>/dev/null || echo '{}')"
+            next_after="$(printf '%s' "$after" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const t=JSON.parse(s||"{}");process.stdout.write(t.next??"")}catch{process.stdout.write("")}})')"
+            expected=""
+            if [ "$ACTION" = "repoint" ]; then expected="$VERSION"; fi
+            if [ "$next_after" != "$expected" ]; then
+              echo "::error title=dist-tag did not take::$pkg reports next='${next_after}' after a successful write; expected '${expected}'."
+              failures=$((failures + 1))
+              continue
+            fi
+            changed=$((changed + 1))
+            echo "$pkg: ok (next -> ${next_after:-<none>})"
+          done
+
+          if [ "$failures" -ne 0 ]; then
+            echo "::error::$failures package(s) could not be fixed."
+            exit 1
+          fi
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "::notice title=Dry run::$changed package(s) would change. Re-run with dry_run=false to apply."
+          else
+            echo "::notice title=Done::$changed package(s) updated; the stale 18.8.6 next tag is gone. Deprecate 18.8.6 itself (npm deprecate \"@marsai-org/<pkg>@18.8.6\" \"pre-rebrand build; use 0.1.x\") if you want unpinned installs warned."
+          fi
