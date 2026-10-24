@@ -13,6 +13,7 @@ import {
 	renderTable,
 	renderTableList,
 } from "@marsai-org/coding-agent/tools/sqlite-reader";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
 import { WriteTool } from "@marsai-org/coding-agent/tools/write";
 
 type ToolTextResult = {
@@ -261,6 +262,27 @@ describe("SQLite tool support", () => {
 	it("lists tables for a .db database when the magic bytes match SQLite", async () => {
 		const result = await readTool.execute("sqlite-db-list", { path: sqliteDbPath });
 		expect(getText(result)).toContain("users (6 rows)");
+	});
+
+	it("reports a table-list cap without advising a `limit=` argument read cannot take", async () => {
+		// The listing caps at 500 tables and `read` has no `limit=` parameter, so
+		// the notice must report the reached count on its own rather than point at
+		// an argument the caller cannot pass. 501 tables is the first count that
+		// proves the cap bit; exactly 500 would be a complete listing.
+		const db = new Database(":memory:");
+		const dbPath = path.join(tmpDir, "many-tables.sqlite");
+		try {
+			for (let i = 0; i < 501; i++) db.run(`CREATE TABLE t${String(i).padStart(3, "0")} (id INTEGER PRIMARY KEY)`);
+			await fs.writeFile(dbPath, db.serialize());
+		} finally {
+			db.close();
+		}
+
+		const result = await readTool.execute("sqlite-many-tables", { path: dbPath });
+		const notice = formatOutputNotice(result.details?.meta);
+
+		expect(notice).toContain("500 results limit reached");
+		expect(notice).not.toContain("Use limit=");
 	});
 
 	it("falls through to plain file reading for non-SQLite .db files", async () => {

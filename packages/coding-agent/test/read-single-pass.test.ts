@@ -115,6 +115,25 @@ describe("read tool single-pass file access", () => {
 		);
 	});
 
+	it("delivers CRLF lines without the carriage return, keeping `:raw` byte-faithful", async () => {
+		// The emitted window is what the model reads: a retained CR ends every
+		// delivered line with an invisible byte that breaks copied text and makes
+		// it compare unequal to the same content without CRLF. `:raw` stays the
+		// byte-verbatim escape hatch, so its CRs must survive.
+		const filePath = path.join(tmpDir, "crlf.txt");
+		await fs.writeFile(filePath, "alpha\r\nbeta\r\ngamma\r\n");
+		const tool = new ReadTool(createSession(tmpDir));
+
+		const plain = textOutput(await tool.execute("crlf-plain", { path: filePath }));
+		expect(plain).not.toContain("\r");
+		expect(plain).toContain("alpha");
+		// Same line numbering as the raw view, so anchors and offsets agree.
+		expect(plain).toContain("\n2:beta");
+
+		const raw = textOutput(await tool.execute("crlf-raw", { path: `${filePath}:raw` }));
+		expect(raw).toContain("alpha\r\nbeta\r\ngamma\r\n");
+	});
+
 	it("does not re-read a file it already materialized", async () => {
 		// Bracket context and the snapshot hash each used to pull the whole file
 		// through `Bun.file(path).text()`, so a ranged read of one file opened it

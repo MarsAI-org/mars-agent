@@ -255,6 +255,43 @@ describe("GlobTool hard-cap limit notice", () => {
 
 		expect(limitNotice(result)).toContain("[50 results limit reached. Use limit=100 for more]");
 	});
+
+	test("exactly the limit is complete, one past it is truncated", async () => {
+		// Real native glob honours `maxResults`, so the tool must ask for one past
+		// the limit: a backend asked for exactly the limit returns 50 entries for
+		// both 50 and 51 matches, and the caller cannot tell a complete listing
+		// from a clipped one. The stub here slices like the native scan does.
+		const limitHonouringTool = (corpus: string[]): GlobTool =>
+			new GlobTool(createSession(), {
+				nativeGlob: async options => {
+					const kept = corpus.slice(0, options.maxResults);
+					return {
+						matches: kept.map(file => ({ path: file, mtime: 0, fileType: FileType.File })),
+						totalMatches: kept.length,
+					};
+				},
+			});
+		const atLimit = Array.from({ length: 50 }, (_, i) => `at-${String(i).padStart(2, "0")}.txt`);
+
+		const exact = await limitHonouringTool(atLimit).execute("glob-limit-exact", {
+			path: ".",
+			limit: 50,
+			gitignore: false,
+		});
+		expect(exact.details?.fileCount).toBe(50);
+		expect(exact.details?.resultLimitReached).toBeUndefined();
+		expect(limitNotice(exact)).not.toContain("results limit reached");
+
+		const truncated = await limitHonouringTool([...atLimit, "over.txt"]).execute("glob-limit-over", {
+			path: ".",
+			limit: 50,
+			gitignore: false,
+		});
+		expect(truncated.details?.fileCount).toBe(50);
+		expect(truncated.details?.resultLimitReached).toBe(50);
+		expect(limitNotice(truncated)).toContain("50 results limit reached");
+		expect(textOf(truncated)).not.toContain("over.txt");
+	});
 });
 
 describe("GlobTool custom backend contract", () => {

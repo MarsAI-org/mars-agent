@@ -385,7 +385,13 @@ function collectLineWindowFromBuffer(
 				window.byteLimitLine = { index, byteLength: lineByteLength };
 				doneCollecting = true;
 			} else {
-				window.lines.push(rawSegments[index] ?? "");
+				// Raw keeps the byte-faithful segment, CR included. Every other read
+				// drops a trailing CR: in a CRLF file it is a line-ending byte, and
+				// keeping it would end each emitted line with a stray `\r`. Indexes
+				// stay aligned with `rawSegments`, so `read` and `:raw` agree on
+				// line numbers.
+				const segment = rawSegments[index] ?? "";
+				window.lines.push(includeTerminalNewline || !segment.endsWith("\r") ? segment : segment.slice(0, -1));
 				window.collectedBytes += separatorBytes + lineByteLength;
 				window.firstLineByteLength ??= lineByteLength;
 				if (window.collectedBytes > maxBytes) {
@@ -534,8 +540,11 @@ async function streamLinesFromFile(
 				byteLimitLine = { index: lineIndex, byteLength: currentLineLength };
 				doneCollecting = true;
 			} else {
+				// Non-raw windows render LF lines: a CRLF file's trailing CR is a
+				// line-ending byte, not content, and would otherwise end every line
+				// handed to the model with a stray `\r`. Raw keeps the bytes verbatim.
 				const lineText = decodeLine();
-				collectedLines.push(lineText);
+				collectedLines.push(includeTerminalNewline || !lineText.endsWith("\r") ? lineText : lineText.slice(0, -1));
 				collectedBytes += separatorBytes + currentLineLength;
 				if (firstLineByteLength === undefined) {
 					firstLineByteLength = currentLineLength;
@@ -1463,6 +1472,8 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 		parsed: ParsedSelector,
 		displayMode: { hashLines: boolean; lineNumbers: boolean },
 		suffixResolution: { from: string; to: string } | undefined,
+		/** Prefix a continuation hint needs so paging stays on a located URL; empty for local files. */
+		selectorBase: string,
 		signal: AbortSignal | undefined,
 		allowBridge = true,
 	): Promise<{
@@ -1522,6 +1533,10 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 			// terminal newline sentinel) but still slices the same buffer.
 			let collectedLines: string[];
 			let totalFileLines: number;
+			// A range read that stopped mid-scan (`stopScanAfterCollect` above the
+			// snapshot cap) only counted the prefix it walked, so `totalFileLines`
+			// is a lower bound and the range is known to continue.
+			let reachedEof = true;
 			const maxBytesForRead = Math.max(DEFAULT_MAX_BYTES, maxLines * 512);
 			if (fullLines) {
 				totalFileLines = fullLines.length;
@@ -1535,6 +1550,7 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 						});
 				totalFileLines = window.totalFileLines;
 				collectedLines = window.lines;
+				reachedEof = window.reachedEof;
 			}
 
 			if (rangeStart >= totalFileLines) {
@@ -1567,6 +1583,24 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 				if (!fullLines || rawSelector) {
 					const blockText = displayLines.join("\n");
 					blocks.push(formatTextWithMode(blockText, range.startLine, shouldAddHashLines, shouldAddLineNumbers));
+				}
+				// Every range is capped at DEFAULT_MAX_LINES (and by its byte budget),
+				// so `:1-5000` quietly ends at 3000 while the range after it still
+				// renders — the output looks like a complete read of a smaller range.
+				// Say where this range stopped and where it resumes, in the same shape
+				// the single-range path uses for a capped request.
+				// The range is clipped only when the window stopped before the last
+				// line the range asks for and that line exists: `:9000-9010` on a
+				// 9000-line file returns everything it can, while `:1-5000` returns
+				// 3000 of 5000. A scan above the snapshot cap stops early, making its
+				// line total a lower bound, so a filled window there is clipped too.
+				const limitLine = range.endLine !== undefined ? Math.min(range.endLine, totalFileLines) : totalFileLines;
+				if (endLine < limitLine || (!reachedEof && collectedLines.length >= maxLines)) {
+					const bound = range.endLine !== undefined ? `${range.startLine}-${range.endLine}` : `${range.startLine}`;
+					const ofLabel = reachedEof ? `${limitLine}` : `at least ${totalFileLines}`;
+					notices.push(
+						`[Showing lines ${range.startLine}-${endLine} of ${ofLabel} in range ${bound}. Use ${selectorBase}:${endLine + 1} to continue]`,
+					);
 				}
 			}
 		}
@@ -2210,6 +2244,7 @@ export class ReadTool implements AgentTool<typeof readSchema, ReadToolDetails> {
 						sel,
 						displayMode,
 						suffixResolution,
+						selectorBase,
 						undefined, // plain-file read: deterministic and fast, never abort mid-read
 						!located, // located URLs read their backing file directly, as their handlers do
 					);

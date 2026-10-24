@@ -6,6 +6,10 @@
 
 - The custom endpoint wizard asks for an optional context window and shows it on the confirmation step.
 
+### Fixed
+
+- `applyListLimit` treats a result set of exactly `limit` items as complete instead of reporting it as truncated.
+
 ## [0.1.1] - 2026-10-20
 
 ### Fixed
