@@ -597,6 +597,13 @@ export function setTerminalTitle(title: string): void {
  */
 function writeTerminalTitle(title: string, recomposeStaticOnFailure = false): void {
 	if (terminalTitleRuntime.disposed) return;
+	if (!terminalTitleRuntime.titleEnabled) {
+		// `tui.title` is off: the emulator keeps the title the shell gave it. Forget
+		// the dedupe key so re-enabling repaints the current title immediately
+		// instead of comparing against a title this sink never wrote.
+		lastTerminalTitle = undefined;
+		return;
+	}
 	if (!process.stdout.isTTY || isTerminalHeadless()) return;
 	const next = sanitizeTerminalTitlePart(title) ?? DEFAULT_TERMINAL_TITLE;
 	if (next === lastTerminalTitle) return;
@@ -808,6 +815,10 @@ const terminalTitleRuntime: {
 	 *  While latched the working separator stays `:` and no interval is
 	 *  scheduled. */
 	nativeTitleFailed: boolean;
+	/** Set by `setTerminalTitleEnabled` from the `tui.title` setting. While false the
+	 *  sink emits nothing and the spinner stays disarmed, so the emulator keeps the
+	 *  title the shell (or the user) gave the tab. */
+	titleEnabled: boolean;
 } = {
 	label: undefined,
 	sessionName: undefined,
@@ -821,6 +832,7 @@ const terminalTitleRuntime: {
 	extensionOverride: undefined,
 	disposed: false,
 	nativeTitleFailed: false,
+	titleEnabled: true,
 };
 
 /**
@@ -911,6 +923,7 @@ function startTerminalTitleSpinner(): void {
 		isNativeRendering() ||
 		isStaticTitleHost() ||
 		terminalTitleRuntime.disposed ||
+		!terminalTitleRuntime.titleEnabled ||
 		terminalTitleRuntime.timer ||
 		terminalTitleRuntime.nativeTitleFailed ||
 		!process.stdout.isTTY
@@ -925,6 +938,29 @@ function startTerminalTitleSpinner(): void {
 	}, TITLE_SPINNER_INTERVAL_MS);
 	// Never keep the event loop alive for a cosmetic animation.
 	terminalTitleRuntime.timer.unref?.();
+}
+
+/**
+ * Turn automatic terminal title updates on or off (driven by the `tui.title`
+ * setting). While off, {@link writeTerminalTitle} emits nothing and the working
+ * spinner never arms, so the emulator keeps whatever title the shell set.
+ * Re-enabling repaints the current composed title at once: the sink's dedupe key
+ * is forgotten either way. Teardown is unaffected — `disposeTerminalTitleState`
+ * still restores the shell's title.
+ */
+export function setTerminalTitleEnabled(enabled: boolean): void {
+	if (enabled === terminalTitleRuntime.titleEnabled) return;
+	terminalTitleRuntime.titleEnabled = enabled;
+	// The sink skips its dedupe comparison while disabled, so the key it remembers
+	// belongs to a title that is no longer on screen. Forget it both ways; the
+	// re-enable path below then repaints the current title at once.
+	lastTerminalTitle = undefined;
+	if (!enabled) {
+		stopTerminalTitleSpinner();
+		return;
+	}
+	if (terminalTitleRuntime.state === "working") startTerminalTitleSpinner();
+	emitTerminalTitle();
 }
 
 /**

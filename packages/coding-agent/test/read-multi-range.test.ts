@@ -255,6 +255,41 @@ describe("read tool multi-range selector", () => {
 		);
 	});
 
+	it("discloses a range the line cap cut and names where it resumes", async () => {
+		// `:1-5000` collects at most DEFAULT_MAX_LINES, so without a notice the
+		// caller sees lines 1-3000 followed by the next requested range and reads
+		// the gap as content that does not exist.
+		const filePath = path.join(tmpDir, "long.txt");
+		await fs.writeFile(filePath, makeNumberedContent(6000));
+
+		const tool = new ReadTool(createSession(tmpDir));
+		const text = textOutput(await tool.execute("call-capped-range", { path: `${filePath}:1-5000,5900-5902` }));
+
+		expect(text).toContain("line 3000");
+		expect(text).not.toContain("line 3001");
+		expect(text).toContain("line 5900");
+		expect(text).toContain("line 5902");
+		expect(text).toContain("[Showing lines 1-3000 of 5000 in range 1-5000. Use :3001 to continue]");
+		// The uncapped tail range needs no notice.
+		expect(text).not.toContain("Showing lines 5900-5902");
+		// Ranges still separate with the elision marker.
+		expect(text).toContain("…");
+	});
+
+	it("keeps a range quiet when it runs past end of file", async () => {
+		// `:5900-5999` asks for lines the file does not have: the window returns
+		// every line that exists, so reporting it as clipped would send the caller
+		// paging to a line number past the end of the file.
+		const filePath = path.join(tmpDir, "long.txt");
+		await fs.writeFile(filePath, makeNumberedContent(6000));
+
+		const tool = new ReadTool(createSession(tmpDir));
+		const text = textOutput(await tool.execute("call-past-eof", { path: `${filePath}:5900-5999,1-5` }));
+
+		expect(text).toContain("line 5999");
+		expect(text).not.toContain("[Showing lines");
+	});
+
 	it("routes multi-range reads through the ACP bridge when available", async () => {
 		const filePath = path.join(tmpDir, "disk.txt");
 		await fs.writeFile(filePath, "disk one\ndisk two\ndisk three\ndisk four\ndisk five\n");

@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { runConfigCommand } from "@marsai-org/coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@marsai-org/coding-agent/config/settings";
+import { getModelPreset } from "@marsai-org/coding-agent/config/model-presets";
+import { cfgProvidersEndpoints } from "@marsai-org/coding-agent/config/provider-endpoint-settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgProvidersMaxInFlightRequests } from "@marsai-org/coding-agent/session/settings";
 import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
 import { initTheme } from "@marsai-org/tui/theme";
 import { getConfigRootDir, setAgentDir, TempDir } from "@marsai-org/utils";
@@ -155,6 +158,58 @@ describe("config CLI schema coverage", () => {
 			openai: "https://my-proxy.example.com/v1",
 			anthropic: "https://claude-gateway.example.com",
 		});
+	});
+
+	it("stores a record subkey argument as the JSON value it spells", async () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		await runConfigCommand({
+			action: "set",
+			key: "modelPresets.mine",
+			value: '{"modelRoles":{"default":"anthropic/claude-sonnet-4-5"}}',
+			flags: { json: true },
+		});
+
+		// A preset is read back as a mapping, so the argument must not land as text.
+		expect(getModelPreset(Settings.instance, "mine")).toEqual({
+			kind: "found",
+			preset: { modelRoles: { default: "anthropic/claude-sonnet-4-5" } },
+		});
+
+		await runConfigCommand({
+			action: "set",
+			key: "providers.maxInFlightRequests.openai",
+			value: "3",
+			flags: { json: true },
+		});
+		expect(cfgProvidersMaxInFlightRequests.get(Settings.instance)).toEqual({ openai: 3 });
+
+		// A URL is neither a number nor a JSON literal, so it stays the typed text.
+		await runConfigCommand({
+			action: "set",
+			key: "providers.endpoints.openai",
+			value: "https://gw.example.com/v1",
+			flags: { json: true },
+		});
+		expect(cfgProvidersEndpoints.get(Settings.instance)).toEqual({ openai: "https://gw.example.com/v1" });
+	});
+
+	it("rejects a malformed JSON object argument for a record subkey", async () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
+			throw new Error("process.exit");
+		}) as typeof process.exit);
+
+		await expect(
+			runConfigCommand({
+				action: "set",
+				key: "modelPresets.mine",
+				value: '{"modelRoles":',
+				flags: { json: true },
+			}),
+		).rejects.toThrow("process.exit");
+		expect(exitSpy).toHaveBeenCalledWith(1);
+		expect(console.error).toHaveBeenCalledWith(expect.stringContaining("Invalid JSON object or array"));
 	});
 
 	it("rejects a subkey write that is not an absolute URL", async () => {

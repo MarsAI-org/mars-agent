@@ -50,6 +50,28 @@ describe("provider-endpoint-settings", () => {
 		).toThrow("Provider endpoints must be absolute URLs");
 	});
 
+	test("drops blank entries instead of failing the whole config load", () => {
+		// A hand-edited `gw:` parses as null; rejecting it would fail
+		// `Settings.init()` and take every command down with it.
+		expect(validateProviderEndpoints({ gw: null, ok: "https://gw.example.com/v1" })).toEqual({
+			ok: "https://gw.example.com/v1",
+		});
+		expect(validateProviderEndpoints({ gw: undefined, ok: "https://gw.example.com/v1" })).toEqual({
+			ok: "https://gw.example.com/v1",
+		});
+		expect(validateProviderEndpoints({ gw: "   ", ok: "https://gw.example.com/v1" })).toEqual({
+			ok: "https://gw.example.com/v1",
+		});
+		resetSettingsForTest();
+		const s = Settings.isolated({ "providers.endpoints": { gw: null, ok: "https://gw.example.com/v1" } });
+
+		expect(cfgProvidersEndpoints.get(s)).toEqual({ ok: "https://gw.example.com/v1" });
+	});
+
+	test("still rejects a non-string endpoint value", () => {
+		expect(() => validateProviderEndpoints({ gw: 12345 })).toThrow("gw");
+	});
+
 	test("integrates with Settings.isolated", () => {
 		resetSettingsForTest();
 		const s = Settings.isolated({

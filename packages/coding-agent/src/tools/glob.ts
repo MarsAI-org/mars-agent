@@ -546,7 +546,10 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 							pattern: target.globPattern,
 							path: target.searchPath,
 							hidden: includeHidden,
-							maxResults: effectiveLimit,
+							// One past the cap: `applyListLimit` compares strictly, so a
+							// result set of exactly `effectiveLimit` entries is complete
+							// while `limit + 1` proves there was more to list.
+							maxResults: effectiveLimit + 1,
 							sortByMtime: true,
 							gitignore: useGitignore,
 							// parseFindPattern explicitly prepends "**/" when the user's

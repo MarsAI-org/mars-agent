@@ -22,9 +22,8 @@ function isWindowRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /**
- * A window as a token count, or `undefined`. Numeric text is accepted because
- * `config set providers.contextWindows.<id> 200000` writes the raw CLI string
- * into the record; JSON writes and `config.yml` itself use numbers.
+ * A window as a token count, or `undefined`. Numeric text is accepted so a
+ * hand-edited or quoted `config.yml` value keeps working.
  */
 function windowOf(value: unknown): number | undefined {
 	const count = typeof value === "string" && DIGITS_PATTERN.test(value.trim()) ? Number(value) : value;
@@ -45,13 +44,18 @@ export function normalizeProviderContextWindows(value: unknown): Record<string, 
 /**
  * Validated per-provider windows.
  *
- * @throws Error naming every provider whose window is not a positive integer.
+ * @throws Error naming every provider whose window is set to something other
+ * than a positive integer. A `null`/blank entry means "no override" — YAML
+ * writes `null` for a key left without a value — and is dropped like the
+ * normalize half drops it, rather than failing the whole config load.
  */
 export function validateProviderContextWindows(value: unknown): Record<string, number> {
 	if (isWindowRecord(value)) {
 		const invalid: string[] = [];
 		for (const provider in value) {
-			if (windowOf(value[provider]) === undefined) invalid.push(provider);
+			const entry = value[provider];
+			const unset = entry === undefined || entry === null || (typeof entry === "string" && entry.trim() === "");
+			if (!unset && windowOf(entry) === undefined) invalid.push(provider);
 		}
 		if (invalid.length > 0) {
 			throw new Error(`Provider context windows must be positive integers (tokens): ${invalid.join(", ")}`);
