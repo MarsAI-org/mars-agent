@@ -731,10 +731,16 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 				// the budget instead of rendering every replayed block (#12933).
 				const liveRows = transcript.liveRowCount(width, Math.max(0, rows - renderedHeader.length - chromeRows));
 				if (!this.#historyFlush && renderedHeader.length + chromeRows + liveRows <= rows) return undefined;
+				// Merging the header into the ledger is the resume shape: only a
+				// container holding a settled backlog should take it. Otherwise the
+				// header retires alone and the transcript follows as it grows.
+				const headerCapacity = Math.max(0, rows - chromeRows - renderedHeader.length);
 				const transcriptBatch = this.#historyFlush
 					? transcript.peekFlushBatch(width)
-					: (transcript.peekResumeBatch(width, Math.max(0, rows - chromeRows - renderedHeader.length)) ??
-						transcript.peekFinalizedBatch(width, Math.max(0, rows - chromeRows - renderedHeader.length)));
+					: this.#freshTranscript && transcript.hasSettledBacklog()
+						? (transcript.peekResumeBatch(width, headerCapacity) ??
+							transcript.peekFinalizedBatch(width, headerCapacity))
+						: undefined;
 				if (transcriptBatch !== undefined) {
 					const headerRows = [...renderedHeader, ""];
 					this.#offeredHistory = {
@@ -769,14 +775,17 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 			this.#headerRetired = true;
 			this.#retiredHeaderRows = [];
 		}
-		const isFresh = this.#freshTranscript;
+		// The resume path only applies when the container really holds a settled
+		// backlog: a caller that fills the transcript one block at a time must keep
+		// the budgeted retirement so its rows stay live and keep reflowing.
+		const isFresh = this.#freshTranscript && transcript.hasSettledBacklog();
 		this.#freshTranscript = false;
+		const capacity = Math.max(0, rows - chromeRows);
 		const batch = this.#historyFlush
 			? transcript.peekFlushBatch(width)
 			: isFresh
-				? (transcript.peekResumeBatch(width, Math.max(0, rows - chromeRows)) ??
-					transcript.peekFinalizedBatch(width, Math.max(0, rows - chromeRows)))
-				: transcript.peekFinalizedBatch(width, Math.max(0, rows - chromeRows));
+				? (transcript.peekResumeBatch(width, capacity) ?? transcript.peekFinalizedBatch(width, capacity))
+				: transcript.peekFinalizedBatch(width, capacity);
 		if (batch === undefined) return undefined;
 		this.#offeredHistory = {
 			id: this.#nextHistoryId++,
@@ -975,7 +984,6 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 		for (const child of children) this.ui.addChild(child);
 		this.ui.addChild(this.#statusHost);
 		this.ui.requestRender();
-		this.#freshTranscript = true;
 	}
 
 	/**

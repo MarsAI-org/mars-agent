@@ -65,6 +65,9 @@ describe("issue #80 — resume lands bottom-anchored in one frame", () => {
 
 		composer.setRuntimeChildren([transcript]);
 		composer.start({ clearScrollback: false, playWelcomeIntro: false });
+		// The app signals a resumed transcript explicitly; mounting alone must not
+		// take the one-shot path, or every remount would collapse its ledger here.
+		composer.notifyFreshTranscript();
 		const plan = composer.renderFrame({ columns: 80, rows: 15 });
 		expect(plan.history).toBeDefined();
 

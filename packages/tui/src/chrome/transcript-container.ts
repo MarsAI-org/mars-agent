@@ -335,6 +335,22 @@ export class TranscriptContainer extends Container {
 		return Math.max(0, Math.trunc(rows)) > active && this.#liveCount() < MAX_LIVE_BLOCKS;
 	}
 
+	/**
+	 * Whether entries beyond the frontier are already settled and waiting to
+	 * retire. A resume installs exactly that shape; a container that is merely
+	 * being filled a block at a time has none, so it must keep the ordinary
+	 * budgeted retirement instead of the one-shot resume path (#80).
+	 */
+	hasSettledBacklog(): boolean {
+		this.#syncEntries();
+		this.#settleFinalized();
+		let count = 0;
+		for (let index = this.#frontier; index < this.#entries.length; index++) {
+			if (this.#entries[index]!.state === "settled") count++;
+		}
+		return count > 1;
+	}
+
 	/** Prepares one atomic replay of the committed ledger and an emitted active-head prefix. */
 	beginReplay(): void {
 		this.#syncEntries();
