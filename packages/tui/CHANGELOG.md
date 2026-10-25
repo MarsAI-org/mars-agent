@@ -5,6 +5,7 @@
 ### Fixed
 
 - **Frames that change nothing no longer touch the terminal.** A render whose body rewrote no row and whose cursor was already parked emitted the synchronized-output markers anyway, and terminals honoring DEC 2026 recomposite the screen for each one — visible as a display that keeps refreshing with nothing changing. The write is skipped; the history acknowledgement, paint notification, and diff-ledger refresh still run, so a provider never re-offers an accepted batch.
+- **Resuming a session lands on the tail instead of scrolling itself down (#80).** A resume installs a whole ledger into a container that has never painted, so every block was still live. Retirement then walked the overflowing prefix one `RETIREMENT_BUDGET_MS` chunk at a time, and each chunk was written as its own history append below the previous frame, filling the pane from row zero with the transcript head and walking down to the tail over several seconds. `peekResumeBatch` retires that entire prefix in one batch without the frame budget, and the composer now merges the retiring welcome header into that same batch instead of offering it alone first.
 
 ## [0.3.0] - 2026-10-25
 
