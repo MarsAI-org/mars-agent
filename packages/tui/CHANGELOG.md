@@ -2,16 +2,12 @@
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-10-25
+
 ### Fixed
 
 - **Frames that change nothing no longer touch the terminal.** A render whose body rewrote no row and whose cursor was already parked emitted the synchronized-output markers anyway, and terminals honoring DEC 2026 recomposite the screen for each one — visible as a display that keeps refreshing with nothing changing. The write is skipped; the history acknowledgement, paint notification, and diff-ledger refresh still run, so a provider never re-offers an accepted batch.
 - **Resuming a session lands on the tail instead of scrolling itself down (#80).** A resume installs a whole ledger into a container that has never painted, so every block was still live. Retirement then walked the overflowing prefix one `RETIREMENT_BUDGET_MS` chunk at a time, and each chunk was written as its own history append below the previous frame, filling the pane from row zero with the transcript head and walking down to the tail over several seconds. `peekResumeBatch` retires that entire prefix in one batch without the frame budget, and the composer now merges the retiring welcome header into that same batch instead of offering it alone first.
-
-## [0.3.0] - 2026-10-25
-
-### Added
-
-- A blank context window in the custom-endpoint wizard now asks the endpoint which window each model accepts, and the confirmation step reports what came back.
 
 ## [18.8.6] - 2026-10-08
 
@@ -3034,29 +3030,4 @@ Initial release under @oh-my-pi scope. See previous releases at [badlogic/pi-mon
 - Cursor now moves to end of content on exit, preventing status line from being overwritten ([#629](https://github.com/badlogic/pi-mono/pull/629) by [@tallshort](https://github.com/tallshort))
 - Reset ANSI styles after each rendered line to prevent style leakage
 
-## [0.42.5] - 2026-01-11
-
-### Fixed
-
-- Reduced flicker by only re-rendering changed lines ([#617](https://github.com/badlogic/pi-mono/pull/617) by [@ogulcancelik](https://github.com/ogulcancelik))
-- Cursor position tracking when content shrinks with unchanged remaining lines
-- TUI renders with wrong dimensions after suspend/resume if terminal was resized while suspended ([#599](https://github.com/badlogic/pi-mono/issues/599))
-- Pasted content containing Kitty key release patterns (e.g., `:3F` in MAC addresses) was incorrectly filtered out ([#623](https://github.com/badlogic/pi-mono/pull/623) by [@ogulcancelik](https://github.com/ogulcancelik))
-
-## [0.39.0] - 2026-01-08
-
-### Added
-
-- **Experimental:** Overlay compositing for `ctx.ui.custom()` with `{ overlay: true }` option ([#558](https://github.com/badlogic/pi-mono/pull/558) by [@nicobailon](https://github.com/nicobailon))
-
-## [0.2.0] - 2026-10-24
-
-### Added
-
-- The custom endpoint wizard asks for an optional context window and shows it on the confirmation step.
-
-### Fixed
-
-- `applyListLimit` treats a result set of exactly `limit` items as complete instead of reporting it as truncated.
-
-Older entries are archived in [packages/tui/CHANGELOG.md@05aec8f649fb](https://github.com/can1357/oh-my-pi/blob/05aec8f649fbc97b1795916e7f547fcd2367e481/packages/tui/CHANGELOG.md).
+Older entries are archived in [packages/tui/CHANGELOG.md@7d328a29981f](https://github.com/can1357/oh-my-pi/blob/7d328a29981f94bc1e18a39b42835ce4c8da1025/packages/tui/CHANGELOG.md).
