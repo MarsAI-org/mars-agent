@@ -98,7 +98,7 @@ interface TranscriptEntry {
 	stableFrozen: boolean;
 }
 
-type RetirementPolicy = "pressure" | "flush";
+type RetirementPolicy = "pressure" | "flush" | "resume";
 type Offered =
 	| { batch: HistoryBatch; kind: "append"; entry: number; emittedEnd: number }
 	| { batch: HistoryBatch; kind: "commit"; end: number }
@@ -333,6 +333,22 @@ export class TranscriptContainer extends Container {
 	canAdmit(rows: number): boolean {
 		const active = this.#entries.filter(entry => entry.state === "active").length;
 		return Math.max(0, Math.trunc(rows)) > active && this.#liveCount() < MAX_LIVE_BLOCKS;
+	}
+
+	/**
+	 * Whether entries beyond the frontier are already settled and waiting to
+	 * retire. A resume installs exactly that shape; a container that is merely
+	 * being filled a block at a time has none, so it must keep the ordinary
+	 * budgeted retirement instead of the one-shot resume path (#80).
+	 */
+	hasSettledBacklog(): boolean {
+		this.#syncEntries();
+		this.#settleFinalized();
+		let count = 0;
+		for (let index = this.#frontier; index < this.#entries.length; index++) {
+			if (this.#entries[index]!.state === "settled") count++;
+		}
+		return count > 1;
 	}
 
 	/** Prepares one atomic replay of the committed ledger and an emitted active-head prefix. */
@@ -594,6 +610,14 @@ export class TranscriptContainer extends Container {
 		return this.#peekBatch(width, 0, "flush");
 	}
 
+	/**
+	 * Offers the full overflowing prefix in one batch without chunking by
+	 * budget, used during resume so the screen lands bottom-anchored in one frame (#80).
+	 */
+	peekResumeBatch(width: number, capacity: number): HistoryBatch | undefined {
+		return this.#peekBatch(width, capacity, "resume");
+	}
+
 	/** Recompose the unacknowledged batch so a discarded TUI frame can be rendered again. */
 	rerenderOfferedBatch(width: number): HistoryBatch | undefined {
 		const offered = this.#offered;
@@ -717,7 +741,7 @@ export class TranscriptContainer extends Container {
 				end,
 				width,
 				true,
-				policy === "flush" ? undefined : RETIREMENT_BUDGET_MS,
+				policy === "flush" || policy === "resume" ? undefined : RETIREMENT_BUDGET_MS,
 			);
 		} finally {
 			popLoopPhase();
