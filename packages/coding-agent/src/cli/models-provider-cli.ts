@@ -21,6 +21,11 @@ import {
 	removeProviderBlock,
 	upsertProviderBlock,
 } from "../config/models-config-writer";
+import {
+	detectAdvertisedContextWindows,
+	uniformDetectedWindow,
+	windowsForDeclaredModels,
+} from "../config/context-window-detection";
 import { cfgProvidersContextWindows } from "../config/provider-context-window-settings";
 import { Settings, settings } from "../config/settings";
 import { replaceFileAtomically } from "../utils/atomic-file";
@@ -40,6 +45,12 @@ export const CUSTOM_PROVIDER_DISCOVERY = ["openai-models-list", "proxy", "litell
 
 export type CustomProviderDiscovery = (typeof CUSTOM_PROVIDER_DISCOVERY)[number];
 
+/** One declared model id, optionally with the context window it accepts. */
+export interface DeclaredCustomModel {
+	id: string;
+	contextWindow?: number;
+}
+
 export interface AddProviderOptions {
 	/** Provider id written under `providers:`. Required. */
 	id: string;
@@ -52,8 +63,15 @@ export interface AddProviderOptions {
 	 * literal token, or a `!command`. Omit for a keyless endpoint.
 	 */
 	apiKey?: string;
-	/** Model ids to declare. An empty list is valid only with discovery enabled. */
-	models?: string[];
+	/**
+	 * Models to declare. An empty list is valid only with discovery enabled.
+	 *
+	 * A bare id inherits `maxContext` when one is given. An entry that carries
+	 * its own `contextWindow` keeps it — that is how a window the endpoint
+	 * advertised per model is written, since a provider-wide value would also
+	 * apply to models the endpoint said nothing about.
+	 */
+	models?: Array<string | DeclaredCustomModel>;
 	/** How the provider advertises its catalog. Defaults to `none` (models are declared). */
 	discovery?: CustomProviderDiscovery;
 	/**
@@ -103,9 +121,16 @@ export function buildProviderConfig(options: AddProviderOptions): Record<string,
 	if (options.headers && Object.keys(options.headers).length > 0) config.headers = { ...options.headers };
 	const discovery = options.discovery ?? "none";
 	if (discovery !== "none") config.discovery = { type: discovery };
-	const models = (options.models ?? []).map(id =>
-		options.maxContext === undefined ? { id } : { id, contextWindow: options.maxContext },
-	);
+	// A declared entry's own window wins over the provider-wide value: a window
+	// the endpoint advertised for that exact id is more specific than one the
+	// user typed for the whole provider.
+	const models = (options.models ?? []).map(entry => {
+		if (typeof entry === "string") {
+			return options.maxContext === undefined ? { id: entry } : { id: entry, contextWindow: options.maxContext };
+		}
+		const contextWindow = entry.contextWindow ?? options.maxContext;
+		return contextWindow === undefined ? { id: entry.id } : { id: entry.id, contextWindow };
+	});
 	if (models.length > 0) config.models = models;
 	return config;
 }
@@ -324,9 +349,13 @@ async function promptForProvider(seed: Partial<AddProviderOptions>): Promise<Add
 			),
 		);
 		const credential = seed.apiKey ?? (await ask(rl, "Credential:"));
-		const models =
+		// The prompt only ever collects plain ids; a caller that prefilled objects
+		// (scripted flags) skips the prompt entirely, so normalize whatever it may
+		// have seeded and keep the rest of this function on ids.
+		const models = (
 			seed.models ??
-			splitList(await ask(rl, "Model ids, comma separated (leave blank to discover them from the endpoint):"));
+			splitList(await ask(rl, "Model ids, comma separated (leave blank to discover them from the endpoint):"))
+		)?.map(entry => (typeof entry === "string" ? entry : entry.id));
 		const discovery = (seed.discovery ??
 			(models === undefined
 				? await ask(rl, `Discovery (${CUSTOM_PROVIDER_DISCOVERY.join(", ")}):`, {
@@ -336,20 +365,51 @@ async function promptForProvider(seed: Partial<AddProviderOptions>): Promise<Add
 		process.stdout.write(
 			chalk.dim(
 				models === undefined
-					? "  Context window: applies to every chat model discovered under this provider. Leave blank to use the provider's own.\n"
-					: "  Context window: tokens every declared model accepts. Leave blank to use the provider's own.\n",
+					? "  Context window: applies to every chat model discovered under this provider. Leave blank to detect it from the endpoint.\n"
+					: "  Context window: tokens every declared model accepts. Leave blank to detect each model's window from the endpoint.\n",
 			),
 		);
 		const maxContext = seed.maxContext ?? (await askWindow(rl, "Context window in tokens:"));
+		// A blank window asks the endpoint. Declared ids get their own window in
+		// the block; a discovered catalog has no ids to attach one to yet, so a
+		// value every advertised model agrees on becomes the provider-wide one.
+		let declaredModels: AddProviderOptions["models"] = models;
+		let providerWindow = maxContext;
+		if (maxContext === undefined && seed.models === undefined) {
+			const detected = await detectAdvertisedContextWindows({ baseUrl, apiKey: credential || undefined });
+			if (detected.models.length === 0) {
+				process.stdout.write(chalk.dim("  The endpoint advertises no context window; using its default.\n"));
+			} else if (models !== undefined) {
+				const matched = windowsForDeclaredModels(detected, models);
+				if (matched.size === 0) {
+					process.stdout.write(chalk.dim("  The endpoint advertises no window for those ids.\n"));
+				} else {
+					process.stdout.write(
+						chalk.dim(
+							`  Detected: ${[...matched].map(([modelId, window]) => `${modelId}=${window}`).join(", ")}\n`,
+						),
+					);
+					declaredModels = models.map(modelId => ({ id: modelId, contextWindow: matched.get(modelId) }));
+				}
+			} else {
+				const uniform = uniformDetectedWindow(detected.models);
+				if (uniform === undefined) {
+					process.stdout.write(chalk.dim("  The advertised windows differ; discovery keeps each model's own.\n"));
+				} else {
+					process.stdout.write(chalk.dim(`  Detected: ${uniform} tokens for every advertised model.\n`));
+					providerWindow = uniform;
+				}
+			}
+		}
 		return {
 			...seed,
 			id,
 			baseUrl,
 			api,
 			apiKey: credential && credential.length > 0 ? credential : undefined,
-			models,
+			models: declaredModels,
 			discovery,
-			maxContext,
+			maxContext: providerWindow,
 		};
 	} finally {
 		rl.close();
