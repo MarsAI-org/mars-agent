@@ -10,6 +10,7 @@
 ### Fixed
 
 - **Orchestrator reports kept the worker output and the reason for a failure.** The settlement queue the report read from is drained by the scheduler, so a finished task reported only its state and worker id: the worker's output, an engine-side error, and the verification verdict were all dropped. `orchestrate` now prints the failing check and its output when the gate rejects a task.
+- **Resuming a session no longer paints the transcript from the top and scrolls down to the tail (#80).** `renderInitialMessages` now tells the composer that the transcript was just populated, so the first frame retires the whole overflowing prefix in one batch instead of one budgeted chunk per frame. The pane lands on the tail, and the same path covers `/resume` and session switches.
 
 ### Changed
 

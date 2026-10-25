@@ -231,7 +231,7 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 					| {
 							transcript: TranscriptContainer;
 							transcriptId?: number;
-							header: "none" | "replay";
+							header: "none" | "replay" | "prepend";
 							/** Recomposed header rows to accept as the new retired-header bytes. */
 							headerRows?: readonly string[];
 					  };
@@ -248,6 +248,13 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 	// it still holds; a settled replay owns every byte it emits, so it
 	// recomposes the header at the replay width and refreshes these rows.
 	#retiredHeaderRows: readonly string[] | undefined;
+	/**
+	 * Set when a caller installed a whole transcript into a container that has
+	 * never painted (resume, session switch). The first history offer then
+	 * retires the entire overflowing prefix in one batch, so the screen lands
+	 * bottom-anchored instead of walking down one budgeted chunk per frame (#80).
+	 */
+	#freshTranscript = false;
 	/** Click spans of the last `renderFrame` viewport, in viewport coordinates. */
 	#lastClickSpans: ViewportClickSpan[] = [];
 	/** Click-candidate id under the pointer, painted with the hover band. Id-anchored so it follows streaming rows. */
@@ -607,8 +614,9 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 			if (offered.source.transcriptId !== undefined) {
 				offered.source.transcript.acknowledgeFinalizedBatch(offered.source.transcriptId);
 			}
-			if (offered.source.header === "replay") {
-				this.#headerReplayPending = false;
+			if (offered.source.header === "replay" || offered.source.header === "prepend") {
+				this.#headerRetired = true;
+				if (offered.source.header === "replay") this.#headerReplayPending = false;
 				if (offered.source.headerRows !== undefined) this.#retiredHeaderRows = offered.source.headerRows;
 			}
 		}
@@ -723,6 +731,35 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 				// the budget instead of rendering every replayed block (#12933).
 				const liveRows = transcript.liveRowCount(width, Math.max(0, rows - renderedHeader.length - chromeRows));
 				if (!this.#historyFlush && renderedHeader.length + chromeRows + liveRows <= rows) return undefined;
+				// Merging the header into the ledger is the resume shape: only a
+				// container holding a settled backlog should take it. Otherwise the
+				// header retires alone and the transcript follows as it grows.
+				const headerCapacity = Math.max(0, rows - chromeRows - renderedHeader.length);
+				const transcriptBatch = this.#historyFlush
+					? transcript.peekFlushBatch(width)
+					: this.#freshTranscript && transcript.hasSettledBacklog()
+						? (transcript.peekResumeBatch(width, headerCapacity) ??
+							transcript.peekFinalizedBatch(width, headerCapacity))
+						: undefined;
+				if (transcriptBatch !== undefined) {
+					const headerRows = [...renderedHeader, ""];
+					this.#offeredHistory = {
+						id: this.#nextHistoryId++,
+						rows: [...headerRows, ...transcriptBatch.rows],
+						kind: "append",
+						source: {
+							transcript,
+							transcriptId: transcriptBatch.id,
+							header: "prepend",
+							headerRows,
+						},
+					};
+					return {
+						id: this.#offeredHistory.id,
+						rows: this.#offeredHistory.rows,
+						kind: this.#offeredHistory.kind,
+					};
+				}
 				this.#offeredHistory = {
 					id: this.#nextHistoryId++,
 					rows: [...renderedHeader, ""],
@@ -738,9 +775,17 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 			this.#headerRetired = true;
 			this.#retiredHeaderRows = [];
 		}
+		// The resume path only applies when the container really holds a settled
+		// backlog: a caller that fills the transcript one block at a time must keep
+		// the budgeted retirement so its rows stay live and keep reflowing.
+		const isFresh = this.#freshTranscript && transcript.hasSettledBacklog();
+		this.#freshTranscript = false;
+		const capacity = Math.max(0, rows - chromeRows);
 		const batch = this.#historyFlush
 			? transcript.peekFlushBatch(width)
-			: transcript.peekFinalizedBatch(width, Math.max(0, rows - chromeRows));
+			: isFresh
+				? (transcript.peekResumeBatch(width, capacity) ?? transcript.peekFinalizedBatch(width, capacity))
+				: transcript.peekFinalizedBatch(width, capacity);
 		if (batch === undefined) return undefined;
 		this.#offeredHistory = {
 			id: this.#nextHistoryId++,
@@ -938,6 +983,18 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 		this.#runtimeChildren = children;
 		for (const child of children) this.ui.addChild(child);
 		this.ui.addChild(this.#statusHost);
+		this.ui.requestRender();
+	}
+
+	/**
+	 * Notify the composer that new settled entries were added to the transcript
+	 * without remounting the container (e.g. after renderInitialMessages populates
+	 * the chatContainer). The next frame retires the backlog in one batch without
+	 * the 8ms per-frame chunking, keeping resume bottom-anchored (#80).
+	 */
+	notifyFreshTranscript(): void {
+		if (this.#stopped) return;
+		this.#freshTranscript = true;
 		this.ui.requestRender();
 	}
 

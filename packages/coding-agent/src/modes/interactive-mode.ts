@@ -7558,6 +7558,7 @@ export class InteractiveMode implements InteractiveModeContext {
 		clearTerminalHistory?: boolean;
 	}): Promise<void> {
 		await this.#uiHelpers.renderInitialMessages(options);
+		this.composer.notifyFreshTranscript();
 		this.syncRetryHintRow();
 	}
 	/**
