@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-25
+
 ### Added
 
 - A blank context window in the custom-endpoint wizard now asks the endpoint which window each model accepts, and the confirmation step reports what came back.

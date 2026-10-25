@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-25
+
 ### Added
 
 - **Context windows are detected when you leave the field blank.** The custom-endpoint wizard, `mars login custom`, and `mars models add-provider` now read the endpoint's own model list (`context_length`, `max_model_len`, or the OpenRouter `limits` pair) instead of falling back to a default. A declared model stores its detected window in `models.yml`; ids the endpoint says nothing about keep resolving normally. A discovered catalog stores one provider-wide value only when every advertised model agrees on it.
