@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Added
+
+- **`/orchestrate` enters orchestrator mode from the session.** `/orchestrate on` enables `orchestrator.enabled` and activates the `orchestrate` tool without leaving the session or restarting; `/orchestrate off` removes only that tool and leaves every other selection alone. `/orchestrate status`, `mode <auto|single|parallel>`, and `workers <n>` complete the toggle.
+- **The verification gate now runs in production.** `ShellVerifier` and the check list existed only as an injectable seam, so every real run settled workers unverified. `orchestrator.verificationChecks` (a list of shell commands, empty by default) is wired into the engine the application builds; a worker whose output fails a check settles as `failed` instead of `completed`.
+
+### Fixed
+
+- **Orchestrator reports kept the worker output and the reason for a failure.** The settlement queue the report read from is drained by the scheduler, so a finished task reported only its state and worker id: the worker's output, an engine-side error, and the verification verdict were all dropped. `orchestrate` now prints the failing check and its output when the gate rejects a task.
+
+### Changed
+
+- **Idle frames no longer reach the terminal.** A render that rewrote no row and left the cursor where it already was used to write the synchronized-output markers anyway; terminals honoring DEC 2026 recomposite the screen for each one, which read as a display that never settles. Only the write is skipped — the history acknowledgement, paint notification, and diff bookkeeping still run, which is what a previous attempt at this got wrong.
+
 ## [0.3.0] - 2026-10-25
 
 ### Added

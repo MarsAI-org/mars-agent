@@ -10,6 +10,7 @@
 import { register } from "../config/registry";
 import { isAndroid } from "@marsai-org/utils/platform";
 import type { Settings } from "../config/settings";
+import type { VerificationCheck } from "./verifier";
 
 /** Mobile initial default for concurrent workers (to be tuned by the benchmark). */
 export const ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID = 2;
@@ -176,6 +177,45 @@ export const cfgOrchestratorMaxWallClockMs = register({
 		],
 	},
 });
+
+/**
+ * Shell commands run against a worker's output before its task may settle as
+ * completed. Each entry is one command line, executed through `sh -c` in order,
+ * stopping at the first failure.
+ *
+ * Empty (the default) disables verification entirely, which keeps the pre-gate
+ * behaviour for callers that have not opted in. Entries are plain command
+ * strings rather than structured records: this file is edited by hand, and
+ * `"bun run check"` reads better than a nested id/command/timeout object while
+ * still covering the common case.
+ */
+export const cfgOrchestratorVerificationChecks = register({
+	id: "orchestrator.verificationChecks",
+	type: "array",
+	default: [] as readonly string[],
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Verification Checks",
+		description:
+			"Shell commands a worker's output must pass before its task counts as complete (empty disables verification)",
+		ordered: true,
+	},
+});
+
+/**
+ * Map the configured command lines onto the verifier's check records.
+ *
+ * A blank entry would run `sh -c ""`, which always succeeds and would quietly
+ * inflate the sense of safety, so blanks are dropped rather than accepted.
+ */
+export function resolveOrchestratorVerificationChecks(settings: Settings): VerificationCheck[] {
+	return cfgOrchestratorVerificationChecks
+		.get(settings)
+		.map((command, index) => ({ command: command.trim(), index }))
+		.filter(entry => entry.command.length > 0)
+		.map(entry => ({ id: `check-${entry.index + 1}`, command: entry.command }));
+}
 
 /**
  * Effective orchestration limits for the current platform.

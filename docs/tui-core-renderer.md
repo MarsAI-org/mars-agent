@@ -77,6 +77,15 @@ history remainder, prepares `remainder || finalViewport`, and performs one
 synchronous `terminal.write`. No block-at-a-time replay frames are observable.
 Ordinary renders never audit or rewrite terminal history.
 
+A frame that rewrites no viewport row and leaves the hardware cursor where it
+already is produces no terminal write at all. Its only content would be the
+synchronized-output markers, and terminals honoring DEC 2026 recomposite the
+screen for every such frame, so a stream of them reads as a display that never
+settles. Only the write is skipped: the history acknowledgement, the paint
+notification, and the diff-ledger refresh still run, because a provider whose
+accepted batch was never acknowledged re-offers it and the same rows land in
+native scrollback twice.
+
 Visible overlays are screen-coordinate content. They composite over the
 viewport and never become history. Showing, updating, or closing an overlay
 only repaints the viewport.
