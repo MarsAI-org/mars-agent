@@ -63,6 +63,12 @@ export interface OrchestrateDetails {
 		workerId?: string;
 		exitCode?: number;
 		error?: string;
+		/**
+		 * Present when the verification gate rejected the worker's output: the
+		 * failing check id plus its truncated output, which is the only clue that
+		 * distinguishes "the code is wrong" from "the worker crashed".
+		 */
+		verificationFailure?: { check: string; output: string };
 	}>;
 	/** Live pane snapshot, present on streamed updates while the run is in flight. */
 	readonly panes?: readonly WorkerPane[];
@@ -112,6 +118,13 @@ function renderReport(details: OrchestrateDetails): string {
 		const mark = outcome.state === "completed" ? "✓" : "✗";
 		const detail = outcome.error ? ` — ${outcome.error}` : "";
 		lines.push(`  ${mark} ${outcome.taskId}: ${outcome.state}${detail}`);
+		// A rejected output is a different failure from a crashed worker, and the
+		// check that rejected it is the actionable part.
+		if (outcome.verificationFailure) {
+			const { check, output } = outcome.verificationFailure;
+			lines.push(`      verification failed: ${check}`);
+			for (const line of output.trim().split("\n").slice(-6)) lines.push(`        ${line}`);
+		}
 	}
 	if (details.usage) {
 		lines.push(`Usage: ${details.usage.totalTokens ?? 0} tokens across ${details.usage.requests ?? 0} request(s)`);
@@ -257,13 +270,22 @@ export class OrchestrateTool implements AgentTool<typeof orchestrateSchema, Orch
 				planId: report.planId,
 				stoppedReason: report.stoppedReason,
 				usage: report.usage,
-				outcomes: [...report.outcomes].map(([taskId, record]) => ({
-					taskId,
-					state: record.state,
-					workerId: record.workerId,
-					exitCode: record.outcome?.exitCode,
-					error: record.outcome?.error,
-				})),
+				outcomes: [...report.outcomes].map(([taskId, record]) => {
+					const failedCheck =
+						record.verification?.ok === false
+							? record.verification.checks.find(candidate => !candidate.ok)
+							: undefined;
+					return {
+						taskId,
+						state: record.state,
+						workerId: record.workerId,
+						exitCode: record.outcome?.exitCode,
+						error: record.error ?? record.outcome?.error,
+						...(failedCheck === undefined
+							? {}
+							: { verificationFailure: { check: failedCheck.id, output: failedCheck.output } }),
+					};
+				}),
 			};
 			return { content: [{ type: "text", text: renderReport(details) }], details };
 		} catch (error) {

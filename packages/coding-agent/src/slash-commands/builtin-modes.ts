@@ -44,6 +44,7 @@ import { formatSlowModeResetClock } from "../session/anthropic-slow-mode";
 import { cfgExtendedContext } from "../session/context-settings";
 import { cfgGoalEnabled } from "../goals/settings";
 import { cfgPlanEnabled } from "../plan-mode/settings";
+import { applyOrchestratorCommand, describeOrchestratorMode } from "../orchestrator/mode";
 
 export function refreshStatusLine(ctx: InteractiveModeContext): void {
 	ctx.statusLine.invalidate();
@@ -408,6 +409,29 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 			await runWithDetachedModeDraft(command, runtime, () =>
 				runtime.ctx.handleGuidedGoalCommand(command.args || undefined, runtime.input),
 			);
+		},
+	},
+	{
+		name: "orchestrate",
+		icon: "action",
+		description: "Toggle orchestrator mode (multi-agent fan-out through the orchestrate tool)",
+		inlineHint: "[on|off|status|mode|workers]",
+		allowArgs: true,
+		subcommands: [
+			{ name: "on", description: "Enable orchestrator mode and expose the orchestrate tool" },
+			{ name: "off", description: "Disable it and drop the orchestrate tool" },
+			{ name: "status", description: "Show the mode, fan-out policy, and worker cap" },
+			{ name: "mode", description: "Set the fan-out policy", usage: "<auto|single|parallel>" },
+			{ name: "workers", description: "Cap concurrent workers", usage: "<n>" },
+		],
+		getTuiAutocompleteDescription: runtime => describeOrchestratorMode(runtime.ctx.settings),
+		handleTui: async (command, runtime) => {
+			// The mode owns the toolset swap, so the draft must survive: a user who
+			// typed half a prompt, then toggles the mode, keeps that text.
+			runtime.ctx.showStatus(
+				await applyOrchestratorCommand(runtime.ctx.settings, runtime.ctx.session, command.args),
+			);
+			clearSubmittedText(runtime);
 		},
 	},
 	{
