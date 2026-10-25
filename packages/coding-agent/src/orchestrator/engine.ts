@@ -126,6 +126,18 @@ export interface TaskOutcomeRecord {
 	readonly state: TaskState;
 	readonly workerId?: string;
 	readonly outcome?: WorkerOutcome;
+	/**
+	 * Why the run produced no worker outcome (an engine-side throw). Without it
+	 * the record said only `failed`, leaving a caller unable to tell a crashed
+	 * worker from one that was rejected.
+	 */
+	readonly error?: string;
+	/**
+	 * The verification verdict, when checks ran. A `failed` state carrying a
+	 * verification is a rejected output, and the failing check's output is the
+	 * diagnostic the caller needs to act on.
+	 */
+	readonly verification?: VerificationResult;
 }
 
 export interface EngineReport {
@@ -168,6 +180,15 @@ export class OrchestrationEngine {
 	readonly #listeners = new Set<OrchestratorEventListener>();
 	readonly #running = new Map<string, RunningEntry>();
 	readonly #settled: SettledRecord[] = [];
+	/**
+	 * Settlement records by task, retained for the final report.
+	 *
+	 * `#settled` is a queue the scheduler drains, so reading it at report time
+	 * found it empty: every run reported `{state, workerId}` and dropped the
+	 * worker's output, error, and verification verdict. This map is written at
+	 * settlement and never drained.
+	 */
+	readonly #settledRecords = new Map<string, SettledRecord>();
 	/**
 	 * Isolation artifacts per task, kept after `#settled` drains: the integration
 	 * phase runs once at the end, long after each task's settlement record was
@@ -536,6 +557,9 @@ export class OrchestrationEngine {
 	#drainSettled(): void {
 		while (this.#settled.length > 0) {
 			const settled = this.#settled.shift()!;
+			// Retain before draining: this queue is emptied here, and the final
+			// report reads the map beside it.
+			this.#settledRecords.set(settled.taskId, settled);
 			if (settled.outcome) this.#budget.charge(settled.outcome.usage ?? {});
 			const state: TaskState = settled.error
 				? "failed"
@@ -572,9 +596,17 @@ export class OrchestrationEngine {
 			if (!state) continue;
 			outcomes.set(task.id, { state, workerId: this.#board.workerOf(task.id) });
 		}
-		for (const settled of this.#settled) {
-			const record = outcomes.get(settled.taskId);
-			if (record) outcomes.set(settled.taskId, { ...record, outcome: settled.outcome });
+		// Retained per task, not read from the (now empty) drain queue: the report
+		// used to lose the worker's output, error, and verification verdict.
+		for (const [taskId, settled] of this.#settledRecords) {
+			const record = outcomes.get(taskId);
+			if (!record) continue;
+			outcomes.set(taskId, {
+				...record,
+				...(settled.outcome === undefined ? {} : { outcome: settled.outcome }),
+				...(settled.error === undefined ? {} : { error: settled.error }),
+				...(settled.verification === undefined ? {} : { verification: settled.verification }),
+			});
 		}
 		return outcomes;
 	}

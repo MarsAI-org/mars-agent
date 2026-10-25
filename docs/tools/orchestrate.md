@@ -20,6 +20,27 @@
 
 Off by default. The tool is registered only when `orchestrator.enabled` is true and the session may still spawn subagents at its current task depth. With the setting off, the engine is never constructed and the session stays on the single-agent path.
 
+`/orchestrate` toggles it from inside a session, so no restart is needed:
+
+| Command | Effect |
+| --- | --- |
+| `/orchestrate on` | Set `orchestrator.enabled` and activate the `orchestrate` tool for the next turn. |
+| `/orchestrate off` | Clear the setting and drop the tool. Every other active tool stays selected. |
+| `/orchestrate status` | Show the mode, fan-out policy, and worker cap. |
+| `/orchestrate mode <auto\|single\|parallel>` | Set `orchestrator.mode`. |
+| `/orchestrate workers <n>` | Set `orchestrator.maxConcurrency`. |
+
+## Verification gate
+
+`orchestrator.verificationChecks` holds shell commands that a worker's output must
+pass before its task may settle as completed. They run in order against the
+working directory, stopping at the first failure, and each entry is a plain
+command line (`bun run check`, `bun test packages/coding-agent`).
+
+Empty — the default — disables the gate. A task rejected by a check settles as
+`failed`, and the report names the check plus the tail of its output, so a
+rejected task is distinguishable from a crashed worker.
+
 ## Inputs
 
 | Field | Required | Effect |

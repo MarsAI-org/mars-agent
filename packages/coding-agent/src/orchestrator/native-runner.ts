@@ -24,7 +24,12 @@ import type { ApprovalMode } from "../tools/approval";
 import type { ToolSession } from "../tools";
 import { OrchestrationEngine, type EngineRunner, type WorkerRunContext } from "./engine";
 import { GitIntegrator } from "./git-integrator";
-import { resolveOrchestratorBudget, resolveOrchestratorLimits } from "./settings";
+import {
+	resolveOrchestratorBudget,
+	resolveOrchestratorLimits,
+	resolveOrchestratorVerificationChecks,
+} from "./settings";
+import { ShellVerifier } from "./verifier";
 import { requireWorkerSpawn } from "./worker-session";
 import type { OrchestratorTask, WorkerChanges, WorkerOutcome, WorkerSpec } from "./types";
 
@@ -161,11 +166,20 @@ export function createNativeOrchestrationEngine(options: NativeWorkerRunnerOptio
 	const limits = resolveOrchestratorLimits(options.settings);
 	const runner = new NativeWorkerRunner(options);
 	const anyIsolated = options.forceIsolation === true || options.isolateWorkers !== false;
+	// The verification gate existed only as an injectable seam; nothing in the
+	// application ever supplied one, so `#verifyOutcome` returned undefined on
+	// every real run and a worker's output settled unverified. Wire the configured
+	// checks here: empty means the user has not opted in, which keeps the previous
+	// behaviour exactly.
+	const verificationChecks = resolveOrchestratorVerificationChecks(options.settings);
 	return new OrchestrationEngine({
 		runner,
 		concurrency: limits.concurrency,
 		processCap: limits.processCap,
 		budget: resolveOrchestratorBudget(options.settings),
 		...(anyIsolated ? { integrator: new GitIntegrator({ cwd: options.cwd }) } : {}),
+		...(verificationChecks.length > 0
+			? { verifier: new ShellVerifier(), verificationChecks, verificationRoot: options.cwd }
+			: {}),
 	});
 }

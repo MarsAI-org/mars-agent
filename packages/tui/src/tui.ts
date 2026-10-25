@@ -3446,6 +3446,11 @@ export class TUI extends Container {
 			}
 			if (newTop + rows < height) buffer += `\x1b[${newTop + rows + 1};1H\x1b[J`;
 		}
+		// True when the body above appended nothing: no destructive reset, no image
+		// transmit, no alt-buffer switch, and (in the diffable branch) not one row
+		// needed rewriting. The non-diffable branch always writes absolute
+		// positioning, so it can never land here.
+		const bodyUnchanged = buffer === this.#paintBeginSequence;
 		const mutableTop = newTop + replayViewportRows;
 		const mutablePreparedLines = replayViewportRows > 0 ? prepared.lines.slice(replayViewportRows) : prepared.lines;
 		const mutablePreparedRows = replayViewportRows > 0 ? prepared.rows.slice(replayViewportRows) : prepared.rows;
@@ -3473,7 +3478,20 @@ export class TUI extends Container {
 		) {
 			this.terminal.write(this.#rebuildNoticeSequence(width, height));
 		}
-		this.terminal.write(buffer);
+		// Emit only the cursor paint when the body rewrote nothing and the hardware
+		// cursor is already parked where this frame wants it. Terminals honoring
+		// DEC 2026 recomposite the screen for every synchronized-output frame, so a
+		// stream of frames carrying nothing but the paint markers reads as a
+		// display that never settles (#73).
+		//
+		// This guard wraps the WRITE alone. The bookkeeping below MUST run even
+		// when the frame is dropped: the history acknowledgement retires an
+		// offered batch, and skipping it made a provider re-offer the same rows so
+		// they landed in native scrollback twice — the defect that forced the
+		// revert in #74.
+		const paintUnchanged =
+			bodyUnchanged && this.#cursorPaintUnchanged(target, mutableTop) && !this.#forceViewportRepaintOnNextRender;
+		if (!paintUnchanged) this.terminal.write(buffer);
 		this.#debugPaint = {
 			lines: prepared.lines,
 			windowTop: this.#debugNextWindowTop,
@@ -3486,8 +3504,12 @@ export class TUI extends Container {
 			this.#resizeAltExitFused = false;
 			setAltScreenActive(false);
 		}
+		// Record where a hidden cursor actually parks (the viewport's top row),
+		// not merely that it is hidden. The common frame carries no cursor marker,
+		// so without the row #cursorPaintUnchanged could never tell an unchanged
+		// park from a moved one.
 		if (target) this.#recordHardwareCursorState(target);
-		else this.#recordHardwareCursorHidden();
+		else this.#recordHardwareCursorState({ row: mutableTop, col: 0, visible: false });
 		this.#providerWindow = mutablePreparedLines;
 		this.#providerPreparedRows = mutablePreparedRows;
 		this.#providerViewportTop = mutableTop;
@@ -4131,6 +4153,20 @@ export class TUI extends Container {
 
 	#forgetHardwareCursorState(): void {
 		this.#hardwareCursorState = null;
+	}
+
+	/**
+	 * Whether the cursor paint this frame would emit is already on screen, so a
+	 * frame that rewrote no row can be dropped whole.
+	 *
+	 * `parkedRow` is the row a marker-less frame parks the hidden cursor on;
+	 * `target === null` means exactly that case.
+	 */
+	#cursorPaintUnchanged(target: HardwareCursorState | null, parkedRow: number): boolean {
+		const state = this.#hardwareCursorState;
+		if (!state) return false;
+		if (target === null) return !state.visible && state.row === parkedRow && state.col === 0;
+		return state.visible === target.visible && state.row === target.row && state.col === target.col;
 	}
 
 	/**

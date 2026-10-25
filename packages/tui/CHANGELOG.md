@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Frames that change nothing no longer touch the terminal.** A render whose body rewrote no row and whose cursor was already parked emitted the synchronized-output markers anyway, and terminals honoring DEC 2026 recomposite the screen for each one — visible as a display that keeps refreshing with nothing changing. The write is skipped; the history acknowledgement, paint notification, and diff-ledger refresh still run, so a provider never re-offers an accepted batch.
+
 ## [0.3.0] - 2026-10-25
 
 ### Added
