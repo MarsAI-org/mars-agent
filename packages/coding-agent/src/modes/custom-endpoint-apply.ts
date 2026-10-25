@@ -15,10 +15,24 @@ import type { AuthStorage } from "../session/auth-storage";
 import { cfgProvidersEndpoints } from "../config/provider-endpoint-settings";
 import { cfgProvidersContextWindows } from "../config/provider-context-window-settings";
 import { addProvider } from "../cli/models-provider-cli";
+import { detectAdvertisedContextWindows, uniformDetectedWindow } from "../config/context-window-detection";
+
+/** Window the wizard detected for one model id. */
+export interface DetectedContextWindow {
+	id: string;
+	contextWindow: number;
+}
 
 /** Structural subset of the wizard's result (the component's own union). */
 export type CustomEndpointResult =
-	| { kind: "override"; provider: string; baseUrl: string; apiKey?: string; maxContext?: number }
+	| {
+			kind: "override";
+			provider: string;
+			baseUrl: string;
+			apiKey?: string;
+			maxContext?: number;
+			detectedContextWindows?: DetectedContextWindow[];
+	  }
 	| {
 			kind: "custom";
 			provider: string;
@@ -26,6 +40,7 @@ export type CustomEndpointResult =
 			api: string;
 			apiKey?: string;
 			maxContext?: number;
+			detectedContextWindows?: DetectedContextWindow[];
 			discovery?: string;
 			models?: string[];
 	  };
@@ -46,15 +61,22 @@ export async function applyCustomEndpointResult(
 	targets: CustomEndpointTargets,
 ): Promise<string> {
 	const credential = result.apiKey?.trim();
+	const detected = result.detectedContextWindows ?? [];
 	if (result.kind === "override") {
 		const current = { ...cfgProvidersEndpoints.get(targets.settings) };
 		current[result.provider] = result.baseUrl;
 		cfgProvidersEndpoints.set(targets.settings, current);
 		// Only touch the window record when the wizard asked for one, so a blank
-		// field keeps whatever `providers.contextWindows` already holds.
-		if (result.maxContext !== undefined) {
+		// field keeps whatever `providers.contextWindows` already holds. A
+		// detected window is usable here only when every model the endpoint
+		// answered for agrees on it: the record is provider-wide, so a mixed set
+		// would silently pin the smaller models above their real limit. A
+		// mixed or single-model answer is left to the catalog instead.
+		const detectedWindow = uniformDetectedWindow(detected);
+		const window = result.maxContext ?? detectedWindow;
+		if (window !== undefined) {
 			const windows = { ...cfgProvidersContextWindows.get(targets.settings) };
-			windows[result.provider] = result.maxContext;
+			windows[result.provider] = window;
 			cfgProvidersContextWindows.set(targets.settings, windows);
 		}
 		await targets.settings.flush();
@@ -62,11 +84,18 @@ export async function applyCustomEndpointResult(
 		// outlives the process, so the credential has to land in the store.
 		if (credential) await targets.authStorage.credentials.set(result.provider, { type: "api_key", key: credential });
 		await targets.modelRegistry.refresh("online");
-		const window = result.maxContext === undefined ? "" : `, ${result.maxContext}-token context window`;
-		return `Custom endpoint set for ${result.provider}: ${result.baseUrl}${window}`;
+		return `Custom endpoint set for ${result.provider}: ${result.baseUrl}${describeAppliedWindow(result.maxContext, detected)}`;
 	}
 
 	const declared = result.models !== undefined && result.models.length > 0;
+	// A declared id carries its own window in the block. The endpoint's answer
+	// is folded in per id; ids it said nothing about fall back to the
+	// provider-wide value the user typed, if any.
+	const byId = new Map(detected.map(entry => [entry.id, entry.contextWindow]));
+	const models = result.models?.map(id => {
+		const contextWindow = byId.get(id) ?? byId.get(id.slice(id.lastIndexOf("/") + 1));
+		return contextWindow === undefined ? id : { id, contextWindow };
+	});
 	await addProvider({
 		id: result.provider,
 		baseUrl: result.baseUrl,
@@ -77,13 +106,35 @@ export async function applyCustomEndpointResult(
 		discovery: (result.discovery ?? (declared ? undefined : "openai-models-list")) as
 			| Parameters<typeof addProvider>[0]["discovery"]
 			| undefined,
-		models: result.models,
-		// A declared id carries the window itself; a discovered catalog stores it
-		// provider-wide, since its ids are only fetched later.
-		maxContext: result.maxContext,
+		models,
+		// A discovered catalog has no ids at write time, so its window can only be
+		// provider-wide. A uniform detected answer is exactly that value.
+		maxContext: result.maxContext ?? (declared ? undefined : uniformDetectedWindow(detected)),
 		settings: targets.settings,
 	});
 	await targets.modelRegistry.refresh("online");
-	const window = result.maxContext === undefined ? "" : `, ${result.maxContext}-token context window`;
-	return `Added custom provider "${result.provider}" (${result.baseUrl}${window})`;
+	return `Added custom provider "${result.provider}" (${result.baseUrl}${describeAppliedWindow(result.maxContext, detected)})`;
+}
+
+/** Human-readable tail for the wizard's status line. */
+function describeAppliedWindow(maxContext: number | undefined, detected: readonly DetectedContextWindow[]): string {
+	if (maxContext !== undefined) return `, ${maxContext}-token context window`;
+	const uniform = uniformDetectedWindow(detected);
+	if (uniform !== undefined) return `, ${uniform}-token context window detected`;
+	if (detected.length > 0) return `, context windows detected for ${detected.length} models`;
+	return "";
+}
+
+/**
+ * Endpoint probe behind the wizard's blank context-window field.
+ *
+ * A gateway that advertises nothing (or cannot be reached) yields an empty
+ * list, which the wizard reads as "keep the endpoint's default".
+ */
+export async function detectContextWindowsForWizard(options: {
+	baseUrl: string;
+	apiKey?: string;
+}): Promise<DetectedContextWindow[]> {
+	const advertised = await detectAdvertisedContextWindows({ baseUrl: options.baseUrl, apiKey: options.apiKey });
+	return advertised.models;
 }

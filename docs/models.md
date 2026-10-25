@@ -64,6 +64,8 @@ mars models remove-provider my-proxy
 
 Inside a session, the same two flows are reachable without leaving the TUI: `/login` lists **`+ Custom Endpoint / Provider...`** as its last row, and `/endpoint` opens the wizard directly. The wizard asks whether you are overriding a built-in provider or registering a new one, then walks through the URL, wire format, credential, model list, and an optional context window. From the terminal, `mars login custom` opens the same add-provider flow.
 
+Leaving the context-window prompt blank asks the endpoint instead of guessing. Mars reads the model list at `/v1/models` and takes each id's own window — `context_length` (vLLM, LiteLLM, OpenRouter), `max_model_len` (vLLM), or the `limits.max_input_tokens + limits.max_output_tokens` pair (OpenRouter), whichever the endpoint states. A declared id gets its detected window written per model in `models.yml`, so ids the endpoint says nothing about keep their normal resolution instead of inheriting a value meant for another model. A discovered catalog has no ids at write time, so its detection is stored provider-wide in `providers.contextWindows.<id>` only when every advertised model agrees on one value; a mixed answer is left to per-model discovery. A gateway that advertises nothing, or cannot be reached, falls back to the endpoint's default.
+
 For built-in providers (OpenAI, Anthropic, Gemini, Ollama, etc.), custom endpoints can also be configured without editing `models.yml` via the `providers.endpoints` setting in `config.yml`:
 
 ```bash

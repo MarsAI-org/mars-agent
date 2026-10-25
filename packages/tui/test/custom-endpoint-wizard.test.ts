@@ -1,7 +1,8 @@
-import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
+import { afterEach, beforeAll, describe, expect, it, type Mock, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
 import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 import {
+	type ContextWindowDetector,
 	CustomEndpointWizardComponent,
 	type CustomEndpointWizardResult,
 } from "@marsai-org/tui/overlays/custom-endpoint-wizard";
@@ -19,14 +20,19 @@ function render(wizard: CustomEndpointWizardComponent): string {
 	return stripVTControlCharacters(wizard.render(100).join("\n"));
 }
 
-function mount(initialMode?: "override" | "custom"): {
+function mount(
+	initialMode?: "override" | "custom",
+	detectContextWindows?: ContextWindowDetector,
+): {
 	wizard: CustomEndpointWizardComponent;
-	onComplete: ReturnType<typeof vi.fn>;
-	onCancel: ReturnType<typeof vi.fn>;
+	onComplete: Mock<(result: CustomEndpointWizardResult) => void>;
+	onCancel: Mock<() => void>;
 } {
 	const onComplete = vi.fn<(result: CustomEndpointWizardResult) => void>();
 	const onCancel = vi.fn<() => void>();
-	const wizard = new CustomEndpointWizardComponent(onComplete, onCancel, undefined, initialMode);
+	const wizard = new CustomEndpointWizardComponent(onComplete, onCancel, undefined, initialMode, {
+		detectContextWindows,
+	});
 	return { wizard, onComplete, onCancel };
 }
 
@@ -224,5 +230,135 @@ describe("CustomEndpointWizardComponent", () => {
 
 		expect(onComplete).not.toHaveBeenCalled();
 		expect(render(wizard)).toContain("Enter a whole number of tokens");
+	});
+
+	it("detects per-model windows when the context field is left blank", async () => {
+		setThemeInstance(darkTheme!);
+		setKeybindings(KeybindingsManager.inMemory());
+		const detector = vi.fn(async (options: { baseUrl: string; apiKey?: string }) => {
+			expect(options.baseUrl).toBe("https://acme.example.com/v1");
+			return [
+				{ id: "chat-v1", contextWindow: 200_000 },
+				{ id: "code-v2", contextWindow: 32_000 },
+			];
+		});
+		const { wizard, onComplete } = mount("custom", detector);
+
+		type(wizard, "acme");
+		wizard.handleInput(ENTER); // provider id
+		type(wizard, "https://acme.example.com/v1");
+		wizard.handleInput(ENTER); // URL
+		wizard.handleInput(ENTER); // wire format
+		wizard.handleInput(ENTER); // no credential
+		wizard.handleInput(DOWN); // declare models myself
+		wizard.handleInput(ENTER);
+		type(wizard, "chat-v1, code-v2");
+		wizard.handleInput(ENTER); // model ids
+		wizard.handleInput(ENTER); // blank context window -> detect
+		await wizard.settled();
+
+		expect(detector).toHaveBeenCalledTimes(1);
+		// The summary reports what the probe found before the user commits.
+		expect(render(wizard)).toContain("detected for 2 models");
+		wizard.handleInput(ENTER); // save
+
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		expect(onComplete.mock.calls[0]?.[0]).toEqual({
+			kind: "custom",
+			provider: "acme",
+			baseUrl: "https://acme.example.com/v1",
+			api: "openai-completions",
+			apiKey: undefined,
+			maxContext: undefined,
+			detectedContextWindows: [
+				{ id: "chat-v1", contextWindow: 200_000 },
+				{ id: "code-v2", contextWindow: 32_000 },
+			],
+			discovery: undefined,
+			models: ["chat-v1", "code-v2"],
+		});
+	});
+
+	it("keeps the endpoint default when detection finds nothing", async () => {
+		setThemeInstance(darkTheme!);
+		setKeybindings(KeybindingsManager.inMemory());
+		const detector = vi.fn(async () => []);
+		const { wizard, onComplete } = mount(undefined, detector);
+
+		wizard.handleInput(ENTER); // override
+		wizard.handleInput(ENTER); // OpenAI
+		for (let i = 0; i < 40; i++) wizard.handleInput("\x7f");
+		type(wizard, "https://proxy.example.com/v1");
+		wizard.handleInput(ENTER); // URL
+		wizard.handleInput(ENTER); // blank credential
+		wizard.handleInput(ENTER); // blank context window -> detect
+		await wizard.settled();
+
+		expect(render(wizard)).toContain("detected none");
+		wizard.handleInput(ENTER); // save
+
+		expect(onComplete.mock.calls[0]?.[0]).toEqual({
+			kind: "override",
+			provider: "openai",
+			baseUrl: "https://proxy.example.com/v1",
+			apiKey: undefined,
+			maxContext: undefined,
+		});
+	});
+
+	it("an explicit window skips detection entirely", async () => {
+		setThemeInstance(darkTheme!);
+		setKeybindings(KeybindingsManager.inMemory());
+		const detector = vi.fn(async () => [{ id: "anything", contextWindow: 1 }]);
+		const { wizard, onComplete } = mount(undefined, detector);
+
+		wizard.handleInput(ENTER); // override
+		wizard.handleInput(ENTER); // OpenAI
+		for (let i = 0; i < 40; i++) wizard.handleInput("\x7f");
+		type(wizard, "https://proxy.example.com/v1");
+		wizard.handleInput(ENTER); // URL
+		wizard.handleInput(ENTER); // blank credential
+		type(wizard, "123456");
+		wizard.handleInput(ENTER); // explicit context window
+		wizard.handleInput(ENTER); // save
+
+		expect(detector).not.toHaveBeenCalled();
+		expect(onComplete.mock.calls[0]?.[0]).toEqual({
+			kind: "override",
+			provider: "openai",
+			baseUrl: "https://proxy.example.com/v1",
+			apiKey: undefined,
+			maxContext: 123456,
+		});
+	});
+
+	it("a slow probe does not drag the user forward after they navigate away", async () => {
+		setThemeInstance(darkTheme!);
+		setKeybindings(KeybindingsManager.inMemory());
+		const release = Promise.withResolvers<void>();
+		const detector = vi.fn(async () => {
+			await release.promise;
+			return [{ id: "chat-v1", contextWindow: 200_000 }];
+		});
+		const { wizard, onComplete } = mount(undefined, detector);
+
+		wizard.handleInput(ENTER); // override
+		wizard.handleInput(ENTER); // OpenAI
+		for (let i = 0; i < 40; i++) wizard.handleInput("\x7f");
+		type(wizard, "https://proxy.example.com/v1");
+		wizard.handleInput(ENTER); // URL
+		wizard.handleInput(ENTER); // blank credential
+		wizard.handleInput(ENTER); // blank window -> probe starts
+
+		// The user changes their mind and steps back to the credential field.
+		wizard.handleInput(ESC);
+		const viewAfterEscape = render(wizard);
+
+		release.resolve();
+		await wizard.settled();
+
+		// Still on the step they retreated to: the late probe changed nothing.
+		expect(render(wizard)).toBe(viewAfterEscape);
+		expect(onComplete).not.toHaveBeenCalled();
 	});
 });

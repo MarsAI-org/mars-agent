@@ -26,9 +26,25 @@ import { TextFormField, type FormFieldTheme } from "../components/form";
 import { SelectList } from "../components/select-list";
 import { WizardStep } from "../components/wizard-step";
 
+/** Window the endpoint advertised for one model id. */
+export interface DetectedContextWindow {
+	id: string;
+	contextWindow: number;
+}
+
+/** Endpoint probe used when the context-window field is left blank. */
+export type ContextWindowDetector = (options: { baseUrl: string; apiKey?: string }) => Promise<DetectedContextWindow[]>;
+
 /** What the wizard hands back once the user confirms. */
 export type CustomEndpointWizardResult =
-	| { kind: "override"; provider: string; baseUrl: string; apiKey?: string; maxContext?: number }
+	| {
+			kind: "override";
+			provider: string;
+			baseUrl: string;
+			apiKey?: string;
+			maxContext?: number;
+			detectedContextWindows?: DetectedContextWindow[];
+	  }
 	| {
 			kind: "custom";
 			provider: string;
@@ -36,6 +52,7 @@ export type CustomEndpointWizardResult =
 			api: string;
 			apiKey?: string;
 			maxContext?: number;
+			detectedContextWindows?: DetectedContextWindow[];
 			discovery?: string;
 			models?: string[];
 	  };
@@ -158,21 +175,36 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 	#models = "";
 	#maxContext = "";
 	#validationError: string | null = null;
+	/** Windows the endpoint advertised when the context field was left blank. */
+	#detectedContextWindows: DetectedContextWindow[] = [];
+	/** Detection is in flight: the field is replaced by a status row. */
+	#detecting = false;
+	/**
+	 * Identity of the newest probe. Bumped when one starts and on any
+	 * user-driven navigation, so a probe that resolves late cannot pull the
+	 * wizard forward from wherever the user actually is.
+	 */
+	#detectionGeneration = 0;
+	/** In-flight probe, so a caller can await the transition. */
+	#detection: Promise<void> | undefined;
 
 	readonly #onCompleteCallback: (result: CustomEndpointWizardResult) => void;
 	readonly #onCancelCallback: () => void;
 	readonly #onRenderCallback: (() => void) | undefined;
+	readonly #detector: ContextWindowDetector | undefined;
 
 	constructor(
 		onComplete: (result: CustomEndpointWizardResult) => void,
 		onCancel: () => void,
 		onRender?: () => void,
 		initialMode?: WizardMode,
+		options: { detectContextWindows?: ContextWindowDetector } = {},
 	) {
 		super("Custom Endpoint", "omp.overlay.customEndpoint");
 		this.#onCompleteCallback = onComplete;
 		this.#onCancelCallback = onCancel;
 		this.#onRenderCallback = onRender;
+		this.#detector = options.detectContextWindows;
 		if (initialMode) {
 			this.#mode = initialMode;
 			// Seed the back-stack so Escape from a prefilled first step returns to
@@ -202,6 +234,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 
 	/** Push the current step, then mount `next` with its selection reset. */
 	#goTo(next: WizardStepName): void {
+		this.#detectionGeneration++;
 		this.#history.push(this.#currentStep);
 		this.#currentStep = next;
 		this.#selectedIndex = 0;
@@ -215,6 +248,9 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			this.#onCancelCallback();
 			return;
 		}
+		this.#detectionGeneration++;
+		this.#detecting = false;
+		this.#inputField = null;
 		this.#currentStep = previous;
 		this.#selectedIndex = 0;
 		this.#validationError = null;
@@ -465,15 +501,24 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 	 * Optional provider-wide prompt window. Applies to every model of the
 	 * provider that declares none of its own, which is the gateway case: the
 	 * host advertises no window, or a smaller one than it accepts.
+	 *
+	 * A blank answer asks the endpoint instead: its `/models` list is probed for
+	 * an advertised window per id, and whatever it reports is written per model
+	 * so the provider-wide setting is left free. An endpoint that says nothing —
+	 * or cannot be reached — leaves the models on their normal default.
 	 */
 	#renderMaxContextStep(): void {
+		if (this.#detecting) {
+			this.#showDetectingStep();
+			return;
+		}
 		this.#inputStep({
 			heading: `Context window for ${this.#providerId}`,
 			prompt: "Max context (tokens):",
 			initial: this.#maxContext,
 			details: [
 				"Replaces the advertised window on every chat model of this provider.",
-				"Leave blank to keep the provider's advertised or default window.",
+				"Leave blank to detect each model's window from the endpoint.",
 			],
 			optional: true,
 			onSubmit: value => {
@@ -484,11 +529,68 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 						this.#rerender();
 						return;
 					}
+					this.#maxContext = value;
+					this.#detectedContextWindows = [];
+					this.#goTo("confirm");
+					return;
 				}
-				this.#maxContext = value;
-				this.#goTo("confirm");
+				this.#maxContext = "";
+				void this.#detectContextWindows();
 			},
 		});
+	}
+
+	/** Stand-in for the field while the endpoint probe is in flight. */
+	#showDetectingStep(): void {
+		// Clear the focused field so Escape / Enter / printable keys reach the
+		// wizard's own handleInput instead of being swallowed by the old field.
+		this.#inputField = null;
+		this.#show(
+			new WizardStep({
+				kind: "input",
+				heading: new Text(theme.fg("accent", `Context window for ${this.#providerId}`), 0, 0),
+				content: new Text(theme.fg("muted", `  Asking the endpoint for each model's context window…`), 0, 0),
+			}),
+		);
+	}
+
+	/**
+	 * Probe the endpoint for advertised windows and continue to the summary.
+	 *
+	 * A failure is not an error the user has to resolve: the models simply keep
+	 * the window they would otherwise resolve, which is what the blank answer
+	 * meant before detection existed.
+	 */
+	async #detectContextWindows(): Promise<void> {
+		if (!this.#detector) {
+			this.#goTo("confirm");
+			return;
+		}
+		this.#detecting = true;
+		this.#validationError = null;
+		this.#showDetectingStep();
+		const generation = ++this.#detectionGeneration;
+		const pending = (async () => {
+			try {
+				this.#detectedContextWindows = await this.#detector!({
+					baseUrl: this.#baseUrl,
+					apiKey: this.#apiKey || undefined,
+				});
+			} catch {
+				this.#detectedContextWindows = [];
+			} finally {
+				this.#detecting = false;
+			}
+			if (generation !== this.#detectionGeneration) return;
+			this.#goTo("confirm");
+		})();
+		this.#detection = pending;
+		await pending;
+	}
+
+	/** Settle an in-flight context-window detection (test / embedder handle). */
+	settled(): Promise<void> {
+		return this.#detection ?? Promise.resolve();
 	}
 
 	#renderConfirmStep(): void {
@@ -517,7 +619,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			);
 		}
 		rows.push(`${theme.fg("muted", "credential")} ${this.#apiKey ? "provided" : "inherited"}`);
-		rows.push(`${theme.fg("muted", "context")}    ${this.#maxContext ? `${this.#maxContext} tokens` : "unchanged"}`);
+		rows.push(`${theme.fg("muted", "context")}    ${this.#contextSummary()}`);
 		for (const row of rows) intro.addChild(new Text(`  ${row}`, 0, 0));
 
 		this.#choiceStep({
@@ -529,6 +631,17 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			],
 			escape: "back",
 		});
+	}
+
+	/** What the confirm step says happened to the context window. */
+	#contextSummary(): string {
+		if (this.#maxContext.length > 0) return `${this.#maxContext} tokens`;
+		if (this.#detectedContextWindows.length === 0) return "detected none, endpoint default";
+		if (this.#detectedContextWindows.length === 1) {
+			const only = this.#detectedContextWindows[0]!;
+			return `detected ${only.contextWindow} tokens for ${only.id}`;
+		}
+		return `detected for ${this.#detectedContextWindows.length} models`;
 	}
 
 	#selectChoice(index: number): void {
@@ -566,6 +679,10 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 
 	#submit(): void {
 		const maxContext = this.#maxContext.length > 0 ? Number(this.#maxContext) : undefined;
+		// Detected windows only travel with a blank field: an explicit provider-wide
+		// value is what the user asked for, and it outranks the endpoint's own.
+		const detected = maxContext === undefined ? this.#detectedContextWindows : [];
+		const detectedContextWindows = detected.length > 0 ? { detectedContextWindows: detected } : {};
 		if (this.#mode === "override") {
 			this.#onCompleteCallback({
 				kind: "override",
@@ -573,6 +690,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 				baseUrl: this.#baseUrl,
 				apiKey: this.#apiKey.length > 0 ? this.#apiKey : undefined,
 				maxContext,
+				...detectedContextWindows,
 			});
 			return;
 		}
@@ -590,6 +708,7 @@ export class CustomEndpointWizardComponent extends OverlayPanel {
 			api: this.#api,
 			apiKey: this.#apiKey.length > 0 ? this.#apiKey : undefined,
 			maxContext,
+			...detectedContextWindows,
 			discovery: this.#discovery === "none" ? undefined : this.#discovery,
 			models,
 		});

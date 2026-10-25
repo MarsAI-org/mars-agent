@@ -2,15 +2,9 @@
 
 ## [Unreleased]
 
-## [0.2.0] - 2026-10-24
-
 ### Added
 
-- The custom endpoint wizard asks for an optional context window and shows it on the confirmation step.
-
-### Fixed
-
-- `applyListLimit` treats a result set of exactly `limit` items as complete instead of reporting it as truncated.
+- A blank context window in the custom-endpoint wizard now asks the endpoint which window each model accepts, and the confirmation step reports what came back.
 
 ## [18.8.6] - 2026-10-08
 
@@ -3048,11 +3042,14 @@ Initial release under @oh-my-pi scope. See previous releases at [badlogic/pi-mon
 
 - **Experimental:** Overlay compositing for `ctx.ui.custom()` with `{ overlay: true }` option ([#558](https://github.com/badlogic/pi-mono/pull/558) by [@nicobailon](https://github.com/nicobailon))
 
-## [0.1.1] - 2026-10-20
+## [0.2.0] - 2026-10-24
+
+### Added
+
+- The custom endpoint wizard asks for an optional context window and shows it on the confirmation step.
 
 ### Fixed
 
-- Reduced memory retained by discarded TSP images and previews ([#14336](https://github.com/can1357/oh-my-pi/pull/14336) by [@iliaal](https://github.com/iliaal)).
-- Fixed startup capability probes printing as text in the prompt (e.g. `25a1;stsp;q;{…}pppppp`) on terminals that cannot parse them, such as macOS Terminal.app.
+- `applyListLimit` treats a result set of exactly `limit` items as complete instead of reporting it as truncated.
 
-Older entries are archived in [packages/tui/CHANGELOG.md@fa14205f838f](https://github.com/can1357/oh-my-pi/blob/fa14205f838f282fcea048c64fca74026789a492/packages/tui/CHANGELOG.md).
+Older entries are archived in [packages/tui/CHANGELOG.md@05aec8f649fb](https://github.com/can1357/oh-my-pi/blob/05aec8f649fbc97b1795916e7f547fcd2367e481/packages/tui/CHANGELOG.md).

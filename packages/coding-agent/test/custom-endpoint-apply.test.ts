@@ -150,6 +150,125 @@ describe("applyCustomEndpointResult", () => {
 		expect(fs.readFileSync(path.join(tempDir.path(), "models.yml"), "utf-8")).not.toContain("contextWindow");
 	});
 
+	it("writes each detected window onto its declared model", async () => {
+		const message = await applyCustomEndpointResult(
+			{
+				kind: "custom",
+				provider: "acme",
+				baseUrl: "https://acme.example.com/v1",
+				api: "openai-completions",
+				models: ["chat-v1", "code-v2", "silent-model"],
+				detectedContextWindows: [
+					{ id: "chat-v1", contextWindow: 200_000 },
+					{ id: "code-v2", contextWindow: 32_000 },
+				],
+			},
+			targets(),
+		);
+
+		const written = fs.readFileSync(path.join(tempDir.path(), "models.yml"), "utf-8");
+		expect(written).toContain("contextWindow: 200000");
+		expect(written).toContain("contextWindow: 32000");
+		// A model the endpoint said nothing about keeps the plain id, so it
+		// resolves normally instead of inheriting another model's window.
+		expect(written).toContain("- id: silent-model");
+		// Every declared model carries its own window, so nothing goes provider-wide.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+		expect(message).toContain("detected");
+	});
+
+	it("folds a discovered catalog's uniform detected window into settings", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "custom",
+				provider: "acme",
+				baseUrl: "https://acme.example.com/v1",
+				api: "openai-completions",
+				detectedContextWindows: [
+					{ id: "a", contextWindow: 128_000 },
+					{ id: "b", contextWindow: 128_000 },
+				],
+			},
+			targets(),
+		);
+
+		// A discovered catalog has no ids at write time, so the one value every
+		// model agreed on is the provider-wide window.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ acme: 128000 });
+	});
+
+	it("leaves a mixed discovered answer alone", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "custom",
+				provider: "acme",
+				baseUrl: "https://acme.example.com/v1",
+				api: "openai-completions",
+				detectedContextWindows: [
+					{ id: "a", contextWindow: 128_000 },
+					{ id: "b", contextWindow: 32_000 },
+				],
+			},
+			targets(),
+		);
+
+		// Pinning the smaller model at 128K would overstate what it accepts, and
+		// pinning the larger one at 32K would silently waste it. Discovery keeps
+		// resolving each id on its own.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+	});
+
+	it("stores a uniform detected window for an override", async () => {
+		const message = await applyCustomEndpointResult(
+			{
+				kind: "override",
+				provider: "openai",
+				baseUrl: "https://proxy.example.com/v1",
+				detectedContextWindows: [
+					{ id: "gpt-5.4", contextWindow: 400_000 },
+					{ id: "gpt-5.4-mini", contextWindow: 400_000 },
+				],
+			},
+			targets(),
+		);
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ openai: 400000 });
+		expect(message).toContain("400000");
+	});
+
+	it("ignores a mixed detected answer for an override", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "override",
+				provider: "openai",
+				baseUrl: "https://proxy.example.com/v1",
+				detectedContextWindows: [
+					{ id: "gpt-5.4", contextWindow: 400_000 },
+					{ id: "gpt-5.4-mini", contextWindow: 128_000 },
+				],
+			},
+			targets(),
+		);
+
+		// The record is provider-wide; a mixed answer cannot be expressed there.
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({});
+	});
+
+	it("an explicit window outranks detection", async () => {
+		await applyCustomEndpointResult(
+			{
+				kind: "override",
+				provider: "openai",
+				baseUrl: "https://proxy.example.com/v1",
+				maxContext: 64_000,
+				detectedContextWindows: [{ id: "gpt-5.4", contextWindow: 400_000 }],
+			},
+			targets(),
+		);
+
+		expect(cfgProvidersContextWindows.get(settings)).toEqual({ openai: 64000 });
+	});
+
 	it("propagates a validation failure", async () => {
 		await expect(
 			applyCustomEndpointResult(
