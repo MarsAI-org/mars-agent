@@ -12,7 +12,7 @@ import type { Settings } from "../config/settings";
 import { captureBrowserSession } from "../utils/browser-session";
 import { copyToClipboard } from "../utils/clipboard";
 import { createModelBrowserSource } from "./model-browser-source";
-import { applyCustomEndpointResult } from "./custom-endpoint-apply";
+import { applyCustomEndpointResult, detectContextWindowsForWizard } from "./custom-endpoint-apply";
 import type { InteractiveModeContext } from "./types";
 
 import {
@@ -108,6 +108,8 @@ export function createSetupHost(ctx: InteractiveModeContext): SetupHost {
 				},
 				close,
 				() => ctx.ui.requestRender(),
+				undefined,
+				{ detectContextWindows: detectContextWindowsForWizard },
 			);
 			handle = ctx.ui.showOverlay(wizard);
 		},

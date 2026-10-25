@@ -135,7 +135,11 @@ import type { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-o
 import { cfgAdvisorSyncBacklog } from "../../advisor/settings";
 import { cfgBranchSummaryEnabled } from "../../session/context-settings";
 import { cfgCycleOrder, cfgDisabledProviders, cfgModelRoleStorage } from "../../config/model-settings";
-import { applyCustomEndpointResult, type CustomEndpointResult } from "../custom-endpoint-apply";
+import {
+	applyCustomEndpointResult,
+	type CustomEndpointResult,
+	detectContextWindowsForWizard,
+} from "../custom-endpoint-apply";
 import { cfgDefaultThinkingLevel, cfgRetryFallbackChains } from "../../session/settings";
 import {
 	cfgStatusLineCompactThinkingLevel,
@@ -2252,6 +2256,7 @@ export class SelectorController {
 					this.ctx.ui.requestRender();
 				},
 				initialMode,
+				{ detectContextWindows: detectContextWindowsForWizard },
 			);
 			return { component: wizard, focus: wizard };
 		});
