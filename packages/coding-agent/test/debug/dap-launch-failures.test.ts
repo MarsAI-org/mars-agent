@@ -638,7 +638,7 @@ describe("DAP TCP transport resilience", () => {
 	const GHOST_ADAPTER = `
 const port = Number(process.argv[2]);
 const server = Bun.listen({ hostname: "127.0.0.1", port, socket: {
-	open(s){ setTimeout(() => { try { s.end(); } catch {} }, scaledTimeout(30)); },
+	open(s){ setTimeout(() => { try { s.end(); } catch {} }, 30); },
 	data(){}, close(){}, error(){},
 }});
 console.log("Debug server listening at 127.0.0.1:" + port);

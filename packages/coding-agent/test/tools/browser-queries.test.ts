@@ -148,14 +148,14 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser semantic selectors and queries", (
 					const node = document.createElement("div");
 					node.textContent = "appeared later";
 					document.body.append(node);
-				}, scaledTimeout(100));
+				}, 100);
 			});
 			await tab.waitForText("appeared later", { timeout: 2_000 });
 			return true`),
 			).toBe(true);
 			expect(
 				await run(`await page.evaluate(() => {
-				setTimeout(() => { document.querySelector("#empty").textContent = "exact scoped text"; }, scaledTimeout(100));
+				setTimeout(() => { document.querySelector("#empty").textContent = "exact scoped text"; }, 100);
 			});
 			await tab.waitForText("exact scoped text", { selector: "#empty", exact: true, timeout: 2_000 });
 			return true`),

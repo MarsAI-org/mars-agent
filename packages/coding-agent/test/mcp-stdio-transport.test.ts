@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -857,7 +856,7 @@ describe("StdioTransport.close", () => {
 						"import { writeFileSync } from 'node:fs';",
 						"process.on('SIGTERM', () => {});",
 						`writeFileSync(${JSON.stringify(readyPath)}, '1');`,
-						"setInterval(() => {}, scaledTimeout(60000));",
+						"setInterval(() => {}, 60_000);",
 					].join("\n"),
 				);
 				transport = new StdioTransport({

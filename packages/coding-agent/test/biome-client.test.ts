@@ -1,5 +1,4 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -132,7 +131,7 @@ describe("BiomeClient lint", () => {
 	test("cancels a hung Biome process when diagnostics are aborted", async () => {
 		const tempDir = await makeTempDir();
 		// Never exits on its own: the timer keeps the hung stub alive until the abort kills it.
-		const command = writeFakeExecutable(tempDir, "biome-hang", "setInterval(() => {}, scaledTimeout(60000));\n");
+		const command = writeFakeExecutable(tempDir, "biome-hang", "setInterval(() => {}, 60_000);\n");
 		const targetFile = path.join(tempDir, "example.ts");
 		const started = Date.now();
 

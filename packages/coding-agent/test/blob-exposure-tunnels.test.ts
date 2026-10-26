@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -77,7 +76,7 @@ if (config.restartPort !== undefined) {
 if (config.exitCode !== undefined) process.exit(config.exitCode);
 // A live tunnel never exits on its own; the timer only keeps the stub alive
 // until the adapter kills it (nothing here waits on wall-clock time).
-setInterval(() => {}, scaledTimeout(60000));
+setInterval(() => {}, 60_000);
 `;
 	for (const name of ["ssh", "devtunnel", "zrok", "bore", "cloudflared"]) {
 		writeFakeExecutable(invocationDir, name, source);
