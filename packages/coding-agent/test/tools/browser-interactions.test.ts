@@ -9,7 +9,7 @@ import { CmuxTab } from "@marsai-org/coding-agent/tools/browser/cmux/cmux-tab";
 import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import { TERN_KIT_SOURCE } from "@marsai-org/coding-agent/tools/browser/tern/page-kit";
 import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
-import { chromiumAvailable } from "./chromium-probe";
+import { BROWSER_TEST_TIMEOUT_MS, chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 const TAB_NAME = `interactions-${crypto.randomUUID()}`;
@@ -83,80 +83,86 @@ afterAll(async () => {
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser click timeouts", () => {
-	test("says why a click that never became clickable timed out", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-unclickable" };
-		const tabName = `unclickable-${crypto.randomUUID()}`;
-		const unclickableHtml = `<!doctype html><button id="hidden" style="display:none">Hidden</button><button id="faded" style="opacity:0">Faded</button>
+	test(
+		"says why a click that never became clickable timed out",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-unclickable" };
+			const tabName = `unclickable-${crypto.randomUUID()}`;
+			const unclickableHtml = `<!doctype html><button id="hidden" style="display:none">Hidden</button><button id="faded" style="opacity:0">Faded</button>
 <button class="multi" style="display:none">First</button><button class="multi">Second</button>
 <button id="swap">Swap</button>`;
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(unclickableHtml)}` },
-			context,
-		);
-		try {
-			const attempt = async (call: string) => {
-				const result = await prelude.invoke(
-					{
-						action: "run",
-						name: tabName,
-						code: `try {
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(unclickableHtml)}` },
+				context,
+			);
+			try {
+				const attempt = async (call: string) => {
+					const result = await prelude.invoke(
+						{
+							action: "run",
+							name: tabName,
+							code: `try {
 	await ${call};
 	return "clicked";
 } catch (error) {
 	return error instanceof Error ? error.message : String(error);
 }`,
-						// A 3 s cell caps the per-op deadline at 2 s.
-						timeout: 3,
-					},
-					context,
-				);
-				return valueFrom<string>(result);
-			};
-			// display:none has no box (never stable); opacity:0 is stable but refused.
-			const hidden = await attempt(`tab.click("#hidden")`);
-			expect(hidden).toMatch(/^tab\.click\("#hidden"\) timed out after \d+ms/);
-			expect(hidden).toContain("last check: display:none");
-			expect(await attempt(`tab.click("#faded")`)).toContain("last check: opacity:0");
-			// The count tells the caller the first of several matches is the hidden one.
-			const multi = await attempt(`tab.dblclick(".multi")`);
-			expect(multi).toContain("last check: display:none");
-			expect(multi).toContain("matches 2 element(s)");
-			// The page replaces the element (as a re-render would) after the caller resolved its handle.
-			expect(
-				await attempt(`(async () => {
+							// A 3 s cell caps the per-op deadline at 2 s.
+							timeout: 3,
+						},
+						context,
+					);
+					return valueFrom<string>(result);
+				};
+				// display:none has no box (never stable); opacity:0 is stable but refused.
+				const hidden = await attempt(`tab.click("#hidden")`);
+				expect(hidden).toMatch(/^tab\.click\("#hidden"\) timed out after \d+ms/);
+				expect(hidden).toContain("last check: display:none");
+				expect(await attempt(`tab.click("#faded")`)).toContain("last check: opacity:0");
+				// The count tells the caller the first of several matches is the hidden one.
+				const multi = await attempt(`tab.dblclick(".multi")`);
+				expect(multi).toContain("last check: display:none");
+				expect(multi).toContain("matches 2 element(s)");
+				// The page replaces the element (as a re-render would) after the caller resolved its handle.
+				expect(
+					await attempt(`(async () => {
 	const { elements } = await tab.observe();
 	const swap = await tab.id(elements.find(element => element.name === "Swap").id);
 	await tab.evaluate(() => { const old = document.querySelector("#swap"); old.replaceWith(old.cloneNode(true)); });
 	await swap.click();
 })()`),
-			).toContain("last check: detached");
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+				).toContain("last check: detached");
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser interaction parity", () => {
-	test("clicks a link that wraps across two lines on the link, not on its paragraph, on puppeteer and Tern", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-wrapped-link" };
-		const tabName = `wrapped-${crypto.randomUUID()}`;
-		const wrappedHtml = `<!doctype html><p id="para" style="width:33ch;font:16px/20px monospace;margin:0">aaaaaaaaaaaaaaaaaaaaaaa <a id="link" href="#">wrapped link</a> bbbbbbbbbbbbbbbbbbbbbbbbbbbb</p>
+	test(
+		"clicks a link that wraps across two lines on the link, not on its paragraph, on puppeteer and Tern",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-wrapped-link" };
+			const tabName = `wrapped-${crypto.randomUUID()}`;
+			const wrappedHtml = `<!doctype html><p id="para" style="width:33ch;font:16px/20px monospace;margin:0">aaaaaaaaaaaaaaaaaaaaaaa <a id="link" href="#">wrapped link</a> bbbbbbbbbbbbbbbbbbbbbbbbbbbb</p>
 <script>window.clicked = []; document.addEventListener("click", event => { clicked.push(event.target.id); event.preventDefault(); });</script>`;
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(wrappedHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					// The Tern page kit is plain page script, so its aim point is checked on this page.
-					code: `const fragments = await tab.evaluate(() => document.querySelector("#link").getClientRects().length);
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(wrappedHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						// The Tern page kit is plain page script, so its aim point is checked on this page.
+						code: `const fragments = await tab.evaluate(() => document.querySelector("#link").getClientRects().length);
 await tab.click("#link");
 await tab.evaluate(${JSON.stringify(`(function () {\n${TERN_KIT_SOURCE}\n})()`)});
 const ternHit = await tab.evaluate(async () => {
@@ -164,19 +170,21 @@ const ternHit = await tab.evaluate(async () => {
 	return target.ok ? document.elementFromPoint(target.x, target.y)?.id : target.reason;
 });
 return { fragments, clicked: await tab.evaluate(() => window.clicked), ternHit };`,
-					timeout: 15,
-				},
-				context,
-			);
-			expect(valueFrom<{ fragments: number; clicked: string[]; ternHit: string }>(result)).toEqual({
-				fragments: 2,
-				clicked: ["link"],
-				ternHit: "link",
-			});
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+						timeout: 15,
+					},
+					context,
+				);
+				expect(valueFrom<{ fragments: number; clicked: string[]; ternHit: string }>(result)).toEqual({
+					fragments: 2,
+					clicked: ["link"],
+					ternHit: "link",
+				});
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 	test("refuses to fill or type into a disabled or read-only field", async () => {
 		const session = makeSession();
 		const prelude = createBrowserPrelude(session);
@@ -234,42 +242,44 @@ return {
 		}
 	}, 40_000);
 
-	test("guards covered clicks and drives keyboard, pointer, drop-zone, checked-state, and highlight interactions", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const invoke = (parameters: unknown) =>
-			prelude.invoke(parameters, { session, toolCallId: "browser-interactions" });
-		const call = async (method: string, args: unknown[] = []): Promise<unknown> => {
-			const result = await invoke({ action: "call", name: TAB_NAME, chain: [{ method, args }] });
-			return valueFrom<unknown>(result);
-		};
+	test(
+		"guards covered clicks and drives keyboard, pointer, drop-zone, checked-state, and highlight interactions",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const invoke = (parameters: unknown) =>
+				prelude.invoke(parameters, { session, toolCallId: "browser-interactions" });
+			const call = async (method: string, args: unknown[] = []): Promise<unknown> => {
+				const result = await invoke({ action: "call", name: TAB_NAME, chain: [{ method, args }] });
+				return valueFrom<unknown>(result);
+			};
 
-		await invoke({
-			action: "open",
-			name: TAB_NAME,
-			url: `data:text/html,${encodeURIComponent(html)}`,
-		});
-		try {
-			const blocked = await invoke({
-				action: "run",
+			await invoke({
+				action: "open",
 				name: TAB_NAME,
-				code: `try {
+				url: `data:text/html,${encodeURIComponent(html)}`,
+			});
+			try {
+				const blocked = await invoke({
+					action: "run",
+					name: TAB_NAME,
+					code: `try {
 	await tab.click("#covered");
 	return "clicked";
 } catch (error) {
 	return error instanceof Error ? error.message : String(error);
 }`,
-				timeout: 10,
-			});
-			expect(valueFrom<string>(blocked)).toBe('tab.click("#covered") blocked: covered by <div#overlay>');
-			await call("evaluate", ["document.querySelector('#overlay').remove()"]);
-			await call("click", ["#covered"]);
+					timeout: 10,
+				});
+				expect(valueFrom<string>(blocked)).toBe('tab.click("#covered") blocked: covered by <div#overlay>');
+				await call("evaluate", ["document.querySelector('#overlay').remove()"]);
+				await call("click", ["#covered"]);
 
-			// The page renders the button after a delay, as a framework would; the click must wait for it.
-			const late = await invoke({
-				action: "run",
-				name: TAB_NAME,
-				code: `await tab.evaluate(() => setTimeout(() => {
+				// The page renders the button after a delay, as a framework would; the click must wait for it.
+				const late = await invoke({
+					action: "run",
+					name: TAB_NAME,
+					code: `await tab.evaluate(() => setTimeout(() => {
 	const button = document.createElement("button");
 	button.id = "late";
 	button.onclick = () => { button.dataset.clicked = "1"; };
@@ -278,29 +288,29 @@ return {
 }, 300));
 await tab.click("#late");
 return tab.attr("#late", "data-clicked");`,
-				timeout: 10,
-			});
-			expect(valueFrom<string>(late)).toBe("1");
+					timeout: 10,
+				});
+				expect(valueFrom<string>(late)).toBe("1");
 
-			await call("check", ["#check"]);
-			await call("check", ["#check"]);
-			expect(await call("evaluate", ["document.querySelector('#check').checked"])).toBe(true);
-			await call("uncheck", ["#check"]);
-			await call("uncheck", ["#check"]);
-			expect(await call("evaluate", ["document.querySelector('#check').checked"])).toBe(false);
+				await call("check", ["#check"]);
+				await call("check", ["#check"]);
+				expect(await call("evaluate", ["document.querySelector('#check').checked"])).toBe(true);
+				await call("uncheck", ["#check"]);
+				await call("uncheck", ["#check"]);
+				expect(await call("evaluate", ["document.querySelector('#check').checked"])).toBe(false);
 
-			await call("dblclick", ["#double"]);
-			await call("focus", ["#keys"]);
-			await call("keyDown", ["Shift"]);
-			await call("press", ["a"]);
-			await call("keyUp", ["Shift"]);
-			await call("clickAt", [350, 45]);
-			await call("uploadFile", ["#drop", uploadPath]);
+				await call("dblclick", ["#double"]);
+				await call("focus", ["#keys"]);
+				await call("keyDown", ["Shift"]);
+				await call("press", ["a"]);
+				await call("keyUp", ["Shift"]);
+				await call("clickAt", [350, 45]);
+				await call("uploadFile", ["#drop", uploadPath]);
 
-			const highlight = await invoke({
-				action: "run",
-				name: TAB_NAME,
-				code: `const pending = tab.highlight("#highlight", { duration: 1000 });
+				const highlight = await invoke({
+					action: "run",
+					name: TAB_NAME,
+					code: `const pending = tab.highlight("#highlight", { duration: 1000 });
 // The overlay is injected asynchronously and removed once the helper's
 // host-side hold elapses, so wait for the node instead of sampling the count.
 await tab.waitForSelector("[data-mars-highlight-overlay]", { timeout: 5000 });
@@ -308,40 +318,44 @@ const during = await tab.evaluate(() => document.querySelectorAll("[data-mars-hi
 await pending;
 const after = await tab.evaluate(() => document.querySelectorAll("[data-mars-highlight-overlay]").length);
 return { during, after };`,
-			});
-			expect(valueFrom<{ during: number; after: number }>(highlight)).toEqual({ during: 1, after: 0 });
+				});
+				expect(valueFrom<{ during: number; after: number }>(highlight)).toEqual({ during: 1, after: 0 });
 
-			const results = await call("evaluate", ["window.results"]);
-			expect(results).toMatchObject({
-				covered: 1,
-				doubles: 1,
-				keys: ["Shift:true", "a:true"],
-				point: 1,
-				dropped: "drop-fixture.txt",
-			});
-		} finally {
-			await invoke({ action: "close", name: TAB_NAME, kill: true }).catch(() => undefined);
-		}
-	}, 30_000);
+				const results = await call("evaluate", ["window.results"]);
+				expect(results).toMatchObject({
+					covered: 1,
+					doubles: 1,
+					keys: ["Shift:true", "a:true"],
+					point: 1,
+					dropped: "drop-fixture.txt",
+				});
+			} finally {
+				await invoke({ action: "close", name: TAB_NAME, kill: true }).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 
-	test("selects options by value, then by visible label, from tabs and element handles", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-select" };
-		const selectHtml = `<!doctype html>
+	test(
+		"selects options by value, then by visible label, from tabs and element handles",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-select" };
+			const selectHtml = `<!doctype html>
 <select id="country"><option value="">Choose…</option><option value="us">United States</option><option value="ca">Canada</option></select>
 <select id="size"><option value="m">Large</option><option value="Large">Extra large</option></select>
 <select id="extras" multiple><option value="cheese">Cheese</option><option value="ham">Ham</option><option value="olives">Olives</option></select>`;
-		await prelude.invoke(
-			{ action: "open", name: SELECT_TAB_NAME, url: `data:text/html,${encodeURIComponent(selectHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: SELECT_TAB_NAME,
-					code: `const byLabel = await tab.select("#country", "United States");
+			await prelude.invoke(
+				{ action: "open", name: SELECT_TAB_NAME, url: `data:text/html,${encodeURIComponent(selectHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: SELECT_TAB_NAME,
+						code: `const byLabel = await tab.select("#country", "United States");
 const afterLabel = await tab.value("#country");
 const byValue = await tab.select("#country", "ca");
 const handle = await tab.waitFor("#country");
@@ -356,67 +370,77 @@ const handleNoMatch = await handle.select("ca", "Mexico").catch(error => error.m
 const afterNoMatch = await tab.value("#country");
 const multiple = await tab.select("#extras", "Cheese", "olives");
 return { byLabel, afterLabel, byValue, handleByLabel, afterHandle, valueWins, firstOnSingle, handleFirstOnSingle, afterFirst, noMatch, handleNoMatch, afterNoMatch, multiple };`,
-					timeout: 20,
-				},
+						timeout: 20,
+					},
+					context,
+				);
+				expect(valueFrom<Record<string, unknown>>(result)).toEqual({
+					byLabel: ["us"],
+					afterLabel: "us",
+					byValue: ["ca"],
+					handleByLabel: ["us"],
+					afterHandle: "us",
+					valueWins: ["Large"],
+					firstOnSingle: ["ca"],
+					handleFirstOnSingle: ["us"],
+					afterFirst: "us",
+					noMatch: expect.stringContaining('No <select> option matches "Mexico"'),
+					handleNoMatch: expect.stringContaining('No <select> option matches "Mexico"'),
+					afterNoMatch: "us",
+					multiple: ["cheese", "olives"],
+				});
+
+				// cmux tabs run the same rules in their injected page script; replay it in this page.
+				const cmux = new CmuxTab({
+					client: {
+						request: async (method: string, params: { script?: string }) => {
+							expect(method).toBe("browser.eval");
+							const evaluated = await prelude.invoke(
+								{
+									action: "call",
+									name: SELECT_TAB_NAME,
+									chain: [{ method: "evaluate", args: [params.script] }],
+								},
+								context,
+							);
+							return { value: valueFrom<unknown>(evaluated) };
+						},
+					} as never,
+					surfaceId: "select",
+				});
+				expect({
+					byLabel: await cmux.select("#country", "United States"),
+					firstOnSingle: await cmux.select("#country", "Canada", "us"),
+					multiple: await cmux.select("#extras", "Ham", "olives"),
+				}).toEqual({ byLabel: ["us"], firstOnSingle: ["ca"], multiple: ["ham", "olives"] });
+				const noMatch = await cmux.select("#country", "Mexico").catch((error: Error) => error.message);
+				expect(noMatch).toContain('No <select> option matches "Mexico"');
+				expect(await cmux.value("#country")).toBe("ca");
+			} finally {
+				await prelude
+					.invoke({ action: "close", name: SELECT_TAB_NAME, kill: true }, context)
+					.catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
+
+	test(
+		"presses key combos on the tab, an element and a frame",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-combos" };
+			await prelude.invoke(
+				{ action: "open", name: COMBO_TAB_NAME, url: `data:text/html,${encodeURIComponent(comboHtml)}` },
 				context,
 			);
-			expect(valueFrom<Record<string, unknown>>(result)).toEqual({
-				byLabel: ["us"],
-				afterLabel: "us",
-				byValue: ["ca"],
-				handleByLabel: ["us"],
-				afterHandle: "us",
-				valueWins: ["Large"],
-				firstOnSingle: ["ca"],
-				handleFirstOnSingle: ["us"],
-				afterFirst: "us",
-				noMatch: expect.stringContaining('No <select> option matches "Mexico"'),
-				handleNoMatch: expect.stringContaining('No <select> option matches "Mexico"'),
-				afterNoMatch: "us",
-				multiple: ["cheese", "olives"],
-			});
-
-			// cmux tabs run the same rules in their injected page script; replay it in this page.
-			const cmux = new CmuxTab({
-				client: {
-					request: async (method: string, params: { script?: string }) => {
-						expect(method).toBe("browser.eval");
-						const evaluated = await prelude.invoke(
-							{ action: "call", name: SELECT_TAB_NAME, chain: [{ method: "evaluate", args: [params.script] }] },
-							context,
-						);
-						return { value: valueFrom<unknown>(evaluated) };
-					},
-				} as never,
-				surfaceId: "select",
-			});
-			expect({
-				byLabel: await cmux.select("#country", "United States"),
-				firstOnSingle: await cmux.select("#country", "Canada", "us"),
-				multiple: await cmux.select("#extras", "Ham", "olives"),
-			}).toEqual({ byLabel: ["us"], firstOnSingle: ["ca"], multiple: ["ham", "olives"] });
-			const noMatch = await cmux.select("#country", "Mexico").catch((error: Error) => error.message);
-			expect(noMatch).toContain('No <select> option matches "Mexico"');
-			expect(await cmux.value("#country")).toBe("ca");
-		} finally {
-			await prelude.invoke({ action: "close", name: SELECT_TAB_NAME, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
-
-	test("presses key combos on the tab, an element and a frame", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-combos" };
-		await prelude.invoke(
-			{ action: "open", name: COMBO_TAB_NAME, url: `data:text/html,${encodeURIComponent(comboHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: COMBO_TAB_NAME,
-					code: `await tab.press("${SHORTCUT}+a", { selector: "#area" });
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: COMBO_TAB_NAME,
+						code: `await tab.press("${SHORTCUT}+a", { selector: "#area" });
 const page = await tab.evaluate(() => { const t = document.querySelector("#area"); return [t.selectionStart, t.selectionEnd]; });
 await tab.evaluate(() => document.querySelector("#area").setSelectionRange(0, 0));
 await tab.press("${SHORTCUT}Left+KeyA", { selector: "#area" });
@@ -432,22 +456,24 @@ const inner = await tab.frame("#inner");
 await inner.press("${SHORTCUT}+a", { selector: "#deep" });
 const frame = await inner.evaluate(() => { const t = document.querySelector("#deep"); return [t.selectionStart, t.selectionEnd]; });
 return { page, spelled, shifted, replaced: await tab.value("#field"), frame, optioned: await tab.value("#paste") };`,
-					timeout: 20,
-				},
-				context,
-			);
-			expect(valueFrom<unknown>(result)).toEqual({
-				page: [0, 11],
-				spelled: [0, 11],
-				shifted: [2, 3],
-				replaced: "x",
-				frame: [0, 11],
-				optioned: "é",
-			});
-		} finally {
-			await prelude.invoke({ action: "close", name: COMBO_TAB_NAME, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+						timeout: 20,
+					},
+					context,
+				);
+				expect(valueFrom<unknown>(result)).toEqual({
+					page: [0, 11],
+					spelled: [0, 11],
+					shifted: [2, 3],
+					replaced: "x",
+					frame: [0, 11],
+					optioned: "é",
+				});
+			} finally {
+				await prelude.invoke({ action: "close", name: COMBO_TAB_NAME, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 
 	// CI runs Linux, where Control+C/V already edit; this is the macOS contract.
 	test.skipIf(process.platform !== "darwin")(
@@ -580,13 +606,15 @@ return {
 		}
 	}, 40_000);
 
-	test("checks custom-styled checkboxes where their drawn box is, for the left button only", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-custom-checkbox" };
-		const tabName = `custom-checkbox-${crypto.randomUUID()}`;
-		// #terms, #nested and #shadowed hold a link or button inside the label, which no click may follow.
-		const customHtml = `<!doctype html><style>label { position: relative; display: block; padding: 4px 24px } input { position: absolute; left: 4px; top: 4px; margin: 0 } .box { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; background: #fff; border: 1px solid #333 }</style>
+	test(
+		"checks custom-styled checkboxes where their drawn box is, for the left button only",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-custom-checkbox" };
+			const tabName = `custom-checkbox-${crypto.randomUUID()}`;
+			// #terms, #nested and #shadowed hold a link or button inside the label, which no click may follow.
+			const customHtml = `<!doctype html><style>label { position: relative; display: block; padding: 4px 24px } input { position: absolute; left: 4px; top: 4px; margin: 0 } .box { position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; background: #fff; border: 1px solid #333 }</style>
 <label><input id="faded" type="checkbox" style="opacity:0"><span style="position:absolute;left:4px;top:4px;width:14px;height:14px;border:1px solid #333"></span>Faded option</label>
 <label><input id="covered" type="checkbox"><span class="box"></span>Covered option</label>
 <label style="display:inline-block"><input id="terms" type="checkbox" style="opacity:0"><span class="box"></span>I agree to the <a href="#terms-page">Terms of Service and Privacy Policy</a></label>
@@ -599,16 +627,16 @@ window.links = 0;
 document.addEventListener("change", event => { if (event.isTrusted) changes++; });
 document.addEventListener("click", event => { if (event.target.closest("a")) { links++; event.preventDefault(); } });
 </script>`;
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(customHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					code: `await tab.check("#faded");
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(customHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						code: `await tab.check("#faded");
 await tab.check("#covered");
 await tab.uncheck("#covered");
 await tab.click("#covered");
@@ -634,34 +662,38 @@ const state = await tab.evaluate(() => ({
 	links: window.links,
 }));
 return { ...state, nested, shadowed, rightClick };`,
-					timeout: 15,
-				},
-				context,
-			);
-			const value = valueFrom<Record<string, unknown>>(result);
-			expect(value).toMatchObject({
-				faded: true,
-				covered: true,
-				terms: true,
-				// One trusted change per call: a state forced through the DOM fires an untrusted one.
-				changes: 5,
-				links: 0,
-			});
-			expect(value.nested).toContain("covered by <button.box>");
-			expect(value.shadowed).toContain("covered by");
-			expect(value.rightClick).toContain("covered by <span.box>");
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+						timeout: 15,
+					},
+					context,
+				);
+				const value = valueFrom<Record<string, unknown>>(result);
+				expect(value).toMatchObject({
+					faded: true,
+					covered: true,
+					terms: true,
+					// One trusted change per call: a state forced through the DOM fires an untrusted one.
+					changes: 5,
+					links: 0,
+				});
+				expect(value.nested).toContain("covered by <button.box>");
+				expect(value.shadowed).toContain("covered by");
+				expect(value.rightClick).toContain("covered by <span.box>");
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 
-	test("clicks a radio or checkbox whose real input is transparent, by id, ref and selector", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-transparent-radio" };
-		const tabName = `transparent-radio-${crypto.randomUUID()}`;
-		// GOV.UK radios: the opacity:0 input sits on top of the circle its label draws. #agree's label draws over its input.
-		const radiosHtml = `<!doctype html><style>
+	test(
+		"clicks a radio or checkbox whose real input is transparent, by id, ref and selector",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-transparent-radio" };
+			const tabName = `transparent-radio-${crypto.randomUUID()}`;
+			// GOV.UK radios: the opacity:0 input sits on top of the circle its label draws. #agree's label draws over its input.
+			const radiosHtml = `<!doctype html><style>
 .item { display: flex; position: relative; margin-bottom: 10px }
 .radio { z-index: 1; width: 44px; height: 44px; margin: 0; opacity: 0 }
 .item label::before { content: ""; position: absolute; top: 2px; left: 2px; width: 40px; height: 40px; border: 2px solid; border-radius: 50%; box-sizing: border-box }
@@ -672,16 +704,16 @@ return { ...state, nested, shadowed, rightClick };`,
 <div class="item"><input class="radio" id="paternity" name="leave" type="radio"><label for="paternity">Paternity</label></div>
 <div class="item"><input id="agree" type="checkbox"><label for="agree">I agree</label></div>
 <script>window.changes = 0; document.addEventListener("change", event => { if (event.isTrusted) changes++; });</script>`;
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(radiosHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					code: `const { elements } = await tab.observe();
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(radiosHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						code: `const { elements } = await tab.observe();
 await (await tab.id(elements.find(element => element.name === "Maternity").id)).click();
 const ref = (await tab.ariaSnapshot()).match(/radio "Paternity".*\\[ref=(e\\d+)\\]/)[1];
 await (await tab.ref(ref)).click();
@@ -691,53 +723,59 @@ return await tab.evaluate(() => ({
 	agree: document.querySelector("#agree").checked,
 	changes: window.changes,
 }));`,
-					timeout: 15,
-				},
-				context,
-			);
-			// One trusted change per click: each one really reached its input.
-			expect(valueFrom<Record<string, unknown>>(result)).toEqual({ leave: "paternity", agree: true, changes: 3 });
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+						timeout: 15,
+					},
+					context,
+				);
+				// One trusted change per click: each one really reached its input.
+				expect(valueFrom<Record<string, unknown>>(result)).toEqual({ leave: "paternity", agree: true, changes: 3 });
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser element handle clicks", () => {
-	test("presses the requested button and click count through an element handle", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const context = { session, toolCallId: "browser-element-click" };
-		const tabName = `element-click-${crypto.randomUUID()}`;
-		const menuHtml = `<!doctype html><button id="menu">Menu</button>
+	test(
+		"presses the requested button and click count through an element handle",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const context = { session, toolCallId: "browser-element-click" };
+			const tabName = `element-click-${crypto.randomUUID()}`;
+			const menuHtml = `<!doctype html><button id="menu">Menu</button>
 <script>window.presses = []; for (const type of ["mousedown", "dblclick", "contextmenu"]) document.querySelector("#menu").addEventListener(type, event => { presses.push(type + ":" + event.button); event.preventDefault(); });</script>`;
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(menuHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					code: `const { elements } = await tab.observe();
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(menuHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						code: `const { elements } = await tab.observe();
 const menu = await tab.id(elements.find(element => element.name === "Menu").id);
 await menu.click({ button: "right" });
 await menu.click({ count: 2 });
 return await tab.evaluate(() => window.presses);`,
-					timeout: 15,
-				},
-				context,
-			);
-			expect(valueFrom<string[]>(result)).toEqual([
-				"mousedown:2",
-				"contextmenu:2",
-				"mousedown:0",
-				"mousedown:0",
-				"dblclick:0",
-			]);
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 30_000);
+						timeout: 15,
+					},
+					context,
+				);
+				expect(valueFrom<string[]>(result)).toEqual([
+					"mousedown:2",
+					"contextmenu:2",
+					"mousedown:0",
+					"mousedown:0",
+					"dblclick:0",
+				]);
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });

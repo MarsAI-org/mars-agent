@@ -4,7 +4,7 @@ import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-m
 import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 import { freezeTabsForOwner, releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
-import { chromiumAvailable } from "./chromium-probe";
+import { BROWSER_TEST_TIMEOUT_MS, chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 const OWNER_ID = "browser-emulation-test-owner";
@@ -80,74 +80,78 @@ afterAll(async () => {
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser device, network, media, and clipboard emulation", () => {
-	it("persists independent overrides and exposes them to page APIs and requests", async () => {
-		await invoke({ action: "open", name: "emulation", url: pageUrl });
-		try {
-			const deviceNames = (await call("devices")) as string[];
-			expect(deviceNames).toContain("iPhone 14");
+	it(
+		"persists independent overrides and exposes them to page APIs and requests",
+		async () => {
+			await invoke({ action: "open", name: "emulation", url: pageUrl });
+			try {
+				const deviceNames = (await call("devices")) as string[];
+				expect(deviceNames).toContain("iPhone 14");
 
-			const mediaState = await call("emulate", [{ colorScheme: "dark" }]);
-			expect(mediaState).toMatchObject({ colorScheme: "dark" });
-			expect(await run("return await tab.evaluate(() => matchMedia('(prefers-color-scheme: dark)').matches)")).toBe(
-				true,
-			);
+				const mediaState = await call("emulate", [{ colorScheme: "dark" }]);
+				expect(mediaState).toMatchObject({ colorScheme: "dark" });
+				expect(
+					await run("return await tab.evaluate(() => matchMedia('(prefers-color-scheme: dark)').matches)"),
+				).toBe(true);
 
-			await call("emulate", [{ device: "iPhone 14" }]);
-			const initialDevice = (await run(
-				"return await tab.evaluate(() => ({ width: innerWidth, userAgent: navigator.userAgent, touch: navigator.maxTouchPoints > 0 }))",
-			)) as { width: number; userAgent: string; touch: boolean };
-			expect(initialDevice.width).toBe(390);
-			expect(initialDevice.userAgent).toContain("iPhone");
-			expect(initialDevice.touch).toBe(true);
-			await call("goto", [`${pageUrl}device`]);
-			expect(await freezeTabsForOwner(OWNER_ID)).toBe(1);
-			const navigatedDevice = (await run(
-				"return await tab.evaluate(() => ({ width: innerWidth, userAgent: navigator.userAgent, dark: matchMedia('(prefers-color-scheme: dark)').matches }))",
-			)) as { width: number; userAgent: string; dark: boolean };
-			expect(navigatedDevice.width).toBe(390);
-			expect(navigatedDevice.userAgent).toContain("iPhone");
-			expect(navigatedDevice.dark).toBe(true);
+				await call("emulate", [{ device: "iPhone 14" }]);
+				const initialDevice = (await run(
+					"return await tab.evaluate(() => ({ width: innerWidth, userAgent: navigator.userAgent, touch: navigator.maxTouchPoints > 0 }))",
+				)) as { width: number; userAgent: string; touch: boolean };
+				expect(initialDevice.width).toBe(390);
+				expect(initialDevice.userAgent).toContain("iPhone");
+				expect(initialDevice.touch).toBe(true);
+				await call("goto", [`${pageUrl}device`]);
+				expect(await freezeTabsForOwner(OWNER_ID)).toBe(1);
+				const navigatedDevice = (await run(
+					"return await tab.evaluate(() => ({ width: innerWidth, userAgent: navigator.userAgent, dark: matchMedia('(prefers-color-scheme: dark)').matches }))",
+				)) as { width: number; userAgent: string; dark: boolean };
+				expect(navigatedDevice.width).toBe(390);
+				expect(navigatedDevice.userAgent).toContain("iPhone");
+				expect(navigatedDevice.dark).toBe(true);
 
-			await call("emulate", [{ geolocation: { latitude: 37.7749, longitude: -122.4194, accuracy: 12 } }]);
-			const position = (await run(
-				"return await tab.evaluate(() => { const {promise, resolve, reject} = Promise.withResolvers(); navigator.geolocation.getCurrentPosition(({coords}) => resolve({latitude: coords.latitude, longitude: coords.longitude, accuracy: coords.accuracy}), reject); return promise; })",
-			)) as { latitude: number; longitude: number; accuracy: number };
-			expect(position).toEqual({ latitude: 37.7749, longitude: -122.4194, accuracy: 12 });
+				await call("emulate", [{ geolocation: { latitude: 37.7749, longitude: -122.4194, accuracy: 12 } }]);
+				const position = (await run(
+					"return await tab.evaluate(() => { const {promise, resolve, reject} = Promise.withResolvers(); navigator.geolocation.getCurrentPosition(({coords}) => resolve({latitude: coords.latitude, longitude: coords.longitude, accuracy: coords.accuracy}), reject); return promise; })",
+				)) as { latitude: number; longitude: number; accuracy: number };
+				expect(position).toEqual({ latitude: 37.7749, longitude: -122.4194, accuracy: 12 });
 
-			await call("emulate", [{ offline: true }]);
-			expect(
-				await run(
-					`return await tab.evaluate(url => fetch(url, { cache: "no-store" }).then(() => false, () => true), ${JSON.stringify(`${pageUrl}ping?offline=1`)})`,
-				),
-			).toBe(true);
-			await call("emulate", [{ offline: false }]);
-			expect(
-				await run(
-					`return await tab.evaluate(url => fetch(url, { cache: "no-store" }).then(response => response.ok), ${JSON.stringify(`${pageUrl}ping?offline=0`)})`,
-				),
-			).toBe(true);
+				await call("emulate", [{ offline: true }]);
+				expect(
+					await run(
+						`return await tab.evaluate(url => fetch(url, { cache: "no-store" }).then(() => false, () => true), ${JSON.stringify(`${pageUrl}ping?offline=1`)})`,
+					),
+				).toBe(true);
+				await call("emulate", [{ offline: false }]);
+				expect(
+					await run(
+						`return await tab.evaluate(url => fetch(url, { cache: "no-store" }).then(response => response.ok), ${JSON.stringify(`${pageUrl}ping?offline=0`)})`,
+					),
+				).toBe(true);
 
-			await call("emulate", [{ headers: { "x-emulation": "header-value" } }]);
-			expect(
-				await run(
-					`return await tab.evaluate(url => fetch(url).then(response => response.json()), ${JSON.stringify(`${pageUrl}headers`)})`,
-				),
-			).toEqual({ value: "header-value" });
+				await call("emulate", [{ headers: { "x-emulation": "header-value" } }]);
+				expect(
+					await run(
+						`return await tab.evaluate(url => fetch(url).then(response => response.json()), ${JSON.stringify(`${pageUrl}headers`)})`,
+					),
+				).toEqual({ value: "header-value" });
 
-			await call("emulate", [{ credentials: { username: "agent", password: "secret" } }]);
-			expect(
-				await run(
-					`return await tab.evaluate(url => fetch(url).then(response => response.text()), ${JSON.stringify(`${pageUrl}auth`)})`,
-				),
-			).toBe("authorized");
+				await call("emulate", [{ credentials: { username: "agent", password: "secret" } }]);
+				expect(
+					await run(
+						`return await tab.evaluate(url => fetch(url).then(response => response.text()), ${JSON.stringify(`${pageUrl}auth`)})`,
+					),
+				).toBe("authorized");
 
-			const writeResult = (await call("clipboardWrite", ["clipboard round trip"])) as { source: string };
-			const readResult = (await call("clipboardRead")) as { text: string; source: string };
-			expect(readResult.text).toBe("clipboard round trip");
-			expect(["page", "shim"]).toContain(writeResult.source);
-			expect(["page", "shim"]).toContain(readResult.source);
-		} finally {
-			await invoke({ action: "close", name: "emulation" });
-		}
-	}, 30_000);
+				const writeResult = (await call("clipboardWrite", ["clipboard round trip"])) as { source: string };
+				const readResult = (await call("clipboardRead")) as { text: string; source: string };
+				expect(readResult.text).toBe("clipboard round trip");
+				expect(["page", "shim"]).toContain(writeResult.source);
+				expect(["page", "shim"]).toContain(readResult.source);
+			} finally {
+				await invoke({ action: "close", name: "emulation" });
+			}
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });
