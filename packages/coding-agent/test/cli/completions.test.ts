@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -236,29 +237,33 @@ describe("buildSpec", () => {
 });
 
 describe("live completion surface", () => {
-	it("generates a zsh script reflecting the registered commands and flags", async () => {
-		const stdout = await generateLiveCompletion("zsh");
+	it(
+		"generates a zsh script reflecting the registered commands and flags",
+		async () => {
+			const stdout = await generateLiveCompletion("zsh");
 
-		// Real top-level flags from launch's static `flags` table. Flags with a
-		// short char render as `{-r,--resume}`, so only assert the bracket form for
-		// the long-only ones and check the char-paired form separately.
-		for (const flag of ["--model", "--thinking", "--mode", "--approval-mode", "--tools", "--no-tools"]) {
-			expect(stdout).toContain(`${flag}[`);
-		}
-		expect(stdout).toContain("{-r,--resume}");
-		// Real enum option sets flow through unchanged.
-		expect(stdout).toContain(":value:(off minimal low medium high xhigh max auto)");
-		expect(stdout).toContain(":value:(always-ask write yolo)");
-		// Real subcommands present; dynamic callbacks wired.
-		expect(stdout).toContain("_mars_cmd_commit");
-		expect(stdout).toContain("'completions:");
-		// zsh routes single-value dynamic flags through the _mars_call action, which
-		// itself shells out to `mars __complete $kind`.
-		expect(stdout).toContain("_mars_call models");
-		expect(stdout).toContain("_mars_call sessions");
-		expect(stdout).toContain("command mars __complete $kind");
-		// Hidden/default commands must NOT surface as completable subcommands.
-		expect(stdout).not.toContain("_mars_cmd_launch");
-		expect(stdout).not.toContain("_mars_cmd___complete");
-	}, 30_000);
+			// Real top-level flags from launch's static `flags` table. Flags with a
+			// short char render as `{-r,--resume}`, so only assert the bracket form for
+			// the long-only ones and check the char-paired form separately.
+			for (const flag of ["--model", "--thinking", "--mode", "--approval-mode", "--tools", "--no-tools"]) {
+				expect(stdout).toContain(`${flag}[`);
+			}
+			expect(stdout).toContain("{-r,--resume}");
+			// Real enum option sets flow through unchanged.
+			expect(stdout).toContain(":value:(off minimal low medium high xhigh max auto)");
+			expect(stdout).toContain(":value:(always-ask write yolo)");
+			// Real subcommands present; dynamic callbacks wired.
+			expect(stdout).toContain("_mars_cmd_commit");
+			expect(stdout).toContain("'completions:");
+			// zsh routes single-value dynamic flags through the _mars_call action, which
+			// itself shells out to `mars __complete $kind`.
+			expect(stdout).toContain("_mars_call models");
+			expect(stdout).toContain("_mars_call sessions");
+			expect(stdout).toContain("command mars __complete $kind");
+			// Hidden/default commands must NOT surface as completable subcommands.
+			expect(stdout).not.toContain("_mars_cmd_launch");
+			expect(stdout).not.toContain("_mars_cmd___complete");
+		},
+		scaledTimeout(30000),
+	);
 });

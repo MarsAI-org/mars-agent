@@ -4,6 +4,7 @@
  * paid for. Regression guard for issue #2190.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -839,77 +840,89 @@ describe("runSubprocess follows the parent's MCP manager", () => {
 		return { session, refreshed, disposers };
 	}
 
-	it("rebinds a live subagent's MCP tools when the parent adds a server and reloads mid-run", async () => {
-		await connectReady({ alpha: fixtureConfig() });
-		const child = followingChild(async ({ refreshedWith }) => {
-			// `/mcp add bravo` then `/mcp reload` in the parent while the child runs.
-			await manager.disconnectAll();
-			await manager.connectServers({ alpha: fixtureConfig(), bravo: fixtureConfig() }, {});
-			await refreshedWith([toolOf("alpha"), toolOf("bravo")]);
-		});
-		const spy = vi.spyOn(sdkModule, "createAgentSession").mockResolvedValue(createSessionResult(child.session));
-
-		const result = await runSubprocess({ ...baseOptions, id: "mcp-follow-reload", mcpManager: manager });
-
-		expect(result.exitCode).toBe(0);
-		const spawnTools = spy.mock.calls[0]?.[0]?.mcpTools?.map(tool => tool.name) ?? [];
-		expect(spawnTools).toContain(toolOf("alpha"));
-		expect(spawnTools).not.toContain(toolOf("bravo"));
-
-		// Session teardown releases the subscription: later reloads leave it alone.
-		// disconnectAll emits synchronously, and a still-subscribed follower would
-		// rebind in the microtask queued before this await resumes.
-		for (const dispose of child.disposers) dispose();
-		const refreshCount = child.refreshed.length;
-		await manager.disconnectAll();
-		expect(child.refreshed).toHaveLength(refreshCount);
-	}, 20_000);
-
-	it("replays a manager change that lands while the subagent session is still being created", async () => {
-		const child = followingChild(async ({ refreshedWith }) => {
-			await refreshedWith([toolOf("alpha")]);
-		});
-		const spy = vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async () => {
-			// The server finishes connecting after proxies were minted but before bind.
+	it(
+		"rebinds a live subagent's MCP tools when the parent adds a server and reloads mid-run",
+		async () => {
 			await connectReady({ alpha: fixtureConfig() });
-			return createSessionResult(child.session);
-		});
+			const child = followingChild(async ({ refreshedWith }) => {
+				// `/mcp add bravo` then `/mcp reload` in the parent while the child runs.
+				await manager.disconnectAll();
+				await manager.connectServers({ alpha: fixtureConfig(), bravo: fixtureConfig() }, {});
+				await refreshedWith([toolOf("alpha"), toolOf("bravo")]);
+			});
+			const spy = vi.spyOn(sdkModule, "createAgentSession").mockResolvedValue(createSessionResult(child.session));
 
-		const result = await runSubprocess({ ...baseOptions, id: "mcp-follow-startup", mcpManager: manager });
+			const result = await runSubprocess({ ...baseOptions, id: "mcp-follow-reload", mcpManager: manager });
 
-		expect(result.exitCode).toBe(0);
-		expect(spy.mock.calls[0]?.[0]?.mcpTools).toBeUndefined();
-		expect(child.refreshed.at(-1)).toContain(toolOf("alpha"));
-	}, 20_000);
+			expect(result.exitCode).toBe(0);
+			const spawnTools = spy.mock.calls[0]?.[0]?.mcpTools?.map(tool => tool.name) ?? [];
+			expect(spawnTools).toContain(toolOf("alpha"));
+			expect(spawnTools).not.toContain(toolOf("bravo"));
 
-	it("never rebinds an MCP proxy over an explicitly supplied same-name child tool", async () => {
-		// Kernel-defined (eval) tools reach children through `customTools` and may
-		// carry `mcp__…` names; the child's own tool must keep the name on reload.
-		const kernelTool: CustomTool = {
-			name: toolOf("alpha"),
-			label: toolOf("alpha"),
-			description: "Kernel-defined tool sharing an MCP tool's minted name.",
-			parameters: { type: "object", properties: {} },
-			execute: async () => ({ content: [{ type: "text", text: "kernel" }] }),
-		};
-		const siblingProxy = `mcp__alpha_${manyToolName(1)}`;
-		await connectReady({ alpha: fixtureConfig() });
-		const child = followingChild(async ({ refreshedWith }) => {
+			// Session teardown releases the subscription: later reloads leave it alone.
+			// disconnectAll emits synchronously, and a still-subscribed follower would
+			// rebind in the microtask queued before this await resumes.
+			for (const dispose of child.disposers) dispose();
+			const refreshCount = child.refreshed.length;
 			await manager.disconnectAll();
-			await manager.connectServers({ alpha: fixtureConfig() }, {});
-			await refreshedWith([siblingProxy]);
-		});
-		const spy = vi.spyOn(sdkModule, "createAgentSession").mockResolvedValue(createSessionResult(child.session));
+			expect(child.refreshed).toHaveLength(refreshCount);
+		},
+		scaledTimeout(20000),
+	);
 
-		const result = await runSubprocess({
-			...baseOptions,
-			id: "mcp-follow-collision",
-			mcpManager: manager,
-			customTools: [kernelTool],
-		});
+	it(
+		"replays a manager change that lands while the subagent session is still being created",
+		async () => {
+			const child = followingChild(async ({ refreshedWith }) => {
+				await refreshedWith([toolOf("alpha")]);
+			});
+			const spy = vi.spyOn(sdkModule, "createAgentSession").mockImplementation(async () => {
+				// The server finishes connecting after proxies were minted but before bind.
+				await connectReady({ alpha: fixtureConfig() });
+				return createSessionResult(child.session);
+			});
 
-		expect(result.exitCode).toBe(0);
-		expect(spy.mock.calls[0]?.[0]?.customTools).toEqual([kernelTool]);
-		expect(child.refreshed.at(-1)).not.toContain(toolOf("alpha"));
-	}, 20_000);
+			const result = await runSubprocess({ ...baseOptions, id: "mcp-follow-startup", mcpManager: manager });
+
+			expect(result.exitCode).toBe(0);
+			expect(spy.mock.calls[0]?.[0]?.mcpTools).toBeUndefined();
+			expect(child.refreshed.at(-1)).toContain(toolOf("alpha"));
+		},
+		scaledTimeout(20000),
+	);
+
+	it(
+		"never rebinds an MCP proxy over an explicitly supplied same-name child tool",
+		async () => {
+			// Kernel-defined (eval) tools reach children through `customTools` and may
+			// carry `mcp__…` names; the child's own tool must keep the name on reload.
+			const kernelTool: CustomTool = {
+				name: toolOf("alpha"),
+				label: toolOf("alpha"),
+				description: "Kernel-defined tool sharing an MCP tool's minted name.",
+				parameters: { type: "object", properties: {} },
+				execute: async () => ({ content: [{ type: "text", text: "kernel" }] }),
+			};
+			const siblingProxy = `mcp__alpha_${manyToolName(1)}`;
+			await connectReady({ alpha: fixtureConfig() });
+			const child = followingChild(async ({ refreshedWith }) => {
+				await manager.disconnectAll();
+				await manager.connectServers({ alpha: fixtureConfig() }, {});
+				await refreshedWith([siblingProxy]);
+			});
+			const spy = vi.spyOn(sdkModule, "createAgentSession").mockResolvedValue(createSessionResult(child.session));
+
+			const result = await runSubprocess({
+				...baseOptions,
+				id: "mcp-follow-collision",
+				mcpManager: manager,
+				customTools: [kernelTool],
+			});
+
+			expect(result.exitCode).toBe(0);
+			expect(spy.mock.calls[0]?.[0]?.customTools).toEqual([kernelTool]);
+			expect(child.refreshed.at(-1)).not.toContain(toolOf("alpha"));
+		},
+		scaledTimeout(20000),
+	);
 });

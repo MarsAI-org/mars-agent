@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -45,82 +46,102 @@ describe("RPC fork", () => {
 		return messageIds;
 	}
 
-	test("forks at an assistant entry: keeps it, drops later turns, leaves the source intact", async () => {
-		const [firstUser, firstReply, ...later] = await seedTwoTurns();
-		const source = await client.getState();
+	test(
+		"forks at an assistant entry: keeps it, drops later turns, leaves the source intact",
+		async () => {
+			const [firstUser, firstReply, ...later] = await seedTwoTurns();
+			const source = await client.getState();
 
-		expect(await client.fork(firstReply)).toEqual({ cancelled: false });
+			expect(await client.fork(firstReply)).toEqual({ cancelled: false });
 
-		const forked = await client.getState();
-		expect(forked.sessionFile).not.toBe(source.sessionFile);
-		expect(forked.sessionId).not.toBe(source.sessionId);
-		// The live process continues from the cut, not just the new file.
-		expect(forked.messageCount).toBe(2);
-		const fork = await readSessionFile(forked.sessionFile!);
-		expect(fork.messageIds).toEqual([firstUser, firstReply]);
-		expect(fork.header.parentSession).toBe(source.sessionFile);
-		expect((await readSessionFile(source.sessionFile!)).messageIds).toEqual([firstUser, firstReply, ...later]);
-	}, 30_000);
+			const forked = await client.getState();
+			expect(forked.sessionFile).not.toBe(source.sessionFile);
+			expect(forked.sessionId).not.toBe(source.sessionId);
+			// The live process continues from the cut, not just the new file.
+			expect(forked.messageCount).toBe(2);
+			const fork = await readSessionFile(forked.sessionFile!);
+			expect(fork.messageIds).toEqual([firstUser, firstReply]);
+			expect(fork.header.parentSession).toBe(source.sessionFile);
+			expect((await readSessionFile(source.sessionFile!)).messageIds).toEqual([firstUser, firstReply, ...later]);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("forks at a user entry and keeps that prompt as the last entry", async () => {
-		const [firstUser, firstReply, secondUser] = await seedTwoTurns();
+	test(
+		"forks at a user entry and keeps that prompt as the last entry",
+		async () => {
+			const [firstUser, firstReply, secondUser] = await seedTwoTurns();
 
-		expect(await client.fork(secondUser)).toEqual({ cancelled: false });
+			expect(await client.fork(secondUser)).toEqual({ cancelled: false });
 
-		const forked = await client.getState();
-		expect(forked.messageCount).toBe(3);
-		expect((await readSessionFile(forked.sessionFile!)).messageIds).toEqual([firstUser, firstReply, secondUser]);
-	}, 30_000);
+			const forked = await client.getState();
+			expect(forked.messageCount).toBe(3);
+			expect((await readSessionFile(forked.sessionFile!)).messageIds).toEqual([firstUser, firstReply, secondUser]);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("without entryId forks the whole session", async () => {
-		const messageIds = await seedTwoTurns();
-		const source = await client.getState();
+	test(
+		"without entryId forks the whole session",
+		async () => {
+			const messageIds = await seedTwoTurns();
+			const source = await client.getState();
 
-		expect(await client.fork()).toEqual({ cancelled: false });
+			expect(await client.fork()).toEqual({ cancelled: false });
 
-		const forked = await client.getState();
-		expect(forked.sessionFile).not.toBe(source.sessionFile);
-		expect(forked.messageCount).toBe(4);
-		const fork = await readSessionFile(forked.sessionFile!);
-		expect(fork.messageIds).toEqual(messageIds);
-		// Whole-session forks record the parent by session id (SessionManager.fork()).
-		expect(fork.header.parentSession).toBe(source.sessionId);
-	}, 30_000);
+			const forked = await client.getState();
+			expect(forked.sessionFile).not.toBe(source.sessionFile);
+			expect(forked.messageCount).toBe(4);
+			const fork = await readSessionFile(forked.sessionFile!);
+			expect(fork.messageIds).toEqual(messageIds);
+			// Whole-session forks record the parent by session id (SessionManager.fork()).
+			expect(fork.header.parentSession).toBe(source.sessionId);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("rejects ids that are not transcript messages without switching sessions", async () => {
-		await seedTwoTurns();
-		await client.setThinkingLevel(ThinkingLevel.High);
-		const source = await client.getState();
-		const { entries } = await client.getEntries();
-		const nonMessage = entries.find(entry => entry.type === "thinking_level_change");
-		expect(nonMessage).toBeDefined();
+	test(
+		"rejects ids that are not transcript messages without switching sessions",
+		async () => {
+			await seedTwoTurns();
+			await client.setThinkingLevel(ThinkingLevel.High);
+			const source = await client.getState();
+			const { entries } = await client.getEntries();
+			const nonMessage = entries.find(entry => entry.type === "thinking_level_change");
+			expect(nonMessage).toBeDefined();
 
-		expect(await rejectionOf(client.fork("no-such-entry"))).toMatchObject({
-			message: expect.stringMatching(/Invalid entry ID for forking/),
-		});
-		expect(await rejectionOf(client.fork(nonMessage!.id))).toMatchObject({
-			message: expect.stringMatching(/Invalid entry ID for forking/),
-		});
-		expect((await client.getState()).sessionFile).toBe(source.sessionFile);
-	}, 30_000);
+			expect(await rejectionOf(client.fork("no-such-entry"))).toMatchObject({
+				message: expect.stringMatching(/Invalid entry ID for forking/),
+			});
+			expect(await rejectionOf(client.fork(nonMessage!.id))).toMatchObject({
+				message: expect.stringMatching(/Invalid entry ID for forking/),
+			});
+			expect((await client.getState()).sessionFile).toBe(source.sessionFile);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("refuses while a turn is streaming", async () => {
-		const [, firstReply] = await seedTwoTurns();
-		const source = await client.getState();
-		const idle = Promise.withResolvers<void>();
-		const unsubscribe = client.onEvent(event => {
-			if (event.type === "agent_end") idle.resolve();
-		});
-		try {
-			await client.prompt("slow");
-			expect((await client.getState()).isStreaming).toBe(true);
+	test(
+		"refuses while a turn is streaming",
+		async () => {
+			const [, firstReply] = await seedTwoTurns();
+			const source = await client.getState();
+			const idle = Promise.withResolvers<void>();
+			const unsubscribe = client.onEvent(event => {
+				if (event.type === "agent_end") idle.resolve();
+			});
+			try {
+				await client.prompt("slow");
+				expect((await client.getState()).isStreaming).toBe(true);
 
-			expect(await rejectionOf(client.fork(firstReply))).toMatchObject({ command: "fork", code: "session_busy" });
+				expect(await rejectionOf(client.fork(firstReply))).toMatchObject({ command: "fork", code: "session_busy" });
 
-			await withTimeout(idle.promise, 10_000, "Streaming turn did not finish");
-		} finally {
-			unsubscribe();
-		}
-		expect((await client.getState()).sessionFile).toBe(source.sessionFile);
-	}, 30_000);
+				await withTimeout(idle.promise, 10_000, "Streaming turn did not finish");
+			} finally {
+				unsubscribe();
+			}
+			expect((await client.getState()).sessionFile).toBe(source.sessionFile);
+		},
+		scaledTimeout(30000),
+	);
 });

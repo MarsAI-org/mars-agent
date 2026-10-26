@@ -10,6 +10,7 @@
  * and that no session file is materialized for a missing path.
  */
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 import { parseArgs } from "@marsai-org/coding-agent/cli/args";
@@ -50,54 +51,58 @@ async function makeSessionFile(cwd: string, id: string): Promise<string> {
 }
 
 describe("--resume <path> — missing path (#13928)", () => {
-	it("exits non-zero naming the path and does not create a session there", async () => {
-		using tempDir = TempDir.createSync("@mars-resume-missing-path-");
-		const sessionDir = tempDir.path();
-		const missingPath = path.join(sessionDir, "ghost-zz9q.jsonl");
-		const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
+	it(
+		"exits non-zero naming the path and does not create a session there",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-resume-missing-path-");
+			const sessionDir = tempDir.path();
+			const missingPath = path.join(sessionDir, "ghost-zz9q.jsonl");
+			const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
 
-		const rawArgs = ["--resume", missingPath, "--print"];
-		const parsed = parseArgs(rawArgs);
-		parsed.noExtensions = true;
-		parsed.noSkills = true;
-		parsed.noRules = true;
-		parsed.noTools = true;
-		parsed.noLsp = true;
-		parsed.sessionDir = sessionDir;
+			const rawArgs = ["--resume", missingPath, "--print"];
+			const parsed = parseArgs(rawArgs);
+			parsed.noExtensions = true;
+			parsed.noSkills = true;
+			parsed.noRules = true;
+			parsed.noTools = true;
+			parsed.noLsp = true;
+			parsed.sessionDir = sessionDir;
 
-		let stderr = "";
-		const exitCodes: number[] = [];
-		vi.spyOn(process.stderr, "write").mockImplementation(((chunk: string | Uint8Array): boolean => {
-			stderr += typeof chunk === "string" ? chunk : new TextDecoder().decode(chunk);
-			return true;
-		}) as typeof process.stderr.write);
-		vi.spyOn(process.stdout, "write").mockImplementation(() => true);
-		vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
-			exitCodes.push(code ?? 0);
-			throw new ProcessExitSignal(code ?? 0);
-		}) as typeof process.exit);
+			let stderr = "";
+			const exitCodes: number[] = [];
+			vi.spyOn(process.stderr, "write").mockImplementation(((chunk: string | Uint8Array): boolean => {
+				stderr += typeof chunk === "string" ? chunk : new TextDecoder().decode(chunk);
+				return true;
+			}) as typeof process.stderr.write);
+			vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+			vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+				exitCodes.push(code ?? 0);
+				throw new ProcessExitSignal(code ?? 0);
+			}) as typeof process.exit);
 
-		let thrown: unknown;
-		try {
-			await runRootCommand(parsed, rawArgs, {
-				discoverAuthStorage: async () => authStorage,
-				settings: Settings.isolated({ "marketplace.autoUpdate": "off" }),
-			});
-		} catch (err) {
-			thrown = err;
-		} finally {
-			vi.restoreAllMocks();
-			authStorage.close();
-		}
+			let thrown: unknown;
+			try {
+				await runRootCommand(parsed, rawArgs, {
+					discoverAuthStorage: async () => authStorage,
+					settings: Settings.isolated({ "marketplace.autoUpdate": "off" }),
+				});
+			} catch (err) {
+				thrown = err;
+			} finally {
+				vi.restoreAllMocks();
+				authStorage.close();
+			}
 
-		expect(thrown).toBeInstanceOf(ProcessExitSignal);
-		expect(exitCodes).toEqual([1]);
-		expect(stderr).toContain(missingPath);
-		expect(stderr).toContain("not found");
-		// The defect's real damage: a session file materializing at a path the
-		// user believed was being read.
-		await expect(fsp.stat(missingPath)).rejects.toThrow();
-	}, 20_000);
+			expect(thrown).toBeInstanceOf(ProcessExitSignal);
+			expect(exitCodes).toEqual([1]);
+			expect(stderr).toContain(missingPath);
+			expect(stderr).toContain("not found");
+			// The defect's real damage: a session file materializing at a path the
+			// user believed was being read.
+			await expect(fsp.stat(missingPath)).rejects.toThrow();
+		},
+		scaledTimeout(20000),
+	);
 });
 
 describe("--resume <path> — existing path (#13928)", () => {

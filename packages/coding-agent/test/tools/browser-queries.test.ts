@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
 import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
@@ -136,11 +137,13 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser semantic selectors and queries", (
 		});
 	});
 
-	it("waits for delayed body and scoped exact text and reports a named timeout", async () => {
-		expect(await call("waitForText", ["Hello world", { timeout: 1_000 }])).toBeUndefined();
-		// This integration case deliberately exercises the page's real timer while waitForText polls Chromium.
-		expect(
-			await run(`await page.evaluate(() => {
+	it(
+		"waits for delayed body and scoped exact text and reports a named timeout",
+		async () => {
+			expect(await call("waitForText", ["Hello world", { timeout: 1_000 }])).toBeUndefined();
+			// This integration case deliberately exercises the page's real timer while waitForText polls Chromium.
+			expect(
+				await run(`await page.evaluate(() => {
 				setTimeout(() => {
 					const node = document.createElement("div");
 					node.textContent = "appeared later";
@@ -149,21 +152,23 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser semantic selectors and queries", (
 			});
 			await tab.waitForText("appeared later", { timeout: 2_000 });
 			return true`),
-		).toBe(true);
-		expect(
-			await run(`await page.evaluate(() => {
+			).toBe(true);
+			expect(
+				await run(`await page.evaluate(() => {
 				setTimeout(() => { document.querySelector("#empty").textContent = "exact scoped text"; }, 100);
 			});
 			await tab.waitForText("exact scoped text", { selector: "#empty", exact: true, timeout: 2_000 });
 			return true`),
-		).toBe(true);
-		const timeout = (await run(`try {
+			).toBe(true);
+			const timeout = (await run(`try {
 			await tab.waitForText("never appears", { timeout: 150 });
 			return null;
 		} catch (error) {
 			return { name: error.name, message: error.message };
 		}`)) as { name: string; message: string } | null;
-		expect(timeout?.name).toBe("ToolError");
-		expect(timeout?.message).toContain("tab.waitForText");
-	}, 15_000);
+			expect(timeout?.name).toBe("ToolError");
+			expect(timeout?.message).toContain("tab.waitForText");
+		},
+		scaledTimeout(15000),
+	);
 });

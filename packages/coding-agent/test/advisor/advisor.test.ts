@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { type } from "@marsai-org/omptype";
 import { type AgentMessage, type AgentTelemetryConfig, Tokenizer } from "@marsai-org/agent-core";
 import {
@@ -4306,167 +4307,185 @@ describe("advisor", () => {
 			expect(promptInputs).toHaveLength(promptsAtHalt);
 		});
 
-		it("never holds the primary agent on the catch-up gate while the advisor is failing", async () => {
-			// CRITICAL contract: a broken advisor (wrong model, dead endpoint)
-			// must not stall the primary agent — not even for one hook. The
-			// onTurnError hook here NEVER resolves, simulating a wedged host
-			// callback; a parked waiter must still be released the moment the
-			// advisor turn fails, and later waits must resolve immediately while
-			// the advisor is mid-failure.
-			const agent: AdvisorAgent = {
-				prompt: async () => {
-					throw new Error("socket hang up");
-				},
-				abort: () => {},
-				reset: () => {},
-				state: { messages: [] },
-			};
-			const messages: AgentMessage[] = [{ role: "user", content: "aaa", timestamp: 1 } as AgentMessage];
-			const host: AdvisorRuntimeHost = {
-				snapshotMessages: () => messages,
-				onTurnError: () => new Promise<undefined>(() => {}),
-			};
-			const runtime = new AdvisorRuntime(agent, host, 60_000);
+		it(
+			"never holds the primary agent on the catch-up gate while the advisor is failing",
+			async () => {
+				// CRITICAL contract: a broken advisor (wrong model, dead endpoint)
+				// must not stall the primary agent — not even for one hook. The
+				// onTurnError hook here NEVER resolves, simulating a wedged host
+				// callback; a parked waiter must still be released the moment the
+				// advisor turn fails, and later waits must resolve immediately while
+				// the advisor is mid-failure.
+				const agent: AdvisorAgent = {
+					prompt: async () => {
+						throw new Error("socket hang up");
+					},
+					abort: () => {},
+					reset: () => {},
+					state: { messages: [] },
+				};
+				const messages: AgentMessage[] = [{ role: "user", content: "aaa", timestamp: 1 } as AgentMessage];
+				const host: AdvisorRuntimeHost = {
+					snapshotMessages: () => messages,
+					onTurnError: () => new Promise<undefined>(() => {}),
+				};
+				const runtime = new AdvisorRuntime(agent, host, 60_000);
 
-			runtime.onTurnEnd(messages);
-			const started = performance.now();
-			// Parked with a huge budget: must release on the failure, not the timer.
-			await runtime.waitForCatchup(60_000, 1);
-			expect(performance.now() - started).toBeLessThan(2_000);
+				runtime.onTurnEnd(messages);
+				const started = performance.now();
+				// Parked with a huge budget: must release on the failure, not the timer.
+				await runtime.waitForCatchup(60_000, 1);
+				expect(performance.now() - started).toBeLessThan(2_000);
 
-			// While the advisor is mid-failure (retry pending), new waits are free.
-			const again = performance.now();
-			await runtime.waitForCatchup(60_000, 1);
-			expect(performance.now() - again).toBeLessThan(100);
-			runtime.dispose();
-		}, 10_000);
+				// While the advisor is mid-failure (retry pending), new waits are free.
+				const again = performance.now();
+				await runtime.waitForCatchup(60_000, 1);
+				expect(performance.now() - again).toBeLessThan(100);
+				runtime.dispose();
+			},
+			scaledTimeout(10000),
+		);
 
-		it("holds a recovery-aware catch-up through the failure but releases it on a terminal quota pause", async () => {
-			// Headless shutdown drains wait through a failing turn so disposal cannot
-			// abort the host's fallback switch. A recovery that ends in a quota pause
-			// can never drain, so the waiter must be released then — not held to its
-			// (ten-minute, in print mode) deadline.
-			const agent: AdvisorAgent = {
-				prompt: async () => {
-					throw new Error("insufficient_quota: you have exceeded your rate limit");
-				},
-				abort: () => {},
-				reset: () => {},
-				state: { messages: [] },
-			};
-			const messages: AgentMessage[] = [{ role: "user", content: "quota-turn", timestamp: 1 } as AgentMessage];
-			const recoveryStarted = Promise.withResolvers<void>();
-			const recoveryResult = Promise.withResolvers<boolean>();
-			const host: AdvisorRuntimeHost = {
-				snapshotMessages: () => messages,
-				onTurnError: () => {
-					recoveryStarted.resolve();
-					return recoveryResult.promise;
-				},
-				notifyQuotaExhausted: () => {},
-			};
-			const runtime = new AdvisorRuntime(agent, host, 0);
+		it(
+			"holds a recovery-aware catch-up through the failure but releases it on a terminal quota pause",
+			async () => {
+				// Headless shutdown drains wait through a failing turn so disposal cannot
+				// abort the host's fallback switch. A recovery that ends in a quota pause
+				// can never drain, so the waiter must be released then — not held to its
+				// (ten-minute, in print mode) deadline.
+				const agent: AdvisorAgent = {
+					prompt: async () => {
+						throw new Error("insufficient_quota: you have exceeded your rate limit");
+					},
+					abort: () => {},
+					reset: () => {},
+					state: { messages: [] },
+				};
+				const messages: AgentMessage[] = [{ role: "user", content: "quota-turn", timestamp: 1 } as AgentMessage];
+				const recoveryStarted = Promise.withResolvers<void>();
+				const recoveryResult = Promise.withResolvers<boolean>();
+				const host: AdvisorRuntimeHost = {
+					snapshotMessages: () => messages,
+					onTurnError: () => {
+						recoveryStarted.resolve();
+						return recoveryResult.promise;
+					},
+					notifyQuotaExhausted: () => {},
+				};
+				const runtime = new AdvisorRuntime(agent, host, 0);
 
-			runtime.onTurnEnd(messages);
-			let settled = false;
-			const catchup = runtime.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true }).then(caughtUp => {
-				settled = true;
-				return caughtUp;
-			});
-			// A failure-released waiter settles before onTurnError runs, so its
-			// continuation is already queued ahead of this one.
-			await recoveryStarted.promise;
-			expect(settled).toBe(false);
+				runtime.onTurnEnd(messages);
+				let settled = false;
+				const catchup = runtime
+					.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true })
+					.then(caughtUp => {
+						settled = true;
+						return caughtUp;
+					});
+				// A failure-released waiter settles before onTurnError runs, so its
+				// continuation is already queued ahead of this one.
+				await recoveryStarted.promise;
+				expect(settled).toBe(false);
 
-			// No fallback available: the runtime latches its quota pause.
-			const released = performance.now();
-			recoveryResult.resolve(false);
-			expect(await catchup).toBe(false);
-			expect(performance.now() - released).toBeLessThan(2_000);
-			expect(runtime.quotaExhausted).toBe(true);
-			runtime.dispose();
-		}, 10_000);
+				// No fallback available: the runtime latches its quota pause.
+				const released = performance.now();
+				recoveryResult.resolve(false);
+				expect(await catchup).toBe(false);
+				expect(performance.now() - released).toBeLessThan(2_000);
+				expect(runtime.quotaExhausted).toBe(true);
+				runtime.dispose();
+			},
+			scaledTimeout(10000),
+		);
 
-		it("releases a recovery-aware catch-up created while a session transition is paused", async () => {
-			// A paused runtime cannot drain until the transition resumes, which never
-			// happens on a shutdown path. A drain waiter created after the pause must
-			// release at once instead of parking for its (ten-minute) budget.
-			let abortPrompt: ((reason: unknown) => void) | undefined;
-			const agent: AdvisorAgent = {
-				prompt: () => {
-					const { promise, reject } = Promise.withResolvers<void>();
-					abortPrompt = reject;
-					return promise;
-				},
-				abort: reason => abortPrompt?.(new Error(String(reason))),
-				reset: () => {},
-				state: { messages: [] },
-			};
-			const messages: AgentMessage[] = [{ role: "user", content: "paused-turn", timestamp: 1 } as AgentMessage];
-			const host: AdvisorRuntimeHost = { snapshotMessages: () => messages };
-			const runtime = new AdvisorRuntime(agent, host, 0);
+		it(
+			"releases a recovery-aware catch-up created while a session transition is paused",
+			async () => {
+				// A paused runtime cannot drain until the transition resumes, which never
+				// happens on a shutdown path. A drain waiter created after the pause must
+				// release at once instead of parking for its (ten-minute) budget.
+				let abortPrompt: ((reason: unknown) => void) | undefined;
+				const agent: AdvisorAgent = {
+					prompt: () => {
+						const { promise, reject } = Promise.withResolvers<void>();
+						abortPrompt = reject;
+						return promise;
+					},
+					abort: reason => abortPrompt?.(new Error(String(reason))),
+					reset: () => {},
+					state: { messages: [] },
+				};
+				const messages: AgentMessage[] = [{ role: "user", content: "paused-turn", timestamp: 1 } as AgentMessage];
+				const host: AdvisorRuntimeHost = { snapshotMessages: () => messages };
+				const runtime = new AdvisorRuntime(agent, host, 0);
 
-			runtime.onTurnEnd(messages);
-			await settleUntil(() => abortPrompt !== undefined);
-			await runtime.pauseForSessionTransition();
-			expect(runtime.backlog).toBeGreaterThan(0);
+				runtime.onTurnEnd(messages);
+				await settleUntil(() => abortPrompt !== undefined);
+				await runtime.pauseForSessionTransition();
+				expect(runtime.backlog).toBeGreaterThan(0);
 
-			const started = performance.now();
-			expect(await runtime.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true })).toBe(false);
-			expect(performance.now() - started).toBeLessThan(100);
-			runtime.dispose();
-		}, 10_000);
+				const started = performance.now();
+				expect(await runtime.waitForCatchup(60_000, 1, undefined, { waitThroughRecovery: true })).toBe(false);
+				expect(performance.now() - started).toBeLessThan(100);
+				runtime.dispose();
+			},
+			scaledTimeout(10000),
+		);
 
-		it("survives a poisoned message without throwing into the caller or losing the delta", async () => {
-			// CRITICAL contract: an advisor render failure (throwing getter,
-			// formatter bug) must neither propagate into the primary agent's
-			// turn-end callback nor park it on the catch-up gate — and the
-			// unrendered delta must survive for the next turn.
-			const promptInputs: Array<string | AgentMessage[]> = [];
-			const agent: AdvisorAgent = {
-				prompt: async input => {
-					promptInputs.push(input);
-				},
-				abort: () => {},
-				reset: () => {},
-				state: { messages: [] },
-			};
-			const messages: AgentMessage[] = [{ role: "user", content: "aaa", timestamp: 1 } as AgentMessage];
-			const host: AdvisorRuntimeHost = {
-				snapshotMessages: () => messages,
-			};
-			const runtime = new AdvisorRuntime(agent, host, 0);
-			runtime.onTurnEnd(messages);
-			await settleUntil(() => promptInputs.length >= 1);
-			expect(promptInputs).toHaveLength(1);
+		it(
+			"survives a poisoned message without throwing into the caller or losing the delta",
+			async () => {
+				// CRITICAL contract: an advisor render failure (throwing getter,
+				// formatter bug) must neither propagate into the primary agent's
+				// turn-end callback nor park it on the catch-up gate — and the
+				// unrendered delta must survive for the next turn.
+				const promptInputs: Array<string | AgentMessage[]> = [];
+				const agent: AdvisorAgent = {
+					prompt: async input => {
+						promptInputs.push(input);
+					},
+					abort: () => {},
+					reset: () => {},
+					state: { messages: [] },
+				};
+				const messages: AgentMessage[] = [{ role: "user", content: "aaa", timestamp: 1 } as AgentMessage];
+				const host: AdvisorRuntimeHost = {
+					snapshotMessages: () => messages,
+				};
+				const runtime = new AdvisorRuntime(agent, host, 0);
+				runtime.onTurnEnd(messages);
+				await settleUntil(() => promptInputs.length >= 1);
+				expect(promptInputs).toHaveLength(1);
 
-			// Poison: reading `content` throws — during the size probe or render.
-			const poisoned = {
-				role: "user",
-				get content(): string {
-					throw new Error("poisoned message");
-				},
-				timestamp: 2,
-			} as AgentMessage;
-			messages.push(poisoned);
-			runtime.onTurnEnd(messages);
-			// A parked primary must not wait out the catch-up budget.
-			const started = performance.now();
-			await runtime.waitForCatchup(60_000, 1);
-			expect(performance.now() - started).toBeLessThan(2_000);
-			await settleUntil(() => runtime.backlog === 0);
+				// Poison: reading `content` throws — during the size probe or render.
+				const poisoned = {
+					role: "user",
+					get content(): string {
+						throw new Error("poisoned message");
+					},
+					timestamp: 2,
+				} as AgentMessage;
+				messages.push(poisoned);
+				runtime.onTurnEnd(messages);
+				// A parked primary must not wait out the catch-up budget.
+				const started = performance.now();
+				await runtime.waitForCatchup(60_000, 1);
+				expect(performance.now() - started).toBeLessThan(2_000);
+				await settleUntil(() => runtime.backlog === 0);
 
-			// Replace the poison with a healthy message: the cursor was restored,
-			// so the next turn re-renders from the failed position.
-			messages[1] = { role: "user", content: "bbb-recovered", timestamp: 2 } as AgentMessage;
-			messages.push({ role: "user", content: "ccc", timestamp: 3 } as AgentMessage);
-			runtime.onTurnEnd(messages);
-			await settleUntil(() => promptInputs.length >= 2);
-			expect(promptInputs).toHaveLength(2);
-			expect(promptText(promptInputs[1])).toContain("bbb-recovered");
-			expect(promptText(promptInputs[1])).toContain("ccc");
-			runtime.dispose();
-		}, 10_000);
+				// Replace the poison with a healthy message: the cursor was restored,
+				// so the next turn re-renders from the failed position.
+				messages[1] = { role: "user", content: "bbb-recovered", timestamp: 2 } as AgentMessage;
+				messages.push({ role: "user", content: "ccc", timestamp: 3 } as AgentMessage);
+				runtime.onTurnEnd(messages);
+				await settleUntil(() => promptInputs.length >= 2);
+				expect(promptInputs).toHaveLength(2);
+				expect(promptText(promptInputs[1])).toContain("bbb-recovered");
+				expect(promptText(promptInputs[1])).toContain("ccc");
+				runtime.dispose();
+			},
+			scaledTimeout(10000),
+		);
 
 		// The live incident shape: ONE agent + ONE advisor froze the whole
 		// process when a post-reset replay rendered a multi-MB transcript. These
@@ -4489,171 +4508,191 @@ describe("advisor", () => {
 				timeoutMs = 10_000,
 			): Promise<void> => settleUntil(() => prompts.length >= count, timeoutMs);
 
-			it("delivers a multi-MB transcript replay completely", async () => {
-				const promptInputs: Array<string | AgentMessage[]> = [];
-				const agent: AdvisorAgent = {
-					prompt: async input => {
-						promptInputs.push(input);
-					},
-					abort: () => {},
-					reset: () => {},
-					state: { messages: [] },
-				};
-				// ~2000 × 5KB ≈ 10MB replay — the post-reset/first-enable shape.
-				const messages = Array.from({ length: 2000 }, (_, i) => bigMessage(i));
-				const host: AdvisorRuntimeHost = {
-					snapshotMessages: () => messages,
-				};
-				const runtime = new AdvisorRuntime(agent, host, 0);
-				runtime.onTurnEnd(messages);
-				await waitForPrompts(promptInputs, 1);
-				expect(promptInputs).toHaveLength(1);
-				// Nothing dropped: first and last transcript messages both rendered.
-				expect(promptText(promptInputs[0])).toContain("msg-0 ");
-				expect(promptText(promptInputs[0])).toContain("msg-1999 ");
-				runtime.dispose();
-			}, 20_000);
+			it(
+				"delivers a multi-MB transcript replay completely",
+				async () => {
+					const promptInputs: Array<string | AgentMessage[]> = [];
+					const agent: AdvisorAgent = {
+						prompt: async input => {
+							promptInputs.push(input);
+						},
+						abort: () => {},
+						reset: () => {},
+						state: { messages: [] },
+					};
+					// ~2000 × 5KB ≈ 10MB replay — the post-reset/first-enable shape.
+					const messages = Array.from({ length: 2000 }, (_, i) => bigMessage(i));
+					const host: AdvisorRuntimeHost = {
+						snapshotMessages: () => messages,
+					};
+					const runtime = new AdvisorRuntime(agent, host, 0);
+					runtime.onTurnEnd(messages);
+					await waitForPrompts(promptInputs, 1);
+					expect(promptInputs).toHaveLength(1);
+					// Nothing dropped: first and last transcript messages both rendered.
+					expect(promptText(promptInputs[0])).toContain("msg-0 ");
+					expect(promptText(promptInputs[0])).toContain("msg-1999 ");
+					runtime.dispose();
+				},
+				scaledTimeout(20000),
+			);
 
-			it("pairs a toolCall with its non-adjacent toolResult inside one update", async () => {
-				const promptInputs: Array<string | AgentMessage[]> = [];
-				const agent: AdvisorAgent = {
-					prompt: async input => {
-						promptInputs.push(input);
-					},
-					abort: () => {},
-					reset: () => {},
-					state: { messages: [] },
-				};
-				// The toolCall sits at index 99 and its result arrives 49 messages
-				// later (index 148), far past any adjacency window: only the
-				// whole-delta result index can pair them.
-				const messages: AgentMessage[] = Array.from({ length: 150 }, (_, i) => bigMessage(i, 64));
-				messages[99] = {
-					role: "assistant",
-					content: [{ type: "toolCall", id: "call-split", name: "read", arguments: { path: "x" } }],
-					timestamp: 99,
-				} as unknown as AgentMessage;
-				messages[100] = {
-					role: "custom",
-					customType: "hook",
-					content: "interleaved",
-					timestamp: 100,
-				} as AgentMessage;
-				messages[148] = {
-					role: "toolResult",
-					toolCallId: "call-split",
-					content: [{ type: "text", text: "result-body" }],
-					timestamp: 148,
-				} as AgentMessage;
-				const host: AdvisorRuntimeHost = {
-					snapshotMessages: () => messages,
-				};
-				const runtime = new AdvisorRuntime(agent, host, 0);
-				runtime.onTurnEnd(messages);
-				await waitForPrompts(promptInputs, 1);
-				expect(promptInputs).toHaveLength(1);
-				expect(promptText(promptInputs[0])).toContain("read(");
-				// The call+result pair rendered as completed, never as a spurious
-				// in-flight call.
-				expect(promptText(promptInputs[0])).toContain("⇒ ok");
-				expect(promptText(promptInputs[0])).not.toContain("⇒ pending");
-				runtime.dispose();
-			}, 20_000);
+			it(
+				"pairs a toolCall with its non-adjacent toolResult inside one update",
+				async () => {
+					const promptInputs: Array<string | AgentMessage[]> = [];
+					const agent: AdvisorAgent = {
+						prompt: async input => {
+							promptInputs.push(input);
+						},
+						abort: () => {},
+						reset: () => {},
+						state: { messages: [] },
+					};
+					// The toolCall sits at index 99 and its result arrives 49 messages
+					// later (index 148), far past any adjacency window: only the
+					// whole-delta result index can pair them.
+					const messages: AgentMessage[] = Array.from({ length: 150 }, (_, i) => bigMessage(i, 64));
+					messages[99] = {
+						role: "assistant",
+						content: [{ type: "toolCall", id: "call-split", name: "read", arguments: { path: "x" } }],
+						timestamp: 99,
+					} as unknown as AgentMessage;
+					messages[100] = {
+						role: "custom",
+						customType: "hook",
+						content: "interleaved",
+						timestamp: 100,
+					} as AgentMessage;
+					messages[148] = {
+						role: "toolResult",
+						toolCallId: "call-split",
+						content: [{ type: "text", text: "result-body" }],
+						timestamp: 148,
+					} as AgentMessage;
+					const host: AdvisorRuntimeHost = {
+						snapshotMessages: () => messages,
+					};
+					const runtime = new AdvisorRuntime(agent, host, 0);
+					runtime.onTurnEnd(messages);
+					await waitForPrompts(promptInputs, 1);
+					expect(promptInputs).toHaveLength(1);
+					expect(promptText(promptInputs[0])).toContain("read(");
+					// The call+result pair rendered as completed, never as a spurious
+					// in-flight call.
+					expect(promptText(promptInputs[0])).toContain("⇒ ok");
+					expect(promptText(promptInputs[0])).not.toContain("⇒ pending");
+					runtime.dispose();
+				},
+				scaledTimeout(20000),
+			);
 
-			it("delivers a single turn carrying a multi-MB payload", async () => {
-				const promptInputs: Array<string | AgentMessage[]> = [];
-				const agent: AdvisorAgent = {
-					prompt: async input => {
-						promptInputs.push(input);
-					},
-					abort: () => {},
-					reset: () => {},
-					state: { messages: [] },
-				};
-				const messages: AgentMessage[] = [{ role: "user", content: "before", timestamp: 1 } as AgentMessage];
-				const host: AdvisorRuntimeHost = {
-					snapshotMessages: () => messages,
-				};
-				const runtime = new AdvisorRuntime(agent, host, 0);
-				runtime.onTurnEnd(messages);
-				await waitForPrompts(promptInputs, 1);
-				expect(promptInputs).toHaveLength(1);
+			it(
+				"delivers a single turn carrying a multi-MB payload",
+				async () => {
+					const promptInputs: Array<string | AgentMessage[]> = [];
+					const agent: AdvisorAgent = {
+						prompt: async input => {
+							promptInputs.push(input);
+						},
+						abort: () => {},
+						reset: () => {},
+						state: { messages: [] },
+					};
+					const messages: AgentMessage[] = [{ role: "user", content: "before", timestamp: 1 } as AgentMessage];
+					const host: AdvisorRuntimeHost = {
+						snapshotMessages: () => messages,
+					};
+					const runtime = new AdvisorRuntime(agent, host, 0);
+					runtime.onTurnEnd(messages);
+					await waitForPrompts(promptInputs, 1);
+					expect(promptInputs).toHaveLength(1);
 
-				// One turn, one message, multi-MB body (an edit-diff-sized payload)
-				// must deliver completely.
-				messages.push({
-					role: "assistant",
-					content: [{ type: "text", text: `huge ${"y".repeat(3_000_000)}` }],
-					timestamp: 2,
-				} as AgentMessage);
-				runtime.onTurnEnd(messages);
-				await waitForPrompts(promptInputs, 2);
-				expect(promptInputs).toHaveLength(2);
-				expect(promptText(promptInputs[1])).toContain("huge ");
-				runtime.dispose();
-			}, 20_000);
+					// One turn, one message, multi-MB body (an edit-diff-sized payload)
+					// must deliver completely.
+					messages.push({
+						role: "assistant",
+						content: [{ type: "text", text: `huge ${"y".repeat(3_000_000)}` }],
+						timestamp: 2,
+					} as AgentMessage);
+					runtime.onTurnEnd(messages);
+					await waitForPrompts(promptInputs, 2);
+					expect(promptInputs).toHaveLength(2);
+					expect(promptText(promptInputs[1])).toContain("huge ");
+					runtime.dispose();
+				},
+				scaledTimeout(20000),
+			);
 
-			it("replays the full transcript after a reset lands between renders", async () => {
-				const promptInputs: Array<string | AgentMessage[]> = [];
-				const agent: AdvisorAgent = {
-					prompt: async input => {
-						promptInputs.push(input);
-					},
-					abort: () => {},
-					reset: () => {},
-					state: { messages: [] },
-				};
-				const messages = Array.from({ length: 400 }, (_, i) => bigMessage(i));
-				const host: AdvisorRuntimeHost = {
-					snapshotMessages: () => messages,
-				};
-				const runtime = new AdvisorRuntime(agent, host, 0);
-				runtime.onTurnEnd(messages);
-				runtime.reset();
-				runtime.onTurnEnd(messages);
-				await waitForPrompts(promptInputs, 1);
-				// The aborted pre-reset render must not have advanced the cursor:
-				// the post-reset replay carries the whole transcript.
-				const replay = promptInputs.find(
-					input => promptText(input).includes("msg-0 ") && promptText(input).includes("msg-399 "),
-				);
-				expect(replay).toBeDefined();
-				runtime.dispose();
-			}, 20_000);
+			it(
+				"replays the full transcript after a reset lands between renders",
+				async () => {
+					const promptInputs: Array<string | AgentMessage[]> = [];
+					const agent: AdvisorAgent = {
+						prompt: async input => {
+							promptInputs.push(input);
+						},
+						abort: () => {},
+						reset: () => {},
+						state: { messages: [] },
+					};
+					const messages = Array.from({ length: 400 }, (_, i) => bigMessage(i));
+					const host: AdvisorRuntimeHost = {
+						snapshotMessages: () => messages,
+					};
+					const runtime = new AdvisorRuntime(agent, host, 0);
+					runtime.onTurnEnd(messages);
+					runtime.reset();
+					runtime.onTurnEnd(messages);
+					await waitForPrompts(promptInputs, 1);
+					// The aborted pre-reset render must not have advanced the cursor:
+					// the post-reset replay carries the whole transcript.
+					const replay = promptInputs.find(
+						input => promptText(input).includes("msg-0 ") && promptText(input).includes("msg-399 "),
+					);
+					expect(replay).toBeDefined();
+					runtime.dispose();
+				},
+				scaledTimeout(20000),
+			);
 
-			it("delivers interleaved turns in order without loss", async () => {
-				const promptInputs: Array<string | AgentMessage[]> = [];
-				const agent: AdvisorAgent = {
-					prompt: async input => {
-						promptInputs.push(input);
-					},
-					abort: () => {},
-					reset: () => {},
-					state: { messages: [] },
-				};
-				const messages = Array.from({ length: 300 }, (_, i) => bigMessage(i));
-				const host: AdvisorRuntimeHost = {
-					snapshotMessages: () => messages,
-				};
-				const runtime = new AdvisorRuntime(agent, host, 0);
-				runtime.onTurnEnd(messages);
-				// Second turn arrives immediately behind the first.
-				messages.push({ role: "user", content: "late-arrival tail", timestamp: 300 } as AgentMessage);
-				runtime.onTurnEnd(messages);
-				await settleUntil(
-					() => promptInputs.some(input => promptText(input).includes("late-arrival tail")),
-					10_000,
-				);
-				const combined = promptInputs.map(i => promptText(i)).join("\n");
-				// Every message exactly once, ordering preserved.
-				expect(combined).toContain("msg-0 ");
-				expect(combined).toContain("msg-299 ");
-				expect(combined.indexOf("msg-299 ")).toBeGreaterThan(combined.indexOf("msg-0 "));
-				expect(combined.indexOf("late-arrival tail")).toBeGreaterThan(combined.indexOf("msg-299 "));
-				expect(combined.match(/msg-150 /g)).toHaveLength(1);
-				expect(combined.match(/late-arrival tail/g)).toHaveLength(1);
-				runtime.dispose();
-			}, 20_000);
+			it(
+				"delivers interleaved turns in order without loss",
+				async () => {
+					const promptInputs: Array<string | AgentMessage[]> = [];
+					const agent: AdvisorAgent = {
+						prompt: async input => {
+							promptInputs.push(input);
+						},
+						abort: () => {},
+						reset: () => {},
+						state: { messages: [] },
+					};
+					const messages = Array.from({ length: 300 }, (_, i) => bigMessage(i));
+					const host: AdvisorRuntimeHost = {
+						snapshotMessages: () => messages,
+					};
+					const runtime = new AdvisorRuntime(agent, host, 0);
+					runtime.onTurnEnd(messages);
+					// Second turn arrives immediately behind the first.
+					messages.push({ role: "user", content: "late-arrival tail", timestamp: 300 } as AgentMessage);
+					runtime.onTurnEnd(messages);
+					await settleUntil(
+						() => promptInputs.some(input => promptText(input).includes("late-arrival tail")),
+						10_000,
+					);
+					const combined = promptInputs.map(i => promptText(i)).join("\n");
+					// Every message exactly once, ordering preserved.
+					expect(combined).toContain("msg-0 ");
+					expect(combined).toContain("msg-299 ");
+					expect(combined.indexOf("msg-299 ")).toBeGreaterThan(combined.indexOf("msg-0 "));
+					expect(combined.indexOf("late-arrival tail")).toBeGreaterThan(combined.indexOf("msg-299 "));
+					expect(combined.match(/msg-150 /g)).toHaveLength(1);
+					expect(combined.match(/late-arrival tail/g)).toHaveLength(1);
+					runtime.dispose();
+				},
+				scaledTimeout(20000),
+			);
 		});
 
 		it("treats a clean prompt resolution with state.error as a failed turn (real Agent contract)", async () => {

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -157,113 +158,121 @@ describe("global --profile flag", () => {
 		expect(outSpy).not.toHaveBeenCalled();
 	});
 
-	it("loads profile agent .env before command modules import pi-utils env", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-"));
-		try {
-			const home = path.join(root, "home");
-			const configDir = ".mars-profile-cli-env";
-			const defaultAgentDir = path.join(home, configDir, "agent");
-			const profileAgentDir = path.join(home, configDir, "profiles", "work", "agent");
-			await fs.mkdir(defaultAgentDir, { recursive: true });
-			await fs.mkdir(profileAgentDir, { recursive: true });
-			await Bun.write(path.join(defaultAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=default\n");
-			await Bun.write(path.join(profileAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=work\n");
+	it(
+		"loads profile agent .env before command modules import pi-utils env",
+		async () => {
+			const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-"));
+			try {
+				const home = path.join(root, "home");
+				const configDir = ".mars-profile-cli-env";
+				const defaultAgentDir = path.join(home, configDir, "agent");
+				const profileAgentDir = path.join(home, configDir, "profiles", "work", "agent");
+				await fs.mkdir(defaultAgentDir, { recursive: true });
+				await fs.mkdir(profileAgentDir, { recursive: true });
+				await Bun.write(path.join(defaultAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=default\n");
+				await Bun.write(path.join(profileAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=work\n");
 
-			const probePath = path.join(root, "probe.ts");
-			await Bun.write(
-				probePath,
-				[
-					`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
-					'await runCli(["--profile", "work", "--help"]);',
-					'process.stdout.write("\\nSENTINEL=" + (Bun.env.MARS_PROFILE_BOOTSTRAP_SENTINEL ?? ""));',
-				].join("\n"),
-			);
+				const probePath = path.join(root, "probe.ts");
+				await Bun.write(
+					probePath,
+					[
+						`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
+						'await runCli(["--profile", "work", "--help"]);',
+						'process.stdout.write("\\nSENTINEL=" + (Bun.env.MARS_PROFILE_BOOTSTRAP_SENTINEL ?? ""));',
+					].join("\n"),
+				);
 
-			const childEnv: Record<string, string | undefined> = {
-				...process.env,
-				HOME: home,
-				// os.homedir() reads USERPROFILE on Windows, HOME elsewhere.
-				USERPROFILE: home,
-				PI_CONFIG_DIR: configDir,
-				PI_NO_TITLE: "1",
-				NO_COLOR: "1",
-			};
-			delete childEnv.MARS_PROFILE;
-			delete childEnv.PI_PROFILE;
-			delete childEnv.PI_CODING_AGENT_DIR;
-			delete childEnv.MARS_PROFILE_BOOTSTRAP_SENTINEL;
+				const childEnv: Record<string, string | undefined> = {
+					...process.env,
+					HOME: home,
+					// os.homedir() reads USERPROFILE on Windows, HOME elsewhere.
+					USERPROFILE: home,
+					PI_CONFIG_DIR: configDir,
+					PI_NO_TITLE: "1",
+					NO_COLOR: "1",
+				};
+				delete childEnv.MARS_PROFILE;
+				delete childEnv.PI_PROFILE;
+				delete childEnv.PI_CODING_AGENT_DIR;
+				delete childEnv.MARS_PROFILE_BOOTSTRAP_SENTINEL;
 
-			const proc = Bun.spawn([process.execPath, probePath], {
-				cwd: repoRoot,
-				stdout: "pipe",
-				stderr: "pipe",
-				env: childEnv,
-			});
-			const [stdout, stderr, exitCode] = await Promise.all([
-				readStream(proc.stdout as ReadableStream<Uint8Array>),
-				readStream(proc.stderr as ReadableStream<Uint8Array>),
-				proc.exited,
-			]);
+				const proc = Bun.spawn([process.execPath, probePath], {
+					cwd: repoRoot,
+					stdout: "pipe",
+					stderr: "pipe",
+					env: childEnv,
+				});
+				const [stdout, stderr, exitCode] = await Promise.all([
+					readStream(proc.stdout as ReadableStream<Uint8Array>),
+					readStream(proc.stderr as ReadableStream<Uint8Array>),
+					proc.exited,
+				]);
 
-			expect(exitCode, stderr).toBe(0);
-			expect(stdout).toContain("SENTINEL=work");
-			expect(stdout).not.toContain("SENTINEL=default");
-		} finally {
-			await removeWithRetries(root);
-		}
-		// Spawns a probe that imports the command modules, so the cost is cold
-		// transpile of the CLI graph, not latency under test.
-	}, 30_000);
+				expect(exitCode, stderr).toBe(0);
+				expect(stdout).toContain("SENTINEL=work");
+				expect(stdout).not.toContain("SENTINEL=default");
+			} finally {
+				await removeWithRetries(root);
+			}
+			// Spawns a probe that imports the command modules, so the cost is cold
+			// transpile of the CLI graph, not latency under test.
+		},
+		scaledTimeout(30000),
+	);
 
-	it("surfaces an invalid MARS_PROFILE env as a clean error, not an import crash", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-bad-"));
-		try {
-			const home = path.join(root, "home");
-			await fs.mkdir(home, { recursive: true });
+	it(
+		"surfaces an invalid MARS_PROFILE env as a clean error, not an import crash",
+		async () => {
+			const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-bad-"));
+			try {
+				const home = path.join(root, "home");
+				await fs.mkdir(home, { recursive: true });
 
-			const probePath = path.join(root, "probe.ts");
-			await Bun.write(
-				probePath,
-				[
-					`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
-					'await runCli(["--version"]);',
-					// Reached only if the module import did NOT throw — i.e. the invalid
-					// env was deferred to runCli's error handler instead of crashing the
-					// process during the static import of dirs.ts.
-					'process.stdout.write("HANDLED");',
-				].join("\n"),
-			);
+				const probePath = path.join(root, "probe.ts");
+				await Bun.write(
+					probePath,
+					[
+						`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
+						'await runCli(["--version"]);',
+						// Reached only if the module import did NOT throw — i.e. the invalid
+						// env was deferred to runCli's error handler instead of crashing the
+						// process during the static import of dirs.ts.
+						'process.stdout.write("HANDLED");',
+					].join("\n"),
+				);
 
-			const childEnv: Record<string, string | undefined> = {
-				...process.env,
-				HOME: home,
-				USERPROFILE: home,
-				PI_CONFIG_DIR: ".mars-profile-cli-env-bad",
-				MARS_PROFILE: "..",
-				NO_COLOR: "1",
-			};
-			delete childEnv.PI_PROFILE;
-			delete childEnv.PI_CODING_AGENT_DIR;
+				const childEnv: Record<string, string | undefined> = {
+					...process.env,
+					HOME: home,
+					USERPROFILE: home,
+					PI_CONFIG_DIR: ".mars-profile-cli-env-bad",
+					MARS_PROFILE: "..",
+					NO_COLOR: "1",
+				};
+				delete childEnv.PI_PROFILE;
+				delete childEnv.PI_CODING_AGENT_DIR;
 
-			const proc = Bun.spawn([process.execPath, probePath], {
-				cwd: repoRoot,
-				stdout: "pipe",
-				stderr: "pipe",
-				env: childEnv,
-			});
-			const [stdout, stderr, exitCode] = await Promise.all([
-				readStream(proc.stdout as ReadableStream<Uint8Array>),
-				readStream(proc.stderr as ReadableStream<Uint8Array>),
-				proc.exited,
-			]);
+				const proc = Bun.spawn([process.execPath, probePath], {
+					cwd: repoRoot,
+					stdout: "pipe",
+					stderr: "pipe",
+					env: childEnv,
+				});
+				const [stdout, stderr, exitCode] = await Promise.all([
+					readStream(proc.stdout as ReadableStream<Uint8Array>),
+					readStream(proc.stderr as ReadableStream<Uint8Array>),
+					proc.exited,
+				]);
 
-			expect(stdout, stderr).toContain("HANDLED");
-			expect(stderr).toContain("Invalid Mars profile");
-			expect(exitCode).toBe(1);
-		} finally {
-			await removeWithRetries(root);
-		}
-		// Same cold-spawn cost as the sibling above; it only escapes Bun's 5s
-		// default because that test warms the transpile cache first.
-	}, 30_000);
+				expect(stdout, stderr).toContain("HANDLED");
+				expect(stderr).toContain("Invalid Mars profile");
+				expect(exitCode).toBe(1);
+			} finally {
+				await removeWithRetries(root);
+			}
+			// Same cold-spawn cost as the sibling above; it only escapes Bun's 5s
+			// default because that test warms the transpile cache first.
+		},
+		scaledTimeout(30000),
+	);
 });

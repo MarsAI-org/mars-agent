@@ -8,6 +8,7 @@
  * the completion attempt instead of the registry guard.
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -42,60 +43,64 @@ const MODELS_YML = `providers:
 const READ_CLI_URL = new URL("../src/cli/read-cli.ts", import.meta.url).href;
 
 describe("mars read <image>?q=", () => {
-	it("resolves a vision model instead of failing with the registry guard", async () => {
-		const tempDir = TempDir.createSync("@pi-read-cli-imgq-");
-		try {
-			const agentDir = tempDir.join("agent");
-			const home = tempDir.join("home");
-			const project = tempDir.join("project");
-			fs.mkdirSync(agentDir, { recursive: true });
-			fs.mkdirSync(home, { recursive: true });
-			fs.mkdirSync(path.join(project, ".mars"), { recursive: true });
-			// Bound the completion attempt so a dead endpoint aborts quickly instead
-			// of running the provider SDK's full connection backoff.
-			fs.writeFileSync(path.join(project, ".mars", "config.yml"), "images:\n  questionTimeoutMs: 3000\n");
-			fs.writeFileSync(path.join(agentDir, "models.yml"), MODELS_YML);
-			const pngPath = path.join(project, "test.png");
-			fs.writeFileSync(pngPath, Buffer.from(PNG_1X1, "base64"));
-
-			// The runner imports the CLI entry by file URL so it resolves
-			// independently of its own location; it lives in the TempDir (never
-			// the repo checkout) so a crash before cleanup leaves nothing
-			// behind in git status. cwd is the isolated project so
-			// getProjectDir() never picks up repo settings.
-			const runnerPath = tempDir.join(`read-cli-runner-${process.pid}.ts`);
-			fs.writeFileSync(
-				runnerPath,
-				`import { runReadCommand } from ${JSON.stringify(READ_CLI_URL)};\nawait runReadCommand({ path: process.argv[2] });\n`,
-			);
+	it(
+		"resolves a vision model instead of failing with the registry guard",
+		async () => {
+			const tempDir = TempDir.createSync("@pi-read-cli-imgq-");
 			try {
-				const child = Bun.spawn(["bun", runnerPath, `${pngPath}?q=describe this image`], {
-					cwd: project,
-					env: {
-						...process.env,
-						HOME: home,
-						PI_CODING_AGENT_DIR: agentDir,
-						PI_TEST_RUNTIME: "1",
-					},
-					stdout: "pipe",
-					stderr: "pipe",
-				});
-				const [stdout, stderr, exitCode] = await Promise.all([
-					new Response(child.stdout).text(),
-					new Response(child.stderr).text(),
-					child.exited,
-				]);
-				const output = `${stdout}\n${stderr}`;
-				// The command fails (dead endpoint) but must get past the registry
-				// guard AND model resolution to an actual completion attempt.
-				expect(exitCode).not.toBe(0);
-				expect(output).not.toContain("Model registry is unavailable for image questions.");
-				expect(output).not.toContain("No models available for image questions.");
+				const agentDir = tempDir.join("agent");
+				const home = tempDir.join("home");
+				const project = tempDir.join("project");
+				fs.mkdirSync(agentDir, { recursive: true });
+				fs.mkdirSync(home, { recursive: true });
+				fs.mkdirSync(path.join(project, ".mars"), { recursive: true });
+				// Bound the completion attempt so a dead endpoint aborts quickly instead
+				// of running the provider SDK's full connection backoff.
+				fs.writeFileSync(path.join(project, ".mars", "config.yml"), "images:\n  questionTimeoutMs: 3000\n");
+				fs.writeFileSync(path.join(agentDir, "models.yml"), MODELS_YML);
+				const pngPath = path.join(project, "test.png");
+				fs.writeFileSync(pngPath, Buffer.from(PNG_1X1, "base64"));
+
+				// The runner imports the CLI entry by file URL so it resolves
+				// independently of its own location; it lives in the TempDir (never
+				// the repo checkout) so a crash before cleanup leaves nothing
+				// behind in git status. cwd is the isolated project so
+				// getProjectDir() never picks up repo settings.
+				const runnerPath = tempDir.join(`read-cli-runner-${process.pid}.ts`);
+				fs.writeFileSync(
+					runnerPath,
+					`import { runReadCommand } from ${JSON.stringify(READ_CLI_URL)};\nawait runReadCommand({ path: process.argv[2] });\n`,
+				);
+				try {
+					const child = Bun.spawn(["bun", runnerPath, `${pngPath}?q=describe this image`], {
+						cwd: project,
+						env: {
+							...process.env,
+							HOME: home,
+							PI_CODING_AGENT_DIR: agentDir,
+							PI_TEST_RUNTIME: "1",
+						},
+						stdout: "pipe",
+						stderr: "pipe",
+					});
+					const [stdout, stderr, exitCode] = await Promise.all([
+						new Response(child.stdout).text(),
+						new Response(child.stderr).text(),
+						child.exited,
+					]);
+					const output = `${stdout}\n${stderr}`;
+					// The command fails (dead endpoint) but must get past the registry
+					// guard AND model resolution to an actual completion attempt.
+					expect(exitCode).not.toBe(0);
+					expect(output).not.toContain("Model registry is unavailable for image questions.");
+					expect(output).not.toContain("No models available for image questions.");
+				} finally {
+					fs.rmSync(runnerPath, { force: true });
+				}
 			} finally {
-				fs.rmSync(runnerPath, { force: true });
+				tempDir.removeSync();
 			}
-		} finally {
-			tempDir.removeSync();
-		}
-	}, 60_000);
+		},
+		scaledTimeout(60000),
+	);
 });

@@ -7,6 +7,7 @@
 // maps to its service-model status, so a transient frame classifies retriable
 // and a genuine validation rejection stays terminal.
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { retriable } from "@marsai-org/ai/error";
 import { bedrockStreamExceptionStatus, streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
 import { crc32 } from "@marsai-org/ai/providers/aws-eventstream";
@@ -131,55 +132,75 @@ describe("bedrockStreamExceptionStatus", () => {
 });
 
 describe("bedrock in-stream failure classification", () => {
-	it("classifies an internalServerException frame as a retriable 500", async () => {
-		const failed = await failWithFrame(
-			exceptionFrame(
-				"internalServerException",
-				"The server had an error while processing your request. Sorry about that!",
-			),
-		);
-		expect(failed.stopReason).toBe("error");
-		expect(failed.errorStatus).toBe(500);
-		expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
-	}, 10_000);
+	it(
+		"classifies an internalServerException frame as a retriable 500",
+		async () => {
+			const failed = await failWithFrame(
+				exceptionFrame(
+					"internalServerException",
+					"The server had an error while processing your request. Sorry about that!",
+				),
+			);
+			expect(failed.stopReason).toBe("error");
+			expect(failed.errorStatus).toBe(500);
+			expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("classifies a throttlingException frame as a retriable 429", async () => {
-		const failed = await failWithFrame(
-			exceptionFrame("throttlingException", "Your request was denied due to exceeding the account quotas."),
-		);
-		expect(failed.errorStatus).toBe(429);
-		expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
-	}, 10_000);
+	it(
+		"classifies a throttlingException frame as a retriable 429",
+		async () => {
+			const failed = await failWithFrame(
+				exceptionFrame("throttlingException", "Your request was denied due to exceeding the account quotas."),
+			);
+			expect(failed.errorStatus).toBe(429);
+			expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("classifies a PascalCase error frame by its code", async () => {
-		const failed = await failWithFrame(
-			encodeFrame(
-				{
-					":message-type": "error",
-					":error-code": "ServiceUnavailableException",
-					":error-message": "The service isn't currently available.",
-				},
-				new Uint8Array(0),
-			),
-		);
-		expect(failed.errorStatus).toBe(503);
-		expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
-	}, 10_000);
+	it(
+		"classifies a PascalCase error frame by its code",
+		async () => {
+			const failed = await failWithFrame(
+				encodeFrame(
+					{
+						":message-type": "error",
+						":error-code": "ServiceUnavailableException",
+						":error-message": "The service isn't currently available.",
+					},
+					new Uint8Array(0),
+				),
+			);
+			expect(failed.errorStatus).toBe(503);
+			expect(failed.errorId !== undefined && retriable(failed.errorId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("keeps a validationException frame terminal at 400", async () => {
-		const failed = await failWithFrame(
-			exceptionFrame(
-				"validationException",
-				"The input fails to satisfy the constraints specified by Amazon Bedrock.",
-			),
-		);
-		expect(failed.errorStatus).toBe(400);
-		expect(failed.errorId === undefined || !retriable(failed.errorId)).toBe(true);
-	}, 10_000);
+	it(
+		"keeps a validationException frame terminal at 400",
+		async () => {
+			const failed = await failWithFrame(
+				exceptionFrame(
+					"validationException",
+					"The input fails to satisfy the constraints specified by Amazon Bedrock.",
+				),
+			);
+			expect(failed.errorStatus).toBe(400);
+			expect(failed.errorId === undefined || !retriable(failed.errorId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("keeps an unrecognized exception frame terminal at 400", async () => {
-		const failed = await failWithFrame(exceptionFrame("someFutureException", "something new broke"));
-		expect(failed.errorStatus).toBe(400);
-		expect(failed.errorId === undefined || !retriable(failed.errorId)).toBe(true);
-	}, 10_000);
+	it(
+		"keeps an unrecognized exception frame terminal at 400",
+		async () => {
+			const failed = await failWithFrame(exceptionFrame("someFutureException", "something new broke"));
+			expect(failed.errorStatus).toBe(400);
+			expect(failed.errorId === undefined || !retriable(failed.errorId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 });

@@ -8,6 +8,7 @@
  * stayed open.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -42,77 +43,89 @@ describe("MCP incremental connectServers", () => {
 		removeSyncWithRetries(workDir);
 	});
 
-	it("keeps server A tools after incrementally connecting server B", async () => {
-		await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
-		expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
-		const afterA = manager.getTools();
-		expect(afterA.map(t => t.name)).toContain(TOOL_A);
-		expect(afterA).toHaveLength(MANY_TOOL_COUNT);
-		expect(afterA.every(t => t.mcpServerName === SERVER_A)).toBe(true);
+	it(
+		"keeps server A tools after incrementally connecting server B",
+		async () => {
+			await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
+			expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
+			const afterA = manager.getTools();
+			expect(afterA.map(t => t.name)).toContain(TOOL_A);
+			expect(afterA).toHaveLength(MANY_TOOL_COUNT);
+			expect(afterA.every(t => t.mcpServerName === SERVER_A)).toBe(true);
 
-		const result = await manager.connectServers({ [SERVER_B]: fixtureConfig() }, {});
-		expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
-		expect(manager.getConnectionStatus(SERVER_B)).toBe("connected");
+			const result = await manager.connectServers({ [SERVER_B]: fixtureConfig() }, {});
+			expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
+			expect(manager.getConnectionStatus(SERVER_B)).toBe("connected");
 
-		const tools = manager.getTools();
-		expect(tools.map(t => t.name)).toContain(TOOL_A);
-		expect(tools.map(t => t.name)).toContain(TOOL_B);
-		expect(tools).toHaveLength(MANY_TOOL_COUNT * 2);
-		expect(tools.filter(t => t.mcpServerName === SERVER_A)).toHaveLength(MANY_TOOL_COUNT);
-		expect(tools.filter(t => t.mcpServerName === SERVER_B)).toHaveLength(MANY_TOOL_COUNT);
-		expect(result.tools.map(t => t.name)).toEqual(tools.map(t => t.name));
-		expect(result.connectedServers).toContain(SERVER_B);
-	}, 20_000);
+			const tools = manager.getTools();
+			expect(tools.map(t => t.name)).toContain(TOOL_A);
+			expect(tools.map(t => t.name)).toContain(TOOL_B);
+			expect(tools).toHaveLength(MANY_TOOL_COUNT * 2);
+			expect(tools.filter(t => t.mcpServerName === SERVER_A)).toHaveLength(MANY_TOOL_COUNT);
+			expect(tools.filter(t => t.mcpServerName === SERVER_B)).toHaveLength(MANY_TOOL_COUNT);
+			expect(result.tools.map(t => t.name)).toEqual(tools.map(t => t.name));
+			expect(result.connectedServers).toContain(SERVER_B);
+		},
+		scaledTimeout(20000),
+	);
 
-	it("applyMcpToggleRuntime enable of B refreshes the A+B union", async () => {
-		await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
-		expect(manager.getTools()).toHaveLength(MANY_TOOL_COUNT);
+	it(
+		"applyMcpToggleRuntime enable of B refreshes the A+B union",
+		async () => {
+			await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
+			expect(manager.getTools()).toHaveLength(MANY_TOOL_COUNT);
 
-		const refreshed: string[][] = [];
-		await applyMcpToggleRuntime({
-			name: SERVER_B,
-			enabled: true,
-			cwd: workDir,
-			manager,
-			session: {
-				refreshMCPTools: next => {
-					refreshed.push(next.map(t => t.name));
+			const refreshed: string[][] = [];
+			await applyMcpToggleRuntime({
+				name: SERVER_B,
+				enabled: true,
+				cwd: workDir,
+				manager,
+				session: {
+					refreshMCPTools: next => {
+						refreshed.push(next.map(t => t.name));
+					},
 				},
-			},
-			loadConfigs: async () => ({
-				configs: { [SERVER_B]: fixtureConfig() },
-				sources: {},
-				exaApiKeys: [],
-			}),
-		});
-
-		expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
-		expect(manager.getConnectionStatus(SERVER_B)).toBe("connected");
-		const names = manager.getTools().map(t => t.name);
-		expect(names).toContain(TOOL_A);
-		expect(names).toContain(TOOL_B);
-		expect(manager.getTools()).toHaveLength(MANY_TOOL_COUNT * 2);
-		expect(refreshed.at(-1)).toContain(TOOL_A);
-		expect(refreshed.at(-1)).toContain(TOOL_B);
-		expect(refreshed.at(-1)).toHaveLength(MANY_TOOL_COUNT * 2);
-	}, 20_000);
-
-	it("notifies connection-status listeners on connect and transport loss", async () => {
-		const events: Array<{ type: string; name?: string }> = [];
-		const stop = manager.addConnectionStatusListener(event => {
-			events.push({
-				type: event.type,
-				name: event.type === "connecting" ? event.serverNames[0] : event.serverName,
+				loadConfigs: async () => ({
+					configs: { [SERVER_B]: fixtureConfig() },
+					sources: {},
+					exaApiKeys: [],
+				}),
 			});
-		});
-		await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
-		expect(events.some(event => event.type === "connecting" && event.name === SERVER_A)).toBe(true);
-		expect(events.some(event => event.type === "connected" && event.name === SERVER_A)).toBe(true);
 
-		const connection = manager.getConnection(SERVER_A);
-		expect(connection).toBeDefined();
-		connection?.transport.onClose?.();
-		expect(events.some(event => event.type === "reconnecting" && event.name === SERVER_A)).toBe(true);
-		stop();
-	}, 20_000);
+			expect(manager.getConnectionStatus(SERVER_A)).toBe("connected");
+			expect(manager.getConnectionStatus(SERVER_B)).toBe("connected");
+			const names = manager.getTools().map(t => t.name);
+			expect(names).toContain(TOOL_A);
+			expect(names).toContain(TOOL_B);
+			expect(manager.getTools()).toHaveLength(MANY_TOOL_COUNT * 2);
+			expect(refreshed.at(-1)).toContain(TOOL_A);
+			expect(refreshed.at(-1)).toContain(TOOL_B);
+			expect(refreshed.at(-1)).toHaveLength(MANY_TOOL_COUNT * 2);
+		},
+		scaledTimeout(20000),
+	);
+
+	it(
+		"notifies connection-status listeners on connect and transport loss",
+		async () => {
+			const events: Array<{ type: string; name?: string }> = [];
+			const stop = manager.addConnectionStatusListener(event => {
+				events.push({
+					type: event.type,
+					name: event.type === "connecting" ? event.serverNames[0] : event.serverName,
+				});
+			});
+			await manager.connectServers({ [SERVER_A]: fixtureConfig() }, {});
+			expect(events.some(event => event.type === "connecting" && event.name === SERVER_A)).toBe(true);
+			expect(events.some(event => event.type === "connected" && event.name === SERVER_A)).toBe(true);
+
+			const connection = manager.getConnection(SERVER_A);
+			expect(connection).toBeDefined();
+			connection?.transport.onClose?.();
+			expect(events.some(event => event.type === "reconnecting" && event.name === SERVER_A)).toBe(true);
+			stop();
+		},
+		scaledTimeout(20000),
+	);
 });

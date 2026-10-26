@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
 import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
@@ -255,14 +256,16 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser navigation, frames, dialogs, and t
 		BROWSER_TEST_TIMEOUT_MS,
 	);
 
-	test("navigates pages whose child frame never finishes loading", async () => {
-		const invoke = createHost();
-		await invoke({ action: "open", name: "stuck", url: `${baseUrl}/one` });
-		const result = await invoke({
-			action: "run",
-			name: "stuck",
-			timeout: 10,
-			code: `
+	test(
+		"navigates pages whose child frame never finishes loading",
+		async () => {
+			const invoke = createHost();
+			await invoke({ action: "open", name: "stuck", url: `${baseUrl}/one` });
+			const result = await invoke({
+				action: "run",
+				name: "stuck",
+				timeout: 10,
+				code: `
 				// The main document's load fires before its never-ending frame is added.
 				await tab.goto(${JSON.stringify(`${baseUrl}/late-frame`)});
 				// The main document is parsed; its frame never finishes.
@@ -272,18 +275,22 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser navigation, frames, dialogs, and t
 				await tab.reload({ waitUntil: "domcontentloaded" });
 				return [tab.url(), await tab.evaluate(() => document.readyState)];
 			`,
-		});
-		expect(valueOf(result)).toEqual([`${baseUrl}/stuck-frame`, "interactive"]);
-	}, 60_000);
+			});
+			expect(valueOf(result)).toEqual([`${baseUrl}/stuck-frame`, "interactive"]);
+		},
+		scaledTimeout(60000),
+	);
 
-	test("validates Playwright-style and array waitUntil values through Puppeteer", async () => {
-		const invoke = createHost();
-		await invoke({ action: "open", name: "wait-values", url: `${baseUrl}/one` });
-		const result = await invoke({
-			action: "run",
-			name: "wait-values",
-			timeout: 20,
-			code: `
+	test(
+		"validates Playwright-style and array waitUntil values through Puppeteer",
+		async () => {
+			const invoke = createHost();
+			await invoke({ action: "open", name: "wait-values", url: `${baseUrl}/one` });
+			const result = await invoke({
+				action: "run",
+				name: "wait-values",
+				timeout: 20,
+				code: `
 				const started = Date.now();
 				let message = "";
 				try {
@@ -295,12 +302,14 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser navigation, frames, dialogs, and t
 				await tab.goto(${JSON.stringify(`${baseUrl}/three`)}, { waitUntil: ["load", "domcontentloaded"] });
 				return [message, elapsed < 5000, tab.url()];
 			`,
-		});
-		const [message, fast, url] = valueOf(result) as [string, boolean, string];
-		expect(message).toContain("Unknown value for options.waitUntil: networkidle");
-		expect(fast).toBe(true);
-		expect(url).toBe(`${baseUrl}/three`);
-	}, 60_000);
+			});
+			const [message, fast, url] = valueOf(result) as [string, boolean, string];
+			expect(message).toContain("Unknown value for options.waitUntil: networkidle");
+			expect(fast).toBe(true);
+			expect(url).toBe(`${baseUrl}/three`);
+		},
+		scaledTimeout(60000),
+	);
 
 	test(
 		"auto-accepts alerts and explicitly settles confirm and prompt dialogs",
@@ -492,29 +501,33 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser navigation, frames, dialogs, and t
 		BROWSER_TEST_TIMEOUT_MS,
 	);
 
-	test("skips a cross-site frame stuck in script until it navigates", async () => {
-		const invoke = createHost();
-		await invoke({ action: "open", name: "observe-stuck-frame", url: `${baseUrl}/observe-stuck-frame` });
-		// The first observation waits out the frame, then still lists the page.
-		expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main"]);
-		const started = performance.now();
-		expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main"]);
-		expect(performance.now() - started).toBeLessThan(2_500);
-		// Navigating the frame clears the memo; the evaluation settles once the new document has loaded.
-		await invoke({
-			action: "call",
-			name: "observe-stuck-frame",
-			chain: [
-				{
-					method: "evaluate",
-					args: [
-						`(async () => { const { promise, resolve } = Promise.withResolvers(); const frame = document.querySelector("#stuck"); frame.onload = () => resolve(true); frame.srcdoc = "<button>Fresh</button>"; await promise; })()`,
-					],
-				},
-			],
-		});
-		expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main", "button:Fresh"]);
-	}, 60_000);
+	test(
+		"skips a cross-site frame stuck in script until it navigates",
+		async () => {
+			const invoke = createHost();
+			await invoke({ action: "open", name: "observe-stuck-frame", url: `${baseUrl}/observe-stuck-frame` });
+			// The first observation waits out the frame, then still lists the page.
+			expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main"]);
+			const started = performance.now();
+			expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main"]);
+			expect(performance.now() - started).toBeLessThan(2_500);
+			// Navigating the frame clears the memo; the evaluation settles once the new document has loaded.
+			await invoke({
+				action: "call",
+				name: "observe-stuck-frame",
+				chain: [
+					{
+						method: "evaluate",
+						args: [
+							`(async () => { const { promise, resolve } = Promise.withResolvers(); const frame = document.querySelector("#stuck"); frame.onload = () => resolve(true); frame.srcdoc = "<button>Fresh</button>"; await promise; })()`,
+						],
+					},
+				],
+			});
+			expect((await observe(invoke, "observe-stuck-frame", {})).names).toEqual(["button:Main", "button:Fresh"]);
+		},
+		scaledTimeout(60000),
+	);
 
 	test(
 		"lists managed tabs with live metadata",

@@ -7,6 +7,7 @@
  * All writes stay under temp dirs, including a fake HOME for the CLI path.
  */
 import { afterEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -92,114 +93,122 @@ afterEach(async () => {
 });
 
 describe("collab host registry (two-process smoke)", () => {
-	it("discovers a separately-spawned host without a URL and prunes it after a crash", async () => {
-		const dir = await tempDir("omp-collab-smoke-seam-");
-		const marker = `seam-${Date.now().toString(36)}`;
-		const instanceId = "seam-host";
-		const { child, stderr } = spawnHelper([dir, marker, instanceId]);
+	it(
+		"discovers a separately-spawned host without a URL and prunes it after a crash",
+		async () => {
+			const dir = await tempDir("omp-collab-smoke-seam-");
+			const marker = `seam-${Date.now().toString(36)}`;
+			const instanceId = "seam-host";
+			const { child, stderr } = spawnHelper([dir, marker, instanceId]);
 
-		const ready = await readUntil(child.stdout, "READY", READY_TIMEOUT_MS);
-		expect({ ready, stderr: stderr() }).toEqual({ ready: true, stderr: "" });
+			const ready = await readUntil(child.stdout, "READY", READY_TIMEOUT_MS);
+			expect({ ready, stderr: stderr() }).toEqual({ ready: true, stderr: "" });
 
-		const hosts = await listCollabHosts({ dir });
-		expect(hosts).toHaveLength(1);
-		expect(hosts[0]).toMatchObject({ instanceId, pid: child.pid, sessionId: `session-${marker}` });
-		expect(hosts[0]).not.toHaveProperty("url");
-		expect(JSON.stringify(hosts)).not.toContain(`https://collab.example/control/${marker}`);
-		expect(JSON.stringify(hosts)).not.toContain(`https://collab.example/view/${marker}`);
+			const hosts = await listCollabHosts({ dir });
+			expect(hosts).toHaveLength(1);
+			expect(hosts[0]).toMatchObject({ instanceId, pid: child.pid, sessionId: `session-${marker}` });
+			expect(hosts[0]).not.toHaveProperty("url");
+			expect(JSON.stringify(hosts)).not.toContain(`https://collab.example/control/${marker}`);
+			expect(JSON.stringify(hosts)).not.toContain(`https://collab.example/view/${marker}`);
 
-		// SIGKILL cannot run shutdown hooks; the next list must prune the endpoint.
-		child.kill("SIGKILL");
-		await child.exited;
+			// SIGKILL cannot run shutdown hooks; the next list must prune the endpoint.
+			child.kill("SIGKILL");
+			await child.exited;
 
-		const pruned = await waitUntil(async () => {
-			const remaining = await listCollabHosts({ dir });
-			if (remaining.length !== 0) return false;
-			const entries = await fs.readdir(dir);
-			return !entries.some(name => name.endsWith(".json"));
-		}, CLEANUP_TIMEOUT_MS);
-		expect(pruned).toBe(true);
-	}, 40_000);
+			const pruned = await waitUntil(async () => {
+				const remaining = await listCollabHosts({ dir });
+				if (remaining.length !== 0) return false;
+				const entries = await fs.readdir(dir);
+				return !entries.some(name => name.endsWith(".json"));
+			}, CLEANUP_TIMEOUT_MS);
+			expect(pruned).toBe(true);
+		},
+		scaledTimeout(40000),
+	);
 
-	it("lists metadata and explicitly retrieves control or view links through the real CLI under a fake HOME", async () => {
-		const home = await tempDir("omp-collab-smoke-home-");
-		const marker = `cli-${Date.now().toString(36)}`;
-		const instanceId = "cli-host";
-		const controlUrl = `https://collab.example/control/${marker}`;
-		const viewUrl = `https://collab.example/view/${marker}`;
-		// Clear every override that could redirect the registry outside the fake HOME.
-		const env: Record<string, string | undefined> = {
-			...process.env,
-			HOME: home,
-			USERPROFILE: home,
-			NO_COLOR: "1",
-			MARS_SMOKE_MARKER: marker,
-			MARS_SMOKE_INSTANCE_ID: instanceId,
-		};
-		delete env.PI_CONFIG_DIR;
-		delete env.PI_PROFILE;
-		delete env.MARS_PROFILE;
-		delete env.PI_CODING_AGENT_DIR;
+	it(
+		"lists metadata and explicitly retrieves control or view links through the real CLI under a fake HOME",
+		async () => {
+			const home = await tempDir("omp-collab-smoke-home-");
+			const marker = `cli-${Date.now().toString(36)}`;
+			const instanceId = "cli-host";
+			const controlUrl = `https://collab.example/control/${marker}`;
+			const viewUrl = `https://collab.example/view/${marker}`;
+			// Clear every override that could redirect the registry outside the fake HOME.
+			const env: Record<string, string | undefined> = {
+				...process.env,
+				HOME: home,
+				USERPROFILE: home,
+				NO_COLOR: "1",
+				MARS_SMOKE_MARKER: marker,
+				MARS_SMOKE_INSTANCE_ID: instanceId,
+			};
+			delete env.PI_CONFIG_DIR;
+			delete env.PI_PROFILE;
+			delete env.MARS_PROFILE;
+			delete env.PI_CODING_AGENT_DIR;
 
-		const { child, stderr } = spawnHelper([], env);
-		const ready = await readUntil(child.stdout, "READY", READY_TIMEOUT_MS);
-		expect({ ready, helperStderr: stderr() }).toEqual({ ready: true, helperStderr: "" });
+			const { child, stderr } = spawnHelper([], env);
+			const ready = await readUntil(child.stdout, "READY", READY_TIMEOUT_MS);
+			expect({ ready, helperStderr: stderr() }).toEqual({ ready: true, helperStderr: "" });
 
-		const runCli = async (args: string[]): Promise<{ code: number; stdout: string; stderr: string }> => {
-			const cli = Bun.spawn([process.execPath, CLI_PATH, "collab", ...args], {
-				cwd: path.resolve(import.meta.dir, "../.."),
-				env,
-				stdin: "ignore",
-				stdout: "pipe",
-				stderr: "pipe",
+			const runCli = async (args: string[]): Promise<{ code: number; stdout: string; stderr: string }> => {
+				const cli = Bun.spawn([process.execPath, CLI_PATH, "collab", ...args], {
+					cwd: path.resolve(import.meta.dir, "../.."),
+					env,
+					stdin: "ignore",
+					stdout: "pipe",
+					stderr: "pipe",
+				});
+				liveChildren.push(cli);
+				const [code, stdout, cliStderr] = await Promise.all([
+					cli.exited,
+					new Response(cli.stdout).text(),
+					new Response(cli.stderr).text(),
+				]);
+				return { code, stdout, stderr: cliStderr };
+			};
+
+			const listed = await runCli(["list", "--json"]);
+			expect({ code: listed.code, stderr: listed.stderr }).toEqual({ code: 0, stderr: "" });
+			const listJson: CollabListJsonOutput = JSON.parse(listed.stdout);
+			const hosts = await listCollabHosts({ dir: path.join(home, ".mars", "run", "collab-hosts") });
+			expect(listJson).toEqual({ version: COLLAB_REGISTRY_VERSION, hosts });
+			expect(listJson.hosts).toHaveLength(1);
+			expect(listJson.hosts[0]).toMatchObject({ instanceId, pid: child.pid });
+			expect(listJson.hosts[0]).not.toHaveProperty("url");
+			expect(listed.stdout).not.toContain(controlUrl);
+			expect(listed.stdout).not.toContain(viewUrl);
+
+			const control = await runCli(["link", instanceId, "--json"]);
+			expect({ code: control.code, stderr: control.stderr }).toEqual({ code: 0, stderr: "" });
+			expect(JSON.parse(control.stdout)).toEqual({
+				version: COLLAB_REGISTRY_VERSION,
+				instanceId,
+				generation: 1,
+				access: "control",
+				url: controlUrl,
 			});
-			liveChildren.push(cli);
-			const [code, stdout, cliStderr] = await Promise.all([
-				cli.exited,
-				new Response(cli.stdout).text(),
-				new Response(cli.stderr).text(),
-			]);
-			return { code, stdout, stderr: cliStderr };
-		};
+			const view = await runCli(["link", String(child.pid), "--view"]);
+			expect(view).toEqual({ code: 0, stdout: `${viewUrl}\n`, stderr: "" });
 
-		const listed = await runCli(["list", "--json"]);
-		expect({ code: listed.code, stderr: listed.stderr }).toEqual({ code: 0, stderr: "" });
-		const listJson: CollabListJsonOutput = JSON.parse(listed.stdout);
-		const hosts = await listCollabHosts({ dir: path.join(home, ".mars", "run", "collab-hosts") });
-		expect(listJson).toEqual({ version: COLLAB_REGISTRY_VERSION, hosts });
-		expect(listJson.hosts).toHaveLength(1);
-		expect(listJson.hosts[0]).toMatchObject({ instanceId, pid: child.pid });
-		expect(listJson.hosts[0]).not.toHaveProperty("url");
-		expect(listed.stdout).not.toContain(controlUrl);
-		expect(listed.stdout).not.toContain(viewUrl);
+			const missing = await runCli(["link", "missing-host"]);
+			expect(missing.code).toBe(1);
+			expect(missing.stdout).toBe("");
+			expect(missing.stderr).toMatch(/^error: [^\n]*missing-host\n$/);
 
-		const control = await runCli(["link", instanceId, "--json"]);
-		expect({ code: control.code, stderr: control.stderr }).toEqual({ code: 0, stderr: "" });
-		expect(JSON.parse(control.stdout)).toEqual({
-			version: COLLAB_REGISTRY_VERSION,
-			instanceId,
-			generation: 1,
-			access: "control",
-			url: controlUrl,
-		});
-		const view = await runCli(["link", String(child.pid), "--view"]);
-		expect(view).toEqual({ code: 0, stdout: `${viewUrl}\n`, stderr: "" });
-
-		const missing = await runCli(["link", "missing-host"]);
-		expect(missing.code).toBe(1);
-		expect(missing.stdout).toBe("");
-		expect(missing.stderr).toMatch(/^error: [^\n]*missing-host\n$/);
-
-		// SIGTERM allows clean withdrawal, unlike the crash path above. Windows cannot deliver a
-		// catchable SIGTERM (kill() terminates the process), so there only crash pruning applies.
-		child.kill("SIGTERM");
-		const stopCode = await child.exited;
-		if (process.platform !== "win32") expect(stopCode).toBe(0);
-		const afterStop = await waitUntil(async () => {
-			const result = await runCli(["list", "--json"]);
-			const json: CollabListJsonOutput = JSON.parse(result.stdout);
-			return result.code === 0 && json.hosts.length === 0;
-		}, CLI_TIMEOUT_MS);
-		expect(afterStop).toBe(true);
-	}, 120_000);
+			// SIGTERM allows clean withdrawal, unlike the crash path above. Windows cannot deliver a
+			// catchable SIGTERM (kill() terminates the process), so there only crash pruning applies.
+			child.kill("SIGTERM");
+			const stopCode = await child.exited;
+			if (process.platform !== "win32") expect(stopCode).toBe(0);
+			const afterStop = await waitUntil(async () => {
+				const result = await runCli(["list", "--json"]);
+				const json: CollabListJsonOutput = JSON.parse(result.stdout);
+				return result.code === 0 && json.hosts.length === 0;
+			}, CLI_TIMEOUT_MS);
+			expect(afterStop).toBe(true);
+		},
+		scaledTimeout(120000),
+	);
 });

@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { scheduler } from "node:timers/promises";
 import { completeSimple, streamSimple } from "@marsai-org/ai";
 import * as AIError from "@marsai-org/ai/error";
@@ -5997,75 +5998,79 @@ describe("openai-codex streaming", () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it("joins an in-flight websocket handshake instead of tearing it down", async () => {
-		const tempDir = TempDir.createSync("@pi-codex-stream-");
-		setAgentDir(tempDir.path());
-		const token = createCodexTestToken();
-		const fetchMock = vi.fn(async () => {
-			throw new Error("SSE fallback should not run when the handshake is joined");
-		});
+	it(
+		"joins an in-flight websocket handshake instead of tearing it down",
+		async () => {
+			const tempDir = TempDir.createSync("@pi-codex-stream-");
+			setAgentDir(tempDir.path());
+			const token = createCodexTestToken();
+			const fetchMock = vi.fn(async () => {
+				throw new Error("SSE fallback should not run when the handshake is joined");
+			});
 
-		let constructorCount = 0;
-		const sockets: DeferredOpenWebSocket[] = [];
-		class DeferredOpenWebSocket extends MockWebSocket {
-			constructor(url: string, options?: { headers?: WsHeaders }) {
-				super(url, options);
-				constructorCount += 1;
-				sockets.push(this);
+			let constructorCount = 0;
+			const sockets: DeferredOpenWebSocket[] = [];
+			class DeferredOpenWebSocket extends MockWebSocket {
+				constructor(url: string, options?: { headers?: WsHeaders }) {
+					super(url, options);
+					constructorCount += 1;
+					sockets.push(this);
+				}
+
+				open(): void {
+					this.readyState = MockWebSocket.OPEN;
+					this.emit("open", new Event("open"));
+				}
+
+				override close(): void {
+					const wasPending = this.readyState === MockWebSocket.CONNECTING;
+					super.close();
+					if (wasPending) this.emit("close", { code: 1000 } as unknown as Event);
+				}
+
+				override send(): void {
+					this.emitCodexResponse({ messageId: "msg_join", responseId: "resp_join", text: "Joined" });
+				}
 			}
+			global.WebSocket = DeferredOpenWebSocket as unknown as typeof WebSocket;
 
-			open(): void {
-				this.readyState = MockWebSocket.OPEN;
-				this.emit("open", new Event("open"));
-			}
+			const model = createCodexTestModel("https://chatgpt.com/backend-api");
+			const providerSessionState = new Map<string, ProviderSessionState>();
+			// Prewarm starts the handshake; the stream call races it before the socket
+			// opens. Tearing down the CONNECTING socket would reject the prewarm with a
+			// fatal "websocket closed before open" and disable websockets for the session.
+			const prewarmPromise = prewarmOpenAICodexResponses(model, {
+				apiKey: token,
+				sessionId: "ws-join-session",
+				providerSessionState,
+			});
+			const streamResult = streamOpenAICodexResponses(model, createCodexTestContext(), {
+				fetch: fetchMock as FetchImpl,
+				apiKey: token,
+				sessionId: "ws-join-session",
+				providerSessionState,
+			}).result();
 
-			override close(): void {
-				const wasPending = this.readyState === MockWebSocket.CONNECTING;
-				super.close();
-				if (wasPending) this.emit("close", { code: 1000 } as unknown as Event);
-			}
+			// Let both callers reach the handshake before the socket opens.
+			await Bun.sleep(5);
+			for (const socket of sockets) socket.open();
 
-			override send(): void {
-				this.emitCodexResponse({ messageId: "msg_join", responseId: "resp_join", text: "Joined" });
-			}
-		}
-		global.WebSocket = DeferredOpenWebSocket as unknown as typeof WebSocket;
+			await prewarmPromise;
+			const result = await streamResult;
 
-		const model = createCodexTestModel("https://chatgpt.com/backend-api");
-		const providerSessionState = new Map<string, ProviderSessionState>();
-		// Prewarm starts the handshake; the stream call races it before the socket
-		// opens. Tearing down the CONNECTING socket would reject the prewarm with a
-		// fatal "websocket closed before open" and disable websockets for the session.
-		const prewarmPromise = prewarmOpenAICodexResponses(model, {
-			apiKey: token,
-			sessionId: "ws-join-session",
-			providerSessionState,
-		});
-		const streamResult = streamOpenAICodexResponses(model, createCodexTestContext(), {
-			fetch: fetchMock as FetchImpl,
-			apiKey: token,
-			sessionId: "ws-join-session",
-			providerSessionState,
-		}).result();
-
-		// Let both callers reach the handshake before the socket opens.
-		await Bun.sleep(5);
-		for (const socket of sockets) socket.open();
-
-		await prewarmPromise;
-		const result = await streamResult;
-
-		expect(constructorCount).toBe(1);
-		expect(result.stopReason).toBe("stop");
-		expect(result.errorMessage).toBeUndefined();
-		expect(result.content).toEqual([expect.objectContaining({ type: "text", text: "Joined" })]);
-		const details = getOpenAICodexTransportDetails(model, {
-			sessionId: "ws-join-session",
-			providerSessionState,
-		});
-		expect(details.websocketDisabled).toBe(false);
-		expect(fetchMock).not.toHaveBeenCalled();
-	}, 15_000); // real handshake join; 5s default flakes under full-suite load
+			expect(constructorCount).toBe(1);
+			expect(result.stopReason).toBe("stop");
+			expect(result.errorMessage).toBeUndefined();
+			expect(result.content).toEqual([expect.objectContaining({ type: "text", text: "Joined" })]);
+			const details = getOpenAICodexTransportDetails(model, {
+				sessionId: "ws-join-session",
+				providerSessionState,
+			});
+			expect(details.websocketDisabled).toBe(false);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+		scaledTimeout(15000),
+	); // real handshake join; 5s default flakes under full-suite load
 
 	it("surfaces a whitespace flood arriving after a delivered tool call instead of replaying", async () => {
 		const tempDir = TempDir.createSync("@pi-codex-stream-");

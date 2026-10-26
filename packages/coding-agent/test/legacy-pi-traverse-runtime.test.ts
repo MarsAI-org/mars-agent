@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 
 interface CacheProbeResult {
@@ -26,17 +27,25 @@ async function runProbe(childPath: string): Promise<CacheProbeResult> {
 }
 
 describe("legacy Pi Babel startup closure", () => {
-	test("detector observes a substantial traverse/types positive-control closure", async () => {
-		const result = await runProbe(positiveControlPath);
-		expect(result.modules, JSON.stringify(result)).toBeGreaterThanOrEqual(100);
-		expect(result.bytes, JSON.stringify(result)).toBeGreaterThanOrEqual(600_000);
-	}, 30_000);
+	test(
+		"detector observes a substantial traverse/types positive-control closure",
+		async () => {
+			const result = await runProbe(positiveControlPath);
+			expect(result.modules, JSON.stringify(result)).toBeGreaterThanOrEqual(100);
+			expect(result.bytes, JSON.stringify(result)).toBeGreaterThanOrEqual(600_000);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("static legacy compatibility import evaluates no traverse/types CommonJS modules", async () => {
-		const result = await runProbe(probePath);
-		expect({ modules: result.modules, bytes: result.bytes }, JSON.stringify(result)).toEqual({
-			modules: 0,
-			bytes: 0,
-		});
-	}, 30_000);
+	test(
+		"static legacy compatibility import evaluates no traverse/types CommonJS modules",
+		async () => {
+			const result = await runProbe(probePath);
+			expect({ modules: result.modules, bytes: result.bytes }, JSON.stringify(result)).toEqual({
+				modules: 0,
+				bytes: 0,
+			});
+		},
+		scaledTimeout(30000),
+	);
 });

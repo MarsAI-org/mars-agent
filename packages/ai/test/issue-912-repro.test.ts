@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { stream } from "@marsai-org/ai/stream";
 import type { Context, Model } from "@marsai-org/ai/types";
 import { buildModel } from "@marsai-org/catalog/build";
@@ -47,60 +48,64 @@ function makeContext(): Context {
  * magnitude tighter than the 100s watchdog.
  */
 describe("issue #912 — github-copilot abort propagation", () => {
-	it("settles within bounded time when the caller aborts a hung Copilot response that ignores fetch abort", async () => {
-		const fetchInvoked = Promise.withResolvers<void>();
+	it(
+		"settles within bounded time when the caller aborts a hung Copilot response that ignores fetch abort",
+		async () => {
+			const fetchInvoked = Promise.withResolvers<void>();
 
-		// A body that never enqueues data and never reacts to the upstream
-		// signal — this is the regression vector. Real Bun fetch normally
-		// propagates abort to the body reader, but we cannot rely on it for
-		// every transport (HTTP/2, intermediaries, native sockets).
-		const fetchMock = (async (input: string | URL | Request, _init?: RequestInit): Promise<Response> => {
-			const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
-			if (!url.endsWith("/responses")) {
-				throw new Error(`Unexpected fetch to ${url}`);
-			}
+			// A body that never enqueues data and never reacts to the upstream
+			// signal — this is the regression vector. Real Bun fetch normally
+			// propagates abort to the body reader, but we cannot rely on it for
+			// every transport (HTTP/2, intermediaries, native sockets).
+			const fetchMock = (async (input: string | URL | Request, _init?: RequestInit): Promise<Response> => {
+				const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+				if (!url.endsWith("/responses")) {
+					throw new Error(`Unexpected fetch to ${url}`);
+				}
 
-			const body = new ReadableStream<Uint8Array>({
-				start(_controller) {
-					// Intentionally do nothing. No enqueue, no close, no error.
-					// The body parser will hang on the first read until something
-					// closes it from outside (which here only ESC/abort can do).
-				},
+				const body = new ReadableStream<Uint8Array>({
+					start(_controller) {
+						// Intentionally do nothing. No enqueue, no close, no error.
+						// The body parser will hang on the first read until something
+						// closes it from outside (which here only ESC/abort can do).
+					},
+				});
+
+				fetchInvoked.resolve();
+
+				return new Response(body, {
+					status: 200,
+					headers: {
+						"Content-Type": "text/event-stream",
+						"Cache-Control": "no-cache",
+					},
+				});
+			}) as typeof fetch;
+
+			const model = makeCopilotResponsesModel("https://api.githubcopilot.example/test");
+			const controller = new AbortController();
+			const providerStream = stream(model, makeContext(), {
+				apiKey: JSON.stringify({ token: "ghu_test_token", enterpriseUrl: undefined }),
+				signal: controller.signal,
+				fetch: fetchMock,
 			});
 
-			fetchInvoked.resolve();
+			await fetchInvoked.promise;
+			await Bun.sleep(50);
+			controller.abort();
 
-			return new Response(body, {
-				status: 200,
-				headers: {
-					"Content-Type": "text/event-stream",
-					"Cache-Control": "no-cache",
-				},
-			});
-		}) as typeof fetch;
+			// Bound: 3 seconds. The first-event watchdog default is 100s, so any
+			// pass within 3s implies the provider observed the abort signal
+			// directly rather than waiting for the watchdog.
+			const result = await Promise.race([
+				providerStream.result(),
+				Bun.sleep(3_000).then(() => {
+					throw new Error("providerStream.result() did not settle within 3s after abort");
+				}),
+			]);
 
-		const model = makeCopilotResponsesModel("https://api.githubcopilot.example/test");
-		const controller = new AbortController();
-		const providerStream = stream(model, makeContext(), {
-			apiKey: JSON.stringify({ token: "ghu_test_token", enterpriseUrl: undefined }),
-			signal: controller.signal,
-			fetch: fetchMock,
-		});
-
-		await fetchInvoked.promise;
-		await Bun.sleep(50);
-		controller.abort();
-
-		// Bound: 3 seconds. The first-event watchdog default is 100s, so any
-		// pass within 3s implies the provider observed the abort signal
-		// directly rather than waiting for the watchdog.
-		const result = await Promise.race([
-			providerStream.result(),
-			Bun.sleep(3_000).then(() => {
-				throw new Error("providerStream.result() did not settle within 3s after abort");
-			}),
-		]);
-
-		expect(result.stopReason).toBe("aborted");
-	}, 10_000);
+			expect(result.stopReason).toBe("aborted");
+		},
+		scaledTimeout(10000),
+	);
 });

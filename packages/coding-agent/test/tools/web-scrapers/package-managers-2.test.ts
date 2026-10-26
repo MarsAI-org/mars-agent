@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../../test-timeout";
 import { handleChocolatey } from "@marsai-org/coding-agent/web/scrapers/chocolatey";
 import { handleDockerHub } from "@marsai-org/coding-agent/web/scrapers/dockerhub";
 import { handleHackage } from "@marsai-org/coding-agent/web/scrapers/hackage";
@@ -46,14 +47,18 @@ describe.skipIf(SKIP)("handleHackage", () => {
 		expect(result).toBeNull();
 	});
 
-	it("fetches aeson package", async () => {
-		const result = await handleHackage("https://hackage.haskell.org/package/aeson", 20);
-		expect(result).not.toBeNull();
-		expect(result?.method).toBe("hackage");
-		expect(result?.content).toContain("aeson");
-		expect(result?.content).toContain("JSON");
-		expect(result?.contentType).toBe("text/markdown");
-	}, 20000);
+	it(
+		"fetches aeson package",
+		async () => {
+			const result = await handleHackage("https://hackage.haskell.org/package/aeson", 20);
+			expect(result).not.toBeNull();
+			expect(result?.method).toBe("hackage");
+			expect(result?.content).toContain("aeson");
+			expect(result?.content).toContain("JSON");
+			expect(result?.contentType).toBe("text/markdown");
+		},
+		scaledTimeout(20000),
+	);
 });
 
 describe.skipIf(SKIP)("handleDockerHub", () => {

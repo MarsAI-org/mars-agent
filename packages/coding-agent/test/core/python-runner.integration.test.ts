@@ -5,6 +5,7 @@
  * (or sandboxes where subprocess spawning is restricted) does not fail.
  */
 import { afterEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -48,34 +49,38 @@ describe.skipIf(!SHOULD_RUN)("python runner subprocess", () => {
 		await disposeAllKernelSessions();
 	});
 
-	it("does not replay a crashed cell's file write and accepts the next cell in a fresh kernel", async () => {
-		using tempDir = TempDir.createSync("@python-runner-crash-");
-		const options = {
-			cwd: tempDir.path(),
-			sessionId: "crash-recovery",
-			kernelMode: "session" as const,
-			timeoutMs: 10_000,
-		};
-		const result = await executePython(
-			[
-				"import os",
-				"with open('effects.txt', 'a') as effects:",
-				"    effects.write('once\\n')",
-				"print('before crash', flush=True)",
-				"os._exit(17)",
-			].join("\n"),
-			options,
-		);
-		expect(await Bun.file(path.join(tempDir.path(), "effects.txt")).text()).toBe("once\n");
-		expect(result.cancelled).toBe(true);
-		expect(result.output).toContain("before crash");
-		expect(result.output).toContain("completion is uncertain");
+	it(
+		"does not replay a crashed cell's file write and accepts the next cell in a fresh kernel",
+		async () => {
+			using tempDir = TempDir.createSync("@python-runner-crash-");
+			const options = {
+				cwd: tempDir.path(),
+				sessionId: "crash-recovery",
+				kernelMode: "session" as const,
+				timeoutMs: 10_000,
+			};
+			const result = await executePython(
+				[
+					"import os",
+					"with open('effects.txt', 'a') as effects:",
+					"    effects.write('once\\n')",
+					"print('before crash', flush=True)",
+					"os._exit(17)",
+				].join("\n"),
+				options,
+			);
+			expect(await Bun.file(path.join(tempDir.path(), "effects.txt")).text()).toBe("once\n");
+			expect(result.cancelled).toBe(true);
+			expect(result.output).toContain("before crash");
+			expect(result.output).toContain("completion is uncertain");
 
-		const next = await executePython("print(21 * 2)", options);
-		expect(next.exitCode).toBe(0);
-		expect(next.output.trim()).toBe("42");
-		expect(await Bun.file(path.join(tempDir.path(), "effects.txt")).text()).toBe("once\n");
-	}, 30_000);
+			const next = await executePython("print(21 * 2)", options);
+			expect(next.exitCode).toBe(0);
+			expect(next.output.trim()).toBe("42");
+			expect(await Bun.file(path.join(tempDir.path(), "effects.txt")).text()).toBe("once\n");
+		},
+		scaledTimeout(30000),
+	);
 
 	it("streams stdout chunks as they are produced", async () => {
 		using tempDir = TempDir.createSync("@python-runner-stream-");

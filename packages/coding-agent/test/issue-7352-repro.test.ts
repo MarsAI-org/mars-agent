@@ -17,6 +17,7 @@
  * exercised without fastembed/onnxruntime.
  */
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { MnemopiEmbedClient, type MnemopiEmbedWorkerHandle } from "@marsai-org/coding-agent/mnemopi/embed-client";
 import type {
 	MnemopiEmbedWorkerInbound,
@@ -57,109 +58,121 @@ function silentEmbedWorker(state: { spawns: number; terminated: number }): () =>
 }
 
 describe("issue #7352 — mnemopi embed requests are bounded and reap a wedged worker", () => {
-	it("fails a wedged embed within the budget instead of hanging forever", async () => {
-		const state = { spawns: 0, terminated: 0 };
-		const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
-		try {
-			const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
-			expect(model).not.toBeNull();
-
-			const start = Date.now();
-			let threw = false;
+	it(
+		"fails a wedged embed within the budget instead of hanging forever",
+		async () => {
+			const state = { spawns: 0, terminated: 0 };
+			const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
 			try {
-				for await (const _ of model!.embed(["hello"])) {
-					/* drain */
+				const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
+				expect(model).not.toBeNull();
+
+				const start = Date.now();
+				let threw = false;
+				try {
+					for await (const _ of model!.embed(["hello"])) {
+						/* drain */
+					}
+				} catch (error) {
+					threw = true;
+					expect(String(error)).toMatch(/timed out/i);
 				}
-			} catch (error) {
-				threw = true;
-				expect(String(error)).toMatch(/timed out/i);
+				expect(threw).toBe(true);
+				// Bounded: nowhere near an indefinite hang.
+				expect(Date.now() - start).toBeLessThan(5_000);
+				// The wedged worker was reaped so it cannot linger as an orphan child.
+				expect(state.terminated).toBeGreaterThanOrEqual(1);
+			} finally {
+				await client.terminate();
 			}
-			expect(threw).toBe(true);
-			// Bounded: nowhere near an indefinite hang.
-			expect(Date.now() - start).toBeLessThan(5_000);
-			// The wedged worker was reaped so it cannot linger as an orphan child.
-			expect(state.terminated).toBeGreaterThanOrEqual(1);
-		} finally {
-			await client.terminate();
-		}
-	}, 10_000);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("respawns a fresh worker for the next request after reaping a wedged one", async () => {
-		const state = { spawns: 0, terminated: 0 };
-		const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
-		try {
-			const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
-			const spawnsAfterInit = state.spawns;
+	it(
+		"respawns a fresh worker for the next request after reaping a wedged one",
+		async () => {
+			const state = { spawns: 0, terminated: 0 };
+			const client = new MnemopiEmbedClient(silentEmbedWorker(state), 50);
+			try {
+				const model = await client.initialize("fast-bge-base-en-v1.5", "/tmp/cache");
+				const spawnsAfterInit = state.spawns;
 
-			await expect(
-				(async () => {
-					for await (const _ of model!.embed(["a"])) {
-						/* drain */
-					}
-				})(),
-			).rejects.toThrow(/timed out/i);
+				await expect(
+					(async () => {
+						for await (const _ of model!.embed(["a"])) {
+							/* drain */
+						}
+					})(),
+				).rejects.toThrow(/timed out/i);
 
-			// The reap nulled the handle; a second embed must spawn a new child
-			// rather than reuse the dead one.
-			await expect(
-				(async () => {
-					for await (const _ of model!.embed(["b"])) {
-						/* drain */
-					}
-				})(),
-			).rejects.toThrow(/timed out/i);
+				// The reap nulled the handle; a second embed must spawn a new child
+				// rather than reuse the dead one.
+				await expect(
+					(async () => {
+						for await (const _ of model!.embed(["b"])) {
+							/* drain */
+						}
+					})(),
+				).rejects.toThrow(/timed out/i);
 
-			expect(state.spawns).toBeGreaterThan(spawnsAfterInit);
-		} finally {
-			await client.terminate();
-		}
-	}, 10_000);
+				expect(state.spawns).toBeGreaterThan(spawnsAfterInit);
+			} finally {
+				await client.terminate();
+			}
+		},
+		scaledTimeout(10000),
+	);
 
-	it("allows initialization to outlive the steady-state embed budget", async () => {
-		vi.useFakeTimers();
-		const state = { spawns: 0, terminated: 0 };
-		const { promise: initStarted, resolve: markInitStarted } = Promise.withResolvers<void>();
-		let completeInit: (() => void) | undefined;
-		const client = new MnemopiEmbedClient(() => {
-			state.spawns += 1;
-			let handler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
-			return {
-				send(message) {
-					if (message.type !== "init") return;
-					completeInit = () => handler?.({ type: "ready", id: message.id });
-					markInitStarted();
-				},
-				onMessage(next) {
-					handler = next;
-					return () => {
-						if (handler === next) handler = undefined;
-					};
-				},
-				onError() {
-					return () => {};
-				},
-				ref() {},
-				unref() {},
-				async terminate() {
-					state.terminated += 1;
-					handler = undefined;
-				},
-			};
-		}, 50);
-		try {
-			const initializing = client.initialize("fast-bge-base-en-v1.5", undefined);
-			await initStarted;
-			vi.advanceTimersByTime(10_000);
-			expect(completeInit).toBeDefined();
-			completeInit?.();
+	it(
+		"allows initialization to outlive the steady-state embed budget",
+		async () => {
+			vi.useFakeTimers();
+			const state = { spawns: 0, terminated: 0 };
+			const { promise: initStarted, resolve: markInitStarted } = Promise.withResolvers<void>();
+			let completeInit: (() => void) | undefined;
+			const client = new MnemopiEmbedClient(() => {
+				state.spawns += 1;
+				let handler: ((message: MnemopiEmbedWorkerOutbound) => void) | undefined;
+				return {
+					send(message) {
+						if (message.type !== "init") return;
+						completeInit = () => handler?.({ type: "ready", id: message.id });
+						markInitStarted();
+					},
+					onMessage(next) {
+						handler = next;
+						return () => {
+							if (handler === next) handler = undefined;
+						};
+					},
+					onError() {
+						return () => {};
+					},
+					ref() {},
+					unref() {},
+					async terminate() {
+						state.terminated += 1;
+						handler = undefined;
+					},
+				};
+			}, scaledTimeout(50));
+			try {
+				const initializing = client.initialize("fast-bge-base-en-v1.5", undefined);
+				await initStarted;
+				vi.advanceTimersByTime(10_000);
+				expect(completeInit).toBeDefined();
+				completeInit?.();
 
-			const model = await initializing;
-			expect(model).not.toBeNull();
-			expect(state.spawns).toBe(1);
-			expect(state.terminated).toBe(0);
-		} finally {
-			await client.terminate();
-			vi.useRealTimers();
-		}
-	}, 10_000);
+				const model = await initializing;
+				expect(model).not.toBeNull();
+				expect(state.spawns).toBe(1);
+				expect(state.terminated).toBe(0);
+			} finally {
+				await client.terminate();
+				vi.useRealTimers();
+			}
+		},
+		scaledTimeout(10000),
+	);
 });

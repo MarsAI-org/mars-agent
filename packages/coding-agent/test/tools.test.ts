@@ -1,4 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -2746,27 +2747,31 @@ function b() {
 			expect(text).toMatch(/timed out/i);
 		});
 
-		it("should abort and recover for subsequent commands", async () => {
-			const controller = new AbortController();
-			const started = Promise.withResolvers<void>();
-			const promise = bashTool.execute(
-				"test-call-10-abort",
-				{ command: "echo READY; sleep 60" },
-				controller.signal,
-				update => {
-					const text = update.content?.find(c => c.type === "text")?.text ?? "";
-					if (text.includes("READY")) started.resolve();
-				},
-			);
-			// Abort as soon as the command has emitted output (proving the shell is
-			// live), instead of blindly waiting a fixed beat for it to enter `sleep`.
-			await started.promise;
-			controller.abort("test abort");
-			await expect(promise).rejects.toThrow(/abort|cancel|timed out/i);
+		it(
+			"should abort and recover for subsequent commands",
+			async () => {
+				const controller = new AbortController();
+				const started = Promise.withResolvers<void>();
+				const promise = bashTool.execute(
+					"test-call-10-abort",
+					{ command: "echo READY; sleep 60" },
+					controller.signal,
+					update => {
+						const text = update.content?.find(c => c.type === "text")?.text ?? "";
+						if (text.includes("READY")) started.resolve();
+					},
+				);
+				// Abort as soon as the command has emitted output (proving the shell is
+				// live), instead of blindly waiting a fixed beat for it to enter `sleep`.
+				await started.promise;
+				controller.abort("test abort");
+				await expect(promise).rejects.toThrow(/abort|cancel|timed out/i);
 
-			const result = await bashTool.execute("test-call-10-after-abort", { command: "echo ok" });
-			expect(getTextOutput(result)).toContain("ok");
-		}, 15_000);
+				const result = await bashTool.execute("test-call-10-after-abort", { command: "echo ok" });
+				expect(getTextOutput(result)).toContain("ok");
+			},
+			scaledTimeout(15000),
+		);
 
 		it("should throw error when cwd does not exist", async () => {
 			const nonexistentCwd = "/this/directory/definitely/does/not/exist/12345";

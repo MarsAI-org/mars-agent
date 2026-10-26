@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -50,38 +51,42 @@ describe("BtwHistoryStore", () => {
 		expect(await Bun.file(journalPath).text()).toBe(journal);
 	});
 
-	it("does not let a recovered view steal a live turn and preserves the owner's terminal answer", async () => {
-		const writer = await BtwHistoryStore.open(artifactsDir);
-		const running = record("running", { status: "running", answer: "Partial answer" });
-		await writer.upsert(running);
-		const recovered = await BtwHistoryStore.open(artifactsDir);
-		const recoveredView = recovered.getRecords();
-		expect(recoveredView).toEqual([{ ...running, status: "interrupted" }]);
+	it(
+		"does not let a recovered view steal a live turn and preserves the owner's terminal answer",
+		async () => {
+			const writer = await BtwHistoryStore.open(artifactsDir);
+			const running = record("running", { status: "running", answer: "Partial answer" });
+			await writer.upsert(running);
+			const recovered = await BtwHistoryStore.open(artifactsDir);
+			const recoveredView = recovered.getRecords();
+			expect(recoveredView).toEqual([{ ...running, status: "interrupted" }]);
 
-		const followUp = {
-			question: "Continue the recovered topic",
-			answer: "",
-			status: "running" as const,
-			createdAt: 4,
-			updatedAt: 4,
-		};
-		await expect(recovered.upsert({ ...recoveredView[0]!, followUps: [followUp] })).rejects.toThrow(
-			"Failed to acquire lock",
-		);
-		expect(recovered.getRecords()).toBe(recoveredView);
+			const followUp = {
+				question: "Continue the recovered topic",
+				answer: "",
+				status: "running" as const,
+				createdAt: 4,
+				updatedAt: 4,
+			};
+			await expect(recovered.upsert({ ...recoveredView[0]!, followUps: [followUp] })).rejects.toThrow(
+				"Failed to acquire lock",
+			);
+			expect(recovered.getRecords()).toBe(recoveredView);
 
-		const complete = { ...running, status: "complete" as const, answer: "Final answer", updatedAt: 3 };
-		await writer.upsert(complete);
-		const reopened = await BtwHistoryStore.open(artifactsDir);
-		expect(reopened.getRecords()).toEqual([complete]);
-		await reopened.upsert({ ...complete, followUps: [followUp] });
-		const finished = {
-			...complete,
-			followUps: [{ ...followUp, status: "complete" as const, answer: "Next answer" }],
-		};
-		await reopened.upsert(finished);
-		expect((await BtwHistoryStore.open(artifactsDir)).getRecords()).toEqual([finished]);
-	}, 10_000);
+			const complete = { ...running, status: "complete" as const, answer: "Final answer", updatedAt: 3 };
+			await writer.upsert(complete);
+			const reopened = await BtwHistoryStore.open(artifactsDir);
+			expect(reopened.getRecords()).toEqual([complete]);
+			await reopened.upsert({ ...complete, followUps: [followUp] });
+			const finished = {
+				...complete,
+				followUps: [{ ...followUp, status: "complete" as const, answer: "Next answer" }],
+			};
+			await reopened.upsert(finished);
+			expect((await BtwHistoryStore.open(artifactsDir)).getRecords()).toEqual([finished]);
+		},
+		scaledTimeout(10000),
+	);
 
 	it("does not lose independent entries written by stores opened before either write", async () => {
 		const left = await BtwHistoryStore.open(artifactsDir);

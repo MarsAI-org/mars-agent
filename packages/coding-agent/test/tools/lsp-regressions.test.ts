@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
@@ -1819,100 +1820,104 @@ describe("lsp regressions", () => {
 	});
 
 	for (const dynamicRegistration of [false, true]) {
-		it(`reports pull diagnostics advertised through ${dynamicRegistration ? "dynamic registration" : "server capabilities"}`, async () => {
-			const tempDir = TempDir.createSync("@mars-lsp-pull-diags-");
-			try {
-				const targetFile = path.join(tempDir.path(), "target.ts");
-				await Bun.write(targetFile, "const broken: string = 42;\n");
-				const diagnostic: Diagnostic = {
-					message: "Type 'number' is not assignable to type 'string'.",
-					severity: 1,
-					code: 2322,
-					source: "ts",
-					range: {
-						start: { line: 0, character: 6 },
-						end: { line: 0, character: 12 },
-					},
-				};
-
-				const fakeServer = installFakeLsp((message, server) => {
-					if (message.method === "initialize") {
-						server.send({
-							jsonrpc: "2.0",
-							id: message.id,
-							result: { capabilities: dynamicRegistration ? {} : { diagnosticProvider: true } },
-						});
-						server.send({
-							jsonrpc: "2.0",
-							method: "$/progress",
-							params: { token: "workspace", value: { kind: "begin" } },
-						});
-						server.send({
-							jsonrpc: "2.0",
-							method: "$/progress",
-							params: { token: "workspace", value: { kind: "end" } },
-						});
-					} else if (dynamicRegistration && message.method === "initialized") {
-						server.send({
-							jsonrpc: "2.0",
-							id: "register-diagnostics",
-							method: "client/registerCapability",
-							params: {
-								registrations: [
-									{
-										id: "pull-diagnostics",
-										method: "textDocument/diagnostic",
-										registerOptions: {},
-									},
-								],
-							},
-						});
-					} else if (message.method === "textDocument/diagnostic") {
-						server.send({
-							jsonrpc: "2.0",
-							id: message.id,
-							result: { kind: "full", items: [diagnostic] },
-						});
-					} else if (message.method === "shutdown") {
-						server.send({ jsonrpc: "2.0", id: message.id, result: null });
-					} else if (message.method === "exit") {
-						server.exit(0);
-					}
-				});
-
-				const serverConfig: ServerConfig = {
-					command: "fake-lsp",
-					fileTypes: ["ts"],
-					rootMarkers: [],
-				};
-				vi.spyOn(lspConfig, "loadConfig").mockReturnValue({
-					servers: { "fake-lsp": serverConfig },
-					idleTimeoutMs: undefined,
-				});
-				vi.spyOn(lspConfig, "getServersForFile").mockReturnValue([["fake-lsp", serverConfig]]);
-
-				const tool = new LspTool(makeLspSession(tempDir.path()));
-				const result = await tool.execute(`pull-diagnostics-${dynamicRegistration}`, {
-					action: "diagnostics",
-					file: targetFile,
-					timeout: 20,
-				});
-				const initialize = fakeServer.received.find(message => message.method === "initialize");
-
-				expect(initialize).toMatchObject({
-					params: {
-						capabilities: {
-							textDocument: { diagnostic: { dynamicRegistration: true } },
+		it(
+			`reports pull diagnostics advertised through ${dynamicRegistration ? "dynamic registration" : "server capabilities"}`,
+			async () => {
+				const tempDir = TempDir.createSync("@mars-lsp-pull-diags-");
+				try {
+					const targetFile = path.join(tempDir.path(), "target.ts");
+					await Bun.write(targetFile, "const broken: string = 42;\n");
+					const diagnostic: Diagnostic = {
+						message: "Type 'number' is not assignable to type 'string'.",
+						severity: 1,
+						code: 2322,
+						source: "ts",
+						range: {
+							start: { line: 0, character: 6 },
+							end: { line: 0, character: 12 },
 						},
-					},
-				});
-				expect(fakeServer.received.map(message => message.method)).toContain("textDocument/diagnostic");
-				expect(textResult(result)).toContain("Type 'number' is not assignable to type 'string'.");
-			} finally {
-				await lspClient.shutdownAll();
-				tempDir.removeSync();
-			}
-		}, 15_000);
+					};
+
+					const fakeServer = installFakeLsp((message, server) => {
+						if (message.method === "initialize") {
+							server.send({
+								jsonrpc: "2.0",
+								id: message.id,
+								result: { capabilities: dynamicRegistration ? {} : { diagnosticProvider: true } },
+							});
+							server.send({
+								jsonrpc: "2.0",
+								method: "$/progress",
+								params: { token: "workspace", value: { kind: "begin" } },
+							});
+							server.send({
+								jsonrpc: "2.0",
+								method: "$/progress",
+								params: { token: "workspace", value: { kind: "end" } },
+							});
+						} else if (dynamicRegistration && message.method === "initialized") {
+							server.send({
+								jsonrpc: "2.0",
+								id: "register-diagnostics",
+								method: "client/registerCapability",
+								params: {
+									registrations: [
+										{
+											id: "pull-diagnostics",
+											method: "textDocument/diagnostic",
+											registerOptions: {},
+										},
+									],
+								},
+							});
+						} else if (message.method === "textDocument/diagnostic") {
+							server.send({
+								jsonrpc: "2.0",
+								id: message.id,
+								result: { kind: "full", items: [diagnostic] },
+							});
+						} else if (message.method === "shutdown") {
+							server.send({ jsonrpc: "2.0", id: message.id, result: null });
+						} else if (message.method === "exit") {
+							server.exit(0);
+						}
+					});
+
+					const serverConfig: ServerConfig = {
+						command: "fake-lsp",
+						fileTypes: ["ts"],
+						rootMarkers: [],
+					};
+					vi.spyOn(lspConfig, "loadConfig").mockReturnValue({
+						servers: { "fake-lsp": serverConfig },
+						idleTimeoutMs: undefined,
+					});
+					vi.spyOn(lspConfig, "getServersForFile").mockReturnValue([["fake-lsp", serverConfig]]);
+
+					const tool = new LspTool(makeLspSession(tempDir.path()));
+					const result = await tool.execute(`pull-diagnostics-${dynamicRegistration}`, {
+						action: "diagnostics",
+						file: targetFile,
+						timeout: 20,
+					});
+					const initialize = fakeServer.received.find(message => message.method === "initialize");
+
+					expect(initialize).toMatchObject({
+						params: {
+							capabilities: {
+								textDocument: { diagnostic: { dynamicRegistration: true } },
+							},
+						},
+					});
+					expect(fakeServer.received.map(message => message.method)).toContain("textDocument/diagnostic");
+					expect(textResult(result)).toContain("Type 'number' is not assignable to type 'string'.");
+				} finally {
+					await lspClient.shutdownAll();
+					tempDir.removeSync();
+				}
+			},
+			scaledTimeout(15000),
+		);
 	}
 
 	for (const scenario of [
@@ -4854,42 +4859,46 @@ describe("lsp regressions", () => {
 		}
 	});
 
-	it("workspace reload failure keeps fresh client creation blocked", async () => {
-		const tempDir = TempDir.createSync("@mars-lsp-reload-failed-teardown-");
-		try {
-			const oldServer = installFakeLsp(
-				(message, server) => {
-					if (message.method === "initialize") {
-						server.send({ jsonrpc: "2.0", id: message.id, result: { capabilities: {} } });
-					} else if (message.method === "shutdown") {
-						server.send({ jsonrpc: "2.0", id: message.id, result: null });
-					}
-				},
-				{ killResolvesExit: false },
-			);
-			const oldConfig: ServerConfig = {
-				command: "fake-lsp",
-				args: ["--mode", "old"],
-				fileTypes: [".ts"],
-				rootMarkers: [],
-			};
-			await lspClient.getOrCreateClient(oldConfig, tempDir.path(), 1_000);
+	it(
+		"workspace reload failure keeps fresh client creation blocked",
+		async () => {
+			const tempDir = TempDir.createSync("@mars-lsp-reload-failed-teardown-");
+			try {
+				const oldServer = installFakeLsp(
+					(message, server) => {
+						if (message.method === "initialize") {
+							server.send({ jsonrpc: "2.0", id: message.id, result: { capabilities: {} } });
+						} else if (message.method === "shutdown") {
+							server.send({ jsonrpc: "2.0", id: message.id, result: null });
+						}
+					},
+					{ killResolvesExit: false },
+				);
+				const oldConfig: ServerConfig = {
+					command: "fake-lsp",
+					args: ["--mode", "old"],
+					fileTypes: [".ts"],
+					rootMarkers: [],
+				};
+				await lspClient.getOrCreateClient(oldConfig, tempDir.path(), 1_000);
 
-			const newServer = installHandshakeLsp();
-			const newConfig: ServerConfig = { ...oldConfig, args: ["--mode", "new"] };
-			await expect(lspClient.shutdownStaleClients(tempDir.path(), [newConfig])).rejects.toThrow(
-				"Failed to stop LSP server(s) with superseded configuration",
-			);
-			await expect(lspClient.getOrCreateClient(newConfig, tempDir.path(), 1_000)).rejects.toThrow(
-				"Failed to stop LSP server(s) with superseded configuration",
-			);
-			expect(newServer.spawnCount).toBe(0);
-			oldServer.exit(0);
-		} finally {
-			await lspClient.shutdownAll();
-			tempDir.removeSync();
-		}
-	}, 10_000);
+				const newServer = installHandshakeLsp();
+				const newConfig: ServerConfig = { ...oldConfig, args: ["--mode", "new"] };
+				await expect(lspClient.shutdownStaleClients(tempDir.path(), [newConfig])).rejects.toThrow(
+					"Failed to stop LSP server(s) with superseded configuration",
+				);
+				await expect(lspClient.getOrCreateClient(newConfig, tempDir.path(), 1_000)).rejects.toThrow(
+					"Failed to stop LSP server(s) with superseded configuration",
+				);
+				expect(newServer.spawnCount).toBe(0);
+				oldServer.exit(0);
+			} finally {
+				await lspClient.shutdownAll();
+				tempDir.removeSync();
+			}
+		},
+		scaledTimeout(10000),
+	);
 
 	it("workspace reload waits for a stale pending client before starting its replacement", async () => {
 		const tempDir = TempDir.createSync("@mars-lsp-reload-pending-");
@@ -5398,35 +5407,39 @@ describe("lsp regressions", () => {
 			}
 		});
 
-		it("shutdownClientInstance reports a failed teardown when the process outlives the kill", async () => {
-			const tempDir = TempDir.createSync("@mars-lsp-teardown-delayed-");
-			try {
-				const server = installFakeLsp(
-					(message, srv) => {
-						if (message.method === "initialize") {
-							srv.send({ jsonrpc: "2.0", id: message.id, result: { capabilities: {} } });
-						} else if (message.method === "shutdown") {
-							srv.send({ jsonrpc: "2.0", id: message.id, result: null });
-						}
-						// `exit` notification and `kill()` never resolve `proc.exited`.
-					},
-					{ killResolvesExit: false },
-				);
-				const config: ServerConfig = { command: "fake-teardown-delayed", fileTypes: [".ts"], rootMarkers: [] };
-				const client = await lspClient.getOrCreateClient(config, tempDir.path());
+		it(
+			"shutdownClientInstance reports a failed teardown when the process outlives the kill",
+			async () => {
+				const tempDir = TempDir.createSync("@mars-lsp-teardown-delayed-");
+				try {
+					const server = installFakeLsp(
+						(message, srv) => {
+							if (message.method === "initialize") {
+								srv.send({ jsonrpc: "2.0", id: message.id, result: { capabilities: {} } });
+							} else if (message.method === "shutdown") {
+								srv.send({ jsonrpc: "2.0", id: message.id, result: null });
+							}
+							// `exit` notification and `kill()` never resolve `proc.exited`.
+						},
+						{ killResolvesExit: false },
+					);
+					const config: ServerConfig = { command: "fake-teardown-delayed", fileTypes: [".ts"], rootMarkers: [] };
+					const client = await lspClient.getOrCreateClient(config, tempDir.path());
 
-				const exited = await lspClient.shutdownClientInstance(client);
-				expect(exited).toBe(false);
-				expect(lspClient.getActiveClients().some(s => s.name === config.command)).toBe(true);
+					const exited = await lspClient.shutdownClientInstance(client);
+					expect(exited).toBe(false);
+					expect(lspClient.getActiveClients().some(s => s.name === config.command)).toBe(true);
 
-				server.exit(0);
-				await Bun.sleep(0);
-				expect(lspClient.getActiveClients().some(s => s.name === config.command)).toBe(false);
-			} finally {
-				vi.restoreAllMocks();
-				tempDir.removeSync();
-			}
-		}, 15_000);
+					server.exit(0);
+					await Bun.sleep(0);
+					expect(lspClient.getActiveClients().some(s => s.name === config.command)).toBe(false);
+				} finally {
+					vi.restoreAllMocks();
+					tempDir.removeSync();
+				}
+			},
+			scaledTimeout(15000),
+		);
 	});
 	describe("reader exit ordering and initialization backoff (#7041)", () => {
 		it("surfaces the process diagnostic when stdout closes before exit publication", async () => {

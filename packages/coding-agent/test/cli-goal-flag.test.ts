@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { parseArgs, validateGoalLaunch, validateGoalStartup } from "@marsai-org/coding-agent/cli/args";
@@ -108,43 +109,55 @@ describe("--goal launch option", () => {
 		expect(args.print).toBeFalsy();
 	});
 
-	it("rejects print mode with a usage exit before a model request", async () => {
-		const result = await launch(["-p", "--goal", "Inspect the importer"]);
-		expect(result.exitCode, result.stderr).toBe(2);
-		expect(result.stderr).toContain("--goal requires an interactive terminal");
-	}, 30_000);
+	it(
+		"rejects print mode with a usage exit before a model request",
+		async () => {
+			const result = await launch(["-p", "--goal", "Inspect the importer"]);
+			expect(result.exitCode, result.stderr).toBe(2);
+			expect(result.stderr).toContain("--goal requires an interactive terminal");
+		},
+		scaledTimeout(30000),
+	);
 
-	it("rejects a non-interactive fork before writing the forked session", async () => {
-		using dir = TempDir.createSync("@mars-goal-fork-print-");
-		const source = writeSourceSession(dir.path());
-		const result = await launch(
-			["--no-extensions", "--session-dir", dir.path(), "--fork", source, "-p", "--goal", "do thing"],
-			dir.path(),
-		);
-		expect(result.exitCode, result.stderr).toBe(2);
-		expect(result.stderr).toContain("--goal requires an interactive terminal");
-		expect(fs.readdirSync(dir.path())).toEqual(["src.jsonl"]);
-	}, 30_000);
+	it(
+		"rejects a non-interactive fork before writing the forked session",
+		async () => {
+			using dir = TempDir.createSync("@mars-goal-fork-print-");
+			const source = writeSourceSession(dir.path());
+			const result = await launch(
+				["--no-extensions", "--session-dir", dir.path(), "--fork", source, "-p", "--goal", "do thing"],
+				dir.path(),
+			);
+			expect(result.exitCode, result.stderr).toBe(2);
+			expect(result.stderr).toContain("--goal requires an interactive terminal");
+			expect(fs.readdirSync(dir.path())).toEqual(["src.jsonl"]);
+		},
+		scaledTimeout(30000),
+	);
 
-	it("rejects resume, fork, and import shapes before session resolution acts on them", async () => {
-		using dir = TempDir.createSync("@mars-goal-fork-tty-");
-		const source = writeSourceSession(dir.path());
-		for (const shape of [
-			["--fork", source],
-			["--resume"],
-			["--resume", source],
-			["--continue"],
-			["--from-claude"],
-			["--from-codex"],
-		]) {
-			const rawArgs = ["--session-dir", dir.path(), ...shape, "--goal", "do thing"];
-			const { thrown, touched } = await launchInteractive(rawArgs);
-			expect(thrown, shape.join(" ")).toBeInstanceOf(CliUsageError);
-			expect((thrown as Error).message).toContain("--goal requires a fresh session");
-			expect(touched, shape.join(" ")).toEqual([]);
-			expect(fs.readdirSync(dir.path()), shape.join(" ")).toEqual(["src.jsonl"]);
-		}
-	}, 30_000);
+	it(
+		"rejects resume, fork, and import shapes before session resolution acts on them",
+		async () => {
+			using dir = TempDir.createSync("@mars-goal-fork-tty-");
+			const source = writeSourceSession(dir.path());
+			for (const shape of [
+				["--fork", source],
+				["--resume"],
+				["--resume", source],
+				["--continue"],
+				["--from-claude"],
+				["--from-codex"],
+			]) {
+				const rawArgs = ["--session-dir", dir.path(), ...shape, "--goal", "do thing"];
+				const { thrown, touched } = await launchInteractive(rawArgs);
+				expect(thrown, shape.join(" ")).toBeInstanceOf(CliUsageError);
+				expect((thrown as Error).message).toContain("--goal requires a fresh session");
+				expect(touched, shape.join(" ")).toEqual([]);
+				expect(fs.readdirSync(dir.path()), shape.join(" ")).toEqual(["src.jsonl"]);
+			}
+		},
+		scaledTimeout(30000),
+	);
 
 	it("rejects positional input instead of sending a second prompt after activation", () => {
 		expect(() => validateGoalStartup(parseArgs(["--goal", "Inspect the importer", "hello"]), true)).toThrow(

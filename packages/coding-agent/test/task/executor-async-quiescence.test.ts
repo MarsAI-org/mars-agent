@@ -7,6 +7,7 @@
  * the run rather than surface the stale payload as a clean success.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import type { AssistantMessage } from "@marsai-org/ai";
 import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
 import type { LoadExtensionsResult } from "@marsai-org/coding-agent/extensibility/extensions/types";
@@ -329,91 +330,95 @@ describe("runSubprocess async quiescence fresh-yield contract", () => {
 		expect(result.output).toContain("done");
 	});
 
-	it("preserves a successful yield across deferred cleanup and waits for every late resource", async () => {
-		const abortStarted = Promise.withResolvers<void>();
-		const abortGate = Promise.withResolvers<void>();
-		const disposeGate = Promise.withResolvers<void>();
-		const lateJobGate = Promise.withResolvers<void>();
-		const manager = new AsyncJobManager({});
-		AsyncJobManager.setInstance(manager);
-		const cleanupGraceMs = 0;
-		let lateJobId: string | undefined;
-		let deferredCleanup: Promise<void> | undefined;
-		const harness = createAsyncSession(
-			({ promptIndex, harness: h }) => {
-				if (promptIndex !== 1) return;
-				h.finishJob();
-				h.emitAssistant("captured before cleanup", 7);
-				h.emitTerminalYield({ report: "yielded output" });
-			},
-			{
-				abort: async () => {
-					abortStarted.resolve();
-					await abortGate.promise;
+	it(
+		"preserves a successful yield across deferred cleanup and waits for every late resource",
+		async () => {
+			const abortStarted = Promise.withResolvers<void>();
+			const abortGate = Promise.withResolvers<void>();
+			const disposeGate = Promise.withResolvers<void>();
+			const lateJobGate = Promise.withResolvers<void>();
+			const manager = new AsyncJobManager({});
+			AsyncJobManager.setInstance(manager);
+			const cleanupGraceMs = 0;
+			let lateJobId: string | undefined;
+			let deferredCleanup: Promise<void> | undefined;
+			const harness = createAsyncSession(
+				({ promptIndex, harness: h }) => {
+					if (promptIndex !== 1) return;
+					h.finishJob();
+					h.emitAssistant("captured before cleanup", 7);
+					h.emitTerminalYield({ report: "yielded output" });
 				},
-				dispose: async () => {
-					lateJobId = manager.register(
-						"task",
-						"shutdown-time job",
-						async () => {
-							await lateJobGate.promise;
-							return "late result";
-						},
-						{ ownerId: "cleanup-timeout" },
-					);
-					await disposeGate.promise;
+				{
+					abort: async () => {
+						abortStarted.resolve();
+						await abortGate.promise;
+					},
+					dispose: async () => {
+						lateJobId = manager.register(
+							"task",
+							"shutdown-time job",
+							async () => {
+								await lateJobGate.promise;
+								return "late result";
+							},
+							{ ownerId: "cleanup-timeout" },
+						);
+						await disposeGate.promise;
+					},
 				},
-			},
-		);
-		mockCreateAgentSession(harness.session);
+			);
+			mockCreateAgentSession(harness.session);
 
-		const run = runSubprocess({
-			cwd: "/tmp",
-			agent: baseAgent,
-			task: "do the work",
-			index: 0,
-			id: "cleanup-timeout",
-			keepAlive: false,
-			cleanupGraceMs,
-			onCleanupDeferred: completion => {
-				deferredCleanup = completion;
-			},
-		});
-		await abortStarted.promise;
-		// abortStarted synchronizes with the in-flight cleanup; a zero grace
-		// exercises the deadline/deferred-ownership transition without sleeping.
+			const run = runSubprocess({
+				cwd: "/tmp",
+				agent: baseAgent,
+				task: "do the work",
+				index: 0,
+				id: "cleanup-timeout",
+				keepAlive: false,
+				cleanupGraceMs,
+				onCleanupDeferred: completion => {
+					deferredCleanup = completion;
+				},
+			});
+			await abortStarted.promise;
+			// abortStarted synchronizes with the in-flight cleanup; a zero grace
+			// exercises the deadline/deferred-ownership transition without sleeping.
 
-		const result = await run;
-		// The run yielded successfully; a teardown that drains past the cleanup
-		// deadline is handed off asynchronously and MUST NOT overwrite the
-		// successful outcome with an aborted status (issue #9670).
-		expect(result.exitCode).toBe(0);
-		expect(result.aborted).toBe(false);
-		expect(result.abortReason).toBeUndefined();
-		expect(result.output).toContain("yielded output");
-		expect(result.usage?.totalTokens).toBe(7);
-		expect(lateJobId).toBeDefined();
-		expect(deferredCleanup).toBeDefined();
+			const result = await run;
+			// The run yielded successfully; a teardown that drains past the cleanup
+			// deadline is handed off asynchronously and MUST NOT overwrite the
+			// successful outcome with an aborted status (issue #9670).
+			expect(result.exitCode).toBe(0);
+			expect(result.aborted).toBe(false);
+			expect(result.abortReason).toBeUndefined();
+			expect(result.output).toContain("yielded output");
+			expect(result.usage?.totalTokens).toBe(7);
+			expect(lateJobId).toBeDefined();
+			expect(deferredCleanup).toBeDefined();
 
-		let cleanupSettled = false;
-		const cleanupOutcome = deferredCleanup?.then(
-			() => {
-				cleanupSettled = true;
-			},
-			() => {
-				cleanupSettled = true;
-			},
-		);
-		abortGate.resolve();
-		disposeGate.reject(new Error("dispose failed"));
-		for (let attempt = 0; attempt < 10 && manager.getJob(lateJobId ?? "")?.status === "running"; attempt += 1) {
-			await Promise.resolve();
-		}
-		expect(cleanupSettled).toBe(false);
-		expect(manager.getJob(lateJobId ?? "")?.status).toBe("cancelled");
+			let cleanupSettled = false;
+			const cleanupOutcome = deferredCleanup?.then(
+				() => {
+					cleanupSettled = true;
+				},
+				() => {
+					cleanupSettled = true;
+				},
+			);
+			abortGate.resolve();
+			disposeGate.reject(new Error("dispose failed"));
+			for (let attempt = 0; attempt < 10 && manager.getJob(lateJobId ?? "")?.status === "running"; attempt += 1) {
+				await Promise.resolve();
+			}
+			expect(cleanupSettled).toBe(false);
+			expect(manager.getJob(lateJobId ?? "")?.status).toBe("cancelled");
 
-		lateJobGate.resolve();
-		await cleanupOutcome;
-		expect(cleanupSettled).toBe(true);
-	}, 15_000);
+			lateJobGate.resolve();
+			await cleanupOutcome;
+			expect(cleanupSettled).toBe(true);
+		},
+		scaledTimeout(15000),
+	);
 });

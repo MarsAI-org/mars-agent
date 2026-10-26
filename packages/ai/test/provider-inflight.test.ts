@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -103,67 +104,73 @@ describe("provider in-flight request limits", () => {
 		expect(mock.calls).toHaveLength(2);
 	});
 
-	test("holds a completions permit until a trailing [DONE] reaches the gateway", async () => {
-		configureProviderMaxInFlightRequests({ tests: 1 });
-		const model: Model<"openai-completions"> = {
-			...getBundledModel<"openai-completions">("openai", "gpt-4o-mini"),
-			provider: "tests",
-			api: "openai-completions",
-			baseUrl: "https://example.test/v1",
-		};
-		const encoder = new TextEncoder();
-		const usageSeen = Promise.withResolvers<void>();
-		const releaseDone = Promise.withResolvers<void>();
-		let calls = 0;
-		let doneSent = false;
-		let overlapped = false;
-		const chunk = (choices: unknown[], usage?: object) =>
-			encoder.encode(`data: ${JSON.stringify({ id: "c1", object: "chat.completion.chunk", choices, usage })}\n\n`);
-		async function mockFetch(): Promise<Response> {
-			calls++;
-			if (calls === 2 && !doneSent) overlapped = true;
-			if (calls === 1) {
+	test(
+		"holds a completions permit until a trailing [DONE] reaches the gateway",
+		async () => {
+			configureProviderMaxInFlightRequests({ tests: 1 });
+			const model: Model<"openai-completions"> = {
+				...getBundledModel<"openai-completions">("openai", "gpt-4o-mini"),
+				provider: "tests",
+				api: "openai-completions",
+				baseUrl: "https://example.test/v1",
+			};
+			const encoder = new TextEncoder();
+			const usageSeen = Promise.withResolvers<void>();
+			const releaseDone = Promise.withResolvers<void>();
+			let calls = 0;
+			let doneSent = false;
+			let overlapped = false;
+			const chunk = (choices: unknown[], usage?: object) =>
+				encoder.encode(
+					`data: ${JSON.stringify({ id: "c1", object: "chat.completion.chunk", choices, usage })}\n\n`,
+				);
+			async function mockFetch(): Promise<Response> {
+				calls++;
+				if (calls === 2 && !doneSent) overlapped = true;
+				if (calls === 1) {
+					const body = new ReadableStream<Uint8Array>({
+						async start(controller) {
+							controller.enqueue(chunk([{ index: 0, delta: { content: "first" } }]));
+							controller.enqueue(chunk([{ index: 0, delta: {}, finish_reason: "stop" }]));
+							controller.enqueue(chunk([], { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 }));
+							await releaseDone.promise;
+							doneSent = true;
+							controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+							controller.close();
+						},
+					});
+					return new Response(body, { headers: { "content-type": "text/event-stream" } });
+				}
 				const body = new ReadableStream<Uint8Array>({
-					async start(controller) {
-						controller.enqueue(chunk([{ index: 0, delta: { content: "first" } }]));
-						controller.enqueue(chunk([{ index: 0, delta: {}, finish_reason: "stop" }]));
-						controller.enqueue(chunk([], { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 }));
-						await releaseDone.promise;
-						doneSent = true;
+					start(controller) {
+						controller.enqueue(chunk([{ index: 0, delta: { content: "second" }, finish_reason: "stop" }]));
 						controller.enqueue(encoder.encode("data: [DONE]\n\n"));
 						controller.close();
 					},
 				});
 				return new Response(body, { headers: { "content-type": "text/event-stream" } });
 			}
-			const body = new ReadableStream<Uint8Array>({
-				start(controller) {
-					controller.enqueue(chunk([{ index: 0, delta: { content: "second" }, finish_reason: "stop" }]));
-					controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-					controller.close();
+			const options = {
+				apiKey: "test",
+				fetch: mockFetch,
+				onSseEvent: (event: RawSseEvent) => {
+					if (event.data.includes('"choices":[]')) usageSeen.resolve();
 				},
-			});
-			return new Response(body, { headers: { "content-type": "text/event-stream" } });
-		}
-		const options = {
-			apiKey: "test",
-			fetch: mockFetch,
-			onSseEvent: (event: RawSseEvent) => {
-				if (event.data.includes('"choices":[]')) usageSeen.resolve();
-			},
-		};
-		const firstResult = stream(model, context(), options).result();
-		await usageSeen.promise;
-		const secondResult = stream(model, context(), options).result();
-		// Exercise the real filesystem-backed lease scheduler while the first
-		// transport is parked waiting for its terminal SSE frame.
-		await Bun.sleep(150);
-		releaseDone.resolve();
-		const [first, second] = await Promise.all([firstResult, secondResult]);
-		expect(first.content).toEqual([{ type: "text", text: "first" }]);
-		expect(second.content).toEqual([{ type: "text", text: "second" }]);
-		expect(overlapped).toBe(false);
-	}, 10_000);
+			};
+			const firstResult = stream(model, context(), options).result();
+			await usageSeen.promise;
+			const secondResult = stream(model, context(), options).result();
+			// Exercise the real filesystem-backed lease scheduler while the first
+			// transport is parked waiting for its terminal SSE frame.
+			await Bun.sleep(150);
+			releaseDone.resolve();
+			const [first, second] = await Promise.all([firstResult, secondResult]);
+			expect(first.content).toEqual([{ type: "text", text: "first" }]);
+			expect(second.content).toEqual([{ type: "text", text: "second" }]);
+			expect(overlapped).toBe(false);
+		},
+		scaledTimeout(10000),
+	);
 
 	test("releases its provider lease before reporting terminal completion", async () => {
 		registerMockApi();

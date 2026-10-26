@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -92,43 +93,63 @@ async function runConfigSet(tempDir: TempDir, settingsInit: SettingsInitMode): P
 
 // Each case cold-starts the CLI graph in a child process; the budget covers that transpile.
 describe("one-shot CLI command settlement", () => {
-	it("exits 1 with a diagnostic when the command's work never settles", async () => {
-		using tempDir = TempDir.createSync("@mars-cli-unsettled-");
-		const run = await runConfigSet(tempDir, "stall");
+	it(
+		"exits 1 with a diagnostic when the command's work never settles",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-cli-unsettled-");
+			const run = await runConfigSet(tempDir, "stall");
 
-		expect(run.exitCode, run.stderr).toBe(1);
-		// Names the stalled subcommand so automation logs show what failed, without its arguments.
-		expect(run.stderr).toContain(`\`mars config\` ${DIAGNOSTIC}`);
-		expect(run.stderr).not.toContain("collab.autoStart");
-		expect(run.stdout).toBe("");
-		expect(fs.existsSync(run.configPath)).toBe(false);
-	}, 30_000);
+			expect(run.exitCode, run.stderr).toBe(1);
+			// Names the stalled subcommand so automation logs show what failed, without its arguments.
+			expect(run.stderr).toContain(`\`mars config\` ${DIAGNOSTIC}`);
+			expect(run.stderr).not.toContain("collab.autoStart");
+			expect(run.stdout).toBe("");
+			expect(fs.existsSync(run.configPath)).toBe(false);
+		},
+		scaledTimeout(30000),
+	);
 
-	it("keeps a completed command's exit 0 and output", async () => {
-		using tempDir = TempDir.createSync("@mars-cli-settled-");
-		const run = await runConfigSet(tempDir, "real");
+	it(
+		"keeps a completed command's exit 0 and output",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-cli-settled-");
+			const run = await runConfigSet(tempDir, "real");
 
-		expect(run.exitCode, run.stderr).toBe(0);
-		expect(run.stdout).toContain("Set collab.autoStart = control");
-		expect(run.stderr).not.toContain(DIAGNOSTIC);
-		expect(Bun.YAML.parse(await Bun.file(run.configPath).text())).toMatchObject({ collab: { autoStart: "control" } });
-	}, 30_000);
+			expect(run.exitCode, run.stderr).toBe(0);
+			expect(run.stdout).toContain("Set collab.autoStart = control");
+			expect(run.stderr).not.toContain(DIAGNOSTIC);
+			expect(Bun.YAML.parse(await Bun.file(run.configPath).text())).toMatchObject({
+				collab: { autoStart: "control" },
+			});
+		},
+		scaledTimeout(30000),
+	);
 
-	it("keeps exit 0 when the loop resumes after a premature beforeExit and the command completes", async () => {
-		using tempDir = TempDir.createSync("@mars-cli-resumed-");
-		const run = await runConfigSet(tempDir, "resume-after-drain");
+	it(
+		"keeps exit 0 when the loop resumes after a premature beforeExit and the command completes",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-cli-resumed-");
+			const run = await runConfigSet(tempDir, "resume-after-drain");
 
-		expect(run.exitCode, run.stderr).toBe(0);
-		expect(run.stdout).toContain("Set collab.autoStart = control");
-		expect(run.stderr).not.toContain(DIAGNOSTIC);
-		expect(Bun.YAML.parse(await Bun.file(run.configPath).text())).toMatchObject({ collab: { autoStart: "control" } });
-	}, 30_000);
+			expect(run.exitCode, run.stderr).toBe(0);
+			expect(run.stdout).toContain("Set collab.autoStart = control");
+			expect(run.stderr).not.toContain(DIAGNOSTIC);
+			expect(Bun.YAML.parse(await Bun.file(run.configPath).text())).toMatchObject({
+				collab: { autoStart: "control" },
+			});
+		},
+		scaledTimeout(30000),
+	);
 
-	it("keeps an explicit exit's code when the loop resumed after a premature beforeExit", async () => {
-		using tempDir = TempDir.createSync("@mars-cli-exited-");
-		const run = await runConfigSet(tempDir, "exit-after-drain");
+	it(
+		"keeps an explicit exit's code when the loop resumed after a premature beforeExit",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-cli-exited-");
+			const run = await runConfigSet(tempDir, "exit-after-drain");
 
-		expect(run.exitCode, run.stderr).toBe(0);
-		expect(run.stderr).not.toContain(DIAGNOSTIC);
-	}, 30_000);
+			expect(run.exitCode, run.stderr).toBe(0);
+			expect(run.stderr).not.toContain(DIAGNOSTIC);
+		},
+		scaledTimeout(30000),
+	);
 });

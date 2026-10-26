@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -3543,31 +3544,35 @@ describe("ACP agent MCP server configuration (late-connecting servers)", () => {
 	 * `onToolsChanged` -> `refreshMCPTools` follow-up now runs through a
 	 * `refreshChain` queue so late connections still land in the session.
 	 */
-	it("delivers a late-connecting server's tools via a queued refreshMCPTools call", async () => {
-		const harness = await createHarness();
-		const refreshSpy = spyOn(FakeAgentSession.prototype, "refreshMCPTools");
-		const namesOf = (tools: unknown[]) => (tools as Array<{ name: string }>).map(tool => tool.name);
+	it(
+		"delivers a late-connecting server's tools via a queued refreshMCPTools call",
+		async () => {
+			const harness = await createHarness();
+			const refreshSpy = spyOn(FakeAgentSession.prototype, "refreshMCPTools");
+			const namesOf = (tools: unknown[]) => (tools as Array<{ name: string }>).map(tool => tool.name);
 
-		try {
-			const created = await harness.agent.newSession({
-				cwd: harness.cwdA,
-				mcpServers: [{ name: "delayed", command: BUN_EXEC, args: [FIXTURE_PATH], env: [] }],
-			});
-			expectAcpStructure(zNewSessionResponse, created);
+			try {
+				const created = await harness.agent.newSession({
+					cwd: harness.cwdA,
+					mcpServers: [{ name: "delayed", command: BUN_EXEC, args: [FIXTURE_PATH], env: [] }],
+				});
+				expectAcpStructure(zNewSessionResponse, created);
 
-			// The fixture delays its `initialize` response past the 250ms startup
-			// race, so the first (synchronous) refresh inside `#configureMcpServers`
-			// must see no tools yet.
-			expect(refreshSpy.mock.calls).toHaveLength(1);
-			expect(namesOf(refreshSpy.mock.calls[0]?.[0] ?? [])).toEqual([]);
+				// The fixture delays its `initialize` response past the 250ms startup
+				// race, so the first (synchronous) refresh inside `#configureMcpServers`
+				// must see no tools yet.
+				expect(refreshSpy.mock.calls).toHaveLength(1);
+				expect(namesOf(refreshSpy.mock.calls[0]?.[0] ?? [])).toEqual([]);
 
-			// Once the delayed `initialize` response lands, the background
-			// `onToolsChanged` -> queued `refreshMCPTools` call must deliver the
-			// server's tool. Before the fix, this late arrival was dropped.
-			await pollUntil(() => refreshSpy.mock.calls.length > 1);
-			expect(namesOf(refreshSpy.mock.calls.at(-1)?.[0] ?? [])).toEqual([`mcp__delayed_${DELAYED_MCP_TOOL_NAME}`]);
-		} finally {
-			refreshSpy.mockRestore();
-		}
-	}, 15_000);
+				// Once the delayed `initialize` response lands, the background
+				// `onToolsChanged` -> queued `refreshMCPTools` call must deliver the
+				// server's tool. Before the fix, this late arrival was dropped.
+				await pollUntil(() => refreshSpy.mock.calls.length > 1);
+				expect(namesOf(refreshSpy.mock.calls.at(-1)?.[0] ?? [])).toEqual([`mcp__delayed_${DELAYED_MCP_TOOL_NAME}`]);
+			} finally {
+				refreshSpy.mockRestore();
+			}
+		},
+		scaledTimeout(15000),
+	);
 });

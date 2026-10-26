@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, type Mock, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import { getBundledModel } from "@marsai-org/catalog/models";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
@@ -466,67 +467,71 @@ describe("AgentSession python cleanup", () => {
 		);
 	});
 
-	it("detaches retained kernel ownership even when dispose times out waiting for Python work", async () => {
-		const { tempDir, cwd } = createTempProject();
-		tempDirs.push(tempDir);
-		const kernel = new FakeKernel();
-		const blockedExecution = Promise.withResolvers<typeof OK_EXECUTION>();
-		const blockedExecutionStarted = Promise.withResolvers<void>();
-		kernel.blockedCode = "print('blocked')";
-		kernel.blockedExecution = blockedExecution.promise;
-		kernel.blockedExecutionStarted = () => blockedExecutionStarted.resolve();
-		kernel.abortBlockedExecution = false;
+	it(
+		"detaches retained kernel ownership even when dispose times out waiting for Python work",
+		async () => {
+			const { tempDir, cwd } = createTempProject();
+			tempDirs.push(tempDir);
+			const kernel = new FakeKernel();
+			const blockedExecution = Promise.withResolvers<typeof OK_EXECUTION>();
+			const blockedExecutionStarted = Promise.withResolvers<void>();
+			kernel.blockedCode = "print('blocked')";
+			kernel.blockedExecution = blockedExecution.promise;
+			kernel.blockedExecutionStarted = () => blockedExecutionStarted.resolve();
+			kernel.abortBlockedExecution = false;
 
-		vi.spyOn(pythonKernel, "checkPythonKernelAvailability").mockResolvedValue({ ok: true });
-		const sleepSpy = vi.spyOn(Bun, "sleep").mockResolvedValue(undefined);
+			vi.spyOn(pythonKernel, "checkPythonKernelAvailability").mockResolvedValue({ ok: true });
+			const sleepSpy = vi.spyOn(Bun, "sleep").mockResolvedValue(undefined);
 
-		const startSpy = vi
-			.spyOn(pythonKernel.PythonKernel, "start")
-			.mockResolvedValue(kernel as unknown as PythonKernelInstance);
+			const startSpy = vi
+				.spyOn(pythonKernel.PythonKernel, "start")
+				.mockResolvedValue(kernel as unknown as PythonKernelInstance);
 
-		const firstSession = await createSession(tempDir, cwd);
-		const secondSession = await createSession(tempDir, cwd);
+			const firstSession = await createSession(tempDir, cwd);
+			const secondSession = await createSession(tempDir, cwd);
 
-		await secondSession.executePython("print('owner-b warmup')");
-		const firstExecution = firstSession.executePython("print('blocked')");
-		await blockedExecutionStarted.promise;
-		let firstExecutionSettled = false;
-		void firstExecution.finally(() => {
-			firstExecutionSettled = true;
-		});
+			await secondSession.executePython("print('owner-b warmup')");
+			const firstExecution = firstSession.executePython("print('blocked')");
+			await blockedExecutionStarted.promise;
+			let firstExecutionSettled = false;
+			void firstExecution.finally(() => {
+				firstExecutionSettled = true;
+			});
 
-		let firstDisposed = false;
-		const disposeFirst = firstSession.dispose().then(() => {
-			firstDisposed = true;
-		});
-		await disposeFirst;
-		expectSleepNear(sleepSpy, 3000);
+			let firstDisposed = false;
+			const disposeFirst = firstSession.dispose().then(() => {
+				firstDisposed = true;
+			});
+			await disposeFirst;
+			expectSleepNear(sleepSpy, 3000);
 
-		expect(firstDisposed).toBe(true);
-		expect(firstExecutionSettled).toBe(false);
-		expect(kernel.shutdownCalls).toBe(0);
-		expect(startSpy).toHaveBeenCalledTimes(1);
+			expect(firstDisposed).toBe(true);
+			expect(firstExecutionSettled).toBe(false);
+			expect(kernel.shutdownCalls).toBe(0);
+			expect(startSpy).toHaveBeenCalledTimes(1);
 
-		blockedExecution.resolve(OK_EXECUTION);
-		// The dispose abort was requested while the execution was still running;
-		// the executor reports such runs as cancelled even when the kernel races
-		// to completion. Detachment is proven below: the kernel survives, is not
-		// restarted, and keeps serving the surviving session.
-		await expect(firstExecution).resolves.toMatchObject({
-			cancelled: true,
-			stdinRequested: false,
-		});
-		await secondSession.executePython("print('owner-b after detach')");
-		expect(startSpy).toHaveBeenCalledTimes(1);
-		expect(kernel.executeCalls).toEqual([
-			"print('owner-b warmup')",
-			"print('blocked')",
-			"print('owner-b after detach')",
-		]);
-		await secondSession.dispose();
+			blockedExecution.resolve(OK_EXECUTION);
+			// The dispose abort was requested while the execution was still running;
+			// the executor reports such runs as cancelled even when the kernel races
+			// to completion. Detachment is proven below: the kernel survives, is not
+			// restarted, and keeps serving the surviving session.
+			await expect(firstExecution).resolves.toMatchObject({
+				cancelled: true,
+				stdinRequested: false,
+			});
+			await secondSession.executePython("print('owner-b after detach')");
+			expect(startSpy).toHaveBeenCalledTimes(1);
+			expect(kernel.executeCalls).toEqual([
+				"print('owner-b warmup')",
+				"print('blocked')",
+				"print('owner-b after detach')",
+			]);
+			await secondSession.dispose();
 
-		expect(kernel.shutdownCalls).toBe(1);
-	}, 10000);
+			expect(kernel.shutdownCalls).toBe(1);
+		},
+		scaledTimeout(10000),
+	);
 
 	it("rejects direct session Python starts once dispose begins", async () => {
 		const { tempDir, cwd } = createTempProject();
@@ -553,101 +558,113 @@ describe("AgentSession python cleanup", () => {
 		expect(executeSpy).not.toHaveBeenCalled();
 	});
 
-	it("rejects direct session Python starts after an async user_python hook yields during dispose", async () => {
-		const { tempDir, cwd } = createTempProject();
-		tempDirs.push(tempDir);
-		const hookStarted = Promise.withResolvers<void>();
-		const releaseHook = Promise.withResolvers<void>();
-		const hookExtension: ExtensionFactory = api => {
-			api.on("user_python", async () => {
-				hookStarted.resolve();
-				await releaseHook.promise;
-				return undefined;
+	it(
+		"rejects direct session Python starts after an async user_python hook yields during dispose",
+		async () => {
+			const { tempDir, cwd } = createTempProject();
+			tempDirs.push(tempDir);
+			const hookStarted = Promise.withResolvers<void>();
+			const releaseHook = Promise.withResolvers<void>();
+			const hookExtension: ExtensionFactory = api => {
+				api.on("user_python", async () => {
+					hookStarted.resolve();
+					await releaseHook.promise;
+					return undefined;
+				});
+			};
+			const executeSpy = vi.spyOn(pythonExecutor, "executePython").mockResolvedValue({
+				output: "late",
+				exitCode: 0,
+				cancelled: false,
+				truncated: false,
+				totalLines: 1,
+				totalBytes: 4,
+				outputLines: 1,
+				outputBytes: 4,
+				displayOutputs: [],
+				stdinRequested: false,
 			});
-		};
-		const executeSpy = vi.spyOn(pythonExecutor, "executePython").mockResolvedValue({
-			output: "late",
-			exitCode: 0,
-			cancelled: false,
-			truncated: false,
-			totalLines: 1,
-			totalBytes: 4,
-			outputLines: 1,
-			outputBytes: 4,
-			displayOutputs: [],
-			stdinRequested: false,
-		});
 
-		const session = await createSession(tempDir, cwd, { extensions: [hookExtension] });
-		const execution = session.executePython("print('late after hook')");
-		await hookStarted.promise;
-		let disposed = false;
-		const disposeSession = session.dispose().then(() => {
-			disposed = true;
-		});
-		await Bun.sleep(0);
-		expect(disposed).toBe(false);
-		releaseHook.resolve();
-		await expect(execution).rejects.toThrow("Python execution is unavailable while session disposal is in progress");
-		await disposeSession;
-		expect(disposed).toBe(true);
-		expect(executeSpy).not.toHaveBeenCalled();
-	}, 10000);
-
-	it("rejects async user_python hook results after dispose begins", async () => {
-		const { tempDir, cwd } = createTempProject();
-		tempDirs.push(tempDir);
-		const hookStarted = Promise.withResolvers<void>();
-		const releaseHook = Promise.withResolvers<void>();
-		const hookExtension: ExtensionFactory = api => {
-			api.on("user_python", async () => {
-				hookStarted.resolve();
-				await releaseHook.promise;
-				return {
-					result: {
-						output: "hooked late",
-						exitCode: 0,
-						cancelled: false,
-						truncated: false,
-						totalLines: 1,
-						totalBytes: 11,
-						outputLines: 1,
-						outputBytes: 11,
-						displayOutputs: [],
-						stdinRequested: false,
-					},
-				};
+			const session = await createSession(tempDir, cwd, { extensions: [hookExtension] });
+			const execution = session.executePython("print('late after hook')");
+			await hookStarted.promise;
+			let disposed = false;
+			const disposeSession = session.dispose().then(() => {
+				disposed = true;
 			});
-		};
-		const executeSpy = vi.spyOn(pythonExecutor, "executePython").mockResolvedValue({
-			output: "late",
-			exitCode: 0,
-			cancelled: false,
-			truncated: false,
-			totalLines: 1,
-			totalBytes: 4,
-			outputLines: 1,
-			outputBytes: 4,
-			displayOutputs: [],
-			stdinRequested: false,
-		});
+			await Bun.sleep(0);
+			expect(disposed).toBe(false);
+			releaseHook.resolve();
+			await expect(execution).rejects.toThrow(
+				"Python execution is unavailable while session disposal is in progress",
+			);
+			await disposeSession;
+			expect(disposed).toBe(true);
+			expect(executeSpy).not.toHaveBeenCalled();
+		},
+		scaledTimeout(10000),
+	);
 
-		const session = await createSession(tempDir, cwd, { extensions: [hookExtension] });
-		const execution = session.executePython("print('late hook result')");
-		await hookStarted.promise;
-		let disposed = false;
-		const disposeSession = session.dispose().then(() => {
-			disposed = true;
-		});
-		await Bun.sleep(0);
-		expect(disposed).toBe(false);
-		releaseHook.resolve();
-		await expect(execution).rejects.toThrow("Python execution is unavailable while session disposal is in progress");
-		await disposeSession;
-		expect(disposed).toBe(true);
-		expect(executeSpy).not.toHaveBeenCalled();
-		expect(session.messages.some(message => message.role === "pythonExecution")).toBe(false);
-	}, 10000);
+	it(
+		"rejects async user_python hook results after dispose begins",
+		async () => {
+			const { tempDir, cwd } = createTempProject();
+			tempDirs.push(tempDir);
+			const hookStarted = Promise.withResolvers<void>();
+			const releaseHook = Promise.withResolvers<void>();
+			const hookExtension: ExtensionFactory = api => {
+				api.on("user_python", async () => {
+					hookStarted.resolve();
+					await releaseHook.promise;
+					return {
+						result: {
+							output: "hooked late",
+							exitCode: 0,
+							cancelled: false,
+							truncated: false,
+							totalLines: 1,
+							totalBytes: 11,
+							outputLines: 1,
+							outputBytes: 11,
+							displayOutputs: [],
+							stdinRequested: false,
+						},
+					};
+				});
+			};
+			const executeSpy = vi.spyOn(pythonExecutor, "executePython").mockResolvedValue({
+				output: "late",
+				exitCode: 0,
+				cancelled: false,
+				truncated: false,
+				totalLines: 1,
+				totalBytes: 4,
+				outputLines: 1,
+				outputBytes: 4,
+				displayOutputs: [],
+				stdinRequested: false,
+			});
+
+			const session = await createSession(tempDir, cwd, { extensions: [hookExtension] });
+			const execution = session.executePython("print('late hook result')");
+			await hookStarted.promise;
+			let disposed = false;
+			const disposeSession = session.dispose().then(() => {
+				disposed = true;
+			});
+			await Bun.sleep(0);
+			expect(disposed).toBe(false);
+			releaseHook.resolve();
+			await expect(execution).rejects.toThrow(
+				"Python execution is unavailable while session disposal is in progress",
+			);
+			await disposeSession;
+			expect(disposed).toBe(true);
+			expect(executeSpy).not.toHaveBeenCalled();
+			expect(session.messages.some(message => message.role === "pythonExecution")).toBe(false);
+		},
+		scaledTimeout(10000),
+	);
 
 	it("rejects eval starts once dispose begins", async () => {
 		const { tempDir, cwd } = createTempProject();

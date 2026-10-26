@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it, spyOn } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { type ChildProcess, execSync, spawn } from "node:child_process";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
@@ -1806,7 +1807,7 @@ describe("Generate E2E Tests", () => {
 				},
 				name: "Ollama GPT-OSS 20B",
 			});
-		}, 30000); // 30 second timeout for setup
+		}, scaledTimeout(30000)); // 30 second timeout for setup
 
 		afterAll(() => {
 			// Kill ollama server

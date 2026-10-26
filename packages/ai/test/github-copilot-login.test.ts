@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { getProviderDefinition } from "@marsai-org/ai/registry";
 import { getOAuthApiKey } from "@marsai-org/ai/registry/oauth";
 import { loginGitHubCopilot } from "@marsai-org/ai/registry/oauth/github-copilot";
@@ -318,51 +319,55 @@ describe("loginGitHubCopilot", () => {
 		).rejects.toThrow("Login cancelled");
 	});
 
-	it("poll handles slow_down then succeeds", async () => {
-		let pollCount = 0;
-		const fetchMock = vi.fn(async (input: string | URL) => {
-			const url = typeof input === "string" ? input : input.toString();
-			if (url === "https://github.com/login/device/code") {
-				return new Response(JSON.stringify(deviceCodeResponse({ interval: 0 })), {
-					status: 200,
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-			if (url === "https://github.com/login/oauth/access_token") {
-				pollCount++;
-				if (pollCount === 1) {
-					return new Response(JSON.stringify({ error: "authorization_pending" }), {
+	it(
+		"poll handles slow_down then succeeds",
+		async () => {
+			let pollCount = 0;
+			const fetchMock = vi.fn(async (input: string | URL) => {
+				const url = typeof input === "string" ? input : input.toString();
+				if (url === "https://github.com/login/device/code") {
+					return new Response(JSON.stringify(deviceCodeResponse({ interval: 0 })), {
 						status: 200,
 						headers: { "Content-Type": "application/json" },
 					});
 				}
-				if (pollCount === 2) {
-					return new Response(JSON.stringify({ error: "slow_down", interval: 1 }), {
+				if (url === "https://github.com/login/oauth/access_token") {
+					pollCount++;
+					if (pollCount === 1) {
+						return new Response(JSON.stringify({ error: "authorization_pending" }), {
+							status: 200,
+							headers: { "Content-Type": "application/json" },
+						});
+					}
+					if (pollCount === 2) {
+						return new Response(JSON.stringify({ error: "slow_down", interval: 1 }), {
+							status: 200,
+							headers: { "Content-Type": "application/json" },
+						});
+					}
+					return new Response(JSON.stringify(accessTokenResponse()), {
 						status: 200,
 						headers: { "Content-Type": "application/json" },
 					});
 				}
-				return new Response(JSON.stringify(accessTokenResponse()), {
-					status: 200,
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-			if (url.includes("/models/") && url.includes("/policy")) {
-				return modelPolicyOk();
-			}
-			throw new Error(`Unexpected URL: ${url}`);
-		});
+				if (url.includes("/models/") && url.includes("/policy")) {
+					return modelPolicyOk();
+				}
+				throw new Error(`Unexpected URL: ${url}`);
+			});
 
-		const credentials = await loginGitHubCopilot({
-			...FAST_POLL_OPTIONS,
-			fetch: fetchMock as unknown as typeof fetch,
-			onAuth: vi.fn(),
-			onPrompt: mockOnPrompt(""),
-		});
+			const credentials = await loginGitHubCopilot({
+				...FAST_POLL_OPTIONS,
+				fetch: fetchMock as unknown as typeof fetch,
+				onAuth: vi.fn(),
+				onPrompt: mockOnPrompt(""),
+			});
 
-		expect(credentials.access).toBe("ghu_test");
-		expect(pollCount).toBeGreaterThanOrEqual(3);
-	}, 15000);
+			expect(credentials.access).toBe("ghu_test");
+			expect(pollCount).toBeGreaterThanOrEqual(3);
+		},
+		scaledTimeout(15000),
+	);
 
 	it("poll timeout", async () => {
 		const fetchMock = vi.fn(async (input: string | URL) => {

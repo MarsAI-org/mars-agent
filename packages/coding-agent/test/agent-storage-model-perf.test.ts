@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { Agent } from "@marsai-org/agent-core";
 import { createMockModel } from "@marsai-org/ai/providers/mock";
@@ -502,31 +503,37 @@ describe("AgentStorage model perf aggregates", () => {
 		}
 	});
 
-	it("lets a process exit naturally mid-window and still persists the pending batch", async () => {
-		tempDir = TempDir.createSync("@mars-agent-storage-natural-exit-");
-		const dbPath = tempDir.join("agent.db");
-		const startedAt = Date.now();
-		const exiting = await runProbe(
-			[
-				`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
-				`const storage = await AgentStorage.open(${JSON.stringify(dbPath)});`,
-				'void storage.recordModelPerf("openai/natural-exit", { outputTokens: 10, durationMs: 1000 });',
-			].join("\n"),
-			{ ...process.env, HOME: tempDir.path(), USERPROFILE: tempDir.path() },
-		);
-		expect(exiting.exitCode, exiting.stderr).toBe(0);
-		// A referenced batch timer would hold the process open for the whole window.
-		expect(Date.now() - startedAt).toBeLessThan(MODEL_PERF_FLUSH_DELAY_MS / 2);
+	it(
+		"lets a process exit naturally mid-window and still persists the pending batch",
+		async () => {
+			tempDir = TempDir.createSync("@mars-agent-storage-natural-exit-");
+			const dbPath = tempDir.join("agent.db");
+			const startedAt = Date.now();
+			const exiting = await runProbe(
+				[
+					`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
+					`const storage = await AgentStorage.open(${JSON.stringify(dbPath)});`,
+					'void storage.recordModelPerf("openai/natural-exit", { outputTokens: 10, durationMs: 1000 });',
+				].join("\n"),
+				{ ...process.env, HOME: tempDir.path(), USERPROFILE: tempDir.path() },
+			);
+			expect(exiting.exitCode, exiting.stderr).toBe(0);
+			// A referenced batch timer would hold the process open for the whole window.
+			expect(Date.now() - startedAt).toBeLessThan(MODEL_PERF_FLUSH_DELAY_MS / 2);
 
-		const db = new Database(dbPath, { readonly: true });
-		try {
-			expect(
-				db
-					.query<{ samples: number }, []>("SELECT samples FROM model_perf WHERE model_key = 'openai/natural-exit'")
-					.get(),
-			).toEqual({ samples: 1 });
-		} finally {
-			db.close();
-		}
-	}, 30_000);
+			const db = new Database(dbPath, { readonly: true });
+			try {
+				expect(
+					db
+						.query<{ samples: number }, []>(
+							"SELECT samples FROM model_perf WHERE model_key = 'openai/natural-exit'",
+						)
+						.get(),
+				).toEqual({ samples: 1 });
+			} finally {
+				db.close();
+			}
+		},
+		scaledTimeout(30000),
+	);
 });

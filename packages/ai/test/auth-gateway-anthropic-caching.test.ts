@@ -13,6 +13,7 @@
  * with the gateway live (`mars auth-gateway serve` or pm2).
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { AUTH_GATEWAY_E2E_URL, checkAuthGatewayE2EAvailable } from "./helpers";
 
 interface AnthropicUsage {
@@ -97,65 +98,69 @@ describe.skipIf(!gateway.ok)("auth-gateway: anthropic prompt caching e2e", () =>
 	const token = gateway.token;
 	if (!token) throw new Error("invariant: token must be present when gateway.ok is true");
 
-	it("writes the system prefix to ephemeral cache on turn 1 and reads it on turn 2", async () => {
-		// Per-run nonce ensures we always start with a cold cache. The bytes
-		// before the breakpoint must be unique to this run; otherwise a
-		// previously-warm Anthropic cache entry hits on turn 1 and we lose the
-		// ability to assert "first turn writes, second turn reads" cleanly.
-		const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
-		const systemTextWithNonce = `${SYSTEM_TEXT}\n\n[run-nonce: ${nonce}]`;
-		const system = [{ type: "text", text: systemTextWithNonce, cache_control: { type: "ephemeral" } }];
+	it(
+		"writes the system prefix to ephemeral cache on turn 1 and reads it on turn 2",
+		async () => {
+			// Per-run nonce ensures we always start with a cold cache. The bytes
+			// before the breakpoint must be unique to this run; otherwise a
+			// previously-warm Anthropic cache entry hits on turn 1 and we lose the
+			// ability to assert "first turn writes, second turn reads" cleanly.
+			const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+			const systemTextWithNonce = `${SYSTEM_TEXT}\n\n[run-nonce: ${nonce}]`;
+			const system = [{ type: "text", text: systemTextWithNonce, cache_control: { type: "ephemeral" } }];
 
-		// ── Turn 1 ───────────────────────────────────────────────────────
-		const turn1Messages: MessageBlock[] = [{ role: "user", content: "Respond with the single word: alpha" }];
-		const turn1 = await callGateway(
-			{
-				model: MODEL,
-				max_tokens: 4,
-				system,
-				messages: turn1Messages,
-			},
-			token,
-		);
+			// ── Turn 1 ───────────────────────────────────────────────────────
+			const turn1Messages: MessageBlock[] = [{ role: "user", content: "Respond with the single word: alpha" }];
+			const turn1 = await callGateway(
+				{
+					model: MODEL,
+					max_tokens: 4,
+					system,
+					messages: turn1Messages,
+				},
+				token,
+			);
 
-		const turn1Text = extractAssistantText(turn1);
-		expect(turn1Text.length).toBeGreaterThan(0);
+			const turn1Text = extractAssistantText(turn1);
+			expect(turn1Text.length).toBeGreaterThan(0);
 
-		// Anthropic populates cache_creation_input_tokens with the size of the
-		// content written to the cache. Above the 1024-token floor this MUST
-		// be > 0 on the first turn or the gateway stripped our cache_control.
-		const turn1Created = turn1.usage.cache_creation_input_tokens ?? 0;
-		const turn1Read = turn1.usage.cache_read_input_tokens ?? 0;
-		expect(turn1Created).toBeGreaterThan(0);
-		// First turn cannot hit the cache (nothing to read yet).
-		expect(turn1Read).toBe(0);
+			// Anthropic populates cache_creation_input_tokens with the size of the
+			// content written to the cache. Above the 1024-token floor this MUST
+			// be > 0 on the first turn or the gateway stripped our cache_control.
+			const turn1Created = turn1.usage.cache_creation_input_tokens ?? 0;
+			const turn1Read = turn1.usage.cache_read_input_tokens ?? 0;
+			expect(turn1Created).toBeGreaterThan(0);
+			// First turn cannot hit the cache (nothing to read yet).
+			expect(turn1Read).toBe(0);
 
-		// ── Turn 2: append assistant + new user, re-send with same system ──
-		const turn2Messages: MessageBlock[] = [
-			...turn1Messages,
-			{ role: "assistant", content: turn1Text },
-			{ role: "user", content: "Respond with the single word: beta" },
-		];
-		const turn2 = await callGateway(
-			{
-				model: MODEL,
-				max_tokens: 4,
-				system,
-				messages: turn2Messages,
-			},
-			token,
-		);
+			// ── Turn 2: append assistant + new user, re-send with same system ──
+			const turn2Messages: MessageBlock[] = [
+				...turn1Messages,
+				{ role: "assistant", content: turn1Text },
+				{ role: "user", content: "Respond with the single word: beta" },
+			];
+			const turn2 = await callGateway(
+				{
+					model: MODEL,
+					max_tokens: 4,
+					system,
+					messages: turn2Messages,
+				},
+				token,
+			);
 
-		const turn2Text = extractAssistantText(turn2);
-		expect(turn2Text.length).toBeGreaterThan(0);
+			const turn2Text = extractAssistantText(turn2);
+			expect(turn2Text.length).toBeGreaterThan(0);
 
-		// Second turn MUST read from the cache populated by turn 1. If
-		// cache_read_input_tokens is 0 the gateway either dropped the marker,
-		// rewrote the cached prefix bytes, or routed the request without
-		// Anthropic's cache-aware OAuth headers.
-		const turn2Read = turn2.usage.cache_read_input_tokens ?? 0;
-		expect(turn2Read).toBeGreaterThan(0);
-		// The cache read should cover at least the system block we wrote.
-		expect(turn2Read).toBeGreaterThanOrEqual(turn1Created);
-	}, 60_000);
+			// Second turn MUST read from the cache populated by turn 1. If
+			// cache_read_input_tokens is 0 the gateway either dropped the marker,
+			// rewrote the cached prefix bytes, or routed the request without
+			// Anthropic's cache-aware OAuth headers.
+			const turn2Read = turn2.usage.cache_read_input_tokens ?? 0;
+			expect(turn2Read).toBeGreaterThan(0);
+			// The cache read should cover at least the system block we wrote.
+			expect(turn2Read).toBeGreaterThanOrEqual(turn1Created);
+		},
+		scaledTimeout(60000),
+	);
 });

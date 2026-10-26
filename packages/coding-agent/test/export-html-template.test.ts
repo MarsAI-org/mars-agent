@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -123,7 +124,7 @@ beforeAll(async () => {
 		compile: { outfile: compiledPath },
 	});
 	expect(compiled.success, compiled.logs.map(log => log.message).join("\n")).toBe(true);
-}, 120_000);
+}, scaledTimeout(120000));
 
 afterAll(() => {
 	fs.rmSync(tempRoot, { recursive: true, force: true });
@@ -159,62 +160,68 @@ describe("HTML export template", () => {
 		expect(await runProbe([process.execPath, bundlePath])).toEqual(expectedTemplate);
 	});
 
-	test("production normal bundle packs every HTML export asset", async () => {
-		const productionBundleDir = path.join(tempRoot, "production-bundle");
-		const staleAssetPath = path.join(productionBundleDir, "template-stale.css");
-		const bundleRunnerPath = path.join(tempRoot, "bundle-dist-runner.ts");
-		await Bun.write(staleAssetPath, "stale");
-		await Bun.write(
-			bundleRunnerPath,
-			`import { bundleDist } from ${JSON.stringify(bundleDistUrl)};\nawait bundleDist(${JSON.stringify(productionBundleDir)});\n`,
-		);
-		const build = Bun.spawn([process.execPath, bundleRunnerPath], {
-			cwd: packageDir,
-			stdin: "ignore",
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const [buildStdout, buildStderr, buildExitCode] = await Promise.all([
-			new Response(build.stdout).text(),
-			new Response(build.stderr).text(),
-			build.exited,
-		]);
-		expect(buildExitCode, `${buildStdout}\n${buildStderr}`).toBe(0);
-		expect(await Bun.file(staleAssetPath).exists()).toBe(false);
+	test(
+		"production normal bundle packs every HTML export asset",
+		async () => {
+			const productionBundleDir = path.join(tempRoot, "production-bundle");
+			const staleAssetPath = path.join(productionBundleDir, "template-stale.css");
+			const bundleRunnerPath = path.join(tempRoot, "bundle-dist-runner.ts");
+			await Bun.write(staleAssetPath, "stale");
+			await Bun.write(
+				bundleRunnerPath,
+				`import { bundleDist } from ${JSON.stringify(bundleDistUrl)};\nawait bundleDist(${JSON.stringify(productionBundleDir)});\n`,
+			);
+			const build = Bun.spawn([process.execPath, bundleRunnerPath], {
+				cwd: packageDir,
+				stdin: "ignore",
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+			const [buildStdout, buildStderr, buildExitCode] = await Promise.all([
+				new Response(build.stdout).text(),
+				new Response(build.stderr).text(),
+				build.exited,
+			]);
+			expect(buildExitCode, `${buildStdout}\n${buildStderr}`).toBe(0);
+			expect(await Bun.file(staleAssetPath).exists()).toBe(false);
 
-		const packDir = path.join(tempRoot, "production-package");
-		await Bun.write(path.join(packDir, "package.json"), Bun.file(path.join(packageDir, "package.json")));
-		await Bun.write(path.join(packDir, "bun.lock"), Bun.file(path.resolve(packageDir, "../../bun.lock")));
-		for (const entry of await fs.promises.readdir(productionBundleDir)) {
-			await Bun.write(path.join(packDir, "dist", entry), Bun.file(path.join(productionBundleDir, entry)));
-		}
-		const proc = Bun.spawn([process.execPath, "pm", "pack", "--dry-run", "--ignore-scripts"], {
-			cwd: packDir,
-			stdin: "ignore",
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const [stdout, stderr, exitCode] = await Promise.all([
-			new Response(proc.stdout).text(),
-			new Response(proc.stderr).text(),
-			proc.exited,
-		]);
-		expect(exitCode, stderr).toBe(0);
-		const packedAssets = Array.from(
-			stdout.matchAll(
-				/^packed \S+ (dist\/(?:template-[^.]+\.(?:css|html|js)|tool-views\.generated-[^.]+\.js|(?:marked|highlight)\.min-[^.]+\.js))$/gm,
-			),
-			match => match[1],
-		);
-		expect(packedAssets).toHaveLength(6);
-		expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.css$/.test(filePath))).toHaveLength(1);
-		expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.html$/.test(filePath))).toHaveLength(1);
-		expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.js$/.test(filePath))).toHaveLength(1);
-		expect(packedAssets.filter(filePath => /^dist\/tool-views\.generated-[^.]+\.js$/.test(filePath))).toHaveLength(1);
-		expect(
-			packedAssets.filter(filePath => /^dist\/(?:marked|highlight)\.min-[^.]+\.js$/.test(filePath)),
-		).toHaveLength(2);
-	}, 30_000);
+			const packDir = path.join(tempRoot, "production-package");
+			await Bun.write(path.join(packDir, "package.json"), Bun.file(path.join(packageDir, "package.json")));
+			await Bun.write(path.join(packDir, "bun.lock"), Bun.file(path.resolve(packageDir, "../../bun.lock")));
+			for (const entry of await fs.promises.readdir(productionBundleDir)) {
+				await Bun.write(path.join(packDir, "dist", entry), Bun.file(path.join(productionBundleDir, entry)));
+			}
+			const proc = Bun.spawn([process.execPath, "pm", "pack", "--dry-run", "--ignore-scripts"], {
+				cwd: packDir,
+				stdin: "ignore",
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+			const [stdout, stderr, exitCode] = await Promise.all([
+				new Response(proc.stdout).text(),
+				new Response(proc.stderr).text(),
+				proc.exited,
+			]);
+			expect(exitCode, stderr).toBe(0);
+			const packedAssets = Array.from(
+				stdout.matchAll(
+					/^packed \S+ (dist\/(?:template-[^.]+\.(?:css|html|js)|tool-views\.generated-[^.]+\.js|(?:marked|highlight)\.min-[^.]+\.js))$/gm,
+				),
+				match => match[1],
+			);
+			expect(packedAssets).toHaveLength(6);
+			expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.css$/.test(filePath))).toHaveLength(1);
+			expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.html$/.test(filePath))).toHaveLength(1);
+			expect(packedAssets.filter(filePath => /^dist\/template-[^.]+\.js$/.test(filePath))).toHaveLength(1);
+			expect(packedAssets.filter(filePath => /^dist\/tool-views\.generated-[^.]+\.js$/.test(filePath))).toHaveLength(
+				1,
+			);
+			expect(
+				packedAssets.filter(filePath => /^dist\/(?:marked|highlight)\.min-[^.]+\.js$/.test(filePath)),
+			).toHaveLength(2);
+		},
+		scaledTimeout(30000),
+	);
 
 	test("serves the cached normal-bundle template after its asset files are removed", async () => {
 		expect(await runProbe([process.execPath, bundlePath, "--remove-assets-after-first-use"])).toEqual({
@@ -227,20 +234,24 @@ describe("HTML export template", () => {
 		expect(await runProbe([compiledPath])).toEqual(expectedTemplate);
 	});
 
-	test("does not retain source asset strings during a static import", async () => {
-		const proc = Bun.spawn([process.execPath, heapProbePath], {
-			stdin: "ignore",
-			stderr: "pipe",
-			stdout: "pipe",
-		});
-		const [stdout, stderr, exitCode] = await Promise.all([
-			new Response(proc.stdout).text(),
-			new Response(proc.stderr).text(),
-			proc.exited,
-		]);
+	test(
+		"does not retain source asset strings during a static import",
+		async () => {
+			const proc = Bun.spawn([process.execPath, heapProbePath], {
+				stdin: "ignore",
+				stderr: "pipe",
+				stdout: "pipe",
+			});
+			const [stdout, stderr, exitCode] = await Promise.all([
+				new Response(proc.stdout).text(),
+				new Response(proc.stderr).text(),
+				proc.exited,
+			]);
 
-		expect(exitCode, stderr).toBe(0);
-		const result = JSON.parse(stdout) as HeapProbeResult;
-		expect(result, JSON.stringify(result)).toEqual({ retainedAssetStrings: 0, retainedAssets: [] });
-	}, 30_000);
+			expect(exitCode, stderr).toBe(0);
+			const result = JSON.parse(stdout) as HeapProbeResult;
+			expect(result, JSON.stringify(result)).toEqual({ retainedAssetStrings: 0, retainedAssets: [] });
+		},
+		scaledTimeout(30000),
+	);
 });

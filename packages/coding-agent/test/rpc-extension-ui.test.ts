@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@marsai-org/utils";
 import type { ExtensionAskDialogQuestion } from "@marsai-org/coding-agent/extensibility/extensions";
@@ -90,13 +91,15 @@ export default function (pi) {
 `;
 
 describe("RPC extension UI", () => {
-	it("keeps extension dialogs headless while tool selections round-trip", async () => {
-		await using temp = await TempDir.create("@rpc-headless-tool-ui-");
-		const fixturePath = temp.join("runtime.ts");
-		const sourceDir = path.resolve(import.meta.dir, "../src");
-		await Bun.write(
-			fixturePath,
-			`
+	it(
+		"keeps extension dialogs headless while tool selections round-trip",
+		async () => {
+			await using temp = await TempDir.create("@rpc-headless-tool-ui-");
+			const fixturePath = temp.join("runtime.ts");
+			const sourceDir = path.resolve(import.meta.dir, "../src");
+			await Bun.write(
+				fixturePath,
+				`
 import { createAgentSession, Settings } from ${JSON.stringify(path.join(sourceDir, "sdk.ts"))};
 import { runRpcMode } from ${JSON.stringify(path.join(sourceDir, "modes/rpc/rpc-mode.ts"))};
 globalThis.fetch = async () => { throw new Error("Offline UI fixture refuses network"); };
@@ -125,55 +128,57 @@ await runRpcMode(session, {
   },
 });
 `,
-		);
-		const child = Bun.spawn([process.execPath, fixturePath], {
-			cwd: temp.path(),
-			env: {
-				PATH: Bun.env.PATH,
-				HOME: temp.join("home"),
-				PI_CODING_AGENT_DIR: temp.join("agent"),
-				XDG_CONFIG_HOME: temp.join("config"),
-				XDG_DATA_HOME: temp.join("data"),
-				XDG_CACHE_HOME: temp.join("cache"),
-				CI: "true",
-				PI_NO_TITLE: "1",
-			},
-			stdin: "pipe",
-			stdout: "pipe",
-			stderr: "pipe",
-			timeout: 20_000,
-		});
-		const stderr = new Response(child.stderr).text();
-		const requests: Record<string, unknown>[] = [];
-		let result: unknown;
-		try {
-			for await (const frame of readJsonl<unknown>(child.stdout)) {
-				if (!isRecord(frame) || frame.type !== "extension_ui_request") continue;
-				requests.push(frame);
-				if (frame.method === "select") {
-					child.stdin.write(
-						`${JSON.stringify({ type: "extension_ui_response", id: frame.id, value: "Deploy" })}\n`,
-					);
-					await child.stdin.flush();
-				} else if (frame.method === "notify") {
-					if (typeof frame.message === "string") result = JSON.parse(frame.message);
-					break;
-				} else {
-					throw new Error(`Unexpected extension UI: ${JSON.stringify(frame)}`);
+			);
+			const child = Bun.spawn([process.execPath, fixturePath], {
+				cwd: temp.path(),
+				env: {
+					PATH: Bun.env.PATH,
+					HOME: temp.join("home"),
+					PI_CODING_AGENT_DIR: temp.join("agent"),
+					XDG_CONFIG_HOME: temp.join("config"),
+					XDG_DATA_HOME: temp.join("data"),
+					XDG_CACHE_HOME: temp.join("cache"),
+					CI: "true",
+					PI_NO_TITLE: "1",
+				},
+				stdin: "pipe",
+				stdout: "pipe",
+				stderr: "pipe",
+				timeout: 20_000,
+			});
+			const stderr = new Response(child.stderr).text();
+			const requests: Record<string, unknown>[] = [];
+			let result: unknown;
+			try {
+				for await (const frame of readJsonl<unknown>(child.stdout)) {
+					if (!isRecord(frame) || frame.type !== "extension_ui_request") continue;
+					requests.push(frame);
+					if (frame.method === "select") {
+						child.stdin.write(
+							`${JSON.stringify({ type: "extension_ui_response", id: frame.id, value: "Deploy" })}\n`,
+						);
+						await child.stdin.flush();
+					} else if (frame.method === "notify") {
+						if (typeof frame.message === "string") result = JSON.parse(frame.message);
+						break;
+					} else {
+						throw new Error(`Unexpected extension UI: ${JSON.stringify(frame)}`);
+					}
 				}
+			} finally {
+				child.stdin.end();
+				await child.exited;
 			}
-		} finally {
-			child.stdin.end();
-			await child.exited;
-		}
-		expect(result, await stderr).toEqual({
-			toolHasUI: true,
-			selected: "Deploy",
-			extension: { hasUI: false, confirmed: false },
-		});
-		expect(requests.map(frame => frame.method)).toEqual(["select", "notify"]);
-		expect(requests[0]).toMatchObject({ title: "Tool choice", options: ["Keep", "Deploy"] });
-	}, 30_000);
+			expect(result, await stderr).toEqual({
+				toolHasUI: true,
+				selected: "Deploy",
+				extension: { hasUI: false, confirmed: false },
+			});
+			expect(requests.map(frame => frame.method)).toEqual(["select", "notify"]);
+			expect(requests[0]).toMatchObject({ title: "Tool choice", options: ["Keep", "Deploy"] });
+		},
+		scaledTimeout(30000),
+	);
 
 	it("keeps the label-only wire shape for bare options", async () => {
 		const pendingRequests = new Map<string, PendingExtensionRequest>();
@@ -254,12 +259,14 @@ await runRpcMode(session, {
 		expect(pendingRequests.size).toBe(0);
 	});
 
-	it("rejects secret login input, completes ordinary OAuth input, and logs the stored account out", async () => {
-		await using temp = await TempDir.create("@rpc-login-");
-		const extensionPath = temp.join("login.mjs");
-		await Bun.write(
-			extensionPath,
-			`
+	it(
+		"rejects secret login input, completes ordinary OAuth input, and logs the stored account out",
+		async () => {
+			await using temp = await TempDir.create("@rpc-login-");
+			const extensionPath = temp.join("login.mjs");
+			await Bun.write(
+				extensionPath,
+				`
 export default function(pi) {
   globalThis.fetch = async () => { throw new Error("Offline login fixture refuses network"); };
   // rpc-alias is a second login for rpc-ordinary's credentials, like openai-codex-device.
@@ -288,152 +295,155 @@ export default function(pi) {
   }
 }
 `,
-		);
-		const child = Bun.spawn(
-			[
-				process.execPath,
-				path.join(import.meta.dir, "..", "src", "cli.ts"),
-				"--trusted-extension",
-				extensionPath,
-				"--mode",
-				"rpc",
-				"--provider",
-				"anthropic",
-				"--model",
-				"claude-sonnet-4-5",
-			],
-			{
-				cwd: temp.path(),
-				env: {
-					PATH: Bun.env.PATH,
-					HOME: temp.join("home"),
-					PI_CODING_AGENT_DIR: temp.join("agent"),
-					XDG_CONFIG_HOME: temp.join("config"),
-					XDG_DATA_HOME: temp.join("data"),
-					XDG_CACHE_HOME: temp.join("cache"),
-					CI: "true",
-					PI_NO_TITLE: "1",
+			);
+			const child = Bun.spawn(
+				[
+					process.execPath,
+					path.join(import.meta.dir, "..", "src", "cli.ts"),
+					"--trusted-extension",
+					extensionPath,
+					"--mode",
+					"rpc",
+					"--provider",
+					"anthropic",
+					"--model",
+					"claude-sonnet-4-5",
+				],
+				{
+					cwd: temp.path(),
+					env: {
+						PATH: Bun.env.PATH,
+						HOME: temp.join("home"),
+						PI_CODING_AGENT_DIR: temp.join("agent"),
+						XDG_CONFIG_HOME: temp.join("config"),
+						XDG_DATA_HOME: temp.join("data"),
+						XDG_CACHE_HOME: temp.join("cache"),
+						CI: "true",
+						PI_NO_TITLE: "1",
+					},
+					stdin: "pipe",
+					stdout: "pipe",
+					stderr: "pipe",
+					timeout: 20_000,
 				},
-				stdin: "pipe",
-				stdout: "pipe",
-				stderr: "pipe",
-				timeout: 20_000,
-			},
-		);
-		const stdout = new Response(child.stdout).body;
-		if (!stdout) throw new Error("RPC login fixture did not expose stdout");
-		const stderr = new Response(child.stderr).text();
-		const inputTitles: string[] = [];
-		let secretResponse: unknown;
-		let ordinaryResponse: unknown;
-		let loggedInProvidersResponse: unknown;
-		let noProviderResponse: unknown;
-		let accountsResponse: unknown;
-		let logoutResponse: unknown;
-		let staleLogoutResponse: unknown;
-		let providersResponse: unknown;
-		let loggedOutCredentialId: unknown;
-		const send = async (frame: object) => {
-			child.stdin.write(`${JSON.stringify(frame)}\n`);
-			await child.stdin.flush();
-		};
+			);
+			const stdout = new Response(child.stdout).body;
+			if (!stdout) throw new Error("RPC login fixture did not expose stdout");
+			const stderr = new Response(child.stderr).text();
+			const inputTitles: string[] = [];
+			let secretResponse: unknown;
+			let ordinaryResponse: unknown;
+			let loggedInProvidersResponse: unknown;
+			let noProviderResponse: unknown;
+			let accountsResponse: unknown;
+			let logoutResponse: unknown;
+			let staleLogoutResponse: unknown;
+			let providersResponse: unknown;
+			let loggedOutCredentialId: unknown;
+			const send = async (frame: object) => {
+				child.stdin.write(`${JSON.stringify(frame)}\n`);
+				await child.stdin.flush();
+			};
 
-		try {
-			await send({ type: "login", providerId: "rpc-secret", id: "secret" });
-			for await (const frame of readJsonl<unknown>(stdout)) {
-				if (!isRecord(frame)) continue;
-				if (frame.type === "extension_ui_request" && frame.method === "input") {
-					if (typeof frame.id !== "string" || typeof frame.title !== "string") {
-						throw new Error("RPC input request did not carry string id and title");
+			try {
+				await send({ type: "login", providerId: "rpc-secret", id: "secret" });
+				for await (const frame of readJsonl<unknown>(stdout)) {
+					if (!isRecord(frame)) continue;
+					if (frame.type === "extension_ui_request" && frame.method === "input") {
+						if (typeof frame.id !== "string" || typeof frame.title !== "string") {
+							throw new Error("RPC input request did not carry string id and title");
+						}
+						inputTitles.push(frame.title);
+						await send({ type: "extension_ui_response", id: frame.id, value: crypto.randomUUID() });
+					} else if (frame.type === "response" && frame.id === "secret") {
+						secretResponse = frame;
+						await send({ type: "login", providerId: "rpc-ordinary", id: "ordinary" });
+					} else if (frame.type === "response" && frame.id === "ordinary") {
+						ordinaryResponse = frame;
+						await send({ type: "get_login_providers", id: "loggedIn" });
+					} else if (frame.type === "response" && frame.id === "loggedIn") {
+						loggedInProvidersResponse = frame;
+						await send({ type: "get_logout_accounts", providerId: "rpc-alias", id: "accounts" });
+					} else if (frame.type === "response" && frame.id === "accounts") {
+						accountsResponse = frame;
+						const accounts =
+							isRecord(frame.data) && Array.isArray(frame.data.accounts) ? frame.data.accounts : [];
+						loggedOutCredentialId = isRecord(accounts[0]) ? accounts[0].credentialId : undefined;
+						await send({
+							type: "logout",
+							providerId: "rpc-alias",
+							credentialId: loggedOutCredentialId,
+							id: "logout",
+						});
+					} else if (frame.type === "response" && frame.id === "logout") {
+						logoutResponse = frame;
+						await send({
+							type: "logout",
+							providerId: "rpc-ordinary",
+							credentialId: loggedOutCredentialId,
+							id: "stale",
+						});
+					} else if (frame.type === "response" && frame.id === "stale") {
+						staleLogoutResponse = frame;
+						// Without a provider the credential store would list every provider's accounts.
+						await send({ type: "get_logout_accounts", id: "noProvider" });
+					} else if (frame.type === "response" && frame.id === "noProvider") {
+						noProviderResponse = frame;
+						await send({ type: "get_login_providers", id: "providers" });
+					} else if (frame.type === "response" && frame.id === "providers") {
+						providersResponse = frame;
+						break;
 					}
-					inputTitles.push(frame.title);
-					await send({ type: "extension_ui_response", id: frame.id, value: crypto.randomUUID() });
-				} else if (frame.type === "response" && frame.id === "secret") {
-					secretResponse = frame;
-					await send({ type: "login", providerId: "rpc-ordinary", id: "ordinary" });
-				} else if (frame.type === "response" && frame.id === "ordinary") {
-					ordinaryResponse = frame;
-					await send({ type: "get_login_providers", id: "loggedIn" });
-				} else if (frame.type === "response" && frame.id === "loggedIn") {
-					loggedInProvidersResponse = frame;
-					await send({ type: "get_logout_accounts", providerId: "rpc-alias", id: "accounts" });
-				} else if (frame.type === "response" && frame.id === "accounts") {
-					accountsResponse = frame;
-					const accounts = isRecord(frame.data) && Array.isArray(frame.data.accounts) ? frame.data.accounts : [];
-					loggedOutCredentialId = isRecord(accounts[0]) ? accounts[0].credentialId : undefined;
-					await send({
-						type: "logout",
-						providerId: "rpc-alias",
-						credentialId: loggedOutCredentialId,
-						id: "logout",
-					});
-				} else if (frame.type === "response" && frame.id === "logout") {
-					logoutResponse = frame;
-					await send({
-						type: "logout",
-						providerId: "rpc-ordinary",
-						credentialId: loggedOutCredentialId,
-						id: "stale",
-					});
-				} else if (frame.type === "response" && frame.id === "stale") {
-					staleLogoutResponse = frame;
-					// Without a provider the credential store would list every provider's accounts.
-					await send({ type: "get_logout_accounts", id: "noProvider" });
-				} else if (frame.type === "response" && frame.id === "noProvider") {
-					noProviderResponse = frame;
-					await send({ type: "get_login_providers", id: "providers" });
-				} else if (frame.type === "response" && frame.id === "providers") {
-					providersResponse = frame;
-					break;
 				}
+			} finally {
+				child.stdin.end();
+				child.kill();
+				await child.exited;
 			}
-		} finally {
-			child.stdin.end();
-			child.kill();
-			await child.exited;
-		}
 
-		if (!providersResponse) throw new Error(`RPC login fixture did not finish: ${await stderr}`);
-		await stderr;
-		expect(secretResponse).toMatchObject({
-			type: "response",
-			command: "login",
-			success: false,
-			error: expect.stringContaining("requires secret input"),
-		});
-		expect(inputTitles).toEqual(["rpc-ordinary"]);
-		expect(ordinaryResponse).toMatchObject({ type: "response", command: "login", success: true });
-		expect(loggedInProvidersResponse).toMatchObject({
-			data: {
-				providers: expect.arrayContaining([
-					expect.objectContaining({ id: "rpc-ordinary", authenticated: true }),
-					// The alias stores under rpc-ordinary, so it is authenticated by the same credential.
-					expect.objectContaining({ id: "rpc-alias", authenticated: true }),
-				]),
-			},
-		});
-		expect(accountsResponse).toMatchObject({
-			success: true,
-			data: { accounts: [expect.objectContaining({ provider: "rpc-ordinary", active: true })] },
-		});
-		expect(logoutResponse).toEqual({ id: "logout", type: "response", command: "logout", success: true, data: {} });
-		expect(staleLogoutResponse).toMatchObject({
-			command: "logout",
-			success: false,
-			error: expect.stringContaining("is not stored for rpc-ordinary"),
-		});
-		expect(noProviderResponse).toMatchObject({ command: "get_logout_accounts", success: false });
-		expect(providersResponse).toMatchObject({
-			success: true,
-			data: {
-				providers: expect.arrayContaining([
-					expect.objectContaining({ id: "rpc-secret", authenticated: false }),
-					expect.objectContaining({ id: "rpc-ordinary", authenticated: false }),
-					expect.objectContaining({ id: "rpc-alias", authenticated: false }),
-				]),
-			},
-		});
-	}, 30_000);
+			if (!providersResponse) throw new Error(`RPC login fixture did not finish: ${await stderr}`);
+			await stderr;
+			expect(secretResponse).toMatchObject({
+				type: "response",
+				command: "login",
+				success: false,
+				error: expect.stringContaining("requires secret input"),
+			});
+			expect(inputTitles).toEqual(["rpc-ordinary"]);
+			expect(ordinaryResponse).toMatchObject({ type: "response", command: "login", success: true });
+			expect(loggedInProvidersResponse).toMatchObject({
+				data: {
+					providers: expect.arrayContaining([
+						expect.objectContaining({ id: "rpc-ordinary", authenticated: true }),
+						// The alias stores under rpc-ordinary, so it is authenticated by the same credential.
+						expect.objectContaining({ id: "rpc-alias", authenticated: true }),
+					]),
+				},
+			});
+			expect(accountsResponse).toMatchObject({
+				success: true,
+				data: { accounts: [expect.objectContaining({ provider: "rpc-ordinary", active: true })] },
+			});
+			expect(logoutResponse).toEqual({ id: "logout", type: "response", command: "logout", success: true, data: {} });
+			expect(staleLogoutResponse).toMatchObject({
+				command: "logout",
+				success: false,
+				error: expect.stringContaining("is not stored for rpc-ordinary"),
+			});
+			expect(noProviderResponse).toMatchObject({ command: "get_logout_accounts", success: false });
+			expect(providersResponse).toMatchObject({
+				success: true,
+				data: {
+					providers: expect.arrayContaining([
+						expect.objectContaining({ id: "rpc-secret", authenticated: false }),
+						expect.objectContaining({ id: "rpc-ordinary", authenticated: false }),
+						expect.objectContaining({ id: "rpc-alias", authenticated: false }),
+					]),
+				},
+			});
+		},
+		scaledTimeout(30000),
+	);
 });
 
 describe("RPC ask dialog", () => {
@@ -563,123 +573,127 @@ describe("RPC ask dialog", () => {
 		expect(onTimeout).not.toHaveBeenCalled();
 	});
 
-	it("keeps select prompts until the host opts in, then sends each ask as one dialog", async () => {
-		await using temp = await TempDir.create("@rpc-ask-dialog-");
-		const extensionPath = temp.join("scripted-ask.ts");
-		await Bun.write(extensionPath, scriptedAskProvider);
-		const child = Bun.spawn(
-			[
-				process.execPath,
-				path.join(import.meta.dir, "..", "src", "cli.ts"),
-				"--trusted-extension",
-				extensionPath,
-				"--mode",
-				"rpc-ui",
-				"--no-session",
-			],
-			{
-				cwd: temp.path(),
-				env: {
-					PATH: Bun.env.PATH,
-					HOME: temp.join("home"),
-					PI_CODING_AGENT_DIR: temp.join("agent"),
-					XDG_CONFIG_HOME: temp.join("config"),
-					XDG_DATA_HOME: temp.join("data"),
-					XDG_CACHE_HOME: temp.join("cache"),
-					CI: "true",
-					PI_NO_TITLE: "1",
+	it(
+		"keeps select prompts until the host opts in, then sends each ask as one dialog",
+		async () => {
+			await using temp = await TempDir.create("@rpc-ask-dialog-");
+			const extensionPath = temp.join("scripted-ask.ts");
+			await Bun.write(extensionPath, scriptedAskProvider);
+			const child = Bun.spawn(
+				[
+					process.execPath,
+					path.join(import.meta.dir, "..", "src", "cli.ts"),
+					"--trusted-extension",
+					extensionPath,
+					"--mode",
+					"rpc-ui",
+					"--no-session",
+				],
+				{
+					cwd: temp.path(),
+					env: {
+						PATH: Bun.env.PATH,
+						HOME: temp.join("home"),
+						PI_CODING_AGENT_DIR: temp.join("agent"),
+						XDG_CONFIG_HOME: temp.join("config"),
+						XDG_DATA_HOME: temp.join("data"),
+						XDG_CACHE_HOME: temp.join("cache"),
+						CI: "true",
+						PI_NO_TITLE: "1",
+					},
+					stdin: "pipe",
+					stdout: "pipe",
+					stderr: "pipe",
+					timeout: 30_000,
 				},
-				stdin: "pipe",
-				stdout: "pipe",
-				stderr: "pipe",
-				timeout: 30_000,
-			},
-		);
-		const stdout = new Response(child.stdout).body;
-		if (!stdout) throw new Error("RPC ask fixture did not expose stdout");
-		const stderr = new Response(child.stderr).text();
-		const send = async (frame: object) => {
-			child.stdin.write(`${JSON.stringify(frame)}\n`);
-			await child.stdin.flush();
-		};
-		const selectRequests: Record<string, unknown>[] = [];
-		const askRequests: Record<string, unknown>[] = [];
-		const toolResults: unknown[] = [];
-		let optInResponse: unknown;
-		let finished = false;
+			);
+			const stdout = new Response(child.stdout).body;
+			if (!stdout) throw new Error("RPC ask fixture did not expose stdout");
+			const stderr = new Response(child.stderr).text();
+			const send = async (frame: object) => {
+				child.stdin.write(`${JSON.stringify(frame)}\n`);
+				await child.stdin.flush();
+			};
+			const selectRequests: Record<string, unknown>[] = [];
+			const askRequests: Record<string, unknown>[] = [];
+			const toolResults: unknown[] = [];
+			let optInResponse: unknown;
+			let finished = false;
 
-		try {
-			// The provider exists only once the extension loads, so select it over RPC.
-			await send({ type: "set_model", id: "model", provider: "scripted", modelId: "ask" });
-			for await (const frame of readJsonl<unknown>(stdout)) {
-				if (!isRecord(frame)) continue;
-				if (frame.type === "response" && frame.id === "model") {
-					if (frame.success !== true) throw new Error(`Scripted model unavailable: ${JSON.stringify(frame)}`);
-					await send({ type: "prompt", id: "fallback", message: JSON.stringify({ questions: [dbQuestion] }) });
-				} else if (frame.type === "extension_ui_request" && frame.method === "select") {
-					selectRequests.push(frame);
-					await send({ type: "extension_ui_response", id: frame.id, value: "Postgres" });
-				} else if (frame.type === "extension_ui_request" && frame.method === "ask") {
-					askRequests.push(frame);
-					await send({
-						type: "extension_ui_response",
-						id: frame.id,
-						answers: [
-							{ id: "db", selectedOptions: [], customInput: "DuckDB" },
-							{ id: "features", selectedOptions: ["Auth", "Search"] },
-						],
-					});
-				} else if (frame.type === "tool_execution_end" && frame.toolName === "ask") {
-					toolResults.push(frame.result);
-				} else if (frame.type === "prompt_result" && frame.id === "fallback") {
-					await send({ type: "set_ask_dialog", id: "opt-in", enabled: true });
-				} else if (frame.type === "response" && frame.id === "opt-in") {
-					optInResponse = frame;
-					await send({
-						type: "prompt",
-						id: "dialog",
-						message: JSON.stringify({ questions: [dbQuestion, featuresQuestion] }),
-					});
-				} else if (frame.type === "prompt_result" && frame.id === "dialog") {
-					finished = true;
-					break;
+			try {
+				// The provider exists only once the extension loads, so select it over RPC.
+				await send({ type: "set_model", id: "model", provider: "scripted", modelId: "ask" });
+				for await (const frame of readJsonl<unknown>(stdout)) {
+					if (!isRecord(frame)) continue;
+					if (frame.type === "response" && frame.id === "model") {
+						if (frame.success !== true) throw new Error(`Scripted model unavailable: ${JSON.stringify(frame)}`);
+						await send({ type: "prompt", id: "fallback", message: JSON.stringify({ questions: [dbQuestion] }) });
+					} else if (frame.type === "extension_ui_request" && frame.method === "select") {
+						selectRequests.push(frame);
+						await send({ type: "extension_ui_response", id: frame.id, value: "Postgres" });
+					} else if (frame.type === "extension_ui_request" && frame.method === "ask") {
+						askRequests.push(frame);
+						await send({
+							type: "extension_ui_response",
+							id: frame.id,
+							answers: [
+								{ id: "db", selectedOptions: [], customInput: "DuckDB" },
+								{ id: "features", selectedOptions: ["Auth", "Search"] },
+							],
+						});
+					} else if (frame.type === "tool_execution_end" && frame.toolName === "ask") {
+						toolResults.push(frame.result);
+					} else if (frame.type === "prompt_result" && frame.id === "fallback") {
+						await send({ type: "set_ask_dialog", id: "opt-in", enabled: true });
+					} else if (frame.type === "response" && frame.id === "opt-in") {
+						optInResponse = frame;
+						await send({
+							type: "prompt",
+							id: "dialog",
+							message: JSON.stringify({ questions: [dbQuestion, featuresQuestion] }),
+						});
+					} else if (frame.type === "prompt_result" && frame.id === "dialog") {
+						finished = true;
+						break;
+					}
 				}
+			} finally {
+				child.stdin.end();
+				child.kill();
+				await child.exited;
 			}
-		} finally {
-			child.stdin.end();
-			child.kill();
-			await child.exited;
-		}
 
-		if (!finished) throw new Error(`RPC ask fixture did not finish: ${await stderr}`);
-		await stderr;
-		expect(selectRequests).toHaveLength(1);
-		expect(selectRequests[0]).toMatchObject({ method: "select", title: "Which database?" });
-		expect(optInResponse).toEqual({
-			id: "opt-in",
-			type: "response",
-			command: "set_ask_dialog",
-			success: true,
-			data: { enabled: true },
-		});
-		expect(askRequests).toEqual([
-			{
-				type: "extension_ui_request",
-				id: expect.any(String),
-				method: "ask",
-				questions: [dbQuestion, featuresQuestion],
-			},
-		]);
-		expect(toolResults).toEqual([
-			expect.objectContaining({ details: expect.objectContaining({ selectedOptions: ["Postgres"] }) }),
-			expect.objectContaining({
-				details: {
-					results: [
-						expect.objectContaining({ id: "db", selectedOptions: [], customInput: "DuckDB" }),
-						expect.objectContaining({ id: "features", selectedOptions: ["Auth", "Search"] }),
-					],
+			if (!finished) throw new Error(`RPC ask fixture did not finish: ${await stderr}`);
+			await stderr;
+			expect(selectRequests).toHaveLength(1);
+			expect(selectRequests[0]).toMatchObject({ method: "select", title: "Which database?" });
+			expect(optInResponse).toEqual({
+				id: "opt-in",
+				type: "response",
+				command: "set_ask_dialog",
+				success: true,
+				data: { enabled: true },
+			});
+			expect(askRequests).toEqual([
+				{
+					type: "extension_ui_request",
+					id: expect.any(String),
+					method: "ask",
+					questions: [dbQuestion, featuresQuestion],
 				},
-			}),
-		]);
-	}, 60_000);
+			]);
+			expect(toolResults).toEqual([
+				expect.objectContaining({ details: expect.objectContaining({ selectedOptions: ["Postgres"] }) }),
+				expect.objectContaining({
+					details: {
+						results: [
+							expect.objectContaining({ id: "db", selectedOptions: [], customInput: "DuckDB" }),
+							expect.objectContaining({ id: "features", selectedOptions: ["Auth", "Search"] }),
+						],
+					},
+				}),
+			]);
+		},
+		scaledTimeout(60000),
+	);
 });

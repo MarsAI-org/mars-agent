@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -72,45 +73,49 @@ async function shutdown(client: DaemonBrokerClient, broker: Promise<void>, activ
 }
 
 describe("broker list", () => {
-	it("returns active daemons first and caps recovered terminal history by real exit time", async () => {
-		using tempDir = TempDir.createSync("@mars-launch-list-");
-		const projectDir = path.join(tempDir.path(), "project");
-		const runtimeDir = path.join(tempDir.path(), "runtime");
-		await fs.mkdir(projectDir);
+	it(
+		"returns active daemons first and caps recovered terminal history by real exit time",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-launch-list-");
+			const projectDir = path.join(tempDir.path(), "project");
+			const runtimeDir = path.join(tempDir.path(), "runtime");
+			await fs.mkdir(projectDir);
 
-		await Promise.all(
-			Array.from({ length: TERMINAL_HISTORY_LIMIT + 5 }, (_, index) =>
-				seedTerminalRecord(runtimeDir, projectDir, terminalSnapshot(index)),
-			),
-		);
+			await Promise.all(
+				Array.from({ length: TERMINAL_HISTORY_LIMIT + 5 }, (_, index) =>
+					seedTerminalRecord(runtimeDir, projectDir, terminalSnapshot(index)),
+				),
+			);
 
-		const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 5_000 });
-		const previousTitle = process.title;
-		const broker = startBroker(projectDir, runtimeDir);
-		const activeName = "active-server";
-		try {
-			const started = await client.request({
-				op: "start",
-				spec: {
-					...spec(activeName, projectDir),
-					args: ["-e", "process.stdin.resume()"],
-				},
-			});
-			expect(started.op).toBe("start");
+			const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 5_000 });
+			const previousTitle = process.title;
+			const broker = startBroker(projectDir, runtimeDir);
+			const activeName = "active-server";
+			try {
+				const started = await client.request({
+					op: "start",
+					spec: {
+						...spec(activeName, projectDir),
+						args: ["-e", "process.stdin.resume()"],
+					},
+				});
+				expect(started.op).toBe("start");
 
-			const listed = await client.request({ op: "list" });
-			expect(listed.op).toBe("list");
-			if (listed.op !== "list") throw new Error(`Unexpected broker result: ${listed.op}`);
+				const listed = await client.request({ op: "list" });
+				expect(listed.op).toBe("list");
+				if (listed.op !== "list") throw new Error(`Unexpected broker result: ${listed.op}`);
 
-			expect(listed.daemons.map(daemon => daemon.name)).toEqual([
-				activeName,
-				...Array.from({ length: TERMINAL_HISTORY_LIMIT }, (_, offset) => `exited-${14 - offset}`),
-			]);
-			expect(listed.daemons[0]?.state).toBe("running");
-			expect(listed.daemons.at(-1)?.exitedAt).toBe(51);
-		} finally {
-			await shutdown(client, broker, activeName);
-			process.title = previousTitle;
-		}
-	}, 20_000);
+				expect(listed.daemons.map(daemon => daemon.name)).toEqual([
+					activeName,
+					...Array.from({ length: TERMINAL_HISTORY_LIMIT }, (_, offset) => `exited-${14 - offset}`),
+				]);
+				expect(listed.daemons[0]?.state).toBe("running");
+				expect(listed.daemons.at(-1)?.exitedAt).toBe(51);
+			} finally {
+				await shutdown(client, broker, activeName);
+				process.title = previousTitle;
+			}
+		},
+		scaledTimeout(20000),
+	);
 });

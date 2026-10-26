@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -1301,54 +1302,58 @@ echo ok
 			await removeWithRetries(fixture.baseDir);
 		});
 
-		it("checks out multiple pull requests in a single call when pr is an array", async () => {
-			vi.spyOn(github, "json")
-				.mockResolvedValueOnce({
-					number: 100,
-					title: "Same-repo PR 100",
-					url: "https://github.com/owner/repo/pull/100",
-					baseRefName: "main",
-					headRefName: fixture.headRefName,
-					headRefOid: fixture.headRefOid,
-					isCrossRepository: false,
-					maintainerCanModify: true,
-				})
-				.mockResolvedValueOnce({
-					number: 200,
-					title: "Same-repo PR 200",
-					url: "https://github.com/owner/repo/pull/200",
-					baseRefName: "main",
-					headRefName: fixture.otherRefName,
-					headRefOid: fixture.otherRefOid,
-					isCrossRepository: false,
-					maintainerCanModify: true,
-				});
+		it(
+			"checks out multiple pull requests in a single call when pr is an array",
+			async () => {
+				vi.spyOn(github, "json")
+					.mockResolvedValueOnce({
+						number: 100,
+						title: "Same-repo PR 100",
+						url: "https://github.com/owner/repo/pull/100",
+						baseRefName: "main",
+						headRefName: fixture.headRefName,
+						headRefOid: fixture.headRefOid,
+						isCrossRepository: false,
+						maintainerCanModify: true,
+					})
+					.mockResolvedValueOnce({
+						number: 200,
+						title: "Same-repo PR 200",
+						url: "https://github.com/owner/repo/pull/200",
+						baseRefName: "main",
+						headRefName: fixture.otherRefName,
+						headRefOid: fixture.otherRefOid,
+						isCrossRepository: false,
+						maintainerCanModify: true,
+					});
 
-			const tool = new GithubTool(createSession(fixture.repoRoot));
-			const result = await tool.execute("pr-checkout", { op: "pr_checkout", pr: ["100", "200"] });
-			const text = result.content[0]?.type === "text" ? result.content[0].text : "";
-			const primaryRoot = vcs.requireGit(fixture.repoRoot).primaryRoot() ?? fixture.repoRoot;
-			const wt100 = await expectedWorktreePath(tempHome.home, primaryRoot, "pr-100");
-			const wt200 = await expectedWorktreePath(tempHome.home, primaryRoot, "pr-200");
+				const tool = new GithubTool(createSession(fixture.repoRoot));
+				const result = await tool.execute("pr-checkout", { op: "pr_checkout", pr: ["100", "200"] });
+				const text = result.content[0]?.type === "text" ? result.content[0].text : "";
+				const primaryRoot = vcs.requireGit(fixture.repoRoot).primaryRoot() ?? fixture.repoRoot;
+				const wt100 = await expectedWorktreePath(tempHome.home, primaryRoot, "pr-100");
+				const wt200 = await expectedWorktreePath(tempHome.home, primaryRoot, "pr-200");
 
-			expect(text).toContain("# 2 Pull Request Worktrees");
-			expect(text).toContain("Checked Out Pull Request #100");
-			expect(text).toContain("Checked Out Pull Request #200");
-			expect(text).toContain(`Worktree: ${wt100}`);
-			expect(text).toContain(`Worktree: ${wt200}`);
-			expect(runGit(wt100, ["branch", "--show-current"])).toBe("pr-100");
-			expect(runGit(wt200, ["branch", "--show-current"])).toBe("pr-200");
-			// Both PR URLs persisted to git config (single read instead of two).
-			// `--get-regexp` echoes variable names in git's canonical lowercase.
-			const prUrls = runGit(fixture.repoRoot, ["config", "--get-regexp", "^branch\\.pr-.*\\.ompprurl$"]);
-			expect(prUrls).toContain("branch.pr-100.ompprurl https://github.com/owner/repo/pull/100");
-			expect(prUrls).toContain("branch.pr-200.ompprurl https://github.com/owner/repo/pull/200");
+				expect(text).toContain("# 2 Pull Request Worktrees");
+				expect(text).toContain("Checked Out Pull Request #100");
+				expect(text).toContain("Checked Out Pull Request #200");
+				expect(text).toContain(`Worktree: ${wt100}`);
+				expect(text).toContain(`Worktree: ${wt200}`);
+				expect(runGit(wt100, ["branch", "--show-current"])).toBe("pr-100");
+				expect(runGit(wt200, ["branch", "--show-current"])).toBe("pr-200");
+				// Both PR URLs persisted to git config (single read instead of two).
+				// `--get-regexp` echoes variable names in git's canonical lowercase.
+				const prUrls = runGit(fixture.repoRoot, ["config", "--get-regexp", "^branch\\.pr-.*\\.ompprurl$"]);
+				expect(prUrls).toContain("branch.pr-100.ompprurl https://github.com/owner/repo/pull/100");
+				expect(prUrls).toContain("branch.pr-200.ompprurl https://github.com/owner/repo/pull/200");
 
-			const summaries = result.details?.checkouts;
-			expect(summaries?.length).toBe(2);
-			expect(summaries?.map(s => s.prNumber)).toEqual([100, 200]);
-			expect(summaries?.every(s => s.reused === false)).toBe(true);
-		}, 30_000);
+				const summaries = result.details?.checkouts;
+				expect(summaries?.length).toBe(2);
+				expect(summaries?.map(s => s.prNumber)).toEqual([100, 200]);
+				expect(summaries?.every(s => s.reused === false)).toBe(true);
+			},
+			scaledTimeout(30000),
+		);
 
 		describe("pr_push without checkout metadata", () => {
 			// Arrange a branch carrying an unpushed commit (so a stray push WOULD

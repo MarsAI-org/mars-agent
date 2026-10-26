@@ -7,6 +7,7 @@
  * (re-root) the session rather than opening against a missing directory.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
@@ -245,70 +246,74 @@ describe("runRootCommand — cross-project --resume", () => {
 		await fsp.rm(root, { recursive: true, force: true });
 	});
 
-	it("uses the destination cwd after access returns during resume", async () => {
-		const match = buildGlobalMatch(resumedProject);
-		vi.spyOn(sessionListingModule, "resolveResumableSession").mockResolvedValue(match);
-		const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
-		const reloadForCwd = vi.spyOn(settings, "reloadForCwd");
-		const preloadedCwds: (string | undefined)[] = [];
-		vi.spyOn(pluginHelpers, "preloadPluginRoots").mockImplementation(async (_home, cwd) => {
-			preloadedCwds.push(cwd);
-		});
-		const realAccess = fs.promises.access.bind(fs.promises);
-		let deniedProbes = 2;
-		const access = vi.spyOn(fs.promises, "access").mockImplementation(async (target, mode) => {
-			if (deniedProbes > 0 && path.basename(String(target)) === "resumed") {
-				deniedProbes -= 1;
-				throw Object.assign(new Error("permission denied"), { code: "EACCES" });
-			}
-			return realAccess(target, mode);
-		});
-		const authStorage = await AuthStorage.create(path.join(root, "auth.db"));
-		const rawArgs = ["--cwd", launchProject, "--resume", "019e84ed", "--print"];
-		const parsed = parseArgs(rawArgs);
-		parsed.noExtensions = true;
-		parsed.noSkills = true;
-		parsed.noRules = true;
-		parsed.noTools = true;
-		parsed.noLsp = true;
-		let resumedManager: SessionManager | undefined;
-
-		let preloadedDestinationAtCreation = false;
-		let sessionOptionsCwd: string | undefined;
-
-		try {
-			await runRootCommand(parsed, rawArgs, {
-				discoverAuthStorage: async () => authStorage,
-				settings,
-				createAgentSession: async options => {
-					if (!options) throw new Error("Expected session options");
-					resumedManager = options.sessionManager;
-					sessionOptionsCwd = options.cwd;
-					// Awaited during the switch, so by session creation the destination
-					// preload has already been requested for the resumed project.
-					preloadedDestinationAtCreation = preloadedCwds.includes(resumedProject);
-					throw new Error("stop after session options");
-				},
+	it(
+		"uses the destination cwd after access returns during resume",
+		async () => {
+			const match = buildGlobalMatch(resumedProject);
+			vi.spyOn(sessionListingModule, "resolveResumableSession").mockResolvedValue(match);
+			const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
+			const reloadForCwd = vi.spyOn(settings, "reloadForCwd");
+			const preloadedCwds: (string | undefined)[] = [];
+			vi.spyOn(pluginHelpers, "preloadPluginRoots").mockImplementation(async (_home, cwd) => {
+				preloadedCwds.push(cwd);
 			});
-		} catch (error) {
-			if (!(error instanceof Error) || error.message !== "stop after session options") throw error;
-		} finally {
-			access.mockRestore();
-			authStorage.close();
-			await resumedManager?.close();
-		}
-		expect(deniedProbes).toBe(0);
+			const realAccess = fs.promises.access.bind(fs.promises);
+			let deniedProbes = 2;
+			const access = vi.spyOn(fs.promises, "access").mockImplementation(async (target, mode) => {
+				if (deniedProbes > 0 && path.basename(String(target)) === "resumed") {
+					deniedProbes -= 1;
+					throw Object.assign(new Error("permission denied"), { code: "EACCES" });
+				}
+				return realAccess(target, mode);
+			});
+			const authStorage = await AuthStorage.create(path.join(root, "auth.db"));
+			const rawArgs = ["--cwd", launchProject, "--resume", "019e84ed", "--print"];
+			const parsed = parseArgs(rawArgs);
+			parsed.noExtensions = true;
+			parsed.noSkills = true;
+			parsed.noRules = true;
+			parsed.noTools = true;
+			parsed.noLsp = true;
+			let resumedManager: SessionManager | undefined;
 
-		expect(getProjectDir()).toBe(resumedProject);
-		// process.cwd() reports the physical path (/private/var/... on macOS) while
-		// the fixture path keeps the /var symlink form — compare canonicalized.
-		expect(normalizePathForComparison(process.cwd())).toBe(normalizePathForComparison(resumedProject));
-		expect(reloadForCwd).toHaveBeenCalledWith(resumedProject);
-		expect(resumedManager?.getCwd()).toBe(resumedProject);
-		expect(parsed.cwd).toBe(resumedProject);
-		expect(sessionOptionsCwd).toBe(resumedProject);
-		expect(preloadedDestinationAtCreation).toBe(true);
-	}, 15_000);
+			let preloadedDestinationAtCreation = false;
+			let sessionOptionsCwd: string | undefined;
+
+			try {
+				await runRootCommand(parsed, rawArgs, {
+					discoverAuthStorage: async () => authStorage,
+					settings,
+					createAgentSession: async options => {
+						if (!options) throw new Error("Expected session options");
+						resumedManager = options.sessionManager;
+						sessionOptionsCwd = options.cwd;
+						// Awaited during the switch, so by session creation the destination
+						// preload has already been requested for the resumed project.
+						preloadedDestinationAtCreation = preloadedCwds.includes(resumedProject);
+						throw new Error("stop after session options");
+					},
+				});
+			} catch (error) {
+				if (!(error instanceof Error) || error.message !== "stop after session options") throw error;
+			} finally {
+				access.mockRestore();
+				authStorage.close();
+				await resumedManager?.close();
+			}
+			expect(deniedProbes).toBe(0);
+
+			expect(getProjectDir()).toBe(resumedProject);
+			// process.cwd() reports the physical path (/private/var/... on macOS) while
+			// the fixture path keeps the /var symlink form — compare canonicalized.
+			expect(normalizePathForComparison(process.cwd())).toBe(normalizePathForComparison(resumedProject));
+			expect(reloadForCwd).toHaveBeenCalledWith(resumedProject);
+			expect(resumedManager?.getCwd()).toBe(resumedProject);
+			expect(parsed.cwd).toBe(resumedProject);
+			expect(sessionOptionsCwd).toBe(resumedProject);
+			expect(preloadedDestinationAtCreation).toBe(true);
+		},
+		scaledTimeout(15000),
+	);
 
 	it("re-scopes Settings back to the launch project when destination rescope fails", async () => {
 		const match = buildGlobalMatch(resumedProject);
@@ -397,50 +402,54 @@ describe("runRootCommand — cross-project --resume", () => {
 		expect(resumedManager?.getCwd()).toBe(launchProject);
 	});
 
-	it("re-resolves the model scope from the resumed project's enabledModels after the switch", async () => {
-		const match = buildGlobalMatch(resumedProject);
-		vi.spyOn(sessionListingModule, "resolveResumableSession").mockResolvedValue(match);
-		// enabledModels scoped only to the resumed project: the launch scope
-		// yields no patterns, so any resolveModelScope call proves the recompute
-		// ran against the destination settings rather than the launch directory.
-		const settings = Settings.isolated({
-			"marketplace.autoUpdate": "off",
-			enabledModels: [{ paths: [resumedProject], models: ["model-resumed"] }],
-		});
-		const resolveModelScope = vi
-			.spyOn(modelResolverModule, "resolveModelScope")
-			.mockResolvedValue([{ model: { id: "model-resumed" } } as modelResolverModule.ScopedModel]);
-		const authStorage = await AuthStorage.create(path.join(root, "auth.db"));
-		const parsed = parseArgs(["--resume", "019e84ed", "--print"]);
-		parsed.noExtensions = true;
-		parsed.noSkills = true;
-		parsed.noRules = true;
-		parsed.noTools = true;
-		parsed.noLsp = true;
-		let resumedManager: SessionManager | undefined;
-
-		try {
-			await runRootCommand(parsed, ["--resume", "019e84ed", "--print"], {
-				discoverAuthStorage: async () => authStorage,
-				settings,
-				createAgentSession: async options => {
-					if (!options) throw new Error("Expected session options");
-					resumedManager = options.sessionManager;
-					throw new Error("stop after session options");
-				},
+	it(
+		"re-resolves the model scope from the resumed project's enabledModels after the switch",
+		async () => {
+			const match = buildGlobalMatch(resumedProject);
+			vi.spyOn(sessionListingModule, "resolveResumableSession").mockResolvedValue(match);
+			// enabledModels scoped only to the resumed project: the launch scope
+			// yields no patterns, so any resolveModelScope call proves the recompute
+			// ran against the destination settings rather than the launch directory.
+			const settings = Settings.isolated({
+				"marketplace.autoUpdate": "off",
+				enabledModels: [{ paths: [resumedProject], models: ["model-resumed"] }],
 			});
-		} catch (error) {
-			if (!(error instanceof Error) || error.message !== "stop after session options") throw error;
-		} finally {
-			authStorage.close();
-			await resumedManager?.close();
-		}
+			const resolveModelScope = vi
+				.spyOn(modelResolverModule, "resolveModelScope")
+				.mockResolvedValue([{ model: { id: "model-resumed" } } as modelResolverModule.ScopedModel]);
+			const authStorage = await AuthStorage.create(path.join(root, "auth.db"));
+			const parsed = parseArgs(["--resume", "019e84ed", "--print"]);
+			parsed.noExtensions = true;
+			parsed.noSkills = true;
+			parsed.noRules = true;
+			parsed.noTools = true;
+			parsed.noLsp = true;
+			let resumedManager: SessionManager | undefined;
 
-		// Launch scope had no patterns, so the only resolution is the post-switch
-		// one; the pre-fix code never recomputed and would not call it at all.
-		expect(resolveModelScope).toHaveBeenCalledTimes(1);
-		expect(resolveModelScope.mock.calls[0]?.[0]).toEqual(["model-resumed"]);
-	}, 15_000);
+			try {
+				await runRootCommand(parsed, ["--resume", "019e84ed", "--print"], {
+					discoverAuthStorage: async () => authStorage,
+					settings,
+					createAgentSession: async options => {
+						if (!options) throw new Error("Expected session options");
+						resumedManager = options.sessionManager;
+						throw new Error("stop after session options");
+					},
+				});
+			} catch (error) {
+				if (!(error instanceof Error) || error.message !== "stop after session options") throw error;
+			} finally {
+				authStorage.close();
+				await resumedManager?.close();
+			}
+
+			// Launch scope had no patterns, so the only resolution is the post-switch
+			// one; the pre-fix code never recomputed and would not call it at all.
+			expect(resolveModelScope).toHaveBeenCalledTimes(1);
+			expect(resolveModelScope.mock.calls[0]?.[0]).toEqual(["model-resumed"]);
+		},
+		scaledTimeout(15000),
+	);
 });
 
 describe("createSessionManager — cross-project --resume relocation (moved worktree)", () => {

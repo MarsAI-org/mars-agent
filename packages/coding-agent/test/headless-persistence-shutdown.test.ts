@@ -10,6 +10,7 @@
  * review threads (3979594811, 3979644907, 3983906393) asked for.
  */
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import { parseArgs, type Args } from "@marsai-org/coding-agent/cli/args";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -179,42 +180,46 @@ async function teardown(
 }
 
 describe("headless persistence-failure shutdown path", () => {
-	it("reports a first-write store failure and exits nonzero without a raw fatal dump", async () => {
-		const harness = await createHarness();
-		const stderr = captureStderr();
-		const quitCodes: number[] = [];
-		const quitSpy = spyOn(postmortem, "quit").mockImplementation(async (code?: number) => {
-			quitCodes.push(code ?? 0);
-		});
+	it(
+		"reports a first-write store failure and exits nonzero without a raw fatal dump",
+		async () => {
+			const harness = await createHarness();
+			const stderr = captureStderr();
+			const quitCodes: number[] = [];
+			const quitSpy = spyOn(postmortem, "quit").mockImplementation(async (code?: number) => {
+				quitCodes.push(code ?? 0);
+			});
 
-		let escaped: unknown;
-		try {
-			await runRootCommand(harness.parsed, harness.rawArgs, harness.deps);
-		} catch (error) {
-			// `cli.ts` runs `runCli(...).catch(fatal)`, and `fatal()` renders
-			// `Bun.inspect(error)` onto fd 2. Reproduce that here so the stderr
-			// asserted below is the stderr an `mars --print` user would get.
-			escaped = error;
-			process.stderr.write(`${Bun.inspect(error, { colors: false })}\n`);
-		} finally {
-			await teardown(harness, stderr, quitSpy);
-		}
+			let escaped: unknown;
+			try {
+				await runRootCommand(harness.parsed, harness.rawArgs, harness.deps);
+			} catch (error) {
+				// `cli.ts` runs `runCli(...).catch(fatal)`, and `fatal()` renders
+				// `Bun.inspect(error)` onto fd 2. Reproduce that here so the stderr
+				// asserted below is the stderr an `mars --print` user would get.
+				escaped = error;
+				process.stderr.write(`${Bun.inspect(error, { colors: false })}\n`);
+			} finally {
+				await teardown(harness, stderr, quitSpy);
+			}
 
-		const output = stderr.written();
-		// 1. No raw fatal dump.
-		expect(output).not.toMatch(RAW_FATAL_DUMP_RE);
-		expect(escaped).toBeUndefined();
-		// 2. The persistence diagnostic reaches stderr.
-		expect(output).toContain("Session persistence failed: ");
-		expect(output).toContain("ENOSPC");
-		// 3. The process terminator was handed a nonzero code.
-		expect(quitCodes).toEqual([1]);
-		// The property under test: the store already held this failure before
-		// print mode subscribed, and its first write never landed.
-		expect(harness.latchedBeforeRun).toHaveLength(1);
-		expect(harness.latchedBeforeRun[0]?.message).toContain("ENOSPC");
-		const sessionFile = harness.manager.getSessionFile();
-		expect(sessionFile).toBeString();
-		expect(fs.existsSync(String(sessionFile))).toBe(false);
-	}, 15_000);
+			const output = stderr.written();
+			// 1. No raw fatal dump.
+			expect(output).not.toMatch(RAW_FATAL_DUMP_RE);
+			expect(escaped).toBeUndefined();
+			// 2. The persistence diagnostic reaches stderr.
+			expect(output).toContain("Session persistence failed: ");
+			expect(output).toContain("ENOSPC");
+			// 3. The process terminator was handed a nonzero code.
+			expect(quitCodes).toEqual([1]);
+			// The property under test: the store already held this failure before
+			// print mode subscribed, and its first write never landed.
+			expect(harness.latchedBeforeRun).toHaveLength(1);
+			expect(harness.latchedBeforeRun[0]?.message).toContain("ENOSPC");
+			const sessionFile = harness.manager.getSessionFile();
+			expect(sessionFile).toBeString();
+			expect(fs.existsSync(String(sessionFile))).toBe(false);
+		},
+		scaledTimeout(15000),
+	);
 });

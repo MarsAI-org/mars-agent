@@ -4,6 +4,7 @@
 // contract matches anthropic / openai-responses / google: await the hook,
 // and use its non-undefined return as the request body.
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
 import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
 import { getBundledModel } from "@marsai-org/catalog/models";
@@ -46,44 +47,56 @@ function createSseFetch(capture?: (body: unknown) => void): FetchImpl {
 type Body = Record<string, any>;
 
 describe("openai-completions onPayload replacement", () => {
-	it("sends an async onPayload replacement body", async () => {
-		let captured: Body | undefined;
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: createSseFetch(body => (captured = body as Body)),
-			onPayload: async payload => ({
-				...(payload as Record<string, unknown>),
-				messages: [{ role: "user", content: "replacement" }],
-			}),
-		}).result();
+	it(
+		"sends an async onPayload replacement body",
+		async () => {
+			let captured: Body | undefined;
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: createSseFetch(body => (captured = body as Body)),
+				onPayload: async payload => ({
+					...(payload as Record<string, unknown>),
+					messages: [{ role: "user", content: "replacement" }],
+				}),
+			}).result();
 
-		expect(result.stopReason).toBe("stop");
-		expect(captured?.messages).toEqual([{ role: "user", content: "replacement" }]);
-		expect(JSON.stringify(captured)).not.toContain("Say hello");
-	}, 10_000);
+			expect(result.stopReason).toBe("stop");
+			expect(captured?.messages).toEqual([{ role: "user", content: "replacement" }]);
+			expect(JSON.stringify(captured)).not.toContain("Say hello");
+		},
+		scaledTimeout(10000),
+	);
 
-	it("sends a synchronous onPayload replacement body", async () => {
-		let captured: Body | undefined;
-		await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: createSseFetch(body => (captured = body as Body)),
-			onPayload: payload => ({
-				...(payload as Record<string, unknown>),
-				messages: [{ role: "user", content: "sync-replacement" }],
-			}),
-		}).result();
+	it(
+		"sends a synchronous onPayload replacement body",
+		async () => {
+			let captured: Body | undefined;
+			await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: createSseFetch(body => (captured = body as Body)),
+				onPayload: payload => ({
+					...(payload as Record<string, unknown>),
+					messages: [{ role: "user", content: "sync-replacement" }],
+				}),
+			}).result();
 
-		expect(captured?.messages).toEqual([{ role: "user", content: "sync-replacement" }]);
-	}, 10_000);
+			expect(captured?.messages).toEqual([{ role: "user", content: "sync-replacement" }]);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("keeps the original body when onPayload returns undefined", async () => {
-		let captured: Body | undefined;
-		await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: createSseFetch(body => (captured = body as Body)),
-			onPayload: async () => undefined,
-		}).result();
+	it(
+		"keeps the original body when onPayload returns undefined",
+		async () => {
+			let captured: Body | undefined;
+			await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: createSseFetch(body => (captured = body as Body)),
+				onPayload: async () => undefined,
+			}).result();
 
-		expect(JSON.stringify(captured?.messages)).toContain("Say hello");
-	}, 10_000);
+			expect(JSON.stringify(captured?.messages)).toContain("Say hello");
+		},
+		scaledTimeout(10000),
+	);
 });

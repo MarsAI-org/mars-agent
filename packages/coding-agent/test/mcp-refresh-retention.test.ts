@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 
 interface ProbeResult {
@@ -43,13 +44,17 @@ async function runProbe(): Promise<ProbeResult> {
 	return JSON.parse(stdout) as ProbeResult;
 }
 
-test("MCP refresh releases obsolete tool wrapper generations", async () => {
-	let last: ProbeResult | undefined;
-	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-		const result = await runProbe();
-		last = result;
-		if (result.mcpTools === result.toolCount && result.adapters === result.toolCount) return;
-	}
-	expect(last!.mcpTools, `unsettled after ${MAX_ATTEMPTS} attempts`).toBe(last!.toolCount);
-	expect(last!.adapters, `unsettled after ${MAX_ATTEMPTS} attempts`).toBe(last!.toolCount);
-}, 60_000);
+test(
+	"MCP refresh releases obsolete tool wrapper generations",
+	async () => {
+		let last: ProbeResult | undefined;
+		for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+			const result = await runProbe();
+			last = result;
+			if (result.mcpTools === result.toolCount && result.adapters === result.toolCount) return;
+		}
+		expect(last!.mcpTools, `unsettled after ${MAX_ATTEMPTS} attempts`).toBe(last!.toolCount);
+		expect(last!.adapters, `unsettled after ${MAX_ATTEMPTS} attempts`).toBe(last!.toolCount);
+	},
+	scaledTimeout(60000),
+);

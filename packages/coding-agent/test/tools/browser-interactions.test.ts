@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -185,24 +186,26 @@ return { fragments, clicked: await tab.evaluate(() => window.clicked), ternHit }
 		},
 		BROWSER_TEST_TIMEOUT_MS,
 	);
-	test("refuses to fill or type into a disabled or read-only field", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const tabName = `locked-${crypto.randomUUID()}`;
-		const lockedHtml = `<!doctype html><input id="locked" disabled value="kept"><input id="fixed" readonly value="kept">
+	test(
+		"refuses to fill or type into a disabled or read-only field",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const tabName = `locked-${crypto.randomUUID()}`;
+			const lockedHtml = `<!doctype html><input id="locked" disabled value="kept"><input id="fixed" readonly value="kept">
 <input id="locksOnFocus" value="kept" onfocus="this.readOnly = true"><input id="disablesOnFocus" onfocus="this.disabled = true">
 <input id="other">`;
-		const context = { session, toolCallId: "browser-locked" };
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(lockedHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					code: `const attempt = async action => {
+			const context = { session, toolCallId: "browser-locked" };
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(lockedHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						code: `const attempt = async action => {
 	try {
 		await action();
 		return "ok";
@@ -222,25 +225,27 @@ return {
 	lockedOnFocus: await tab.value("#locksOnFocus"),
 	other: await tab.value("#other"),
 };`,
-					timeout: 25,
-				},
-				context,
-			);
-			expect(valueFrom<Record<string, string>>(result)).toEqual({
-				fillDisabled: "Cannot fill a disabled element",
-				fillReadOnly: "Cannot fill a read-only element",
-				typeDisabled: "Cannot type into a disabled element",
-				fillLockedOnFocus: "Cannot fill a read-only element",
-				typeDisabledOnFocus: "Cannot type into a disabled element",
-				locked: "kept",
-				fixed: "kept",
-				lockedOnFocus: "kept",
-				other: "",
-			});
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 40_000);
+						timeout: 25,
+					},
+					context,
+				);
+				expect(valueFrom<Record<string, string>>(result)).toEqual({
+					fillDisabled: "Cannot fill a disabled element",
+					fillReadOnly: "Cannot fill a read-only element",
+					typeDisabled: "Cannot type into a disabled element",
+					fillLockedOnFocus: "Cannot fill a read-only element",
+					typeDisabledOnFocus: "Cannot type into a disabled element",
+					locked: "kept",
+					fixed: "kept",
+					lockedOnFocus: "kept",
+					other: "",
+				});
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		scaledTimeout(40000),
+	);
 
 	test(
 		"guards covered clicks and drives keyboard, pointer, drop-zone, checked-state, and highlight interactions",
@@ -508,13 +513,15 @@ return await tab.value("#paste");`,
 		30_000,
 	);
 
-	test("clearing a field with an empty fill reports the change to the page", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const tabName = `cleared-${crypto.randomUUID()}`;
-		// The input listener mirrors a framework value tracker (React's): it records
-		// programmatic assignments and reports only input whose value differs from them.
-		const clearedHtml = `<!doctype html><input id="q" value="stale">
+	test(
+		"clearing a field with an empty fill reports the change to the page",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const tabName = `cleared-${crypto.randomUUID()}`;
+			// The input listener mirrors a framework value tracker (React's): it records
+			// programmatic assignments and reports only input whose value differs from them.
+			const clearedHtml = `<!doctype html><input id="q" value="stale">
 <script>
 window.reported = [];
 const field = document.querySelector("#q");
@@ -532,52 +539,56 @@ field.addEventListener("input", () => {
 });
 field.addEventListener("change", () => reported.push("change:" + field.value));
 </script>`;
-		const context = { session, toolCallId: "browser-cleared" };
-		await prelude.invoke(
-			{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(clearedHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: tabName,
-					code: `await tab.fill("#q", "");
+			const context = { session, toolCallId: "browser-cleared" };
+			await prelude.invoke(
+				{ action: "open", name: tabName, url: `data:text/html,${encodeURIComponent(clearedHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: tabName,
+						code: `await tab.fill("#q", "");
 // A field that is already empty has nothing to report.
 await tab.fill("#q", "");
 return { value: await tab.value("#q"), reported: await tab.evaluate(() => window.reported) };`,
-					timeout: 25,
-				},
-				context,
-			);
-			expect(valueFrom<{ value: string; reported: string[] }>(result)).toEqual({
-				value: "",
-				reported: ["input:", "change:"],
-			});
-		} finally {
-			await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
-		}
-	}, 40_000);
+						timeout: 25,
+					},
+					context,
+				);
+				expect(valueFrom<{ value: string; reported: string[] }>(result)).toEqual({
+					value: "",
+					reported: ["input:", "change:"],
+				});
+			} finally {
+				await prelude.invoke({ action: "close", name: tabName, kill: true }, context).catch(() => undefined);
+			}
+		},
+		scaledTimeout(40000),
+	);
 
 	// Backgrounded headless tabs deliver no animation frames, which stalls every
 	// Puppeteer `Locator` precondition (viewport/stability/enabled) forever.
 	// Virtual time pinned at "pause" reproduces that state deterministically.
-	test("fills page and frame selectors on a tab that produces no animation frames", async () => {
-		const session = makeSession();
-		const prelude = createBrowserPrelude(session);
-		const starvedHtml = `<!doctype html><input id="q" value="stale"><div id="editable" contenteditable>stale</div>
+	test(
+		"fills page and frame selectors on a tab that produces no animation frames",
+		async () => {
+			const session = makeSession();
+			const prelude = createBrowserPrelude(session);
+			const starvedHtml = `<!doctype html><input id="q" value="stale"><div id="editable" contenteditable>stale</div>
 <iframe id="inner" srcdoc='<!doctype html><input id="deep" value="stale"><button id="go" onclick="this.dataset.clicked=1">Go</button>'></iframe>`;
-		const context = { session, toolCallId: "browser-starved" };
-		await prelude.invoke(
-			{ action: "open", name: STARVED_TAB_NAME, url: `data:text/html,${encodeURIComponent(starvedHtml)}` },
-			context,
-		);
-		try {
-			const result = await prelude.invoke(
-				{
-					action: "run",
-					name: STARVED_TAB_NAME,
-					code: `await tab.waitFor("#inner");
+			const context = { session, toolCallId: "browser-starved" };
+			await prelude.invoke(
+				{ action: "open", name: STARVED_TAB_NAME, url: `data:text/html,${encodeURIComponent(starvedHtml)}` },
+				context,
+			);
+			try {
+				const result = await prelude.invoke(
+					{
+						action: "run",
+						name: STARVED_TAB_NAME,
+						code: `await tab.waitFor("#inner");
 const cdp = await page.createCDPSession();
 await cdp.send("Emulation.setVirtualTimePolicy", { policy: "pause" });
 await tab.fill("#q", "typed");
@@ -591,20 +602,24 @@ return {
 	editable: await tab.text("#editable"),
 	clicked: await inner.attr("#go", "data-clicked"),
 };`,
-					timeout: 25,
-				},
-				context,
-			);
-			expect(valueFrom<{ page: string; frame: string; editable: string; clicked: string }>(result)).toEqual({
-				page: "typed",
-				frame: "nested",
-				editable: "replaced",
-				clicked: "1",
-			});
-		} finally {
-			await prelude.invoke({ action: "close", name: STARVED_TAB_NAME, kill: true }, context).catch(() => undefined);
-		}
-	}, 40_000);
+						timeout: 25,
+					},
+					context,
+				);
+				expect(valueFrom<{ page: string; frame: string; editable: string; clicked: string }>(result)).toEqual({
+					page: "typed",
+					frame: "nested",
+					editable: "replaced",
+					clicked: "1",
+				});
+			} finally {
+				await prelude
+					.invoke({ action: "close", name: STARVED_TAB_NAME, kill: true }, context)
+					.catch(() => undefined);
+			}
+		},
+		scaledTimeout(40000),
+	);
 
 	test(
 		"checks custom-styled checkboxes where their drawn box is, for the left button only",

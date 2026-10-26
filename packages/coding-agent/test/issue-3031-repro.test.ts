@@ -16,6 +16,7 @@
  * re-introduce the crash.
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import {
 	createMnemopiEmbedSubprocess,
@@ -28,72 +29,84 @@ import type {
 } from "@marsai-org/coding-agent/mnemopi/embed-protocol";
 
 describe("issue #3031 — mnemopi embeddings live in an isolated subprocess", () => {
-	it("ping/pongs through the spawned worker subprocess and tears it down cleanly", async () => {
-		// `smokeTestMnemopiEmbedWorker` is the runtime probe wired into
-		// `mars --smoke-test`. Run it in a child Bun process instead of this
-		// Bun-test worker: the test runner owns its own IPC channel and can
-		// starve nested Bun subprocess IPC on some Bun builds.
-		const repoRoot = path.resolve(import.meta.dir, "../../..");
-		const script =
-			'const { smokeTestMnemopiEmbedWorker } = await import("@marsai-org/coding-agent/mnemopi/embed-client"); await smokeTestMnemopiEmbedWorker({ timeoutMs: 15000 });';
-		const proc = Bun.spawn([process.execPath, "-e", script], {
-			cwd: repoRoot,
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const [stdout, stderr, exitCode] = await Promise.all([
-			new Response(proc.stdout).text(),
-			new Response(proc.stderr).text(),
-			proc.exited,
-		]);
-		expect(`${stdout}${stderr}`).toBe("");
-		expect(exitCode).toBe(0);
-	}, 30_000);
+	it(
+		"ping/pongs through the spawned worker subprocess and tears it down cleanly",
+		async () => {
+			// `smokeTestMnemopiEmbedWorker` is the runtime probe wired into
+			// `mars --smoke-test`. Run it in a child Bun process instead of this
+			// Bun-test worker: the test runner owns its own IPC channel and can
+			// starve nested Bun subprocess IPC on some Bun builds.
+			const repoRoot = path.resolve(import.meta.dir, "../../..");
+			const script =
+				'const { smokeTestMnemopiEmbedWorker } = await import("@marsai-org/coding-agent/mnemopi/embed-client"); await smokeTestMnemopiEmbedWorker({ timeoutMs: 15000 });';
+			const proc = Bun.spawn([process.execPath, "-e", script], {
+				cwd: repoRoot,
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+			const [stdout, stderr, exitCode] = await Promise.all([
+				new Response(proc.stdout).text(),
+				new Response(proc.stderr).text(),
+				proc.exited,
+			]);
+			expect(`${stdout}${stderr}`).toBe("");
+			expect(exitCode).toBe(0);
+		},
+		scaledTimeout(30000),
+	);
 
-	it("surfaces unexpected signal exits so in-flight callers don't await forever", async () => {
-		// If the child dies from a signal we did NOT request — SIGSEGV from
-		// onnxruntime's NAPI fault (the original Windows shutdown bug, now
-		// relocated to the child), an OOM SIGKILL, or an operator `kill -9`
-		// — the subprocess wrapper must fault every in-flight request via
-		// the `errors` channel. Without this contract a `TinyTitleClient`-
-		// style swallow would leave callers waiting forever on `await embed`.
-		const sub = createMnemopiEmbedSubprocess();
-		try {
-			const { promise, resolve } = Promise.withResolvers<Error>();
-			sub.errors.add(resolve);
-			sub.proc.kill("SIGKILL");
-			const err = await promise;
-			expect(err.message).toMatch(/signal/i);
-		} finally {
+	it(
+		"surfaces unexpected signal exits so in-flight callers don't await forever",
+		async () => {
+			// If the child dies from a signal we did NOT request — SIGSEGV from
+			// onnxruntime's NAPI fault (the original Windows shutdown bug, now
+			// relocated to the child), an OOM SIGKILL, or an operator `kill -9`
+			// — the subprocess wrapper must fault every in-flight request via
+			// the `errors` channel. Without this contract a `TinyTitleClient`-
+			// style swallow would leave callers waiting forever on `await embed`.
+			const sub = createMnemopiEmbedSubprocess();
 			try {
+				const { promise, resolve } = Promise.withResolvers<Error>();
+				sub.errors.add(resolve);
 				sub.proc.kill("SIGKILL");
-			} catch {}
-			await sub.proc.exited;
-		}
-	}, 15_000);
+				const err = await promise;
+				expect(err.message).toMatch(/signal/i);
+			} finally {
+				try {
+					sub.proc.kill("SIGKILL");
+				} catch {}
+				await sub.proc.exited;
+			}
+		},
+		scaledTimeout(15000),
+	);
 
-	it("does not surface intentional terminate() SIGKILLs as worker errors", async () => {
-		// Inverse of the previous test: a SIGKILL issued by the wrapper's
-		// own `terminate()` MUST NOT fault callers — terminate is the
-		// shutdown path and the worker handle is already torn down by then.
-		// Regression guard against an over-eager fix that surfaces every
-		// signal exit indiscriminately.
-		const sub = createMnemopiEmbedSubprocess();
-		let errored = false;
-		sub.errors.add(() => {
-			errored = true;
-		});
-		// Simulate what `wrapSubprocess.terminate()` does: flip the flag,
-		// then SIGKILL. We test the primitive directly rather than going
-		// through the wrapper to avoid coupling to `WorkerHandle` internals.
-		// `proc.exited` resolves only after the `onExit` handler runs, so by
-		// the time the await returns the error channel reflects the truth —
-		// no real-clock sleep needed.
-		sub.intentionalExit.value = true;
-		sub.proc.kill("SIGKILL");
-		await sub.proc.exited;
-		expect(errored).toBe(false);
-	}, 10_000);
+	it(
+		"does not surface intentional terminate() SIGKILLs as worker errors",
+		async () => {
+			// Inverse of the previous test: a SIGKILL issued by the wrapper's
+			// own `terminate()` MUST NOT fault callers — terminate is the
+			// shutdown path and the worker handle is already torn down by then.
+			// Regression guard against an over-eager fix that surfaces every
+			// signal exit indiscriminately.
+			const sub = createMnemopiEmbedSubprocess();
+			let errored = false;
+			sub.errors.add(() => {
+				errored = true;
+			});
+			// Simulate what `wrapSubprocess.terminate()` does: flip the flag,
+			// then SIGKILL. We test the primitive directly rather than going
+			// through the wrapper to avoid coupling to `WorkerHandle` internals.
+			// `proc.exited` resolves only after the `onExit` handler runs, so by
+			// the time the await returns the error channel reflects the truth —
+			// no real-clock sleep needed.
+			sub.intentionalExit.value = true;
+			sub.proc.kill("SIGKILL");
+			await sub.proc.exited;
+			expect(errored).toBe(false);
+		},
+		scaledTimeout(10000),
+	);
 
 	it("carries (model, cacheDir) on every embed so a respawned worker can self-init", async () => {
 		// Without this contract: after `shutdownMnemopiEmbedClient()` runs on

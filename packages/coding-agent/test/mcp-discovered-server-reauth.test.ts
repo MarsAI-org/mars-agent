@@ -18,6 +18,7 @@
  *     `validateServerName` previously rejected the colon, so the persist threw.
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -32,41 +33,48 @@ const BUN_EXEC = process.execPath;
 
 describe("MCP discovered-server reauth", () => {
 	describe("manager surfaces discovered configs for unconnected servers", () => {
-		it("exposes config + source for a discovered server that failed to connect", async () => {
-			const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-mcp-discovered-"));
-			const manager = new MCPManager(workDir);
+		it(
+			"exposes config + source for a discovered server that failed to connect",
+			async () => {
+				const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "mars-mcp-discovered-"));
+				const manager = new MCPManager(workDir);
 
-			// Exits before speaking MCP, so the connect attempt fails and the
-			// server stays "not connected" — mirroring an OAuth server that needs
-			// authorization. `connectServers` records config/source up front, so
-			// the failure must not erase them.
-			const config: MCPStdioServerConfig = {
-				type: "stdio",
-				command: BUN_EXEC,
-				args: ["-e", "process.exit(0)"],
-			};
-			const source: SourceMeta = {
-				provider: "claude-plugins",
-				providerName: "Claude Code Marketplace",
-				path: path.join(workDir, ".mcp.json"),
-				level: "user",
-			};
+				// Exits before speaking MCP, so the connect attempt fails and the
+				// server stays "not connected" — mirroring an OAuth server that needs
+				// authorization. `connectServers` records config/source up front, so
+				// the failure must not erase them.
+				const config: MCPStdioServerConfig = {
+					type: "stdio",
+					command: BUN_EXEC,
+					args: ["-e", "process.exit(0)"],
+				};
+				const source: SourceMeta = {
+					provider: "claude-plugins",
+					providerName: "Claude Code Marketplace",
+					path: path.join(workDir, ".mcp.json"),
+					level: "user",
+				};
 
-			try {
-				const result = await manager.connectServers({ [NAMESPACED_NAME]: config }, { [NAMESPACED_NAME]: source });
+				try {
+					const result = await manager.connectServers(
+						{ [NAMESPACED_NAME]: config },
+						{ [NAMESPACED_NAME]: source },
+					);
 
-				// Precondition: the server is discovered but not connected.
-				expect(result.connectedServers).not.toContain(NAMESPACED_NAME);
-				expect(manager.getConnectionStatus(NAMESPACED_NAME)).not.toBe("connected");
+					// Precondition: the server is discovered but not connected.
+					expect(result.connectedServers).not.toContain(NAMESPACED_NAME);
+					expect(manager.getConnectionStatus(NAMESPACED_NAME)).not.toBe("connected");
 
-				// Contract: its config + source remain recoverable for reauth.
-				expect(manager.getServerConfig(NAMESPACED_NAME)).toEqual(config);
-				expect(manager.getSource(NAMESPACED_NAME)).toEqual(source);
-			} finally {
-				await manager.disconnectAll();
-				removeSyncWithRetries(workDir);
-			}
-		}, 15_000);
+					// Contract: its config + source remain recoverable for reauth.
+					expect(manager.getServerConfig(NAMESPACED_NAME)).toEqual(config);
+					expect(manager.getSource(NAMESPACED_NAME)).toEqual(source);
+				} finally {
+					await manager.disconnectAll();
+					removeSyncWithRetries(workDir);
+				}
+			},
+			scaledTimeout(15000),
+		);
 
 		it("returns undefined for an unknown server", () => {
 			const manager = new MCPManager(process.cwd());

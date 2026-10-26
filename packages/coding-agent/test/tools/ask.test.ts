@@ -1,4 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { stripVTControlCharacters } from "node:util";
 import { type } from "@marsai-org/omptype";
 import type { AgentToolContext } from "@marsai-org/agent-core";
@@ -192,97 +193,105 @@ describe("AskTool cancellation", () => {
 		).rejects.toBeInstanceOf(ToolAbortError);
 		expect(abort).toHaveBeenCalledTimes(1);
 	});
-	it("auto-selects the recommended option on ask timeout", async () => {
-		const tool = new AskTool(
-			createSession({
-				settings: Settings.isolated({ "ask.timeout": 0.001 }),
-			}),
-		);
-		const abort = vi.fn();
-		const select = vi.fn(
-			async (
-				_prompt: string,
-				options: ExtensionUISelectItem[],
-				dialogOptions?: { initialIndex?: number; timeout?: number; onTimeout?: () => void },
-			) => {
-				dialogOptions?.onTimeout?.();
-				const selected = options[dialogOptions?.initialIndex ?? 0];
-				return typeof selected === "string" ? selected : selected?.label;
-			},
-		);
-		const context = createContext({
-			select,
-			abort,
-		});
+	it(
+		"auto-selects the recommended option on ask timeout",
+		async () => {
+			const tool = new AskTool(
+				createSession({
+					settings: Settings.isolated({ "ask.timeout": 0.001 }),
+				}),
+			);
+			const abort = vi.fn();
+			const select = vi.fn(
+				async (
+					_prompt: string,
+					options: ExtensionUISelectItem[],
+					dialogOptions?: { initialIndex?: number; timeout?: number; onTimeout?: () => void },
+				) => {
+					dialogOptions?.onTimeout?.();
+					const selected = options[dialogOptions?.initialIndex ?? 0];
+					return typeof selected === "string" ? selected : selected?.label;
+				},
+			);
+			const context = createContext({
+				select,
+				abort,
+			});
 
-		const result = await tool.execute(
-			"call-2",
-			{
-				questions: [
-					{
-						id: "confirm",
-						question: "Proceed?",
-						options: [{ label: "yes" }, { label: "no" }],
-						recommended: 1,
-					},
-				],
-			},
-			undefined,
-			undefined,
-			context,
-		);
+			const result = await tool.execute(
+				"call-2",
+				{
+					questions: [
+						{
+							id: "confirm",
+							question: "Proceed?",
+							options: [{ label: "yes" }, { label: "no" }],
+							recommended: 1,
+						},
+					],
+				},
+				undefined,
+				undefined,
+				context,
+			);
 
-		expect(result.content[0]?.type).toBe("text");
-		if (result.content[0]?.type !== "text") {
-			throw new Error("Expected text result");
-		}
-		expect(result.content[0].text).toContain("User selected: no");
-		expect(result.details?.selectedOptions).toEqual(["no"]);
-		expect(abort).not.toHaveBeenCalled();
-		expect(select).toHaveBeenCalledTimes(1);
-		expect(select.mock.calls[0]?.[2]?.initialIndex).toBe(1);
-		expect(select.mock.calls[0]?.[2]?.timeout).toBeGreaterThan(0);
-	}, 30_000);
+			expect(result.content[0]?.type).toBe("text");
+			if (result.content[0]?.type !== "text") {
+				throw new Error("Expected text result");
+			}
+			expect(result.content[0].text).toContain("User selected: no");
+			expect(result.details?.selectedOptions).toEqual(["no"]);
+			expect(abort).not.toHaveBeenCalled();
+			expect(select).toHaveBeenCalledTimes(1);
+			expect(select.mock.calls[0]?.[2]?.initialIndex).toBe(1);
+			expect(select.mock.calls[0]?.[2]?.timeout).toBeGreaterThan(0);
+		},
+		scaledTimeout(30000),
+	);
 
-	it("auto-selects the first option when timeout elapses without a selected option", async () => {
-		const tool = new AskTool(
-			createSession({
-				settings: Settings.isolated({ "ask.timeout": 0.001 }),
-			}),
-		);
-		const abort = vi.fn();
-		const context = createContext({
-			select: async (_prompt, _options, dialogOptions) => {
-				dialogOptions?.onTimeout?.();
-				return undefined;
-			},
-			abort,
-		});
+	it(
+		"auto-selects the first option when timeout elapses without a selected option",
+		async () => {
+			const tool = new AskTool(
+				createSession({
+					settings: Settings.isolated({ "ask.timeout": 0.001 }),
+				}),
+			);
+			const abort = vi.fn();
+			const context = createContext({
+				select: async (_prompt, _options, dialogOptions) => {
+					dialogOptions?.onTimeout?.();
+					return undefined;
+				},
+				abort,
+			});
 
-		const result = await tool.execute(
-			"call-timeout-none",
-			{
-				questions: [
-					{
-						id: "confirm",
-						question: "Proceed?",
-						options: [{ label: "yes" }, { label: "no" }],
-					},
-				],
-			},
-			undefined,
-			undefined,
-			context,
-		);
+			const result = await tool.execute(
+				"call-timeout-none",
+				{
+					questions: [
+						{
+							id: "confirm",
+							question: "Proceed?",
+							options: [{ label: "yes" }, { label: "no" }],
+						},
+					],
+				},
+				undefined,
+				undefined,
+				context,
+			);
 
-		expect(result.content[0]?.type).toBe("text");
-		if (result.content[0]?.type !== "text") {
-			throw new Error("Expected text result");
-		}
-		expect(result.content[0].text).toContain("User selected: yes");
-		expect(result.details?.selectedOptions).toEqual(["yes"]);
-		expect(abort).not.toHaveBeenCalled();
-	}, 30_000);
+			expect(result.content[0]?.type).toBe("text");
+			if (result.content[0]?.type !== "text") {
+				throw new Error("Expected text result");
+			}
+			expect(result.content[0].text).toContain("User selected: yes");
+			expect(result.details?.selectedOptions).toEqual(["yes"]);
+			expect(abort).not.toHaveBeenCalled();
+		},
+		scaledTimeout(30000),
+	);
 
 	it("routes custom input through editor with promptStyle after choosing Other", async () => {
 		const tool = new AskTool(
@@ -338,52 +347,56 @@ describe("AskTool cancellation", () => {
 		expect(abort).not.toHaveBeenCalled();
 	});
 
-	it("does not enter custom input when timeout resolves to Other in multi-select", async () => {
-		const tool = new AskTool(
-			createSession({
-				settings: Settings.isolated({ "ask.timeout": 0.001 }),
-			}),
-		);
-		const abort = vi.fn();
-		const editor = vi.fn(async () => "should-not-be-used");
-		const context = createContext({
-			select: async (_prompt, _options, dialogOptions) => {
-				const timeout = dialogOptions?.timeout ?? 1;
-				await Bun.sleep(timeout + 5);
-				dialogOptions?.onTimeout?.();
-				return "Other (type your own)";
-			},
-			editor,
-			abort,
-		});
+	it(
+		"does not enter custom input when timeout resolves to Other in multi-select",
+		async () => {
+			const tool = new AskTool(
+				createSession({
+					settings: Settings.isolated({ "ask.timeout": 0.001 }),
+				}),
+			);
+			const abort = vi.fn();
+			const editor = vi.fn(async () => "should-not-be-used");
+			const context = createContext({
+				select: async (_prompt, _options, dialogOptions) => {
+					const timeout = dialogOptions?.timeout ?? 1;
+					await Bun.sleep(timeout + 5);
+					dialogOptions?.onTimeout?.();
+					return "Other (type your own)";
+				},
+				editor,
+				abort,
+			});
 
-		const result = await tool.execute(
-			"call-timeout-other-multi",
-			{
-				questions: [
-					{
-						id: "confirm",
-						question: "Proceed?",
-						options: [{ label: "yes" }, { label: "no" }],
-						multi: true,
-					},
-				],
-			},
-			undefined,
-			undefined,
-			context,
-		);
+			const result = await tool.execute(
+				"call-timeout-other-multi",
+				{
+					questions: [
+						{
+							id: "confirm",
+							question: "Proceed?",
+							options: [{ label: "yes" }, { label: "no" }],
+							multi: true,
+						},
+					],
+				},
+				undefined,
+				undefined,
+				context,
+			);
 
-		expect(result.content[0]?.type).toBe("text");
-		if (result.content[0]?.type !== "text") {
-			throw new Error("Expected text result");
-		}
-		expect(result.content[0].text).toContain("User selected: yes");
-		expect(result.details?.selectedOptions).toEqual(["yes"]);
-		expect(result.details?.customInput).toBeUndefined();
-		expect(editor).not.toHaveBeenCalled();
-		expect(abort).not.toHaveBeenCalled();
-	}, 30_000);
+			expect(result.content[0]?.type).toBe("text");
+			if (result.content[0]?.type !== "text") {
+				throw new Error("Expected text result");
+			}
+			expect(result.content[0].text).toContain("User selected: yes");
+			expect(result.details?.selectedOptions).toEqual(["yes"]);
+			expect(result.details?.customInput).toBeUndefined();
+			expect(editor).not.toHaveBeenCalled();
+			expect(abort).not.toHaveBeenCalled();
+		},
+		scaledTimeout(30000),
+	);
 
 	it("aborts multi-question ask when any question is explicitly cancelled", async () => {
 		const tool = new AskTool(createSession());
@@ -1066,44 +1079,48 @@ describe("AskTool multi-question navigation", () => {
 		expect(result.details?.results?.[1]?.selectedOptions).toEqual(["alpha"]);
 	});
 
-	it("handles timeout with navigation and allows revisiting timed-out questions", async () => {
-		const tool = new AskTool(
-			createSession({
-				settings: Settings.isolated({ "ask.timeout": 0.001 }),
-			}),
-		);
-		let secondVisits = 0;
-		let thirdVisits = 0;
-		const context = createContext({
-			select: async (prompt, _options, dialogOptions) => {
-				if (prompt.includes("First?")) return "one";
-				if (prompt.includes("Second?")) {
-					secondVisits += 1;
-					if (secondVisits === 1) {
-						await Bun.sleep(5);
-						dialogOptions?.onTimeout?.();
+	it(
+		"handles timeout with navigation and allows revisiting timed-out questions",
+		async () => {
+			const tool = new AskTool(
+				createSession({
+					settings: Settings.isolated({ "ask.timeout": 0.001 }),
+				}),
+			);
+			let secondVisits = 0;
+			let thirdVisits = 0;
+			const context = createContext({
+				select: async (prompt, _options, dialogOptions) => {
+					if (prompt.includes("First?")) return "one";
+					if (prompt.includes("Second?")) {
+						secondVisits += 1;
+						if (secondVisits === 1) {
+							await Bun.sleep(5);
+							dialogOptions?.onTimeout?.();
+							return undefined;
+						}
+						return "beta";
+					}
+					if (prompt.includes("Third?")) {
+						thirdVisits += 1;
+						if (thirdVisits === 1) {
+							dialogOptions?.onLeft?.();
+							return undefined;
+						}
+						dialogOptions?.onRight?.();
 						return undefined;
 					}
-					return "beta";
-				}
-				if (prompt.includes("Third?")) {
-					thirdVisits += 1;
-					if (thirdVisits === 1) {
-						dialogOptions?.onLeft?.();
-						return undefined;
-					}
-					dialogOptions?.onRight?.();
 					return undefined;
-				}
-				return undefined;
-			},
-		});
+				},
+			});
 
-		const result = await tool.execute("call-nav-4", { questions }, undefined, undefined, context);
-		expect(result.details?.results?.[0]?.selectedOptions).toEqual(["one"]);
-		expect(result.details?.results?.[1]?.selectedOptions).toEqual(["beta"]);
-		expect(result.details?.results?.[2]?.selectedOptions).toEqual([]);
-	}, 30_000);
+			const result = await tool.execute("call-nav-4", { questions }, undefined, undefined, context);
+			expect(result.details?.results?.[0]?.selectedOptions).toEqual(["one"]);
+			expect(result.details?.results?.[1]?.selectedOptions).toEqual(["beta"]);
+			expect(result.details?.results?.[2]?.selectedOptions).toEqual([]);
+		},
+		scaledTimeout(30000),
+	);
 	it("preserves custom input when navigating back and forward", async () => {
 		const tool = new AskTool(createSession());
 		const multilineText = "line 1\nline 2";

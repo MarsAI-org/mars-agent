@@ -11,6 +11,7 @@
  * the provider, so the pre-send API-key check fails with "No API key found".
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -81,104 +82,112 @@ function baseOptions(cwd: string) {
 }
 
 describe("/tan extension auth over a shared registry", () => {
-	it("keeps the extension provider's credential resolvable after a forwarded tan-like child is created", async () => {
-		using tempDir = TempDir.createSync("mars-tan-ext-auth-");
-		const cwd = path.resolve(tempDir.path());
-		const extPath = path.join(cwd, "provider-ext.ts");
-		await Bun.write(extPath, EXTENSION_SOURCE);
+	it(
+		"keeps the extension provider's credential resolvable after a forwarded tan-like child is created",
+		async () => {
+			using tempDir = TempDir.createSync("mars-tan-ext-auth-");
+			const cwd = path.resolve(tempDir.path());
+			const extPath = path.join(cwd, "provider-ext.ts");
+			await Bun.write(extPath, EXTENSION_SOURCE);
 
-		const authStorage = await AuthStorage.create(tempDir.join("auth.db"));
-		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
-		const base = baseOptions(cwd);
+			const authStorage = await AuthStorage.create(tempDir.join("auth.db"));
+			const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
+			const base = baseOptions(cwd);
 
-		try {
-			const { session: parent } = await createAgentSession({
-				...base,
-				sessionManager: SessionManager.inMemory(cwd),
-				authStorage,
-				modelRegistry,
-				additionalExtensionPaths: [extPath],
-				extensions: [INLINE_EXTENSION],
-				disableExtensionDiscovery: true,
-			});
+			try {
+				const { session: parent } = await createAgentSession({
+					...base,
+					sessionManager: SessionManager.inMemory(cwd),
+					authStorage,
+					modelRegistry,
+					additionalExtensionPaths: [extPath],
+					extensions: [INLINE_EXTENSION],
+					disableExtensionDiscovery: true,
+				});
 
-			const model = modelRegistry.find(PROVIDER, MODEL_ID);
-			const inlineModel = modelRegistry.find(INLINE_PROVIDER, INLINE_MODEL_ID);
-			expect(model).toBeDefined();
-			expect(inlineModel).toBeDefined();
-			expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
-			expect(await modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
-			expect(parent.preparedExtensions?.length).toBeGreaterThan(0);
+				const model = modelRegistry.find(PROVIDER, MODEL_ID);
+				const inlineModel = modelRegistry.find(INLINE_PROVIDER, INLINE_MODEL_ID);
+				expect(model).toBeDefined();
+				expect(inlineModel).toBeDefined();
+				expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+				expect(await modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
+				expect(parent.preparedExtensions?.length).toBeGreaterThan(0);
 
-			// Tan child: forwards the parent's prepared extensions + root policy, so
-			// bindPreparedExtensions re-registers the provider before the prune.
-			const { session: tanChild } = await createAgentSession({
-				...base,
-				sessionManager: SessionManager.inMemory(cwd),
-				authStorage,
-				modelRegistry,
-				disableExtensionDiscovery: true,
-				preloadedPreparedExtensions: parent.preparedExtensions,
-				extensionRoots: () => parent.effectiveExtensionRoots,
-			});
+				// Tan child: forwards the parent's prepared extensions + root policy, so
+				// bindPreparedExtensions re-registers the provider before the prune.
+				const { session: tanChild } = await createAgentSession({
+					...base,
+					sessionManager: SessionManager.inMemory(cwd),
+					authStorage,
+					modelRegistry,
+					disableExtensionDiscovery: true,
+					preloadedPreparedExtensions: parent.preparedExtensions,
+					extensionRoots: () => parent.effectiveExtensionRoots,
+				});
 
-			// Child request auth resolves AND the parent's registration survives on
-			// the shared registry instance.
-			expect(await tanChild.modelRegistry.getApiKey(model!)).toBe(SENTINEL);
-			expect(await tanChild.modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
-			expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
-			expect(await modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
+				// Child request auth resolves AND the parent's registration survives on
+				// the shared registry instance.
+				expect(await tanChild.modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+				expect(await tanChild.modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
+				expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+				expect(await modelRegistry.getApiKey(inlineModel!)).toBe(INLINE_SENTINEL);
 
-			await tanChild.dispose();
-			await parent.dispose();
-		} finally {
-			authStorage.close();
-		}
-	}, 20_000);
+				await tanChild.dispose();
+				await parent.dispose();
+			} finally {
+				authStorage.close();
+			}
+		},
+		scaledTimeout(20000),
+	);
 
-	it("preserves auth via the extension-paths fallback when no prepared factories are forwarded", async () => {
-		using tempDir = TempDir.createSync("mars-tan-ext-auth-fallback-");
-		const cwd = path.resolve(tempDir.path());
-		const extPath = path.join(cwd, "provider-ext.ts");
-		await Bun.write(extPath, EXTENSION_SOURCE);
+	it(
+		"preserves auth via the extension-paths fallback when no prepared factories are forwarded",
+		async () => {
+			using tempDir = TempDir.createSync("mars-tan-ext-auth-fallback-");
+			const cwd = path.resolve(tempDir.path());
+			const extPath = path.join(cwd, "provider-ext.ts");
+			await Bun.write(extPath, EXTENSION_SOURCE);
 
-		const authStorage = await AuthStorage.create(tempDir.join("auth.db"));
-		const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
-		const base = baseOptions(cwd);
+			const authStorage = await AuthStorage.create(tempDir.join("auth.db"));
+			const modelRegistry = new ModelRegistry(authStorage, tempDir.join("models.yml"));
+			const base = baseOptions(cwd);
 
-		try {
-			const { session: parent } = await createAgentSession({
-				...base,
-				sessionManager: SessionManager.inMemory(cwd),
-				authStorage,
-				modelRegistry,
-				additionalExtensionPaths: [extPath],
-				disableExtensionDiscovery: true,
-			});
-			const model = modelRegistry.find(PROVIDER, MODEL_ID);
-			expect(model).toBeDefined();
-			expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+			try {
+				const { session: parent } = await createAgentSession({
+					...base,
+					sessionManager: SessionManager.inMemory(cwd),
+					authStorage,
+					modelRegistry,
+					additionalExtensionPaths: [extPath],
+					disableExtensionDiscovery: true,
+				});
+				const model = modelRegistry.find(PROVIDER, MODEL_ID);
+				expect(model).toBeDefined();
+				expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
 
-			// Simulate the rare parent build path that yields no prepared factories:
-			// the child rebinds from source paths (SDK branch: preloadedExtensionPaths)
-			// and must still re-register the provider before the prune.
-			const { session: tanChild } = await createAgentSession({
-				...base,
-				sessionManager: SessionManager.inMemory(cwd),
-				authStorage,
-				modelRegistry,
-				disableExtensionDiscovery: true,
-				preloadedExtensionPaths: [extPath],
-				extensionRoots: () => parent.effectiveExtensionRoots,
-			});
+				// Simulate the rare parent build path that yields no prepared factories:
+				// the child rebinds from source paths (SDK branch: preloadedExtensionPaths)
+				// and must still re-register the provider before the prune.
+				const { session: tanChild } = await createAgentSession({
+					...base,
+					sessionManager: SessionManager.inMemory(cwd),
+					authStorage,
+					modelRegistry,
+					disableExtensionDiscovery: true,
+					preloadedExtensionPaths: [extPath],
+					extensionRoots: () => parent.effectiveExtensionRoots,
+				});
 
-			expect(await tanChild.modelRegistry.getApiKey(model!)).toBe(SENTINEL);
-			expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+				expect(await tanChild.modelRegistry.getApiKey(model!)).toBe(SENTINEL);
+				expect(await modelRegistry.getApiKey(model!)).toBe(SENTINEL);
 
-			await tanChild.dispose();
-			await parent.dispose();
-		} finally {
-			authStorage.close();
-		}
-	}, 20_000);
+				await tanChild.dispose();
+				await parent.dispose();
+			} finally {
+				authStorage.close();
+			}
+		},
+		scaledTimeout(20000),
+	);
 });
