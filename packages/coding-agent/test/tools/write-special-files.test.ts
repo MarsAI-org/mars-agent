@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -79,13 +80,17 @@ describe.skipIf(process.platform === "win32")("write on non-regular files", () =
 		await removeWithRetries(testDir);
 	});
 
-	it("rejects an existing FIFO before a main-thread file open can block", async () => {
-		const result = await writeInChild(fifo, testDir);
+	it(
+		"rejects an existing FIFO before a main-thread file open can block",
+		async () => {
+			const result = await writeInChild(fifo, testDir);
 
-		expect(result.signal).toBeNull();
-		expect(result.code).toBe(1);
-		expect(result.output).toContain("it is a FIFO");
-	}, 30_000);
+			expect(result.signal).toBeNull();
+			expect(result.code).toBe(1);
+			expect(result.output).toContain("it is a FIFO");
+		},
+		scaledTimeout(30000),
+	);
 
 	it("rejects a FIFO used as a SQLite database without sniffing its header", async () => {
 		const sqlitePath = path.join(testDir, "database.db");

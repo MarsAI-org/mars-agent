@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import type { AgentTool } from "@marsai-org/agent-core";
 import type { TSchema } from "@marsai-org/ai";
 import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
@@ -18,7 +19,7 @@ beforeAll(async () => {
 	resetSettingsForTest();
 	await Settings.init({ inMemory: true, cwd: process.cwd() });
 	await initTheme(false, undefined, undefined, "dark", "light");
-}, 15_000);
+}, scaledTimeout(15000));
 
 async function getRequiredTheme() {
 	const uiTheme = await getThemeByName("dark");
@@ -111,61 +112,73 @@ async function renderCompletedMCPTool(isError: boolean): Promise<string> {
 }
 
 describe("MCP tool rendering", () => {
-	it("replaces the pending call header with a success header after completion", async () => {
-		const uiTheme = await getRequiredTheme();
-		const pendingIcon = Bun.stripANSI(formatStatusIcon("pending", uiTheme));
-		const doneIcon = Bun.stripANSI(uiTheme.styledSymbol("tool.mcp", "accent"));
+	it(
+		"replaces the pending call header with a success header after completion",
+		async () => {
+			const uiTheme = await getRequiredTheme();
+			const pendingIcon = Bun.stripANSI(formatStatusIcon("pending", uiTheme));
+			const doneIcon = Bun.stripANSI(uiTheme.styledSymbol("tool.mcp", "accent"));
 
-		const rendered = await renderCompletedMCPTool(false);
+			const rendered = await renderCompletedMCPTool(false);
 
-		expect(makeTool().mergeCallAndResult).toBe(true);
-		expect(makeDeferredTool().mergeCallAndResult).toBe(true);
-		expect(rendered).toContain(`${doneIcon} sentry/search_events`);
-		expect(rendered).not.toContain(`${pendingIcon} sentry/search_events`);
-	}, 15_000);
+			expect(makeTool().mergeCallAndResult).toBe(true);
+			expect(makeDeferredTool().mergeCallAndResult).toBe(true);
+			expect(rendered).toContain(`${doneIcon} sentry/search_events`);
+			expect(rendered).not.toContain(`${pendingIcon} sentry/search_events`);
+		},
+		scaledTimeout(15000),
+	);
 
-	it("replaces the pending call header with an error header for MCP errors", async () => {
-		const uiTheme = await getRequiredTheme();
-		const pendingIcon = Bun.stripANSI(formatStatusIcon("pending", uiTheme));
-		const errorIcon = Bun.stripANSI(formatStatusIcon("error", uiTheme));
+	it(
+		"replaces the pending call header with an error header for MCP errors",
+		async () => {
+			const uiTheme = await getRequiredTheme();
+			const pendingIcon = Bun.stripANSI(formatStatusIcon("pending", uiTheme));
+			const errorIcon = Bun.stripANSI(formatStatusIcon("error", uiTheme));
 
-		const rendered = await renderCompletedMCPTool(true);
+			const rendered = await renderCompletedMCPTool(true);
 
-		expect(rendered).toContain(`${errorIcon} sentry/search_events`);
-		expect(rendered).not.toContain(`${pendingIcon} sentry/search_events`);
-	}, 15_000);
+			expect(rendered).toContain(`${errorIcon} sentry/search_events`);
+			expect(rendered).not.toContain(`${pendingIcon} sentry/search_events`);
+		},
+		scaledTimeout(15000),
+	);
 
-	it("strips the spill notice from the body and surfaces the artifact link as a styled warning", () => {
-		const meta: OutputMeta = {
-			truncation: {
-				direction: "tail",
-				truncatedBy: "bytes",
-				totalLines: 100,
-				totalBytes: 8000,
-				outputLines: 4,
-				outputBytes: 160,
-				maxBytes: 1024,
-				shownRange: { start: 97, end: 100 },
-				artifactId: "7",
-			},
-		};
-		// Mirror what the spill wrapper emits: the truncated body with the
-		// LLM-facing notice appended (via formatOutputNotice) plus meta.truncation.
-		const body = "event 97\nevent 98\nevent 99\nevent 100";
-		const result = {
-			content: [{ type: "text" as const, text: body + formatOutputNotice(meta) }],
-			details: { serverName: "evk", mcpToolName: "peek", meta },
-		};
+	it(
+		"strips the spill notice from the body and surfaces the artifact link as a styled warning",
+		() => {
+			const meta: OutputMeta = {
+				truncation: {
+					direction: "tail",
+					truncatedBy: "bytes",
+					totalLines: 100,
+					totalBytes: 8000,
+					outputLines: 4,
+					outputBytes: 160,
+					maxBytes: 1024,
+					shownRange: { start: 97, end: 100 },
+					artifactId: "7",
+				},
+			};
+			// Mirror what the spill wrapper emits: the truncated body with the
+			// LLM-facing notice appended (via formatOutputNotice) plus meta.truncation.
+			const body = "event 97\nevent 98\nevent 99\nevent 100";
+			const result = {
+				content: [{ type: "text" as const, text: body + formatOutputNotice(meta) }],
+				details: { serverName: "evk", mcpToolName: "peek", meta },
+			};
 
-		const rendered = Bun.stripANSI(
-			renderMCPResult(result, { expanded: true, isPartial: false }, activeTheme).render(160).join("\n"),
-		);
+			const rendered = Bun.stripANSI(
+				renderMCPResult(result, { expanded: true, isPartial: false }, activeTheme).render(160).join("\n"),
+			);
 
-		expect(rendered).toContain("event 97");
-		expect(rendered).toContain("event 100");
-		expect(rendered).toContain("artifact://7");
-		// The link appears exactly once — as the styled warning — proving the
-		// inline notice was stripped from the body rather than echoed verbatim.
-		expect(rendered.split("artifact://7").length - 1).toBe(1);
-	}, 15_000);
+			expect(rendered).toContain("event 97");
+			expect(rendered).toContain("event 100");
+			expect(rendered).toContain("artifact://7");
+			// The link appears exactly once — as the styled warning — proving the
+			// inline notice was stripped from the body rather than echoed verbatim.
+			expect(rendered.split("artifact://7").length - 1).toBe(1);
+		},
+		scaledTimeout(15000),
+	);
 });

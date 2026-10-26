@@ -1,4 +1,5 @@
 import { expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -49,22 +50,26 @@ async function pingComputerWorker(
 	}
 }
 
-it("starts ordinary CLI paths without loading the native computer addon", async () => {
-	const cliPath = path.resolve(import.meta.dir, "../../src/cli.ts");
-	for (const args of [
-		["--no-addons", cliPath, "--version"],
-		[cliPath, "--help"],
-	]) {
-		const proc = Bun.spawn([process.execPath, ...args], {
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const [exitCode, stderr] = await Promise.all([proc.exited, new Response(proc.stderr).text()]);
-		expect(exitCode, `${args.at(-1)}: ${stderr}`).toBe(0);
-	}
-	// Two cold CLI spawns (`--version`, `--help`) per run; the assertion is the exit
-	// code, not the wall time.
-}, 30_000);
+it(
+	"starts ordinary CLI paths without loading the native computer addon",
+	async () => {
+		const cliPath = path.resolve(import.meta.dir, "../../src/cli.ts");
+		for (const args of [
+			["--no-addons", cliPath, "--version"],
+			[cliPath, "--help"],
+		]) {
+			const proc = Bun.spawn([process.execPath, ...args], {
+				stdout: "pipe",
+				stderr: "pipe",
+			});
+			const [exitCode, stderr] = await Promise.all([proc.exited, new Response(proc.stderr).text()]);
+			expect(exitCode, `${args.at(-1)}: ${stderr}`).toBe(0);
+		}
+		// Two cold CLI spawns (`--version`, `--help`) per run; the assertion is the exit
+		// code, not the wall time.
+	},
+	scaledTimeout(30000),
+);
 
 it("dispatches the computer worker through the CLI host selector in a child process", async () => {
 	const fixture = path.resolve(import.meta.dir, "../fixtures/computer-worker-cli-selector.ts");
@@ -107,35 +112,39 @@ it("dispatches the computer worker from a single npm-style host bundle", async (
 	expect(response).toEqual({ type: "pong", id: "computer-npm-bundle" });
 });
 
-it("keeps non-computer selectors isolated in a compiled single-entry worker host", async () => {
-	using tempDir = TempDir.createSync("@mars-compiled-worker-selector-");
-	const packageDir = path.resolve(import.meta.dir, "../..");
-	const outfile = path.join(tempDir.path(), process.platform === "win32" ? "worker-host.exe" : "worker-host");
-	const build = Bun.spawn(
-		[
-			process.execPath,
-			"build",
-			"--compile",
-			"--target=bun",
-			`--outfile=${outfile}`,
-			path.join(packageDir, "test/fixtures/compiled-worker-selector-host.ts"),
-		],
-		{ cwd: packageDir, stdout: "pipe", stderr: "pipe" },
-	);
-	const [buildExitCode, buildStderr] = await Promise.all([build.exited, new Response(build.stderr).text()]);
-	expect(buildExitCode, buildStderr).toBe(0);
-	const proc = Bun.spawn([outfile], {
-		cwd: packageDir,
-		stdout: "pipe",
-		stderr: "pipe",
-	});
-	const [exitCode, stdout, stderr] = await Promise.all([
-		proc.exited,
-		new Response(proc.stdout).text(),
-		new Response(proc.stderr).text(),
-	]);
-	expect(exitCode, stderr).toBe(0);
-	expect(stdout).toBe('{"ok":true,"kind":"pong"}\n');
-	// Compiles a standalone binary with `bun build --compile` before running it, so
-	// this needs the same headroom as the other compile-backed tests.
-}, 60_000);
+it(
+	"keeps non-computer selectors isolated in a compiled single-entry worker host",
+	async () => {
+		using tempDir = TempDir.createSync("@mars-compiled-worker-selector-");
+		const packageDir = path.resolve(import.meta.dir, "../..");
+		const outfile = path.join(tempDir.path(), process.platform === "win32" ? "worker-host.exe" : "worker-host");
+		const build = Bun.spawn(
+			[
+				process.execPath,
+				"build",
+				"--compile",
+				"--target=bun",
+				`--outfile=${outfile}`,
+				path.join(packageDir, "test/fixtures/compiled-worker-selector-host.ts"),
+			],
+			{ cwd: packageDir, stdout: "pipe", stderr: "pipe" },
+		);
+		const [buildExitCode, buildStderr] = await Promise.all([build.exited, new Response(build.stderr).text()]);
+		expect(buildExitCode, buildStderr).toBe(0);
+		const proc = Bun.spawn([outfile], {
+			cwd: packageDir,
+			stdout: "pipe",
+			stderr: "pipe",
+		});
+		const [exitCode, stdout, stderr] = await Promise.all([
+			proc.exited,
+			new Response(proc.stdout).text(),
+			new Response(proc.stderr).text(),
+		]);
+		expect(exitCode, stderr).toBe(0);
+		expect(stdout).toBe('{"ok":true,"kind":"pong"}\n');
+		// Compiles a standalone binary with `bun build --compile` before running it, so
+		// this needs the same headroom as the other compile-backed tests.
+	},
+	scaledTimeout(60000),
+);

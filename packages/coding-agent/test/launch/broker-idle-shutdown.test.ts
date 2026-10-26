@@ -5,6 +5,7 @@
 // (no polling, no fixed sleep). A regression leaves the broker alive, so the test's own timeout
 // surfaces the failure.
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -32,46 +33,50 @@ function startBroker(projectDir: string, runtimeDir: string, idleGraceMs: number
 }
 
 describe("daemon broker idle shutdown", () => {
-	it("shuts down after its last persistent daemon exits with no clients", async () => {
-		using tempDir = TempDir.createSync("@mars-launch-idle-");
-		const projectDir = path.join(tempDir.path(), "project");
-		const runtimeDir = path.join(tempDir.path(), "runtime");
-		await fs.mkdir(projectDir);
+	it(
+		"shuts down after its last persistent daemon exits with no clients",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-launch-idle-");
+			const projectDir = path.join(tempDir.path(), "project");
+			const runtimeDir = path.join(tempDir.path(), "runtime");
+			await fs.mkdir(projectDir);
 
-		const previousTitle = process.title;
-		// Create the client (writes broker.token) before starting the broker, which reads that token.
-		const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 100 });
-		const broker = startBroker(projectDir, runtimeDir, 100);
-		try {
-			// A persistent daemon that outlives the first idle-shutdown timer (100ms) and then
-			// self-exits (~300ms). restart:"no" so its exit is terminal.
-			const started = await client.request({
-				op: "start",
-				spec: {
-					name: "persistent-temp",
-					application: process.execPath,
-					args: ["-e", "setTimeout(() => {}, 300)"],
-					env: {},
-					cwd: projectDir,
-					pty: false,
-					restart: "no",
-					persist: true,
-					detached: false,
-				},
-			});
-			expect(started.op).toBe("start");
+			const previousTitle = process.title;
+			// Create the client (writes broker.token) before starting the broker, which reads that token.
+			const client = await createDaemonBrokerClient(projectDir, { runtimeDir, idleGraceMs: 100 });
+			const broker = startBroker(projectDir, runtimeDir, 100);
+			try {
+				// A persistent daemon that outlives the first idle-shutdown timer (100ms) and then
+				// self-exits (~300ms). restart:"no" so its exit is terminal.
+				const started = await client.request({
+					op: "start",
+					spec: {
+						name: "persistent-temp",
+						application: process.execPath,
+						args: ["-e", "setTimeout(() => {}, 300)"],
+						env: {},
+						cwd: projectDir,
+						pty: false,
+						restart: "no",
+						persist: true,
+						detached: false,
+					},
+				});
+				expect(started.op).toBe("start");
 
-			// Disconnect the final client. The broker keeps the persistent daemon alive, so the
-			// idle timer this arms fires while the daemon is still live and returns without rearming.
-			client.close();
+				// Disconnect the final client. The broker keeps the persistent daemon alive, so the
+				// idle timer this arms fires while the daemon is still live and returns without rearming.
+				client.close();
 
-			// When the daemon self-exits, terminal settlement must rearm idle shutdown; the broker
-			// then releases its lease and run() resolves. Awaiting the broker promise IS the shutdown
-			// signal. Before the fix nothing rearmed, so this await never resolved and the test timed
-			// out — the regression this guards.
-			await broker;
-		} finally {
-			process.title = previousTitle;
-		}
-	}, 30_000);
+				// When the daemon self-exits, terminal settlement must rearm idle shutdown; the broker
+				// then releases its lease and run() resolves. Awaiting the broker promise IS the shutdown
+				// signal. Before the fix nothing rearmed, so this await never resolved and the test timed
+				// out — the regression this guards.
+				await broker;
+			} finally {
+				process.title = previousTitle;
+			}
+		},
+		scaledTimeout(30000),
+	);
 });

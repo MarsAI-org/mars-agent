@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -131,20 +132,24 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser cookie and storage state helpers",
 		BROWSER_TEST_TIMEOUT_MS,
 	);
 
-	it("does not echo cookie values from malformed imports", async () => {
-		await invoke({ action: "open", name: "bad-cookie", url: pageUrl });
-		const secret = "cookie-secret-must-not-leak";
-		try {
-			let message = "";
+	it(
+		"does not echo cookie values from malformed imports",
+		async () => {
+			await invoke({ action: "open", name: "bad-cookie", url: pageUrl });
+			const secret = "cookie-secret-must-not-leak";
 			try {
-				await call("bad-cookie", "setCookies", [`[{"name":"broken","value":"${secret}"}`]);
-			} catch (error) {
-				message = error instanceof Error ? error.message : String(error);
+				let message = "";
+				try {
+					await call("bad-cookie", "setCookies", [`[{"name":"broken","value":"${secret}"}`]);
+				} catch (error) {
+					message = error instanceof Error ? error.message : String(error);
+				}
+				expect(message).toContain("malformed cookie input");
+				expect(message).not.toContain(secret);
+			} finally {
+				await invoke({ action: "close", name: "bad-cookie" });
 			}
-			expect(message).toContain("malformed cookie input");
-			expect(message).not.toContain(secret);
-		} finally {
-			await invoke({ action: "close", name: "bad-cookie" });
-		}
-	}, 15_000);
+		},
+		scaledTimeout(15000),
+	);
 });

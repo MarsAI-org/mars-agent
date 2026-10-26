@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
 
@@ -45,35 +46,43 @@ describe("legacy-pi specifier shim", () => {
 		tempDir = undefined;
 	});
 
-	it("resolves a canonical @oh-my-pi subpath that remaps to itself", async () => {
-		// Regression: the resolve hook matches `@oh-my-pi/pi-*` as well as the
-		// legacy scopes, so resolving the remapped specifier called
-		// `Bun.resolveSync` with a specifier this same hook matches. Bun
-		// re-entered the hook and re-prefixed the namespace on every pass until
-		// the import died as `NameTooLong reading "file:file:…"`, breaking every
-		// `require("@marsai-org/ai/index.js")` first-use boundary — the
-		// `/login` provider selector among them.
-		const loaded = parseLoaded(await requireThroughShim("@marsai-org/ai/index.js"));
-		expect(loaded.pluginLocal).toBe(false);
-		expect(loaded.keys).toBeGreaterThan(1);
-	}, 30_000);
+	it(
+		"resolves a canonical @oh-my-pi subpath that remaps to itself",
+		async () => {
+			// Regression: the resolve hook matches `@oh-my-pi/pi-*` as well as the
+			// legacy scopes, so resolving the remapped specifier called
+			// `Bun.resolveSync` with a specifier this same hook matches. Bun
+			// re-entered the hook and re-prefixed the namespace on every pass until
+			// the import died as `NameTooLong reading "file:file:…"`, breaking every
+			// `require("@marsai-org/ai/index.js")` first-use boundary — the
+			// `/login` provider selector among them.
+			const loaded = parseLoaded(await requireThroughShim("@marsai-org/ai/index.js"));
+			expect(loaded.pluginLocal).toBe(false);
+			expect(loaded.keys).toBeGreaterThan(1);
+		},
+		scaledTimeout(30000),
+	);
 
-	it("keeps a plugin's canonical subpath import on the host copy, not a plugin-local install", async () => {
-		// A plugin that ships its own `@marsai-org/ai` must still share the host
-		// singleton (split registries otherwise); only the host copy exposes more
-		// than the fixture's single marker export.
-		tempDir = TempDir.createSync("@pi-legacy-canonical-shadow-");
-		const localPackage = tempDir.join("node_modules/@marsai-org/ai");
-		await Bun.write(
-			path.join(localPackage, "package.json"),
-			JSON.stringify({ name: "@marsai-org/ai", version: "0.0.0", main: "index.js" }),
-		);
-		await Bun.write(path.join(localPackage, "index.js"), "module.exports = { PLUGIN_LOCAL_COPY: true };");
-		const pluginEntry = tempDir.join("plugin.cjs");
-		await Bun.write(pluginEntry, 'module.exports = require("@marsai-org/ai/index.js");');
+	it(
+		"keeps a plugin's canonical subpath import on the host copy, not a plugin-local install",
+		async () => {
+			// A plugin that ships its own `@marsai-org/ai` must still share the host
+			// singleton (split registries otherwise); only the host copy exposes more
+			// than the fixture's single marker export.
+			tempDir = TempDir.createSync("@pi-legacy-canonical-shadow-");
+			const localPackage = tempDir.join("node_modules/@marsai-org/ai");
+			await Bun.write(
+				path.join(localPackage, "package.json"),
+				JSON.stringify({ name: "@marsai-org/ai", version: "0.0.0", main: "index.js" }),
+			);
+			await Bun.write(path.join(localPackage, "index.js"), "module.exports = { PLUGIN_LOCAL_COPY: true };");
+			const pluginEntry = tempDir.join("plugin.cjs");
+			await Bun.write(pluginEntry, 'module.exports = require("@marsai-org/ai/index.js");');
 
-		const loaded = parseLoaded(await requireThroughShim(pluginEntry));
-		expect(loaded.pluginLocal).toBe(false);
-		expect(loaded.keys).toBeGreaterThan(1);
-	}, 30_000);
+			const loaded = parseLoaded(await requireThroughShim(pluginEntry));
+			expect(loaded.pluginLocal).toBe(false);
+			expect(loaded.keys).toBeGreaterThan(1);
+		},
+		scaledTimeout(30000),
+	);
 });

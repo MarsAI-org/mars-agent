@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../../test-timeout";
 import { handleAur } from "@marsai-org/coding-agent/web/scrapers/aur";
 import { handleBrew } from "@marsai-org/coding-agent/web/scrapers/brew";
 import { handleMaven } from "@marsai-org/coding-agent/web/scrapers/maven";
@@ -85,12 +86,16 @@ describe.skipIf(SKIP)("handleMaven", () => {
 		expect(result?.contentType).toBe("text/markdown");
 	});
 
-	it("fetches commons-lang3 artifact from mvnrepository.com", async () => {
-		const result = await handleMaven("https://mvnrepository.com/artifact/org.apache.commons/commons-lang3", 20);
-		expect(result).not.toBeNull();
-		expect(result?.method).toBe("maven");
-		expect(result?.content).toContain("org.apache.commons");
-		expect(result?.content).toContain("commons-lang3");
-		expect(result?.contentType).toBe("text/markdown");
-	}, 60000);
+	it(
+		"fetches commons-lang3 artifact from mvnrepository.com",
+		async () => {
+			const result = await handleMaven("https://mvnrepository.com/artifact/org.apache.commons/commons-lang3", 20);
+			expect(result).not.toBeNull();
+			expect(result?.method).toBe("maven");
+			expect(result?.content).toContain("org.apache.commons");
+			expect(result?.content).toContain("commons-lang3");
+			expect(result?.contentType).toBe("text/markdown");
+		},
+		scaledTimeout(60000),
+	);
 });

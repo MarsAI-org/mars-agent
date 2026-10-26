@@ -25,6 +25,7 @@
  *      to the no-auth sentinel.
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -172,141 +173,157 @@ const lmModels = (registry: ModelRegistry): string[] =>
 		.map(model => model.id);
 
 describe("issue #12281 — lm-studio empty-fallback placeholder vs. wire auth", () => {
-	test("a real login key is attached as a Bearer token to every lm-studio discovery request", async () => {
-		// Failure mode: with a genuine stored credential, discovery requests
-		// leave without Authorization (the reporter's wireshark capture),
-		// the server rejects them, and the model list silently empties even
-		// though the UI shows the provider as signed in.
-		const storage = await bootStorage("realkey");
-		await storage.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => LM_KEY });
+	test(
+		"a real login key is attached as a Bearer token to every lm-studio discovery request",
+		async () => {
+			// Failure mode: with a genuine stored credential, discovery requests
+			// leave without Authorization (the reporter's wireshark capture),
+			// the server rejects them, and the model list silently empties even
+			// though the UI shows the provider as signed in.
+			const storage = await bootStorage("realkey");
+			await storage.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => LM_KEY });
 
-		const registry = bootRegistry(storage);
-		await refreshLmStudio(registry);
+			const registry = bootRegistry(storage);
+			await refreshLmStudio(registry);
 
-		const requests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
-		expect(requests.length).toBeGreaterThan(0);
-		for (const request of requests) {
-			expect(request.auth).toBe(`Bearer ${LM_KEY}`);
-		}
-		expect(lmModels(registry)).toContain("qwen3-8b");
-		expect(registry.getProviderDiscoveryState("lm-studio")?.status).toBe("ok");
-		storage.close();
-	}, 30_000);
+			const requests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
+			expect(requests.length).toBeGreaterThan(0);
+			for (const request of requests) {
+				expect(request.auth).toBe(`Bearer ${LM_KEY}`);
+			}
+			expect(lmModels(registry)).toContain("qwen3-8b");
+			expect(registry.getProviderDiscoveryState("lm-studio")?.status).toBe("ok");
+			storage.close();
+		},
+		scaledTimeout(30000),
+	);
 
-	test("an empty-paste placeholder never presents lm-studio as authenticated while discovery 401s surface as an auth error", async () => {
-		// Failure mode (the defect): Enter at the optional-key prompt stores
-		// "lm-studio-local"; the UI reported hasAuth=true (hub unlocked,
-		// /login "logged in (api key)") while every request went out bare
-		// and the 401 was swallowed as generic "unavailable" — models
-		// silently gone with no auth-specific error.
-		const storage = await bootStorage("placeholder");
-		await storage.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => "" });
+	test(
+		"an empty-paste placeholder never presents lm-studio as authenticated while discovery 401s surface as an auth error",
+		async () => {
+			// Failure mode (the defect): Enter at the optional-key prompt stores
+			// "lm-studio-local"; the UI reported hasAuth=true (hub unlocked,
+			// /login "logged in (api key)") while every request went out bare
+			// and the 401 was swallowed as generic "unavailable" — models
+			// silently gone with no auth-specific error.
+			const storage = await bootStorage("placeholder");
+			await storage.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => "" });
 
-		// The placeholder itself stays stored (so /logout can remove it) —
-		// what must change is the auth *status* derived from it. Violations
-		// are aggregated so one failing run reports every broken leg.
-		expect(await storage.keys.peek("lm-studio")).toBe("lm-studio-local");
-		const violations: string[] = [];
-		if (storage.keys.source("lm-studio") !== undefined) {
-			violations.push("hasAuth=true — UI claims authenticated while every wire request goes bare");
-		}
-		const origin = storage.keys.source("lm-studio");
-		if (origin !== undefined) {
-			violations.push(`getCredentialOrigin=${JSON.stringify(origin)} — /login would show "logged in"`);
-		}
-		const source = storage.keys.describe("lm-studio");
-		if (source !== undefined) {
-			violations.push(`describeCredentialSource=${JSON.stringify(source)} — /session would show an auth source`);
-		}
+			// The placeholder itself stays stored (so /logout can remove it) —
+			// what must change is the auth *status* derived from it. Violations
+			// are aggregated so one failing run reports every broken leg.
+			expect(await storage.keys.peek("lm-studio")).toBe("lm-studio-local");
+			const violations: string[] = [];
+			if (storage.keys.source("lm-studio") !== undefined) {
+				violations.push("hasAuth=true — UI claims authenticated while every wire request goes bare");
+			}
+			const origin = storage.keys.source("lm-studio");
+			if (origin !== undefined) {
+				violations.push(`getCredentialOrigin=${JSON.stringify(origin)} — /login would show "logged in"`);
+			}
+			const source = storage.keys.describe("lm-studio");
+			if (source !== undefined) {
+				violations.push(`describeCredentialSource=${JSON.stringify(source)} — /session would show an auth source`);
+			}
 
-		const registry = bootRegistry(storage);
-		await refreshLmStudio(registry);
+			const registry = bootRegistry(storage);
+			await refreshLmStudio(registry);
 
-		// Against an auth-required server the keyless assumption fails: the
-		// bare requests are rejected and the rejection must surface as an
-		// auth-specific state, not a silent empty list.
-		const state = registry.getProviderDiscoveryState("lm-studio");
-		if (state?.status !== "unauthenticated") {
-			violations.push(
-				`discovery status=${state?.status} error=${JSON.stringify(state?.error)} — 401 swallowed as a generic outage`,
-			);
-		}
-		if (lmModels(registry).length !== 0) {
-			violations.push(`models=${JSON.stringify(lmModels(registry))} — expected none against a 401ing server`);
-		}
-		storage.close();
-		expect(violations).toEqual([]);
-	}, 30_000);
+			// Against an auth-required server the keyless assumption fails: the
+			// bare requests are rejected and the rejection must surface as an
+			// auth-specific state, not a silent empty list.
+			const state = registry.getProviderDiscoveryState("lm-studio");
+			if (state?.status !== "unauthenticated") {
+				violations.push(
+					`discovery status=${state?.status} error=${JSON.stringify(state?.error)} — 401 swallowed as a generic outage`,
+				);
+			}
+			if (lmModels(registry).length !== 0) {
+				violations.push(`models=${JSON.stringify(lmModels(registry))} — expected none against a 401ing server`);
+			}
+			storage.close();
+			expect(violations).toEqual([]);
+		},
+		scaledTimeout(30000),
+	);
 
-	test("keyless lm-studio keeps discovering without an Authorization header, with and without a stored placeholder", async () => {
-		// Failure mode (overcorrection): if placeholder handling started
-		// attaching a fake bearer, refused to probe, or hid the provider
-		// from the available list, keyless LM Studio setups — which must
-		// keep working exactly as before — would break with 401s or an
-		// empty model picker.
-		authRequired = false;
+	test(
+		"keyless lm-studio keeps discovering without an Authorization header, with and without a stored placeholder",
+		async () => {
+			// Failure mode (overcorrection): if placeholder handling started
+			// attaching a fake bearer, refused to probe, or hid the provider
+			// from the available list, keyless LM Studio setups — which must
+			// keep working exactly as before — would break with 401s or an
+			// empty model picker.
+			authRequired = false;
 
-		// Fresh setup: no login ever performed.
-		const fresh = await bootStorage("keyless-fresh");
-		const freshRegistry = bootRegistry(fresh);
-		await refreshLmStudio(freshRegistry);
+			// Fresh setup: no login ever performed.
+			const fresh = await bootStorage("keyless-fresh");
+			const freshRegistry = bootRegistry(fresh);
+			await refreshLmStudio(freshRegistry);
 
-		const freshRequests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
-		expect(freshRequests.length).toBeGreaterThan(0);
-		for (const request of freshRequests) {
-			expect(request.auth).toBeUndefined();
-		}
-		expect(lmModels(freshRegistry)).toContain("qwen3-8b");
-		expect(
-			freshRegistry.getAvailable().some(model => model.provider === "lm-studio" && model.id === "qwen3-8b"),
-		).toBe(true);
-		fresh.close();
+			const freshRequests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
+			expect(freshRequests.length).toBeGreaterThan(0);
+			for (const request of freshRequests) {
+				expect(request.auth).toBeUndefined();
+			}
+			expect(lmModels(freshRegistry)).toContain("qwen3-8b");
+			expect(
+				freshRegistry.getAvailable().some(model => model.provider === "lm-studio" && model.id === "qwen3-8b"),
+			).toBe(true);
+			fresh.close();
 
-		// Placeholder-only setup: empty paste against a keyless server.
-		wire.length = 0;
-		const placeholder = await bootStorage("keyless-placeholder");
-		await placeholder.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => "" });
-		const placeholderRegistry = bootRegistry(placeholder);
-		await refreshLmStudio(placeholderRegistry);
+			// Placeholder-only setup: empty paste against a keyless server.
+			wire.length = 0;
+			const placeholder = await bootStorage("keyless-placeholder");
+			await placeholder.oauth.login("lm-studio", { onAuth: () => {}, onPrompt: async () => "" });
+			const placeholderRegistry = bootRegistry(placeholder);
+			await refreshLmStudio(placeholderRegistry);
 
-		const placeholderRequests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
-		expect(placeholderRequests.length).toBeGreaterThan(0);
-		for (const request of placeholderRequests) {
-			expect(request.auth).toBeUndefined();
-		}
-		expect(lmModels(placeholderRegistry)).toContain("qwen3-8b");
-		expect(
-			placeholderRegistry.getAvailable().some(model => model.provider === "lm-studio" && model.id === "qwen3-8b"),
-		).toBe(true);
-		placeholder.close();
-	}, 30_000);
+			const placeholderRequests = wire.filter(w => w.path === "/v1/models" || w.path === "/api/v0/models");
+			expect(placeholderRequests.length).toBeGreaterThan(0);
+			for (const request of placeholderRequests) {
+				expect(request.auth).toBeUndefined();
+			}
+			expect(lmModels(placeholderRegistry)).toContain("qwen3-8b");
+			expect(
+				placeholderRegistry.getAvailable().some(model => model.provider === "lm-studio" && model.id === "qwen3-8b"),
+			).toBe(true);
+			placeholder.close();
+		},
+		scaledTimeout(30000),
+	);
 
-	test("a placeholder-only vllm login keeps discovered models requestable without bearer auth", async () => {
-		// Failure mode (#13246): vllm shares the empty-fallback pattern but
-		// receives no implicit keyless mark. Availability recognizes the stored
-		// placeholder as keyless, while request credential resolution dropped it
-		// and returned undefined, so AgentSession rejected the prompt before any
-		// request reached the local server.
-		const storage = await bootStorage("vllm-placeholder");
-		await storage.oauth.login("vllm", { onAuth: () => {}, onPrompt: async () => "" });
-		expect(await storage.keys.peek("vllm")).toBe("vllm-local");
+	test(
+		"a placeholder-only vllm login keeps discovered models requestable without bearer auth",
+		async () => {
+			// Failure mode (#13246): vllm shares the empty-fallback pattern but
+			// receives no implicit keyless mark. Availability recognizes the stored
+			// placeholder as keyless, while request credential resolution dropped it
+			// and returned undefined, so AgentSession rejected the prompt before any
+			// request reached the local server.
+			const storage = await bootStorage("vllm-placeholder");
+			await storage.oauth.login("vllm", { onAuth: () => {}, onPrompt: async () => "" });
+			expect(await storage.keys.peek("vllm")).toBe("vllm-local");
 
-		const registry = bootRegistry(storage);
-		await registry.refresh("online");
+			const registry = bootRegistry(storage);
+			await registry.refresh("online");
 
-		expect(vllmProbeAuth.length).toBeGreaterThan(0);
-		for (const auth of vllmProbeAuth) {
-			expect(auth).toBeUndefined();
-		}
-		const model = registry.find("vllm", "qwen3-8b");
-		expect(model).toBeDefined();
-		if (!model) throw new Error("Expected discovered vllm model");
-		expect(await registry.getApiKey(model)).toBe(kNoAuth);
-		// Explicit selection (`--model`, /model, setModel) gates on these.
-		expect(registry.hasConfiguredAuth(model)).toBe(true);
-		expect(registry.hasConcreteAuth("vllm")).toBe(true);
-		expect(registry.getAll().some(entry => entry.provider === "vllm" && entry.id === "qwen3-8b")).toBe(true);
-		expect(registry.getAvailable().some(entry => entry.provider === "vllm" && entry.id === "qwen3-8b")).toBe(true);
-		storage.close();
-	}, 30_000);
+			expect(vllmProbeAuth.length).toBeGreaterThan(0);
+			for (const auth of vllmProbeAuth) {
+				expect(auth).toBeUndefined();
+			}
+			const model = registry.find("vllm", "qwen3-8b");
+			expect(model).toBeDefined();
+			if (!model) throw new Error("Expected discovered vllm model");
+			expect(await registry.getApiKey(model)).toBe(kNoAuth);
+			// Explicit selection (`--model`, /model, setModel) gates on these.
+			expect(registry.hasConfiguredAuth(model)).toBe(true);
+			expect(registry.hasConcreteAuth("vllm")).toBe(true);
+			expect(registry.getAll().some(entry => entry.provider === "vllm" && entry.id === "qwen3-8b")).toBe(true);
+			expect(registry.getAvailable().some(entry => entry.provider === "vllm" && entry.id === "qwen3-8b")).toBe(true);
+			storage.close();
+		},
+		scaledTimeout(30000),
+	);
 });

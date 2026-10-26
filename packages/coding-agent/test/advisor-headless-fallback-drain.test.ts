@@ -11,6 +11,7 @@
  * recovery and pushes session teardown past its cleanup deadline.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { Agent } from "@marsai-org/agent-core";
 import type { Api, AssistantMessageEventStream, Context, Model, SimpleStreamOptions } from "@marsai-org/ai";
 import { createMockModel } from "@marsai-org/ai/providers/mock";
@@ -100,21 +101,29 @@ describe("headless advisor drain with a fallback reviewer", () => {
 		return { advised, unavailableAdvisor, backupAdvisor };
 	}
 
-	it("waits for the fallback advisor model to finish the review before reporting catch-up", async () => {
-		const { advised, unavailableAdvisor, backupAdvisor } = await startSessionWithFailingAdvisor();
+	it(
+		"waits for the fallback advisor model to finish the review before reporting catch-up",
+		async () => {
+			const { advised, unavailableAdvisor, backupAdvisor } = await startSessionWithFailingAdvisor();
 
-		expect(await advised.waitForAdvisorCatchup(10_000, { waitThroughRecovery: true })).toBe(true);
-		expect(unavailableAdvisor.calls.length).toBeGreaterThanOrEqual(1);
-		expect(backupAdvisor.calls).toHaveLength(1);
-	}, 20_000);
+			expect(await advised.waitForAdvisorCatchup(10_000, { waitThroughRecovery: true })).toBe(true);
+			expect(unavailableAdvisor.calls.length).toBeGreaterThanOrEqual(1);
+			expect(backupAdvisor.calls).toHaveLength(1);
+		},
+		scaledTimeout(20000),
+	);
 
-	it("releases the default drain promptly while fallback recovery is still running", async () => {
-		// The backup reviewer hangs until disposal aborts it, so only the
-		// deadline could release a drain that waits through recovery.
-		const { advised } = await startSessionWithFailingAdvisor(60_000);
+	it(
+		"releases the default drain promptly while fallback recovery is still running",
+		async () => {
+			// The backup reviewer hangs until disposal aborts it, so only the
+			// deadline could release a drain that waits through recovery.
+			const { advised } = await startSessionWithFailingAdvisor(60_000);
 
-		const started = performance.now();
-		expect(await advised.waitForAdvisorCatchup(10_000)).toBe(false);
-		expect(performance.now() - started).toBeLessThan(2_000);
-	}, 20_000);
+			const started = performance.now();
+			expect(await advised.waitForAdvisorCatchup(10_000)).toBe(false);
+			expect(performance.now() - started).toBeLessThan(2_000);
+		},
+		scaledTimeout(20000),
+	);
 });

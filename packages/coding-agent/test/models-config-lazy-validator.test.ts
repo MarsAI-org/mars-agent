@@ -1,4 +1,5 @@
 import { expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
 
@@ -36,36 +37,40 @@ async function runProbe(root: string): Promise<ProbeResults> {
 	return JSON.parse(stdout) as ProbeResults;
 }
 
-test("models config validation resources are retained only for a custom config", async () => {
-	const tempDir = TempDir.createSync("@models-config-validator-");
-	try {
-		const { missing, custom } = await runProbe(tempDir.path());
+test(
+	"models config validation resources are retained only for a custom config",
+	async () => {
+		const tempDir = TempDir.createSync("@models-config-validator-");
+		try {
+			const { missing, custom } = await runProbe(tempDir.path());
 
-		expect(missing.model).toMatchObject({
-			provider: "anthropic",
-			id: "claude-sonnet-4-5",
-			baseUrl: "https://api.anthropic.com",
-			api: "anthropic-messages",
-		});
-		expect(custom.model).toEqual({
-			provider: "lazy-models",
-			id: "lazy-model",
-			baseUrl: "https://lazy.example/v1",
-			api: "openai-responses",
-			thinking: {
-				mode: "effort",
-				efforts: ["low", "medium", "high"],
-				defaultLevel: "medium",
-				requiresEffort: false,
-			},
-		});
-		expect(custom.schemaIdentityStable).toBe(true);
-		expect(missing.retainedHeapNodes).toBeLessThan(custom.retainedHeapNodes);
-		expect(
-			custom.retainedHeapNodes - missing.retainedHeapNodes,
-			"custom config validation should retain its schema bundle",
-		).toBeGreaterThan(5_000);
-	} finally {
-		await tempDir.remove().catch(() => {});
-	}
-}, 60_000);
+			expect(missing.model).toMatchObject({
+				provider: "anthropic",
+				id: "claude-sonnet-4-5",
+				baseUrl: "https://api.anthropic.com",
+				api: "anthropic-messages",
+			});
+			expect(custom.model).toEqual({
+				provider: "lazy-models",
+				id: "lazy-model",
+				baseUrl: "https://lazy.example/v1",
+				api: "openai-responses",
+				thinking: {
+					mode: "effort",
+					efforts: ["low", "medium", "high"],
+					defaultLevel: "medium",
+					requiresEffort: false,
+				},
+			});
+			expect(custom.schemaIdentityStable).toBe(true);
+			expect(missing.retainedHeapNodes).toBeLessThan(custom.retainedHeapNodes);
+			expect(
+				custom.retainedHeapNodes - missing.retainedHeapNodes,
+				"custom config validation should retain its schema bundle",
+			).toBeGreaterThan(5_000);
+		} finally {
+			await tempDir.remove().catch(() => {});
+		}
+	},
+	scaledTimeout(60000),
+);

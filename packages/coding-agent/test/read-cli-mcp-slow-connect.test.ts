@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -69,11 +70,15 @@ describe("mars read MCP resource with a slow-connecting server", () => {
 		return { exitCode, output, error };
 	}
 
-	it("waits for the pending connect instead of racing the startup deadline", async () => {
-		const { exitCode, output, error } = await runReadProbe();
+	it(
+		"waits for the pending connect instead of racing the startup deadline",
+		async () => {
+			const { exitCode, output, error } = await runReadProbe();
 
-		expect(error).toBe("");
-		expect(exitCode).toBe(0);
-		expect(output).toContain("fixture content for test://alpha");
-	}, 30_000);
+			expect(error).toBe("");
+			expect(exitCode).toBe(0);
+			expect(output).toContain("fixture content for test://alpha");
+		},
+		scaledTimeout(30000),
+	);
 });

@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
 import { getThemeByName, initTheme } from "@marsai-org/tui/theme";
@@ -10,7 +11,7 @@ beforeAll(async () => {
 	resetSettingsForTest();
 	await Settings.init({ inMemory: true, cwd: process.cwd() });
 	await initTheme(false, undefined, undefined, "dark", "light");
-}, 15_000);
+}, scaledTimeout(15000));
 
 const SKIP_TEXT = "Skipped due to a queued background completion (job or supervised process).";
 
@@ -48,31 +49,43 @@ describe("mid-turn steering skip rendering", () => {
 		}
 	});
 
-	it("preserves other skipped tool cards and real wait results", async () => {
-		const uiTheme = await getThemeByName("dark");
-		if (!uiTheme) throw new Error("dark theme missing");
-		const infoIcon = Bun.stripANSI(formatStatusIcon("info", uiTheme));
-		const skippedEdit = renderTool("edit", {
-			content: [{ type: "text", text: SKIP_TEXT }],
-			details: { __synthetic: true, source: "interrupt_skipped", executed: false },
-			isError: true,
-		});
-		expect(skippedEdit).toContain(infoIcon);
+	it(
+		"preserves other skipped tool cards and real wait results",
+		async () => {
+			const uiTheme = await getThemeByName("dark");
+			if (!uiTheme) throw new Error("dark theme missing");
+			const infoIcon = Bun.stripANSI(formatStatusIcon("info", uiTheme));
+			const skippedEdit = renderTool("edit", {
+				content: [{ type: "text", text: SKIP_TEXT }],
+				details: { __synthetic: true, source: "interrupt_skipped", executed: false },
+				isError: true,
+			});
+			expect(skippedEdit).toContain(infoIcon);
 
-		const realWait = renderTool("wait", {
-			content: [{ type: "text", text: "No background work to wait for" }],
-			details: { op: "wait", jobs: [] },
-		});
-		expect(realWait).toContain("No background work to wait for");
-	}, 15_000);
+			const realWait = renderTool("wait", {
+				content: [{ type: "text", text: "No background work to wait for" }],
+				details: { op: "wait", jobs: [] },
+			});
+			expect(realWait).toContain("No background work to wait for");
+		},
+		scaledTimeout(15000),
+	);
 
-	it("still renders a genuine edit failure as an error", async () => {
-		const uiTheme = await getThemeByName("dark");
-		if (!uiTheme) throw new Error("dark theme missing");
-		const errorIcon = Bun.stripANSI(formatStatusIcon("error", uiTheme));
+	it(
+		"still renders a genuine edit failure as an error",
+		async () => {
+			const uiTheme = await getThemeByName("dark");
+			if (!uiTheme) throw new Error("dark theme missing");
+			const errorIcon = Bun.stripANSI(formatStatusIcon("error", uiTheme));
 
-		const rendered = renderTool("edit", { content: [{ type: "text", text: SKIP_TEXT }], details: {}, isError: true });
+			const rendered = renderTool("edit", {
+				content: [{ type: "text", text: SKIP_TEXT }],
+				details: {},
+				isError: true,
+			});
 
-		expect(rendered).toContain(errorIcon);
-	}, 15_000);
+			expect(rendered).toContain(errorIcon);
+		},
+		scaledTimeout(15000),
+	);
 });

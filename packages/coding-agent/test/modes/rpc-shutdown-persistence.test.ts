@@ -7,6 +7,7 @@
  * learns about a failure the mode already reported and then recovered from.
  */
 import { afterEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { isRecord, TempDir } from "@marsai-org/utils";
@@ -161,84 +162,94 @@ const exitedWhileQueued = (child: { exited: Promise<number> }): Promise<boolean>
 	Promise.race([child.exited.then(() => true), Bun.sleep(2_000).then(() => false)]);
 
 describe.skipIf(unsupportedHarness)("RPC shutdown on a failed session store", () => {
-	it("drains the queued notice before exiting on a persistence failure", async () => {
-		const dir = TempDir.createSync("@pi-rpc-shutdown-");
-		tempDirs.push(dir);
-		const root = dir.path();
-		// A session directory the process can read but not write: the first
-		// persistence write fails with EACCES and the store latches the failure,
-		// exactly as a full or unplugged disk would.
-		const sessionDir = path.join(root, "sessions");
-		fs.mkdirSync(sessionDir, { recursive: true });
-		fs.chmodSync(sessionDir, 0o500);
+	it(
+		"drains the queued notice before exiting on a persistence failure",
+		async () => {
+			const dir = TempDir.createSync("@pi-rpc-shutdown-");
+			tempDirs.push(dir);
+			const root = dir.path();
+			// A session directory the process can read but not write: the first
+			// persistence write fails with EACCES and the store latches the failure,
+			// exactly as a full or unplugged disk would.
+			const sessionDir = path.join(root, "sessions");
+			fs.mkdirSync(sessionDir, { recursive: true });
+			fs.chmodSync(sessionDir, 0o500);
 
-		const { child, fifo, release, stderrText } = spawnRpcChild({ root, sessionDir });
-		try {
-			child.stdin.write(backlogFrames());
-			await child.stdin.flush();
-			child.stdin.end();
+			const { child, fifo, release, stderrText } = spawnRpcChild({ root, sessionDir });
+			try {
+				child.stdin.write(backlogFrames());
+				await child.stdin.flush();
+				child.stdin.end();
 
-			const wasQueuedAtDrain = await exitedWhileQueued(child);
-			const output = await drainFifo(child, fifo, 20_000);
-			const exitCode = await child.exited;
+				const wasQueuedAtDrain = await exitedWhileQueued(child);
+				const output = await drainFifo(child, fifo, 20_000);
+				const exitCode = await child.exited;
 
-			expect(exitCode).toBe(1);
-			const notice = findPersistenceNotice(output);
-			expect(notice?.level).toBe("error");
-			expect(String(notice?.message)).toContain("Session persistence failed: ");
-			// The mode's own teardown claim is on stderr; the raw fatal dump the
-			// review complains about never gets this far.
-			expect(stderrText()).toContain("Session persistence is still failing at shutdown: ");
-			// The mechanism: without the drain the child is gone before the parent
-			// reads a single frame, so nothing above could pass.
-			expect(wasQueuedAtDrain).toBe(false);
-		} finally {
-			release();
-			fs.chmodSync(sessionDir, 0o700);
-		}
-	}, 30_000);
+				expect(exitCode).toBe(1);
+				const notice = findPersistenceNotice(output);
+				expect(notice?.level).toBe("error");
+				expect(String(notice?.message)).toContain("Session persistence failed: ");
+				// The mode's own teardown claim is on stderr; the raw fatal dump the
+				// review complains about never gets this far.
+				expect(stderrText()).toContain("Session persistence is still failing at shutdown: ");
+				// The mechanism: without the drain the child is gone before the parent
+				// reads a single frame, so nothing above could pass.
+				expect(wasQueuedAtDrain).toBe(false);
+			} finally {
+				release();
+				fs.chmodSync(sessionDir, 0o700);
+			}
+		},
+		scaledTimeout(30000),
+	);
 
-	it("drains a recovered failure's notice before exiting successfully", async () => {
-		const dir = TempDir.createSync("@pi-rpc-recovered-");
-		tempDirs.push(dir);
-		const root = dir.path();
-		const sessionDir = path.join(root, "sessions");
-		fs.mkdirSync(sessionDir, { recursive: true });
-		fs.chmodSync(sessionDir, 0o500);
+	it(
+		"drains a recovered failure's notice before exiting successfully",
+		async () => {
+			const dir = TempDir.createSync("@pi-rpc-recovered-");
+			tempDirs.push(dir);
+			const root = dir.path();
+			const sessionDir = path.join(root, "sessions");
+			fs.mkdirSync(sessionDir, { recursive: true });
+			fs.chmodSync(sessionDir, 0o500);
 
-		const { child, fifo, release, waitForStderr } = spawnRpcChild({ root, sessionDir });
-		try {
-			child.stdin.write(backlogFrames());
-			await child.stdin.flush();
-			// The store rejects the first write, so a notice is queued behind the
-			// backlog the parent is still not reading.
-			expect(await waitForStderr("Session persistence failed: ", 20_000)).toBe(true);
+			const { child, fifo, release, waitForStderr } = spawnRpcChild({ root, sessionDir });
+			try {
+				child.stdin.write(backlogFrames());
+				await child.stdin.flush();
+				// The store rejects the first write, so a notice is queued behind the
+				// backlog the parent is still not reading.
+				expect(await waitForStderr("Session persistence failed: ", 20_000)).toBe(true);
 
-			// The store recovers: a successful rewrite clears the latch, so dispose
-			// resolves and the mode leaves through its success path. A second
-			// `new_session` cannot be used here: it awaits `#drainAndCloseWriter`
-			// before `#resetToNewSession` clears the error, so it replays the latch.
-			fs.chmodSync(sessionDir, 0o700);
-			child.stdin.write(`${JSON.stringify({ id: "recover", type: "set_session_name", name: "after-failure" })}\n`);
-			await child.stdin.flush();
-			child.stdin.end();
+				// The store recovers: a successful rewrite clears the latch, so dispose
+				// resolves and the mode leaves through its success path. A second
+				// `new_session` cannot be used here: it awaits `#drainAndCloseWriter`
+				// before `#resetToNewSession` clears the error, so it replays the latch.
+				fs.chmodSync(sessionDir, 0o700);
+				child.stdin.write(
+					`${JSON.stringify({ id: "recover", type: "set_session_name", name: "after-failure" })}\n`,
+				);
+				await child.stdin.flush();
+				child.stdin.end();
 
-			const wasQueuedAtDrain = await exitedWhileQueued(child);
-			const output = await drainFifo(child, fifo, 20_000);
-			const exitCode = await child.exited;
+				const wasQueuedAtDrain = await exitedWhileQueued(child);
+				const output = await drainFifo(child, fifo, 20_000);
+				const exitCode = await child.exited;
 
-			expect(exitCode).toBe(0);
-			// The notice the mode already emitted on the failed write still reaches
-			// the client, even though the run itself recovered and reported success.
-			const notice = findPersistenceNotice(output);
-			expect(notice?.level).toBe("error");
-			expect(String(notice?.message)).toContain("Session persistence failed: ");
-			// The mechanism: without the success-path drain the child is gone before
-			// the parent reads a single frame, so the notice above is lost.
-			expect(wasQueuedAtDrain).toBe(false);
-		} finally {
-			release();
-			fs.chmodSync(sessionDir, 0o700);
-		}
-	}, 30_000);
+				expect(exitCode).toBe(0);
+				// The notice the mode already emitted on the failed write still reaches
+				// the client, even though the run itself recovered and reported success.
+				const notice = findPersistenceNotice(output);
+				expect(notice?.level).toBe("error");
+				expect(String(notice?.message)).toContain("Session persistence failed: ");
+				// The mechanism: without the success-path drain the child is gone before
+				// the parent reads a single frame, so the notice above is lost.
+				expect(wasQueuedAtDrain).toBe(false);
+			} finally {
+				release();
+				fs.chmodSync(sessionDir, 0o700);
+			}
+		},
+		scaledTimeout(30000),
+	);
 });

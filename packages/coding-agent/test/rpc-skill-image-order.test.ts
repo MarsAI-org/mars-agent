@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -38,35 +39,41 @@ afterEach(async () => {
 	await removeWithRetries(directory);
 });
 
-test("a later prompt does not overtake an idle image skill while its image is described", async () => {
-	const results = new Map<string, RpcPromptResultFrame>();
-	const bothSettled = Promise.withResolvers<void>();
-	const unsubscribe = client.onPromptResult(frame => {
-		if (frame.id) results.set(frame.id, frame);
-		if (results.size === 2) bothSettled.resolve();
-	});
-	try {
-		const skill = client.prompt("/skill:look what is this?", [{ type: "image", data: PNG, mimeType: "image/png" }]);
-		// The skill is acknowledged only after admission, which waits for the held vision request.
-		// An acknowledgement first means the vision path never ran, so fail now instead of at the test timeout.
-		let visionStarted = false;
-		await Promise.race([
-			waitForFile(path.join(directory, "vision-started")).then(() => {
-				visionStarted = true;
-			}),
-			skill.then(() => {
-				if (!visionStarted) throw new Error("skill was admitted without starting a vision description request");
-			}),
-		]);
-		const second = client.prompt("second", undefined, "followUp");
-		// get_state runs on the serial queue after the second prompt was accepted and handed to the input gate.
-		await client.getState();
-		await Bun.write(path.join(directory, "vision-release"), "");
-		await Promise.all([skill, second]);
-		await bothSettled.promise;
-	} finally {
-		unsubscribe();
-	}
-	expect([...results.values()].map(result => result.status)).toEqual(["completed", "completed"]);
-	expect(submissionOrder(await client.getMessages())).toEqual(["skill", "second"]);
-}, 30_000);
+test(
+	"a later prompt does not overtake an idle image skill while its image is described",
+	async () => {
+		const results = new Map<string, RpcPromptResultFrame>();
+		const bothSettled = Promise.withResolvers<void>();
+		const unsubscribe = client.onPromptResult(frame => {
+			if (frame.id) results.set(frame.id, frame);
+			if (results.size === 2) bothSettled.resolve();
+		});
+		try {
+			const skill = client.prompt("/skill:look what is this?", [
+				{ type: "image", data: PNG, mimeType: "image/png" },
+			]);
+			// The skill is acknowledged only after admission, which waits for the held vision request.
+			// An acknowledgement first means the vision path never ran, so fail now instead of at the test timeout.
+			let visionStarted = false;
+			await Promise.race([
+				waitForFile(path.join(directory, "vision-started")).then(() => {
+					visionStarted = true;
+				}),
+				skill.then(() => {
+					if (!visionStarted) throw new Error("skill was admitted without starting a vision description request");
+				}),
+			]);
+			const second = client.prompt("second", undefined, "followUp");
+			// get_state runs on the serial queue after the second prompt was accepted and handed to the input gate.
+			await client.getState();
+			await Bun.write(path.join(directory, "vision-release"), "");
+			await Promise.all([skill, second]);
+			await bothSettled.promise;
+		} finally {
+			unsubscribe();
+		}
+		expect([...results.values()].map(result => result.status)).toEqual(["completed", "completed"]);
+		expect(submissionOrder(await client.getMessages())).toEqual(["skill", "second"]);
+	},
+	scaledTimeout(30000),
+);

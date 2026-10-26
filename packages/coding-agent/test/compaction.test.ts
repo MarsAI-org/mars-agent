@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { type AgentMessage, Tokenizer } from "@marsai-org/agent-core";
 import {
@@ -1648,34 +1649,38 @@ describe("Large session fixture", () => {
 // ============================================================================
 
 describe.skipIf(!e2eApiKey("ANTHROPIC_API_KEY"))("LLM summarization", () => {
-	it("should produce valid session after compaction", async () => {
-		const entries = await loadLargeSessionEntries();
-		const loaded = buildSessionContext(entries);
-		const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
+	it(
+		"should produce valid session after compaction",
+		async () => {
+			const entries = await loadLargeSessionEntries();
+			const loaded = buildSessionContext(entries);
+			const model = getBundledModel("anthropic", "claude-sonnet-4-5")!;
 
-		const preparation = prepareCompaction(entries, DEFAULT_COMPACTION_SETTINGS);
+			const preparation = prepareCompaction(entries, DEFAULT_COMPACTION_SETTINGS);
 
-		const compactionResult = await compact(preparation!, model, e2eApiKey("ANTHROPIC_API_KEY")!);
+			const compactionResult = await compact(preparation!, model, e2eApiKey("ANTHROPIC_API_KEY")!);
 
-		// Simulate appending compaction to entries by creating a proper entry
-		const lastEntry = entries[entries.length - 1];
-		const parentId = lastEntry.id;
-		const compactionEntry: CompactionEntry = {
-			type: "compaction",
-			id: "compaction-test-id",
-			parentId,
-			timestamp: new Date().toISOString(),
-			...compactionResult,
-		};
-		const newEntries = [...entries, compactionEntry];
-		const reloaded = buildSessionContext(newEntries);
+			// Simulate appending compaction to entries by creating a proper entry
+			const lastEntry = entries[entries.length - 1];
+			const parentId = lastEntry.id;
+			const compactionEntry: CompactionEntry = {
+				type: "compaction",
+				id: "compaction-test-id",
+				parentId,
+				timestamp: new Date().toISOString(),
+				...compactionResult,
+			};
+			const newEntries = [...entries, compactionEntry];
+			const reloaded = buildSessionContext(newEntries);
 
-		// Should have summary + kept messages
-		expect(reloaded.messages.length).toBeLessThan(loaded.messages.length);
-		expect(reloaded.messages[0].role).toBe("compactionSummary");
-		expect((reloaded.messages[0] as any).summary).toContain(compactionResult.summary);
+			// Should have summary + kept messages
+			expect(reloaded.messages.length).toBeLessThan(loaded.messages.length);
+			expect(reloaded.messages[0].role).toBe("compactionSummary");
+			expect((reloaded.messages[0] as any).summary).toContain(compactionResult.summary);
 
-		console.log("Original messages:", loaded.messages.length);
-		console.log("After compaction:", reloaded.messages.length);
-	}, 60000);
+			console.log("Original messages:", loaded.messages.length);
+			console.log("After compaction:", reloaded.messages.length);
+		},
+		scaledTimeout(60000),
+	);
 });

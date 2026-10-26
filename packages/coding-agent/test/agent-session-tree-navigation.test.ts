@@ -9,6 +9,7 @@
  * - Abort handling during summarization
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
 import { createTestSession, e2eApiKey, type TestSessionContext } from "./utilities";
 
@@ -38,54 +39,62 @@ describe.skipIf(!e2eApiKey("ANTHROPIC_API_KEY"))("AgentSession tree navigation e
 		await ctx.cleanup();
 	});
 
-	it("should navigate to user message and put text in editor", async () => {
-		const { session } = ctx;
+	it(
+		"should navigate to user message and put text in editor",
+		async () => {
+			const { session } = ctx;
 
-		// Build conversation: u1 -> a1 -> u2 -> a2
-		await session.prompt("First message");
-		await session.agent.waitForIdle();
-		await session.prompt("Second message");
-		await session.agent.waitForIdle();
+			// Build conversation: u1 -> a1 -> u2 -> a2
+			await session.prompt("First message");
+			await session.agent.waitForIdle();
+			await session.prompt("Second message");
+			await session.agent.waitForIdle();
 
-		// Get tree entries
-		const tree = session.sessionManager.getTree();
-		expect(tree.length).toBe(1);
+			// Get tree entries
+			const tree = session.sessionManager.getTree();
+			expect(tree.length).toBe(1);
 
-		// Find the first user entry (u1)
-		const rootNode = tree[0];
-		expect(rootNode.entry.type).toBe("message");
+			// Find the first user entry (u1)
+			const rootNode = tree[0];
+			expect(rootNode.entry.type).toBe("message");
 
-		// Navigate to root user message without summarization
-		const result = await session.navigateTree(rootNode.entry.id, { summarize: false });
+			// Navigate to root user message without summarization
+			const result = await session.navigateTree(rootNode.entry.id, { summarize: false });
 
-		expect(result.cancelled).toBe(false);
-		expect(result.editorText).toBe("First message");
+			expect(result.cancelled).toBe(false);
+			expect(result.editorText).toBe("First message");
 
-		// After navigating to root user message, leaf should be null (empty conversation)
-		expect(session.sessionManager.getLeafId()).toBeNull();
-	}, 60000);
+			// After navigating to root user message, leaf should be null (empty conversation)
+			expect(session.sessionManager.getLeafId()).toBeNull();
+		},
+		scaledTimeout(60000),
+	);
 
-	it("should navigate to non-user message without editor text", async () => {
-		const { session, sessionManager } = ctx;
+	it(
+		"should navigate to non-user message without editor text",
+		async () => {
+			const { session, sessionManager } = ctx;
 
-		// Build conversation
-		await session.prompt("Hello");
-		await session.agent.waitForIdle();
+			// Build conversation
+			await session.prompt("Hello");
+			await session.agent.waitForIdle();
 
-		// Get the assistant message
-		const entries = sessionManager.getEntries();
-		const assistantEntry = entries.find(e => e.type === "message" && e.message.role === "assistant");
-		expect(assistantEntry).toBeDefined();
+			// Get the assistant message
+			const entries = sessionManager.getEntries();
+			const assistantEntry = entries.find(e => e.type === "message" && e.message.role === "assistant");
+			expect(assistantEntry).toBeDefined();
 
-		// Navigate to assistant message
-		const result = await session.navigateTree(assistantEntry!.id, { summarize: false });
+			// Navigate to assistant message
+			const result = await session.navigateTree(assistantEntry!.id, { summarize: false });
 
-		expect(result.cancelled).toBe(false);
-		expect(result.editorText).toBeUndefined();
+			expect(result.cancelled).toBe(false);
+			expect(result.editorText).toBeUndefined();
 
-		// Leaf should be the assistant entry
-		expect(sessionManager.getLeafId()).toBe(assistantEntry!.id);
-	}, 60000);
+			// Leaf should be the assistant entry
+			expect(sessionManager.getLeafId()).toBe(assistantEntry!.id);
+		},
+		scaledTimeout(60000),
+	);
 
 	it("should create branch summary when navigating with summarize=true", async () => {
 		const { session, sessionManager } = ctx;
@@ -184,83 +193,95 @@ describe.skipIf(!e2eApiKey("ANTHROPIC_API_KEY"))("AgentSession tree navigation e
 		expect(sessionManager.getLeafId()).toBe(result.summaryEntry?.id ?? null);
 	}, 120000);
 
-	it("should handle abort during summarization", async () => {
-		const { session, sessionManager } = ctx;
+	it(
+		"should handle abort during summarization",
+		async () => {
+			const { session, sessionManager } = ctx;
 
-		// Build conversation
-		await session.prompt("Tell me about something");
-		await session.agent.waitForIdle();
-		await session.prompt("Continue");
-		await session.agent.waitForIdle();
+			// Build conversation
+			await session.prompt("Tell me about something");
+			await session.agent.waitForIdle();
+			await session.prompt("Continue");
+			await session.agent.waitForIdle();
 
-		const entriesBefore = sessionManager.getEntries();
-		const leafBefore = sessionManager.getLeafId();
+			const entriesBefore = sessionManager.getEntries();
+			const leafBefore = sessionManager.getLeafId();
 
-		// Get root user message
-		const tree = sessionManager.getTree();
-		const rootNode = tree[0];
+			// Get root user message
+			const tree = sessionManager.getTree();
+			const rootNode = tree[0];
 
-		// Synchronize on the session_before_tree boundary: at this point the
-		// production abort controller exists, so aborting cannot race setup.
-		observeTreePreparation = true;
-		const navigationPromise = session.navigateTree(rootNode.entry.id, { summarize: true });
-		await treePreparationStarted.promise;
-		session.abortBranchSummary();
+			// Synchronize on the session_before_tree boundary: at this point the
+			// production abort controller exists, so aborting cannot race setup.
+			observeTreePreparation = true;
+			const navigationPromise = session.navigateTree(rootNode.entry.id, { summarize: true });
+			await treePreparationStarted.promise;
+			session.abortBranchSummary();
 
-		const result = await navigationPromise;
+			const result = await navigationPromise;
 
-		expect(result.cancelled).toBe(true);
-		expect(result.aborted).toBe(true);
-		expect(result.summaryEntry).toBeUndefined();
+			expect(result.cancelled).toBe(true);
+			expect(result.aborted).toBe(true);
+			expect(result.summaryEntry).toBeUndefined();
 
-		// Session should be unchanged
-		const entriesAfter = sessionManager.getEntries();
-		expect(entriesAfter.length).toBe(entriesBefore.length);
-		expect(sessionManager.getLeafId()).toBe(leafBefore);
-	}, 60000);
+			// Session should be unchanged
+			const entriesAfter = sessionManager.getEntries();
+			expect(entriesAfter.length).toBe(entriesBefore.length);
+			expect(sessionManager.getLeafId()).toBe(leafBefore);
+		},
+		scaledTimeout(60000),
+	);
 
-	it("should not create summary when navigating without summarize option", async () => {
-		const { session, sessionManager } = ctx;
+	it(
+		"should not create summary when navigating without summarize option",
+		async () => {
+			const { session, sessionManager } = ctx;
 
-		// Build conversation
-		await session.prompt("First");
-		await session.agent.waitForIdle();
-		await session.prompt("Second");
-		await session.agent.waitForIdle();
+			// Build conversation
+			await session.prompt("First");
+			await session.agent.waitForIdle();
+			await session.prompt("Second");
+			await session.agent.waitForIdle();
 
-		const entriesBefore = sessionManager.getEntries().length;
+			const entriesBefore = sessionManager.getEntries().length;
 
-		// Navigate without summarization
-		const tree = sessionManager.getTree();
-		await session.navigateTree(tree[0].entry.id, { summarize: false });
+			// Navigate without summarization
+			const tree = sessionManager.getTree();
+			await session.navigateTree(tree[0].entry.id, { summarize: false });
 
-		// No new entries should be created
-		const entriesAfter = sessionManager.getEntries().length;
-		expect(entriesAfter).toBe(entriesBefore);
+			// No new entries should be created
+			const entriesAfter = sessionManager.getEntries().length;
+			expect(entriesAfter).toBe(entriesBefore);
 
-		// No branch_summary entries
-		const summaries = sessionManager.getEntries().filter(e => e.type === "branch_summary");
-		expect(summaries.length).toBe(0);
-	}, 60000);
+			// No branch_summary entries
+			const summaries = sessionManager.getEntries().filter(e => e.type === "branch_summary");
+			expect(summaries.length).toBe(0);
+		},
+		scaledTimeout(60000),
+	);
 
-	it("should handle navigation to same position (no-op)", async () => {
-		const { session, sessionManager } = ctx;
+	it(
+		"should handle navigation to same position (no-op)",
+		async () => {
+			const { session, sessionManager } = ctx;
 
-		// Build conversation
-		await session.prompt("Hello");
-		await session.agent.waitForIdle();
+			// Build conversation
+			await session.prompt("Hello");
+			await session.agent.waitForIdle();
 
-		const leafBefore = sessionManager.getLeafId();
-		expect(leafBefore).toBeTruthy();
-		const entriesBefore = sessionManager.getEntries().length;
+			const leafBefore = sessionManager.getLeafId();
+			expect(leafBefore).toBeTruthy();
+			const entriesBefore = sessionManager.getEntries().length;
 
-		// Navigate to current leaf
-		const result = await session.navigateTree(leafBefore!, { summarize: false });
+			// Navigate to current leaf
+			const result = await session.navigateTree(leafBefore!, { summarize: false });
 
-		expect(result.cancelled).toBe(false);
-		expect(sessionManager.getLeafId()).toBe(leafBefore);
-		expect(sessionManager.getEntries().length).toBe(entriesBefore);
-	}, 60000);
+			expect(result.cancelled).toBe(false);
+			expect(sessionManager.getLeafId()).toBe(leafBefore);
+			expect(sessionManager.getEntries().length).toBe(entriesBefore);
+		},
+		scaledTimeout(60000),
+	);
 
 	it("should support custom summarization instructions", async () => {
 		const { session, sessionManager } = ctx;

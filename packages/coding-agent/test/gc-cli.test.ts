@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, spyOn, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -747,33 +748,37 @@ describe("runGcCommand history checkpoint", () => {
 		expect(await Bun.file(path.join(root, "gc.lock")).exists()).toBe(false);
 	});
 
-	test("--apply reports busy WAL checkpoints and releases the gc lock", async () => {
-		const dbPath = getHistoryDbPath(root);
-		await fs.mkdir(path.dirname(dbPath), { recursive: true });
-		const writer = new Database(dbPath);
-		const reader = new Database(dbPath);
-		try {
-			writer.run("PRAGMA journal_mode=WAL");
-			writer.run("CREATE TABLE history (id INTEGER PRIMARY KEY, prompt TEXT)");
-			writer.run("INSERT INTO history (prompt) VALUES ('before-reader')");
-			reader.run("PRAGMA journal_mode=WAL");
-			reader.run("BEGIN");
-			reader.query("SELECT * FROM history").all();
-			writer.run("INSERT INTO history (prompt) VALUES ('after-reader')");
-
-			await expect(runGcCommand({ flags: { agentDir: root, wal: true, apply: true } })).rejects.toThrow(
-				`WAL checkpoint failed for ${dbPath}: busy=1`,
-			);
-
-			expect(await Bun.file(path.join(root, "gc.lock")).exists()).toBe(false);
-		} finally {
+	test(
+		"--apply reports busy WAL checkpoints and releases the gc lock",
+		async () => {
+			const dbPath = getHistoryDbPath(root);
+			await fs.mkdir(path.dirname(dbPath), { recursive: true });
+			const writer = new Database(dbPath);
+			const reader = new Database(dbPath);
 			try {
-				reader.run("COMMIT");
-			} catch {}
-			reader.close();
-			writer.close();
-		}
-	}, 10_000);
+				writer.run("PRAGMA journal_mode=WAL");
+				writer.run("CREATE TABLE history (id INTEGER PRIMARY KEY, prompt TEXT)");
+				writer.run("INSERT INTO history (prompt) VALUES ('before-reader')");
+				reader.run("PRAGMA journal_mode=WAL");
+				reader.run("BEGIN");
+				reader.query("SELECT * FROM history").all();
+				writer.run("INSERT INTO history (prompt) VALUES ('after-reader')");
+
+				await expect(runGcCommand({ flags: { agentDir: root, wal: true, apply: true } })).rejects.toThrow(
+					`WAL checkpoint failed for ${dbPath}: busy=1`,
+				);
+
+				expect(await Bun.file(path.join(root, "gc.lock")).exists()).toBe(false);
+			} finally {
+				try {
+					reader.run("COMMIT");
+				} catch {}
+				reader.close();
+				writer.close();
+			}
+		},
+		scaledTimeout(10000),
+	);
 });
 
 describe("runGcCommand cold-session archive", () => {

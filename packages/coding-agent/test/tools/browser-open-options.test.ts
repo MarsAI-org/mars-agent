@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { afterAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
 import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
@@ -190,38 +191,42 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 		}
 	});
 
-	it("keeps the tab on what loaded when the page outlasts the open timeout", async () => {
-		const server = Bun.serve({
-			port: 0,
-			fetch(request) {
-				// The image never answers, so the page never fires `load`.
-				if (new URL(request.url).pathname === "/hang.png") return new Promise<Response>(() => {});
-				return new Response('<title>slow</title><p>partial</p><img src="/hang.png">', {
-					headers: { "content-type": "text/html" },
-				});
-			},
-		});
-		try {
-			const invoke = browserHost();
-			const name = `slow-${crypto.randomUUID()}`;
-			const open = () => rejectionOf(invoke({ action: "open", name, url: server.url.href, timeout: 3 }));
-			const keptTab = { message: expect.stringContaining(`browser.tab(${JSON.stringify(name)})`) };
-			// The first open creates the tab; the second reuses the one it kept.
-			expect(await open()).toMatchObject(keptTab);
-			expect(await open()).toMatchObject(keptTab);
-			expect(
-				returnedValue(
-					await invoke({
-						action: "run",
-						name,
-						code: "return { url: tab.url(), text: await tab.evaluate(() => document.body.innerText) };",
-					}),
-				),
-			).toEqual({ url: server.url.href, text: "partial" });
-		} finally {
-			server.stop(true);
-		}
-	}, 20_000);
+	it(
+		"keeps the tab on what loaded when the page outlasts the open timeout",
+		async () => {
+			const server = Bun.serve({
+				port: 0,
+				fetch(request) {
+					// The image never answers, so the page never fires `load`.
+					if (new URL(request.url).pathname === "/hang.png") return new Promise<Response>(() => {});
+					return new Response('<title>slow</title><p>partial</p><img src="/hang.png">', {
+						headers: { "content-type": "text/html" },
+					});
+				},
+			});
+			try {
+				const invoke = browserHost();
+				const name = `slow-${crypto.randomUUID()}`;
+				const open = () => rejectionOf(invoke({ action: "open", name, url: server.url.href, timeout: 3 }));
+				const keptTab = { message: expect.stringContaining(`browser.tab(${JSON.stringify(name)})`) };
+				// The first open creates the tab; the second reuses the one it kept.
+				expect(await open()).toMatchObject(keptTab);
+				expect(await open()).toMatchObject(keptTab);
+				expect(
+					returnedValue(
+						await invoke({
+							action: "run",
+							name,
+							code: "return { url: tab.url(), text: await tab.evaluate(() => document.body.innerText) };",
+						}),
+					),
+				).toEqual({ url: server.url.href, text: "partial" });
+			} finally {
+				server.stop(true);
+			}
+		},
+		scaledTimeout(20000),
+	);
 
 	it("closes the tab its open created when the navigation fails outright, but keeps a reused one", async () => {
 		const refused = Bun.serve({ port: 0, fetch: () => new Response("") });
@@ -247,39 +252,45 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser open options", () => {
 		expect(await tabNames()).toContain(name);
 	});
 
-	it("closes the tab its open created when the open is cancelled during navigation", async () => {
-		const requested = Promise.withResolvers<void>();
-		const answer = Promise.withResolvers<void>();
-		const server = Bun.serve({
-			port: 0,
-			async fetch() {
-				requested.resolve();
-				// Held until after the cancel, so the navigation is still pending then.
-				await answer.promise;
-				return new Response("<title>late</title>", { headers: { "content-type": "text/html" } });
-			},
-		});
-		try {
-			const invoke = browserHost();
-			const name = `cancelled-${crypto.randomUUID()}`;
-			const controller = new AbortController();
-			const open = rejectionOf(invoke({ action: "open", name, url: server.url.href }, controller.signal));
-			await requested.promise;
-			const cancelled = getTab(name);
-			expect(cancelled?.state).toBe("alive");
-			controller.abort();
-			expect(await open).toBeInstanceOf(ToolAbortError);
-			// A cancelled run may only unwind once the pending document answers.
-			answer.resolve();
-			// Opens of one name run in order, so this one starts after the
-			// cancelled open finished unwinding, and finds no tab to reuse.
-			const reopened = await invoke({ action: "open", name });
-			expect(reopened.content).toEqual([expect.objectContaining({ text: expect.stringMatching(/^Opened tab /) })]);
-			expect(getTab(name)).not.toBe(cancelled);
-		} finally {
-			server.stop(true);
-		}
-	}, 20_000);
+	it(
+		"closes the tab its open created when the open is cancelled during navigation",
+		async () => {
+			const requested = Promise.withResolvers<void>();
+			const answer = Promise.withResolvers<void>();
+			const server = Bun.serve({
+				port: 0,
+				async fetch() {
+					requested.resolve();
+					// Held until after the cancel, so the navigation is still pending then.
+					await answer.promise;
+					return new Response("<title>late</title>", { headers: { "content-type": "text/html" } });
+				},
+			});
+			try {
+				const invoke = browserHost();
+				const name = `cancelled-${crypto.randomUUID()}`;
+				const controller = new AbortController();
+				const open = rejectionOf(invoke({ action: "open", name, url: server.url.href }, controller.signal));
+				await requested.promise;
+				const cancelled = getTab(name);
+				expect(cancelled?.state).toBe("alive");
+				controller.abort();
+				expect(await open).toBeInstanceOf(ToolAbortError);
+				// A cancelled run may only unwind once the pending document answers.
+				answer.resolve();
+				// Opens of one name run in order, so this one starts after the
+				// cancelled open finished unwinding, and finds no tab to reuse.
+				const reopened = await invoke({ action: "open", name });
+				expect(reopened.content).toEqual([
+					expect.objectContaining({ text: expect.stringMatching(/^Opened tab /) }),
+				]);
+				expect(getTab(name)).not.toBe(cancelled);
+			} finally {
+				server.stop(true);
+			}
+		},
+		scaledTimeout(20000),
+	);
 
 	it("reports where a download was saved when another tab set a different downloads directory", async () => {
 		const payload = new TextEncoder().encode("download payload\n");

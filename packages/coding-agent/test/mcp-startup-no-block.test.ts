@@ -17,6 +17,7 @@
  * path if/when it eventually connects.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -38,40 +39,44 @@ describe("MCP startup (issue #2100)", () => {
 		removeSyncWithRetries(workDir);
 	});
 
-	it("returns promptly when a configured MCP server stalls on initialize", async () => {
-		const manager = new MCPManager(workDir);
-		const config: MCPStdioServerConfig = {
-			type: "stdio",
-			command: BUN_EXEC,
-			args: [FIXTURE_PATH],
-		};
+	it(
+		"returns promptly when a configured MCP server stalls on initialize",
+		async () => {
+			const manager = new MCPManager(workDir);
+			const config: MCPStdioServerConfig = {
+				type: "stdio",
+				command: BUN_EXEC,
+				args: [FIXTURE_PATH],
+			};
 
-		try {
-			const start = performance.now();
-			const result = await manager.connectServers({ hang: config }, {});
-			const elapsedMs = performance.now() - start;
+			try {
+				const start = performance.now();
+				const result = await manager.connectServers({ hang: config }, {});
+				const elapsedMs = performance.now() - start;
 
-			// `STARTUP_TIMEOUT_MS` is 250 ms; allow generous headroom for
-			// process spawn + scheduling jitter in CI. The pre-fix code path
-			// blocked 30 000 ms, so anything under a few seconds proves the
-			// regression is closed.
-			expect(elapsedMs).toBeLessThan(5_000);
+				// `STARTUP_TIMEOUT_MS` is 250 ms; allow generous headroom for
+				// process spawn + scheduling jitter in CI. The pre-fix code path
+				// blocked 30 000 ms, so anything under a few seconds proves the
+				// regression is closed.
+				expect(elapsedMs).toBeLessThan(5_000);
 
-			// Slow server with no cached tools surfaces no tools at startup
-			// and no error (it's still pending in the background). The fact
-			// that startup returned at all is the contract.
-			expect(result.tools).toEqual([]);
-			expect(result.connectedServers).toEqual([]);
-			expect(result.errors.has("hang")).toBe(false);
+				// Slow server with no cached tools surfaces no tools at startup
+				// and no error (it's still pending in the background). The fact
+				// that startup returned at all is the contract.
+				expect(result.tools).toEqual([]);
+				expect(result.connectedServers).toEqual([]);
+				expect(result.errors.has("hang")).toBe(false);
 
-			// Manager retains the pending connection so reconnect/dedup logic
-			// continues to function — a second `connectServers` call must not
-			// double-spawn while the first is still in flight.
-			const second = await manager.connectServers({ hang: config }, {});
-			expect(second.tools).toEqual([]);
-			expect(second.errors.has("hang")).toBe(false);
-		} finally {
-			await manager.disconnectAll();
-		}
-	}, 15_000);
+				// Manager retains the pending connection so reconnect/dedup logic
+				// continues to function — a second `connectServers` call must not
+				// double-spawn while the first is still in flight.
+				const second = await manager.connectServers({ hang: config }, {});
+				expect(second.tools).toEqual([]);
+				expect(second.errors.has("hang")).toBe(false);
+			} finally {
+				await manager.disconnectAll();
+			}
+		},
+		scaledTimeout(15000),
+	);
 });

@@ -7,6 +7,7 @@
  * instead of crashing the test runner.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { loadExtensions } from "@marsai-org/coding-agent/extensibility/extensions/loader";
@@ -48,7 +49,7 @@ describe("extension/hook loader process.exit guard (#3680)", () => {
 			try {
 				proc.kill("SIGKILL");
 			} catch {}
-		}, 20_000);
+		}, scaledTimeout(20000));
 		try {
 			const [exitCode, stdout, stderr] = await Promise.all([
 				proc.exited,

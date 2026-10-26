@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -30,41 +31,45 @@ const TEST_ADAPTER: DapResolvedAdapter = {
 	acceptsDirectoryProgram: false,
 };
 
-it("rejects pending DAP work and terminates an adapter with invalid framing", async () => {
-	const client = await DapClient.spawn({
-		adapter: {
-			...TEST_ADAPTER,
-			command: process.execPath,
-			resolvedCommand: process.execPath,
-			args: ["run", path.join(import.meta.dir, "../fixtures/malformed-jsonrpc-peer.ts")],
-		},
-		cwd: process.cwd(),
-	});
-	try {
-		const request = client.sendRequest("initialize", {}, undefined, 60_000);
-		const event = client.waitForEvent("stopped", undefined, undefined, 60_000);
-		const results = await withTimeout(
-			Promise.allSettled([request, event]),
-			5_000,
-			"Invalid framing did not reject pending DAP work",
-		);
-		for (const result of results) {
-			expect(result.status).toBe("rejected");
-			if (result.status === "rejected") {
-				expect(result.reason).toBeInstanceOf(Error);
-				expect((result.reason as Error).message).toMatch(/Content-Length.*limit/);
+it(
+	"rejects pending DAP work and terminates an adapter with invalid framing",
+	async () => {
+		const client = await DapClient.spawn({
+			adapter: {
+				...TEST_ADAPTER,
+				command: process.execPath,
+				resolvedCommand: process.execPath,
+				args: ["run", path.join(import.meta.dir, "../fixtures/malformed-jsonrpc-peer.ts")],
+			},
+			cwd: process.cwd(),
+		});
+		try {
+			const request = client.sendRequest("initialize", {}, undefined, 60_000);
+			const event = client.waitForEvent("stopped", undefined, undefined, 60_000);
+			const results = await withTimeout(
+				Promise.allSettled([request, event]),
+				5_000,
+				"Invalid framing did not reject pending DAP work",
+			);
+			for (const result of results) {
+				expect(result.status).toBe("rejected");
+				if (result.status === "rejected") {
+					expect(result.reason).toBeInstanceOf(Error);
+					expect((result.reason as Error).message).toMatch(/Content-Length.*limit/);
+				}
 			}
+			await expect(client.sendRequest("threads", {})).rejects.toThrow(/not running/);
+			await withTimeout(
+				client.proc.exited.catch(() => {}),
+				5_000,
+				"Malformed adapter remained alive",
+			);
+		} finally {
+			await client.dispose();
 		}
-		await expect(client.sendRequest("threads", {})).rejects.toThrow(/not running/);
-		await withTimeout(
-			client.proc.exited.catch(() => {}),
-			5_000,
-			"Malformed adapter remained alive",
-		);
-	} finally {
-		await client.dispose();
-	}
-}, 10_000);
+	},
+	scaledTimeout(10000),
+);
 
 const DELAYED_UNIX_SOCKET_ADAPTER = `
 const listenPrefix = "--listen=unix:";
@@ -633,7 +638,7 @@ describe("DAP TCP transport resilience", () => {
 	const GHOST_ADAPTER = `
 const port = Number(process.argv[2]);
 const server = Bun.listen({ hostname: "127.0.0.1", port, socket: {
-	open(s){ setTimeout(() => { try { s.end(); } catch {} }, 30); },
+	open(s){ setTimeout(() => { try { s.end(); } catch {} }, scaledTimeout(30)); },
 	data(){}, close(){}, error(){},
 }});
 console.log("Debug server listening at 127.0.0.1:" + port);
@@ -659,36 +664,44 @@ await Bun.sleep(60_000);
 		}
 	}
 
-	it("rejects a pending request fast when the transport closes cleanly without answering", async () => {
-		await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
-			const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
-			try {
-				// The ghost socket ends the read stream cleanly. The reader must wake
-				// the pending request with a connection-closed error; a wake regression
-				// rejects with `DAP request initialize timed out` instead.
-				await expect(client.sendRequest("initialize", {}, undefined, 60_000)).rejects.toThrow(
-					/DAP connection closed/,
-				);
-			} finally {
-				await client.dispose();
-			}
-		});
-	}, 20_000);
+	it(
+		"rejects a pending request fast when the transport closes cleanly without answering",
+		async () => {
+			await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
+				const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
+				try {
+					// The ghost socket ends the read stream cleanly. The reader must wake
+					// the pending request with a connection-closed error; a wake regression
+					// rejects with `DAP request initialize timed out` instead.
+					await expect(client.sendRequest("initialize", {}, undefined, 60_000)).rejects.toThrow(
+						/DAP connection closed/,
+					);
+				} finally {
+					await client.dispose();
+				}
+			});
+		},
+		scaledTimeout(20000),
+	);
 
-	it("wakes an event waiter when the transport closes instead of waiting out its timeout", async () => {
-		await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
-			const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
-			try {
-				// A close must wake the event waiter with the connection error rather
-				// than letting it wait out its own timeout.
-				await expect(client.waitForEvent("stopped", undefined, undefined, 60_000)).rejects.toThrow(
-					/DAP connection closed/,
-				);
-			} finally {
-				await client.dispose();
-			}
-		});
-	}, 20_000);
+	it(
+		"wakes an event waiter when the transport closes instead of waiting out its timeout",
+		async () => {
+			await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
+				const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
+				try {
+					// A close must wake the event waiter with the connection error rather
+					// than letting it wait out its own timeout.
+					await expect(client.waitForEvent("stopped", undefined, undefined, 60_000)).rejects.toThrow(
+						/DAP connection closed/,
+					);
+				} finally {
+					await client.dispose();
+				}
+			});
+		},
+		scaledTimeout(20000),
+	);
 
 	// Deterministic gate contract: the client must not open its first connect
 	// until the adapter's stdout mentions the reserved port. Driven with a

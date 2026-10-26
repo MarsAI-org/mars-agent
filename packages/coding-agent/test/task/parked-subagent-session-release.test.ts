@@ -7,6 +7,7 @@
  * spawned subagent.
  */
 import { afterEach, beforeEach, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -163,38 +164,46 @@ async function runKeptAliveSubagent(): Promise<{ release(): void; close(): void 
 	};
 }
 
-it("releases a parked keep-alive subagent's session while the agent stays revivable", async () => {
-	const run = await runKeptAliveSubagent();
-	try {
-		const sessionRef = weakRefToLiveSession(AGENT_ID);
-		await AgentLifecycleManager.global().park(AGENT_ID);
-		expect(AgentRegistry.global().get(AGENT_ID)).toMatchObject({ status: "parked", session: null });
-		expect(AgentLifecycleManager.global().has(AGENT_ID)).toBe(true);
+it(
+	"releases a parked keep-alive subagent's session while the agent stays revivable",
+	async () => {
+		const run = await runKeptAliveSubagent();
+		try {
+			const sessionRef = weakRefToLiveSession(AGENT_ID);
+			await AgentLifecycleManager.global().park(AGENT_ID);
+			expect(AgentRegistry.global().get(AGENT_ID)).toMatchObject({ status: "parked", session: null });
+			expect(AgentLifecycleManager.global().has(AGENT_ID)).toBe(true);
 
-		run.release();
-		expect(await collected(sessionRef, COLLECT_DEADLINE_MS)).toBe(true);
-		// Still adopted after collection: the release did not come from dropping the reviver.
-		expect(AgentLifecycleManager.global().has(AGENT_ID)).toBe(true);
-	} finally {
-		run.close();
-	}
-}, 30_000);
+			run.release();
+			expect(await collected(sessionRef, COLLECT_DEADLINE_MS)).toBe(true);
+			// Still adopted after collection: the release did not come from dropping the reviver.
+			expect(AgentLifecycleManager.global().has(AGENT_ID)).toBe(true);
+		} finally {
+			run.close();
+		}
+	},
+	scaledTimeout(30000),
+);
 
-it("parks without retaining the run's settings overlay and revives with the settings it wrote", async () => {
-	const run = await runKeptAliveSubagent();
-	try {
-		// A write the subagent made to its own settings during the run.
-		const settingsRef = writeAndObserveLiveSettings(AGENT_ID);
+it(
+	"parks without retaining the run's settings overlay and revives with the settings it wrote",
+	async () => {
+		const run = await runKeptAliveSubagent();
+		try {
+			// A write the subagent made to its own settings during the run.
+			const settingsRef = writeAndObserveLiveSettings(AGENT_ID);
 
-		await AgentLifecycleManager.global().park(AGENT_ID);
-		run.release();
-		// The reviver held the run's whole overlay — merged view, memoized values, listener buckets —
-		// for as long as the parked agent stayed adopted.
-		expect(await collected(settingsRef, COLLECT_DEADLINE_MS)).toBe(true);
+			await AgentLifecycleManager.global().park(AGENT_ID);
+			run.release();
+			// The reviver held the run's whole overlay — merged view, memoized values, listener buckets —
+			// for as long as the parked agent stayed adopted.
+			expect(await collected(settingsRef, COLLECT_DEADLINE_MS)).toBe(true);
 
-		const revived = await AgentLifecycleManager.global().ensureLive(AGENT_ID);
-		expect(cfgContextPromotionEnabled.get(revived)).toBe(true);
-	} finally {
-		run.close();
-	}
-}, 30_000);
+			const revived = await AgentLifecycleManager.global().ensureLive(AGENT_ID);
+			expect(cfgContextPromotionEnabled.get(revived)).toBe(true);
+		} finally {
+			run.close();
+		}
+	},
+	scaledTimeout(30000),
+);

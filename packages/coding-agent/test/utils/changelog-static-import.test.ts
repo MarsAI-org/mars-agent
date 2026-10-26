@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -72,87 +73,99 @@ describe("bundled changelog asset path resolution", () => {
 });
 
 describe("changelog static import resources", () => {
-	test("does not retain the multi-megabyte changelog text before parsing", async () => {
-		const proc = Bun.spawn([process.execPath, heapProbePath], {
-			stderr: "pipe",
-			stdout: "pipe",
-		});
-		const [stdout, stderr, exitCode] = await Promise.all([
-			new Response(proc.stdout).text(),
-			new Response(proc.stderr).text(),
-			proc.exited,
-		]);
-
-		expect(exitCode, stderr).toBe(0);
-		expect(JSON.parse(stdout) as HeapProbeResult).toEqual({ retainedChangelogStrings: 0 });
-	}, 30_000);
-
-	test("reads the emitted changelog asset when run outside the bundle directory", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-bundle-"));
-		try {
-			const bundleDir = path.join(tempDir, "bundle");
-			const unrelatedCwd = path.join(tempDir, "cwd");
-			const missingPackageChangelogPath = path.join(tempDir, "missing-package", "CHANGELOG.md");
-			await fs.mkdir(unrelatedCwd);
-			const sourceResult = await runProbe([process.execPath, bundleProbePath, missingPackageChangelogPath]);
-
-			const buildOutput = await Bun.build({
-				entrypoints: [bundleProbePath],
-				outdir: bundleDir,
-				target: "bun",
-				external: ["mars-legacy-pi-modules"],
-				plugins: [changelogUtilsStubPlugin()],
+	test(
+		"does not retain the multi-megabyte changelog text before parsing",
+		async () => {
+			const proc = Bun.spawn([process.execPath, heapProbePath], {
+				stderr: "pipe",
+				stdout: "pipe",
 			});
-			expect(buildOutput.success, buildOutput.logs.map(log => log.message).join("\n")).toBe(true);
+			const [stdout, stderr, exitCode] = await Promise.all([
+				new Response(proc.stdout).text(),
+				new Response(proc.stderr).text(),
+				proc.exited,
+			]);
 
-			const outputs = await fs.readdir(bundleDir);
-			expect(outputs.some(output => output.endsWith(".md"))).toBe(true);
-			const bundleFilename = outputs.find(output => output.endsWith(".js"));
-			if (!bundleFilename) throw new Error("Changelog bundle build did not emit an entrypoint");
-			const result = await runProbe(
-				[process.execPath, path.join(bundleDir, bundleFilename), missingPackageChangelogPath],
-				unrelatedCwd,
-			);
+			expect(exitCode, stderr).toBe(0);
+			expect(JSON.parse(stdout) as HeapProbeResult).toEqual({ retainedChangelogStrings: 0 });
+		},
+		scaledTimeout(30000),
+	);
 
-			expect(result.entries).toBe(sourceResult.entries);
-			expect(result.version).toBe(sourceResult.version);
-		} finally {
-			await fs.rm(tempDir, { force: true, recursive: true });
-		}
-	}, 30_000);
+	test(
+		"reads the emitted changelog asset when run outside the bundle directory",
+		async () => {
+			const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-bundle-"));
+			try {
+				const bundleDir = path.join(tempDir, "bundle");
+				const unrelatedCwd = path.join(tempDir, "cwd");
+				const missingPackageChangelogPath = path.join(tempDir, "missing-package", "CHANGELOG.md");
+				await fs.mkdir(unrelatedCwd);
+				const sourceResult = await runProbe([process.execPath, bundleProbePath, missingPackageChangelogPath]);
 
-	test("reads the emitted changelog asset from a compiled binary", async () => {
-		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-compiled-"));
-		try {
-			const binaryPath = path.join(
-				tempDir,
-				process.platform === "win32" ? "changelog-probe.exe" : "changelog-probe",
-			);
-			const unrelatedCwd = path.join(tempDir, "cwd");
-			const missingPackageChangelogPath = path.join(tempDir, "missing-package", "CHANGELOG.md");
-			await fs.mkdir(unrelatedCwd);
-			const sourceResult = await runProbe([process.execPath, bundleProbePath, missingPackageChangelogPath]);
+				const buildOutput = await Bun.build({
+					entrypoints: [bundleProbePath],
+					outdir: bundleDir,
+					target: "bun",
+					external: ["mars-legacy-pi-modules"],
+					plugins: [changelogUtilsStubPlugin()],
+				});
+				expect(buildOutput.success, buildOutput.logs.map(log => log.message).join("\n")).toBe(true);
 
-			const buildOutput = await Bun.build({
-				entrypoints: [bundleProbePath],
-				root: repoRoot,
-				external: ["mars-legacy-pi-modules"],
-				plugins: [changelogUtilsStubPlugin()],
-				compile: {
-					outfile: binaryPath,
-					autoloadBunfig: false,
-					autoloadDotenv: false,
-					autoloadTsconfig: false,
-					autoloadPackageJson: false,
-				},
-			});
-			expect(buildOutput.success, buildOutput.logs.map(log => log.message).join("\n")).toBe(true);
+				const outputs = await fs.readdir(bundleDir);
+				expect(outputs.some(output => output.endsWith(".md"))).toBe(true);
+				const bundleFilename = outputs.find(output => output.endsWith(".js"));
+				if (!bundleFilename) throw new Error("Changelog bundle build did not emit an entrypoint");
+				const result = await runProbe(
+					[process.execPath, path.join(bundleDir, bundleFilename), missingPackageChangelogPath],
+					unrelatedCwd,
+				);
 
-			const result = await runProbe([binaryPath, missingPackageChangelogPath], unrelatedCwd);
-			expect(result.entries).toBe(sourceResult.entries);
-			expect(result.version).toBe(sourceResult.version);
-		} finally {
-			await fs.rm(tempDir, { force: true, recursive: true });
-		}
-	}, 30_000);
+				expect(result.entries).toBe(sourceResult.entries);
+				expect(result.version).toBe(sourceResult.version);
+			} finally {
+				await fs.rm(tempDir, { force: true, recursive: true });
+			}
+		},
+		scaledTimeout(30000),
+	);
+
+	test(
+		"reads the emitted changelog asset from a compiled binary",
+		async () => {
+			const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-compiled-"));
+			try {
+				const binaryPath = path.join(
+					tempDir,
+					process.platform === "win32" ? "changelog-probe.exe" : "changelog-probe",
+				);
+				const unrelatedCwd = path.join(tempDir, "cwd");
+				const missingPackageChangelogPath = path.join(tempDir, "missing-package", "CHANGELOG.md");
+				await fs.mkdir(unrelatedCwd);
+				const sourceResult = await runProbe([process.execPath, bundleProbePath, missingPackageChangelogPath]);
+
+				const buildOutput = await Bun.build({
+					entrypoints: [bundleProbePath],
+					root: repoRoot,
+					external: ["mars-legacy-pi-modules"],
+					plugins: [changelogUtilsStubPlugin()],
+					compile: {
+						outfile: binaryPath,
+						autoloadBunfig: false,
+						autoloadDotenv: false,
+						autoloadTsconfig: false,
+						autoloadPackageJson: false,
+					},
+				});
+				expect(buildOutput.success, buildOutput.logs.map(log => log.message).join("\n")).toBe(true);
+
+				const result = await runProbe([binaryPath, missingPackageChangelogPath], unrelatedCwd);
+				expect(result.entries).toBe(sourceResult.entries);
+				expect(result.version).toBe(sourceResult.version);
+			} finally {
+				await fs.rm(tempDir, { force: true, recursive: true });
+			}
+		},
+		scaledTimeout(30000),
+	);
 });

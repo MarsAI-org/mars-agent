@@ -5,6 +5,7 @@
  * and the parent's delivery sink receives the completion (#14428).
  */
 import { afterEach, beforeEach, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -169,51 +170,59 @@ async function spawnKeptAliveChild() {
 	return { session, artifact, deliveries, firstDelivery: firstDelivery.promise, close };
 }
 
-it("a focused manual prompt's yield rewrites the artifact and notifies the parent", async () => {
-	const child = await spawnKeptAliveChild();
-	try {
-		// The focused-session input path: a plain user prompt on the idle child.
-		await child.session.prompt("go on");
+it(
+	"a focused manual prompt's yield rewrites the artifact and notifies the parent",
+	async () => {
+		const child = await spawnKeptAliveChild();
+		try {
+			// The focused-session input path: a plain user prompt on the idle child.
+			await child.session.prompt("go on");
 
-		// The job settles only after finalization has rewritten the artifact.
-		expect(await child.firstDelivery).toContain("manual result");
-		expect(await Bun.file(child.artifact).text()).toContain("manual result");
-	} finally {
-		child.close();
-	}
-}, 15_000);
+			// The job settles only after finalization has rewritten the artifact.
+			expect(await child.firstDelivery).toContain("manual result");
+			expect(await Bun.file(child.artifact).text()).toContain("manual result");
+		} finally {
+			child.close();
+		}
+	},
+	scaledTimeout(15000),
+);
 
-it("a prompt typed while the previous turn awaits owned background work reports each turn's own result", async () => {
-	const child = await spawnKeptAliveChild();
-	try {
-		// Owned background work keeps the first manual turn's observation open
-		// after the turn itself returns, leaving the child idle for another prompt.
-		const gate = Promise.withResolvers<void>();
-		manager.register(
-			"bash",
-			"background build",
-			async () => {
-				await gate.promise;
-				return "build done";
-			},
-			{ ownerId: AGENT_ID, agentId: AGENT_ID },
-		);
-		await child.session.prompt("go on");
-		await child.session.prompt("finish up");
-		gate.resolve();
+it(
+	"a prompt typed while the previous turn awaits owned background work reports each turn's own result",
+	async () => {
+		const child = await spawnKeptAliveChild();
+		try {
+			// Owned background work keeps the first manual turn's observation open
+			// after the turn itself returns, leaving the child idle for another prompt.
+			const gate = Promise.withResolvers<void>();
+			manager.register(
+				"bash",
+				"background build",
+				async () => {
+					await gate.promise;
+					return "build done";
+				},
+				{ ownerId: AGENT_ID, agentId: AGENT_ID },
+			);
+			await child.session.prompt("go on");
+			await child.session.prompt("finish up");
+			gate.resolve();
 
-		await child.firstDelivery;
-		await manager.waitForOwnerJobs(PARENT_ID);
-		await manager.drainDeliveries({ filter: { ownerId: PARENT_ID } });
-		// One completion per turn, each carrying only that turn's yield.
-		const manual = child.deliveries.filter(text => text.includes("manual result"));
-		const final = child.deliveries.filter(text => text.includes("final result"));
-		expect(child.deliveries).toHaveLength(2);
-		expect(manual).toHaveLength(1);
-		expect(final).toHaveLength(1);
-		expect(manual[0]).not.toContain("final result");
-		expect(await Bun.file(child.artifact).text()).toContain("final result");
-	} finally {
-		child.close();
-	}
-}, 15_000);
+			await child.firstDelivery;
+			await manager.waitForOwnerJobs(PARENT_ID);
+			await manager.drainDeliveries({ filter: { ownerId: PARENT_ID } });
+			// One completion per turn, each carrying only that turn's yield.
+			const manual = child.deliveries.filter(text => text.includes("manual result"));
+			const final = child.deliveries.filter(text => text.includes("final result"));
+			expect(child.deliveries).toHaveLength(2);
+			expect(manual).toHaveLength(1);
+			expect(final).toHaveLength(1);
+			expect(manual[0]).not.toContain("final result");
+			expect(await Bun.file(child.artifact).text()).toContain("final result");
+		} finally {
+			child.close();
+		}
+	},
+	scaledTimeout(15000),
+);
