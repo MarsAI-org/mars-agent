@@ -642,10 +642,12 @@ jobs:
               MARS_TEST_CONCURRENCY: "4"
            run: |
               bun run ci:test:ts:workspace
-              # Not `test:scripts`: scripts/musl-release.test.ts fails on main
-              # (its install.sh smoke-check executes a fake binary), so running
-              # the whole group here would red this job on an unrelated break.
-              bun test scripts/ci-test-ts.test.ts scripts/ci-path-filters.test.ts scripts/python-test-invocation.test.ts scripts/release.test.ts
+              # `test:scripts` runs the whole group. The comment that used to
+              # exclude it cited scripts/musl-release.test.ts failing on main;
+              # that file passes (repeatedly) now, and the exclusion was
+              # costing 15 files of coverage, including the checks on the CI
+              # runner itself.
+              bun run test:scripts
 
    test_coding_agent_singleton:
       name: Test coding-agent singleton/global-state (TS)
