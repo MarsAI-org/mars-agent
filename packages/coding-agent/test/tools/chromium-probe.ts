@@ -107,3 +107,17 @@ export function visibleBrowserAvailable(): Promise<boolean> {
 	})();
 	return visibleProbe;
 }
+
+/**
+ * Per-test wall clock for suites that drive a real Chromium.
+ *
+ * Bun's per-call timeout argument overrides the runner's `--timeout`, so a
+ * literal here silently replaces CI's `MARS_TEST_TIMEOUT=120` with a tighter
+ * ceiling. A browser test that takes ~29 s alone then exceeds a 30 s literal
+ * once the CI chunk runs ten files side by side, and the suite reddens on a
+ * slab of unrelated work. Scale from the runner budget instead: CI's value
+ * when it is set, a generous local default otherwise.
+ */
+const runnerBudgetSeconds = Number.parseInt(Bun.env.MARS_TEST_TIMEOUT ?? "", 10);
+
+export const BROWSER_TEST_TIMEOUT_MS: number = runnerBudgetSeconds > 0 ? runnerBudgetSeconds * 1000 : 60_000;
