@@ -9,7 +9,7 @@ import type {
 	WebMcpListResult,
 } from "@marsai-org/coding-agent/tools/browser/webmcp";
 import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
-import { chromiumAvailable } from "./chromium-probe";
+import { BROWSER_TEST_TIMEOUT_MS, chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 
@@ -51,9 +51,11 @@ afterAll(async () => {
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser WebMCP helpers", () => {
-	it("discovers, invokes, bounds trust, and reports page-side registrations", async () => {
-		const invoke = createBrowserHost();
-		const html = `<!doctype html>
+	it(
+		"discovers, invokes, bounds trust, and reports page-side registrations",
+		async () => {
+			const invoke = createBrowserHost();
+			const html = `<!doctype html>
 <html><head><title>loading</title></head><body><script>
 (async () => {
   window.webmcpSurface = navigator.modelContext?.constructor?.name === "ModelContext" ? "native" : "hook-polyfill";
@@ -83,59 +85,63 @@ describe.skipIf(!CHROMIUM_AVAILABLE)("browser WebMCP helpers", () => {
   document.title = "registered";
 })();
 </script></body></html>`;
-		const url = `data:text/html,${encodeURIComponent(html)}`;
-		await invoke({ action: "open", name: "webmcp", url });
+			const url = `data:text/html,${encodeURIComponent(html)}`;
+			await invoke({ action: "open", name: "webmcp", url });
 
-		const surface = valueFrom<string>(await invoke(call("webmcp", "evaluate", ["window.webmcpSurface"])));
-		// Chrome 150 with WebMCP flags does not expose its secure-context API to data: pages; the preload polyfill runs.
-		expect(surface).toBe("hook-polyfill");
+			const surface = valueFrom<string>(await invoke(call("webmcp", "evaluate", ["window.webmcpSurface"])));
+			// Chrome 150 with WebMCP flags does not expose its secure-context API to data: pages; the preload polyfill runs.
+			expect(surface).toBe("hook-polyfill");
 
-		const summary = valueFrom<WebMcpListResult>(await invoke(call("webmcp", "webmcpList")));
-		expect(summary).toMatchObject({
-			status: "ready",
-			truncated: false,
-			untrusted: true,
-		});
-		expect(summary.tools.map(tool => tool.name)).toEqual(["large_result", "sum_values", "throw_page_error"]);
-		expect(summary.tools.every(tool => tool.inputSchema === undefined)).toBe(true);
-
-		const detail = valueFrom<WebMcpListResult>(await invoke(call("webmcp", "webmcpList", [{ name: "sum_values" }])));
-		expect(detail.tools).toEqual([
-			expect.objectContaining({
-				name: "sum_values",
-				inputSchema: expect.objectContaining({ type: "object", required: ["left", "right"] }),
-				annotations: { readOnlyHint: true },
+			const summary = valueFrom<WebMcpListResult>(await invoke(call("webmcp", "webmcpList")));
+			expect(summary).toMatchObject({
+				status: "ready",
+				truncated: false,
 				untrusted: true,
-			}),
-		]);
+			});
+			expect(summary.tools.map(tool => tool.name)).toEqual(["large_result", "sum_values", "throw_page_error"]);
+			expect(summary.tools.every(tool => tool.inputSchema === undefined)).toBe(true);
 
-		const result = valueFrom<WebMcpInvokeResult>(
-			await invoke(call("webmcp", "webmcpInvoke", ["sum_values", { left: 20, right: 22 }])),
-		);
-		expect(result).toEqual({ ok: true, result: { total: 42 }, untrusted: true });
+			const detail = valueFrom<WebMcpListResult>(
+				await invoke(call("webmcp", "webmcpList", [{ name: "sum_values" }])),
+			);
+			expect(detail.tools).toEqual([
+				expect.objectContaining({
+					name: "sum_values",
+					inputSchema: expect.objectContaining({ type: "object", required: ["left", "right"] }),
+					annotations: { readOnlyHint: true },
+					untrusted: true,
+				}),
+			]);
 
-		const largeResult = valueFrom<WebMcpInvokeResult>(
-			await invoke(call("webmcp", "webmcpInvoke", ["large_result", {}])),
-		);
-		expect(largeResult).toMatchObject({ ok: true, truncated: true, untrusted: true });
-		expect(Buffer.byteLength(JSON.stringify(largeResult), "utf8")).toBeLessThanOrEqual(64 * 1024);
+			const result = valueFrom<WebMcpInvokeResult>(
+				await invoke(call("webmcp", "webmcpInvoke", ["sum_values", { left: 20, right: 22 }])),
+			);
+			expect(result).toEqual({ ok: true, result: { total: 42 }, untrusted: true });
 
-		const failure = valueFrom<WebMcpInvokeResult>(
-			await invoke(call("webmcp", "webmcpInvoke", ["throw_page_error", {}])),
-		);
-		expect(failure).toMatchObject({ ok: false, untrusted: true });
-		if (failure.ok) throw new Error("Expected page tool failure");
-		expect(failure.error).toContain("BEGIN UNTRUSTED WEBMCP CONTENT");
-		expect(failure.error).toContain("PAGE_SENTINEL_FAILURE");
-		expect(failure.error).toContain("END UNTRUSTED WEBMCP CONTENT");
+			const largeResult = valueFrom<WebMcpInvokeResult>(
+				await invoke(call("webmcp", "webmcpInvoke", ["large_result", {}])),
+			);
+			expect(largeResult).toMatchObject({ ok: true, truncated: true, untrusted: true });
+			expect(Buffer.byteLength(JSON.stringify(largeResult), "utf8")).toBeLessThanOrEqual(64 * 1024);
 
-		const events = valueFrom<WebMcpEventsResult>(await invoke(call("webmcp", "webmcpEvents")));
-		expect(events).toMatchObject({ untrusted: true, truncated: false });
-		expect(events.events.map(event => [event.type, event.name])).toEqual([
-			["registered", "large_result"],
-			["registered", "sum_values"],
-			["registered", "throw_page_error"],
-		]);
-		await invoke({ action: "close", name: "webmcp", kill: true });
-	}, 30_000);
+			const failure = valueFrom<WebMcpInvokeResult>(
+				await invoke(call("webmcp", "webmcpInvoke", ["throw_page_error", {}])),
+			);
+			expect(failure).toMatchObject({ ok: false, untrusted: true });
+			if (failure.ok) throw new Error("Expected page tool failure");
+			expect(failure.error).toContain("BEGIN UNTRUSTED WEBMCP CONTENT");
+			expect(failure.error).toContain("PAGE_SENTINEL_FAILURE");
+			expect(failure.error).toContain("END UNTRUSTED WEBMCP CONTENT");
+
+			const events = valueFrom<WebMcpEventsResult>(await invoke(call("webmcp", "webmcpEvents")));
+			expect(events).toMatchObject({ untrusted: true, truncated: false });
+			expect(events.events.map(event => [event.type, event.name])).toEqual([
+				["registered", "large_result"],
+				["registered", "sum_values"],
+				["registered", "throw_page_error"],
+			]);
+			await invoke({ action: "close", name: "webmcp", kill: true });
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });

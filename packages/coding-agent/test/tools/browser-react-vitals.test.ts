@@ -6,7 +6,7 @@ import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-m
 import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
-import { chromiumAvailable } from "./chromium-probe";
+import { BROWSER_TEST_TIMEOUT_MS, chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 const fixtureDir = path.join(import.meta.dir, "../fixtures");
@@ -105,91 +105,99 @@ afterAll(async () => {
 });
 
 describe.skipIf(!CHROMIUM_AVAILABLE)("browser React introspection and Web Vitals", () => {
-	test("captures buffered paint, navigation, layout-shift, and long-task metrics", async () => {
-		const page = encodeURIComponent(
-			'<!doctype html><html><head><style>body{margin:0}#target{height:80px;background:#ddd}</style></head><body><div id="target">Contentful paint</div></body></html>',
-		);
-		await invoke({ action: "open", name: "vitals", url: `data:text/html;charset=utf-8,${page}` });
-		await invoke({
-			action: "run",
-			name: "vitals",
-			code: `await tab.evaluate(() => {
+	test(
+		"captures buffered paint, navigation, layout-shift, and long-task metrics",
+		async () => {
+			const page = encodeURIComponent(
+				'<!doctype html><html><head><style>body{margin:0}#target{height:80px;background:#ddd}</style></head><body><div id="target">Contentful paint</div></body></html>',
+			);
+			await invoke({ action: "open", name: "vitals", url: `data:text/html;charset=utf-8,${page}` });
+			await invoke({
+				action: "run",
+				name: "vitals",
+				code: `await tab.evaluate(() => {
 				const spacer = document.createElement("div");
 				spacer.style.height = "120px";
 				spacer.textContent = "late content";
 				document.body.prepend(spacer);
 				document.body.getBoundingClientRect();
 			});`,
-		});
-		const response = await directCall("vitals", "vitals", [{ reload: false }]);
-		const value = valueFrom<Record<string, unknown>>(response);
-		expect(typeof value.fcp).toBe("number");
-		expect(typeof value.ttfb).toBe("number");
-		expect(typeof value.domContentLoaded).toBe("number");
-		expect(typeof value.load).toBe("number");
-		expect(typeof value.longTasks).toBe("number");
-		expect(value.cls as number).toBeGreaterThanOrEqual(0);
-	}, 30_000);
+			});
+			const response = await directCall("vitals", "vitals", [{ reload: false }]);
+			const value = valueFrom<Record<string, unknown>>(response);
+			expect(typeof value.fcp).toBe("number");
+			expect(typeof value.ttfb).toBe("number");
+			expect(typeof value.domContentLoaded).toBe("number");
+			expect(typeof value.load).toBe("number");
+			expect(typeof value.longTasks).toBe("number");
+			expect(value.cls as number).toBeGreaterThanOrEqual(0);
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 
-	test("walks, inspects, profiles, and reports Suspense for a React 18 app", async () => {
-		await invoke({ action: "open", name: "react", url: server.url.href });
-		const missingHook = await invoke({
-			action: "run",
-			name: "react",
-			code: `try {
+	test(
+		"walks, inspects, profiles, and reports Suspense for a React 18 app",
+		async () => {
+			await invoke({ action: "open", name: "react", url: server.url.href });
+			const missingHook = await invoke({
+				action: "run",
+				name: "react",
+				code: `try {
 				await tab.reactTree();
 				return null;
 			} catch (error) {
 				return { name: error.constructor.name, message: error.message };
 			}`,
-		});
-		expect(valueFrom<unknown>(missingHook)).toEqual({
-			name: "ToolError",
-			message: "React DevTools hook not installed — call tab.reactEnable() first",
-		});
+			});
+			expect(valueFrom<unknown>(missingHook)).toEqual({
+				name: "ToolError",
+				message: "React DevTools hook not installed — call tab.reactEnable() first",
+			});
 
-		const enabled = await directCall("react", "reactEnable");
-		const enabledValue = valueFrom<{ installed: boolean; reactVersion?: string }>(enabled);
-		expect(enabledValue.installed).toBe(true);
-		expect(enabledValue.reactVersion?.startsWith("18.3.1")).toBe(true);
-		await invoke({
-			action: "run",
-			name: "react",
-			code: 'await tab.waitForSelector("#counter");',
-		});
+			const enabled = await directCall("react", "reactEnable");
+			const enabledValue = valueFrom<{ installed: boolean; reactVersion?: string }>(enabled);
+			expect(enabledValue.installed).toBe(true);
+			expect(enabledValue.reactVersion?.startsWith("18.3.1")).toBe(true);
+			await invoke({
+				action: "run",
+				name: "react",
+				code: 'await tab.waitForSelector("#counter");',
+			});
 
-		const treeResponse = await directCall("react", "reactTree");
-		const tree = valueFrom<TreeNode[]>(treeResponse);
-		const app = findTreeNode(tree, "App");
-		const suspense = findTreeNode(app?.children ?? [], "Suspense");
-		const counter = findTreeNode(suspense?.children ?? [], "Counter");
-		expect(app).toBeDefined();
-		expect(suspense).toBeDefined();
-		expect(counter).toBeDefined();
+			const treeResponse = await directCall("react", "reactTree");
+			const tree = valueFrom<TreeNode[]>(treeResponse);
+			const app = findTreeNode(tree, "App");
+			const suspense = findTreeNode(app?.children ?? [], "Suspense");
+			const counter = findTreeNode(suspense?.children ?? [], "Counter");
+			expect(app).toBeDefined();
+			expect(suspense).toBeDefined();
+			expect(counter).toBeDefined();
 
-		const inspected = await directCall("react", "reactInspect", [counter!.id]);
-		const inspection = valueFrom<{ state?: Array<{ index: number; kind: string; value: unknown }> }>(inspected);
-		expect(inspection.state).toContainEqual({ index: 0, kind: "State", value: 0 });
+			const inspected = await directCall("react", "reactInspect", [counter!.id]);
+			const inspection = valueFrom<{ state?: Array<{ index: number; kind: string; value: unknown }> }>(inspected);
+			expect(inspection.state).toContainEqual({ index: 0, kind: "State", value: 0 });
 
-		await directCall("react", "reactRenders", [{ action: "start" }]);
-		await directCall("react", "click", ["#counter"]);
-		await invoke({
-			action: "run",
-			name: "react",
-			code: 'await page.waitForFunction(() => document.querySelector("#counter")?.textContent === "1");',
-		});
-		const rendersResponse = await directCall("react", "reactRenders", [{ action: "stop" }]);
-		const renders = valueFrom<{
-			commits: number;
-			components: Array<{ name: string; renders: number; totalMs: number }>;
-		}>(rendersResponse);
-		expect(renders.commits).toBeGreaterThanOrEqual(1);
-		const counterRenders = renders.components.find(component => component.name === "Counter");
-		expect(counterRenders).toBeDefined();
-		expect(counterRenders!.renders).toBeGreaterThanOrEqual(1);
+			await directCall("react", "reactRenders", [{ action: "start" }]);
+			await directCall("react", "click", ["#counter"]);
+			await invoke({
+				action: "run",
+				name: "react",
+				code: 'await page.waitForFunction(() => document.querySelector("#counter")?.textContent === "1");',
+			});
+			const rendersResponse = await directCall("react", "reactRenders", [{ action: "stop" }]);
+			const renders = valueFrom<{
+				commits: number;
+				components: Array<{ name: string; renders: number; totalMs: number }>;
+			}>(rendersResponse);
+			expect(renders.commits).toBeGreaterThanOrEqual(1);
+			const counterRenders = renders.components.find(component => component.name === "Counter");
+			expect(counterRenders).toBeDefined();
+			expect(counterRenders!.renders).toBeGreaterThanOrEqual(1);
 
-		const suspenseResponse = await directCall("react", "reactSuspense");
-		const boundaries = valueFrom<Array<{ state: string; classification: string }>>(suspenseResponse);
-		expect(boundaries).toContainEqual(expect.objectContaining({ state: "resolved", classification: "static" }));
-	}, 30_000);
+			const suspenseResponse = await directCall("react", "reactSuspense");
+			const boundaries = valueFrom<Array<{ state: string; classification: string }>>(suspenseResponse);
+			expect(boundaries).toContainEqual(expect.objectContaining({ state: "resolved", classification: "static" }));
+		},
+		BROWSER_TEST_TIMEOUT_MS,
+	);
 });
