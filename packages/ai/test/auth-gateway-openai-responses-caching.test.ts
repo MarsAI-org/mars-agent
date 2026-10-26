@@ -14,6 +14,7 @@
  * with the gateway live (`mars auth-gateway serve` or pm2).
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { AUTH_GATEWAY_E2E_URL, checkAuthGatewayE2EAvailable } from "./helpers";
 
 interface OpenAIResponsesUsage {
@@ -104,76 +105,80 @@ describe.skipIf(!gateway.ok)("auth-gateway: openai-responses prompt caching e2e"
 	const token = gateway.token;
 	if (!token) throw new Error("invariant: token must be present when gateway.ok is true");
 
-	it("automatically caches the instructions prefix across two turns", async () => {
-		// Per-run nonce ensures we always start with a cold cache. The bytes
-		// before the cacheable prefix boundary must be unique to this run;
-		// otherwise a previously-warm cache entry silently hits on turn 1
-		// and we lose the ability to assert "first turn cold, second turn warm".
-		const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
-		// Prepend (not append) — OpenAI caches at prefix-tree granularity, so the
-		// first chunk must differ across runs to guarantee a cold start.
-		const instructionsWithNonce = `[run-nonce: ${nonce}]\n\n${INSTRUCTIONS}`;
-		// Stable per-run cache key. The ChatGPT-subscription Codex backend
-		// only coalesces prefixes across requests when an explicit
-		// `prompt_cache_key` is set — caching is opt-in there, unlike public
-		// OpenAI Responses which caches automatically. Reusing the same key
-		// across both turns is the contract that makes turn 2 hit.
-		const cacheKey = `mars-e2e-${nonce}`;
+	it(
+		"automatically caches the instructions prefix across two turns",
+		async () => {
+			// Per-run nonce ensures we always start with a cold cache. The bytes
+			// before the cacheable prefix boundary must be unique to this run;
+			// otherwise a previously-warm cache entry silently hits on turn 1
+			// and we lose the ability to assert "first turn cold, second turn warm".
+			const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+			// Prepend (not append) — OpenAI caches at prefix-tree granularity, so the
+			// first chunk must differ across runs to guarantee a cold start.
+			const instructionsWithNonce = `[run-nonce: ${nonce}]\n\n${INSTRUCTIONS}`;
+			// Stable per-run cache key. The ChatGPT-subscription Codex backend
+			// only coalesces prefixes across requests when an explicit
+			// `prompt_cache_key` is set — caching is opt-in there, unlike public
+			// OpenAI Responses which caches automatically. Reusing the same key
+			// across both turns is the contract that makes turn 2 hit.
+			const cacheKey = `mars-e2e-${nonce}`;
 
-		// ── Turn 1 ───────────────────────────────────────────────────────
-		const turn1Input: ResponseInputMessage[] = [{ role: "user", content: "Respond with the single word: alpha" }];
-		const turn1 = await callGateway(
-			{
-				model: MODEL,
-				max_output_tokens: 64,
-				instructions: instructionsWithNonce,
-				prompt_cache_key: cacheKey,
-				input: turn1Input,
-			},
-			token,
-		);
+			// ── Turn 1 ───────────────────────────────────────────────────────
+			const turn1Input: ResponseInputMessage[] = [{ role: "user", content: "Respond with the single word: alpha" }];
+			const turn1 = await callGateway(
+				{
+					model: MODEL,
+					max_output_tokens: 64,
+					instructions: instructionsWithNonce,
+					prompt_cache_key: cacheKey,
+					input: turn1Input,
+				},
+				token,
+			);
 
-		const turn1Text = extractAssistantText(turn1);
+			const turn1Text = extractAssistantText(turn1);
 
-		expect(turn1Text.length).toBeGreaterThan(0);
+			expect(turn1Text.length).toBeGreaterThan(0);
 
-		// First turn cannot hit the cache (nothing to read yet thanks to the nonce).
-		const turn1Cached = turn1.usage.input_tokens_details?.cached_tokens ?? 0;
-		expect(turn1Cached).toBe(0);
-		// Confirm the request actually crossed the 1024-token caching floor;
-		// otherwise OpenAI never registers a cache entry and turn 2 can't
-		// possibly read.
-		expect(turn1.usage.input_tokens).toBeGreaterThan(1024);
+			// First turn cannot hit the cache (nothing to read yet thanks to the nonce).
+			const turn1Cached = turn1.usage.input_tokens_details?.cached_tokens ?? 0;
+			expect(turn1Cached).toBe(0);
+			// Confirm the request actually crossed the 1024-token caching floor;
+			// otherwise OpenAI never registers a cache entry and turn 2 can't
+			// possibly read.
+			expect(turn1.usage.input_tokens).toBeGreaterThan(1024);
 
-		// ── Turn 2: append assistant + new user, re-send with same instructions ──
-		const turn2Input: ResponseInputMessage[] = [
-			...turn1Input,
-			{ role: "assistant", content: turn1Text },
-			{ role: "user", content: "Respond with the single word: beta" },
-		];
-		const turn2 = await callGateway(
-			{
-				prompt_cache_key: cacheKey,
-				model: MODEL,
-				max_output_tokens: 64,
-				instructions: instructionsWithNonce,
-				input: turn2Input,
-			},
-			token,
-		);
+			// ── Turn 2: append assistant + new user, re-send with same instructions ──
+			const turn2Input: ResponseInputMessage[] = [
+				...turn1Input,
+				{ role: "assistant", content: turn1Text },
+				{ role: "user", content: "Respond with the single word: beta" },
+			];
+			const turn2 = await callGateway(
+				{
+					prompt_cache_key: cacheKey,
+					model: MODEL,
+					max_output_tokens: 64,
+					instructions: instructionsWithNonce,
+					input: turn2Input,
+				},
+				token,
+			);
 
-		const turn2Text = extractAssistantText(turn2);
-		expect(turn2Text.length).toBeGreaterThan(0);
+			const turn2Text = extractAssistantText(turn2);
+			expect(turn2Text.length).toBeGreaterThan(0);
 
-		// Second turn MUST hit the cache populated by turn 1. If
-		// cached_tokens is 0, the gateway either mutated the prefix bytes
-		// between turns or failed to surface input_tokens_details from the
-		// upstream usage block.
-		const turn2Cached = turn2.usage.input_tokens_details?.cached_tokens ?? 0;
-		expect(turn2Cached).toBeGreaterThan(0);
-		// The cached prefix should cover at least the instructions block we
-		// established on turn 1 — sanity check that we're not catching a
-		// trivial 64-token overlap.
-		expect(turn2Cached).toBeGreaterThan(1024);
-	}, 90_000);
+			// Second turn MUST hit the cache populated by turn 1. If
+			// cached_tokens is 0, the gateway either mutated the prefix bytes
+			// between turns or failed to surface input_tokens_details from the
+			// upstream usage block.
+			const turn2Cached = turn2.usage.input_tokens_details?.cached_tokens ?? 0;
+			expect(turn2Cached).toBeGreaterThan(0);
+			// The cached prefix should cover at least the instructions block we
+			// established on turn 1 — sanity check that we're not catching a
+			// trivial 64-token overlap.
+			expect(turn2Cached).toBeGreaterThan(1024);
+		},
+		scaledTimeout(90000),
+	);
 });

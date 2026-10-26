@@ -7,6 +7,7 @@
 // AssistantMessage) instead of instantiating the error class directly, so a
 // regression in status/body propagation is caught, not masked.
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import * as AIError from "@marsai-org/ai/error";
 import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
 import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
@@ -32,45 +33,53 @@ function jsonErrorFetch(status: number, body: unknown): FetchImpl {
 }
 
 describe("Fireworks mid-generation NaN 400", () => {
-	it("surfaces a retryable provider error through the completions path", async () => {
-		const fetchMock = jsonErrorFetch(400, {
-			error: {
-				object: "error",
-				type: "invalid_request_error",
-				code: "invalid_request_error",
-				message:
-					"Floating point NaN (not-a-number) is detected in generation. This is a model-side numerical error.",
-			},
-		});
+	it(
+		"surfaces a retryable provider error through the completions path",
+		async () => {
+			const fetchMock = jsonErrorFetch(400, {
+				error: {
+					object: "error",
+					type: "invalid_request_error",
+					code: "invalid_request_error",
+					message:
+						"Floating point NaN (not-a-number) is detected in generation. This is a model-side numerical error.",
+				},
+			});
 
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
 
-		expect(result.stopReason).toBe("error");
-		expect(AIError.retriable(result.errorId)).toBe(true);
-		expect(AIError.is(result.errorId, AIError.Flag.Transient)).toBe(true);
-		// The classification survives a re-classify from the persisted message
-		// fields (the form loop-level salvage sees after the Error is gone).
-		const reId = AIError.classifyMessage({ errorId: result.errorId, errorMessage: result.errorMessage });
-		expect(AIError.retriable(reId)).toBe(true);
-	}, 10_000);
+			expect(result.stopReason).toBe("error");
+			expect(AIError.retriable(result.errorId)).toBe(true);
+			expect(AIError.is(result.errorId, AIError.Flag.Transient)).toBe(true);
+			// The classification survives a re-classify from the persisted message
+			// fields (the form loop-level salvage sees after the Error is gone).
+			const reId = AIError.classifyMessage({ errorId: result.errorId, errorMessage: result.errorMessage });
+			expect(AIError.retriable(reId)).toBe(true);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("keeps a genuine request-validation 400 terminal", async () => {
-		const fetchMock = jsonErrorFetch(400, {
-			error: { type: "invalid_request_error", message: "Invalid value for 'temperature': must be <= 2." },
-		});
+	it(
+		"keeps a genuine request-validation 400 terminal",
+		async () => {
+			const fetchMock = jsonErrorFetch(400, {
+				error: { type: "invalid_request_error", message: "Invalid value for 'temperature': must be <= 2." },
+			});
 
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
 
-		expect(result.stopReason).toBe("error");
-		expect(AIError.retriable(result.errorId)).toBe(false);
-		expect(AIError.is(result.errorId, AIError.Flag.Transient)).toBe(false);
-		const reId = AIError.classifyMessage({ errorId: result.errorId, errorMessage: result.errorMessage });
-		expect(AIError.retriable(reId)).toBe(false);
-	}, 10_000);
+			expect(result.stopReason).toBe("error");
+			expect(AIError.retriable(result.errorId)).toBe(false);
+			expect(AIError.is(result.errorId, AIError.Flag.Transient)).toBe(false);
+			const reId = AIError.classifyMessage({ errorId: result.errorId, errorMessage: result.errorMessage });
+			expect(AIError.retriable(reId)).toBe(false);
+		},
+		scaledTimeout(10000),
+	);
 });

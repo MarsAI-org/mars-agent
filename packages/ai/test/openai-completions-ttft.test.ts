@@ -6,6 +6,7 @@
 // the tok/s figure is computed over an unknown window for every turn that
 // ends in toolUse.
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
 import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
 import { getBundledModel } from "@marsai-org/catalog/models";
@@ -91,28 +92,36 @@ function createNoContentSseFetch(): FetchImpl {
 }
 
 describe("openai-completions ttft stamping", () => {
-	it("stamps ttft on a pure tool-call stream (no text deltas)", async () => {
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: createToolCallSseFetch(),
-		}).result();
+	it(
+		"stamps ttft on a pure tool-call stream (no text deltas)",
+		async () => {
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: createToolCallSseFetch(),
+			}).result();
 
-		expect(result.stopReason).toBe("toolUse");
-		expect(result.content.some(block => block.type === "toolCall")).toBe(true);
-		expect(result.ttft).toBeDefined();
-		expect(result.ttft).toBeGreaterThanOrEqual(0);
-		// TTFT must not exceed the total duration.
-		expect(result.duration).toBeDefined();
-		expect(result.ttft).toBeLessThanOrEqual(result.duration ?? Number.POSITIVE_INFINITY);
-	}, 10_000);
+			expect(result.stopReason).toBe("toolUse");
+			expect(result.content.some(block => block.type === "toolCall")).toBe(true);
+			expect(result.ttft).toBeDefined();
+			expect(result.ttft).toBeGreaterThanOrEqual(0);
+			// TTFT must not exceed the total duration.
+			expect(result.duration).toBeDefined();
+			expect(result.ttft).toBeLessThanOrEqual(result.duration ?? Number.POSITIVE_INFINITY);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("leaves ttft undefined when the stream carries no content at all", async () => {
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: createNoContentSseFetch(),
-		}).result();
+	it(
+		"leaves ttft undefined when the stream carries no content at all",
+		async () => {
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: createNoContentSseFetch(),
+			}).result();
 
-		// No first byte ever arrived; TTFT is unknown, not zero.
-		expect(result.ttft).toBeUndefined();
-	}, 10_000);
+			// No first byte ever arrived; TTFT is unknown, not zero.
+			expect(result.ttft).toBeUndefined();
+		},
+		scaledTimeout(10000),
+	);
 });
