@@ -642,10 +642,12 @@ jobs:
               MARS_TEST_CONCURRENCY: "4"
            run: |
               bun run ci:test:ts:workspace
-              # Not `test:scripts`: scripts/musl-release.test.ts fails on main
-              # (its install.sh smoke-check executes a fake binary), so running
-              # the whole group here would red this job on an unrelated break.
-              bun test scripts/ci-test-ts.test.ts scripts/ci-path-filters.test.ts scripts/release.test.ts
+              # `test:scripts` runs the whole group. The comment that used to
+              # exclude it cited scripts/musl-release.test.ts failing on main;
+              # that file passes (repeatedly) now, and the exclusion was
+              # costing 15 files of coverage, including the checks on the CI
+              # runner itself.
+              bun run test:scripts
 
    test_coding_agent_singleton:
       name: Test coding-agent singleton/global-state (TS)
@@ -737,6 +739,32 @@ jobs:
          - name: CLI smoke test
            run: bun run ci:test:smoke
 
+   # python/robomp and sdk/python ship in this repo and have their own suites
+   # (670 and 100+ cases), but no workflow ran them: a Python-side regression
+   # reached main unverified. They need no native artifacts, so this job is
+   # cheap and runs alongside the TS fan-out.
+   test_python:
+      name: Test Python packages
+      runs-on: ubuntu-22.04
+      timeout-minutes: 15
+      steps:
+         - uses: actions/checkout@v4
+         - uses: actions/setup-python@v5
+           with:
+              python-version: "3.12"
+         - name: Install packages
+           # robomp depends on the SDK by name, so install the local checkout,
+           # never a registry copy.
+           run: python -m pip install ./sdk/python/omp-rpc "./python/robomp[dev]"
+         - name: Run suites
+           # Two separate invocations, not one: both trees ship a `tests`
+           # package, so a single pytest run imports whichever it saw first and
+           # the other then resolves `tests.*` to the wrong root and fails to
+           # collect. This is why the root `test:py` script chains two runs.
+           run: |
+              python -m pytest -q sdk/python/omp-rpc/tests
+              python -m pytest -q python/robomp/tests
+
    install_methods:
       name: Install method smoke tests
       runs-on: ubuntu-22.04
@@ -770,8 +798,8 @@ jobs:
          needs.test_coding_agent_runtime.result == 'success' &&
          needs.test_coding_agent_native.result == 'success' &&
          needs.test_smoke.result == 'success' && needs.check.result == 'success' &&
-         needs.install_methods.result == 'success' }}
-      needs: [release_metadata, check, rust_validate, native_addons, native_addons_cross, test_workspace, test_coding_agent_singleton, test_ts_native, test_coding_agent_ui, test_coding_agent_runtime, test_coding_agent_native, test_smoke, install_methods]
+         needs.test_python.result == 'success' && needs.install_methods.result == 'success' }}
+      needs: [release_metadata, check, rust_validate, native_addons, native_addons_cross, test_workspace, test_coding_agent_singleton, test_ts_native, test_coding_agent_ui, test_coding_agent_runtime, test_coding_agent_native, test_smoke, test_python, install_methods]
       runs-on: ubuntu-22.04
       steps:
          - uses: actions/checkout@v4
