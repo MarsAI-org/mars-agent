@@ -1323,7 +1323,7 @@ exit 64
 			realSetTimeout(() => {
 				onChunk?.(null, "flushed-during-timeout\n");
 				nativeResult.resolve({ exitCode: undefined, cancelled: false, timedOut: true });
-			}, scaledTimeout(20));
+			}, 20);
 			return nativeResult.promise;
 		});
 		const abortSpy = vi.spyOn(piNatives.Shell.prototype, "abort").mockResolvedValue();
