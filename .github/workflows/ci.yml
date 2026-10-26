@@ -29,6 +29,18 @@ on:
          - "bunfig.toml"
          - "package.json"
          - "patches/**"
+         # Paths that belong to the build or ship with a package but sit outside
+         # "packages/**". `scripts/release.ts` regenerates nix/bun.nix, so a
+         # release commit touching only that file used to push untested (see
+         # e788bdbbfb, which ran no CI at all). python/, sdk/, and the
+         # Dockerfiles are shipped or exercised by the tree below.
+         - "nix/**"
+         - "python/**"
+         - "sdk/**"
+         - "Dockerfile"
+         - "Dockerfile.robomp"
+         - "Dockerfile.dockerignore"
+         - "Dockerfile.robomp.dockerignore"
          - ".github/**"
    pull_request:
       branches: [main, omp2]
@@ -55,6 +67,13 @@ on:
          - "bunfig.toml"
          - "package.json"
          - "patches/**"
+         - "nix/**"
+         - "python/**"
+         - "sdk/**"
+         - "Dockerfile"
+         - "Dockerfile.robomp"
+         - "Dockerfile.dockerignore"
+         - "Dockerfile.robomp.dockerignore"
          - ".github/**"
    workflow_dispatch:
       inputs:
@@ -626,7 +645,7 @@ jobs:
               # Not `test:scripts`: scripts/musl-release.test.ts fails on main
               # (its install.sh smoke-check executes a fake binary), so running
               # the whole group here would red this job on an unrelated break.
-              bun test scripts/ci-test-ts.test.ts scripts/release.test.ts
+              bun test scripts/ci-test-ts.test.ts scripts/ci-path-filters.test.ts scripts/release.test.ts
 
    test_coding_agent_singleton:
       name: Test coding-agent singleton/global-state (TS)
