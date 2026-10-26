@@ -21,6 +21,7 @@
  */
 
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { withTimeout } from "@marsai-org/utils";
@@ -333,40 +334,44 @@ describe("browser cleanup — timed-out target close in a shared browser", () =>
 		expect(healthCheck).toHaveBeenCalledTimes(1);
 	});
 
-	it("bounds the close a joining release waits on when force-kill is stuck on a wedged browser", async () => {
-		const scope = trackedScope();
-		const healthCheck = spyOn(sharedDaemon, "stopSharedBrowserIfUnreachable").mockResolvedValue(false);
-		await recordSharedTarget(scope, TARGET_ID);
-		// Never resolves: the CDP close hangs exactly as it does against a wedged
-		// Chromium, so only the supervisor's own close budget can end this wait.
-		const wedged = Promise.withResolvers<void>();
-		const entered = Promise.withResolvers<void>();
-		getTabsMapForTest().set(
-			"logos-b2b",
-			makeWedgeTab(scope, { close: "gate", gate: wedged.promise, entered: () => entered.resolve() }),
-		);
+	it(
+		"bounds the close a joining release waits on when force-kill is stuck on a wedged browser",
+		async () => {
+			const scope = trackedScope();
+			const healthCheck = spyOn(sharedDaemon, "stopSharedBrowserIfUnreachable").mockResolvedValue(false);
+			await recordSharedTarget(scope, TARGET_ID);
+			// Never resolves: the CDP close hangs exactly as it does against a wedged
+			// Chromium, so only the supervisor's own close budget can end this wait.
+			const wedged = Promise.withResolvers<void>();
+			const entered = Promise.withResolvers<void>();
+			getTabsMapForTest().set(
+				"logos-b2b",
+				makeWedgeTab(scope, { close: "gate", gate: wedged.promise, entered: () => entered.resolve() }),
+			);
 
-		const killed = runInTab("logos-b2b", {
-			code: "await wait(60_000);",
-			timeoutMs: 20,
-			session: makeSession(),
-		}).catch((error: Error) => error.message);
-		await entered.promise;
+			const killed = runInTab("logos-b2b", {
+				code: "await wait(60_000);",
+				timeoutMs: 20,
+				session: makeSession(),
+			}).catch((error: Error) => error.message);
+			await entered.promise;
 
-		// A release joining the force-kill must not inherit an unbounded CDP wait
-		// (Puppeteer's protocol timeout is 60 s); the supervisor's 5 s close
-		// budget ends it, and the join still reports the tab as released.
-		const joined = await withTimeout(
-			releaseTab("logos-b2b", { timeoutMs: 50 }),
-			9_000,
-			"joined release outlived the force-kill close budget",
-		).catch(() => "timed-out" as const);
-		expect(joined).toBe(true);
+			// A release joining the force-kill must not inherit an unbounded CDP wait
+			// (Puppeteer's protocol timeout is 60 s); the supervisor's 5 s close
+			// budget ends it, and the join still reports the tab as released.
+			const joined = await withTimeout(
+				releaseTab("logos-b2b", { timeoutMs: 50 }),
+				9_000,
+				"joined release outlived the force-kill close budget",
+			).catch(() => "timed-out" as const);
+			expect(joined).toBe(true);
 
-		await killed;
-		expect(await ownedTargets(scope)).toEqual([TARGET_ID]);
-		expect(healthCheck).toHaveBeenCalledTimes(1);
-	}, 20_000);
+			await killed;
+			expect(await ownedTargets(scope)).toEqual([TARGET_ID]);
+			expect(healthCheck).toHaveBeenCalledTimes(1);
+		},
+		scaledTimeout(20000),
+	);
 
 	it("never checks a browser that is not the shared one", async () => {
 		const scope = trackedScope();

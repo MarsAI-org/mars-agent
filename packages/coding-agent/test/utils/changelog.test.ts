@@ -10,6 +10,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { Buffer } from "node:buffer";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
@@ -354,52 +355,56 @@ describe("last changelog marker", () => {
 });
 
 describe.skipIf(!hasPtyHarness)("interactive startup changelog PTY smoke", () => {
-	test("does not dump packaged changelog history on first install with uncollapsed notes", async () => {
-		await withTempAgentDir(async agentDir => {
-			const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-pty-"));
-			try {
-				await fs.mkdir(path.join(root, "xdg-config"), { recursive: true });
-				await fs.mkdir(path.join(root, "xdg-state"), { recursive: true });
-				await fs.mkdir(path.join(root, "xdg-data"), { recursive: true });
-				await Bun.write(path.join(agentDir, "config.yml"), "setupVersion: 1\ncollapseChangelog: false\n");
+	test(
+		"does not dump packaged changelog history on first install with uncollapsed notes",
+		async () => {
+			await withTempAgentDir(async agentDir => {
+				const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-changelog-pty-"));
+				try {
+					await fs.mkdir(path.join(root, "xdg-config"), { recursive: true });
+					await fs.mkdir(path.join(root, "xdg-state"), { recursive: true });
+					await fs.mkdir(path.join(root, "xdg-data"), { recursive: true });
+					await Bun.write(path.join(agentDir, "config.yml"), "setupVersion: 1\ncollapseChangelog: false\n");
 
-				const proc = Bun.spawn(
-					["timeout", "6s", "script", "-q", "-c", `bun ${JSON.stringify(cliEntry)}`, "/dev/null"],
-					{
-						cwd: repoRoot,
-						stdout: "pipe",
-						stderr: "pipe",
-						env: {
-							...process.env,
-							HOME: root,
-							XDG_CONFIG_HOME: path.join(root, "xdg-config"),
-							XDG_STATE_HOME: path.join(root, "xdg-state"),
-							XDG_DATA_HOME: path.join(root, "xdg-data"),
-							PI_CODING_AGENT_DIR: agentDir,
-							PI_PACKAGE_DIR: packageDir,
-							PI_NO_TITLE: "1",
-							NO_COLOR: "1",
-							TERM: "xterm-256color",
+					const proc = Bun.spawn(
+						["timeout", "6s", "script", "-q", "-c", `bun ${JSON.stringify(cliEntry)}`, "/dev/null"],
+						{
+							cwd: repoRoot,
+							stdout: "pipe",
+							stderr: "pipe",
+							env: {
+								...process.env,
+								HOME: root,
+								XDG_CONFIG_HOME: path.join(root, "xdg-config"),
+								XDG_STATE_HOME: path.join(root, "xdg-state"),
+								XDG_DATA_HOME: path.join(root, "xdg-data"),
+								PI_CODING_AGENT_DIR: agentDir,
+								PI_PACKAGE_DIR: packageDir,
+								PI_NO_TITLE: "1",
+								NO_COLOR: "1",
+								TERM: "xterm-256color",
+							},
 						},
-					},
-				);
+					);
 
-				const [stdout, stderr, exitCode] = await Promise.all([
-					new Response(proc.stdout).arrayBuffer(),
-					new Response(proc.stderr).text(),
-					proc.exited,
-				]);
-				const output = Buffer.from(stdout).toString("utf8");
+					const [stdout, stderr, exitCode] = await Promise.all([
+						new Response(proc.stdout).arrayBuffer(),
+						new Response(proc.stderr).text(),
+						proc.exited,
+					]);
+					const output = Buffer.from(stdout).toString("utf8");
 
-				expect(exitCode).toBe(124);
-				expect(Buffer.byteLength(output)).toBeLessThan(PTY_STARTUP_OUTPUT_CEILING);
-				expect(output).not.toContain("## [");
-				expect(output).not.toContain(STARTUP_CHANGELOG_FULL_HINT);
-				expect(stderr).not.toContain("Cannot find module");
-				expect(await readLastChangelogVersion(agentDir)).toBe(VERSION);
-			} finally {
-				await removeWithRetries(root);
-			}
-		});
-	}, 15_000);
+					expect(exitCode).toBe(124);
+					expect(Buffer.byteLength(output)).toBeLessThan(PTY_STARTUP_OUTPUT_CEILING);
+					expect(output).not.toContain("## [");
+					expect(output).not.toContain(STARTUP_CHANGELOG_FULL_HINT);
+					expect(stderr).not.toContain("Cannot find module");
+					expect(await readLastChangelogVersion(agentDir)).toBe(VERSION);
+				} finally {
+					await removeWithRetries(root);
+				}
+			});
+		},
+		scaledTimeout(15000),
+	);
 });

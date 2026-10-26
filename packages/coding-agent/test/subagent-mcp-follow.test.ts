@@ -5,6 +5,7 @@
  * retaining its spawn-time snapshot forever.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -86,67 +87,75 @@ describe("subagent session MCP tools follow the shared manager", () => {
 		};
 	}
 
-	it("adds and removes a live child's MCP tools across parent reloads", async () => {
-		await connectReady({ alpha: fixtureConfig() });
-		const follower = followMCPTools(manager);
-		const { session: child } = await createAgentSession({
-			...sessionOptions(),
-			mcpManager: manager,
-			mcpTools: createMCPProxyTools(manager),
-			parentTaskPrefix: "Follow-1",
-		});
-		sessions.push(child);
-		follower.bind(child);
-		expect(serversOf(child)).toEqual(["alpha"]);
+	it(
+		"adds and removes a live child's MCP tools across parent reloads",
+		async () => {
+			await connectReady({ alpha: fixtureConfig() });
+			const follower = followMCPTools(manager);
+			const { session: child } = await createAgentSession({
+				...sessionOptions(),
+				mcpManager: manager,
+				mcpTools: createMCPProxyTools(manager),
+				parentTaskPrefix: "Follow-1",
+			});
+			sessions.push(child);
+			follower.bind(child);
+			expect(serversOf(child)).toEqual(["alpha"]);
 
-		// Parent: `/mcp add bravo`, then `/mcp reload`.
-		await manager.disconnectAll();
-		await connectReady({ alpha: fixtureConfig(), bravo: fixtureConfig() });
-		await child.runToolRegistryMutation(async () => undefined);
-		expect(serversOf(child)).toEqual(["alpha", "bravo"]);
+			// Parent: `/mcp add bravo`, then `/mcp reload`.
+			await manager.disconnectAll();
+			await connectReady({ alpha: fixtureConfig(), bravo: fixtureConfig() });
+			await child.runToolRegistryMutation(async () => undefined);
+			expect(serversOf(child)).toEqual(["alpha", "bravo"]);
 
-		// Parent: remove alpha, then `/mcp reload`. Its proxies must leave the child too.
-		await manager.disconnectAll();
-		await connectReady({ bravo: fixtureConfig() });
-		await child.runToolRegistryMutation(async () => undefined);
-		expect(serversOf(child)).toEqual(["bravo"]);
-	}, 20_000);
+			// Parent: remove alpha, then `/mcp reload`. Its proxies must leave the child too.
+			await manager.disconnectAll();
+			await connectReady({ bravo: fixtureConfig() });
+			await child.runToolRegistryMutation(async () => undefined);
+			expect(serversOf(child)).toEqual(["bravo"]);
+		},
+		scaledTimeout(20000),
+	);
 
-	it("keeps a child's explicitly supplied same-name tool over the MCP proxy, before and after a reload", async () => {
-		await connectReady({ alpha: fixtureConfig() });
-		const collidingName = `mcp__alpha_${manyToolName(0)}`;
-		const KERNEL_RESULT = "kernel-defined tool ran";
-		const kernelTool: CustomTool = {
-			name: collidingName,
-			label: collidingName,
-			description: "Kernel-defined tool sharing an MCP tool's minted name.",
-			parameters: { type: "object", properties: {} },
-			execute: async () => ({ content: [{ type: "text", text: KERNEL_RESULT }] }),
-		};
-		const follower = followMCPTools(manager, new Set([collidingName]));
-		const { session: child } = await createAgentSession({
-			...sessionOptions(),
-			mcpManager: manager,
-			mcpTools: createMCPProxyTools(manager),
-			customTools: [kernelTool],
-			parentTaskPrefix: "Follow-2",
-		});
-		sessions.push(child);
-		follower.bind(child);
-		const runColliding = async (): Promise<string> => {
-			const tool = child.getToolByName(collidingName);
-			if (!tool) throw new Error(`${collidingName} missing from the child`);
-			const result = await tool.execute("call-colliding", {});
-			return result.content.map(part => (part.type === "text" ? part.text : "")).join("");
-		};
-		expect(await runColliding()).toBe(KERNEL_RESULT);
+	it(
+		"keeps a child's explicitly supplied same-name tool over the MCP proxy, before and after a reload",
+		async () => {
+			await connectReady({ alpha: fixtureConfig() });
+			const collidingName = `mcp__alpha_${manyToolName(0)}`;
+			const KERNEL_RESULT = "kernel-defined tool ran";
+			const kernelTool: CustomTool = {
+				name: collidingName,
+				label: collidingName,
+				description: "Kernel-defined tool sharing an MCP tool's minted name.",
+				parameters: { type: "object", properties: {} },
+				execute: async () => ({ content: [{ type: "text", text: KERNEL_RESULT }] }),
+			};
+			const follower = followMCPTools(manager, new Set([collidingName]));
+			const { session: child } = await createAgentSession({
+				...sessionOptions(),
+				mcpManager: manager,
+				mcpTools: createMCPProxyTools(manager),
+				customTools: [kernelTool],
+				parentTaskPrefix: "Follow-2",
+			});
+			sessions.push(child);
+			follower.bind(child);
+			const runColliding = async (): Promise<string> => {
+				const tool = child.getToolByName(collidingName);
+				if (!tool) throw new Error(`${collidingName} missing from the child`);
+				const result = await tool.execute("call-colliding", {});
+				return result.content.map(part => (part.type === "text" ? part.text : "")).join("");
+			};
+			expect(await runColliding()).toBe(KERNEL_RESULT);
 
-		// Parent `/mcp reload`: the rebind must not hand the name back to the MCP proxy.
-		await manager.disconnectAll();
-		await connectReady({ alpha: fixtureConfig() });
-		await child.runToolRegistryMutation(async () => undefined);
-		expect(await runColliding()).toBe(KERNEL_RESULT);
-		// The rest of alpha's proxies still follow the reload.
-		expect(child.getEnabledToolNames()).toContain(`mcp__alpha_${manyToolName(1)}`);
-	}, 20_000);
+			// Parent `/mcp reload`: the rebind must not hand the name back to the MCP proxy.
+			await manager.disconnectAll();
+			await connectReady({ alpha: fixtureConfig() });
+			await child.runToolRegistryMutation(async () => undefined);
+			expect(await runColliding()).toBe(KERNEL_RESULT);
+			// The rest of alpha's proxies still follow the reload.
+			expect(child.getEnabledToolNames()).toContain(`mcp__alpha_${manyToolName(1)}`);
+		},
+		scaledTimeout(20000),
+	);
 });

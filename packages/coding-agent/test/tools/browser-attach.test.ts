@@ -8,6 +8,7 @@
  */
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, test, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -337,85 +338,97 @@ describe("pickElectronTarget", () => {
 		expect(normalizeConnectedCdpUrl("http://127.0.0.1:9222/")).toBe("http://127.0.0.1:9222");
 	});
 
-	test("refuses to replace a running same-executable process", async () => {
-		const existing = await spawnDisposableExecutable();
-		try {
-			await expect(
-				acquireBrowser(
-					{ kind: "spawned", path: existing.path },
-					{ cwd: process.cwd(), signal: AbortSignal.timeout(2_000) },
-				),
-			).rejects.toThrow("already running without a reusable CDP endpoint");
-			expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
-		} finally {
-			await existing.close();
-		}
-	}, 10_000);
+	test(
+		"refuses to replace a running same-executable process",
+		async () => {
+			const existing = await spawnDisposableExecutable();
+			try {
+				await expect(
+					acquireBrowser(
+						{ kind: "spawned", path: existing.path },
+						{ cwd: process.cwd(), signal: AbortSignal.timeout(2_000) },
+					),
+				).rejects.toThrow("already running without a reusable CDP endpoint");
+				expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
+			} finally {
+				await existing.close();
+			}
+		},
+		scaledTimeout(10000),
+	);
 
-	test("rejects a user-data-dir already used by the running executable", async () => {
-		const profile = path.join(os.tmpdir(), `mars-browser-profile-${process.pid}-${Date.now()}`);
-		const existing = await spawnDisposableExecutable([`--user-data-dir=${profile}`]);
-		try {
-			await expect(
-				acquireBrowser(
-					{ kind: "spawned", path: existing.path, args: [`--user-data-dir=${profile}`] },
-					{
-						cwd: process.cwd(),
-						signal: AbortSignal.timeout(2_000),
-					},
-				),
-			).rejects.toThrow("already running without a reusable CDP endpoint");
-			expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
-		} finally {
-			await existing.close();
-		}
-	}, 10_000);
+	test(
+		"rejects a user-data-dir already used by the running executable",
+		async () => {
+			const profile = path.join(os.tmpdir(), `mars-browser-profile-${process.pid}-${Date.now()}`);
+			const existing = await spawnDisposableExecutable([`--user-data-dir=${profile}`]);
+			try {
+				await expect(
+					acquireBrowser(
+						{ kind: "spawned", path: existing.path, args: [`--user-data-dir=${profile}`] },
+						{
+							cwd: process.cwd(),
+							signal: AbortSignal.timeout(2_000),
+						},
+					),
+				).rejects.toThrow("already running without a reusable CDP endpoint");
+				expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
+			} finally {
+				await existing.close();
+			}
+		},
+		scaledTimeout(10000),
+	);
 
-	test("launches an isolated user-data-dir beside a running executable", async () => {
-		const existing = await spawnDisposableExecutable();
-		const { promise: launched, resolve: markLaunched } = Promise.withResolvers<void>();
-		const marker = Bun.serve({
-			hostname: "127.0.0.1",
-			port: 0,
-			fetch() {
-				markLaunched();
-				return new Response("ok");
-			},
-		});
-		const controller = new AbortController();
-		const childScript = `await fetch(${JSON.stringify(marker.url.href)}); Bun.serve({ port: 0, fetch: () => new Response("ok") });`;
-		const openError = acquireBrowser(
-			{
-				kind: "spawned",
-				path: existing.path,
-				args: ["--eval", childScript, `--user-data-dir=${path.join(path.dirname(existing.path), "profile")}`],
-			},
-			{
-				cwd: process.cwd(),
-				signal: controller.signal,
-			},
-		).then(
-			() => new Error("Expected isolated app acquisition to remain pending"),
-			error => (error instanceof Error ? error : new Error(String(error))),
-		);
+	test(
+		"launches an isolated user-data-dir beside a running executable",
+		async () => {
+			const existing = await spawnDisposableExecutable();
+			const { promise: launched, resolve: markLaunched } = Promise.withResolvers<void>();
+			const marker = Bun.serve({
+				hostname: "127.0.0.1",
+				port: 0,
+				fetch() {
+					markLaunched();
+					return new Response("ok");
+				},
+			});
+			const controller = new AbortController();
+			const childScript = `await fetch(${JSON.stringify(marker.url.href)}); Bun.serve({ port: 0, fetch: () => new Response("ok") });`;
+			const openError = acquireBrowser(
+				{
+					kind: "spawned",
+					path: existing.path,
+					args: ["--eval", childScript, `--user-data-dir=${path.join(path.dirname(existing.path), "profile")}`],
+				},
+				{
+					cwd: process.cwd(),
+					signal: controller.signal,
+				},
+			).then(
+				() => new Error("Expected isolated app acquisition to remain pending"),
+				error => (error instanceof Error ? error : new Error(String(error))),
+			);
 
-		try {
-			await Promise.race([
-				launched,
-				openError.then(error => {
-					throw error;
-				}),
-			]);
-			expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
-			controller.abort();
-			expect((await openError).name).toBe("ToolAbortError");
-		} finally {
-			controller.abort();
-			await openError;
-			await marker.stop(true);
-			await existing.close();
-		}
-	}, 10_000);
+			try {
+				await Promise.race([
+					launched,
+					openError.then(error => {
+						throw error;
+					}),
+				]);
+				expect(Process.fromPid(existing.pid)?.status()).toBe(ProcessStatus.Running);
+				controller.abort();
+				expect((await openError).name).toBe("ToolAbortError");
+			} finally {
+				controller.abort();
+				await openError;
+				await marker.stop(true);
+				await existing.close();
+			}
+		},
+		scaledTimeout(10000),
+	);
 
 	test("does not reuse a live CDP endpoint belonging to a different profile", async () => {
 		const cdp = Bun.serve({ hostname: "127.0.0.1", port: 0, fetch: () => new Response("{}") });

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -77,45 +78,49 @@ describe("MCPManager initial connection ownership", () => {
 		expect(manager.getConnectedServers()).toEqual([]);
 	});
 
-	it("recovers tools after an initial handshake timeout", async () => {
-		const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-initial-recovery-"));
-		const manager = new MCPManager(workDir);
-		const rebound = Promise.withResolvers<void>();
-		const statusTypes: string[] = [];
-		const statusSettled = Promise.withResolvers<void>();
-		const marker = path.join(workDir, "first-start");
-		const config: MCPStdioServerConfig = {
-			type: "stdio",
-			command: process.execPath,
-			args: [path.join(import.meta.dir, "fixtures", "delayed-tool-mcp.ts"), marker],
-			timeout: 1_000,
-		};
-		manager.setOnToolsChanged(tools => {
-			if (tools.some(tool => tool.name === `mcp__server_${DELAYED_TOOL_NAME}`)) rebound.resolve();
-		});
+	it(
+		"recovers tools after an initial handshake timeout",
+		async () => {
+			const workDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-mcp-initial-recovery-"));
+			const manager = new MCPManager(workDir);
+			const rebound = Promise.withResolvers<void>();
+			const statusTypes: string[] = [];
+			const statusSettled = Promise.withResolvers<void>();
+			const marker = path.join(workDir, "first-start");
+			const config: MCPStdioServerConfig = {
+				type: "stdio",
+				command: process.execPath,
+				args: [path.join(import.meta.dir, "fixtures", "delayed-tool-mcp.ts"), marker],
+				timeout: 1_000,
+			};
+			manager.setOnToolsChanged(tools => {
+				if (tools.some(tool => tool.name === `mcp__server_${DELAYED_TOOL_NAME}`)) rebound.resolve();
+			});
 
-		try {
-			const result = await manager.connectServers(
-				{ server: config },
-				{},
-				event => {
-					statusTypes.push(event.type);
-					if (event.type === "connected") statusSettled.resolve();
-				},
-				0,
-			);
-			expect(result.errors.get("server")).toBe('Connection to MCP server "server" timed out after 1000ms');
-			await rebound.promise;
-			await statusSettled.promise;
+			try {
+				const result = await manager.connectServers(
+					{ server: config },
+					{},
+					event => {
+						statusTypes.push(event.type);
+						if (event.type === "connected") statusSettled.resolve();
+					},
+					0,
+				);
+				expect(result.errors.get("server")).toBe('Connection to MCP server "server" timed out after 1000ms');
+				await rebound.promise;
+				await statusSettled.promise;
 
-			expect(manager.getConnectionStatus("server")).toBe("connected");
-			expect(manager.getTools().map(tool => tool.name)).toEqual([`mcp__server_${DELAYED_TOOL_NAME}`]);
-			expect(statusTypes).toEqual(["connecting", "failed", "reconnecting", "connected"]);
-		} finally {
-			await manager.disconnectAll();
-			await removeWithRetries(workDir);
-		}
-	}, 10_000);
+				expect(manager.getConnectionStatus("server")).toBe("connected");
+				expect(manager.getTools().map(tool => tool.name)).toEqual([`mcp__server_${DELAYED_TOOL_NAME}`]);
+				expect(statusTypes).toEqual(["connecting", "failed", "reconnecting", "connected"]);
+			} finally {
+				await manager.disconnectAll();
+				await removeWithRetries(workDir);
+			}
+		},
+		scaledTimeout(10000),
+	);
 
 	it("stops a startup-timeout retry when that server is disconnected", async () => {
 		vi.useFakeTimers();

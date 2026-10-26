@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import type { AgentTool, AgentToolContext } from "@marsai-org/agent-core";
 import { TempDir } from "@marsai-org/utils";
 import { getThemeByName, initTheme } from "@marsai-org/tui/theme";
@@ -260,7 +261,7 @@ describe("MCP result rendering with structuredContent", () => {
 		resetSettingsForTest();
 		await Settings.init({ inMemory: true, cwd: process.cwd() });
 		await initTheme(false, undefined, undefined, "dark", "light");
-	}, 15_000);
+	}, scaledTimeout(15000));
 
 	async function renderText(result: MCPToolCallResult): Promise<string> {
 		const theme = await getThemeByName("dark");

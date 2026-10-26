@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -128,19 +129,21 @@ process.stdout.write(String(await probeRelayServer(url)));`,
 		}
 	});
 
-	it("stays alive while a consumer in another project holds the global broker lease", async () => {
-		const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-global-"));
-		const firstProject = path.join(home, "project-a");
-		const secondProject = path.join(home, "project-b");
-		const firstMarker = path.join(home, "first-ready");
-		const secondMarker = path.join(home, "second-ready");
-		const globalRuntimeDir = path.join(home, ".mars", "run", "daemons", "global", "browser-relay");
-		const cdpUrl = `http://127.0.0.1:${await findFreeCdpPort()}`;
-		const scriptPath = path.join(home, "consumer.ts");
-		await Promise.all([fs.mkdir(firstProject), fs.mkdir(secondProject)]);
-		await Bun.write(
-			scriptPath,
-			`
+	it(
+		"stays alive while a consumer in another project holds the global broker lease",
+		async () => {
+			const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-global-"));
+			const firstProject = path.join(home, "project-a");
+			const secondProject = path.join(home, "project-b");
+			const firstMarker = path.join(home, "first-ready");
+			const secondMarker = path.join(home, "second-ready");
+			const globalRuntimeDir = path.join(home, ".mars", "run", "daemons", "global", "browser-relay");
+			const cdpUrl = `http://127.0.0.1:${await findFreeCdpPort()}`;
+			const scriptPath = path.join(home, "consumer.ts");
+			await Promise.all([fs.mkdir(firstProject), fs.mkdir(secondProject)]);
+			await Bun.write(
+				scriptPath,
+				`
 import { closeDaemonClients } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/launch/client.ts"))};
 import { ensureRelayDaemon } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/tools/browser/relay/daemon.ts"))};
 
@@ -158,82 +161,86 @@ try {
 	await closeDaemonClients();
 }
 `,
-		);
-
-		const spawnConsumer = (cwd: string, profile: string, marker: string) =>
-			observeConsumer(
-				Bun.spawn([process.execPath, scriptPath], {
-					cwd,
-					env: {
-						...process.env,
-						HOME: home,
-						USERPROFILE: home,
-						PI_CONFIG_DIR: ".mars",
-						MARS_PROFILE: profile,
-						MARS_DAEMON_IDLE_GRACE_MS: "200",
-						MARS_TEST_RELAY_URL: cdpUrl,
-						MARS_TEST_READY_MARKER: marker,
-					},
-					stdin: "pipe",
-					stdout: "ignore",
-					stderr: "pipe",
-				}),
 			);
 
-		const first = spawnConsumer(firstProject, "profile-a", firstMarker);
-		try {
-			await waitForConsumerReady(first, firstMarker, 15_000);
-			expect(await probeRelayServer(cdpUrl)).toBeTrue();
+			const spawnConsumer = (cwd: string, profile: string, marker: string) =>
+				observeConsumer(
+					Bun.spawn([process.execPath, scriptPath], {
+						cwd,
+						env: {
+							...process.env,
+							HOME: home,
+							USERPROFILE: home,
+							PI_CONFIG_DIR: ".mars",
+							MARS_PROFILE: profile,
+							MARS_DAEMON_IDLE_GRACE_MS: "200",
+							MARS_TEST_RELAY_URL: cdpUrl,
+							MARS_TEST_READY_MARKER: marker,
+						},
+						stdin: "pipe",
+						stdout: "ignore",
+						stderr: "pipe",
+					}),
+				);
 
-			const second = spawnConsumer(secondProject, "profile-b", secondMarker);
+			const first = spawnConsumer(firstProject, "profile-a", firstMarker);
 			try {
-				await waitForConsumerReady(second, secondMarker, 15_000);
-				await stopConsumer(first);
-				// The global broker's real idle clock must pass while the second client remains connected.
-				await Bun.sleep(500);
+				await waitForConsumerReady(first, firstMarker, 15_000);
 				expect(await probeRelayServer(cdpUrl)).toBeTrue();
 
-				await stopConsumer(second);
-				expect(await waitUntil(async () => !(await probeRelayServer(cdpUrl)), 5_000)).toBeTrue();
-			} finally {
-				await terminateConsumer(second);
-			}
-		} finally {
-			await terminateConsumer(first);
-			const rescue = await createDaemonBrokerClient(globalRuntimeDir, {
-				runtimeDir: globalRuntimeDir,
-				idleGraceMs: 200,
-			});
-			try {
-				await rescue.request({ op: "shutdown" });
-			} catch {
-				// The last-client grace may already have stopped the broker.
-			}
-			rescue.close();
-			await fs.rm(home, { recursive: true, force: true });
-		}
-		// Budget must exceed the sum of the bounds inside the test: two 15s marker waits
-		// plus the 5s shutdown probe are 35s of legitimate waiting, so a 30s cap let a
-		// loaded runner kill the test mid-`waitUntil` and report only "timed out after
-		// 30000ms" instead of the marker assertion that actually failed. Each consumer is
-		// a cold `bun` process importing the daemon module graph, so the spawns are slow
-		// exactly when the machine is busy.
-	}, 60_000);
+				const second = spawnConsumer(secondProject, "profile-b", secondMarker);
+				try {
+					await waitForConsumerReady(second, secondMarker, 15_000);
+					await stopConsumer(first);
+					// The global broker's real idle clock must pass while the second client remains connected.
+					await Bun.sleep(500);
+					expect(await probeRelayServer(cdpUrl)).toBeTrue();
 
-	it("keeps one port's relay running when another relay starts on a different port", async () => {
-		const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-ports-"));
-		const globalRuntimeDir = path.join(home, ".mars", "run", "daemons", "global", "browser-relay");
-		const firstPort = await findFreeCdpPort();
-		let secondPort = await findFreeCdpPort();
-		// The finder releases its probe listener, so it can hand back the same port twice.
-		while (secondPort === firstPort) secondPort = await findFreeCdpPort();
-		const firstUrl = `http://127.0.0.1:${firstPort}`;
-		const secondUrl = `http://127.0.0.1:${secondPort}`;
-		const child = Bun.spawn(
-			[
-				process.execPath,
-				"-e",
-				`import { closeDaemonClients } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/launch/client.ts"))};
+					await stopConsumer(second);
+					expect(await waitUntil(async () => !(await probeRelayServer(cdpUrl)), 5_000)).toBeTrue();
+				} finally {
+					await terminateConsumer(second);
+				}
+			} finally {
+				await terminateConsumer(first);
+				const rescue = await createDaemonBrokerClient(globalRuntimeDir, {
+					runtimeDir: globalRuntimeDir,
+					idleGraceMs: 200,
+				});
+				try {
+					await rescue.request({ op: "shutdown" });
+				} catch {
+					// The last-client grace may already have stopped the broker.
+				}
+				rescue.close();
+				await fs.rm(home, { recursive: true, force: true });
+			}
+			// Budget must exceed the sum of the bounds inside the test: two 15s marker waits
+			// plus the 5s shutdown probe are 35s of legitimate waiting, so a 30s cap let a
+			// loaded runner kill the test mid-`waitUntil` and report only "timed out after
+			// 30000ms" instead of the marker assertion that actually failed. Each consumer is
+			// a cold `bun` process importing the daemon module graph, so the spawns are slow
+			// exactly when the machine is busy.
+		},
+		scaledTimeout(60000),
+	);
+
+	it(
+		"keeps one port's relay running when another relay starts on a different port",
+		async () => {
+			const home = await fs.mkdtemp(path.join(os.tmpdir(), "mars-relay-ports-"));
+			const globalRuntimeDir = path.join(home, ".mars", "run", "daemons", "global", "browser-relay");
+			const firstPort = await findFreeCdpPort();
+			let secondPort = await findFreeCdpPort();
+			// The finder releases its probe listener, so it can hand back the same port twice.
+			while (secondPort === firstPort) secondPort = await findFreeCdpPort();
+			const firstUrl = `http://127.0.0.1:${firstPort}`;
+			const secondUrl = `http://127.0.0.1:${secondPort}`;
+			const child = Bun.spawn(
+				[
+					process.execPath,
+					"-e",
+					`import { closeDaemonClients } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/launch/client.ts"))};
 import { ensureRelayDaemon, probeRelayServer } from ${JSON.stringify(path.resolve(import.meta.dir, "../../src/tools/browser/relay/daemon.ts"))};
 const [first, second] = [Bun.env.MARS_TEST_FIRST_RELAY_URL!, Bun.env.MARS_TEST_SECOND_RELAY_URL!];
 try {
@@ -243,44 +250,46 @@ try {
 } finally {
 	await closeDaemonClients();
 }`,
-			],
-			{
-				cwd: home,
-				env: {
-					...process.env,
-					HOME: home,
-					USERPROFILE: home,
-					PI_CONFIG_DIR: ".mars",
-					MARS_DAEMON_IDLE_GRACE_MS: "200",
-					MARS_TEST_FIRST_RELAY_URL: firstUrl,
-					MARS_TEST_SECOND_RELAY_URL: secondUrl,
+				],
+				{
+					cwd: home,
+					env: {
+						...process.env,
+						HOME: home,
+						USERPROFILE: home,
+						PI_CONFIG_DIR: ".mars",
+						MARS_DAEMON_IDLE_GRACE_MS: "200",
+						MARS_TEST_FIRST_RELAY_URL: firstUrl,
+						MARS_TEST_SECOND_RELAY_URL: secondUrl,
+					},
+					stdout: "pipe",
+					stderr: "pipe",
 				},
-				stdout: "pipe",
-				stderr: "pipe",
-			},
-		);
-		try {
-			const [exitCode, stdout, stderr] = await Promise.all([
-				child.exited,
-				new Response(child.stdout).text(),
-				new Response(child.stderr).text(),
-			]);
-			expect(exitCode, stderr).toBe(0);
-			expect(JSON.parse(stdout)).toEqual({ started: [true, true], serving: [true, true] });
-		} finally {
-			if (child.exitCode === null) child.kill();
-			await child.exited;
-			const rescue = await createDaemonBrokerClient(globalRuntimeDir, {
-				runtimeDir: globalRuntimeDir,
-				idleGraceMs: 200,
-			});
+			);
 			try {
-				await rescue.request({ op: "shutdown" });
-			} catch {
-				// The last-client grace may already have stopped the broker.
+				const [exitCode, stdout, stderr] = await Promise.all([
+					child.exited,
+					new Response(child.stdout).text(),
+					new Response(child.stderr).text(),
+				]);
+				expect(exitCode, stderr).toBe(0);
+				expect(JSON.parse(stdout)).toEqual({ started: [true, true], serving: [true, true] });
+			} finally {
+				if (child.exitCode === null) child.kill();
+				await child.exited;
+				const rescue = await createDaemonBrokerClient(globalRuntimeDir, {
+					runtimeDir: globalRuntimeDir,
+					idleGraceMs: 200,
+				});
+				try {
+					await rescue.request({ op: "shutdown" });
+				} catch {
+					// The last-client grace may already have stopped the broker.
+				}
+				rescue.close();
+				await fs.rm(home, { recursive: true, force: true });
 			}
-			rescue.close();
-			await fs.rm(home, { recursive: true, force: true });
-		}
-	}, 60_000);
+		},
+		scaledTimeout(60000),
+	);
 });

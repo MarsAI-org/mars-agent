@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -167,85 +168,89 @@ describe("RpcLiveBridge", () => {
 });
 
 describe("live commands over RPC", () => {
-	test("start/mute/stop wire shapes; frames bypass set_event_filter; stdin end stops the session", async () => {
-		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-rpc-live-"));
-		const child = Bun.spawn([process.execPath, path.join(import.meta.dir, "fixtures", "live-rpc-agent.ts")], {
-			cwd: dir,
-			env: { ...process.env, PI_CODING_AGENT_DIR: dir, PI_NO_TITLE: "1" },
-			stdin: "pipe",
-			stdout: "pipe",
-			stderr: "pipe",
-		});
-		const stderr = new Response(child.stderr).text();
-		const lines = readLines(child.stdout, AbortSignal.timeout(30_000));
-		const decoder = new TextDecoder();
-		const seen: Record<string, unknown>[] = [];
-		const receive = async (): Promise<Record<string, unknown> | undefined> => {
-			const line = await lines.next();
-			if (line.done) return undefined;
-			const frame = JSON.parse(decoder.decode(line.value)) as Record<string, unknown>;
-			seen.push(frame);
-			return frame;
-		};
-		let id = 0;
-		const command = async (fields: object): Promise<Record<string, unknown>> => {
-			const requestId = String(++id);
-			child.stdin.write(`${JSON.stringify({ ...fields, id: requestId })}\n`);
-			await child.stdin.flush();
-			for (;;) {
-				const frame = await receive();
-				if (!frame) throw new Error(await stderr);
-				if (frame.type === "response" && frame.id === requestId) return frame;
-			}
-		};
-		try {
-			while ((await receive())?.type !== "ready") {}
-			expect(await command({ type: "set_event_filter", events: ["agent_end"] })).toMatchObject({ success: true });
-			expect(await command({ type: "live_mute" })).toMatchObject({
-				type: "response",
-				command: "live_mute",
-				success: false,
-				error: "No live session is active",
+	test(
+		"start/mute/stop wire shapes; frames bypass set_event_filter; stdin end stops the session",
+		async () => {
+			const dir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-rpc-live-"));
+			const child = Bun.spawn([process.execPath, path.join(import.meta.dir, "fixtures", "live-rpc-agent.ts")], {
+				cwd: dir,
+				env: { ...process.env, PI_CODING_AGENT_DIR: dir, PI_NO_TITLE: "1" },
+				stdin: "pipe",
+				stdout: "pipe",
+				stderr: "pipe",
 			});
-			expect(await command({ type: "live_stop" })).toEqual({
-				id: "3",
-				type: "response",
-				command: "live_stop",
-				success: true,
-			});
-			expect(await command({ type: "live_start", instructions: "Hey {{firstName}}" })).toEqual({
-				id: "4",
-				type: "response",
-				command: "live_start",
-				success: true,
-				data: { voice: "sol" },
-			});
-			expect(seen.filter(frame => String(frame.type).startsWith("live_"))).toEqual([
-				{ type: "live_phase", phase: "connecting" },
-				{ type: "live_transcript", role: "user", turn: 1, text: "hello", final: true },
-				{ type: "live_phase", phase: "listening" },
-			]);
-			expect(await command({ type: "live_start" })).toMatchObject({
-				command: "live_start",
-				success: false,
-				error: "A live session is already active",
-			});
-			expect(await command({ type: "live_mute" })).toMatchObject({ success: true, data: { muted: true } });
-			expect(await command({ type: "live_mute", muted: false })).toMatchObject({ data: { muted: false } });
+			const stderr = new Response(child.stderr).text();
+			const lines = readLines(child.stdout, AbortSignal.timeout(30_000));
+			const decoder = new TextDecoder();
+			const seen: Record<string, unknown>[] = [];
+			const receive = async (): Promise<Record<string, unknown> | undefined> => {
+				const line = await lines.next();
+				if (line.done) return undefined;
+				const frame = JSON.parse(decoder.decode(line.value)) as Record<string, unknown>;
+				seen.push(frame);
+				return frame;
+			};
+			let id = 0;
+			const command = async (fields: object): Promise<Record<string, unknown>> => {
+				const requestId = String(++id);
+				child.stdin.write(`${JSON.stringify({ ...fields, id: requestId })}\n`);
+				await child.stdin.flush();
+				for (;;) {
+					const frame = await receive();
+					if (!frame) throw new Error(await stderr);
+					if (frame.type === "response" && frame.id === requestId) return frame;
+				}
+			};
+			try {
+				while ((await receive())?.type !== "ready") {}
+				expect(await command({ type: "set_event_filter", events: ["agent_end"] })).toMatchObject({ success: true });
+				expect(await command({ type: "live_mute" })).toMatchObject({
+					type: "response",
+					command: "live_mute",
+					success: false,
+					error: "No live session is active",
+				});
+				expect(await command({ type: "live_stop" })).toEqual({
+					id: "3",
+					type: "response",
+					command: "live_stop",
+					success: true,
+				});
+				expect(await command({ type: "live_start", instructions: "Hey {{firstName}}" })).toEqual({
+					id: "4",
+					type: "response",
+					command: "live_start",
+					success: true,
+					data: { voice: "sol" },
+				});
+				expect(seen.filter(frame => String(frame.type).startsWith("live_"))).toEqual([
+					{ type: "live_phase", phase: "connecting" },
+					{ type: "live_transcript", role: "user", turn: 1, text: "hello", final: true },
+					{ type: "live_phase", phase: "listening" },
+				]);
+				expect(await command({ type: "live_start" })).toMatchObject({
+					command: "live_start",
+					success: false,
+					error: "A live session is already active",
+				});
+				expect(await command({ type: "live_mute" })).toMatchObject({ success: true, data: { muted: true } });
+				expect(await command({ type: "live_mute", muted: false })).toMatchObject({ data: { muted: false } });
 
-			await child.stdin.end();
-			while (await receive()) {}
-			expect(await child.exited).toBe(0);
-			expect(seen.at(-1)).toEqual({ type: "live_end" });
-			expect(await Bun.file(path.join(dir, "live-stopped.json")).json()).toEqual({
-				voice: "sol",
-				instructions: "Hey {{firstName}}",
-			});
-		} finally {
-			child.kill();
-			await child.exited;
-			await stderr;
-			await removeWithRetries(dir);
-		}
-	}, 60_000);
+				await child.stdin.end();
+				while (await receive()) {}
+				expect(await child.exited).toBe(0);
+				expect(seen.at(-1)).toEqual({ type: "live_end" });
+				expect(await Bun.file(path.join(dir, "live-stopped.json")).json()).toEqual({
+					voice: "sol",
+					instructions: "Hey {{firstName}}",
+				});
+			} finally {
+				child.kill();
+				await child.exited;
+				await stderr;
+				await removeWithRetries(dir);
+			}
+		},
+		scaledTimeout(60000),
+	);
 });

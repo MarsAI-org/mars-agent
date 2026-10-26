@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { fileURLToPath } from "node:url";
 import type { CostEstimatorContext } from "@marsai-org/agent-core";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -105,55 +106,63 @@ describe("initTelemetryExport gating", () => {
 });
 
 describe("initTelemetryExport exporter selection", () => {
-	it("does not send OTLP when console is explicitly selected for every signal", async () => {
-		const probe = fileURLToPath(new URL("./otel-non-otlp-probe.ts", import.meta.url));
-		const proc = Bun.spawn([process.execPath, probe], {
-			env: { ...process.env },
-			stdin: "ignore",
-			stdout: "pipe",
-			stderr: "ignore",
-		});
-		const output = new Response(proc.stdout).text();
-		const exitCode = await proc.exited;
+	it(
+		"does not send OTLP when console is explicitly selected for every signal",
+		async () => {
+			const probe = fileURLToPath(new URL("./otel-non-otlp-probe.ts", import.meta.url));
+			const proc = Bun.spawn([process.execPath, probe], {
+				env: { ...process.env },
+				stdin: "ignore",
+				stdout: "pipe",
+				stderr: "ignore",
+			});
+			const output = new Response(proc.stdout).text();
+			const exitCode = await proc.exited;
 
-		expect({ exitCode, output: (await output).trim() }).toEqual({
-			exitCode: 0,
-			output: "PROBE: NO_EXPORT",
-		});
-	}, 10_000);
+			expect({ exitCode, output: (await output).trim() }).toEqual({
+				exitCode: 0,
+				output: "PROBE: NO_EXPORT",
+			});
+		},
+		scaledTimeout(10000),
+	);
 });
 
 describe("initTelemetryExport signals export path", () => {
-	it("exports every OTLP/proto signal and merged resource attributes", async () => {
-		// Positive initialization registers process-global providers, so each
-		// scenario still runs in its own process. Starting the independent probes
-		// together avoids serially paying three Bun startup and exporter-flush waits.
-		const probes = [
-			["traces", "./otel-export-probe.ts"],
-			["logs and metrics", "./otel-signals-probe.ts"],
-			["resource attributes", "./otel-resource-probe.ts"],
-		] as const;
-		const results = await Promise.all(
-			probes.map(async ([name, relativePath]) => {
-				const probe = fileURLToPath(new URL(relativePath, import.meta.url));
-				const proc = Bun.spawn([process.execPath, probe], {
-					// Bun otherwise inherits the process's original native environment,
-					// including external OTEL kill-switches removed in beforeEach.
-					env: { ...process.env },
-					stdin: "ignore",
-					stdout: "ignore",
-					stderr: "ignore",
-				});
-				return [name, await proc.exited] as const;
-			}),
-		);
+	it(
+		"exports every OTLP/proto signal and merged resource attributes",
+		async () => {
+			// Positive initialization registers process-global providers, so each
+			// scenario still runs in its own process. Starting the independent probes
+			// together avoids serially paying three Bun startup and exporter-flush waits.
+			const probes = [
+				["traces", "./otel-export-probe.ts"],
+				["logs and metrics", "./otel-signals-probe.ts"],
+				["resource attributes", "./otel-resource-probe.ts"],
+			] as const;
+			const results = await Promise.all(
+				probes.map(async ([name, relativePath]) => {
+					const probe = fileURLToPath(new URL(relativePath, import.meta.url));
+					const proc = Bun.spawn([process.execPath, probe], {
+						// Bun otherwise inherits the process's original native environment,
+						// including external OTEL kill-switches removed in beforeEach.
+						env: { ...process.env },
+						stdin: "ignore",
+						stdout: "ignore",
+						stderr: "ignore",
+					});
+					return [name, await proc.exited] as const;
+				}),
+			);
 
-		expect(Object.fromEntries(results)).toEqual({
-			traces: 0,
-			"logs and metrics": 0,
-			"resource attributes": 0,
-		});
-	}, 20_000);
+			expect(Object.fromEntries(results)).toEqual({
+				traces: 0,
+				"logs and metrics": 0,
+				"resource attributes": 0,
+			});
+		},
+		scaledTimeout(20000),
+	);
 });
 
 describe("estimateProviderCost", () => {

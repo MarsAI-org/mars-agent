@@ -12,6 +12,7 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import type { ChildProcess } from "node:child_process";
 import { execSync, spawn } from "node:child_process";
 import { isContextOverflow as originalIsContextOverflow } from "@marsai-org/ai/error";
@@ -627,7 +628,7 @@ describe("Context overflow error handling", () => {
 				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 				name: "Ollama GPT-OSS 20B",
 			});
-		}, 60000);
+		}, scaledTimeout(60000));
 
 		afterAll(() => {
 			if (ollamaProcess) {

@@ -11,6 +11,7 @@
  * onCancel that just closes the overlay.
  */
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { parseArgs } from "@marsai-org/coding-agent/cli/args";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -26,73 +27,77 @@ class ProcessExitSignal extends Error {
 }
 
 describe("runRootCommand — startup --resume picker cancellation", () => {
-	it("exits cleanly (process.exit 0) when the picker is cancelled instead of returning and hanging", async () => {
-		using tempDir = TempDir.createSync("@mars-resume-cancel-");
-		const sessionDir = tempDir.path();
-		// One answered session so folderSessions is non-empty and the picker (not the
-		// "No sessions found" probe) is the path under test.
-		await Bun.write(
-			path.join(sessionDir, "existing.jsonl"),
-			[
-				JSON.stringify({
-					type: "session",
-					id: "existing-session",
-					cwd: sessionDir,
-					timestamp: new Date().toISOString(),
-				}),
-				JSON.stringify({
-					type: "message",
-					id: "e1",
-					parentId: null,
-					timestamp: new Date().toISOString(),
-					message: { role: "assistant", content: "prior work" },
-				}),
-			].join("\n"),
-		);
+	it(
+		"exits cleanly (process.exit 0) when the picker is cancelled instead of returning and hanging",
+		async () => {
+			using tempDir = TempDir.createSync("@mars-resume-cancel-");
+			const sessionDir = tempDir.path();
+			// One answered session so folderSessions is non-empty and the picker (not the
+			// "No sessions found" probe) is the path under test.
+			await Bun.write(
+				path.join(sessionDir, "existing.jsonl"),
+				[
+					JSON.stringify({
+						type: "session",
+						id: "existing-session",
+						cwd: sessionDir,
+						timestamp: new Date().toISOString(),
+					}),
+					JSON.stringify({
+						type: "message",
+						id: "e1",
+						parentId: null,
+						timestamp: new Date().toISOString(),
+						message: { role: "assistant", content: "prior work" },
+					}),
+				].join("\n"),
+			);
 
-		const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
-		const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
+			const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
+			const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
 
-		// --print keeps initTheme non-interactive so no global appearance/SIGWINCH
-		// listeners leak into the rest of the suite; the picker branch is gated on
-		// `resume === true`, not on interactivity, so it still runs.
-		const parsed = parseArgs(["--resume", "--print"]);
-		parsed.noExtensions = true;
-		parsed.noSkills = true;
-		parsed.noRules = true;
-		parsed.noTools = true;
-		parsed.noLsp = true;
-		parsed.sessionDir = sessionDir;
+			// --print keeps initTheme non-interactive so no global appearance/SIGWINCH
+			// listeners leak into the rest of the suite; the picker branch is gated on
+			// `resume === true`, not on interactivity, so it still runs.
+			const parsed = parseArgs(["--resume", "--print"]);
+			parsed.noExtensions = true;
+			parsed.noSkills = true;
+			parsed.noRules = true;
+			parsed.noTools = true;
+			parsed.noLsp = true;
+			parsed.sessionDir = sessionDir;
 
-		const exitCodes: number[] = [];
-		vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
-			exitCodes.push(code ?? 0);
-			throw new ProcessExitSignal(code ?? 0);
-		}) as typeof process.exit);
-		vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+			const exitCodes: number[] = [];
+			vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+				exitCodes.push(code ?? 0);
+				throw new ProcessExitSignal(code ?? 0);
+			}) as typeof process.exit);
+			vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
-		let pickerCalled = false;
-		let thrown: unknown;
-		try {
-			await runRootCommand(parsed, ["--resume", "--print"], {
-				discoverAuthStorage: async () => authStorage,
-				settings,
-				selectSession: async () => {
-					pickerCalled = true;
-					return null; // user cancelled (Esc)
-				},
-			});
-		} catch (err) {
-			thrown = err;
-		} finally {
-			vi.restoreAllMocks();
-			authStorage.close();
-		}
+			let pickerCalled = false;
+			let thrown: unknown;
+			try {
+				await runRootCommand(parsed, ["--resume", "--print"], {
+					discoverAuthStorage: async () => authStorage,
+					settings,
+					selectSession: async () => {
+						pickerCalled = true;
+						return null; // user cancelled (Esc)
+					},
+				});
+			} catch (err) {
+				thrown = err;
+			} finally {
+				vi.restoreAllMocks();
+				authStorage.close();
+			}
 
-		expect(pickerCalled).toBe(true);
-		expect(thrown).toBeInstanceOf(ProcessExitSignal);
-		// Exactly one clean exit — proves the cancel branch terminates instead of
-		// falling through to session creation or returning into a hang.
-		expect(exitCodes).toEqual([0]);
-	}, 15_000);
+			expect(pickerCalled).toBe(true);
+			expect(thrown).toBeInstanceOf(ProcessExitSignal);
+			// Exactly one clean exit — proves the cancel branch terminates instead of
+			// falling through to session creation or returning into a hang.
+			expect(exitCodes).toEqual([0]);
+		},
+		scaledTimeout(15000),
+	);
 });

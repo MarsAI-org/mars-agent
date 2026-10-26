@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -66,13 +67,17 @@ describe("mars read MCP resources", () => {
 		return { exitCode, output, error };
 	}
 
-	it("reads native, opaque, and wrapped MCP resources and reports missing resources through the CLI", async () => {
-		const { exitCode, output, error } = await runReadProbe();
+	it(
+		"reads native, opaque, and wrapped MCP resources and reports missing resources through the CLI",
+		async () => {
+			const { exitCode, output, error } = await runReadProbe();
 
-		expect(exitCode).toBe(1);
-		expect(output).toContain("fixture content for test://alpha");
-		expect(output).toContain("fixture content for urn:fixture:gamma");
-		expect(output).toContain("fixture content for test://beta");
-		expect(error).toContain('No MCP server has resource "test://missing"');
-	}, 30_000);
+			expect(exitCode).toBe(1);
+			expect(output).toContain("fixture content for test://alpha");
+			expect(output).toContain("fixture content for urn:fixture:gamma");
+			expect(output).toContain("fixture content for test://beta");
+			expect(error).toContain('No MCP server has resource "test://missing"');
+		},
+		scaledTimeout(30000),
+	);
 });

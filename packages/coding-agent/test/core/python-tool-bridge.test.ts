@@ -1,4 +1,5 @@
 import { afterAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
 import { PYTHON_PRELUDE } from "@marsai-org/coding-agent/eval/py/prelude";
 import {
@@ -101,34 +102,36 @@ describe("Python tool bridge HTTP server", () => {
 			unregister();
 		}
 	});
-	it("keeps Python defaults out of schema-owned intent parameters", async () => {
-		let executions = 0;
-		const constrained = {
-			name: "constrained",
-			label: "constrained",
-			description: "Reports the validated tool-owned parameter",
-			parameters: {
-				type: "object",
-				properties: { i: { type: "string", enum: ["allowed"] } },
-				additionalProperties: false,
-			},
-			async execute(_id: string, args: unknown): Promise<AgentToolResult> {
-				executions++;
-				if (!isRecord(args)) throw new Error("Expected object arguments");
-				return { content: [{ type: "text", text: String(args.i ?? "omitted") }] };
-			},
-		} as unknown as AgentTool;
-		const info = await ensurePyToolBridge();
-		const sessionId = `python-intent-${crypto.randomUUID()}`;
-		const unregister = registerPyToolBridge(sessionId, "run", {
-			toolSession: makeSession(new Map([["constrained", constrained]])),
-		});
-		try {
-			const prelude = PYTHON_PRELUDE.replace(
-				"from __future__ import annotations",
-				"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
-			);
-			const script = `${prelude}
+	it(
+		"keeps Python defaults out of schema-owned intent parameters",
+		async () => {
+			let executions = 0;
+			const constrained = {
+				name: "constrained",
+				label: "constrained",
+				description: "Reports the validated tool-owned parameter",
+				parameters: {
+					type: "object",
+					properties: { i: { type: "string", enum: ["allowed"] } },
+					additionalProperties: false,
+				},
+				async execute(_id: string, args: unknown): Promise<AgentToolResult> {
+					executions++;
+					if (!isRecord(args)) throw new Error("Expected object arguments");
+					return { content: [{ type: "text", text: String(args.i ?? "omitted") }] };
+				},
+			} as unknown as AgentTool;
+			const info = await ensurePyToolBridge();
+			const sessionId = `python-intent-${crypto.randomUUID()}`;
+			const unregister = registerPyToolBridge(sessionId, "run", {
+				toolSession: makeSession(new Map([["constrained", constrained]])),
+			});
+			try {
+				const prelude = PYTHON_PRELUDE.replace(
+					"from __future__ import annotations",
+					"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
+				);
+				const script = `${prelude}
 __omp_run_id__ = "run"
 async def check_intent():
     print(await tool.constrained())
@@ -142,39 +145,41 @@ async def check_intent():
         raise AssertionError("Invalid tool-owned intent reached execution")
 asyncio.run(check_intent())
 `;
-			// Feed the script over stdin: the inlined prelude exceeds Windows spawn limits via `-c`.
-			const child = Bun.spawn([Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python"), "-"], {
-				stdin: new Response(script),
-				stdout: "pipe",
-				stderr: "pipe",
-				signal: AbortSignal.timeout(10_000),
-				env: {
-					...process.env,
-					PI_TOOL_BRIDGE_URL: info.url,
-					PI_TOOL_BRIDGE_TOKEN: info.token,
-					PI_TOOL_BRIDGE_SESSION: sessionId,
-				},
-			});
-			try {
-				const [exitCode, stdout, stderr] = await Promise.all([
-					child.exited,
-					new Response(child.stdout).text(),
-					new Response(child.stderr).text(),
-				]);
-				expect({ exitCode, stdout: stdout.replaceAll("\r\n", "\n"), stderr }).toEqual({
-					exitCode: 0,
-					stdout: "omitted\nomitted\nallowed\ninvalid rejected\n",
-					stderr: "",
+				// Feed the script over stdin: the inlined prelude exceeds Windows spawn limits via `-c`.
+				const child = Bun.spawn([Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python"), "-"], {
+					stdin: new Response(script),
+					stdout: "pipe",
+					stderr: "pipe",
+					signal: AbortSignal.timeout(10_000),
+					env: {
+						...process.env,
+						PI_TOOL_BRIDGE_URL: info.url,
+						PI_TOOL_BRIDGE_TOKEN: info.token,
+						PI_TOOL_BRIDGE_SESSION: sessionId,
+					},
 				});
-				expect(executions).toBe(3);
+				try {
+					const [exitCode, stdout, stderr] = await Promise.all([
+						child.exited,
+						new Response(child.stdout).text(),
+						new Response(child.stderr).text(),
+					]);
+					expect({ exitCode, stdout: stdout.replaceAll("\r\n", "\n"), stderr }).toEqual({
+						exitCode: 0,
+						stdout: "omitted\nomitted\nallowed\ninvalid rejected\n",
+						stderr: "",
+					});
+					expect(executions).toBe(3);
+				} finally {
+					child.kill();
+					await child.exited;
+				}
 			} finally {
-				child.kill();
-				await child.exited;
+				unregister();
 			}
-		} finally {
-			unregister();
-		}
-	}, 15_000);
+		},
+		scaledTimeout(15000),
+	);
 
 	it("returns ok=false when no session is registered for the given id", async () => {
 		const info = await ensurePyToolBridge();
@@ -303,74 +308,78 @@ asyncio.run(check_intent())
 		}
 	});
 
-	it("carries call-site identity through an awaited read", async () => {
-		const calls: FakeCall[] = [];
-		const readTool = makeFakeTool("read", calls, {
-			content: [{ type: "text", text: "file body" }],
-		});
-		const claims: Array<{ name: string; args: unknown; identity: { siteId: string; occurrence: number } }> = [];
-		const shadowCell = {
-			async claim(name: string, args: unknown, identity: { siteId: string; occurrence: number }) {
-				claims.push({ name, args, identity });
-				return undefined;
-			},
-		} as unknown as EvalShadowCellSession;
-		const info = await ensurePyToolBridge();
-		const sessionId = `py-identity-${crypto.randomUUID()}`;
-		const unregister = registerPyToolBridge(sessionId, "run", {
-			toolSession: makeSession(new Map([["read", readTool]])),
-			shadowCell,
-		});
-		try {
-			const prelude = PYTHON_PRELUDE.replace(
-				"from __future__ import annotations",
-				"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
-			);
-			// Mirror the runner rewrite shape: `await tool.read({...})` becomes
-			// `await __omp_with_call_site__(siteId, tool.read, {...})`.
-			const script = `${prelude}
+	it(
+		"carries call-site identity through an awaited read",
+		async () => {
+			const calls: FakeCall[] = [];
+			const readTool = makeFakeTool("read", calls, {
+				content: [{ type: "text", text: "file body" }],
+			});
+			const claims: Array<{ name: string; args: unknown; identity: { siteId: string; occurrence: number } }> = [];
+			const shadowCell = {
+				async claim(name: string, args: unknown, identity: { siteId: string; occurrence: number }) {
+					claims.push({ name, args, identity });
+					return undefined;
+				},
+			} as unknown as EvalShadowCellSession;
+			const info = await ensurePyToolBridge();
+			const sessionId = `py-identity-${crypto.randomUUID()}`;
+			const unregister = registerPyToolBridge(sessionId, "run", {
+				toolSession: makeSession(new Map([["read", readTool]])),
+				shadowCell,
+			});
+			try {
+				const prelude = PYTHON_PRELUDE.replace(
+					"from __future__ import annotations",
+					"from __future__ import annotations\n__omp_display = lambda *args, **kwargs: None",
+				);
+				// Mirror the runner rewrite shape: `await tool.read({...})` becomes
+				// `await __omp_with_call_site__(siteId, tool.read, {...})`.
+				const script = `${prelude}
 __omp_run_id__ = "run"
 async def check_identity():
     print(await __omp_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
     print(await __omp_with_call_site__("py:0", tool.read, {"path": "foo.txt"}))
 asyncio.run(check_identity())
 `;
-			const child = Bun.spawn([Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python"), "-"], {
-				stdin: new Response(script),
-				stdout: "pipe",
-				stderr: "pipe",
-				signal: AbortSignal.timeout(10_000),
-				env: {
-					...process.env,
-					PI_TOOL_BRIDGE_URL: info.url,
-					PI_TOOL_BRIDGE_TOKEN: info.token,
-					PI_TOOL_BRIDGE_SESSION: sessionId,
-				},
-			});
-			try {
-				const [exitCode, stdout, stderr] = await Promise.all([
-					child.exited,
-					new Response(child.stdout).text(),
-					new Response(child.stderr).text(),
-				]);
-				expect({ exitCode, stdout: stdout.replaceAll("\r\n", "\n"), stderr }).toEqual({
-					exitCode: 0,
-					stdout: "file body\nfile body\n",
-					stderr: "",
+				const child = Bun.spawn([Bun.env.PYTHON ?? ($which("python3") ? "python3" : "python"), "-"], {
+					stdin: new Response(script),
+					stdout: "pipe",
+					stderr: "pipe",
+					signal: AbortSignal.timeout(10_000),
+					env: {
+						...process.env,
+						PI_TOOL_BRIDGE_URL: info.url,
+						PI_TOOL_BRIDGE_TOKEN: info.token,
+						PI_TOOL_BRIDGE_SESSION: sessionId,
+					},
 				});
-				expect(claims).toEqual([
-					{ name: "read", args: { path: "foo.txt" }, identity: { siteId: "py:0", occurrence: 0 } },
-					{ name: "read", args: { path: "foo.txt" }, identity: { siteId: "py:0", occurrence: 1 } },
-				]);
-				expect(calls).toHaveLength(2);
+				try {
+					const [exitCode, stdout, stderr] = await Promise.all([
+						child.exited,
+						new Response(child.stdout).text(),
+						new Response(child.stderr).text(),
+					]);
+					expect({ exitCode, stdout: stdout.replaceAll("\r\n", "\n"), stderr }).toEqual({
+						exitCode: 0,
+						stdout: "file body\nfile body\n",
+						stderr: "",
+					});
+					expect(claims).toEqual([
+						{ name: "read", args: { path: "foo.txt" }, identity: { siteId: "py:0", occurrence: 0 } },
+						{ name: "read", args: { path: "foo.txt" }, identity: { siteId: "py:0", occurrence: 1 } },
+					]);
+					expect(calls).toHaveLength(2);
+				} finally {
+					child.kill();
+					await child.exited;
+				}
 			} finally {
-				child.kill();
-				await child.exited;
+				unregister();
 			}
-		} finally {
-			unregister();
-		}
-	}, 15_000);
+		},
+		scaledTimeout(15000),
+	);
 
 	it("force-stops with an in-flight response without an unhandled socket rejection", async () => {
 		const started = Promise.withResolvers<void>();

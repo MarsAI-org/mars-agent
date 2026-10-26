@@ -5,6 +5,7 @@
  * the process, and a revived subagent silently inherits the old shell state.
  */
 import { afterEach, beforeEach, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -65,76 +66,86 @@ afterEach(async () => {
 	await removeWithRetries(root);
 });
 
-it("releases a parked subagent's persistent shell so a revive starts a fresh one", async () => {
-	// Under the isolated HOME: project discovery walks up from cwd and stops at os.homedir(). On Windows
-	// os.tmpdir() lives under the real home, so a cwd outside the fake HOME would walk into the real
-	// ~/.mars and load the developer's installed plugins as project plugins.
-	const cwd = path.join(root, "home", "work");
-	const artifactsDir = path.join(root, "artifacts");
-	await fs.mkdir(cwd, { recursive: true });
-	await fs.mkdir(artifactsDir, { recursive: true });
+it(
+	"releases a parked subagent's persistent shell so a revive starts a fresh one",
+	async () => {
+		// Under the isolated HOME: project discovery walks up from cwd and stops at os.homedir(). On Windows
+		// os.tmpdir() lives under the real home, so a cwd outside the fake HOME would walk into the real
+		// ~/.mars and load the developer's installed plugins as project plugins.
+		const cwd = path.join(root, "home", "work");
+		const artifactsDir = path.join(root, "artifacts");
+		await fs.mkdir(cwd, { recursive: true });
+		await fs.mkdir(artifactsDir, { recursive: true });
 
-	let checked: string | undefined;
-	const authStorage = createInMemoryAuthStorage();
-	authStorage.keys.setRuntime("mock", "test-key");
-	const modelRegistry = new ModelRegistry(authStorage);
-	// First prompt: export a marker into the persistent shell, then yield. After the revive,
-	// CHECK_PROMPT: echo the marker back, record what the shell answered, then yield.
-	const mock = createMockModel({
-		handler: context => {
-			if (!(context.tools ?? []).some(tool => tool.name === "yield")) return { content: ["label"] };
-			const checkIndex = context.messages.findLastIndex(
-				message => message.role === "user" && JSON.stringify(message.content).includes(CHECK_PROMPT),
-			);
-			const bashResults = context.messages
-				.slice(Math.max(checkIndex, 0))
-				.filter(message => message.role === "toolResult" && message.toolName === "bash");
-			if (bashResults.length === 0) {
-				const command = checkIndex >= 0 ? "printenv PARK_MARK || echo mark-unset" : "export PARK_MARK=kept";
-				return { content: [{ type: "toolCall", name: "bash", arguments: { command } }] };
-			}
-			if (checkIndex >= 0) checked = JSON.stringify(bashResults[0].content);
-			return { content: [{ type: "toolCall", name: "yield", arguments: { type: "result", data: "done" } }] };
-		},
-	});
-	const catalogAvailable = modelRegistry.getAvailable.bind(modelRegistry);
-	vi.spyOn(modelRegistry, "getAvailable").mockImplementation(kind => [mock, ...catalogAvailable(kind)]);
-
-	try {
-		const result = await runSubprocess({
-			cwd,
-			artifactsDir,
-			agent: { name: "task", description: "test", systemPrompt: "test", tools: ["read", "bash"], source: "bundled" },
-			task: "report done",
-			index: 0,
-			id: AGENT_ID,
-			modelOverride: "mock/mock-model",
-			authStorage,
-			modelRegistry,
-			settings: Settings.isolated({
-				// No TTL timer: the test parks explicitly through the same path the timer takes.
-				"task.agentIdleTtlMs": 0,
-				"async.enabled": false,
-				"compaction.enabled": false,
-				"retry.enabled": false,
-				"todo.enabled": false,
-				"todo.reminders": false,
-				"advisor.enabled": false,
-				modelRoles: { default: "mock/mock-model" },
-			}),
-			enableLsp: false,
-			enableMCP: false,
-			enableIrc: false,
+		let checked: string | undefined;
+		const authStorage = createInMemoryAuthStorage();
+		authStorage.keys.setRuntime("mock", "test-key");
+		const modelRegistry = new ModelRegistry(authStorage);
+		// First prompt: export a marker into the persistent shell, then yield. After the revive,
+		// CHECK_PROMPT: echo the marker back, record what the shell answered, then yield.
+		const mock = createMockModel({
+			handler: context => {
+				if (!(context.tools ?? []).some(tool => tool.name === "yield")) return { content: ["label"] };
+				const checkIndex = context.messages.findLastIndex(
+					message => message.role === "user" && JSON.stringify(message.content).includes(CHECK_PROMPT),
+				);
+				const bashResults = context.messages
+					.slice(Math.max(checkIndex, 0))
+					.filter(message => message.role === "toolResult" && message.toolName === "bash");
+				if (bashResults.length === 0) {
+					const command = checkIndex >= 0 ? "printenv PARK_MARK || echo mark-unset" : "export PARK_MARK=kept";
+					return { content: [{ type: "toolCall", name: "bash", arguments: { command } }] };
+				}
+				if (checkIndex >= 0) checked = JSON.stringify(bashResults[0].content);
+				return { content: [{ type: "toolCall", name: "yield", arguments: { type: "result", data: "done" } }] };
+			},
 		});
-		expect(result.exitCode).toBe(0);
+		const catalogAvailable = modelRegistry.getAvailable.bind(modelRegistry);
+		vi.spyOn(modelRegistry, "getAvailable").mockImplementation(kind => [mock, ...catalogAvailable(kind)]);
 
-		await AgentLifecycleManager.global().park(AGENT_ID);
-		const revived = await AgentLifecycleManager.global().ensureLive(AGENT_ID);
-		await revived.prompt(CHECK_PROMPT);
-		expect(checked).toContain("mark-unset");
-		expect(checked).not.toContain("kept");
-	} finally {
-		mock.reset();
-		authStorage.close();
-	}
-}, 20_000);
+		try {
+			const result = await runSubprocess({
+				cwd,
+				artifactsDir,
+				agent: {
+					name: "task",
+					description: "test",
+					systemPrompt: "test",
+					tools: ["read", "bash"],
+					source: "bundled",
+				},
+				task: "report done",
+				index: 0,
+				id: AGENT_ID,
+				modelOverride: "mock/mock-model",
+				authStorage,
+				modelRegistry,
+				settings: Settings.isolated({
+					// No TTL timer: the test parks explicitly through the same path the timer takes.
+					"task.agentIdleTtlMs": 0,
+					"async.enabled": false,
+					"compaction.enabled": false,
+					"retry.enabled": false,
+					"todo.enabled": false,
+					"todo.reminders": false,
+					"advisor.enabled": false,
+					modelRoles: { default: "mock/mock-model" },
+				}),
+				enableLsp: false,
+				enableMCP: false,
+				enableIrc: false,
+			});
+			expect(result.exitCode).toBe(0);
+
+			await AgentLifecycleManager.global().park(AGENT_ID);
+			const revived = await AgentLifecycleManager.global().ensureLive(AGENT_ID);
+			await revived.prompt(CHECK_PROMPT);
+			expect(checked).toContain("mark-unset");
+			expect(checked).not.toContain("kept");
+		} finally {
+			mock.reset();
+			authStorage.close();
+		}
+	},
+	scaledTimeout(20000),
+);

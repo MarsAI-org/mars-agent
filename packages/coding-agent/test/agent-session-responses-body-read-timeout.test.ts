@@ -1,6 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { Agent, type AgentMessage } from "@marsai-org/agent-core";
 import { DEFAULT_SHAKE_CONFIG } from "@marsai-org/agent-core/compaction";
 import { streamSimple } from "@marsai-org/ai/stream";
@@ -205,82 +206,90 @@ function assertTerminalErrorState(harness: SessionHarness): void {
 }
 
 describe("AgentSession Responses request-body timeout recovery", () => {
-	it("retries once with a mechanically smaller artifact-backed Responses request", async () => {
-		const harness = await createSessionHarness({ maxRetries: 1 });
-		try {
-			await runPrompt(harness);
-			expect(harness.requests).toHaveLength(2);
-			expect(Buffer.byteLength(harness.requests[1]!)).toBeLessThan(Buffer.byteLength(harness.requests[0]!));
-			expect(harness.requests[1]).toContain("artifact://");
-			expect(harness.requests[1]).not.toContain("data:image/png");
-			const artifactId = /artifact:\/\/([^\s)]+)/.exec(harness.requests[1]!)?.[1];
-			expect(artifactId).toBeDefined();
-			const artifactPath = await harness.sessionManager.getArtifactPath(artifactId!);
-			expect(artifactPath).not.toBeNull();
-			expect(await Bun.file(artifactPath!).text()).toContain("historical tool result");
-			expect(harness.requests[1]).toContain("historical fenced context");
-			expect(harness.requests[1]).not.toContain("historical tool result");
-			expect(harness.session.agent.state.messages.at(-1)).toMatchObject({
-				role: "assistant",
-				stopReason: "stop",
-				content: [{ type: "text", text: "Recovered" }],
-			});
-		} finally {
-			await harness.cleanup();
-		}
-	}, 30_000);
+	it(
+		"retries once with a mechanically smaller artifact-backed Responses request",
+		async () => {
+			const harness = await createSessionHarness({ maxRetries: 1 });
+			try {
+				await runPrompt(harness);
+				expect(harness.requests).toHaveLength(2);
+				expect(Buffer.byteLength(harness.requests[1]!)).toBeLessThan(Buffer.byteLength(harness.requests[0]!));
+				expect(harness.requests[1]).toContain("artifact://");
+				expect(harness.requests[1]).not.toContain("data:image/png");
+				const artifactId = /artifact:\/\/([^\s)]+)/.exec(harness.requests[1]!)?.[1];
+				expect(artifactId).toBeDefined();
+				const artifactPath = await harness.sessionManager.getArtifactPath(artifactId!);
+				expect(artifactPath).not.toBeNull();
+				expect(await Bun.file(artifactPath!).text()).toContain("historical tool result");
+				expect(harness.requests[1]).toContain("historical fenced context");
+				expect(harness.requests[1]).not.toContain("historical tool result");
+				expect(harness.session.agent.state.messages.at(-1)).toMatchObject({
+					role: "assistant",
+					stopReason: "stop",
+					content: [{ type: "text", text: "Recovered" }],
+				});
+			} finally {
+				await harness.cleanup();
+			}
+		},
+		scaledTimeout(30000),
+	);
 
-	it("preserves native Responses replay payloads while eliding tool-result text", async () => {
-		const messages = defaultMessages();
-		messages.splice(2, 0, {
-			role: "assistant",
-			content: [{ type: "text", text: "native assistant visible" }],
-			api: "openai-responses",
-			provider: "openai",
-			model: "local-responses-test",
-			usage: {
-				input: 0,
-				output: 0,
-				cacheRead: 0,
-				cacheWrite: 0,
-				totalTokens: 0,
-				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
-			},
-			stopReason: "stop",
-			providerPayload: createOpenAIResponsesHistoryPayload("openai", [
-				{ type: "message", role: "assistant", content: [{ type: "output_text", text: NATIVE_REPLAY_BULK }] },
-			]),
-			timestamp: Date.now() - 3,
-		});
-		const harness = await createSessionHarness({
-			messages,
-			respond: async (_body, requestNumber) => (requestNumber === 2 ? timeoutResponse() : completeResponse()),
-		});
-		try {
-			const activeModel = harness.session.agent.state.model as Model<"openai-responses">;
-			await streamOpenAIResponses(
-				activeModel,
-				{ messages: messages as Context["messages"] },
-				{
-					apiKey: "local-test-key",
-					providerSessionState: harness.session.providerSessionState,
-					sessionId: harness.session.sessionId,
+	it(
+		"preserves native Responses replay payloads while eliding tool-result text",
+		async () => {
+			const messages = defaultMessages();
+			messages.splice(2, 0, {
+				role: "assistant",
+				content: [{ type: "text", text: "native assistant visible" }],
+				api: "openai-responses",
+				provider: "openai",
+				model: "local-responses-test",
+				usage: {
+					input: 0,
+					output: 0,
+					cacheRead: 0,
+					cacheWrite: 0,
+					totalTokens: 0,
+					cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
 				},
-			).result();
-			await runPrompt(harness);
-			expect(harness.requests).toHaveLength(3);
-			expect(harness.requests[1]).toContain(NATIVE_REPLAY_BULK);
-			expect(harness.requests[2]).toContain(NATIVE_REPLAY_BULK);
-			expect(harness.requests[2]).not.toContain("historical tool result");
-			const artifactId = /artifact:\/\/([^\s)]+)/.exec(harness.requests[2] ?? "")?.[1];
-			expect(artifactId).toBeDefined();
-			const artifactPath = await harness.sessionManager.getArtifactPath(artifactId!);
-			expect(artifactPath).not.toBeNull();
-			expect(await Bun.file(artifactPath!).text()).toContain("historical tool result");
-		} finally {
-			await harness.cleanup();
-		}
-	}, 30_000);
+				stopReason: "stop",
+				providerPayload: createOpenAIResponsesHistoryPayload("openai", [
+					{ type: "message", role: "assistant", content: [{ type: "output_text", text: NATIVE_REPLAY_BULK }] },
+				]),
+				timestamp: Date.now() - 3,
+			});
+			const harness = await createSessionHarness({
+				messages,
+				respond: async (_body, requestNumber) => (requestNumber === 2 ? timeoutResponse() : completeResponse()),
+			});
+			try {
+				const activeModel = harness.session.agent.state.model as Model<"openai-responses">;
+				await streamOpenAIResponses(
+					activeModel,
+					{ messages: messages as Context["messages"] },
+					{
+						apiKey: "local-test-key",
+						providerSessionState: harness.session.providerSessionState,
+						sessionId: harness.session.sessionId,
+					},
+				).result();
+				await runPrompt(harness);
+				expect(harness.requests).toHaveLength(3);
+				expect(harness.requests[1]).toContain(NATIVE_REPLAY_BULK);
+				expect(harness.requests[2]).toContain(NATIVE_REPLAY_BULK);
+				expect(harness.requests[2]).not.toContain("historical tool result");
+				const artifactId = /artifact:\/\/([^\s)]+)/.exec(harness.requests[2] ?? "")?.[1];
+				expect(artifactId).toBeDefined();
+				const artifactPath = await harness.sessionManager.getArtifactPath(artifactId!);
+				expect(artifactPath).not.toBeNull();
+				expect(await Bun.file(artifactPath!).text()).toContain("historical tool result");
+			} finally {
+				await harness.cleanup();
+			}
+		},
+		scaledTimeout(30000),
+	);
 
 	for (const [maxRetries, expectedRequests, changedRetry] of [
 		[1, 2, false],

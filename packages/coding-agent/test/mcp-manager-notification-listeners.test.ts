@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -306,96 +307,100 @@ describe("MCPManager notification listeners", () => {
 		}
 	});
 
-	it("mcp_notification listener for tools/list_changed fires only AFTER setOnToolsChanged callback resolves", async () => {
-		// Option B integration test: exercises the full manager-side chain
-		// #handleServerNotification → refreshServerTools → #onToolsChanged
-		// → fanout to notification listeners. Uses a slow async
-		// setOnToolsChanged callback that gates on a controllable promise
-		// (matches the mcp-dispose-disconnect-bounded.test.ts gate pattern)
-		// to prove that if the SDK's setOnToolsChanged handler is async and
-		// its work isn't complete, the mcp_notification listener does NOT
-		// fire prematurely. Regression guard: catches any future refactor
-		// that reintroduces fire-and-forget in the callback chain (e.g. the
-		// original sdk.ts:3411 `void (async () => ...)()` wrapper — which
-		// was the specific race raised in review of #6535).
-		const manager = new MCPManager(workDir);
-		const events: string[] = [];
-		let cbCall = 0;
-		const { promise: gate, resolve: releaseGate } = Promise.withResolvers<void>();
+	it(
+		"mcp_notification listener for tools/list_changed fires only AFTER setOnToolsChanged callback resolves",
+		async () => {
+			// Option B integration test: exercises the full manager-side chain
+			// #handleServerNotification → refreshServerTools → #onToolsChanged
+			// → fanout to notification listeners. Uses a slow async
+			// setOnToolsChanged callback that gates on a controllable promise
+			// (matches the mcp-dispose-disconnect-bounded.test.ts gate pattern)
+			// to prove that if the SDK's setOnToolsChanged handler is async and
+			// its work isn't complete, the mcp_notification listener does NOT
+			// fire prematurely. Regression guard: catches any future refactor
+			// that reintroduces fire-and-forget in the callback chain (e.g. the
+			// original sdk.ts:3411 `void (async () => ...)()` wrapper — which
+			// was the specific race raised in review of #6535).
+			const manager = new MCPManager(workDir);
+			const events: string[] = [];
+			let cbCall = 0;
+			const { promise: gate, resolve: releaseGate } = Promise.withResolvers<void>();
 
-		manager.setOnToolsChanged(async () => {
-			cbCall++;
-			// Initial connect fires the callback via a background continuation
-			// (manager.ts line ~555, fire-and-forget). Return immediately so
-			// its floating promise resolves cleanly; only gate on the second
-			// call, which is the one our simulated post-connect notification
-			// triggers.
-			if (cbCall === 1) {
-				events.push("initial-cb:done");
-				return;
+			manager.setOnToolsChanged(async () => {
+				cbCall++;
+				// Initial connect fires the callback via a background continuation
+				// (manager.ts line ~555, fire-and-forget). Return immediately so
+				// its floating promise resolves cleanly; only gate on the second
+				// call, which is the one our simulated post-connect notification
+				// triggers.
+				if (cbCall === 1) {
+					events.push("initial-cb:done");
+					return;
+				}
+				events.push("cb:start");
+				await gate;
+				events.push("cb:end");
+			});
+
+			manager.addNotificationListener((_server, method) => {
+				if (method === "notifications/tools/list_changed") {
+					events.push("listener:fire");
+				}
+			});
+
+			try {
+				await manager.connectServers({ alpha: serverConfig() }, {});
+				// Wait for the initial-connect background continuation to fire the
+				// callback (call #1, ungated). Once it's recorded, we know the
+				// callback is idle and the next invocation will be call #2.
+				for (let i = 0; i < 20 && !events.includes("initial-cb:done"); i++) {
+					await Bun.sleep(10);
+				}
+				expect(events).toContain("initial-cb:done");
+
+				// Simulate a post-connect `notifications/tools/list_changed` frame
+				// by driving the transport's onNotification hook directly — that's
+				// exactly what the transport does when a server pushes a
+				// notification after startup. Bypasses the fixture's initial
+				// handshake burst so we exercise the connectionKnown=true path
+				// (where refresh actually runs and the callback is awaited).
+				const conn = manager.getConnection("alpha");
+				if (!conn?.transport.onNotification) throw new Error("expected transport onNotification to be wired");
+				void conn.transport.onNotification("notifications/tools/list_changed", {});
+
+				// Give the async chain time to enter the callback's await.
+				for (let i = 0; i < 20 && !events.includes("cb:start"); i++) {
+					await Bun.sleep(10);
+				}
+				expect(events).toContain("cb:start");
+
+				// CRITICAL: at this point the callback is holding, and the
+				// listener MUST NOT have fired. If it has, the manager fanned
+				// out before awaiting the callback — the exact race this test
+				// guards against.
+				expect(events).not.toContain("cb:end");
+				expect(events).not.toContain("listener:fire");
+
+				// Release the gate. Now the callback resolves, refresh completes,
+				// and the listener fires — in that order.
+				releaseGate();
+
+				// Wait for the listener to fire (or bail on timeout).
+				for (let i = 0; i < 50 && !events.includes("listener:fire"); i++) {
+					await Bun.sleep(10);
+				}
+
+				const idxCbEnd = events.indexOf("cb:end");
+				const idxFire = events.indexOf("listener:fire");
+				expect(idxCbEnd).toBeGreaterThanOrEqual(0);
+				expect(idxFire).toBeGreaterThanOrEqual(0);
+				expect(idxFire).toBeGreaterThan(idxCbEnd);
+			} finally {
+				// Ensure gate is released even on early failure so no promise leaks.
+				releaseGate();
+				await manager.disconnectAll();
 			}
-			events.push("cb:start");
-			await gate;
-			events.push("cb:end");
-		});
-
-		manager.addNotificationListener((_server, method) => {
-			if (method === "notifications/tools/list_changed") {
-				events.push("listener:fire");
-			}
-		});
-
-		try {
-			await manager.connectServers({ alpha: serverConfig() }, {});
-			// Wait for the initial-connect background continuation to fire the
-			// callback (call #1, ungated). Once it's recorded, we know the
-			// callback is idle and the next invocation will be call #2.
-			for (let i = 0; i < 20 && !events.includes("initial-cb:done"); i++) {
-				await Bun.sleep(10);
-			}
-			expect(events).toContain("initial-cb:done");
-
-			// Simulate a post-connect `notifications/tools/list_changed` frame
-			// by driving the transport's onNotification hook directly — that's
-			// exactly what the transport does when a server pushes a
-			// notification after startup. Bypasses the fixture's initial
-			// handshake burst so we exercise the connectionKnown=true path
-			// (where refresh actually runs and the callback is awaited).
-			const conn = manager.getConnection("alpha");
-			if (!conn?.transport.onNotification) throw new Error("expected transport onNotification to be wired");
-			void conn.transport.onNotification("notifications/tools/list_changed", {});
-
-			// Give the async chain time to enter the callback's await.
-			for (let i = 0; i < 20 && !events.includes("cb:start"); i++) {
-				await Bun.sleep(10);
-			}
-			expect(events).toContain("cb:start");
-
-			// CRITICAL: at this point the callback is holding, and the
-			// listener MUST NOT have fired. If it has, the manager fanned
-			// out before awaiting the callback — the exact race this test
-			// guards against.
-			expect(events).not.toContain("cb:end");
-			expect(events).not.toContain("listener:fire");
-
-			// Release the gate. Now the callback resolves, refresh completes,
-			// and the listener fires — in that order.
-			releaseGate();
-
-			// Wait for the listener to fire (or bail on timeout).
-			for (let i = 0; i < 50 && !events.includes("listener:fire"); i++) {
-				await Bun.sleep(10);
-			}
-
-			const idxCbEnd = events.indexOf("cb:end");
-			const idxFire = events.indexOf("listener:fire");
-			expect(idxCbEnd).toBeGreaterThanOrEqual(0);
-			expect(idxFire).toBeGreaterThanOrEqual(0);
-			expect(idxFire).toBeGreaterThan(idxCbEnd);
-		} finally {
-			// Ensure gate is released even on early failure so no promise leaks.
-			releaseGate();
-			await manager.disconnectAll();
-		}
-	}, 15_000);
+		},
+		scaledTimeout(15000),
+	);
 });

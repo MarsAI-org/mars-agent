@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -63,172 +64,192 @@ describe("AsyncJobManager singleton across concurrent top-level sessions", () =>
 		return session;
 	}
 
-	it("keeps the primary session's manager installed after a secondary session disposes", async () => {
-		const primary = await spawnTopLevelSession();
-		try {
-			const primaryManager = AsyncJobManager.instance();
-			expect(primaryManager).toBeDefined();
-
-			const secondary = await spawnTopLevelSession();
+	it(
+		"keeps the primary session's manager installed after a secondary session disposes",
+		async () => {
+			const primary = await spawnTopLevelSession();
 			try {
-				// While the secondary is alive the global instance MUST still point at
-				// the primary's manager so background tools keep delivering completions
-				// to the primary session that owns them.
+				const primaryManager = AsyncJobManager.instance();
+				expect(primaryManager).toBeDefined();
+
+				const secondary = await spawnTopLevelSession();
+				try {
+					// While the secondary is alive the global instance MUST still point at
+					// the primary's manager so background tools keep delivering completions
+					// to the primary session that owns them.
+					expect(AsyncJobManager.instance()).toBe(primaryManager);
+				} finally {
+					await secondary.dispose();
+				}
+
+				// After the secondary disposes, the primary's manager MUST still be the
+				// reachable singleton — otherwise the `task` async path errors with
+				// "Async execution is enabled but no async job manager is available".
 				expect(AsyncJobManager.instance()).toBe(primaryManager);
 			} finally {
-				await secondary.dispose();
+				await primary.dispose();
 			}
 
-			// After the secondary disposes, the primary's manager MUST still be the
-			// reachable singleton — otherwise the `task` async path errors with
-			// "Async execution is enabled but no async job manager is available".
-			expect(AsyncJobManager.instance()).toBe(primaryManager);
-		} finally {
-			await primary.dispose();
-		}
+			// Once the owning primary session disposes the singleton clears, matching
+			// the documented single-owner invariant.
+			expect(AsyncJobManager.instance()).toBeUndefined();
+		},
+		scaledTimeout(60000),
+	);
 
-		// Once the owning primary session disposes the singleton clears, matching
-		// the documented single-owner invariant.
-		expect(AsyncJobManager.instance()).toBeUndefined();
-	}, 60000);
-
-	it("does not cancel the primary session's running jobs when a secondary session disposes", async () => {
-		const primary = await spawnTopLevelSession();
-		try {
-			const primaryManager = AsyncJobManager.instance();
-			expect(primaryManager).toBeDefined();
-
-			// Register a long-running job on the primary's manager under the
-			// MAIN_AGENT_ID owner — the same owner the secondary would inherit by
-			// default. The secondary's dispose-time `cancelOwnAsyncJobs` must NOT
-			// cancel this job (issue #1923).
-			const release = Promise.withResolvers<string>();
-			const jobId = primaryManager!.register(
-				"bash",
-				"sleep",
-				async ({ signal }) => {
-					const aborted = Promise.withResolvers<void>();
-					signal.addEventListener("abort", () => aborted.resolve(), { once: true });
-					await Promise.race([release.promise, aborted.promise]);
-					return signal.aborted ? "aborted" : "completed";
-				},
-				{ ownerId: "Main" },
-			);
-			expect(primary.getAsyncJobSnapshot()?.running.some(job => job.id === jobId)).toBe(true);
-
-			const secondary = await spawnTopLevelSession();
+	it(
+		"does not cancel the primary session's running jobs when a secondary session disposes",
+		async () => {
+			const primary = await spawnTopLevelSession();
 			try {
-				expect(secondary.getAsyncJobSnapshot()).toBeNull();
-			} finally {
-				await secondary.dispose();
-			}
+				const primaryManager = AsyncJobManager.instance();
+				expect(primaryManager).toBeDefined();
 
-			const job = primaryManager!.getJob(jobId);
-			expect(job?.status).toBe("running");
-
-			release.resolve("done");
-			await primaryManager!.waitForAll();
-		} finally {
-			await primary.dispose();
-		}
-	}, 60000);
-
-	it("exposes the owning session's jobs through a production extension context", async () => {
-		let observedSnapshot: AsyncJobSnapshot | null | undefined;
-		const snapshotExtension: ExtensionFactory = pi => {
-			pi.registerTool({
-				name: "capture_async_job_snapshot",
-				label: "Capture async job snapshot",
-				description: "Capture the session-owned async job snapshot for this test.",
-				parameters: type({}),
-				approval: "read",
-				async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
-					observedSnapshot = ctx.getAsyncJobSnapshot();
-					return { content: [{ type: "text", text: "captured" }] };
-				},
-			});
-		};
-		const session = await spawnTopLevelSession(undefined, [snapshotExtension]);
-		const manager = AsyncJobManager.instance();
-		expect(manager).toBeDefined();
-		const release = Promise.withResolvers<string>();
-		const jobId = manager!.register("bash", "extension snapshot test", async () => release.promise, {
-			ownerId: "Main",
-		});
-
-		try {
-			const snapshotTool = session.getToolByName("capture_async_job_snapshot");
-			expect(snapshotTool).toBeDefined();
-			await snapshotTool!.execute("call-snapshot", {});
-
-			expect(observedSnapshot?.running.some(job => job.id === jobId)).toBe(true);
-		} finally {
-			release.resolve("done");
-			await manager!.waitForAll();
-			await session.dispose();
-		}
-	}, 60000);
-
-	it("refuses async bash from a secondary session instead of routing it to the primary's manager", async () => {
-		const primary = await spawnTopLevelSession({ "async.enabled": true });
-		try {
-			const primaryManager = AsyncJobManager.instance();
-			expect(primaryManager).toBeDefined();
-			const primaryJobCountBefore = primaryManager!.getAllJobs().length;
-
-			const secondary = await spawnTopLevelSession({ "async.enabled": true });
-			try {
-				const bashTool = secondary.getToolByName("bash");
-				expect(bashTool).toBeDefined();
-				await expect(bashTool!.execute("call-1", { command: "echo hi", async: true })).rejects.toThrow(
-					/Async job manager unavailable/,
+				// Register a long-running job on the primary's manager under the
+				// MAIN_AGENT_ID owner — the same owner the secondary would inherit by
+				// default. The secondary's dispose-time `cancelOwnAsyncJobs` must NOT
+				// cancel this job (issue #1923).
+				const release = Promise.withResolvers<string>();
+				const jobId = primaryManager!.register(
+					"bash",
+					"sleep",
+					async ({ signal }) => {
+						const aborted = Promise.withResolvers<void>();
+						signal.addEventListener("abort", () => aborted.resolve(), { once: true });
+						await Promise.race([release.promise, aborted.promise]);
+						return signal.aborted ? "aborted" : "completed";
+					},
+					{ ownerId: "Main" },
 				);
+				expect(primary.getAsyncJobSnapshot()?.running.some(job => job.id === jobId)).toBe(true);
+
+				const secondary = await spawnTopLevelSession();
+				try {
+					expect(secondary.getAsyncJobSnapshot()).toBeNull();
+				} finally {
+					await secondary.dispose();
+				}
+
+				const job = primaryManager!.getJob(jobId);
+				expect(job?.status).toBe("running");
+
+				release.resolve("done");
+				await primaryManager!.waitForAll();
 			} finally {
-				await secondary.dispose();
+				await primary.dispose();
 			}
+		},
+		scaledTimeout(60000),
+	);
 
-			// The secondary's failed async attempt must not have leaked a job into
-			// the primary's manager.
-			expect(primaryManager!.getAllJobs().length).toBe(primaryJobCountBefore);
-		} finally {
-			await primary.dispose();
-		}
-	}, 60000);
+	it(
+		"exposes the owning session's jobs through a production extension context",
+		async () => {
+			let observedSnapshot: AsyncJobSnapshot | null | undefined;
+			const snapshotExtension: ExtensionFactory = pi => {
+				pi.registerTool({
+					name: "capture_async_job_snapshot",
+					label: "Capture async job snapshot",
+					description: "Capture the session-owned async job snapshot for this test.",
+					parameters: type({}),
+					approval: "read",
+					async execute(_toolCallId, _params, _signal, _onUpdate, ctx) {
+						observedSnapshot = ctx.getAsyncJobSnapshot();
+						return { content: [{ type: "text", text: "captured" }] };
+					},
+				});
+			};
+			const session = await spawnTopLevelSession(undefined, [snapshotExtension]);
+			const manager = AsyncJobManager.instance();
+			expect(manager).toBeDefined();
+			const release = Promise.withResolvers<string>();
+			const jobId = manager!.register("bash", "extension snapshot test", async () => release.promise, {
+				ownerId: "Main",
+			});
 
-	it("clears a manager installed before a top-level session startup failure takes ownership", async () => {
-		const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-async-startup-failure-${Snowflake.next()}-`));
-		tempDirs.push(tempDir);
-		const cwd = path.join(tempDir, `project-${Snowflake.next()}`);
-		const agentDir = path.join(tempDir, "agent");
-		fs.mkdirSync(cwd, { recursive: true });
+			try {
+				const snapshotTool = session.getToolByName("capture_async_job_snapshot");
+				expect(snapshotTool).toBeDefined();
+				await snapshotTool!.execute("call-snapshot", {});
 
-		await expect(
-			createAgentSession({
-				cwd,
-				agentDir,
-				settings: Settings.isolated({ "bash.autoBackground.enabled": true }),
-				disableExtensionDiscovery: true,
-				skills: [],
-				contextFiles: [],
-				promptTemplates: [],
-				slashCommands: [],
-				enableMCP: false,
-				enableLsp: false,
-				modelRegistry: sharedModelRegistry,
-				systemPrompt: () => {
-					throw new Error("forced startup failure");
-				},
-			}),
-		).rejects.toThrow("forced startup failure");
+				expect(observedSnapshot?.running.some(job => job.id === jobId)).toBe(true);
+			} finally {
+				release.resolve("done");
+				await manager!.waitForAll();
+				await session.dispose();
+			}
+		},
+		scaledTimeout(60000),
+	);
 
-		expect(AsyncJobManager.instance()).toBeUndefined();
+	it(
+		"refuses async bash from a secondary session instead of routing it to the primary's manager",
+		async () => {
+			const primary = await spawnTopLevelSession({ "async.enabled": true });
+			try {
+				const primaryManager = AsyncJobManager.instance();
+				expect(primaryManager).toBeDefined();
+				const primaryJobCountBefore = primaryManager!.getAllJobs().length;
 
-		const replacement = await spawnTopLevelSession();
-		try {
-			expect(AsyncJobManager.instance()).toBeDefined();
-			expect(replacement.getAsyncJobSnapshot()).not.toBeNull();
-		} finally {
-			await replacement.dispose();
-		}
-	}, 60000);
+				const secondary = await spawnTopLevelSession({ "async.enabled": true });
+				try {
+					const bashTool = secondary.getToolByName("bash");
+					expect(bashTool).toBeDefined();
+					await expect(bashTool!.execute("call-1", { command: "echo hi", async: true })).rejects.toThrow(
+						/Async job manager unavailable/,
+					);
+				} finally {
+					await secondary.dispose();
+				}
+
+				// The secondary's failed async attempt must not have leaked a job into
+				// the primary's manager.
+				expect(primaryManager!.getAllJobs().length).toBe(primaryJobCountBefore);
+			} finally {
+				await primary.dispose();
+			}
+		},
+		scaledTimeout(60000),
+	);
+
+	it(
+		"clears a manager installed before a top-level session startup failure takes ownership",
+		async () => {
+			const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), `pi-sdk-async-startup-failure-${Snowflake.next()}-`));
+			tempDirs.push(tempDir);
+			const cwd = path.join(tempDir, `project-${Snowflake.next()}`);
+			const agentDir = path.join(tempDir, "agent");
+			fs.mkdirSync(cwd, { recursive: true });
+
+			await expect(
+				createAgentSession({
+					cwd,
+					agentDir,
+					settings: Settings.isolated({ "bash.autoBackground.enabled": true }),
+					disableExtensionDiscovery: true,
+					skills: [],
+					contextFiles: [],
+					promptTemplates: [],
+					slashCommands: [],
+					enableMCP: false,
+					enableLsp: false,
+					modelRegistry: sharedModelRegistry,
+					systemPrompt: () => {
+						throw new Error("forced startup failure");
+					},
+				}),
+			).rejects.toThrow("forced startup failure");
+
+			expect(AsyncJobManager.instance()).toBeUndefined();
+
+			const replacement = await spawnTopLevelSession();
+			try {
+				expect(AsyncJobManager.instance()).toBeDefined();
+				expect(replacement.getAsyncJobSnapshot()).not.toBeNull();
+			} finally {
+				await replacement.dispose();
+			}
+		},
+		scaledTimeout(60000),
+	);
 });

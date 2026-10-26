@@ -14,6 +14,7 @@
  * shows up in `~/.mars/logs/omp.log` without regressing idle-worker shutdown.
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { createWorkerSubprocess, type SpawnedSubprocess } from "@marsai-org/coding-agent/subprocess/worker-client";
 
 interface FakeWorkerOutbound {
@@ -44,62 +45,74 @@ function firstWorkerError(sub: SpawnedSubprocess<FakeWorkerOutbound>): Promise<E
 }
 
 describe("issue #4324 — worker subprocess stderr survives to the exit error", () => {
-	it("surfaces stderr in the onExit error when the worker exits non-zero", async () => {
-		const stderr =
-			"onnxruntime[Native]: Non-zero status code returned while executing Add node.\n" +
-			"terminate called after throwing an instance of 'std::runtime_error'\n" +
-			"  what():  cudaMemcpy failed\n";
-		const sub = createWorkerSubprocess<FakeWorkerOutbound>({
-			spawnCommand: stderrExitCommand(JSON.stringify(stderr), 7),
-			env: {},
-			exitLabel: "tts subprocess",
-		});
-		const err = await firstWorkerError(sub);
-		// The exit-code prefix is preserved so existing log parsers keep working.
-		expect(err.message).toStartWith("tts subprocess exited with code 7");
-		// The actual native crash reason must now be part of the error.
-		expect(err.message).toContain("onnxruntime[Native]");
-		expect(err.message).toContain("cudaMemcpy failed");
-	}, 15_000);
+	it(
+		"surfaces stderr in the onExit error when the worker exits non-zero",
+		async () => {
+			const stderr =
+				"onnxruntime[Native]: Non-zero status code returned while executing Add node.\n" +
+				"terminate called after throwing an instance of 'std::runtime_error'\n" +
+				"  what():  cudaMemcpy failed\n";
+			const sub = createWorkerSubprocess<FakeWorkerOutbound>({
+				spawnCommand: stderrExitCommand(JSON.stringify(stderr), 7),
+				env: {},
+				exitLabel: "tts subprocess",
+			});
+			const err = await firstWorkerError(sub);
+			// The exit-code prefix is preserved so existing log parsers keep working.
+			expect(err.message).toStartWith("tts subprocess exited with code 7");
+			// The actual native crash reason must now be part of the error.
+			expect(err.message).toContain("onnxruntime[Native]");
+			expect(err.message).toContain("cudaMemcpy failed");
+		},
+		scaledTimeout(15000),
+	);
 
-	it("truncates a large stderr to the last ~16 KiB so a chatty runtime can't blow the parent up", async () => {
-		// Write well past the 16 KiB tail limit. A recognisable trailer must
-		// still land at the end so the diagnostic tail is what survives.
-		const trailer = "FATAL: onnxruntime session run failed\n";
-		const sub = createWorkerSubprocess<FakeWorkerOutbound>({
-			spawnCommand: stderrExitCommand(`"A".repeat(${64 * 1024}) + ${JSON.stringify(trailer)}`, 7),
-			env: {},
-			exitLabel: "tts subprocess",
-		});
-		const err = await firstWorkerError(sub);
-		// Trailer wins.
-		expect(err.message).toContain("FATAL: onnxruntime session run failed");
-		// Truncation happened — we did not append the whole 64 KiB.
-		expect(err.message.length).toBeLessThan(20_000);
-	}, 15_000);
+	it(
+		"truncates a large stderr to the last ~16 KiB so a chatty runtime can't blow the parent up",
+		async () => {
+			// Write well past the 16 KiB tail limit. A recognisable trailer must
+			// still land at the end so the diagnostic tail is what survives.
+			const trailer = "FATAL: onnxruntime session run failed\n";
+			const sub = createWorkerSubprocess<FakeWorkerOutbound>({
+				spawnCommand: stderrExitCommand(`"A".repeat(${64 * 1024}) + ${JSON.stringify(trailer)}`, 7),
+				env: {},
+				exitLabel: "tts subprocess",
+			});
+			const err = await firstWorkerError(sub);
+			// Trailer wins.
+			expect(err.message).toContain("FATAL: onnxruntime session run failed");
+			// Truncation happened — we did not append the whole 64 KiB.
+			expect(err.message.length).toBeLessThan(20_000);
+		},
+		scaledTimeout(15000),
+	);
 
-	it("does not surface intentional terminate() SIGKILLs as worker errors", async () => {
-		// Regression guard: piping stderr must not change the semantics of an
-		// intentional teardown. The wrapper's `terminate()` flips
-		// `intentionalExit` then SIGKILLs — the error channel must stay quiet.
-		const sub = createWorkerSubprocess<FakeWorkerOutbound>({
-			// A sleeping child so we get to SIGKILL it before it exits on its own.
-			spawnCommand: {
-				cmd: [process.execPath, "-e", "Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60000);"],
-			},
-			env: {},
-			exitLabel: "tts subprocess",
-		});
-		let errored = false;
-		sub.errors.add(() => {
-			errored = true;
-		});
-		sub.intentionalExit.value = true;
-		sub.proc.kill("SIGKILL");
-		// Wait for both process reap AND stderr drain so any latent error
-		// path has had its shot at firing before we assert silence.
-		await sub.proc.exited;
-		await sub.stderrDrained;
-		expect(errored).toBe(false);
-	}, 15_000);
+	it(
+		"does not surface intentional terminate() SIGKILLs as worker errors",
+		async () => {
+			// Regression guard: piping stderr must not change the semantics of an
+			// intentional teardown. The wrapper's `terminate()` flips
+			// `intentionalExit` then SIGKILLs — the error channel must stay quiet.
+			const sub = createWorkerSubprocess<FakeWorkerOutbound>({
+				// A sleeping child so we get to SIGKILL it before it exits on its own.
+				spawnCommand: {
+					cmd: [process.execPath, "-e", "Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60000);"],
+				},
+				env: {},
+				exitLabel: "tts subprocess",
+			});
+			let errored = false;
+			sub.errors.add(() => {
+				errored = true;
+			});
+			sub.intentionalExit.value = true;
+			sub.proc.kill("SIGKILL");
+			// Wait for both process reap AND stderr drain so any latent error
+			// path has had its shot at firing before we assert silence.
+			await sub.proc.exited;
+			await sub.stderrDrained;
+			expect(errored).toBe(false);
+		},
+		scaledTimeout(15000),
+	);
 });

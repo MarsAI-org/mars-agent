@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { isRecord, readJsonl, TempDir } from "@marsai-org/utils";
 import { selectRpcEntries } from "@marsai-org/coding-agent/modes/rpc/rpc-compat";
@@ -248,157 +249,182 @@ describe("RpcWordPredictor", () => {
 });
 
 describe("RPC Pi-compatible primitives (live server)", () => {
-	test("rejects invalid cache warming modes and accepts a subsequent session-scoped mode change", async () => {
-		await withRpcServer(async (send, next) => {
-			send({ type: "set_cache_warming", id: "bad-warming", mode: "always" });
-			expect(await next()).toEqual({
-				id: "bad-warming",
-				type: "response",
-				command: "set_cache_warming",
-				success: false,
-				error: "Invalid cache warming mode: always",
+	test(
+		"rejects invalid cache warming modes and accepts a subsequent session-scoped mode change",
+		async () => {
+			await withRpcServer(async (send, next) => {
+				send({ type: "set_cache_warming", id: "bad-warming", mode: "always" });
+				expect(await next()).toEqual({
+					id: "bad-warming",
+					type: "response",
+					command: "set_cache_warming",
+					success: false,
+					error: "Invalid cache warming mode: always",
+				});
+				send({ type: "set_cache_warming", id: "warming-off", mode: "off" });
+				expect(await next()).toEqual({
+					id: "warming-off",
+					type: "response",
+					command: "set_cache_warming",
+					success: true,
+					data: { mode: "off" },
+				});
 			});
-			send({ type: "set_cache_warming", id: "warming-off", mode: "off" });
-			expect(await next()).toEqual({
-				id: "warming-off",
-				type: "response",
-				command: "set_cache_warming",
-				success: true,
-				data: { mode: "off" },
+		},
+		scaledTimeout(60000),
+	);
+
+	test(
+		"set_slow_mode rejects a non-boolean enabled before touching the persisted Claude setting",
+		async () => {
+			await withRpcServer(async (send, next) => {
+				send({ type: "get_state", id: "slow-state" });
+				const state = (await next()).data as { slowModeSupported: unknown; slowModeScope: unknown };
+				expect([state.slowModeSupported, state.slowModeScope]).toEqual([true, "global"]);
+				send({ type: "set_slow_mode", id: "slow-bad", enabled: "false" });
+				expect(await next()).toEqual({
+					id: "slow-bad",
+					type: "response",
+					command: "set_slow_mode",
+					success: false,
+					error: "set_slow_mode requires boolean enabled",
+				});
 			});
-		});
-	}, 60000);
+		},
+		scaledTimeout(60000),
+	);
 
-	test("set_slow_mode rejects a non-boolean enabled before touching the persisted Claude setting", async () => {
-		await withRpcServer(async (send, next) => {
-			send({ type: "get_state", id: "slow-state" });
-			const state = (await next()).data as { slowModeSupported: unknown; slowModeScope: unknown };
-			expect([state.slowModeSupported, state.slowModeScope]).toEqual([true, "global"]);
-			send({ type: "set_slow_mode", id: "slow-bad", enabled: "false" });
-			expect(await next()).toEqual({
-				id: "slow-bad",
-				type: "response",
-				command: "set_slow_mode",
-				success: false,
-				error: "set_slow_mode requires boolean enabled",
+	test(
+		"get_entries, get_tree, thinking levels, and command-discovery dialect",
+		async () => {
+			await withRpcServer(async (send, next) => {
+				send({ type: "get_entries", id: "entries-base" });
+				const entriesBase = await next();
+				expect(entriesBase.id).toBe("entries-base");
+				expect(entriesBase.command).toBe("get_entries");
+				expect(entriesBase.success).toBe(true);
+				const baseData = entriesBase.data as { entries: unknown[]; leafId: string | null };
+				expect(Array.isArray(baseData.entries)).toBe(true);
+				expect(baseData.leafId === null || typeof baseData.leafId === "string").toBe(true);
+
+				send({ type: "get_tree", id: "tree-base" });
+				const tree = await next();
+				expect(tree.id).toBe("tree-base");
+				expect(tree.command).toBe("get_tree");
+				expect(tree.success).toBe(true);
+				const treeData = tree.data as { tree: unknown[]; leafId: string | null };
+				expect(Array.isArray(treeData.tree)).toBe(true);
+				expect(treeData.leafId).toBe(baseData.leafId);
+
+				send({ type: "get_available_thinking_levels", id: "levels" });
+				const levels = await next();
+				expect(levels.id).toBe("levels");
+				expect(levels.command).toBe("get_available_thinking_levels");
+				expect(levels.success).toBe(true);
+				const discovered = (levels.data as { levels: unknown[] }).levels;
+				// Pi-compatible discovery: selectable levels with `off` first.
+				expect(discovered.length).toBeGreaterThan(0);
+				expect(discovered[0]).toBe("off");
+				for (const level of discovered) expect(typeof level).toBe("string");
+
+				// Every discovered level must be settable: `off` round-trips.
+				send({ type: "set_thinking_level", id: "set-off", level: "off" });
+				const setOff = await next();
+				expect(setOff.id).toBe("set-off");
+				expect(setOff.success).toBe(true);
+				send({ type: "get_state", id: "state-off" });
+				const stateOff = await next();
+				expect((stateOff.data as { thinkingLevel: unknown }).thinkingLevel).toBe("off");
+
+				// Command discovery stays an Mars dialect: the Pi-spelled alias is
+				// intentionally not served (see issue #6).
+				send({ type: "get_available_commands", id: "cmds-a" });
+				const available = await next();
+				expect(available.id).toBe("cmds-a");
+				expect(available.command).toBe("get_available_commands");
+				expect(available.success).toBe(true);
+				expect(Array.isArray((available.data as { commands: unknown[] }).commands)).toBe(true);
+				send({ type: "get_commands", id: "cmds-b" });
+				const alias = await next();
+				expect(alias.id).toBe("cmds-b");
+				expect(alias.command).toBe("get_commands");
+				expect(alias.success).toBe(false);
 			});
-		});
-	}, 60000);
+		},
+		scaledTimeout(60000),
+	);
 
-	test("get_entries, get_tree, thinking levels, and command-discovery dialect", async () => {
-		await withRpcServer(async (send, next) => {
-			send({ type: "get_entries", id: "entries-base" });
-			const entriesBase = await next();
-			expect(entriesBase.id).toBe("entries-base");
-			expect(entriesBase.command).toBe("get_entries");
-			expect(entriesBase.success).toBe(true);
-			const baseData = entriesBase.data as { entries: unknown[]; leafId: string | null };
-			expect(Array.isArray(baseData.entries)).toBe(true);
-			expect(baseData.leafId === null || typeof baseData.leafId === "string").toBe(true);
+	test(
+		"ordinary failures preserve ids; malformed JSON stays uncorrelated",
+		async () => {
+			await withRpcServer(async (send, next, sendRaw) => {
+				send({ type: "definitely_not_a_command", id: "unknown-1" });
+				const unknown = await next();
+				expect(unknown.id).toBe("unknown-1");
+				expect(unknown.command).toBe("definitely_not_a_command");
+				expect(unknown.success).toBe(false);
 
-			send({ type: "get_tree", id: "tree-base" });
-			const tree = await next();
-			expect(tree.id).toBe("tree-base");
-			expect(tree.command).toBe("get_tree");
-			expect(tree.success).toBe(true);
-			const treeData = tree.data as { tree: unknown[]; leafId: string | null };
-			expect(Array.isArray(treeData.tree)).toBe(true);
-			expect(treeData.leafId).toBe(baseData.leafId);
+				send({ type: "set_session_name", id: "bad-arg", name: "   " });
+				const invalid = await next();
+				expect(invalid.id).toBe("bad-arg");
+				expect(invalid.command).toBe("set_session_name");
+				expect(invalid.success).toBe(false);
 
-			send({ type: "get_available_thinking_levels", id: "levels" });
-			const levels = await next();
-			expect(levels.id).toBe("levels");
-			expect(levels.command).toBe("get_available_thinking_levels");
-			expect(levels.success).toBe(true);
-			const discovered = (levels.data as { levels: unknown[] }).levels;
-			// Pi-compatible discovery: selectable levels with `off` first.
-			expect(discovered.length).toBeGreaterThan(0);
-			expect(discovered[0]).toBe("off");
-			for (const level of discovered) expect(typeof level).toBe("string");
+				send({ type: "get_entries", id: "unknown-since", since: "missing-entry-id" });
+				const since = await next();
+				expect(since.id).toBe("unknown-since");
+				expect(since.command).toBe("get_entries");
+				expect(since.success).toBe(false);
 
-			// Every discovered level must be settable: `off` round-trips.
-			send({ type: "set_thinking_level", id: "set-off", level: "off" });
-			const setOff = await next();
-			expect(setOff.id).toBe("set-off");
-			expect(setOff.success).toBe(true);
-			send({ type: "get_state", id: "state-off" });
-			const stateOff = await next();
-			expect((stateOff.data as { thinkingLevel: unknown }).thinkingLevel).toBe("off");
+				// Malformed line goes through the same stdin pipe; the server must
+				// report an uncorrelated parse error and keep serving later commands.
+				sendRaw("this is not json");
+				const parseError = await next();
+				expect(parseError.command).toBe("parse");
+				expect(parseError.success).toBe(false);
+				expect(parseError.id).toBeUndefined();
 
-			// Command discovery stays an Mars dialect: the Pi-spelled alias is
-			// intentionally not served (see issue #6).
-			send({ type: "get_available_commands", id: "cmds-a" });
-			const available = await next();
-			expect(available.id).toBe("cmds-a");
-			expect(available.command).toBe("get_available_commands");
-			expect(available.success).toBe(true);
-			expect(Array.isArray((available.data as { commands: unknown[] }).commands)).toBe(true);
-			send({ type: "get_commands", id: "cmds-b" });
-			const alias = await next();
-			expect(alias.id).toBe("cmds-b");
-			expect(alias.command).toBe("get_commands");
-			expect(alias.success).toBe(false);
-		});
-	}, 60000);
-
-	test("ordinary failures preserve ids; malformed JSON stays uncorrelated", async () => {
-		await withRpcServer(async (send, next, sendRaw) => {
-			send({ type: "definitely_not_a_command", id: "unknown-1" });
-			const unknown = await next();
-			expect(unknown.id).toBe("unknown-1");
-			expect(unknown.command).toBe("definitely_not_a_command");
-			expect(unknown.success).toBe(false);
-
-			send({ type: "set_session_name", id: "bad-arg", name: "   " });
-			const invalid = await next();
-			expect(invalid.id).toBe("bad-arg");
-			expect(invalid.command).toBe("set_session_name");
-			expect(invalid.success).toBe(false);
-
-			send({ type: "get_entries", id: "unknown-since", since: "missing-entry-id" });
-			const since = await next();
-			expect(since.id).toBe("unknown-since");
-			expect(since.command).toBe("get_entries");
-			expect(since.success).toBe(false);
-
-			// Malformed line goes through the same stdin pipe; the server must
-			// report an uncorrelated parse error and keep serving later commands.
-			sendRaw("this is not json");
-			const parseError = await next();
-			expect(parseError.command).toBe("parse");
-			expect(parseError.success).toBe(false);
-			expect(parseError.id).toBeUndefined();
-
-			send({ type: "get_state", id: "after-malformed" });
-			const ok = await next();
-			expect(ok.id).toBe("after-malformed");
-			expect(ok.success).toBe(true);
-		});
-	}, 60000);
-
-	test("predict_word gates non-prose words and rejects cursors outside the text", async () => {
-		await withRpcServer(async (send, next) => {
-			// The cursor ends a word inside a fenced block on the third line: code
-			// never gets ghost text, so the answer is null without asking an engine.
-			const fenced = "Look:\n```ts\nconst val";
-			send({ type: "predict_word", id: "fenced", text: fenced, cursor: fenced.length });
-			const gated = await next();
-			expect(gated).toMatchObject({ id: "fenced", command: "predict_word", success: true, data: { suffix: null } });
-
-			send({ type: "predict_word", id: "past-end", text: "hello", cursor: 6 });
-			const pastEnd = await next();
-			expect(pastEnd).toMatchObject({ id: "past-end", command: "predict_word", success: false });
-
-			send({
-				type: "predict_word_feedback",
-				id: "fb-bad",
-				text: "hi",
-				cursor: 1.5,
-				suggestion: "x",
-				accepted: true,
+				send({ type: "get_state", id: "after-malformed" });
+				const ok = await next();
+				expect(ok.id).toBe("after-malformed");
+				expect(ok.success).toBe(true);
 			});
-			const badFeedback = await next();
-			expect(badFeedback).toMatchObject({ id: "fb-bad", command: "predict_word_feedback", success: false });
-		});
-	}, 60000);
+		},
+		scaledTimeout(60000),
+	);
+
+	test(
+		"predict_word gates non-prose words and rejects cursors outside the text",
+		async () => {
+			await withRpcServer(async (send, next) => {
+				// The cursor ends a word inside a fenced block on the third line: code
+				// never gets ghost text, so the answer is null without asking an engine.
+				const fenced = "Look:\n```ts\nconst val";
+				send({ type: "predict_word", id: "fenced", text: fenced, cursor: fenced.length });
+				const gated = await next();
+				expect(gated).toMatchObject({
+					id: "fenced",
+					command: "predict_word",
+					success: true,
+					data: { suffix: null },
+				});
+
+				send({ type: "predict_word", id: "past-end", text: "hello", cursor: 6 });
+				const pastEnd = await next();
+				expect(pastEnd).toMatchObject({ id: "past-end", command: "predict_word", success: false });
+
+				send({
+					type: "predict_word_feedback",
+					id: "fb-bad",
+					text: "hi",
+					cursor: 1.5,
+					suggestion: "x",
+					accepted: true,
+				});
+				const badFeedback = await next();
+				expect(badFeedback).toMatchObject({ id: "fb-bad", command: "predict_word_feedback", success: false });
+			});
+		},
+		scaledTimeout(60000),
+	);
 });

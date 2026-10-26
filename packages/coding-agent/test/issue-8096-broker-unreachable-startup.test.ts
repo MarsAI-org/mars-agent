@@ -10,6 +10,7 @@
  * a silent fallback to local credentials.
  */
 import { describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import { AuthBrokerError } from "@marsai-org/ai/auth-broker";
 import { MissingApiKeyError } from "@marsai-org/ai/error";
 import { parseArgs } from "@marsai-org/coding-agent/cli/args";
@@ -65,43 +66,47 @@ describe("describeAuthBrokerStartupError", () => {
 });
 
 describe("runRootCommand — unreachable auth broker at startup", () => {
-	it("exits 1 with an actionable message instead of an uncaught AuthBrokerError", async () => {
-		const previous = setInteractiveHost(false);
-		const parsed = parseArgs([]);
-		parsed.noExtensions = true;
-		// An interactive launch needs a terminal on stdin; without one it exits 2.
-		const originalIsTTY = process.stdin.isTTY;
-		Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
+	it(
+		"exits 1 with an actionable message instead of an uncaught AuthBrokerError",
+		async () => {
+			const previous = setInteractiveHost(false);
+			const parsed = parseArgs([]);
+			parsed.noExtensions = true;
+			// An interactive launch needs a terminal on stdin; without one it exits 2.
+			const originalIsTTY = process.stdin.isTTY;
+			Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
 
-		const exitCodes: number[] = [];
-		let stderr = "";
-		vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
-			exitCodes.push(code ?? 0);
-			throw new ProcessExitSignal(code ?? 0);
-		}) as typeof process.exit);
-		vi.spyOn(process.stderr, "write").mockImplementation((chunk: unknown) => {
-			stderr += String(chunk);
-			return true;
-		});
-
-		let thrown: unknown;
-		try {
-			await runRootCommand(parsed, [], {
-				discoverAuthStorage: async () => {
-					throw new AuthBrokerError("Auth broker request failed after 2 attempt(s)");
-				},
+			const exitCodes: number[] = [];
+			let stderr = "";
+			vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+				exitCodes.push(code ?? 0);
+				throw new ProcessExitSignal(code ?? 0);
+			}) as typeof process.exit);
+			vi.spyOn(process.stderr, "write").mockImplementation((chunk: unknown) => {
+				stderr += String(chunk);
+				return true;
 			});
-		} catch (err) {
-			thrown = err;
-		} finally {
-			vi.restoreAllMocks();
-			Object.defineProperty(process.stdin, "isTTY", { value: originalIsTTY, configurable: true });
-			setInteractiveHost(previous);
-		}
 
-		expect(thrown).toBeInstanceOf(ProcessExitSignal);
-		expect(exitCodes).toEqual([1]);
-		expect(stderr).toContain("Auth broker request failed after 2 attempt(s)");
-		expect(stderr).toContain("mars auth-broker serve");
-	}, 15_000);
+			let thrown: unknown;
+			try {
+				await runRootCommand(parsed, [], {
+					discoverAuthStorage: async () => {
+						throw new AuthBrokerError("Auth broker request failed after 2 attempt(s)");
+					},
+				});
+			} catch (err) {
+				thrown = err;
+			} finally {
+				vi.restoreAllMocks();
+				Object.defineProperty(process.stdin, "isTTY", { value: originalIsTTY, configurable: true });
+				setInteractiveHost(previous);
+			}
+
+			expect(thrown).toBeInstanceOf(ProcessExitSignal);
+			expect(exitCodes).toEqual([1]);
+			expect(stderr).toContain("Auth broker request failed after 2 attempt(s)");
+			expect(stderr).toContain("mars auth-broker serve");
+		},
+		scaledTimeout(15000),
+	);
 });

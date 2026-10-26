@@ -12,6 +12,7 @@
 // 3. openai-responses: `response.completed` → `processResponsesStream`
 //    breaks immediately; no grace window involved.
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
 import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
 import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
@@ -66,182 +67,202 @@ function completionChunk(extra: Record<string, unknown>): unknown {
 }
 
 describe("terminal frame without connection close", () => {
-	it("openai-completions: breaks immediately once finish_reason and usage arrived", async () => {
-		const fetchMock = createNeverClosingFetch([
-			completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
-			completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
-			completionChunk({ choices: [], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } }),
-		]);
+	it(
+		"openai-completions: breaks immediately once finish_reason and usage arrived",
+		async () => {
+			const fetchMock = createNeverClosingFetch([
+				completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
+				completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
+				completionChunk({ choices: [], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } }),
+			]);
 
-		const startedAt = Date.now();
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
+			const startedAt = Date.now();
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
 
-		expect(result.stopReason).toBe("stop");
-		expect(result.errorMessage).toBeUndefined();
-		expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
-		expect(result.usage.input).toBe(10);
-		expect(result.usage.output).toBe(5);
-		// Immediate break path: must finish well inside the 2.5s post-finish
-		// grace window (the pre-fix behavior was a 120s idle-watchdog error).
-		expect(Date.now() - startedAt).toBeLessThan(2_000);
-	}, 10_000);
+			expect(result.stopReason).toBe("stop");
+			expect(result.errorMessage).toBeUndefined();
+			expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
+			expect(result.usage.input).toBe(10);
+			expect(result.usage.output).toBe(5);
+			// Immediate break path: must finish well inside the 2.5s post-finish
+			// grace window (the pre-fix behavior was a 120s idle-watchdog error).
+			expect(Date.now() - startedAt).toBeLessThan(2_000);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("openai-completions: resolves before a late [DONE] without cancelling the response", async () => {
-		// Gateways record a request as client-cancelled when the body is torn
-		// down before they relay `[DONE]`, even though the turn completed.
-		const encoder = new TextEncoder();
-		const frames = [
-			completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
-			completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
-			completionChunk({ choices: [], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } }),
-		].map(event => encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
-		const releaseDone = Promise.withResolvers<void>();
-		const outcome = Promise.withResolvers<"done" | "cancelled">();
-		let cancelled = false;
-		// highWaterMark 0: `pull` runs only on client read demand, so `[DONE]` is
-		// relayed only if the client keeps reading after the usage chunk.
-		const body = new ReadableStream<Uint8Array>(
-			{
-				async pull(controller) {
-					const frame = frames.shift();
-					if (frame) {
-						controller.enqueue(frame);
-						return;
-					}
-					await releaseDone.promise;
-					if (cancelled) return;
-					controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-					controller.close();
-					outcome.resolve("done");
+	it(
+		"openai-completions: resolves before a late [DONE] without cancelling the response",
+		async () => {
+			// Gateways record a request as client-cancelled when the body is torn
+			// down before they relay `[DONE]`, even though the turn completed.
+			const encoder = new TextEncoder();
+			const frames = [
+				completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
+				completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
+				completionChunk({ choices: [], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } }),
+			].map(event => encoder.encode(`data: ${JSON.stringify(event)}\n\n`));
+			const releaseDone = Promise.withResolvers<void>();
+			const outcome = Promise.withResolvers<"done" | "cancelled">();
+			let cancelled = false;
+			// highWaterMark 0: `pull` runs only on client read demand, so `[DONE]` is
+			// relayed only if the client keeps reading after the usage chunk.
+			const body = new ReadableStream<Uint8Array>(
+				{
+					async pull(controller) {
+						const frame = frames.shift();
+						if (frame) {
+							controller.enqueue(frame);
+							return;
+						}
+						await releaseDone.promise;
+						if (cancelled) return;
+						controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+						controller.close();
+						outcome.resolve("done");
+					},
+					cancel() {
+						cancelled = true;
+						outcome.resolve("cancelled");
+					},
 				},
-				cancel() {
-					cancelled = true;
-					outcome.resolve("cancelled");
+				{ highWaterMark: 0 },
+			);
+			async function mockFetch(_input: string | URL | Request, _init?: RequestInit): Promise<Response> {
+				return new Response(body, { status: 200, headers: { "content-type": "text/event-stream" } });
+			}
+
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: mockFetch as typeof fetch,
+			}).result();
+			// The turn resolved on the usage chunk while `[DONE]` is still withheld.
+			expect(result.stopReason).toBe("stop");
+			expect(result.usage.input).toBe(10);
+
+			releaseDone.resolve();
+			expect(await outcome.promise).toBe("done");
+		},
+		scaledTimeout(10000),
+	);
+
+	it(
+		"openai-completions: ignores zero cache placeholder until trailing positive cache details arrive",
+		async () => {
+			const fetchMock = createNeverClosingFetch([
+				completionChunk({
+					choices: [{ index: 0, delta: { role: "assistant", content: "Hello" }, finish_reason: "stop" }],
+					usage: {
+						prompt_tokens: 10,
+						completion_tokens: 5,
+						total_tokens: 15,
+						prompt_tokens_details: { cached_tokens: 0 },
+					},
+				}),
+				completionChunk({
+					choices: [],
+					usage: {
+						prompt_tokens: 10,
+						completion_tokens: 5,
+						total_tokens: 15,
+						prompt_tokens_details: { cached_tokens: 4 },
+					},
+				}),
+			]);
+
+			const startedAt = Date.now();
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
+
+			expect(result.stopReason).toBe("stop");
+			expect(result.errorMessage).toBeUndefined();
+			expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
+			expect(result.usage.input).toBe(6);
+			expect(result.usage.cacheRead).toBe(4);
+			expect(result.usage.output).toBe(5);
+			expect(Date.now() - startedAt).toBeLessThan(2_000);
+		},
+		scaledTimeout(10000),
+	);
+
+	it(
+		"openai-completions: ends cleanly via the grace window when no usage chunk ever arrives",
+		async () => {
+			const fetchMock = createNeverClosingFetch([
+				completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
+				completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
+			]);
+
+			const result = await streamOpenAICompletions(completionsModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
+
+			expect(result.stopReason).toBe("stop");
+			expect(result.errorMessage).toBeUndefined();
+			expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
+		},
+		scaledTimeout(10000),
+	);
+
+	it(
+		"openai-responses: breaks immediately on response.completed",
+		async () => {
+			const fetchMock = createNeverClosingFetch([
+				{ type: "response.created", response: { id: "resp_terminal" } },
+				{
+					type: "response.output_item.added",
+					output_index: 0,
+					item: { type: "message", id: "msg_1", role: "assistant", status: "in_progress", content: [] },
 				},
-			},
-			{ highWaterMark: 0 },
-		);
-		async function mockFetch(_input: string | URL | Request, _init?: RequestInit): Promise<Response> {
-			return new Response(body, { status: 200, headers: { "content-type": "text/event-stream" } });
-		}
-
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: mockFetch as typeof fetch,
-		}).result();
-		// The turn resolved on the usage chunk while `[DONE]` is still withheld.
-		expect(result.stopReason).toBe("stop");
-		expect(result.usage.input).toBe(10);
-
-		releaseDone.resolve();
-		expect(await outcome.promise).toBe("done");
-	}, 10_000);
-
-	it("openai-completions: ignores zero cache placeholder until trailing positive cache details arrive", async () => {
-		const fetchMock = createNeverClosingFetch([
-			completionChunk({
-				choices: [{ index: 0, delta: { role: "assistant", content: "Hello" }, finish_reason: "stop" }],
-				usage: {
-					prompt_tokens: 10,
-					completion_tokens: 5,
-					total_tokens: 15,
-					prompt_tokens_details: { cached_tokens: 0 },
+				{
+					type: "response.content_part.added",
+					output_index: 0,
+					item_id: "msg_1",
+					part: { type: "output_text", text: "", annotations: [] },
 				},
-			}),
-			completionChunk({
-				choices: [],
-				usage: {
-					prompt_tokens: 10,
-					completion_tokens: 5,
-					total_tokens: 15,
-					prompt_tokens_details: { cached_tokens: 4 },
+				{ type: "response.output_text.delta", output_index: 0, item_id: "msg_1", delta: "Hello" },
+				{
+					type: "response.output_item.done",
+					output_index: 0,
+					item: {
+						type: "message",
+						id: "msg_1",
+						role: "assistant",
+						status: "completed",
+						content: [{ type: "output_text", text: "Hello", annotations: [] }],
+					},
 				},
-			}),
-		]);
-
-		const startedAt = Date.now();
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
-
-		expect(result.stopReason).toBe("stop");
-		expect(result.errorMessage).toBeUndefined();
-		expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
-		expect(result.usage.input).toBe(6);
-		expect(result.usage.cacheRead).toBe(4);
-		expect(result.usage.output).toBe(5);
-		expect(Date.now() - startedAt).toBeLessThan(2_000);
-	}, 10_000);
-
-	it("openai-completions: ends cleanly via the grace window when no usage chunk ever arrives", async () => {
-		const fetchMock = createNeverClosingFetch([
-			completionChunk({ choices: [{ index: 0, delta: { role: "assistant", content: "Hello" } }] }),
-			completionChunk({ choices: [{ index: 0, delta: {}, finish_reason: "stop" }] }),
-		]);
-
-		const result = await streamOpenAICompletions(completionsModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
-
-		expect(result.stopReason).toBe("stop");
-		expect(result.errorMessage).toBeUndefined();
-		expect(result.content).toEqual([{ type: "text", text: "Hello" }]);
-	}, 10_000);
-
-	it("openai-responses: breaks immediately on response.completed", async () => {
-		const fetchMock = createNeverClosingFetch([
-			{ type: "response.created", response: { id: "resp_terminal" } },
-			{
-				type: "response.output_item.added",
-				output_index: 0,
-				item: { type: "message", id: "msg_1", role: "assistant", status: "in_progress", content: [] },
-			},
-			{
-				type: "response.content_part.added",
-				output_index: 0,
-				item_id: "msg_1",
-				part: { type: "output_text", text: "", annotations: [] },
-			},
-			{ type: "response.output_text.delta", output_index: 0, item_id: "msg_1", delta: "Hello" },
-			{
-				type: "response.output_item.done",
-				output_index: 0,
-				item: {
-					type: "message",
-					id: "msg_1",
-					role: "assistant",
-					status: "completed",
-					content: [{ type: "output_text", text: "Hello", annotations: [] }],
+				{
+					type: "response.completed",
+					response: {
+						id: "resp_terminal",
+						status: "completed",
+						usage: { input_tokens: 10, output_tokens: 5, total_tokens: 15 },
+					},
 				},
-			},
-			{
-				type: "response.completed",
-				response: {
-					id: "resp_terminal",
-					status: "completed",
-					usage: { input_tokens: 10, output_tokens: 5, total_tokens: 15 },
-				},
-			},
-		]);
+			]);
 
-		const startedAt = Date.now();
-		const result = await streamOpenAIResponses(responsesModel, baseContext(), {
-			apiKey: "test-key",
-			fetch: fetchMock,
-		}).result();
+			const startedAt = Date.now();
+			const result = await streamOpenAIResponses(responsesModel, baseContext(), {
+				apiKey: "test-key",
+				fetch: fetchMock,
+			}).result();
 
-		expect(result.stopReason).toBe("stop");
-		expect(result.errorMessage).toBeUndefined();
-		expect(result.content).toEqual([
-			expect.objectContaining({ type: "text", text: "Hello" }) as unknown as (typeof result.content)[number],
-		]);
-		expect(result.usage.input).toBe(10);
-		expect(result.usage.output).toBe(5);
-		expect(Date.now() - startedAt).toBeLessThan(2_000);
-	}, 10_000);
+			expect(result.stopReason).toBe("stop");
+			expect(result.errorMessage).toBeUndefined();
+			expect(result.content).toEqual([
+				expect.objectContaining({ type: "text", text: "Hello" }) as unknown as (typeof result.content)[number],
+			]);
+			expect(result.usage.input).toBe(10);
+			expect(result.usage.output).toBe(5);
+			expect(Date.now() - startedAt).toBeLessThan(2_000);
+		},
+		scaledTimeout(10000),
+	);
 });

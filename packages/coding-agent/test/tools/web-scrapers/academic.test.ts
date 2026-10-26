@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../../test-timeout";
 import { handleArxiv } from "@marsai-org/coding-agent/web/scrapers/arxiv";
 import { handleIacr } from "@marsai-org/coding-agent/web/scrapers/iacr";
 import { handlePubMed } from "@marsai-org/coding-agent/web/scrapers/pubmed";
@@ -87,20 +88,28 @@ describe.skipIf(SKIP)("handlePubMed", () => {
 		return cachedKnownPubMed;
 	};
 
-	it("fetches a known article from pubmed.ncbi.nlm.nih.gov", async () => {
-		// PMID 33782455 - COVID-19 vaccine paper
-		const result = await fetchKnownPubMed();
-		expect(result).not.toBeNull();
-		expect(result?.method).toBe("pubmed");
-		expect(result?.contentType).toBe("text/markdown");
-		expect(result?.truncated).toBe(false);
-	}, 60000);
+	it(
+		"fetches a known article from pubmed.ncbi.nlm.nih.gov",
+		async () => {
+			// PMID 33782455 - COVID-19 vaccine paper
+			const result = await fetchKnownPubMed();
+			expect(result).not.toBeNull();
+			expect(result?.method).toBe("pubmed");
+			expect(result?.contentType).toBe("text/markdown");
+			expect(result?.truncated).toBe(false);
+		},
+		scaledTimeout(60000),
+	);
 
-	it("fetches from ncbi.nlm.nih.gov/pubmed format", async () => {
-		const result = await handlePubMed("https://ncbi.nlm.nih.gov/pubmed/33782455", 20);
-		expect(result).not.toBeNull();
-		expect(result?.method).toBe("pubmed");
-	}, 20000);
+	it(
+		"fetches from ncbi.nlm.nih.gov/pubmed format",
+		async () => {
+			const result = await handlePubMed("https://ncbi.nlm.nih.gov/pubmed/33782455", 20);
+			expect(result).not.toBeNull();
+			expect(result?.method).toBe("pubmed");
+		},
+		scaledTimeout(20000),
+	);
 
 	it("includes PMID in output", async () => {
 		const result = await fetchKnownPubMed();

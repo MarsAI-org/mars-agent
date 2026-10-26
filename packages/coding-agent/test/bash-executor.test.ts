@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -1022,56 +1023,60 @@ exit 64
 		expect(result.output).toContain("a");
 	});
 
-	it("handles large output without freeze or OOM", async () => {
-		if (process.platform === "win32") return;
+	it(
+		"handles large output without freeze or OOM",
+		async () => {
+			if (process.platform === "win32") return;
 
-		// Once raw output exceeds the truncation cap, the streaming + middle-elision
-		// path is volume-independent, so a few hundred KB exercises the same
-		// no-freeze / no-OOM contract the original 40MB did without paying several
-		// seconds to generate it. 100k lines of `seq` is ~690KB — an order of
-		// magnitude past the ~71KB head+tail cap asserted below.
-		const lineCount = 100_000;
-		let chunkCount = 0;
-		const start = Date.now();
-		const result = await executeBash(`seq 1 ${lineCount}`, {
-			cwd: tempDir,
-			timeout: 10_000,
-			onChunk: () => {
-				chunkCount++;
-			},
-		});
-		const elapsed = Date.now() - start;
+			// Once raw output exceeds the truncation cap, the streaming + middle-elision
+			// path is volume-independent, so a few hundred KB exercises the same
+			// no-freeze / no-OOM contract the original 40MB did without paying several
+			// seconds to generate it. 100k lines of `seq` is ~690KB — an order of
+			// magnitude past the ~71KB head+tail cap asserted below.
+			const lineCount = 100_000;
+			let chunkCount = 0;
+			const start = Date.now();
+			const result = await executeBash(`seq 1 ${lineCount}`, {
+				cwd: tempDir,
+				timeout: 10_000,
+				onChunk: () => {
+					chunkCount++;
+				},
+			});
+			const elapsed = Date.now() - start;
 
-		// Should complete, not hang or OOM
-		expect(result.exitCode).toBe(0);
-		expect(result.cancelled).toBe(false);
+			// Should complete, not hang or OOM
+			expect(result.exitCode).toBe(0);
+			expect(result.cancelled).toBe(false);
 
-		// Output summary reflects every line even though the visible text is capped.
-		expect(result.totalLines).toBeGreaterThanOrEqual(lineCount);
+			// Output summary reflects every line even though the visible text is capped.
+			expect(result.totalLines).toBeGreaterThanOrEqual(lineCount);
 
-		// Truncated output stays bounded by head + tail + marker overhead
-		// (middle-elision keeps the head budget plus the tail spill window) — proof
-		// the full ~690KB stream was never accumulated in the visible buffer.
-		expect(result.outputBytes).toBeLessThanOrEqual(DEFAULT_MAX_BYTES + ARTIFACT_HEAD_BYTES_DEFAULT + 1024);
+			// Truncated output stays bounded by head + tail + marker overhead
+			// (middle-elision keeps the head budget plus the tail spill window) — proof
+			// the full ~690KB stream was never accumulated in the visible buffer.
+			expect(result.outputBytes).toBeLessThanOrEqual(DEFAULT_MAX_BYTES + ARTIFACT_HEAD_BYTES_DEFAULT + 1024);
 
-		// The tail should still contain numeric values near the end of the range.
-		// BSD `seq` on macOS formats large numbers in scientific notation, so parse
-		// the final lines numerically instead of matching one exact decimal string.
-		const tailValues = result.output
-			.split("\n")
-			.slice(-1000)
-			.map(line => Number(line.trim()))
-			.filter(Number.isFinite);
-		expect(tailValues.some(value => value >= lineCount - 500 && value <= lineCount)).toBe(true);
+			// The tail should still contain numeric values near the end of the range.
+			// BSD `seq` on macOS formats large numbers in scientific notation, so parse
+			// the final lines numerically instead of matching one exact decimal string.
+			const tailValues = result.output
+				.split("\n")
+				.slice(-1000)
+				.map(line => Number(line.trim()))
+				.filter(Number.isFinite);
+			expect(tailValues.some(value => value >= lineCount - 500 && value <= lineCount)).toBe(true);
 
-		// Chunks are coalesced by the read buffer, so onChunk fires orders of
-		// magnitude less often than once per line — the proof the stream is neither
-		// delivered line-by-line nor buffered whole.
-		expect(chunkCount).toBeLessThan(lineCount / 100);
+			// Chunks are coalesced by the read buffer, so onChunk fires orders of
+			// magnitude less often than once per line — the proof the stream is neither
+			// delivered line-by-line nor buffered whole.
+			expect(chunkCount).toBeLessThan(lineCount / 100);
 
-		// Should complete promptly (not frozen).
-		expect(elapsed).toBeLessThan(10_000);
-	}, 15_000);
+			// Should complete promptly (not frozen).
+			expect(elapsed).toBeLessThan(10_000);
+		},
+		scaledTimeout(15000),
+	);
 
 	it("sources snapshot env vars across session commands", async () => {
 		if (process.platform === "win32") {

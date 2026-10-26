@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import { AsyncJobManager } from "@marsai-org/coding-agent/async";
 import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
@@ -286,19 +287,23 @@ describe("runSubprocess incremental yield loops", () => {
 		expect(result.output).toContain("RECOVERED");
 	});
 
-	it("fails explicitly when a dropped assignment never reaches idle", async () => {
-		const id = "WedgedScout";
-		const handle = createMockSession(() => "dropped");
-		handle.session.waitForIdle = () => Promise.withResolvers<void>().promise;
-		mockCreateAgentSession(handle.session);
-		registerRunning(id, handle.session);
+	it(
+		"fails explicitly when a dropped assignment never reaches idle",
+		async () => {
+			const id = "WedgedScout";
+			const handle = createMockSession(() => "dropped");
+			handle.session.waitForIdle = () => Promise.withResolvers<void>().promise;
+			mockCreateAgentSession(handle.session);
+			registerRunning(id, handle.session);
 
-		const result = await runSubprocess(baseOptions(id, 0));
+			const result = await runSubprocess(baseOptions(id, 0));
 
-		expect(handle.prompts).toHaveLength(1);
-		expect(result.exitCode).toBe(1);
-		expect(result.error).toContain("initial prompt dropped before provider dispatch; session did not become idle");
-	}, 10_000);
+			expect(handle.prompts).toHaveLength(1);
+			expect(result.exitCode).toBe(1);
+			expect(result.error).toContain("initial prompt dropped before provider dispatch; session did not become idle");
+		},
+		scaledTimeout(10000),
+	);
 
 	it("retries a dropped yield reminder without consuming another reminder", async () => {
 		const id = "ReminderScout";
