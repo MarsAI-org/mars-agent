@@ -6,6 +6,23 @@
 
 - Fixed the stats dashboard serving index.html at /favicon.ico; it now returns the omp icon (image/x-icon), so dashboard tabs and bookmarks show a real icon ([#15162](https://github.com/can1357/oh-my-pi/pull/15162) by [@yuzu-octopus](https://github.com/yuzu-octopus)).
 - Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date ([#16605](https://github.com/can1357/oh-my-pi/pull/16605) by [@GarrettShrop](https://github.com/GarrettShrop))
+- Fixed tool error rates counting skipped tool calls that were explicitly marked as not executed ([#17463](https://github.com/can1357/oh-my-pi/pull/17463) by [@Xytronix](https://github.com/Xytronix)).
+
+## [18.14.0] - 2026-10-29
+
+### Changed
+
+- Improved `omp stats` session synchronization performance by approximately 2–5× on large histories. The first sync after upgrading may take up to a minute while the stats database is optimized.
+
+### Fixed
+
+- Fixed `/stats` and `omp stats` failing when another dashboard was syncing sessions or the configured port was already in use; busy dashboards are now reused, and a free port is selected when necessary.
+
+## [18.13.3] - 2026-10-28
+
+### Changed
+
+- Updated Bun engine requirement to ≥1.4.4
 
 ## [18.12.0] - 2026-10-17
 
