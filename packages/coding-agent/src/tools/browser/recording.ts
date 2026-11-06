@@ -8,7 +8,12 @@ import { TempDir } from "@marsai-org/utils/temp";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, Page } from "puppeteer-core";
 import { resizeImage } from "../../utils/image-resize";
-import { buildChangedFrameContactSheetPng, requireMediaBinary, runFfmpeg } from "../../utils/video";
+import {
+	availableH264Encoders,
+	buildChangedFrameContactSheetPng,
+	requireMediaBinary,
+	runFfmpeg,
+} from "../../utils/video";
 import { resolveToCwd } from "../path-utils";
 import { readPageViewport } from "./launch";
 import type { RunOutput } from "./run-output";
@@ -397,30 +402,33 @@ async function encodeRecording(active: ActiveRecording, durationMs: number, sign
 	const fpsFilter = `fps=${active.options.fps}`;
 	const extension = path.extname(active.path).toLowerCase();
 	if (extension === ".mp4") {
-		await runFfmpeg(
-			[
-				"-f",
-				"concat",
-				"-safe",
-				"0",
-				"-i",
-				absoluteConcatFile,
-				"-an",
-				"-vf",
-				`${fpsFilter},scale=trunc(iw/2)*2:trunc(ih/2)*2`,
-				"-c:v",
-				"libx264",
-				"-crf",
-				String(Math.round(((100 - quality) * 51) / 100)),
-				"-pix_fmt",
-				"yuv420p",
-				"-movflags",
-				"+faststart",
-				active.path,
-			],
-			signal,
-		);
-		return;
+		const input = [
+			"-f",
+			"concat",
+			"-safe",
+			"0",
+			"-i",
+			absoluteConcatFile,
+			"-an",
+			"-vf",
+			`${fpsFilter},scale=trunc(iw/2)*2:trunc(ih/2)*2`,
+		];
+		const crf = String(Math.round(((100 - quality) * 51) / 100));
+		const output = ["-pix_fmt", "yuv420p", "-movflags", "+faststart", active.path];
+		const encoders = await availableH264Encoders();
+		let lastError: unknown;
+		for (const encoder of encoders) {
+			try {
+				await runFfmpeg([...input, "-c:v", encoder, "-crf", crf, ...output], signal);
+				return;
+			} catch (error) {
+				// A crash, not an encoder-selection failure: retrying another
+				// encoder would obscure the real cause.
+				if (signal?.aborted) throw error;
+				lastError = error;
+			}
+		}
+		throw lastError;
 	}
 	const input = ["-f", "concat", "-safe", "0", "-i", absoluteConcatFile, "-an", "-vf", fpsFilter];
 	try {
