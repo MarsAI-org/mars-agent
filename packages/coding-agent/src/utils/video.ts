@@ -139,6 +139,74 @@ export function requireMediaBinary(name: "ffmpeg" | "ffprobe"): string {
 	return found;
 }
 
+/**
+ * Software H.264 encoders, most preferred first. `libx264` is the reference
+ * encoder, but distro ffmpeg builds frequently ship without it (e.g. Debian's
+ * `ffmpeg` links OpenH264 instead; macOS adds VideoToolbox). Hardware encoders
+ * are listed last because they need a device/library that a headless host may
+ * lack, so the software fallbacks win when both are present.
+ */
+const PREFERRED_H264_ENCODERS = [
+	"libx264",
+	"libopenh264",
+	"h264_videotoolbox",
+	"h264_nvenc",
+	"h264_qsv",
+	"h264_vaapi",
+] as const;
+
+/**
+ * Extract the H.264 encoder names from `ffmpeg -encoders` output. A row counts
+ * when it advertises codec `h264`; the leading capability flags and the
+ * free-text description are ignored so the parse survives ffmpeg rewording.
+ */
+export function parseH264EncoderNames(encodersOutput: string): string[] {
+	const names: string[] = [];
+	for (const line of encodersOutput.split("\n")) {
+		if (!line.includes("(codec h264)")) continue;
+		const match = /^\s*[A-Z.]{6}\s+(\S+)/.exec(line);
+		if (match) names.push(match[1]!);
+	}
+	return names;
+}
+
+/**
+ * Pick one H.264 encoder from the available names: the first preferred encoder
+ * that is present, else any shipped H.264 encoder, else undefined. Keeps the
+ * selection deterministic so callers do not depend on ffmpeg's listing order.
+ */
+export function selectH264Encoder(available: readonly string[]): string | undefined {
+	for (const preferred of PREFERRED_H264_ENCODERS) {
+		if (available.includes(preferred)) return preferred;
+	}
+	return available[0];
+}
+
+let cachedH264Encoders: string[] | null = null;
+
+/**
+ * H.264 encoders this host's ffmpeg advertises, in preference order. Probed
+ * once per process; an ffmpeg that cannot list encoders yields the preferred
+ * names so the caller still attempts `libx264` and surfaces its own error.
+ */
+export async function availableH264Encoders(): Promise<string[]> {
+	if (cachedH264Encoders) return cachedH264Encoders;
+	let available: string[];
+	try {
+		const ffmpeg = requireMediaBinary("ffmpeg");
+		const child = Bun.spawn([ffmpeg, "-hide_banner", "-encoders"], { stdout: "pipe", stderr: "pipe" });
+		const [stdout] = await Promise.all([readStream(child.stdout), readStream(child.stderr), child.exited]);
+		available = parseH264EncoderNames(stdout);
+	} catch {
+		available = [];
+	}
+	const ordered = [...PREFERRED_H264_ENCODERS, ...available].filter(
+		(name, index, all) => all.indexOf(name) === index && available.includes(name),
+	);
+	cachedH264Encoders = ordered.length > 0 ? ordered : [...PREFERRED_H264_ENCODERS];
+	return cachedH264Encoders;
+}
+
 interface FfprobeStream {
 	codec_type?: string;
 	codec_name?: string;

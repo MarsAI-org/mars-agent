@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- **Browser MP4 recording works on ffmpeg builds without `libx264`.** The MP4 branch hard-coded the `libx264` encoder, so recording failed outright with "Unknown encoder" on ffmpeg builds that ship a different H.264 encoder (e.g. distro packages linking OpenH264). It now probes the available H.264 encoders and falls back through them, mirroring the WebM path's VP9→VP8 fallback.
+
 ## [0.3.1] - 2026-10-25
 
 ### Added
