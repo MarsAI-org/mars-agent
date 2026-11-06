@@ -7,8 +7,10 @@
 import { describe, expect, it } from "bun:test";
 import {
 	formatVideoTimestamp,
+	parseH264EncoderNames,
 	parseVideoSelector,
 	parseVideoTimestamp,
+	selectH264Encoder,
 	splitVideoReadTarget,
 } from "@marsai-org/coding-agent/utils/video";
 
@@ -79,5 +81,48 @@ describe("splitVideoReadTarget", () => {
 		expect(splitVideoReadTarget("notes.txt:12")).toBeNull();
 		expect(splitVideoReadTarget("clip.mp4:50-200")).toBeNull();
 		expect(splitVideoReadTarget("clip.mp4")).toBeNull();
+	});
+});
+
+describe("parseH264EncoderNames", () => {
+	// `ffmpeg -encoders` section header + rows; only H.264-capable rows count.
+	const ENCODERS_OUTPUT = [
+		"Encoders:",
+		" V..... = Video",
+		" -----",
+		" V....D libx264              libx264 H.264 / AVC (codec h264)",
+		" V....D libopenh264          OpenH264 H.264 / AVC (codec h264)",
+		" V..... h264_qsv             H.264 (Intel Quick Sync Video) (codec h264)",
+		" V....D h264_nvenc           NVIDIA NVENC H.264 encoder (codec h264)",
+		" V....D libvpx-vp9           libvpx VP9 (codec vp9)",
+		" A....D aac                  AAC (Advanced Audio Coding) (codec aac)",
+	].join("\n");
+
+	it("extracts only the H.264 encoder names", () => {
+		expect(parseH264EncoderNames(ENCODERS_OUTPUT)).toEqual(["libx264", "libopenh264", "h264_qsv", "h264_nvenc"]);
+	});
+
+	it("returns an empty list when no H.264 encoder is present", () => {
+		const vpOnly = [" V....D libvpx-vp9           libvpx VP9 (codec vp9)"].join("\n");
+		expect(parseH264EncoderNames(vpOnly)).toEqual([]);
+	});
+});
+
+describe("selectH264Encoder", () => {
+	it("prefers libx264 when present", () => {
+		expect(selectH264Encoder(["h264_nvenc", "libx264", "libopenh264"])).toBe("libx264");
+	});
+
+	it("falls back through software encoders before hardware ones", () => {
+		expect(selectH264Encoder(["h264_vaapi", "libopenh264"])).toBe("libopenh264");
+		expect(selectH264Encoder(["h264_nvenc", "h264_qsv"])).toBe("h264_nvenc");
+	});
+
+	it("uses any available H.264 encoder when none is preferred", () => {
+		expect(selectH264Encoder(["some_future_h264"])).toBe("some_future_h264");
+	});
+
+	it("returns undefined when no H.264 encoder exists", () => {
+		expect(selectH264Encoder([])).toBeUndefined();
 	});
 });

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import type { Component } from "@marsai-org/tui";
 import { TERMINAL } from "@marsai-org/tui/terminal-capabilities";
 import {
@@ -35,6 +35,16 @@ function restoreEnv(name: "SSH_CONNECTION" | "SSH_TTY" | "SSH_CLIENT" | "TMUX", 
 
 describe("ProcessTerminal kitty keyboard progressive-enhancement ordering", () => {
 	let harness: ProcessTerminalRenderHarness | undefined;
+
+	beforeEach(() => {
+		// Start every case from a hermetic baseline: an ambient SSH/tmux host
+		// would otherwise flip the capability probe and fail cases that assume a
+		// local terminal. Cases that exercise SSH/tmux set the vars themselves.
+		delete Bun.env.SSH_CONNECTION;
+		delete Bun.env.SSH_TTY;
+		delete Bun.env.SSH_CLIENT;
+		delete Bun.env.TMUX;
+	});
 
 	afterEach(() => {
 		harness?.dispose();
