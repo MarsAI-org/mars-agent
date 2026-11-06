@@ -9,9 +9,10 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { processFileArguments } from "@marsai-org/coding-agent/cli/file-processor";
-import { $which, removeWithRetries } from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
+import { h264Encoder, hasFfmpegBinaries, hasH264Encoder } from "../helpers/ffmpeg-encoders";
 
-const hasFfmpeg = Boolean($which("ffmpeg") && $which("ffprobe"));
+const hasFfmpeg = hasFfmpegBinaries && hasH264Encoder;
 
 describe.skipIf(!hasFfmpeg)("processFileArguments video attachments", () => {
 	let testDir: string;
@@ -33,7 +34,7 @@ describe.skipIf(!hasFfmpeg)("processFileArguments video attachments", () => {
 			"-pix_fmt",
 			"yuv420p",
 			"-c:v",
-			"libx264",
+			h264Encoder!,
 			videoPath,
 		]);
 		expect(await process.exited).toBe(0);

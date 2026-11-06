@@ -22,7 +22,7 @@ import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/
 import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
 import { chipLabel } from "@marsai-org/tui/prompt/composer-attachments";
 import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
-import { $which } from "@marsai-org/utils";
+import { h264Encoder, hasFfmpegBinaries, hasH264Encoder } from "./helpers/ffmpeg-encoders";
 
 // A clipboard with no image on it — the deterministic default for the
 // not-found assertions so a real screenshot on the dev's clipboard cannot
@@ -37,7 +37,7 @@ const ONE_PX_PNG = Buffer.from(
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M8AAAMBAQDJ/pLvAAAAAElFTkSuQmCC",
 	"base64",
 );
-const hasFfmpeg = Boolean($which("ffmpeg") && $which("ffprobe"));
+const hasFfmpeg = hasFfmpegBinaries && hasH264Encoder;
 
 function createContext() {
 	const pasteText = vi.fn();
@@ -205,7 +205,7 @@ describe("InputController.handleImagePathPaste (issue #2375)", () => {
 			"-pix_fmt",
 			"yuv420p",
 			"-c:v",
-			"libx264",
+			h264Encoder!,
 			video,
 		]);
 		try {

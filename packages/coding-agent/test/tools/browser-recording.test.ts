@@ -10,10 +10,11 @@ import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { $which } from "@marsai-org/utils/which";
+import { h264Encoder, hasH264Encoder } from "../helpers/ffmpeg-encoders";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
-const FFMPEG_AVAILABLE = Boolean($which("ffmpeg") && $which("ffprobe"));
+const FFMPEG_AVAILABLE = hasH264Encoder && h264Encoder !== undefined;
 const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-browser-recording-"));
 const session: ToolSession = {
 	cwd: root,

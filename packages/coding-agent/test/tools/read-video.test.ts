@@ -11,9 +11,10 @@ import { createMockModel } from "@marsai-org/ai/providers/mock";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import { ReadTool } from "@marsai-org/coding-agent/tools/read";
-import { $which, removeWithRetries } from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
+import { h264Encoder, hasFfmpegBinaries, hasH264Encoder } from "../helpers/ffmpeg-encoders";
 
-const hasFfmpeg = Boolean($which("ffmpeg") && $which("ffprobe"));
+const hasFfmpeg = hasFfmpegBinaries && hasH264Encoder;
 
 function makeSession(testDir: string, textOnlyModel = false): ToolSession {
 	const sessionFile = path.join(testDir, "session.jsonl");
@@ -57,7 +58,7 @@ describe.skipIf(!hasFfmpeg)("read video", () => {
 			"-pix_fmt",
 			"yuv420p",
 			"-c:v",
-			"libx264",
+			h264Encoder!,
 			clipPath,
 		]);
 		const exit = await proc.exited;

@@ -17,6 +17,19 @@ function makeBand(): { editor: CustomEditor; band: AttachmentChipsBand } {
 	return { editor, band: new AttachmentChipsBand(editor, new ImageBudget(8), () => {}) };
 }
 
+/**
+ * Base64 payload of one Kitty graphics transmit. Handles the tmux passthrough
+ * wrapper (`\x1bPtmux;` + doubled ESCs) a tmux host injects, so the assertion
+ * reads the payload rather than the wrapper's first `;`.
+ */
+function kittyTransmitPayload(sequence: string): string {
+	const marker = sequence.indexOf("_G");
+	const payloadStart = marker === -1 ? -1 : sequence.indexOf(";", marker);
+	if (payloadStart === -1) return "";
+	const end = sequence.indexOf("\x1b", payloadStart);
+	return sequence.slice(payloadStart + 1, end === -1 ? undefined : end);
+}
+
 beforeAll(async () => {
 	await initTheme(false);
 });
@@ -151,8 +164,7 @@ describe("AttachmentChipsBand — Kitty placeholder thumbnails", () => {
 			expect(rows.some(row => row.includes("\x1b_Ga=p,U=1"))).toBe(true);
 			const transmits = budget.takeTransmits();
 			expect(transmits).toHaveLength(1);
-			const payload = transmits[0]!.slice(transmits[0]!.indexOf(";") + 1);
-			expect(payload.startsWith("iVBOR")).toBe(true);
+			expect(kittyTransmitPayload(transmits[0]!).startsWith("iVBOR")).toBe(true);
 		} finally {
 			mutable.imageProtocol = originalProtocol;
 			setKittyGraphics({ unicodePlaceholders: false });

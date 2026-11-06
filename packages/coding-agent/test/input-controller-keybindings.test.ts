@@ -51,6 +51,15 @@ type FakeEditor = {
 type InputListenerResult = { consume: boolean } | undefined;
 type InputListener = (data: string) => InputListenerResult;
 
+/** Restore one SSH env var to its captured value (undefined deletes it). */
+function restoreEnv(name: "SSH_CONNECTION" | "SSH_TTY" | "SSH_CLIENT", value: string | undefined): void {
+	if (value === undefined) {
+		delete Bun.env[name];
+		return;
+	}
+	Bun.env[name] = value;
+}
+
 function dispatchInput(listeners: InputListener[], data: string): InputListenerResult {
 	for (const listener of listeners) {
 		const result = listener(data);
@@ -743,6 +752,11 @@ describe("InputController keybinding setup", () => {
 describe("InputController image paste into an image-accepting prompt", () => {
 	let settingsState: SettingsTestState | undefined;
 	let tempDir: TempDir;
+	const originalSsh = {
+		connection: Bun.env.SSH_CONNECTION,
+		tty: Bun.env.SSH_TTY,
+		client: Bun.env.SSH_CLIENT,
+	};
 
 	beforeAll(async () => {
 		await initTheme(false);
@@ -752,12 +766,21 @@ describe("InputController image paste into an image-accepting prompt", () => {
 		settingsState = beginSettingsTest();
 		await Settings.init({ inMemory: true });
 		tempDir = await TempDir.create("@mars-prompt-image-");
+		// Hermetic baseline: the clipboard fallback is deliberately disabled over
+		// SSH, so an ambient SSH host would flip the paste paths under test.
+		// Cases that exercise the SSH branch set these vars themselves.
+		delete Bun.env.SSH_CONNECTION;
+		delete Bun.env.SSH_TTY;
+		delete Bun.env.SSH_CLIENT;
 	});
 
 	afterEach(async () => {
 		restoreSettingsTestState(settingsState);
 		settingsState = undefined;
 		await tempDir.remove();
+		restoreEnv("SSH_CONNECTION", originalSsh.connection);
+		restoreEnv("SSH_TTY", originalSsh.tty);
+		restoreEnv("SSH_CLIENT", originalSsh.client);
 	});
 
 	/** Controller context whose session commits pasted images under the test's temp dir. */
