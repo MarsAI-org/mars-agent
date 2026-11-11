@@ -7,6 +7,8 @@ pub mod delivery;
 mod geometry;
 #[cfg(target_os = "windows")]
 mod input;
+#[cfg(any(target_os = "windows", test))]
+mod keyboard;
 #[cfg(target_os = "windows")]
 mod menus;
 #[cfg(target_os = "windows")]
