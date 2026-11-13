@@ -6,6 +6,7 @@
 
 - The Frustration page's per-model table counts every answered message again; since agent notices began landing before replies, about half went uncounted ([#19114](https://github.com/can1357/oh-my-pi/pull/19114) by [@will-bogusz](https://github.com/will-bogusz))
 - Fixed the `omp stats` Traces tab leaving every background job open to the end of the session, which hid all idle time and stretched each turn bar across the whole timeline ([#19115](https://github.com/can1357/oh-my-pi/pull/19115) by [@will-bogusz](https://github.com/will-bogusz))
+- The stats Gain tab counts the context snapcompact compactions free, beside imaged tool results, so sessions that compact with snapcompact no longer show zero savings ([#19120](https://github.com/can1357/oh-my-pi/pull/19120) by [@will-bogusz](https://github.com/will-bogusz))
 
 ## [18.20.0] - 2026-11-12
 
