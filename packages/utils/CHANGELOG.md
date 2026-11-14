@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added a profile-aware data directory for managed Antigravity CLI installations and isolated account state.
+
 ## [18.20.1] - 2026-11-14
 
 ### Added
