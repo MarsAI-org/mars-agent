@@ -2861,16 +2861,19 @@ describe("Mistral reasoning_effort ladders (#19265)", () => {
 		for (const [id, efforts] of ladders) {
 			const model = getBundledModel<"openai-completions">("mistral", id);
 			expect(getSupportedEfforts(model)).toEqual([...efforts]);
-			const sent = new Set<unknown>();
-			for (const requested of [Effort.Minimal, Effort.Low, Effort.Medium, Effort.High, Effort.XHigh, Effort.Max]) {
-				const payload = toObject(
+			const send = async (requested: Effort) =>
+				toObject(
 					await captureOpenAICompletionsPayload(model, undefined, {
 						reasoning: clampThinkingLevelForModel(model, requested),
 					}),
-				);
-				sent.add(payload?.reasoning_effort);
+				)?.reasoning_effort;
+			// A documented effort goes out as itself, `max` included.
+			for (const effort of efforts) expect(await send(effort)).toBe(effort);
+			// An undocumented one is clamped to a documented value, never sent as-is.
+			for (const requested of [Effort.Minimal, Effort.Medium, Effort.XHigh, Effort.Max]) {
+				if ((efforts as readonly Effort[]).includes(requested)) continue;
+				expect(efforts as readonly unknown[]).toContain(await send(requested));
 			}
-			expect([...sent].every(value => (efforts as readonly unknown[]).includes(value))).toBe(true);
 		}
 	});
 });
