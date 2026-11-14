@@ -2848,6 +2848,33 @@ describe("mistral prompt_cache_key regression (#15079)", () => {
 	});
 });
 
+describe("Mistral reasoning_effort ladders (#19265)", () => {
+	// docs.mistral.ai/inference/conversations/reasoning: GLM 5.3 and Flash take
+	// low/high/max; Large 4 takes low/medium/high and rejects minimal/xhigh/max.
+	it("offers each model only the efforts Mistral documents and sends them on the wire", async () => {
+		const ladders = [
+			["zai-glm-5-3", [Effort.Low, Effort.High, Effort.Max]],
+			["zai-glm-5-3-flash", [Effort.Low, Effort.High, Effort.Max]],
+			["mistral-large-4", [Effort.Low, Effort.Medium, Effort.High]],
+			["mistral-large-4-0", [Effort.Low, Effort.Medium, Effort.High]],
+		] as const;
+		for (const [id, efforts] of ladders) {
+			const model = getBundledModel<"openai-completions">("mistral", id);
+			expect(getSupportedEfforts(model)).toEqual([...efforts]);
+			const sent = new Set<unknown>();
+			for (const requested of [Effort.Minimal, Effort.Low, Effort.Medium, Effort.High, Effort.XHigh, Effort.Max]) {
+				const payload = toObject(
+					await captureOpenAICompletionsPayload(model, undefined, {
+						reasoning: clampThinkingLevelForModel(model, requested),
+					}),
+				);
+				sent.add(payload?.reasoning_effort);
+			}
+			expect([...sent].every(value => (efforts as readonly unknown[]).includes(value))).toBe(true);
+		}
+	});
+});
+
 describe("Groq Qwen reasoning_effort on the wire", () => {
 	it("sends each Qwen only an effort value Groq accepts", async () => {
 		// Qwen 3.6 takes `default` (thinking) or `none`; Qwen 3.8 takes low/medium/high.
