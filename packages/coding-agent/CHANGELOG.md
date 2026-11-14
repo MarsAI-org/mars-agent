@@ -6,6 +6,10 @@
 
 - Added the `antigravity-cli` provider for Google Antigravity over ACP, with managed binary installation, `/login antigravity-cli` Google sign-in, host tool execution, and retained conversations across tool steps and history changes.
 
+### Fixed
+
+- ACP sessions now honor `mcp.startupTimeoutMs` when connecting the MCP servers a client declares in `session/new` ([#19253](https://github.com/can1357/oh-my-pi/issues/19253)) ([#19286](https://github.com/can1357/oh-my-pi/pull/19286) by [@Alex-Wengg](https://github.com/Alex-Wengg)).
+
 ## [18.20.1] - 2026-11-14
 
 ### Added
