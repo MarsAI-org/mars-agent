@@ -5,6 +5,9 @@
 ### Added
 
 - Added Antigravity CLI models for Gemini, Claude and GPT-OSS with selectable native thinking levels.
+### Fixed
+
+- Mistral GLM 5.3, GLM 5.3 Flash and Mistral Large 4 now offer only the reasoning efforts Mistral documents ([#19265](https://github.com/can1357/oh-my-pi/issues/19265)) ([#19287](https://github.com/can1357/oh-my-pi/pull/19287) by [@Alex-Wengg](https://github.com/Alex-Wengg)).
 
 ## [18.20.1] - 2026-11-14
 
