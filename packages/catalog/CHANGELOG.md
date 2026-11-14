@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [18.20.2] - 2026-11-14
+
 ### Added
 
 - Added Antigravity CLI models for Gemini, Claude and GPT-OSS with selectable native thinking levels.
