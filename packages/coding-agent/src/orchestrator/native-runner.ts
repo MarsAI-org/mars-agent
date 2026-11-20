@@ -18,7 +18,7 @@
  */
 
 import type { Settings } from "../config/settings";
-import { runStructuredSubagent } from "../task/structured-subagent";
+import { runStructuredSubagent, type StructuredSubagentResult } from "../task/structured-subagent";
 import type { AgentDefinition } from "../task/types";
 import type { ApprovalMode } from "../tools/approval";
 import type { ToolSession } from "../tools";
@@ -140,7 +140,7 @@ export class NativeWorkerRunner implements EngineRunner {
 }
 
 /** Project the structured-subagent result onto the orchestrator's change record. */
-function toWorkerChanges(execution: Awaited<ReturnType<typeof runStructuredSubagent>>): WorkerChanges {
+function toWorkerChanges(execution: StructuredSubagentResult): WorkerChanges {
 	const result = execution.result;
 	const hasChanges = result.patchPath !== undefined || result.branchName !== undefined;
 	return {

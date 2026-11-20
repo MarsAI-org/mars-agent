@@ -1,0 +1,84 @@
+name: Mars Bot Auto-Coder
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Task instructions for Mars Bot"
+        required: true
+        type: string
+        default: "Run health checks and fix any broken types or tests"
+      issue_number:
+        description: "Associated Issue / PR Number (optional)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  mars-bot:
+    name: Mars Bot Agent
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' &&
+       contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association) &&
+       contains(github.event.issue.body, '@mars-bot')) ||
+      (github.event_name == 'issue_comment' &&
+       contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) && (
+         contains(github.event.comment.body, '@mars-bot') ||
+         startsWith(github.event.comment.body, '/fix') ||
+         startsWith(github.event.comment.body, '/code')
+      )) ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) && (
+         contains(github.event.comment.body, '@mars-bot') ||
+         startsWith(github.event.comment.body, '/fix')
+      ))
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MARS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.3"
+
+      - name: Setup Rust Toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          toolchain: nightly-2026-10-06
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "mars-bot[bot]"
+          git config --global user.email "mars-bot@users.noreply.github.com"
+
+      - name: Run Mars Bot Agent
+        env:
+          MARS_ROUTER_URL: ${{ secrets.MARS_ROUTER_URL || 'http://localhost:20128/v1' }}
+          MARS_ROUTER_API_KEY: ${{ secrets.MARS_ROUTER_API_KEY || 'default-secret' }}
+          MARS_MODEL: ${{ vars.MARS_MODEL || 'gpt-4o' }}
+          MARS_BOT_TOKEN: ${{ secrets.MARS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MARS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          REPO_TYPE: "mars-agent"
+          INPUT_PROMPT: ${{ github.event.inputs.prompt }}
+          INPUT_ISSUE_NUMBER: ${{ github.event.inputs.issue_number }}
+        run: |
+          bun run .github/scripts/mars-bot-runner.mjs

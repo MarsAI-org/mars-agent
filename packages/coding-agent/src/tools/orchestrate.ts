@@ -21,6 +21,7 @@ import { cfgOrchestratorEnabled } from "../orchestrator/settings";
 import { BoardModel } from "../orchestrator/board-model";
 import type { WorkerPane } from "@marsai-org/tui/apps/orchestrator-board";
 import { discoverAgents, getAgent } from "../task/discovery";
+import type { AgentDefinition } from "../task/types";
 import { createNativeOrchestrationEngine } from "../orchestrator/native-runner";
 import type { OrchestratorPlan, OrchestratorTask, WorkerSpec } from "../orchestrator/types";
 import { BUILTIN_TOOL_NAMES } from "./builtin-names";
@@ -164,7 +165,7 @@ export class OrchestrateTool implements AgentTool<typeof orchestrateSchema, Orch
 
 	private constructor(
 		private readonly session: ToolSession,
-		private readonly agents: Awaited<ReturnType<typeof discoverAgents>>["agents"],
+		private readonly agents: AgentDefinition[],
 	) {
 		this.description = prompt.render(orchestrateDescription);
 	}

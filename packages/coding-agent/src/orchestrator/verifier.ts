@@ -12,7 +12,7 @@
  * Design reference: ORCHESTRATOR_DESIGN.md, Milestone 3.
  */
 
-import { spawn } from "node:child_process";
+import { spawn, type ChildProcess } from "node:child_process";
 
 /** One command the verifier runs. */
 export interface VerificationCheck {
@@ -77,7 +77,7 @@ function runCheck(root: string, check: VerificationCheck): Promise<CheckResult> 
 			resolve(result);
 		};
 
-		let child: ReturnType<typeof spawn>;
+		let child: ChildProcess;
 		try {
 			child = spawn(isWindows ? "cmd" : "sh", isWindows ? ["/c", check.command] : ["-c", check.command], {
 				cwd,

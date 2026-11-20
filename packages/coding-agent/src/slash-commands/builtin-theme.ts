@@ -1,4 +1,4 @@
-import { getAvailableThemes, isLightTheme, setTheme } from "@marsai-org/tui/theme";
+import { getAvailableThemes, isLightTheme, setTheme, type Theme } from "@marsai-org/tui/theme";
 import { cfgThemeDark, cfgThemeLight } from "../modes/settings";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec, SubcommandDef } from "./types";
@@ -15,7 +15,7 @@ import type { SlashCommandSpec, SubcommandDef } from "./types";
 
 const PREVIEW_MS = 4_000;
 
-function swatchLines(theme: Awaited<ReturnType<typeof import("@marsai-org/tui/theme").getThemeByName>>): string[] {
+function swatchLines(theme: Theme | undefined): string[] {
 	if (!theme) return [];
 	const rows: Array<[string, Parameters<typeof theme.fg>[0], string]> = [
 		["accent ", "accent", "Mars orange"],

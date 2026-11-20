@@ -164,6 +164,7 @@ import { SkillDescriptionCatalog } from "../extensibility/skill-descriptions";
 import type { Skill, SkillWarning } from "../extensibility/skills";
 import { expandSlashCommand, type FileSlashCommand, loadSlashCommands } from "../extensibility/slash-commands";
 import { normalizeToolEventInput, resolveToolEventInput } from "../extensibility/tool-event-input";
+import type { ToolCallEventResult } from "../extensibility/shared-events";
 import { GoalRuntime } from "../goals/runtime";
 import type { GoalModeState, GoalTokenUsage } from "../goals/state";
 import type { HindsightSessionState } from "../hindsight/state";
@@ -4864,7 +4865,7 @@ export class AgentSession implements SettingsScope {
 			? { actions: computer.actions, pendingSafetyChecks: computer.pendingSafetyChecks }
 			: ctx.args;
 		runner.markToolCallEmitted(ctx.toolCall.id, ctx.tool.name);
-		let callResult: Awaited<ReturnType<ExtensionRunner["emitToolCall"]>>;
+		let callResult: ToolCallEventResult | undefined;
 		try {
 			callResult = await runner.emitToolCall(
 				{
