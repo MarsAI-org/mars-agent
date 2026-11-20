@@ -381,6 +381,37 @@ providers:
 
 `mars models add-provider` writes this block for you, interactively or from flags, and validates it through the same loader the registry uses before replacing the file. `mars models providers` lists the blocks, and `mars models remove-provider <id>` removes one. See [Model and Provider Configuration](./models.md#managing-custom-providers-via-cli).
 
+### Local gateway: Mars Router
+
+[Mars Router](https://github.com/Veldris88/mars-router) is a local OpenAI-compatible
+gateway that fronts 40+ providers with automatic fallback (subscription → cheap →
+free), RTK token saving, and a self-hosted OpenCode Unlimited free tier. Run it,
+then register it as a custom provider:
+
+```bash
+docker run -d --name mars-router -p 20128:20128 \
+  -v "$HOME/.mars-router:/app/data" \
+  ghcr.io/veldris88/mars-router:latest
+```
+
+```yaml
+providers:
+  mars-router:
+    baseUrl: http://localhost:20128/v1
+    api: openai-completions
+    apiKey: sk-your-mars-router-key
+    models:
+      - id: oc/beam-free
+        name: OpenCode Beam Free
+        contextWindow: 200000
+        maxTokens: 64000
+```
+
+Every model the gateway routes (`oc/...`, `cc/...`, `glm/...`, custom combos) then
+resolves like any other provider. Source and image:
+[`Veldris88/mars-router`](https://github.com/Veldris88/mars-router) ·
+[`ghcr.io/veldris88/mars-router`](https://github.com/Veldris88/mars-router/pkgs/container/mars-router).
+
 ### Changing a built-in provider's endpoint
 
 Built-in providers take a custom endpoint from the `providers.endpoints` setting in `config.yml`, without a `models.yml` block:
