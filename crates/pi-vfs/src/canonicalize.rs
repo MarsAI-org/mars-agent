@@ -19,7 +19,12 @@ use crate::{
 };
 
 /// Symlinks followed before loop detection starts (uucore's threshold).
-const SYMLINKS_BEFORE_LOOP_CHECK: u32 = 20;
+const SYMLINKS_BEFORE_LOOP_CHECK: usize = 20;
+/// Hard cap on total symlink expansions (matches Linux `MAXSYMLINKS` = 40),
+/// bounding growing cycles such as `a -> a/a` whose remaining path changes on
+/// every iteration and would otherwise evade the `(dir, remaining)` visited
+/// set.
+const MAX_SYMLINK_EXPANSIONS: usize = 40;
 
 /// Filesystem lookups needed by [`canonicalize`].
 pub(crate) trait Resolver: Sync {
@@ -77,7 +82,7 @@ pub(crate) async fn canonicalize<R: Resolver>(
 
 	let mut pending: VecDeque<Part> = parts(path).into();
 	let mut result = PathBuilder::default();
-	let mut followed = 0u32;
+	let mut followed = 0usize;
 	let mut visited: HashSet<(PathBuf, PathBuf)> = HashSet::new();
 
 	while let Some(part) = pending.pop_front() {
@@ -99,12 +104,14 @@ pub(crate) async fn canonicalize<R: Resolver>(
 		let current = result.to_path();
 		match resolver.symlink_target(&current).await {
 			Ok(Some(target)) => {
+				followed += 1;
+				if followed > MAX_SYMLINK_EXPANSIONS {
+					return Err(symlink_loop());
+				}
 				for part in parts(&target).into_iter().rev() {
 					pending.push_front(part);
 				}
-				if followed < SYMLINKS_BEFORE_LOOP_CHECK {
-					followed += 1;
-				} else {
+				if followed > SYMLINKS_BEFORE_LOOP_CHECK {
 					let dir = parent_path(&current).map_or_default(Path::to_path_buf);
 					if !visited.insert((dir, remaining_path(&pending))) {
 						return Err(symlink_loop());
@@ -142,4 +149,45 @@ pub(crate) async fn canonicalize<R: Resolver>(
 		MissingHandling::Missing => {},
 	}
 	Ok(result)
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	struct GrowingCycleResolver;
+
+	impl Resolver for GrowingCycleResolver {
+		fn symlink_target(
+			&self,
+			path: &Path,
+		) -> impl Future<Output = io::Result<Option<PathBuf>>> + Send {
+			let result = if path.file_name().is_some_and(|name| name == "a") {
+				Ok(Some(PathBuf::from("a/a")))
+			} else {
+				Ok(None)
+			};
+			std::future::ready(result)
+		}
+
+		fn exists(&self, _path: &Path) -> impl Future<Output = bool> + Send {
+			std::future::ready(true)
+		}
+
+		fn require_dir(&self, _path: &Path) -> impl Future<Output = io::Result<()>> + Send {
+			std::future::ready(Ok(()))
+		}
+	}
+
+	#[test]
+	fn growing_symlink_cycle_hits_expansion_cap() {
+		let runtime = tokio::runtime::Builder::new_current_thread()
+			.build()
+			.expect("runtime");
+		let options = CanonicalizeOptions::new(MissingHandling::Missing, ResolveMode::Physical);
+		let err = runtime
+			.block_on(canonicalize(&GrowingCycleResolver, Path::new("/root/a"), &options))
+			.expect_err("growing symlink cycle must fail");
+		assert_eq!(err.to_string(), "Too many levels of symbolic links");
+	}
 }

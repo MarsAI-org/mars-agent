@@ -60,8 +60,11 @@ pub fn apple_fm_cancel(handle: u32) {
 mod platform {
 	use std::{
 		ffi::{CStr, CString, c_char, c_void},
-		fs, io,
-		path::PathBuf,
+		fs::{self, DirBuilder, OpenOptions},
+		io::{self, Read, Write},
+		os::unix::fs::{DirBuilderExt, MetadataExt, OpenOptionsExt, PermissionsExt},
+		panic::{AssertUnwindSafe, catch_unwind},
+		path::{Path, PathBuf},
 		sync::{
 			LazyLock,
 			atomic::{AtomicU32, Ordering},
@@ -181,22 +184,112 @@ mod platform {
 		version.to_str().ok()?.split('.').next()?.parse().ok()
 	}
 
-	/// Writes [`DYLIB`] to a content-addressed path under `$TMPDIR` (per-user on
-	/// macOS), reusing an identical existing copy.
+	static STAGING_SEQ: AtomicU32 = AtomicU32::new(0);
+
+	/// Ensures `dir` is a real directory owned by `euid` with `0700`
+	/// permissions, refusing symlinks or directories owned by another user.
+	fn ensure_private_bridge_dir(dir: &Path, euid: u32) -> io::Result<()> {
+		match DirBuilder::new().mode(0o700).create(dir) {
+			Ok(()) => {},
+			Err(err) if err.kind() == io::ErrorKind::AlreadyExists => {},
+			Err(err) => return Err(err),
+		}
+		let meta = fs::symlink_metadata(dir)?;
+		if meta.file_type().is_symlink() || !meta.is_dir() {
+			return Err(io::Error::new(
+				io::ErrorKind::PermissionDenied,
+				"bridge staging directory is not a regular directory",
+			));
+		}
+		if meta.uid() != euid {
+			return Err(io::Error::new(
+				io::ErrorKind::PermissionDenied,
+				"bridge staging directory is not owned by the current user",
+			));
+		}
+		if meta.mode() & 0o777 != 0o700 {
+			fs::set_permissions(dir, fs::Permissions::from_mode(0o700))?;
+		}
+		Ok(())
+	}
+
+	/// Returns `true` when `path` is a private, non-symlink regular file owned
+	/// by `euid` whose bytes match `DYLIB`.
+	fn existing_dylib_matches(path: &Path, euid: u32) -> bool {
+		let Ok(mut file) = OpenOptions::new()
+			.read(true)
+			.custom_flags(libc::O_NOFOLLOW)
+			.open(path)
+		else {
+			return false;
+		};
+		let Ok(meta) = file.metadata() else {
+			return false;
+		};
+		if !meta.is_file() || meta.uid() != euid || (meta.mode() & 0o077) != 0 {
+			return false;
+		}
+		if meta.len() != DYLIB.len() as u64 {
+			return false;
+		}
+		let mut bytes = Vec::with_capacity(DYLIB.len());
+		file.read_to_end(&mut bytes).is_ok() && bytes == DYLIB
+	}
+
+	/// Writes [`DYLIB`] to a content-addressed path inside a private `0700`
+	/// per-user directory under `$TMPDIR`, reusing an identical existing copy.
 	fn materialize() -> io::Result<PathBuf> {
+		// SAFETY: `geteuid` has no preconditions and always succeeds.
+		let euid = unsafe { libc::geteuid() };
+		let dir = std::env::temp_dir().join(format!("mars-applefm-{euid}"));
+		ensure_private_bridge_dir(&dir, euid)?;
+
 		// FNV-1a: a stable content key, so builds with different bridges never
 		// share (or overwrite a loaded copy of) one file.
 		let hash = DYLIB.iter().fold(0xcbf2_9ce4_8422_2325_u64, |hash, &byte| {
 			(hash ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3)
 		});
-		let path = std::env::temp_dir().join(format!("mars-applefm-{hash:016x}.dylib"));
-		if fs::read(&path).is_ok_and(|bytes| bytes == DYLIB) {
+		let path = dir.join(format!("mars-applefm-{hash:016x}.dylib"));
+		if existing_dylib_matches(&path, euid) {
 			return Ok(path);
 		}
-		let staging = path.with_extension(format!("{}.tmp", std::process::id()));
-		fs::write(&staging, DYLIB)?;
-		fs::rename(&staging, &path).inspect_err(|_| {
-			let _ = fs::remove_file(&staging);
+
+		let pid = std::process::id();
+		let mut staging = None;
+		for _ in 0..32 {
+			let seq = STAGING_SEQ.fetch_add(1, Ordering::Relaxed);
+			let candidate = dir.join(format!(".mars-applefm-{hash:016x}-{pid}-{seq}.tmp"));
+			match OpenOptions::new()
+				.write(true)
+				.create_new(true)
+				.mode(0o700)
+				.custom_flags(libc::O_NOFOLLOW)
+				.open(&candidate)
+			{
+				Ok(file) => {
+					staging = Some((candidate, file));
+					break;
+				},
+				Err(err) if err.kind() == io::ErrorKind::AlreadyExists => continue,
+				Err(err) => return Err(err),
+			}
+		}
+		let (staging_path, mut file) = staging.ok_or_else(|| {
+			io::Error::new(io::ErrorKind::AlreadyExists, "failed to allocate unique staging file")
+		})?;
+		let write_result = (|| -> io::Result<()> {
+			file.write_all(DYLIB)?;
+			file.set_permissions(fs::Permissions::from_mode(0o700))?;
+			file.sync_all()?;
+			Ok(())
+		})();
+		drop(file);
+		if let Err(err) = write_result {
+			let _ = fs::remove_file(&staging_path);
+			return Err(err);
+		}
+		fs::rename(&staging_path, &path).inspect_err(|_| {
+			let _ = fs::remove_file(&staging_path);
 		})?;
 		Ok(path)
 	}
@@ -256,20 +349,39 @@ mod platform {
 	}
 
 	extern "C" fn emit(context: *mut c_void, event: *const c_char, is_final: bool) {
-		// SAFETY: `event` is a NUL-terminated string valid for this call.
-		let event = unsafe { CStr::from_ptr(event) }
-			.to_string_lossy()
-			.into_owned();
-		let callback = context.cast::<ThreadsafeFunction<String>>();
-		if is_final {
-			// SAFETY: the terminal event is the last use of `context`, created by
-			// `Box::into_raw` in `generate`.
-			let callback = unsafe { Box::from_raw(callback) };
-			callback.call(Ok(event), ThreadsafeFunctionCallMode::NonBlocking);
-		} else {
-			// SAFETY: non-terminal events are delivered sequentially before the
-			// terminal one, so the box is still live.
-			unsafe { &*callback }.call(Ok(event), ThreadsafeFunctionCallMode::NonBlocking);
+		let result = catch_unwind(AssertUnwindSafe(|| {
+			if context.is_null() {
+				return;
+			}
+			let callback = context.cast::<ThreadsafeFunction<String>>();
+			if event.is_null() {
+				if is_final {
+					// SAFETY: the terminal event is the last use of `context`,
+					// created by `Box::into_raw` in `generate`.
+					drop(unsafe { Box::from_raw(callback) });
+				}
+				return;
+			}
+			// SAFETY: `event` was verified non-null and is a NUL-terminated
+			// string valid for this call.
+			let event = unsafe { CStr::from_ptr(event) }
+				.to_string_lossy()
+				.into_owned();
+			if is_final {
+				// SAFETY: the terminal event is the last use of `context`, created
+				// by `Box::into_raw` in `generate`.
+				let callback = unsafe { Box::from_raw(callback) };
+				callback.call(Ok(event), ThreadsafeFunctionCallMode::NonBlocking);
+			} else {
+				// SAFETY: non-terminal events are delivered sequentially before the
+				// terminal one, so the box is still live.
+				unsafe { &*callback }.call(Ok(event), ThreadsafeFunctionCallMode::NonBlocking);
+			}
+		}));
+		if let Err(payload) = result {
+			// Never unwind across the C ABI boundary, even if the panic
+			// payload's `Drop` impl panics.
+			std::mem::forget(payload);
 		}
 	}
 }

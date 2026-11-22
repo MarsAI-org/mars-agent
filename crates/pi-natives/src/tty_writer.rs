@@ -158,16 +158,22 @@ fn pump_loop(fd: i32, inner: &Inner) {
 			}
 		}
 		front.clear();
-		// Wake `flushSync` waiters parked on the same condvar.
-		inner.cv.notify_all();
+		// Synchronize with `flush_sync` waiters checking `pending`/`dead` under
+		// `back` so a drain completion cannot slip between their predicate check
+		// and `cv.wait_for`.
+		{
+			let _back = inner.back.lock();
+			inner.cv.notify_all();
+		}
 	}
 }
 
 /// Dedicated writer thread for one terminal fd.
 ///
-/// `dup(2)`'d at construction and closed on drop. The duplicate keeps the
-/// pump's fd alive if the original is closed or replaced; file-status flags
-/// such as `O_NONBLOCK` are shared and handled by polling for `POLLOUT`.
+/// Duplicated with `F_DUPFD_CLOEXEC` at construction and closed on drop. The
+/// duplicate keeps the pump's fd alive if the original is closed or replaced;
+/// file-status flags such as `O_NONBLOCK` are shared and handled by polling for
+/// `POLLOUT`.
 #[napi]
 pub struct TtyWriter {
 	inner:  Arc<Inner>,
@@ -184,11 +190,13 @@ impl TtyWriter {
 	pub fn new(fd: i32) -> Result<Self> {
 		#[cfg(unix)]
 		{
-			// SAFETY: dup on a caller-provided fd; a negative result is handled.
-			let owned = unsafe { libc::dup(fd) };
+			// SAFETY: `F_DUPFD_CLOEXEC` atomically duplicates `fd` with
+			// `FD_CLOEXEC` set so child processes never inherit it; a negative
+			// result is handled below.
+			let owned = unsafe { libc::fcntl(fd, libc::F_DUPFD_CLOEXEC, 0) };
 			if owned < 0 {
 				return Err(Error::from_reason(format!(
-					"dup({fd}) failed: {}",
+					"fcntl({fd}, F_DUPFD_CLOEXEC, 0) failed: {}",
 					std::io::Error::last_os_error()
 				)));
 			}
@@ -203,7 +211,12 @@ impl TtyWriter {
 			let thread = std::thread::Builder::new()
 				.name("tty-writer".into())
 				.spawn(move || pump_loop(owned, &thread_inner))
-				.map_err(|err| Error::from_reason(format!("tty writer thread spawn failed: {err}")))?;
+				.map_err(|err| {
+					// SAFETY: `owned` was duplicated above and the pump thread did
+					// not start, so nothing else owns or references it.
+					unsafe { libc::close(owned) };
+					Error::from_reason(format!("tty writer thread spawn failed: {err}"))
+				})?;
 			Ok(Self { inner, thread: Some(thread), fd: owned })
 		}
 		#[cfg(not(unix))]
@@ -221,7 +234,7 @@ impl TtyWriter {
 	/// warm writer costs no per-call heap allocation.
 	#[napi]
 	pub fn write(&self, data: JsString) -> Result<u32> {
-		if self.inner.dead.load(Ordering::Acquire) {
+		if self.inner.dead.load(Ordering::Acquire) || self.inner.stop.load(Ordering::Acquire) {
 			return Ok(self.pending());
 		}
 		let units = js::utf16(data)?;
@@ -246,6 +259,9 @@ impl TtyWriter {
 	fn append(&self, fill: impl FnOnce(&mut Vec<u8>) -> usize) -> u32 {
 		{
 			let mut back = self.inner.back.lock();
+			if self.inner.dead.load(Ordering::Acquire) || self.inner.stop.load(Ordering::Acquire) {
+				return self.pending();
+			}
 			let added = fill(&mut back);
 			// Publish the pending-byte accounting while `back` is still locked.
 			// Once this lock is released, the pump may claim and drain the buffer;
@@ -304,8 +320,13 @@ impl TtyWriter {
 			return;
 		};
 		let drained = self.flush_sync(flush_timeout_ms);
-		self.inner.stop.store(true, Ordering::Release);
-		self.inner.cv.notify_all();
+		{
+			// Synchronize with `pump_loop`'s check of `stop` under `back` so
+			// `notify_all` cannot fire before the pump enters `cv.wait`.
+			let _back = self.inner.back.lock();
+			self.inner.stop.store(true, Ordering::Release);
+			self.inner.cv.notify_all();
+		}
 		if !drained && !self.inner.dead.load(Ordering::Acquire) {
 			// Likely mid-blocking-write; detach and leak the fd.
 			return;

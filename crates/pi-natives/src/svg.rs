@@ -136,7 +136,8 @@ fn rasterize_svg_sync(
 	if max_width_px == 0 || max_height_px == 0 {
 		return Err(napi::Error::from_reason("SVG render limits must be greater than zero"));
 	}
-	if !scale.is_finite() || scale <= 0.0 {
+	let scale_f32 = scale as f32;
+	if !scale.is_finite() || scale <= 0.0 || !scale_f32.is_finite() || scale_f32 <= 0.0 {
 		return Err(napi::Error::from_reason("SVG render scale must be finite and positive"));
 	}
 	let (max_width_px, max_height_px) = match cell {
@@ -165,14 +166,23 @@ fn rasterize_svg_sync(
 	let source = tree.size();
 	let fit = (max_width_px as f32 / source.width())
 		.min(max_height_px as f32 / source.height())
-		.min(scale as f32);
-	let mut width = (source.width() * fit).ceil().max(1.0) as u32;
-	let mut height = (source.height() * fit).ceil().max(1.0) as u32;
+		.min(scale_f32);
+	if !fit.is_finite() || fit <= 0.0 {
+		return Err(napi::Error::from_reason("SVG dimensions are out of renderable range"));
+	}
+	let mut width = ((source.width() * fit).ceil().max(1.0) as u32).clamp(1, max_width_px);
+	let mut height = ((source.height() * fit).ceil().max(1.0) as u32).clamp(1, max_height_px);
 	if let Some(cell) = cell {
 		// The limits are whole cells, so padding stays within them; the clamp
 		// only absorbs a float-rounded extra pixel.
-		width = width.next_multiple_of(cell.width_px).min(max_width_px);
-		height = height.next_multiple_of(cell.height_px).min(max_height_px);
+		width = width
+			.checked_next_multiple_of(cell.width_px)
+			.unwrap_or(max_width_px)
+			.min(max_width_px);
+		height = height
+			.checked_next_multiple_of(cell.height_px)
+			.unwrap_or(max_height_px)
+			.min(max_height_px);
 	}
 	let mut pixmap = tiny_skia::Pixmap::new(width, height)
 		.ok_or_else(|| napi::Error::from_reason("Failed to allocate SVG render surface"))?;
@@ -292,5 +302,30 @@ mod tests {
 		let error =
 			rasterize_svg_sync(svg, 8192, 8192, 1.0, None).expect_err("oversized canvas should fail");
 		assert!(error.reason.contains("safety cap"));
+	}
+
+	#[test]
+	fn rejects_f32_overflowing_scale_without_panicking() {
+		let svg = br#"<svg xmlns="http://www.w3.org/2000/svg" width="0.001" height="0.001"><rect width="0.001" height="0.001" fill="red"/></svg>"#;
+		let cell = Some(SvgCell { width_px: 8, height_px: 18 });
+		let error = rasterize_svg_sync(svg, 100, 100, 1e39, cell)
+			.expect_err("scale overflowing f32 should fail cleanly");
+		assert!(error.reason.contains("finite and positive"));
+
+		let underflow = rasterize_svg_sync(svg, 100, 100, 1e-300, cell)
+			.expect_err("scale underflowing f32 to zero should fail cleanly");
+		assert!(underflow.reason.contains("finite and positive"));
+	}
+
+	#[test]
+	fn clamps_extreme_tiny_svg_without_cell_overflow() {
+		let svg = br#"<svg xmlns="http://www.w3.org/2000/svg" width="1e-35" height="1e-35"><rect width="1e-35" height="1e-35" fill="red"/></svg>"#;
+		let cell = Some(SvgCell { width_px: 8, height_px: 18 });
+		// Depending on usvg parsing, either renders bounded within limits or
+		// returns a clean error — never panics on next_multiple_of overflow.
+		if let Ok(png) = rasterize_svg_sync(svg, 100, 100, 1.0, cell) {
+			let image = image::load_from_memory(&png).expect("result should be PNG");
+			assert!(image.width() <= 104 && image.height() <= 108);
+		}
 	}
 }

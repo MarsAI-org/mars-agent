@@ -4590,8 +4590,8 @@ mod platform {
 			Foundation::{CloseHandle, HANDLE, INVALID_HANDLE_VALUE, STATUS_NO_MORE_FILES},
 			Storage::FileSystem::{
 				CreateFileW, FILE_ATTRIBUTE_DIRECTORY, FILE_ATTRIBUTE_REPARSE_POINT,
-				FILE_FLAG_BACKUP_SEMANTICS, FILE_FLAG_OPEN_REPARSE_POINT, FILE_LIST_DIRECTORY,
-				FILE_SHARE_DELETE, FILE_SHARE_READ, FILE_SHARE_WRITE, OPEN_EXISTING,
+				FILE_FLAG_BACKUP_SEMANTICS, FILE_LIST_DIRECTORY, FILE_SHARE_DELETE, FILE_SHARE_READ,
+				FILE_SHARE_WRITE, OPEN_EXISTING,
 			},
 			System::IO::IO_STATUS_BLOCK,
 		},
@@ -4601,6 +4601,12 @@ mod platform {
 		FileType, RawDirEntry, ReadDirControl, ReadDirError, WalkDetail, WalkError, mtime_millis,
 	};
 
+	#[link(name = "ntdll")]
+	unsafe extern "system" {
+		fn RtlNtStatusToDosError(status: i32) -> u32;
+	}
+
+	const ERROR_MR_MID_NOT_FOUND: u32 = 317;
 	pub const CHEAP_SIZE_HINTS: bool = true;
 
 	const BUFFER_SIZE: usize = 256 * 1024;
@@ -4613,6 +4619,19 @@ mod platform {
 		fn drop(&mut self) {
 			// SAFETY: `HandleGuard` owns this handle and closes it exactly once.
 			unsafe { CloseHandle(self.0) };
+		}
+	}
+
+	fn ntstatus_to_io_error(status: i32) -> io::Error {
+		// SAFETY: `RtlNtStatusToDosError` is a pure status-code lookup in ntdll.
+		let dos = unsafe { RtlNtStatusToDosError(status) };
+		if dos == ERROR_MR_MID_NOT_FOUND {
+			io::Error::other(format!(
+				"NtQueryDirectoryFile failed with NTSTATUS 0x{:08x}",
+				status as u32
+			))
+		} else {
+			io::Error::from_raw_os_error(dos as i32)
 		}
 	}
 
@@ -4655,26 +4674,45 @@ mod platform {
 				break;
 			}
 			if status < 0 {
-				return Err(io::Error::from_raw_os_error(status).into());
+				return Err(ntstatus_to_io_error(status).into());
 			}
 
+			let valid_len = iosb.Information.min(buffer.len());
+			if valid_len == 0 {
+				break;
+			}
+			const HEADER_LEN: usize = std::mem::offset_of!(FILE_ID_FULL_DIR_INFORMATION, FileName);
 			let mut offset = 0usize;
 			loop {
-				if offset + std::mem::size_of::<FILE_ID_FULL_DIR_INFORMATION>() > buffer.len() {
+				if offset
+					.checked_add(HEADER_LEN)
+					.is_none_or(|end| end > valid_len)
+				{
 					return Err(invalid_data("truncated NtQueryDirectoryFile record").into());
 				}
+				let mut info = std::mem::MaybeUninit::<FILE_ID_FULL_DIR_INFORMATION>::zeroed();
+				// SAFETY: `offset + HEADER_LEN <= valid_len <= buffer.len()`, and
+				// `HEADER_LEN <= size_of::<FILE_ID_FULL_DIR_INFORMATION>()`. Only
+				// the fixed header bytes are copied so a short final record (e.g.
+				// a 1-char filename without trailing alignment padding) never
+				// reads past `valid_len` or `buffer.len()`. Every field of
+				// `FILE_ID_FULL_DIR_INFORMATION` is a plain integer, so the
+				// zeroed trailing `FileName`/padding bytes are valid.
 				let info = unsafe {
-					// SAFETY: Bounds were checked above; records are byte-packed in
-					// the buffer and may not be aligned for Rust references.
-					std::ptr::read_unaligned(
-						buffer[offset..]
-							.as_ptr()
-							.cast::<FILE_ID_FULL_DIR_INFORMATION>(),
-					)
+					std::ptr::copy_nonoverlapping(
+						buffer.as_ptr().add(offset),
+						info.as_mut_ptr().cast::<u8>(),
+						HEADER_LEN,
+					);
+					info.assume_init()
 				};
-				let name_offset = offset + std::mem::offset_of!(FILE_ID_FULL_DIR_INFORMATION, FileName);
+				let name_offset = offset + HEADER_LEN;
 				let name_len = info.FileNameLength as usize;
-				if !name_len.is_multiple_of(2) || name_offset + name_len > buffer.len() {
+				if !name_len.is_multiple_of(2)
+					|| name_offset
+						.checked_add(name_len)
+						.is_none_or(|end| end > valid_len)
+				{
 					return Err(invalid_data("invalid NtQueryDirectoryFile name length").into());
 				}
 				let name_units: Vec<u16> = buffer[name_offset..name_offset + name_len]
@@ -4702,7 +4740,14 @@ mod platform {
 				if info.NextEntryOffset == 0 {
 					break;
 				}
-				offset = offset.saturating_add(info.NextEntryOffset as usize);
+				match offset.checked_add(info.NextEntryOffset as usize) {
+					Some(next) if next > offset && next < valid_len => offset = next,
+					_ => {
+						return Err(
+							invalid_data("invalid NtQueryDirectoryFile next entry offset").into(),
+						);
+					},
+				}
 			}
 		}
 		Ok(ReadDirControl::Continue)
@@ -4712,7 +4757,9 @@ mod platform {
 		let mut path: Vec<u16> = path.as_os_str().encode_wide().collect();
 		path.push(0);
 		// SAFETY: `path` is NUL-terminated; the returned handle is owned by
-		// `HandleGuard` on success.
+		// `HandleGuard` on success. Omit `FILE_FLAG_OPEN_REPARSE_POINT` so
+		// enumerating a followed symlink/junction directory lists its target,
+		// matching Unix `opendir`.
 		let handle = unsafe {
 			CreateFileW(
 				path.as_ptr(),
@@ -4720,7 +4767,7 @@ mod platform {
 				FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 				std::ptr::null(),
 				OPEN_EXISTING,
-				FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+				FILE_FLAG_BACKUP_SEMANTICS,
 				std::ptr::null_mut(),
 			)
 		};

@@ -1278,10 +1278,16 @@ pub mod sys {
 		let end = base.checked_add(storage.len().checked_mul(size_of::<usize>())?)?;
 		let command_start = command.buffer as usize;
 		let command_end = command_start.checked_add(length)?;
-		if command_start < base || command_end > end {
+		if command.buffer.is_null()
+			|| !command.buffer.is_aligned()
+			|| !command_start.is_multiple_of(align_of::<u16>())
+			|| command_start < base
+			|| command_end > end
+		{
 			return None;
 		}
-		// SAFETY: the validated range is aligned for UTF-16 within the query buffer.
+		// SAFETY: `command.buffer` is non-null, properly aligned for `u16`, and
+		// the entire byte range lies inside the initialized query buffer.
 		let units = unsafe { std::slice::from_raw_parts(command.buffer, length / size_of::<u16>()) };
 		Some(String::from_utf16_lossy(units)).filter(|command| !command.is_empty())
 	}

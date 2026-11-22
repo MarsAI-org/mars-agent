@@ -795,6 +795,12 @@ fn apply_patches_to_map(
 	for patch in patches {
 		let (source_path, target_path, source_mode, target_mode) =
 			patch_sides(patch, options.reverse);
+		if let Some(path) = source_path {
+			validate_repo_path(path).map_err(ApplyFailure::into_error)?;
+		}
+		if let Some(path) = target_path {
+			validate_repo_path(path).map_err(ApplyFailure::into_error)?;
+		}
 		// A create patch may land on an intent-to-add entry: git treats the
 		// promised path as absent and stages the real content over it.
 		if source_path.is_none()
@@ -1811,7 +1817,7 @@ fn write_worktree_entry(
 	entry: &FileEntry,
 ) -> Result<()> {
 	validate_repo_path(path).map_err(ApplyFailure::into_error)?;
-	let absolute = repo.root().join(path);
+	let absolute = ensure_no_symlink_ancestors(repo.root(), path)?;
 	if let Some(parent) = absolute.parent() {
 		fs::create_dir_all(parent)?;
 	}
@@ -1826,6 +1832,15 @@ fn write_worktree_entry(
 		#[cfg(not(unix))]
 		fs::write(&absolute, bytes)?;
 		return Ok(());
+	}
+	// Never follow an existing leaf symlink when materializing a regular file:
+	// unlink it first so neither `fs::write` nor `fs::set_permissions` can
+	// target a file outside the worktree.
+	match fs::symlink_metadata(&absolute) {
+		Ok(meta) if meta.file_type().is_symlink() => fs::remove_file(&absolute)?,
+		Ok(_) => {},
+		Err(err) if err.kind() == std::io::ErrorKind::NotFound => {},
+		Err(err) => return Err(err.into()),
 	}
 	fs::write(&absolute, filter.git_to_worktree(path, bytes)?)?;
 	#[cfg(unix)]
@@ -1843,7 +1858,7 @@ fn write_worktree_entry(
 
 fn remove_worktree_path(repo: &GitRepo, path: &str) -> Result<()> {
 	validate_repo_path(path).map_err(ApplyFailure::into_error)?;
-	let absolute = repo.root().join(path);
+	let absolute = ensure_no_symlink_ancestors(repo.root(), path)?;
 	match fs::remove_file(&absolute) {
 		Ok(()) => {},
 		Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(()),
@@ -1862,14 +1877,83 @@ fn remove_worktree_path(repo: &GitRepo, path: &str) -> Result<()> {
 	Ok(())
 }
 
-fn validate_repo_path(path: &str) -> std::result::Result<(), ApplyFailure> {
-	let candidate = PathBuf::from(path);
-	if candidate.is_absolute()
-		|| candidate.components().any(|component| {
-			matches!(component, Component::ParentDir | Component::RootDir | Component::Prefix(_))
+/// Walks every ancestor component of `relative` under `root`, refusing any
+/// path that traverses an existing symbolic link before returning the joined
+/// target path.
+fn ensure_no_symlink_ancestors(root: &Path, relative: &str) -> Result<PathBuf> {
+	let components: Vec<_> = Path::new(relative)
+		.components()
+		.filter_map(|component| match component {
+			Component::Normal(part) => Some(part),
+			_ => None,
 		})
-		|| path.is_empty()
+		.collect();
+	if components.is_empty() {
+		return Err(ApplyFailure::Invalid(format!("unsafe patch path: {relative}")).into_error());
+	}
+	let mut current = root.to_path_buf();
+	for ancestor in &components[..components.len() - 1] {
+		current.push(ancestor);
+		match fs::symlink_metadata(&current) {
+			Ok(meta) if meta.file_type().is_symlink() => {
+				return Err(
+					ApplyFailure::Invalid(format!("unsafe patch path traverses symlink: {relative}"))
+						.into_error(),
+				);
+			},
+			Ok(_) => {},
+			Err(err) if err.kind() == std::io::ErrorKind::NotFound => {},
+			Err(err) => return Err(err.into()),
+		}
+	}
+	current.push(components[components.len() - 1]);
+	Ok(current)
+}
+
+/// Returns `true` if `name` could resolve to the `.git` metadata directory on
+/// POSIX, macOS, or Windows/NTFS (case-insensitive, trailing dots/spaces, and
+/// NTFS 8.3 short-name variants like `git~1`).
+fn is_dot_git_component(name: &str) -> bool {
+	let trimmed = name.trim_end_matches(['.', ' ']);
+	if trimmed.eq_ignore_ascii_case(".git") {
+		return true;
+	}
+	// NTFS 8.3 short-name equivalents of `.git` (e.g. `git~1`, `GIT~2`).
+	if let Some(prefix) = trimmed.get(..4)
+		&& prefix.eq_ignore_ascii_case("git~")
 	{
+		let suffix = &trimmed[4..];
+		if !suffix.is_empty() && suffix.bytes().all(|byte| byte.is_ascii_digit()) {
+			return true;
+		}
+	}
+	false
+}
+
+fn validate_repo_path(path: &str) -> std::result::Result<(), ApplyFailure> {
+	if path.is_empty() || path.contains('\0') {
+		return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
+	}
+	let candidate = Path::new(path);
+	if candidate.is_absolute() {
+		return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
+	}
+	let mut has_normal = false;
+	for component in candidate.components() {
+		match component {
+			Component::ParentDir | Component::RootDir | Component::Prefix(_) => {
+				return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
+			},
+			Component::Normal(part) => {
+				has_normal = true;
+				if is_dot_git_component(&part.to_string_lossy()) {
+					return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
+				}
+			},
+			Component::CurDir => {},
+		}
+	}
+	if !has_normal {
 		return Err(ApplyFailure::Invalid(format!("unsafe patch path: {path}")));
 	}
 	Ok(())
@@ -2609,5 +2693,134 @@ mod tests {
 		assert!(repository.stash_try_pop(false).expect("pop second"));
 		assert_eq!(git(temp.path(), &["rev-parse", "refs/stash"]), first);
 		assert_eq!(fs::read(temp.path().join("file.txt")).expect("second restored"), b"second\n");
+	}
+
+	#[test]
+	fn validate_repo_path_blocks_git_metadata_and_variants() {
+		for blocked in [
+			".git/config",
+			".GIT/hooks/post-checkout",
+			".Git/HEAD",
+			"sub/.git/config",
+			".git./config",
+			".git /config",
+			".git. ./hooks/pre-commit",
+			"git~1/config",
+			"GIT~1/hooks/post-checkout",
+			"sub/git~2./config",
+			"../outside",
+			"/etc/passwd",
+			".",
+			"",
+		] {
+			assert!(
+				validate_repo_path(blocked).is_err(),
+				"expected validate_repo_path to reject {blocked:?}"
+			);
+		}
+		for allowed in [
+			".gitignore",
+			".gitattributes",
+			".gitmodules",
+			".github/workflows/ci.yml",
+			"src/git~notdigits/file.rs",
+			"file.txt",
+		] {
+			assert!(
+				validate_repo_path(allowed).is_ok(),
+				"expected validate_repo_path to allow {allowed:?}"
+			);
+		}
+	}
+
+	#[test]
+	fn apply_patch_rejects_git_metadata_overwrite() {
+		let temp = init(&[("file.txt", b"base\n")]);
+		let repository = repo(temp.path());
+		let before_config = fs::read(temp.path().join(".git/config")).expect("read .git/config");
+		for target in [".git/config", ".GIT/hooks/post-checkout"] {
+			let patch = format!(
+				"diff --git a/{target} b/{target}\nnew file mode 100644\n--- /dev/null\n+++ \
+				 b/{target}\n@@ -0,0 +1 @@\n+pwned\n"
+			);
+			let err = repository
+				.apply_patch(&patch, &ApplyOptions::default())
+				.expect_err("patch targeting .git metadata must be rejected");
+			assert!(
+				matches!(err, Error::PatchFailed { .. }),
+				"expected PatchFailed for {target}, got {err:?}"
+			);
+		}
+		assert_eq!(
+			fs::read(temp.path().join(".git/config")).expect("read .git/config after"),
+			before_config
+		);
+		assert!(!temp.path().join(".git/hooks/post-checkout").exists());
+	}
+
+	#[cfg(unix)]
+	#[test]
+	fn worktree_mutation_blocks_symlink_escape() {
+		use std::os::unix::fs::symlink;
+
+		let temp = init(&[("file.txt", b"base\n")]);
+		let outside = tempfile::tempdir().expect("outside tempdir");
+		let escaped_dir_target = outside.path().join("escaped.txt");
+		let outside_file = outside.path().join("secret.txt");
+		fs::write(&outside_file, b"original-secret\n").expect("write outside file");
+
+		symlink(outside.path(), temp.path().join("dir_link")).expect("create dir symlink");
+		symlink(&outside_file, temp.path().join("leaf_link")).expect("create leaf symlink");
+
+		let repository = repo(temp.path());
+		let escape_patch = "\
+diff --git a/dir_link/escaped.txt b/dir_link/escaped.txt
+new file mode 100644
+--- /dev/null
++++ b/dir_link/escaped.txt
+@@ -0,0 +1 @@
++pwned
+";
+		let err = repository
+			.apply_patch(escape_patch, &ApplyOptions::default())
+			.expect_err("patch writing through symlinked directory must fail");
+		assert!(matches!(err, Error::PatchFailed { .. }), "unexpected error: {err:?}");
+		assert!(!escaped_dir_target.exists(), "must not write through symlinked ancestor");
+
+		// Direct write_worktree_entry through an ancestor symlink is also
+		// blocked.
+		let gix_repo = repository.gix().expect("open gix");
+		let blob_id = gix_repo
+			.write_blob(b"pwned\n")
+			.expect("write blob")
+			.detach();
+		let entry = FileEntry::new(blob_id, Mode::FILE);
+		let mut filter =
+			WorktreeFilter::new(&gix_repo, "test", gix::index::State::new(gix_repo.object_hash()))
+				.expect("filter");
+		let err =
+			write_worktree_entry(&repository, &gix_repo, &mut filter, "dir_link/escaped.txt", &entry)
+				.expect_err("write_worktree_entry through symlinked ancestor must fail");
+		assert!(matches!(err, Error::PatchFailed { .. }), "unexpected error: {err:?}");
+		assert!(!escaped_dir_target.exists());
+
+		// Direct remove_worktree_path through an ancestor symlink is blocked.
+		let err = remove_worktree_path(&repository, "dir_link/secret.txt")
+			.expect_err("remove_worktree_path through symlinked ancestor must fail");
+		assert!(matches!(err, Error::PatchFailed { .. }), "unexpected error: {err:?}");
+		assert!(outside_file.exists(), "must not delete through symlinked ancestor");
+
+		// Writing a regular file over an existing leaf symlink unlinks the
+		// symlink instead of overwriting the symlink target.
+		write_worktree_entry(&repository, &gix_repo, &mut filter, "leaf_link", &entry)
+			.expect("replacing leaf symlink with regular file should succeed safely");
+		assert_eq!(
+			fs::read(&outside_file).expect("read outside file"),
+			b"original-secret\n",
+			"outside symlink target must remain untouched"
+		);
+		let leaf_meta = fs::symlink_metadata(temp.path().join("leaf_link")).expect("leaf meta");
+		assert!(!leaf_meta.file_type().is_symlink(), "leaf_link must now be a regular file");
+		assert_eq!(fs::read(temp.path().join("leaf_link")).expect("read leaf"), b"pwned\n");
 	}
 }

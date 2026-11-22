@@ -70,6 +70,14 @@ pub(super) fn root(hwnd: HWND) -> HWND {
 	if root.is_null() { hwnd } else { root }
 }
 
+/// Process ID that owns `hwnd`, or `None` when the window handle is stale.
+pub(super) fn process_id(hwnd: HWND) -> Option<u32> {
+	let mut pid = 0;
+	// SAFETY: `pid` is writable; Win32 validates the handle.
+	unsafe { GetWindowThreadProcessId(hwnd, &mut pid) };
+	(pid != 0).then_some(pid)
+}
+
 /// Class name of `hwnd`, or `<unknown>` when Win32 cannot report one.
 pub(super) fn class_name(hwnd: HWND) -> String {
 	with_class_name(hwnd, |class| {
@@ -303,12 +311,9 @@ fn depth_below(ancestor: HWND, descendant: HWND) -> Option<usize> {
 /// Refuses higher-integrity targets and unreadable tokens. An OS enqueue
 /// result is not evidence that a higher-integrity application consumed input.
 pub(super) fn uipi_block(hwnd: HWND) -> Option<String> {
-	let mut pid = 0;
-	// SAFETY: `pid` is writable; Win32 validates the handle.
-	unsafe { GetWindowThreadProcessId(hwnd, &mut pid) };
-	if pid == 0 {
+	let Some(pid) = process_id(hwnd) else {
 		return Some("the target's owning process is no longer available".to_string());
-	}
+	};
 	// SAFETY: the pseudo-handle for the current process needs no cleanup.
 	let Some(own) = integrity_level(unsafe { GetCurrentProcess() }) else {
 		return Some(
@@ -361,13 +366,16 @@ fn integrity_level(process: HANDLE) -> Option<u32> {
 	} != 0;
 	// SAFETY: `token` was opened above and is closed exactly once.
 	unsafe { CloseHandle(token) };
-	if !read {
+	if !read || written < size_of::<TOKEN_MANDATORY_LABEL>() as u32 {
 		return None;
 	}
-	// SAFETY: GetTokenInformation filled `label` with a TOKEN_MANDATORY_LABEL
-	// whose SID points into the same still-live buffer.
+	// SAFETY: GetTokenInformation filled at least `TOKEN_MANDATORY_LABEL` bytes
+	// of the u64-aligned `label` buffer.
 	let sid = unsafe { (*label.as_ptr().cast::<TOKEN_MANDATORY_LABEL>()).Label.Sid };
-	// SAFETY: `sid` is a valid SID inside `label`.
+	if sid.is_null() {
+		return None;
+	}
+	// SAFETY: `sid` is a non-null SID inside the still-live `label` buffer.
 	let count = unsafe { GetSidSubAuthorityCount(sid) };
 	if count.is_null() {
 		return None;
@@ -402,12 +410,9 @@ pub(super) fn is_xaml_host(root: HWND) -> bool {
 /// Whether the executable owning `hwnd` has one of the ASCII `names`,
 /// compared case-insensitively against the image path's file name.
 fn executable_is_any(hwnd: HWND, names: &[&str]) -> bool {
-	let mut pid = 0;
-	// SAFETY: `pid` is writable; Win32 validates the handle.
-	unsafe { GetWindowThreadProcessId(hwnd, &mut pid) };
-	if pid == 0 {
+	let Some(pid) = process_id(hwnd) else {
 		return false;
-	}
+	};
 	// SAFETY: scalar arguments; a null result is handled below.
 	let process = unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid) };
 	if process.is_null() {

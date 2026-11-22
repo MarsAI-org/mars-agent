@@ -90,7 +90,7 @@ pub mod matchers {
 					Ok(()) => true,
 					Err(e) => {
 						matcher_io.set_exit_code(1);
-						writeln!(&mut matcher_io.host().stderr, "Failed to delete {path_str}: {e}").unwrap();
+						let _ = writeln!(&mut matcher_io.host().stderr, "Failed to delete {path_str}: {e}");
 						false
 					},
 				}
@@ -127,13 +127,12 @@ pub mod matchers {
 					match file_info.metadata() {
 						Ok(meta) => meta.len() == 0,
 						Err(err) => {
-							writeln!(
+							let _ = writeln!(
 								&mut matcher_io.host().stderr,
 								"Error getting size for {}: {}",
 								file_info.path().display(),
 								err
-							)
-							.unwrap();
+							);
 							false
 						},
 					}
@@ -141,13 +140,12 @@ pub mod matchers {
 					match file_info.fs().read_dir(file_info.path()) {
 						Ok(mut it) => it.next().is_none(),
 						Err(err) => {
-							writeln!(
+							let _ = writeln!(
 								&mut matcher_io.host().stderr,
 								"Error getting contents of {}: {}",
 								file_info.path().display(),
 								err
-							)
-							.unwrap();
+							);
 							false
 						},
 					}
@@ -569,7 +567,7 @@ pub mod matchers {
 				match matcher_io.host().run_command(command) {
 					Ok(status) => status.success(),
 					Err(e) => {
-						writeln!(&mut matcher_io.host().stderr, "Failed to run {}: {}", self.executable, e).unwrap();
+						let _ = writeln!(&mut matcher_io.host().stderr, "Failed to run {}: {}", self.executable, e);
 						false
 					},
 				}
@@ -633,7 +631,7 @@ pub mod matchers {
 						}
 					},
 					Err(e) => {
-						writeln!(&mut matcher_io.host().stderr, "Failed to run {}: {}", self.executable, e).unwrap();
+						let _ = writeln!(&mut matcher_io.host().stderr, "Failed to run {}: {}", self.executable, e);
 						matcher_io.set_exit_code(1);
 					},
 				}
@@ -662,13 +660,12 @@ pub mod matchers {
 					// Reset command status.
 					*command = self.new_command();
 					if let Err(e) = command.try_arg(&path_to_file) {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Cannot fit a single argument {}: {}",
 							path_to_file.to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						matcher_io.set_exit_code(1);
 					}
 				}
@@ -802,12 +799,11 @@ pub mod matchers {
 				match self.file_system_type(file_info) {
 					Ok(result) => result == self.fs_text,
 					Err(_) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting filesystem type for {}",
 							file_info.path().to_string_lossy()
-						)
-						.unwrap();
+						);
 
 						false
 					},
@@ -973,8 +969,7 @@ pub mod matchers {
 					RegexOptions::REGEX_OPTION_NONE
 				};
 
-				// As long as glob_to_regex() is correct, this should never fail
-				let regex = glob_to_regex(pattern).map(|r| parse_bre(&r, options).unwrap());
+				let regex = glob_to_regex(pattern).and_then(|r| parse_bre(&r, options).ok());
 				Self { regex }
 			}
 
@@ -1085,13 +1080,12 @@ pub mod matchers {
 					// If it's not a symlink, then it's not an error that should be
 					// shown.
 					if err.kind() != std::io::ErrorKind::InvalidInput {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error reading target of {}: {}",
 							file_info.path().display(),
 							err
-						)
-						.unwrap();
+						);
 					}
 
 					None
@@ -1603,13 +1597,12 @@ pub mod matchers {
 				let metadata = match file_info.metadata() {
 					Ok(metadata) => metadata,
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting metadata for {}: {}",
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						matcher_io.set_exit_code(1);
 						return;
 					},
@@ -1655,13 +1648,12 @@ pub mod matchers {
 					Ok(_) => {},
 					Err(e) => {
 						if print_error_message {
-							writeln!(
+							let _ = writeln!(
 								&mut matcher_io.host().stderr,
 								"Error writing {:?} for {}",
 								file_info.display_path().to_string_lossy(),
 								e
-							)
-							.unwrap();
+							);
 							matcher_io.set_exit_code(1);
 						}
 					},
@@ -1864,13 +1856,12 @@ pub mod matchers {
 							.mode_bits_match(pattern, metadata.permissions().mode())
 					},
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting permissions for {}: {}",
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 				}
@@ -1878,7 +1869,7 @@ pub mod matchers {
 
 			#[cfg(not(unix))]
 			fn matches(&self, _dummy_file_info: &WalkEntry, matcher_io: &mut MatcherIO) -> bool {
-				writeln!(&mut matcher_io.host().stderr, "Permission matching not available on this platform!").unwrap();
+				let _ = writeln!(&mut matcher_io.host().stderr, "Permission matching not available on this platform!");
 				return false;
 			}
 		}
@@ -1933,13 +1924,12 @@ pub mod matchers {
 					Ok(()) => {},
 					Err(e) => {
 						if print_error_message {
-							writeln!(
+							let _ = writeln!(
 								&mut matcher_io.host().stderr,
 								"Error writing {:?} for {}",
 								file_info.display_path().to_string_lossy(),
 								e
-							)
-							.unwrap();
+							);
 							matcher_io.set_exit_code(1);
 						}
 					},
@@ -2537,22 +2527,22 @@ pub mod matchers {
 			fn print(&self, file_info: &WalkEntry, mut out: impl Write) -> Result<(), Box<dyn Error>> {
 				for component in &self.format.components {
 					match component {
-						FormatComponent::Literal(literal) => write!(out, "{literal}").unwrap(),
-						FormatComponent::Flush => out.flush().unwrap(),
+						FormatComponent::Literal(literal) => write!(out, "{literal}")?,
+						FormatComponent::Flush => out.flush()?,
 						FormatComponent::Directive { directive, width, justify } => {
 							match format_directive(file_info, directive, &self.fs_cache) {
 								Ok(content) => {
 									if let Some(width) = width {
 										match justify {
 											Justify::Left => {
-												write!(out, "{content:<width$}").unwrap();
+												write!(out, "{content:<width$}")?;
 											},
 											Justify::Right => {
-												write!(out, "{content:>width$}").unwrap();
+												write!(out, "{content:>width$}")?;
 											},
 										}
 									} else {
-										write!(out, "{content}").unwrap();
+										write!(out, "{content}")?;
 									}
 								},
 								Err(e) => return Err(e),
@@ -2893,13 +2883,12 @@ pub mod matchers {
 						.value_to_match
 						.matches(byte_size_to_unit_size(self.unit, metadata.len())),
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting file size for {}: {}",
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 				}
@@ -3035,13 +3024,12 @@ pub mod matchers {
 			fn matches(&self, file_info: &WalkEntry, matcher_io: &mut MatcherIO) -> bool {
 				match self.matches_impl(file_info) {
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting modification time for {}: {}",
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 					Ok(t) => t,
@@ -3117,14 +3105,13 @@ pub mod matchers {
 			fn matches(&self, file_info: &WalkEntry, matcher_io: &mut MatcherIO) -> bool {
 				match self.matches_impl(file_info) {
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting {:?} time for {}: {}",
 							self.x_option,
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 					Ok(t) => t,
@@ -3164,14 +3151,13 @@ pub mod matchers {
 			fn matches(&self, file_info: &WalkEntry, matcher_io: &mut MatcherIO) -> bool {
 				match self.matches_impl(file_info) {
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting {:?} time for {}: {}",
 							self.newer_time_type,
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 					Ok(t) => t,
@@ -3209,14 +3195,13 @@ pub mod matchers {
 				let start_time = get_time(matcher_io, self.today_start);
 				match self.matches_impl(file_info, start_time) {
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting {:?} time for {}: {}",
 							self.file_time_type,
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 					Ok(t) => t,
@@ -3278,14 +3263,13 @@ pub mod matchers {
 				let start_time = get_time(matcher_io, self.today_start);
 				match self.matches_impl(file_info, start_time) {
 					Err(e) => {
-						writeln!(
+						let _ = writeln!(
 							&mut matcher_io.host().stderr,
 							"Error getting {:?} time for {}: {}",
 							self.file_time_type,
 							file_info.path().to_string_lossy(),
 							e
-						)
-						.unwrap();
+						);
 						false
 					},
 					Ok(t) => t,

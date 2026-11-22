@@ -50,7 +50,10 @@ mod platform {
 		ffi::{CStr, c_char, c_void},
 		panic::{AssertUnwindSafe, catch_unwind},
 		ptr,
-		sync::mpsc::{self, SyncSender},
+		sync::{
+			Arc,
+			mpsc::{self, RecvTimeoutError, SyncSender},
+		},
 		time::{Duration, Instant},
 	};
 
@@ -143,7 +146,8 @@ mod platform {
 	}
 
 	/// Objective-C block ABI: the 32-byte literal header followed by the
-	/// captured context (a raw pointer to the channel sender).
+	/// captured context (an `Arc::into_raw` pointer to the channel sender,
+	/// retained by `completion_copy` and released by `completion_dispose`).
 	#[repr(C)]
 	struct CompletionBlock {
 		isa:        *const c_void,
@@ -154,17 +158,21 @@ mod platform {
 		sender:     *const SyncSender<Completion>,
 	}
 
-	/// `Block_descriptor_1` followed immediately by `Block_descriptor_3`.
-	/// No `Block_descriptor_2` (copy/dispose helpers) is emitted because the
-	/// captured sender pointer is plain-old-data and needs no retain/release.
+	/// `Block_descriptor_1` + `Block_descriptor_2` (copy/dispose helpers) +
+	/// `Block_descriptor_3` (signature).
 	#[repr(C)]
 	struct CompletionBlockDescriptor {
 		reserved:  usize,
 		size:      usize,
+		copy:      unsafe extern "C" fn(*mut CompletionBlock, *const CompletionBlock),
+		dispose:   unsafe extern "C" fn(*mut CompletionBlock),
 		signature: *const c_char,
 	}
 
-	/// `BLOCK_HAS_SIGNATURE` — the only flag needed for a POD stack block.
+	/// `BLOCK_HAS_COPY_DISPOSE` — descriptor carries copy and dispose helpers
+	/// so `Arc` ownership follows stack-to-heap block promotion and destruction.
+	const BLOCK_HAS_COPY_DISPOSE: i32 = 1 << 25;
+	/// `BLOCK_HAS_SIGNATURE` — descriptor carries the ObjC type encoding.
 	const BLOCK_HAS_SIGNATURE: i32 = 1 << 30;
 
 	/// Type encoding for `void (^)(NSData *token, NSError *error)`:
@@ -179,8 +187,39 @@ mod platform {
 	static COMPLETION_DESCRIPTOR: CompletionBlockDescriptor = CompletionBlockDescriptor {
 		reserved:  0,
 		size:      size_of::<CompletionBlock>(),
+		copy:      completion_copy,
+		dispose:   completion_dispose,
 		signature: BLOCK_SIGNATURE.as_ptr(),
 	};
+
+	/// Block copy helper invoked by `libsystem_blocks` when promoting the stack
+	/// block to the heap.
+	///
+	/// # Safety
+	/// `dst` and `src` are valid `CompletionBlock` pointers; `(*src).sender`
+	/// was produced by `Arc::into_raw` with a strong count of at least 1.
+	unsafe extern "C" fn completion_copy(dst: *mut CompletionBlock, src: *const CompletionBlock) {
+		// SAFETY: upheld by `libsystem_blocks` during stack-to-heap promotion.
+		unsafe {
+			let sender = (*src).sender;
+			Arc::increment_strong_count(sender);
+			(*dst).sender = sender;
+		}
+	}
+
+	/// Block dispose helper invoked by `libsystem_blocks` once when the heap
+	/// block's reference count reaches zero.
+	///
+	/// # Safety
+	/// `block` is a valid heap-promoted `CompletionBlock` whose `sender`
+	/// strong reference was acquired by `completion_copy`.
+	unsafe extern "C" fn completion_dispose(block: *mut CompletionBlock) {
+		// SAFETY: balances the `Arc::increment_strong_count` in
+		// `completion_copy`; `SyncSender::drop` never panics.
+		unsafe {
+			Arc::decrement_strong_count((*block).sender);
+		}
+	}
 
 	/// Resolve a selector by name; `sel_registerName` is idempotent and cheap.
 	///
@@ -224,6 +263,9 @@ mod platform {
 	/// and `error` are live `NSData`/`NSError` objects (or null) for the
 	/// duration of the call.
 	unsafe extern "C" fn completion_invoke(block: *mut CompletionBlock, token: Id, error: Id) {
+		if block.is_null() {
+			return;
+		}
 		let completion = catch_unwind(AssertUnwindSafe(|| {
 			if !token.is_null() {
 				// SAFETY: `token` is a live NSData for the duration of the
@@ -258,12 +300,20 @@ mod platform {
 				Completion::Error("DeviceCheck completion panicked".to_owned())
 			},
 		};
-		// SAFETY: the owner keeps the sender alive until the block has fired
-		// (and leaks it on timeout), so the captured pointer is always valid.
-		// `try_send` never blocks the XPC queue, even if the runtime were to
-		// invoke the block more than once.
-		unsafe {
-			_ = (*(*block).sender).try_send(completion);
+		// SAFETY: `block` holds its own `Arc` strong reference to `sender`
+		// (stack-owned during synchronous invocation, or heap-owned via
+		// `completion_copy`/`completion_dispose` until the runtime releases the
+		// block after `completion_invoke` returns), so `sender` stays live for
+		// the entire `try_send` call even if the receiver wakes immediately or
+		// timed out earlier.
+		let send = catch_unwind(AssertUnwindSafe(|| unsafe {
+			let sender = (*block).sender;
+			if !sender.is_null() {
+				_ = (*sender).try_send(completion);
+			}
+		}));
+		if let Err(payload) = send {
+			std::mem::forget(payload);
 		}
 	}
 
@@ -274,24 +324,30 @@ mod platform {
 	/// `device` must be a live, retained `DCDevice` instance.
 	unsafe fn run_token_request(device: Id) -> DeviceCheckTokenResult {
 		let (sender, receiver) = mpsc::sync_channel::<Completion>(1);
-		let sender = Box::into_raw(Box::new(sender));
+		let sender = Arc::into_raw(Arc::new(sender));
 		let block = CompletionBlock {
 			isa: ptr::addr_of!(_NSConcreteStackBlock).cast::<c_void>(),
-			flags: BLOCK_HAS_SIGNATURE,
+			flags: BLOCK_HAS_COPY_DISPOSE | BLOCK_HAS_SIGNATURE,
 			reserved: 0,
 			invoke: completion_invoke,
 			descriptor: &raw const COMPLETION_DESCRIPTOR,
 			sender,
 		};
 		// SAFETY: `device` is a live DCDevice and `block` follows the block ABI;
-		// the runtime copies the literal, so the stack frame may die after the
-		// call.
+		// the runtime promotes the literal via `completion_copy` if it retains
+		// it past this call.
 		unsafe {
 			msg_send_block(
 				device,
 				selector(c"generateTokenWithCompletionHandler:"),
 				(&raw const block).cast(),
 			);
+			// Release the stack block's `Arc` reference now that `msg_send_block`
+			// has returned. Any retained heap block owns its own reference until
+			// `completion_dispose`, preventing both use-after-free and timeout
+			// leaks while letting `receiver` wake immediately if the block was
+			// discarded uninvoked.
+			Arc::decrement_strong_count(sender);
 		}
 
 		let mut result = DeviceCheckTokenResult {
@@ -303,20 +359,15 @@ mod platform {
 		match receiver.recv_timeout(TOKEN_TIMEOUT) {
 			Ok(Completion::Token(token)) => {
 				result.token_base64 = Some(token);
-				// SAFETY: the block has fired and will not fire again, so the
-				// sender is unreachable from the runtime and can be reclaimed.
-				drop(unsafe { Box::from_raw(sender) });
 			},
 			Ok(Completion::Error(message)) => {
 				result.error = Some(message);
-				// SAFETY: same as above — the single-shot block already fired.
-				drop(unsafe { Box::from_raw(sender) });
 			},
-			Err(_) => {
-				// Timeout (or a vanished sender): the block may still fire on
-				// the XPC queue, so deliberately leak the sender to keep the
-				// captured pointer valid. Bounded to one leak per timeout.
+			Err(RecvTimeoutError::Timeout) => {
 				result.error = Some("timed out waiting for DeviceCheck token".to_owned());
+			},
+			Err(RecvTimeoutError::Disconnected) => {
+				result.error = Some("DeviceCheck completed without invoking handler".to_owned());
 			},
 		}
 		result

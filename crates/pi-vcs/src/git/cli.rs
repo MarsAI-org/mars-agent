@@ -462,6 +462,13 @@ async fn terminate(child: &mut tokio::process::Child) {
 // Network operations (public API)
 // ═══════════════════════════════════════════════════════════════════════════
 
+fn reject_leading_dash(context: &'static str, field: &str, value: &str) -> Result<()> {
+	if value.starts_with('-') {
+		return Err(Error::backend(context, format!("{field} must not start with '-': {value}")));
+	}
+	Ok(())
+}
+
 impl GitRepo {
 	/// Push the current branch (branch-scoped: never follows tags).
 	///
@@ -474,9 +481,18 @@ impl GitRepo {
 		options: &PushOptions,
 		cancel: Option<CancellationToken>,
 	) -> Result<()> {
+		if let Some(remote) = &options.remote {
+			reject_leading_dash("git push", "remote", remote)?;
+		}
+		if let Some(refspec) = &options.refspec {
+			reject_leading_dash("git push", "refspec", refspec)?;
+		}
 		let mut args = vec!["push".to_owned(), "--no-follow-tags".to_owned()];
 		if options.force_with_lease {
 			args.push("--force-with-lease".to_owned());
+		}
+		if options.remote.is_some() || options.refspec.is_some() {
+			args.push("--".to_owned());
 		}
 		if let Some(remote) = &options.remote {
 			args.push(remote.clone());
@@ -502,7 +518,13 @@ impl GitRepo {
 		timeout: Option<Duration>,
 		cancel: Option<CancellationToken>,
 	) -> Result<()> {
-		let args = vec!["fetch".to_owned(), remote.to_owned(), format!("+{source}:{target}")];
+		reject_leading_dash("git fetch", "remote", remote)?;
+		let args = vec![
+			"fetch".to_owned(),
+			"--".to_owned(),
+			remote.to_owned(),
+			format!("+{source}:{target}"),
+		];
 		run_checked(self.root(), &args, &RunOptions {
 			timeout: Some(timeout.unwrap_or(NETWORK_TIMEOUT)),
 			cancel,
@@ -513,7 +535,8 @@ impl GitRepo {
 	}
 }
 
-/// Clone `url` into `target_dir`, removing the partial clone on any failure.
+/// Clone `url` into `target_dir`, removing the partial clone on any failure
+/// (only if `target_dir` did not already exist before the clone started).
 ///
 /// Shallow (`--depth 1 --single-branch`) unless a specific SHA is pinned:
 /// a shallow clone only fetches the tip, so checking out a non-tip commit
@@ -524,7 +547,16 @@ pub async fn clone(
 	options: &CloneOptions,
 	cancel: Option<CancellationToken>,
 ) -> Result<()> {
+	reject_leading_dash("git clone", "url", url)?;
+	if let Some(ref_name) = &options.ref_name {
+		reject_leading_dash("git clone", "ref_name", ref_name)?;
+	}
+	if let Some(sha) = &options.sha {
+		reject_leading_dash("git clone", "sha", sha)?;
+	}
+
 	let absolute = std::path::absolute(target_dir)?;
+	let existed_before = tokio::fs::symlink_metadata(&absolute).await.is_ok();
 	let parent = absolute
 		.parent()
 		.map_or_else(|| absolute.clone(), Path::to_owned);
@@ -543,6 +575,7 @@ pub async fn clone(
 	} else if shallow {
 		args.push("--single-branch".to_owned());
 	}
+	args.push("--".to_owned());
 	args.push(url.to_owned());
 	args.push(absolute.to_string_lossy().into_owned());
 
@@ -553,18 +586,23 @@ pub async fn clone(
 	};
 	let outcome = run_checked(&parent, &args, &run_options).await;
 	if let Err(err) = outcome {
-		let _ = tokio::fs::remove_dir_all(&absolute).await;
+		if !existed_before {
+			let _ = tokio::fs::remove_dir_all(&absolute).await;
+		}
 		return Err(err);
 	}
 
 	if let Some(sha) = &options.sha {
-		let checkout = run_checked(&absolute, &["checkout".to_owned(), sha.clone()], &RunOptions {
-			cancel,
-			..RunOptions::default()
-		})
+		let checkout = run_checked(
+			&absolute,
+			&["checkout".to_owned(), sha.clone(), "--".to_owned()],
+			&RunOptions { cancel, ..RunOptions::default() },
+		)
 		.await;
 		if checkout.is_err() {
-			let _ = tokio::fs::remove_dir_all(&absolute).await;
+			if !existed_before {
+				let _ = tokio::fs::remove_dir_all(&absolute).await;
+			}
 			return Err(Error::backend(
 				"git clone",
 				format!("failed to checkout SHA {sha} in cloned repository {url}"),
@@ -655,5 +693,92 @@ mod tests {
 			String::from_utf8_lossy(&child.stdout),
 			String::from_utf8_lossy(&child.stderr)
 		);
+	}
+
+	#[tokio::test]
+	async fn rejects_leading_dash_arguments_and_preserves_existing_clone_target() {
+		let dir = tempfile::tempdir().expect("tempdir");
+		let init = std::process::Command::new("git")
+			.args(["init", "-q", "-b", "main"])
+			.current_dir(dir.path())
+			.status()
+			.expect("spawn git init");
+		assert!(init.success(), "git init failed");
+
+		let repo = GitRepo::require(dir.path()).expect("open repo");
+
+		let push_remote = repo
+			.push(
+				&PushOptions {
+					remote:           Some("--upload-pack=evil".to_owned()),
+					refspec:          None,
+					force_with_lease: false,
+				},
+				None,
+			)
+			.await;
+		assert!(push_remote.is_err(), "leading-dash remote must be rejected");
+
+		let push_refspec = repo
+			.push(
+				&PushOptions {
+					remote:           Some("origin".to_owned()),
+					refspec:          Some("--delete".to_owned()),
+					force_with_lease: false,
+				},
+				None,
+			)
+			.await;
+		assert!(push_refspec.is_err(), "leading-dash refspec must be rejected");
+
+		let fetch_remote = repo
+			.fetch("--upload-pack=evil", "main", "refs/remotes/origin/main", None, None)
+			.await;
+		assert!(fetch_remote.is_err(), "leading-dash fetch remote must be rejected");
+
+		let target = dir.path().join("fresh-clone");
+		assert!(
+			clone("--upload-pack=evil", &target, &CloneOptions::default(), None)
+				.await
+				.is_err(),
+			"leading-dash clone url must be rejected"
+		);
+		assert!(
+			clone(
+				"https://example.invalid/repo.git",
+				&target,
+				&CloneOptions { ref_name: Some("--evil".to_owned()), ..CloneOptions::default() },
+				None,
+			)
+			.await
+			.is_err(),
+			"leading-dash ref_name must be rejected"
+		);
+		assert!(
+			clone(
+				"https://example.invalid/repo.git",
+				&target,
+				&CloneOptions { sha: Some("--force".to_owned()), ..CloneOptions::default() },
+				None,
+			)
+			.await
+			.is_err(),
+			"leading-dash sha must be rejected"
+		);
+
+		// A failed clone against an existing directory must NOT delete it.
+		let existing = dir.path().join("existing-target");
+		std::fs::create_dir_all(&existing).expect("create existing dir");
+		let sentinel = existing.join("keep.txt");
+		std::fs::write(&sentinel, b"important").expect("write sentinel");
+		let failed = clone(
+			&dir.path().join("does-not-exist.git").to_string_lossy(),
+			&existing,
+			&CloneOptions::default(),
+			None,
+		)
+		.await;
+		assert!(failed.is_err(), "clone from nonexistent path should fail");
+		assert!(sentinel.exists(), "existing target_dir must survive failed clone");
 	}
 }
