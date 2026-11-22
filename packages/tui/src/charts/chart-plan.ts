@@ -2994,7 +2994,7 @@ const MAX_RIVALS = 16;
 
 /**
  * Per category, the series with its best value among the rival columns: the
- * most series sharing one unit and one polarity, two at least (`omp-xfs`
+ * most series sharing one unit and one polarity, two at least (`pi-walker`
  * and `Go` beside their `Speedup`); `undefined` where tied or missing.
  */
 function columnLeaders(

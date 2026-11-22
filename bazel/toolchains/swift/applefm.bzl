@@ -1,6 +1,6 @@
 """Repository rule detecting the mac host's Swift toolchain for the Apple Foundation Models bridge.
 
-Runs `crates/natives/src/applefm/build-bridge.sh detect` on the host and
+Runs `crates/pi-natives/src/applefm/build-bridge.sh detect` on the host and
 materializes the result for the mac exec host toolchain (//bazel/toolchains/swift:host)
 the `applefm_bridge` rule resolves; linux exec hosts use the pinned swift.org
 toolchain instead (linux.bzl):

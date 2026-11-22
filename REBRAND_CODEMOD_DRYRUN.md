@@ -142,7 +142,7 @@ Mode: apply
 
 #### crates/natives
 
-- `crates/natives/src/utok/claude/testdata/fixtures.json`
+- `crates/pi-natives/src/utok/claude/testdata/fixtures.json`
   - scope+package: 10 edit(s)
     - `@oh-my-pi/pi-ai → @marsai-org/ai` ×2
     - `@oh-my-pi/pi-catalog → @marsai-org/catalog`
@@ -152,7 +152,7 @@ Mode: apply
 
 #### crates/shell
 
-- `crates/shell/src/minimizer/filters/bun.rs`
+- `crates/pi-shell/src/minimizer/filters/bun.rs`
   - scope+package: 20 edit(s)
     - `@oh-my-pi/pi-coding-agent → @marsai-org/coding-agent` ×9
     - `@oh-my-pi/pi-utils → @marsai-org/utils` ×11

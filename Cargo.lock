@@ -6117,15 +6117,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-ast"
+name = "pi-ast"
 version = "19.1.0"
 dependencies = [
  "anyhow",
  "ast-grep-core",
  "async-trait",
  "futures",
- "omp-vfs",
- "omp-xfs",
+ "pi-vfs",
+ "pi-walker",
  "parking_lot",
  "phf",
  "semver",
@@ -6159,7 +6159,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-builtins"
+name = "pi-builtins"
 version = "19.1.0"
 dependencies = [
  "ansi-width",
@@ -6217,11 +6217,11 @@ dependencies = [
  "objc2",
  "objc2-app-kit",
  "objc2-foundation",
- "omp-ast",
- "omp-diff",
- "omp-iso",
- "omp-vfs",
- "omp-xfs",
+ "pi-ast",
+ "pi-diff",
+ "pi-iso",
+ "pi-vfs",
+ "pi-walker",
  "onig",
  "os_display",
  "parking_lot",
@@ -6255,20 +6255,20 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-diff"
+name = "pi-diff"
 version = "19.1.0"
 dependencies = [
  "xutf",
 ]
 
 [[package]]
-name = "omp-edit"
+name = "pi-edit"
 version = "19.1.0"
 dependencies = [
  "async-trait",
- "omp-ast",
- "omp-diff",
- "omp-xfs",
+ "pi-ast",
+ "pi-diff",
+ "pi-walker",
  "parking_lot",
  "regex",
  "serde_json",
@@ -6281,12 +6281,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-iso"
+name = "pi-iso"
 version = "19.1.0"
 dependencies = [
  "async-trait",
  "libc",
- "omp-diff",
+ "pi-diff",
  "parking_lot",
  "tokio",
  "windows-sys 0.61.2",
@@ -6294,7 +6294,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-natives"
+name = "pi-natives"
 version = "19.1.0"
 dependencies = [
  "anyhow",
@@ -6339,17 +6339,17 @@ dependencies = [
  "objc2-core-foundation",
  "objc2-core-graphics",
  "objc2-foundation",
- "omp-ast",
- "omp-builtins",
- "omp-diff",
- "omp-edit",
- "omp-iso",
- "omp-predict",
- "omp-shell",
- "omp-vcs",
- "omp-vfs",
- "omp-voice",
- "omp-xfs",
+ "pi-ast",
+ "pi-builtins",
+ "pi-diff",
+ "pi-edit",
+ "pi-iso",
+ "pi-predict",
+ "pi-shell",
+ "pi-vcs",
+ "pi-vfs",
+ "pi-voice",
+ "pi-walker",
  "parking_lot",
  "pdf-inspector",
  "peg-runtime",
@@ -6391,7 +6391,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-predict"
+name = "pi-predict"
 version = "19.1.0"
 dependencies = [
  "anyhow",
@@ -6410,7 +6410,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-shell"
+name = "pi-shell"
 version = "19.1.0"
 dependencies = [
  "anyhow",
@@ -6426,9 +6426,9 @@ dependencies = [
  "jiff",
  "libc",
  "libm",
- "omp-builtins",
- "omp-vcs",
- "omp-vfs",
+ "pi-builtins",
+ "pi-vcs",
+ "pi-vfs",
  "parking_lot",
  "pcre2-sys",
  "postcard",
@@ -6449,7 +6449,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-vcs"
+name = "pi-vcs"
 version = "19.1.0"
 dependencies = [
  "futures",
@@ -6457,7 +6457,7 @@ dependencies = [
  "gix-utils",
  "jj-lib",
  "libc",
- "omp-iso",
+ "pi-iso",
  "tempfile",
  "thiserror 2.0.21",
  "tokio",
@@ -6467,7 +6467,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-vfs"
+name = "pi-vfs"
 version = "19.1.0"
 dependencies = [
  "async-trait",
@@ -6480,7 +6480,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-voice"
+name = "pi-voice"
 version = "19.1.0"
 dependencies = [
  "bytes",
@@ -6494,7 +6494,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "omp-xfs"
+name = "pi-walker"
 version = "19.1.0"
 dependencies = [
  "async-trait",
@@ -6509,7 +6509,7 @@ dependencies = [
  "ignore",
  "libc",
  "memchr",
- "omp-vfs",
+ "pi-vfs",
  "parking_lot",
  "regex",
  "serde",

@@ -3014,7 +3014,7 @@ export declare enum IsoChangeKind {
 /**
  * Capture the changes between `lower` and `merged`.
  *
- * Uses [`omp_iso::IsolationBackend::diff`]'s default implementation —
+ * Uses [`pi_iso::IsolationBackend::diff`]'s default implementation —
  * `git diff` when `merged/.git` exists, otherwise a mtime-skipped tree
  * walk. The backend selection only affects the lifecycle methods; diff
  * behaviour is uniform.
@@ -3074,7 +3074,7 @@ export interface IsoProbeResult {
 /**
  * Pick the best backend available right now.
  *
- * `preferred` is treated as a hint — see [`omp_iso::resolve`] for the exact
+ * `preferred` is treated as a hint — see [`pi_iso::resolve`] for the exact
  * priority rules. Backend probes may spawn CLIs, so they run on the native
  * blocking pool.
  */

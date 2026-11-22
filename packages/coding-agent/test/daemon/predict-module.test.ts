@@ -2,7 +2,7 @@
  * The daemon `predict` module with the real `ngram` `TextPredictor`, driven
  * through the module's `open`/`call`/`flush`/`stop` contract in a temp agent dir.
  *
- * The ngram engine ignores `feedback` by design (`crates/predict/src/ngram/mod.rs`:
+ * The ngram engine ignores `feedback` by design (`crates/pi-predict/src/ngram/mod.rs`:
  * accepted words are learned when the prompt is submitted), so learning is
  * observed through `history.db` ingestion.
  */

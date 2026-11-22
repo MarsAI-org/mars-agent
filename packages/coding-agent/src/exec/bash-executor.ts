@@ -94,7 +94,7 @@ export interface BashExecutorOptions {
 	 */
 	streams?: PipeStreams;
 	/**
-	 * Receives the embedded shell's live trace of the command (omp-shell's
+	 * Receives the embedded shell's live trace of the command (pi-shell's
 	 * `RunTrace` snapshot) every {@link TRACE_POLL_MS} while it changed, and
 	 * once more after the run settles. The PTY path never calls it.
 	 */
@@ -949,7 +949,7 @@ export async function executeBash(command: string, options?: BashExecutorOptions
 				timeoutTimer = setTimeout(onDeadline, remainingMs);
 				return;
 			}
-			// Explicit timeouts are enforced inside omp-natives via `timeoutMs`.
+			// Explicit timeouts are enforced inside pi-natives via `timeoutMs`.
 			// Give native cancellation time to flush pipeline output and drain the
 			// N-API bridge before this result-only watchdog gives up on the run.
 			if (!nativeOwnsTimeout) {

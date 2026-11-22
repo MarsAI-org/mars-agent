@@ -1644,7 +1644,7 @@ export class UnitTable {
 		// Nothing plays terminal for a supervised PTY, so a program probing for cursor
 		// position or device attributes would block on the reply. Answer those queries
 		// from the output stream. On Windows ConPTY's INHERIT_CURSOR handshake is answered
-		// by the PTY layer (crates/natives/src/pty.rs), so it must not be answered twice.
+		// by the PTY layer (crates/pi-natives/src/pty.rs), so it must not be answered twice.
 		const responder = new TerminalQueryResponder({ hostCursorHandshake: process.platform === "win32" });
 		return (error, chunk) => {
 			if (launch !== runtime.launch) return;

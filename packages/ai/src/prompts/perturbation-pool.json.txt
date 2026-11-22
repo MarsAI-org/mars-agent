@@ -14319,13 +14319,13 @@
 			]
 		},
 		{
-			"source": "nextest, `        PASS [   0.012s] omp-natives line_match::tests::named_groups`:",
+			"source": "nextest, `        PASS [   0.012s] pi-natives line_match::tests::named_groups`:",
 			"origin": "system/job-widget-system.md",
 			"variants": [
-				"nextest, ` PASS [ 0.012s] omp-natives line_match::tests::named_groups`:",
-				"For nextest, ` PASS [ 0.012s] omp-natives line_match::tests::named_groups`:",
-				"nextest example: ` PASS [ 0.012s] omp-natives line_match::tests::named_groups`:",
-				"nextest, like ` PASS [ 0.012s] omp-natives line_match::tests::named_groups`:"
+				"nextest, ` PASS [ 0.012s] pi-natives line_match::tests::named_groups`:",
+				"For nextest, ` PASS [ 0.012s] pi-natives line_match::tests::named_groups`:",
+				"nextest example: ` PASS [ 0.012s] pi-natives line_match::tests::named_groups`:",
+				"nextest, like ` PASS [ 0.012s] pi-natives line_match::tests::named_groups`:"
 			]
 		},
 		{
@@ -15601,12 +15601,12 @@
 			]
 		},
 		{
-			"source": "{\"title\":\"nextest · omp-natives\",\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}],\"stage\":\"current\"}",
+			"source": "{\"title\":\"nextest · pi-natives\",\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}],\"stage\":\"current\"}",
 			"origin": "system/job-widget-system.md",
 			"variants": [
-				"{\"title\":\"nextest · omp-natives\",\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"stage\":\"current\",\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}]}",
-				"{\"title\":\"nextest · omp-natives\",\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}],\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"stage\":\"current\"}",
-				"{\"title\":\"nextest · omp-natives\",\"stage\":\"current\",\"rules\":[{\"count\":\"pass\",\"match\":\"^\\\\s*PASS \\\\[\",\"from\":\"*\"},{\"text\":\"fail\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"from\":\"*\"},{\"text\":\"current\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"from\":\"*\"}],\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}]}"
+				"{\"title\":\"nextest · pi-natives\",\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"stage\":\"current\",\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}]}",
+				"{\"title\":\"nextest · pi-natives\",\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}],\"rules\":[{\"from\":\"*\",\"match\":\"^\\\\s*PASS \\\\[\",\"count\":\"pass\"},{\"from\":\"*\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"text\":\"fail\"},{\"from\":\"*\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"text\":\"current\"}],\"stage\":\"current\"}",
+				"{\"title\":\"nextest · pi-natives\",\"stage\":\"current\",\"rules\":[{\"count\":\"pass\",\"match\":\"^\\\\s*PASS \\\\[\",\"from\":\"*\"},{\"text\":\"fail\",\"match\":\"^\\\\s*FAIL \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<fail>.+)$\",\"from\":\"*\"},{\"text\":\"current\",\"match\":\"^\\\\s*(?:PASS|FAIL) \\\\[\\\\s*[\\\\d.]+s\\\\] (?P<current>.+)$\",\"from\":\"*\"}],\"blocks\":[{\"kind\":\"stat\",\"items\":[{\"field\":\"pass\",\"agg\":\"count\",\"label\":\"passed\"},{\"field\":\"fail\",\"agg\":\"count\",\"label\":\"failed\"}]},{\"kind\":\"text\",\"field\":\"fail\"}]}"
 			]
 		},
 		{
