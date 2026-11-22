@@ -411,7 +411,7 @@ export function lockupNode(version: string, update: VersionUpdate | null = null)
 	return keyed(
 		row(
 			[
-				node("image", { builtin: "omp", alt: APP_NAME, w: 128, role: "omp.welcome.logo" }, undefined, "logo"),
+				node("image", { builtin: "mars", alt: APP_NAME, w: 128, role: "omp.welcome.logo" }, undefined, "logo"),
 				keyed(
 					col(
 						[
@@ -433,13 +433,13 @@ export function lockupNode(version: string, update: VersionUpdate | null = null)
 }
 
 /** Block-grid brand mark shared by the welcome and setup surfaces. */
-export const PI_LOGO = ["████████████", "   ██  ██   ", "   ██  ██   ", "   ▒▒  ██   ", "       ██   "];
+export const MARS_LOGO = ["████████████", "   ██  ██   ", "   ██  ██   ", "   ▒▒  ██   ", "       ██   "];
 
-/** Columns of {@link PI_LOGO}. */
-const LOGO_WIDTH = Math.max(...PI_LOGO.map(row => row.length));
+/** Columns of {@link MARS_LOGO}. */
+const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
 
 /**
- * The `omp` wordmark in half-blocks, set beside {@link PI_LOGO} from its second
+ * The `omp` wordmark in half-blocks, set beside {@link MARS_LOGO} from its second
  * row: the `p` descends into the fourth, the version takes the fifth.
  */
 const WORDMARK = ["▄▀▀▄ █▀▄▀▄ █▀▀▄", "▀▄▄▀ █ █ █ █▄▄▀", "           █"];
@@ -663,11 +663,11 @@ function introLogoFrame(progress: number): string[] {
 	const phase = ((((1 - eased) * INTRO_SWEEPS) % 1) + 1) % 1;
 	const shinePos = (((progress * INTRO_SHINE_TRAVERSALS) % 1) + 1) % 1;
 	const shineStrength = (1 - eased) ** 1.5;
-	return gradientLogo(PI_LOGO, phase, {
+	return gradientLogo(MARS_LOGO, phase, {
 		strength: shineStrength,
 		pos: shinePos,
 	});
 }
 
 /** Resting gradient frame, cached for re-renders outside of the intro. */
-const REST_FRAME = gradientLogo(PI_LOGO, 0);
+const REST_FRAME = gradientLogo(MARS_LOGO, 0);

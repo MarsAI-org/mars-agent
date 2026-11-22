@@ -14,7 +14,7 @@
  */
 
 import { Snowflake } from "@marsai-org/utils";
-import { IrcBus } from "../irc/bus";
+import { IrcBus, type IrcBusApi } from "../irc/bus";
 import type { OrchestratorMessage, OrchestratorMessageKind } from "./types";
 
 /** Body prefix that carries the typed kind across the bus. */
@@ -45,7 +45,7 @@ export class InMemoryMessageTransport implements MessageTransport {
 
 /** Transport backed by the process-global peer message bus. */
 export class IrcMessageTransport implements MessageTransport {
-	constructor(private readonly bus: IrcBus = IrcBus.global()) {}
+	constructor(private readonly bus: IrcBusApi = IrcBus.global()) {}
 
 	async send(message: OrchestratorMessage): Promise<{ delivered: boolean; error?: string }> {
 		const receipt = await this.bus.send({

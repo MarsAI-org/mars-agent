@@ -28,14 +28,11 @@
  * flushed by {@link takeLegacyEnvWarnings} for the CLI host to print.
  */
 
-const BUN_TEST_ENTRY_PATTERN = /[._](?:test|spec)\.[cm]?[jt]sx?$/;
+// The implementation moved to `test-runtime.ts`; re-exported so the legacy
+// `@marsai-org/utils/env-compat` entrypoint keeps its shape without two copies.
+import { isBunTestRuntime } from "./test-runtime";
 
-/** True when the process is an explicitly marked test child or Bun is running a test entrypoint. */
-export function isBunTestRuntime(): boolean {
-	if (Bun.env.PI_TEST_RUNTIME === "1") return true;
-	const hasTestEnvironment = Bun.env.BUN_ENV === "test" || Bun.env.NODE_ENV === "test";
-	return hasTestEnvironment && BUN_TEST_ENTRY_PATTERN.test(Bun.main);
-}
+export { isBunTestRuntime };
 
 /**
  * Canonical-to-legacy variable pairs this build still accepts.

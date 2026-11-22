@@ -378,6 +378,13 @@ export interface WriteContext {
 export interface ProtocolHandler {
 	/** The scheme this handler processes (without trailing ://) */
 	readonly scheme: string;
+	/**
+	 * Additional schemes that resolve to this same handler. They are registered
+	 * as built-ins exactly like {@link scheme}, share its spec and grammar, and
+	 * are omitted from the system-prompt scheme list (only the canonical scheme
+	 * is advertised).
+	 */
+	readonly aliases?: readonly string[];
 	/** Declared consumption contract; see {@link SchemeSpec}. */
 	readonly spec: SchemeSpec;
 	/**

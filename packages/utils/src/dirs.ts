@@ -1153,6 +1153,84 @@ function adoptLegacyDir(legacyPath: string, targetPath: string): void {
 	}
 }
 
+// =============================================================================
+// Legacy ~/.omp → ~/.mars migration
+// =============================================================================
+
+/** Config directory name Mars used before the rebrand. Read once, never written. */
+const LEGACY_CONFIG_DIR_NAME = ".omp";
+
+/**
+ * Exact notice a CLI host MUST print once when the migration runs. Kept here so
+ * the wording is owned by the same module that performs the copy and consumers
+ * print the same bytes every time.
+ */
+export const LEGACY_CONFIG_MIGRATION_NOTICE = `Copied your legacy configuration from ${LEGACY_CONFIG_DIR_NAME} to ${CONFIG_DIR_NAME}; the old directory was left untouched.\n`;
+
+let legacyConfigMigrationEvaluated = false;
+let pendingLegacyConfigMigrationNotice: string | undefined;
+
+/**
+ * Best-effort one-time migration of the pre-rebrand config root (`~/.omp`) to
+ * the current one (`~/.mars`), so existing installs keep their settings,
+ * credentials, sessions, and caches across the rename.
+ *
+ * The copy is staged next to the target and renamed into place — the same
+ * pattern as {@link adoptLegacyDir} — so a reader never sees a partial tree and
+ * two concurrent first-runs cannot clobber each other. The legacy directory is
+ * never deleted, moved, or modified: an older Mars build sharing the same home
+ * keeps reading it.
+ *
+ * Returns true only when this process performed the copy. Skipped entirely when
+ * `MARS_CONFIG_DIR` (or the legacy `PI_CONFIG_DIR`) overrides the config root,
+ * because that root is unrelated to the renamed default. Any failure (lost
+ * rename race, unwritable target, home that does not exist) falls back to fresh
+ * state at the new path rather than throwing: the copy is a convenience, not a
+ * start-up requirement.
+ *
+ * Evaluated at most once per process — later calls are a no-op returning false
+ * — so a notice can fire exactly once no matter how many consumers ask.
+ */
+export function maybeMigrateLegacyConfigDir(): boolean {
+	if (legacyConfigMigrationEvaluated) return false;
+	legacyConfigMigrationEvaluated = true;
+	// An explicit root is a deliberate location, not one the rename owns.
+	if (process.env.MARS_CONFIG_DIR || process.env.PI_CONFIG_DIR) return false;
+	const home = os.homedir();
+	const legacyRoot = path.join(home, LEGACY_CONFIG_DIR_NAME);
+	const currentRoot = path.join(home, CONFIG_DIR_NAME);
+	if (legacyRoot === currentRoot) return false;
+	const staging = `${currentRoot}.adopt-${process.pid}`;
+	try {
+		// Nothing to adopt, or the new root is already in use (a previous run
+		// migrated it, or the user created it first): leave the new root alone.
+		if (fs.existsSync(currentRoot)) return false;
+		if (!fs.statSync(legacyRoot, { throwIfNoEntry: false })?.isDirectory()) return false;
+		fs.mkdirSync(path.dirname(currentRoot), { recursive: true });
+		fs.rmSync(staging, { recursive: true, force: true });
+		fs.cpSync(legacyRoot, staging, { recursive: true });
+		fs.renameSync(staging, currentRoot);
+	} catch {
+		fs.rmSync(staging, { recursive: true, force: true });
+		return false;
+	}
+	pendingLegacyConfigMigrationNotice = LEGACY_CONFIG_MIGRATION_NOTICE;
+	return true;
+}
+
+/**
+ * Consume the pending legacy-config migration notice, returning
+ * {@link LEGACY_CONFIG_MIGRATION_NOTICE} exactly once for the process that ran
+ * the copy and `undefined` at every other call site (no migration, a test
+ * runtime, or an already-consumed notice). Callers MUST print the notice
+ * themselves through their output sink so shared code never writes to stdout or
+ * stderr while the TUI, RPC, ACP, workers, or the SDK are active.
+ */
+export function takeLegacyConfigMigrationNotice(): string | undefined {
+	const notice = pendingLegacyConfigMigrationNotice;
+	pendingLegacyConfigMigrationNotice = undefined;
+	return notice;
+}
 /** Get the secret placeholder key path (~/.omp/agent/secret-placeholder.key; XDG default: $XDG_STATE_HOME/omp/secret-placeholder.key). Adopts a legacy key on first XDG resolution. */
 export function getSecretPlaceholderKeyPath(): string {
 	const keyPath = dirs.agentSubdir(undefined, "secret-placeholder.key", "state");

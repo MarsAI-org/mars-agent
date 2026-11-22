@@ -103,6 +103,8 @@ export type SymbolKey =
 	| "icon.advisor"
 	| "icon.advisorClosed"
 	| "icon.time"
+	| "icon.mars"
+	/** @deprecated Brand alias kept for existing theme overrides; mirrors `icon.mars`. */
 	| "icon.omp"
 	| "icon.ghost"
 	| "icon.agents"
@@ -497,6 +499,7 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"icon.advisorClosed": "🙈",
 	"icon.time": "⏱",
 	"icon.omp": "π",
+	"icon.mars": "π",
 	"icon.ghost": "👻",
 	"icon.agents": "👥",
 	"icon.job": "⚙",
@@ -891,6 +894,7 @@ const NERD_SYMBOLS: SymbolMap = {
 	// U+F03FF before (2ec52b8bdd) and reverted because it renders the wrong glyph;
 	// do not swap it again.
 	"icon.omp": "\u{f0d57}",
+	"icon.mars": "\u{f0d57}",
 	// pick: 󰊠 (nf-md-ghost) | alt: 👻
 	"icon.ghost": "\u{f02a0}",
 	// pick:  | alt: 
@@ -1306,6 +1310,7 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.advisorClosed": "(adv)",
 	"icon.time": "t:",
 	"icon.omp": "pi",
+	"icon.mars": "pi",
 	"icon.ghost": "@",
 	"icon.agents": "AG",
 	"icon.job": "bg",

@@ -61,6 +61,11 @@ export const BUILTIN_TOOL_HELP: Record<BuiltinToolName, BuiltinToolHelp> = {
 	},
 	eval: { summary: "Run Python/JS cells with browser, computer, and binary-analysis helpers", defaultState: "on" },
 	task: { summary: "Launch subagents for parallel work", defaultState: "on" },
+	orchestrate: {
+		summary: "Run a multi-agent task DAG with leases and budgets",
+		defaultState: "detected",
+		detectedWhen: "orchestrator mode is on",
+	},
 	wait: { summary: "Wait for background jobs", defaultState: "on" },
 	todo: { summary: "Track a todo list", defaultState: "on" },
 	ask: { summary: "Ask the user questions (interactive mode only)", defaultState: "on" },

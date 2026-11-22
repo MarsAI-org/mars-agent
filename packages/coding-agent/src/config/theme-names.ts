@@ -10,7 +10,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { getCustomThemesDir } from "@marsai-org/utils";
-import { getBuiltinThemes } from "@marsai-org/tui/theme";
+import { getBuiltinThemes } from "@marsai-org/tui/theme/loader";
 
 /** True when `name` names a built-in theme or a `.json` in the custom themes dir. */
 export function isKnownTheme(name: string): boolean {

@@ -22,7 +22,7 @@ const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarn
 		oauthManualInput: manualInput,
 		editor: {
 			setText: () => {},
-		} as unknown as InteractiveModeContext["editor"],
+		} as unknown as unknown as InteractiveModeContext["editor"],
 		showStatus: (message: string) => {
 			statusMessage = message;
 		},
@@ -36,7 +36,7 @@ const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarn
 		showCustomEndpointWizard: async () => {
 			endpointWizardCalls += 1;
 		},
-	} as InteractiveModeContext;
+	} as unknown as InteractiveModeContext;
 
 	return {
 		runtime: {

@@ -8,7 +8,13 @@ import { TempDir } from "@marsai-org/utils/temp";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, Page } from "puppeteer-core";
 import { resizeImage } from "../../utils/image-resize";
-import { buildChangedFrameContactSheetPng, requireMediaBinary, runFfmpeg } from "../../utils/video";
+import {
+	availableH264Encoders,
+	buildChangedFrameContactSheetPng,
+	requireMediaBinary,
+	runFfmpeg,
+	selectH264Encoder,
+} from "../../utils/video";
 import { resolveToCwd } from "../path-utils";
 import { readPageViewport } from "./launch";
 import type { RunOutput } from "./run-output";
@@ -397,6 +403,10 @@ async function encodeRecording(active: ActiveRecording, durationMs: number, sign
 	const fpsFilter = `fps=${active.options.fps}`;
 	const extension = path.extname(active.path).toLowerCase();
 	if (extension === ".mp4") {
+		// Probe the H.264 encoders this ffmpeg advertises: `libx264` is missing from
+		// distro builds that link OpenH264 (and macOS adds VideoToolbox), where a
+		// hard-coded encoder made the recording fail with "Unknown encoder".
+		const encoder = selectH264Encoder(await availableH264Encoders()) ?? "libx264";
 		await runFfmpeg(
 			[
 				"-f",
@@ -409,7 +419,7 @@ async function encodeRecording(active: ActiveRecording, durationMs: number, sign
 				"-vf",
 				`${fpsFilter},scale=trunc(iw/2)*2:trunc(ih/2)*2`,
 				"-c:v",
-				"libx264",
+				encoder,
 				"-crf",
 				String(Math.round(((100 - quality) * 51) / 100)),
 				"-pix_fmt",

@@ -227,7 +227,7 @@ const piSegment: StatusLineSegment = {
 		const content =
 			ctx.turnElapsedMs != null
 				? `${brandMark(glyph, profile)} ${brandTimer(ctx.turnElapsedMs)}`
-				: brandMark(theme.icon.omp, profile);
+				: brandMark(theme.icon.mars, profile);
 		return { content: `${fgAnsi}${content}\x1b[39m`, visible: true };
 	},
 	describe(ctx) {

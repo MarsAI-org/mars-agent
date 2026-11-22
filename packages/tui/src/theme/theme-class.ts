@@ -694,6 +694,7 @@ export class Theme {
 			advisor: this.#symbols["icon.advisor"],
 			advisorClosed: this.#symbols["icon.advisorClosed"],
 			time: this.#symbols["icon.time"],
+			mars: this.#symbols["icon.mars"],
 			omp: this.#symbols["icon.omp"],
 			ghost: this.#symbols["icon.ghost"],
 			agents: this.#symbols["icon.agents"],

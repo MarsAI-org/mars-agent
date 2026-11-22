@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { parseEnv } from "node:util";
-import { getAgentDir, getConfigRootDir, getProjectDir, refreshDirsFromEnv } from "./dirs";
+import { maybeMigrateLegacyConfigDir, getAgentDir, getConfigRootDir, getProjectDir, refreshDirsFromEnv } from "./dirs";
 import { isBunTestRuntime } from "./test-runtime";
 
 export * from "./test-runtime";
@@ -565,3 +565,9 @@ export function parseFlag(value: string | undefined, def = false): boolean {
 export function $flag(name: string, def: boolean = false): boolean {
 	return parseFlag($env[name], def);
 }
+
+// A pre-rebrand install keeps its settings, credentials, sessions, and caches in
+// the legacy config root. Every host — CLI, RPC/ACP, worker, SDK embed — migrates
+// exactly once per install; `bun test` never migrates because these paths run
+// against the developer's real home there.
+if (!isBunTestRuntime()) maybeMigrateLegacyConfigDir();

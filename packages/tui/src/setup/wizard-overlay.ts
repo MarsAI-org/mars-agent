@@ -6,7 +6,7 @@ import { centerLine, padding } from "../utils";
 import { padToWidth } from "../render/utils";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../mouse";
 import { APP_NAME } from "@marsai-org/utils";
-import { gradientLogo, PI_LOGO } from "../prompt/welcome";
+import { gradientLogo, MARS_LOGO } from "../prompt/welcome";
 import { theme } from "../theme/theme";
 import { col, keyed, node, row, span, text } from "../native/describe";
 import type { DescribeContext, NativeChild, NativeNode, NativeScreen, NativeUiEvent } from "../native/node";
@@ -336,7 +336,7 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 								[
 									node(
 										"image",
-										{ builtin: "omp", alt: APP_NAME, w: 22, role: "omp.setup.mark" },
+										{ builtin: "mars", alt: APP_NAME, w: 22, role: "omp.setup.mark" },
 										undefined,
 										"logo",
 									),
@@ -405,7 +405,7 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 		const subtitle = this.#activeScene?.subtitle;
 		const { scenes: steps, current } = this.#steps();
 		const contentWidth = Math.max(MIN_CONTENT_WIDTH, width - SCENE_MARGIN_X * 2);
-		const logo = gradientLogo(PI_LOGO, 0);
+		const logo = gradientLogo(MARS_LOGO, 0);
 		const header = [
 			"",
 			...logo.map(line => centerLine(line, width)),

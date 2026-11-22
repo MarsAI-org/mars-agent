@@ -1,11 +1,11 @@
 /**
- * `omp models` — list, search, and refresh available models.
+ * `mars models` — list, search, and refresh available models.
  *
  * Subcommands:
  * - `ls` (default): list available chat models grouped by provider.
  * - `find <substring>`: list models of the selected kind whose provider, id, or name contains the substring.
  * - `refresh`: force an online catalog re-fetch (ignoring the model cache TTL),
- *   then list. This is the supported replacement for `rm -rf ~/.omp/models.db`
+ *   then list. This is the supported replacement for `rm -rf ~/.mars/models.db`
  *   when a provider ships a new model that the 24h cache has not picked up yet.
  *
  * `ls`/`find` use the cache when fresh (`online-if-uncached`); only `refresh`
@@ -27,12 +27,13 @@ import { SessionManager } from "../session/session-manager";
 import { EventBus } from "../utils/event-bus";
 
 import { cfgDisabledExtensions, cfgExtensions } from "../extensibility/settings";
+import { runAddProviderCommand, runListProvidersCommand, runRemoveProviderCommand } from "./models-provider-cli";
 
-export type ModelsAction = "ls" | "find" | "refresh";
+export type ModelsAction = "ls" | "find" | "refresh" | "add-provider" | "remove-provider" | "providers";
 
 export interface ModelsCommandArgs {
 	action: ModelsAction;
-	/** Search substring for `find`, or optional filter for `ls`. */
+	/** Search substring for `find`, or optional filter for `ls`, or provider id for `add-provider`/`remove-provider`. */
 	pattern?: string;
 	flags: {
 		json?: boolean;
@@ -44,19 +45,42 @@ export interface ModelsCommandArgs {
 		noExtensions?: boolean;
 		/** Extra `config.yml` overlays to apply for this invocation. */
 		config?: string[];
+		/** Base URL for add-provider (`--endpoint` / `--base-url`). */
+		endpoint?: string;
+		/** Credential for add-provider (`--token` / `--api-key`). */
+		token?: string;
+		/** Wire API for add-provider. */
+		api?: string;
+		/** Discovery mode for add-provider. */
+		discovery?: string;
+		/** Model IDs (comma-separated) for add-provider. */
+		models?: string;
+		/** Context window in tokens for every id in `models` (add-provider). */
+		maxContext?: number;
+		/** Custom headers for add-provider. */
+		header?: string[];
+		/** Path to models.yml for provider operations. */
+		path?: string;
+		/** Overwrite existing provider in models.yml. */
+		overwrite?: boolean;
+		/** Dry run validation without writing to models.yml. */
+		dryRun?: boolean;
 	};
 }
 
 /**
  * Known action keywords. Any other first token (e.g. `openai-codex`) is treated
  * as a provider/substring filter for the default `ls` view, so every provider
- * name doubles as an `omp models <provider>` shortcut.
+ * name doubles as an `mars models <provider>` shortcut.
  */
 const KNOWN_ACTIONS: Record<string, ModelsAction> = {
 	ls: "ls",
 	list: "ls",
 	find: "find",
 	refresh: "refresh",
+	"add-provider": "add-provider",
+	"remove-provider": "remove-provider",
+	providers: "providers",
 };
 
 /** Resolve the two positional args into an action + filter (provider names fall through to `ls`). */
@@ -190,7 +214,7 @@ export interface ModelsListingSource {
 }
 
 /**
- * Render `omp models ls`/`find` as one box table per provider, selecting chat
+ * Render `mars models ls`/`find` as one box table per provider, selecting chat
  * models by default or the caller-requested catalog kind.
  */
 export function renderProviderModels(
@@ -383,7 +407,7 @@ export async function runModelsListing(options: RunModelsListingOptions): Promis
 }
 
 /**
- * Entry point for the standalone `omp models` command: bootstraps auth storage,
+ * Entry point for the standalone `mars models` command: bootstraps auth storage,
  * settings, and the model registry, force/cache-refreshes built-in providers per
  * the chosen action, then delegates to {@link runModelsListing}.
  */
@@ -392,8 +416,55 @@ export async function runModelsCommand(command: ModelsCommandArgs): Promise<void
 	const json = command.flags.json ?? false;
 	const kind = command.flags.kind ?? "chat";
 
+	if (action === "add-provider") {
+		// The window of a discovered catalog is written to config.yml, so the
+		// settings store has to exist before the writer runs.
+		await Settings.init({ cwd: getProjectDir(), configFiles: command.flags.config });
+		await runAddProviderCommand({
+			id: pattern,
+			flags: {
+				baseUrl: command.flags.endpoint,
+				api: command.flags.api,
+				token: command.flags.token,
+				models: command.flags.models,
+				discovery: command.flags.discovery,
+				header: command.flags.header,
+				maxContext: command.flags.maxContext,
+				path: command.flags.path,
+				overwrite: command.flags.overwrite,
+				dryRun: command.flags.dryRun,
+				json: command.flags.json,
+			},
+		});
+		return;
+	}
+
+	if (action === "remove-provider") {
+		if (!pattern || pattern.trim().length === 0) {
+			process.stderr.write(
+				"`mars models remove-provider` requires a provider id, e.g. `mars models remove-provider acme`\n",
+			);
+			process.exitCode = 1;
+			return;
+		}
+		await runRemoveProviderCommand(pattern.trim(), {
+			path: command.flags.path,
+			dryRun: command.flags.dryRun,
+			json: command.flags.json,
+		});
+		return;
+	}
+
+	if (action === "providers") {
+		runListProvidersCommand({
+			path: command.flags.path,
+			json: command.flags.json,
+		});
+		return;
+	}
+
 	if (action === "find" && (!pattern || pattern.trim().length === 0)) {
-		process.stderr.write("`omp models find` requires a search substring, e.g. `omp models find minimax`\n");
+		process.stderr.write("`mars models find` requires a search substring, e.g. `mars models find minimax`\n");
 		process.exitCode = 1;
 		return;
 	}

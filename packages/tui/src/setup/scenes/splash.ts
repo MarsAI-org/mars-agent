@@ -1,7 +1,7 @@
 import { centerLine, visibleWidth } from "../../utils";
 import { padToWidth } from "../../render/utils";
 import { APP_NAME, VERSION } from "@marsai-org/utils";
-import { gradientEscape, gradientLogo, lockupNode, PI_LOGO, type ShineConfig } from "../../prompt/welcome";
+import { gradientEscape, gradientLogo, lockupNode, MARS_LOGO, type ShineConfig } from "../../prompt/welcome";
 import { theme } from "../../theme/theme";
 import { formatKeyHint } from "../../app-keybindings";
 import { col, kbd, keyed, node, row, span, text } from "../../native/describe";
@@ -11,7 +11,7 @@ export const SETUP_SPLASH_MS = 2600;
 export const SETUP_TICK_MS = 33;
 
 /** Brand mark at 2x: every glyph doubled horizontally, every row doubled vertically. */
-const LARGE_LOGO = PI_LOGO.flatMap(line => {
+const LARGE_LOGO = MARS_LOGO.flatMap(line => {
 	let wide = "";
 	for (const char of line) {
 		wide += char === " " ? "  " : `${char}${char}`;
@@ -278,7 +278,7 @@ export function describeSetupSplash(): NativeNode {
 
 /** Centered fallback for windows too small to hold the full scene. */
 function renderCompactSplash(width: number, height: number, phase: number, shine: ShineConfig): string[] {
-	const art = height >= 14 ? LARGE_LOGO : PI_LOGO;
+	const art = height >= 14 ? LARGE_LOGO : MARS_LOGO;
 	const content = [...gradientLogo(art, phase, shine), "", theme.bold(APP_NAME)];
 	const start = Math.max(0, Math.floor((height - content.length) / 2));
 	const lines: string[] = [];

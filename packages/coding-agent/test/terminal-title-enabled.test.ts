@@ -4,11 +4,11 @@ import {
 	initTerminalTitleState,
 	popTerminalTitle,
 	setSessionTerminalTitle,
-	setTerminalTitleEnabled,
+	setTerminalTitleStateEnabled,
 	setTerminalTitleState,
 } from "@marsai-org/coding-agent/utils/title-generator";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
-import { cfgTuiTitle } from "@marsai-org/coding-agent/modes/settings";
+import { cfgTuiTitleState } from "@marsai-org/coding-agent/modes/settings";
 import { setTerminalHeadless } from "@marsai-org/utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
@@ -59,7 +59,7 @@ describe("tui.title", () => {
 
 	afterEach(() => {
 		// Re-enable before disposing so a disabled runtime never leaks into the next file.
-		setTerminalTitleEnabled(true);
+		setTerminalTitleStateEnabled(true);
 		disposeTerminalTitleState();
 		stdoutSpy?.mockRestore();
 		windowsTitleMock?.restore();
@@ -77,7 +77,7 @@ describe("tui.title", () => {
 	});
 
 	it("defaults to letting mars own the title", () => {
-		expect(cfgTuiTitle.get(Settings.isolated())).toBe(true);
+		expect(cfgTuiTitleState.get(Settings.isolated())).toBe(true);
 	});
 
 	it("writes no OSC title for a run-state change while disabled, and one after re-enabling", () => {
@@ -87,7 +87,7 @@ describe("tui.title", () => {
 
 		writes.length = 0;
 		windowsTitleMock!.titles.length = 0;
-		setTerminalTitleEnabled(false);
+		setTerminalTitleStateEnabled(false);
 
 		// The disabled runtime must forget the title it last wrote, so re-enabling
 		// repaints instead of considering the new title already on screen.
@@ -101,7 +101,7 @@ describe("tui.title", () => {
 		expect(observedTitles()).toEqual([]);
 
 		// Re-enabling repaints the current composed title at once.
-		setTerminalTitleEnabled(true);
+		setTerminalTitleStateEnabled(true);
 		expect(observedTitles().length).toBe(1);
 		expect(observedTitles()[0]).toContain("my-project");
 	});
@@ -110,7 +110,7 @@ describe("tui.title", () => {
 		// The setting silences mars's own titles; it must not silence the xterm
 		// window-op that hands the tab back to the shell on exit. Gating that behind
 		// the setting would strand the parent shell's tab reading `mars …`.
-		setTerminalTitleEnabled(false);
+		setTerminalTitleStateEnabled(false);
 		disposeTerminalTitleState();
 
 		writes.length = 0;
