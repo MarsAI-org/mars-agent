@@ -29,6 +29,7 @@ This repo contains multiple packages, but **`packages/coding-agent/`** is the pr
 - A request to address or fix PR feedback permits drafting replies, not posting them without confirmation. A request only to get or check comments is read-only.
 - When authorized to resolve review feedback, MUST verify the fix, obtain approval for a factual reply citing the change and verification, and post it in the existing thread before resolving. NEVER resolve if the reply is unapproved or posting fails.
 - Permission to work on a PR does not authorize unrelated comments or issue creation.
+- Commit messages and PR bodies credit only people who wrote the change. NEVER add a `Co-Authored-By` trailer, `Signed-off-by`, or "Generated with …" footer for a third-party agent or scaffolding tool (Codebuff, Claude Code, Copilot, Cursor, and the like); the author of the commit is the developer who ran the agent. Human co-authors named by that person stay.
 
 ### Pull requests
 

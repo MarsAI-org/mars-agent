@@ -81,6 +81,25 @@ function runFile(file, args, opts = {}) {
   }
 }
 
+/**
+ * Footers that attribute a commit to another agent or tool. The bot authors its own
+ * commits, so a message that credits a third party (a code assistant that produced
+ * text the model copied, or a scaffolding tool) misrepresents who wrote the change
+ * and puts that name on the contributor list. Strip those lines; keep human
+ * `Co-Authored-By` trailers, which are a deliberate credit.
+ */
+const FOREIGN_ATTRIBUTION_RE = /^\s*(?:[-*]\s*)?(?:🤖\s*)?(?:(?:generated|made|created|written|produced)\s+(?:with|by)|co-authored-by:\s*bot|co-authored-by:\s*(?:codebuff|openai|chatgpt|claude|copilot|cursor|codex|devin|aider)|signed-off-by:\s*(?:codebuff|openai|chatgpt|claude|copilot|cursor|codex|devin|aider))/i;
+const THIRD_PARTY_AGENT_RE = /codebuff/i;
+
+/** Commit message with foreign attribution lines removed and trailing blanks collapsed. */
+function sanitizeCommitMessage(message) {
+  const kept = String(message || "")
+    .split("\n")
+    .filter(line => !THIRD_PARTY_AGENT_RE.test(line) && !FOREIGN_ATTRIBUTION_RE.test(line));
+  while (kept.length > 0 && kept[kept.length - 1].trim() === "") kept.pop();
+  return kept.join("\n");
+}
+
 /** Exit status plus combined output, for checks whose verdict is the exit code. */
 function runCheck(file, args, cwd = process.cwd()) {
   try {
@@ -711,7 +730,9 @@ ${repoGuidance}`,
     return;
   }
 
-  const commitMsg = finalResult.commitMessage || `fix: automated autonomous repair (${task.issueNumber ? `#${task.issueNumber}` : "self-governed"})`;
+  const commitMsg =
+    sanitizeCommitMessage(finalResult.commitMessage) ||
+    `fix: automated autonomous repair (${task.issueNumber ? `#${task.issueNumber}` : "self-governed"})`;
   const branchName = `mars-bot/${Date.now()}-${task.issueNumber || "auto"}`;
 
   console.log(`Committing verified changes to: ${branchName}`);
