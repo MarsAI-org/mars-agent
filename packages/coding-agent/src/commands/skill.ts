@@ -1,5 +1,6 @@
 /**
- * Install, publish, and manage skills on a Skillshare registry (skills.omp.sh).
+ * Install, publish, and manage skills on a Skillshare registry
+ * (default: the upstream registry configured by `skills.registryUrl`).
  */
 import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import type { SkillSearchSort } from "@marsai-org/wire/skillshare";
@@ -35,14 +36,14 @@ export default class Skill extends Command {
 	};
 
 	static examples = [
-		"omp skill install @alice/pdf-tools",
-		"omp skill install -g @alice/pdf-tools@^1.2",
-		'omp skill search "pdf" --sort downloads',
-		"omp skill version minor && omp skill publish",
-		"omp skill publish ./skills/pdf-tools --dry-run",
-		"omp skill tag @alice/pdf-tools@2.0.0-beta.1 next",
-		'omp skill deprecate @alice/pdf-tools@"<1.0.0" "use 1.x"',
-		"omp skill token create ci --package @alice/pdf-tools --expires 90",
+		"mars skill install @alice/pdf-tools",
+		"mars skill install -g @alice/pdf-tools@^1.2",
+		'mars skill search "pdf" --sort downloads',
+		"mars skill version minor && mars skill publish",
+		"mars skill publish ./skills/pdf-tools --dry-run",
+		"mars skill tag @alice/pdf-tools@2.0.0-beta.1 next",
+		'mars skill deprecate @alice/pdf-tools@"<1.0.0" "use 1.x"',
+		"mars skill token create ci --package @alice/pdf-tools --expires 90",
 	];
 
 	async run(): Promise<void> {

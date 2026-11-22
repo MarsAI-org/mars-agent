@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -13,14 +14,14 @@ const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "resources-no-templa
 // still handshaking when `connectServers` returns and the read begins.
 const HANDSHAKE_DELAY_MS = 700;
 
-describe("omp read MCP resource with a slow-connecting server", () => {
+describe("mars read MCP resource with a slow-connecting server", () => {
 	let root: string;
 	let projectDir: string;
 	let agentDir: string;
 	let probePath: string;
 
 	beforeEach(async () => {
-		root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-read-mcp-slow-"));
+		root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-read-mcp-slow-"));
 		projectDir = path.join(root, "project");
 		agentDir = path.join(root, "agent");
 		await Promise.all([fs.mkdir(projectDir), fs.mkdir(agentDir)]);
@@ -69,11 +70,15 @@ describe("omp read MCP resource with a slow-connecting server", () => {
 		return { exitCode, output, error };
 	}
 
-	it("waits for the pending connect instead of racing the startup deadline", async () => {
-		const { exitCode, output, error } = await runReadProbe();
+	it(
+		"waits for the pending connect instead of racing the startup deadline",
+		async () => {
+			const { exitCode, output, error } = await runReadProbe();
 
-		expect(error).toBe("");
-		expect(exitCode).toBe(0);
-		expect(output).toContain("fixture content for test://alpha");
-	}, 30_000);
+			expect(error).toBe("");
+			expect(exitCode).toBe(0);
+			expect(output).toContain("fixture content for test://alpha");
+		},
+		scaledTimeout(30000),
+	);
 });

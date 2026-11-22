@@ -1,16 +1,16 @@
 /**
- * OMP extension-package sub-discovery provider.
+ * Mars extension-package sub-discovery provider.
  *
  * When a user configures an extension via `extensions:` (in settings) or
  * `--extension`/`-e` (on the CLI), the docs promise that the package's
  * sibling directories — `skills/`, `hooks/pre|post/`, `tools/`, `commands/`,
- * `rules/`, `prompts/`, and `.mcp.json` — are picked up by omp's standard
- * discovery surfaces. The native `omp` provider in `builtin.ts` only walks
- * `.omp/` and `~/.omp/agent/`, so without this provider those sub-trees are
+ * `rules/`, `prompts/`, and `.mcp.json` — are picked up by mars's standard
+ * discovery surfaces. The native `mars` provider in `builtin.ts` only walks
+ * `.mars/` and `~/.mars/agent/`, so without this provider those sub-trees are
  * silently ignored.
  *
- * Provider priority is set below the native `omp` provider (100) so an
- * extension package never shadows the user's own `.omp/` configuration on
+ * Provider priority is set below the native `mars` provider (100) so an
+ * extension package never shadows the user's own `.mars/` configuration on
  * dedup.
  *
  * @see ./omp-extension-roots.ts
@@ -40,8 +40,13 @@ import {
 import { listOmpExtensionRoots, type OmpExtensionRoot } from "./omp-extension-roots";
 import { resolvePluginStdioPaths } from "./substitute-plugin-root";
 
-const PROVIDER_ID = "omp-plugins";
-const DISPLAY_NAME = "OMP Extension Packages";
+/**
+ * Canonical provider id. The pre-rebrand id `omp-plugins` stays accepted as an
+ * alias wherever persisted user config names a provider (see
+ * `PROVIDER_ID_ALIASES` in `../capability`).
+ */
+const PROVIDER_ID = "mars-plugins";
+const DISPLAY_NAME = "Mars Extension Packages";
 const DESCRIPTION =
 	"Sub-discovery (skills, hooks, tools, commands, rules, prompts, .mcp.json) inside extension packages";
 const PRIORITY = 90;
@@ -311,13 +316,13 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 
 		const parsed = tryParseJson<{ mcpServers?: Record<string, unknown> }>(raw);
 		if (!parsed) {
-			warnings.push(`[omp-plugins] Invalid JSON in ${mcpPath}`);
-			logger.warn(`[omp-plugins] Invalid JSON in ${mcpPath}`);
+			warnings.push(`[mars-plugins] Invalid JSON in ${mcpPath}`);
+			logger.warn(`[mars-plugins] Invalid JSON in ${mcpPath}`);
 			continue;
 		}
 		const servers = expandEnvVarsDeep(parsed.mcpServers, {
 			CLAUDE_PLUGIN_ROOT: root.path,
-			OMP_PLUGIN_ROOT: root.path,
+			MARS_PLUGIN_ROOT: root.path,
 		});
 		if (!servers || typeof servers !== "object" || Array.isArray(servers)) continue;
 
@@ -325,7 +330,7 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 			if (!serverCfg || typeof serverCfg !== "object" || Array.isArray(serverCfg)) continue;
 			const cfg = serverCfg as RawMcpServer;
 			if (typeof cfg.command !== "string" && typeof cfg.url !== "string") {
-				warnings.push(`[omp-plugins] Skipping MCP server "${serverName}" in ${mcpPath}: missing command or url`);
+				warnings.push(`[mars-plugins] Skipping MCP server "${serverName}" in ${mcpPath}: missing command or url`);
 				continue;
 			}
 			// Root relative command/cwd at the plugin's config directory, not the
@@ -337,13 +342,13 @@ async function loadMCPServers(ctx: LoadContext): Promise<LoadResult<MCPServer>> 
 			const requestIdFormat = parseRequestIdFormat(cfg.requestIdFormat);
 			if (requestIdFormat === undefined && cfg.requestIdFormat != null) {
 				logger.warn(
-					`[omp-plugins] MCP server "${serverName}" in ${mcpPath}: invalid requestIdFormat ${JSON.stringify(cfg.requestIdFormat)}, ignoring`,
+					`[mars-plugins] MCP server "${serverName}" in ${mcpPath}: invalid requestIdFormat ${JSON.stringify(cfg.requestIdFormat)}, ignoring`,
 				);
 			}
 			const instructions = typeof cfg.instructions === "boolean" ? cfg.instructions : undefined;
 			if (instructions === undefined && cfg.instructions != null) {
 				logger.warn(
-					`[omp-plugins] MCP server "${serverName}" in ${mcpPath}: invalid instructions ${JSON.stringify(cfg.instructions)}, ignoring`,
+					`[mars-plugins] MCP server "${serverName}" in ${mcpPath}: invalid instructions ${JSON.stringify(cfg.instructions)}, ignoring`,
 				);
 			}
 			items.push({

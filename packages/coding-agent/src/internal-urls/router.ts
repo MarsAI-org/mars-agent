@@ -98,9 +98,11 @@ export class InternalUrlRouter {
 	static #instance: InternalUrlRouter | undefined;
 
 	#handlers = new Map<string, ProtocolHandler>();
+	/** Alias schemes registered through {@link ProtocolHandler.aliases}; never advertised. */
+	#aliases = new Set<string>();
 	/** Scheme whose handler resolves resources of unregistered custom schemes (MCP resource URIs). */
 	readonly #resourceFallbackScheme: string;
-	/** Schemes the constructor registers: OMP-owned, never replaced by hosts. */
+	/** Schemes the constructor registers: Mars-owned, never replaced by hosts. */
 	readonly #builtinSchemes: ReadonlySet<string>;
 
 	constructor() {
@@ -117,7 +119,7 @@ export class InternalUrlRouter {
 		this.register(new ProcProtocolHandler());
 		this.register(new CfgProtocolHandler());
 		this.register(new SshProtocolHandler());
-		// Reserved OMP-owned security-analysis namespace; vendor adapters normalize into its store.
+		// Reserved Mars-owned security-analysis namespace; vendor adapters normalize into its store.
 		this.register(new SecurityProtocolHandler());
 		this.register(new VaultProtocolHandler());
 		this.register(new IssueProtocolHandler());
@@ -143,10 +145,12 @@ export class InternalUrlRouter {
 	}
 
 	/**
-	 * Install (or replace) the handler for `handler.scheme`. Throws when the spec's write
-	 * policy disagrees with the handler: `write()` exists exactly for `write.via: "handler"`;
-	 * `write.via: "file"` needs a mutable file-backed spec with `locate()`; a `sandbox` scope
-	 * needs a linkable `locateSync()` so {@link sandboxRoots} can locate its root.
+	 * Install (or replace) the handler for `handler.scheme` and each of its
+	 * {@link ProtocolHandler.aliases}. Throws when the spec's write policy
+	 * disagrees with the handler: `write()` exists exactly for `write.via:
+	 * "handler"`; `write.via: "file"` needs a mutable file-backed spec with
+	 * `locate()`; a `sandbox` scope needs a linkable `locateSync()` so
+	 * {@link sandboxRoots} can locate its root.
 	 */
 	register(handler: ProtocolHandler): void {
 		const { scheme, spec } = handler;
@@ -169,17 +173,43 @@ export class InternalUrlRouter {
 		if (spec.write?.scope === "sandbox" && (!spec.linkable || !handler.locateSync)) {
 			throw new Error(`${scheme}:// spec.write.scope "sandbox" requires spec.linkable and a locateSync() hook`);
 		}
-		this.#handlers.set(scheme.toLowerCase(), handler);
+		const canonical = scheme.toLowerCase();
+		const aliases = (handler.aliases ?? []).map(alias => alias.toLowerCase());
+		for (const alias of aliases) {
+			if (!/^[a-z][a-z0-9+.-]*$/.test(alias)) {
+				throw new Error(`${alias}:// is not a valid scheme name`);
+			}
+			const existing = this.#handlers.get(alias);
+			// Re-registering the same handler (its own alias) replaces it; any other owner is a conflict.
+			if (alias === canonical || (existing !== undefined && existing !== handler)) {
+				throw new Error(`${alias}:// is already registered`);
+			}
+		}
+		this.#handlers.set(canonical, handler);
+		for (const alias of aliases) {
+			this.#handlers.set(alias, handler);
+			this.#aliases.add(alias);
+		}
 	}
 
-	/** Whether the router constructor registered `scheme` (case-insensitive): an OMP-owned scheme hosts may not replace. */
+	/** Whether the router constructor registered `scheme` (case-insensitive): an Mars-owned scheme hosts may not replace. */
 	isBuiltin(scheme: string): boolean {
 		return this.#builtinSchemes.has(scheme.toLowerCase());
 	}
 
-	/** Remove a scheme's handler; true when one was registered. */
+	/** Remove a scheme's handler and every alias of it; true when one was registered. */
 	unregister(scheme: string): boolean {
-		return this.#handlers.delete(scheme.toLowerCase());
+		const normalized = scheme.toLowerCase();
+		const handler = this.#handlers.get(normalized);
+		if (!handler) return false;
+		this.#handlers.delete(normalized);
+		this.#aliases.delete(normalized);
+		for (const [candidate, owner] of this.#handlers) {
+			if (owner !== handler) continue;
+			this.#handlers.delete(candidate);
+			this.#aliases.delete(candidate);
+		}
+		return true;
 	}
 
 	/** Registered handler for `scheme` (case-insensitive). */
@@ -431,10 +461,11 @@ export class InternalUrlRouter {
 		return tier;
 	}
 
-	/** Rendered promptDoc lines, registration order, for schemes available under `host`. */
+	/** Rendered promptDoc lines, registration order, for schemes available under `host`; aliases are not advertised. */
 	describe(host: SchemeHost): string[] {
 		const lines: string[] = [];
-		for (const handler of this.#handlers.values()) {
+		for (const [scheme, handler] of this.#handlers) {
+			if (this.#aliases.has(scheme)) continue;
 			const line = handler.promptDoc?.(host);
 			if (line !== undefined) lines.push(line);
 		}

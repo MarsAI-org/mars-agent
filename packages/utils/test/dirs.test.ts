@@ -69,7 +69,7 @@ describe("project directory state", () => {
 	});
 
 	it("normalizes each containment operand only once", () => {
-		const root = fs.mkdtempSync(path.join(os.tmpdir(), "omp-dirs-containment-"));
+		const root = fs.mkdtempSync(path.join(os.tmpdir(), "mars-dirs-containment-"));
 		const candidate = path.join(root, "child");
 		fs.mkdirSync(candidate);
 		const realpath = spyOn(fs, "realpathSync");
@@ -99,7 +99,7 @@ describe("dated log path", () => {
 		// sink (logger/rotating-file.ts) never creates.
 		const date = new Date(2026, 4, 31, 2, 30);
 		expect(localDay(date)).toBe("2026-05-31");
-		expect(path.basename(getLogPath(date, 123))).toBe("omp.2026-05-31.123.log");
+		expect(path.basename(getLogPath(date, 123))).toBe("mars.2026-05-31.123.log");
 	});
 
 	it("keeps the local-day key under a forced non-UTC timezone", () => {
@@ -115,6 +115,25 @@ describe("dated log path", () => {
 		if (proc.exitCode === 2) return; // TZ not honored on this platform
 		if (proc.exitCode !== 0) console.error(proc.stderr.toString());
 		expect(proc.exitCode).toBe(0);
+	});
+
+	it("resolves APP_URL to getmars.eu.cc by default with a trailing slash", async () => {
+		const { APP_URL } = await import("@marsai-org/utils/dirs");
+		expect(APP_URL).toBe("https://getmars.eu.cc/");
+	});
+
+	it("honors MARS_APP_URL override and ensures trailing slash", () => {
+		const proc = Bun.spawnSync(
+			[process.execPath, "-e", 'import { APP_URL } from "./src/dirs"; console.log(APP_URL);'],
+			{
+				cwd: path.resolve(import.meta.dir, ".."),
+				env: { ...process.env, MARS_APP_URL: "https://custom.mars.dev" },
+				stdout: "pipe",
+				stderr: "pipe",
+			},
+		);
+		expect(proc.exitCode).toBe(0);
+		expect(proc.stdout.toString().trim()).toBe("https://custom.mars.dev/");
 	});
 });
 

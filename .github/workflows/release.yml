@@ -1,0 +1,374 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (build and test without publishing GitHub Release)"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release_metadata:
+    name: Resolve release metadata
+    runs-on: ubuntu-22.04
+    outputs:
+      release_tag: ${{ steps.meta.outputs.release_tag }}
+      is_dry_run: ${{ steps.meta.outputs.is_dry_run }}
+      is_prerelease: ${{ steps.meta.outputs.is_prerelease }}
+    steps:
+      - id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="v0.1.0-dryrun"
+            DRY_RUN="${{ inputs.dry_run }}"
+          else
+            TAG="${GITHUB_REF#refs/tags/}"
+            DRY_RUN="false"
+          fi
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "is_dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" == *"-rc"* ]] || [[ "$TAG" == *"-canary"* ]] || [[ "$TAG" == *"-beta"* ]] || [[ "$TAG" == *"-alpha"* ]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build_native:
+    name: "Build native addon: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [release_metadata]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            cargo_profile: ci
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            cargo_profile: ci
+          - os: macos-15-intel
+            target_id: darwin-x64
+            cargo_profile: ci
+          - os: macos-15
+            target_id: darwin-arm64
+            cargo_profile: ci
+          - os: windows-2025
+            target_id: win32-x64
+            cargo_profile: ci
+          - os: windows-11-arm
+            target_id: win32-arm64
+            cargo_profile: ci
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Build native addon
+        env:
+          MARS_NATIVE_CARGO_PROFILE: ${{ matrix.cargo_profile }}
+        run: bun --cwd=packages/natives run build:bindings
+      - name: Upload native addon
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: native-${{ matrix.target_id }}
+          path: packages/natives/native/*.node
+
+  build_binary:
+    name: "Build binary: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [release_metadata, build_native]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            native_id: linux-x64
+            binary_name: mars-linux-x64
+          - os: ubuntu-22.04
+            target_id: linux-musl-x64
+            native_id: linux-x64
+            binary_name: mars-linux-musl-x64
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            native_id: linux-arm64
+            binary_name: mars-linux-arm64
+          - os: ubuntu-24.04-arm
+            target_id: linux-musl-arm64
+            native_id: linux-arm64
+            binary_name: mars-linux-musl-arm64
+          - os: macos-15-intel
+            target_id: darwin-x64
+            native_id: darwin-x64
+            binary_name: mars-darwin-x64
+          - os: macos-15
+            target_id: darwin-arm64
+            native_id: darwin-arm64
+            binary_name: mars-darwin-arm64
+          - os: windows-2025
+            target_id: win32-x64
+            native_id: win32-x64
+            binary_name: mars-windows-x64.exe
+          - os: windows-11-arm
+            target_id: win32-arm64
+            native_id: win32-arm64
+            binary_name: mars-windows-arm64.exe
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Download native addon
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: native-${{ matrix.native_id }}
+          path: packages/natives/native
+      - name: Build release binary
+        env:
+          RELEASE_TARGETS: ${{ matrix.target_id }}
+        run: bun run ci:release:build-binaries
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: binary-${{ matrix.target_id }}
+          path: packages/coding-agent/binaries/${{ matrix.binary_name }}
+
+  smoke_test:
+    name: "Smoke test: ${{ matrix.target_id }}"
+    runs-on: ${{ matrix.os }}
+    needs: [build_binary]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target_id: linux-x64
+            binary_name: mars-linux-x64
+          - os: ubuntu-22.04
+            target_id: linux-musl-x64
+            binary_name: mars-linux-musl-x64
+            alpine: true
+          - os: ubuntu-24.04-arm
+            target_id: linux-arm64
+            binary_name: mars-linux-arm64
+          - os: ubuntu-24.04-arm
+            target_id: linux-musl-arm64
+            binary_name: mars-linux-musl-arm64
+            alpine: true
+          - os: macos-15-intel
+            target_id: darwin-x64
+            binary_name: mars-darwin-x64
+          - os: macos-15
+            target_id: darwin-arm64
+            binary_name: mars-darwin-arm64
+          - os: windows-2025
+            target_id: win32-x64
+            binary_name: mars-windows-x64.exe
+          - os: windows-11-arm
+            target_id: win32-arm64
+            binary_name: mars-windows-arm64.exe
+    steps:
+      - name: Download binary
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          name: binary-${{ matrix.target_id }}
+          path: bin
+      - name: Test (POSIX)
+        if: runner.os != 'Windows' && !matrix.alpine
+        shell: bash
+        run: |
+          chmod +x bin/${{ matrix.binary_name }}
+          bin/${{ matrix.binary_name }} --version
+          bin/${{ matrix.binary_name }} --help
+          bin/${{ matrix.binary_name }} --platform-check --json
+      - name: Test (Alpine Docker)
+        if: matrix.alpine
+        shell: bash
+        run: |
+          chmod +x bin/${{ matrix.binary_name }}
+          docker run --rm -v "$(pwd)/bin/${{ matrix.binary_name }}:/usr/local/bin/mars:ro" alpine:3.22 sh -ec '
+            apk add --no-cache libstdc++ libgcc >/dev/null
+            mars --version
+            mars --help
+            mars --platform-check --json
+          '
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          & .\bin\${{ matrix.binary_name }} --version
+          & .\bin\${{ matrix.binary_name }} --help
+          & .\bin\${{ matrix.binary_name }} --platform-check --json
+
+  publish_native_leaves:
+    name: Publish native leaf packages
+    runs-on: ubuntu-22.04
+    # Leaf publishing packages the addons `build_native` already produced; it has
+    # no dependency on the binary smoke tests. Requiring `smoke_test` here let a
+    # single flaky macOS runner (cancelled twice on v0.1.3) block every leaf
+    # package and, through the release gate, the GitHub Release as well.
+    needs: [release_metadata, build_native]
+    if: needs.release_metadata.outputs.is_dry_run != 'true'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install a publishing npm
+        run: npm install -g npm@11.17.0
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      # Every addon this run built, one directory per target.
+      - name: Download native addons
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: native-*
+          path: native-artifacts
+          merge-multiple: false
+      # The generator reads packages/natives/native, so stage each target's
+      # addon there. musl reuses the linux filenames and has no leaf package.
+      - name: Stage native addons
+        shell: bash
+        run: |
+          set -euo pipefail
+          for dir in native-artifacts/native-*; do
+            target="${dir#native-artifacts/native-}"
+            for f in "$dir"/*.node; do
+              [ -e "$f" ] || continue
+              cp "$f" "packages/natives/native/$(basename "$f")"
+            done
+            echo "staged $target"
+          done
+          ls -la packages/natives/native/*.node
+      - name: Publish native leaf packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -uo pipefail
+          logs="$RUNNER_TEMP/native-leaf-logs"
+          mkdir -p "$logs"
+          tags=(linux-x64 linux-arm64 darwin-x64 darwin-arm64 win32-x64 win32-arm64)
+          pids=()
+          for tag in "${tags[@]}"; do
+            bun run ci:release:publish-native-leaf "$tag" >"$logs/$tag.log" 2>&1 &
+            pids+=("$!")
+          done
+          failed=()
+          for i in "${!tags[@]}"; do
+            tag="${tags[$i]}"
+            if wait "${pids[$i]}"; then
+              status=ok
+            else
+              status="failed (exit $?)"
+              failed+=("$tag")
+            fi
+            echo "::group::$tag: $status"
+            cat "$logs/$tag.log"
+            echo "::endgroup::"
+          done
+          if [ "${#failed[@]}" -gt 0 ]; then
+            echo "::error title=Native leaf publish::failed: ${failed[*]}"
+            exit 1
+          fi
+      # A release is only usable if what it advertises can be installed. The
+      # umbrella package loads its addon from the platform leaf, so publishing
+      # the umbrella alone installs cleanly and then dies at runtime.
+      - name: Verify every published package is installable
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(bun -e 'console.log((await Bun.file("packages/coding-agent/package.json").json()).version)')"
+          echo "verifying npm packages for $version"
+          pkgs=(
+            utils wire omptype catalog ai natives tui mnemopi snapcompact stats
+            agent-core coding-agent
+            natives-linux-x64 natives-linux-arm64
+            natives-darwin-x64 natives-darwin-arm64
+            natives-win32-x64 natives-win32-arm64
+          )
+          # npm is eventually consistent, and the lag is not uniform: on v0.1.4
+          # five leaves appeared within seconds while natives-linux-x64 took four
+          # minutes. A per-package loop with a 60s budget declared that one
+          # missing and failed the whole release even though it had published.
+          #
+          # Poll every package together against one deadline, so a slow package
+          # never eats the budget of the ones after it. Large native leaf
+          # packages (~190 MB) can take 15+ minutes to replicate across npm.
+          deadline=$(( SECONDS + 1200 ))
+          missing=()
+          pending=("${pkgs[@]}")
+          while [ "${#pending[@]}" -gt 0 ] && [ "$SECONDS" -lt "$deadline" ]; do
+            still=()
+            for p in "${pending[@]}"; do
+              if npm view "@marsai-org/${p}@${version}" version >/dev/null 2>&1; then
+                echo "ok      @marsai-org/${p}@${version}"
+              else
+                still+=("$p")
+              fi
+            done
+            pending=("${still[@]+"${still[@]}"}")
+            if [ "${#pending[@]}" -gt 0 ]; then
+              echo "waiting on ${pending[*]} (${SECONDS}s elapsed)"
+              sleep 20
+            fi
+          done
+          for p in "${pending[@]+"${pending[@]}"}"; do
+            echo "::error::missing @marsai-org/${p}@${version}"
+            missing+=("$p")
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            echo "::error title=Release incomplete::not on npm: ${missing[*]}"
+            exit 1
+          fi
+
+  publish_release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-22.04
+    needs: [release_metadata, smoke_test, publish_native_leaves]
+    if: needs.release_metadata.outputs.is_dry_run != 'true'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Download all binaries
+        uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+        with:
+          pattern: binary-*
+          path: release-assets
+          merge-multiple: true
+      - name: Generate Checksums
+        shell: bash
+        run: |
+          cd release-assets
+          sha256sum mars-* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Create Release
+        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        with:
+          tag_name: ${{ needs.release_metadata.outputs.release_tag }}
+          prerelease: ${{ needs.release_metadata.outputs.is_prerelease == 'true' }}
+          generate_release_notes: true
+          files: |
+            release-assets/*
+            LICENSE

@@ -1,0 +1,48 @@
+name: Mars PR Auto-Reviewer
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-review:
+    name: Autonomous Code & Security Review
+    # Two gates. Never review the bot's own PRs (review loop), and never run on a
+    # fork PR: the reviewer needs the MARS_LLM_* secrets, which GitHub withholds
+    # from fork workflows anyway, so the job would only fail red.
+    if: >-
+      !startsWith(github.head_ref, 'mars-bot/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          # Pin the checkout to the base commit. The default checkout here is the
+          # PR merge commit, so `.github/scripts/mars-pr-reviewer.mjs` would be the
+          # PR author's copy — run with secrets.MARS_BOT_TOKEN in the environment.
+          # The diff under review is fetched through the API, not from this tree.
+          ref: ${{ github.event.pull_request.base.sha }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.3"
+
+      - name: Run Mars PR Reviewer
+        env:
+          MARS_LLM_URL: ${{ secrets.MARS_LLM_URL || '' }}
+          MARS_LLM_API_KEY: ${{ secrets.MARS_LLM_API_KEY || '' }}
+          MARS_MODEL: ${{ vars.MARS_MODEL || 'gpt-4o' }}
+          GITHUB_TOKEN: ${{ secrets.MARS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
+          REPO_TYPE: "mars-agent"
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          bun run .github/scripts/mars-pr-reviewer.mjs

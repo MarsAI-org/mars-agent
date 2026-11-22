@@ -1,6 +1,6 @@
 import { discoverRelayEndpoints } from "../../coding-agent/src/tools/browser/relay/discovery";
 /**
- * Manual end-to-end smoke for the relay: replicates the omp browser tool's
+ * Manual end-to-end smoke for the relay: replicates the mars browser tool's
  * connection pattern against a live relay + extension.
  *
  * The tool opens TWO puppeteer connections per driven tab — the supervisor
@@ -18,7 +18,7 @@ const relayUrl = Bun.argv[2] ?? discoverRelayEndpoints()[0];
 if (!relayUrl) throw new Error("No local omp browser relay found; supply the relay URL explicitly.");
 const matcher = Bun.argv[3] ?? "Relay Smoke Page";
 
-/** Puppeteer keeps the CDP target id on an internal field; same access the omp tab supervisor uses (`targetIdForPage`). */
+/** Puppeteer keeps the CDP target id on an internal field; same access the mars tab supervisor uses (`targetIdForPage`). */
 function targetIdOf(target: Target): string {
 	// Internal puppeteer field, not on the public type.
 	const raw = target as unknown as { _targetId: string };

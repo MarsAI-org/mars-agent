@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -50,10 +51,10 @@ describe("global --profile flag", () => {
 		originalProfile = getActiveProfile();
 		originalAgentDir = getAgentDir();
 		originalAgentDirEnv = process.env.PI_CODING_AGENT_DIR;
-		originalOmpProfileEnv = process.env.OMP_PROFILE;
+		originalOmpProfileEnv = process.env.MARS_PROFILE;
 		originalPiProfileEnv = process.env.PI_PROFILE;
 		originalConfigDir = process.env.PI_CONFIG_DIR;
-		configDir = `.omp-profile-cli-test-${Snowflake.next()}`;
+		configDir = `.mars-profile-cli-test-${Snowflake.next()}`;
 		process.env.PI_CONFIG_DIR = configDir;
 		process.exitCode = 0;
 	});
@@ -74,9 +75,9 @@ describe("global --profile flag", () => {
 			setProfile(undefined);
 		}
 		if (originalOmpProfileEnv === undefined) {
-			delete process.env.OMP_PROFILE;
+			delete process.env.MARS_PROFILE;
 		} else {
-			process.env.OMP_PROFILE = originalOmpProfileEnv;
+			process.env.MARS_PROFILE = originalOmpProfileEnv;
 		}
 		if (originalPiProfileEnv === undefined) {
 			delete process.env.PI_PROFILE;
@@ -104,10 +105,10 @@ describe("global --profile flag", () => {
 		expect(getAgentDir()).toBe(path.join(os.homedir(), configDir, "profiles", "work", "agent"));
 	});
 
-	it("activates a profile inherited from OMP_PROFILE at run time", async () => {
+	it("activates a profile inherited from MARS_PROFILE at run time", async () => {
 		const writeSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 		setProfile(undefined);
-		process.env.OMP_PROFILE = "work";
+		process.env.MARS_PROFILE = "work";
 		delete process.env.PI_PROFILE;
 
 		await runCli(["--version"]);
@@ -123,24 +124,24 @@ describe("global --profile flag", () => {
 		const installSpy = vi.spyOn(profileAliasCli, "installProfileAlias").mockResolvedValue({
 			shell: "bash",
 			configPath: "/home/me/.bashrc",
-			aliasName: "omp-work",
+			aliasName: "mars-work",
 			profile: "work",
-			command: "omp --profile=work",
+			command: "mars --profile=work",
 			reloadedWith: ". '/home/me/.bashrc'",
 		});
 		const outSpy = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
 
-		await runCli(["--profile", "work", "--alias", "omp-work", "--version"]);
+		await runCli(["--profile", "work", "--alias", "mars-work", "--version"]);
 
 		expect(process.exitCode).toBe(0);
 		expect(installSpy).toHaveBeenCalledWith(
 			expect.objectContaining({
 				profile: "work",
-				aliasName: "omp-work",
+				aliasName: "mars-work",
 			}),
 		);
 		const output = outSpy.mock.calls.map(call => String(call[0] ?? "")).join("\n");
-		expect(output).toContain("Created omp-work");
+		expect(output).toContain("Created mars-work");
 		expect(output).not.toContain(`${APP_NAME}/${VERSION}`);
 	});
 
@@ -157,113 +158,121 @@ describe("global --profile flag", () => {
 		expect(outSpy).not.toHaveBeenCalled();
 	});
 
-	it("loads profile agent .env before command modules import pi-utils env", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-profile-cli-env-"));
-		try {
-			const home = path.join(root, "home");
-			const configDir = ".omp-profile-cli-env";
-			const defaultAgentDir = path.join(home, configDir, "agent");
-			const profileAgentDir = path.join(home, configDir, "profiles", "work", "agent");
-			await fs.mkdir(defaultAgentDir, { recursive: true });
-			await fs.mkdir(profileAgentDir, { recursive: true });
-			await Bun.write(path.join(defaultAgentDir, ".env"), "OMP_PROFILE_BOOTSTRAP_SENTINEL=default\n");
-			await Bun.write(path.join(profileAgentDir, ".env"), "OMP_PROFILE_BOOTSTRAP_SENTINEL=work\n");
+	it(
+		"loads profile agent .env before command modules import pi-utils env",
+		async () => {
+			const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-"));
+			try {
+				const home = path.join(root, "home");
+				const configDir = ".mars-profile-cli-env";
+				const defaultAgentDir = path.join(home, configDir, "agent");
+				const profileAgentDir = path.join(home, configDir, "profiles", "work", "agent");
+				await fs.mkdir(defaultAgentDir, { recursive: true });
+				await fs.mkdir(profileAgentDir, { recursive: true });
+				await Bun.write(path.join(defaultAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=default\n");
+				await Bun.write(path.join(profileAgentDir, ".env"), "MARS_PROFILE_BOOTSTRAP_SENTINEL=work\n");
 
-			const probePath = path.join(root, "probe.ts");
-			await Bun.write(
-				probePath,
-				[
-					`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
-					'await runCli(["--profile", "work", "--help"]);',
-					'process.stdout.write("\\nSENTINEL=" + (Bun.env.OMP_PROFILE_BOOTSTRAP_SENTINEL ?? ""));',
-				].join("\n"),
-			);
+				const probePath = path.join(root, "probe.ts");
+				await Bun.write(
+					probePath,
+					[
+						`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
+						'await runCli(["--profile", "work", "--help"]);',
+						'process.stdout.write("\\nSENTINEL=" + (Bun.env.MARS_PROFILE_BOOTSTRAP_SENTINEL ?? ""));',
+					].join("\n"),
+				);
 
-			const childEnv: Record<string, string | undefined> = {
-				...process.env,
-				HOME: home,
-				// os.homedir() reads USERPROFILE on Windows, HOME elsewhere.
-				USERPROFILE: home,
-				PI_CONFIG_DIR: configDir,
-				PI_NO_TITLE: "1",
-				NO_COLOR: "1",
-			};
-			delete childEnv.OMP_PROFILE;
-			delete childEnv.PI_PROFILE;
-			delete childEnv.PI_CODING_AGENT_DIR;
-			delete childEnv.OMP_PROFILE_BOOTSTRAP_SENTINEL;
+				const childEnv: Record<string, string | undefined> = {
+					...process.env,
+					HOME: home,
+					// os.homedir() reads USERPROFILE on Windows, HOME elsewhere.
+					USERPROFILE: home,
+					PI_CONFIG_DIR: configDir,
+					PI_NO_TITLE: "1",
+					NO_COLOR: "1",
+				};
+				delete childEnv.MARS_PROFILE;
+				delete childEnv.PI_PROFILE;
+				delete childEnv.PI_CODING_AGENT_DIR;
+				delete childEnv.MARS_PROFILE_BOOTSTRAP_SENTINEL;
 
-			const proc = Bun.spawn([process.execPath, probePath], {
-				cwd: repoRoot,
-				stdout: "pipe",
-				stderr: "pipe",
-				env: childEnv,
-			});
-			const [stdout, stderr, exitCode] = await Promise.all([
-				readStream(proc.stdout as ReadableStream<Uint8Array>),
-				readStream(proc.stderr as ReadableStream<Uint8Array>),
-				proc.exited,
-			]);
+				const proc = Bun.spawn([process.execPath, probePath], {
+					cwd: repoRoot,
+					stdout: "pipe",
+					stderr: "pipe",
+					env: childEnv,
+				});
+				const [stdout, stderr, exitCode] = await Promise.all([
+					readStream(proc.stdout as ReadableStream<Uint8Array>),
+					readStream(proc.stderr as ReadableStream<Uint8Array>),
+					proc.exited,
+				]);
 
-			expect(exitCode, stderr).toBe(0);
-			expect(stdout).toContain("SENTINEL=work");
-			expect(stdout).not.toContain("SENTINEL=default");
-		} finally {
-			await removeWithRetries(root);
-		}
-		// Spawns a probe that imports the command modules, so the cost is cold
-		// transpile of the CLI graph, not latency under test.
-	}, 30_000);
+				expect(exitCode, stderr).toBe(0);
+				expect(stdout).toContain("SENTINEL=work");
+				expect(stdout).not.toContain("SENTINEL=default");
+			} finally {
+				await removeWithRetries(root);
+			}
+			// Spawns a probe that imports the command modules, so the cost is cold
+			// transpile of the CLI graph, not latency under test.
+		},
+		scaledTimeout(30000),
+	);
 
-	it("surfaces an invalid OMP_PROFILE env as a clean error, not an import crash", async () => {
-		const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-profile-cli-env-bad-"));
-		try {
-			const home = path.join(root, "home");
-			await fs.mkdir(home, { recursive: true });
+	it(
+		"surfaces an invalid MARS_PROFILE env as a clean error, not an import crash",
+		async () => {
+			const root = await fs.mkdtemp(path.join(os.tmpdir(), "mars-profile-cli-env-bad-"));
+			try {
+				const home = path.join(root, "home");
+				await fs.mkdir(home, { recursive: true });
 
-			const probePath = path.join(root, "probe.ts");
-			await Bun.write(
-				probePath,
-				[
-					`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
-					'await runCli(["--version"]);',
-					// Reached only if the module import did NOT throw — i.e. the invalid
-					// env was deferred to runCli's error handler instead of crashing the
-					// process during the static import of dirs.ts.
-					'process.stdout.write("HANDLED");',
-				].join("\n"),
-			);
+				const probePath = path.join(root, "probe.ts");
+				await Bun.write(
+					probePath,
+					[
+						`import { runCli } from ${JSON.stringify(url.pathToFileURL(cliEntry).href)};`,
+						'await runCli(["--version"]);',
+						// Reached only if the module import did NOT throw — i.e. the invalid
+						// env was deferred to runCli's error handler instead of crashing the
+						// process during the static import of dirs.ts.
+						'process.stdout.write("HANDLED");',
+					].join("\n"),
+				);
 
-			const childEnv: Record<string, string | undefined> = {
-				...process.env,
-				HOME: home,
-				USERPROFILE: home,
-				PI_CONFIG_DIR: ".omp-profile-cli-env-bad",
-				OMP_PROFILE: "..",
-				NO_COLOR: "1",
-			};
-			delete childEnv.PI_PROFILE;
-			delete childEnv.PI_CODING_AGENT_DIR;
+				const childEnv: Record<string, string | undefined> = {
+					...process.env,
+					HOME: home,
+					USERPROFILE: home,
+					PI_CONFIG_DIR: ".mars-profile-cli-env-bad",
+					MARS_PROFILE: "..",
+					NO_COLOR: "1",
+				};
+				delete childEnv.PI_PROFILE;
+				delete childEnv.PI_CODING_AGENT_DIR;
 
-			const proc = Bun.spawn([process.execPath, probePath], {
-				cwd: repoRoot,
-				stdout: "pipe",
-				stderr: "pipe",
-				env: childEnv,
-			});
-			const [stdout, stderr, exitCode] = await Promise.all([
-				readStream(proc.stdout as ReadableStream<Uint8Array>),
-				readStream(proc.stderr as ReadableStream<Uint8Array>),
-				proc.exited,
-			]);
+				const proc = Bun.spawn([process.execPath, probePath], {
+					cwd: repoRoot,
+					stdout: "pipe",
+					stderr: "pipe",
+					env: childEnv,
+				});
+				const [stdout, stderr, exitCode] = await Promise.all([
+					readStream(proc.stdout as ReadableStream<Uint8Array>),
+					readStream(proc.stderr as ReadableStream<Uint8Array>),
+					proc.exited,
+				]);
 
-			expect(stdout, stderr).toContain("HANDLED");
-			expect(stderr).toContain("Invalid OMP profile");
-			expect(exitCode).toBe(1);
-		} finally {
-			await removeWithRetries(root);
-		}
-		// Same cold-spawn cost as the sibling above; it only escapes Bun's 5s
-		// default because that test warms the transpile cache first.
-	}, 30_000);
+				expect(stdout, stderr).toContain("HANDLED");
+				expect(stderr).toContain("Invalid Mars profile");
+				expect(exitCode).toBe(1);
+			} finally {
+				await removeWithRetries(root);
+			}
+			// Same cold-spawn cost as the sibling above; it only escapes Bun's 5s
+			// default because that test warms the transpile cache first.
+		},
+		scaledTimeout(30000),
+	);
 });

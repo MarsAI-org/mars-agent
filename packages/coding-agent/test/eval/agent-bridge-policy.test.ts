@@ -1,4 +1,5 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { TempDir } from "@marsai-org/utils";
@@ -615,7 +616,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("exposes agent() in JavaScript and parses structured output", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-js-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-js-");
 		const { session, sessionFile } = makeEvalSession(tempDir, "js-agent");
 		mockAgents();
 		vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options =>
@@ -654,7 +655,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("runs JavaScript agent handles concurrently and returns results in input order", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-js-handles-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-js-handles-");
 		const { session, sessionFile } = makeEvalSession(tempDir, "js-agent-handles");
 		mockAgents();
 		const overlap = spyOverlapBarrier(4);
@@ -670,7 +671,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("propagates handle failures or returns them in place when requested", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-js-handle-errors-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-js-handle-errors-");
 		const { session, sessionFile } = makeEvalSession(tempDir, "js-agent-handle-errors");
 		mockAgents();
 		vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => {
@@ -699,7 +700,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("exposes agent() in the Python runtime", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-py-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-py-");
 		const { session, sessionFile, sessionId } = makeEvalSession(tempDir, "py-agent");
 		mockAgents();
 		vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options =>
@@ -743,7 +744,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("runs Python agent handles concurrently and returns results in input order", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-py-handles-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-py-handles-");
 		const { session, sessionFile, sessionId } = makeEvalSession(tempDir, "py-agent-handles");
 		mockAgents();
 		const overlap = spyOverlapBarrier(4);
@@ -762,7 +763,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("streams the latest enriched agent progress through onStatus before the cell finishes", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-progress-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-progress-");
 		const { session, sessionFile } = makeEvalSession(tempDir, "js-agent-progress");
 		mockAgents();
 		const releaseCompletion = Promise.withResolvers<void>();
@@ -863,7 +864,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("pauses the idle watchdog while a quiet agent() runs past the budget", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-timeout-pause-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-timeout-pause-");
 		const { session } = makeEvalSession(
 			tempDir,
 			"js-agent-timeout-pause",
@@ -931,7 +932,7 @@ describe("agent() through eval runtimes", () => {
 	});
 
 	it("keeps timeout paused despite agent() progress snapshots", async () => {
-		using tempDir = TempDir.createSync("@omp-eval-agent-progress-timeout-pause-");
+		using tempDir = TempDir.createSync("@mars-eval-agent-progress-timeout-pause-");
 		const { session } = makeEvalSession(tempDir, "js-agent-progress-timeout-pause");
 		mockAgents();
 
@@ -1007,72 +1008,76 @@ describe("agent() through eval runtimes", () => {
 		expect(idle.signal.aborted).toBe(false);
 	});
 
-	it("interrupting a JavaScript agent() aborts it at once but waits out its critical phase", async () => {
-		// Regression: `onAbort` used to hard-kill the worker straight away, which
-		// rejected the run while the untracked `handleToolCall` promise carried on
-		// — so an isolation merge could keep cherry-picking after the cell had
-		// already returned. Mirrors the Python bridge's shielded-signal contract.
-		//
-		// Asserted as an ordering, not a duration: the agent call must finish
-		// before the cell settles. Killing early inverts the two.
-		using tempDir = TempDir.createSync("@omp-eval-agent-js-interrupt-");
-		const { session, sessionFile } = makeEvalSession(tempDir, "js-agent-interrupt");
-		mockAgents();
+	it(
+		"interrupting a JavaScript agent() aborts it at once but waits out its critical phase",
+		async () => {
+			// Regression: `onAbort` used to hard-kill the worker straight away, which
+			// rejected the run while the untracked `handleToolCall` promise carried on
+			// — so an isolation merge could keep cherry-picking after the cell had
+			// already returned. Mirrors the Python bridge's shielded-signal contract.
+			//
+			// Asserted as an ordering, not a duration: the agent call must finish
+			// before the cell settles. Killing early inverts the two.
+			using tempDir = TempDir.createSync("@mars-eval-agent-js-interrupt-");
+			const { session, sessionFile } = makeEvalSession(tempDir, "js-agent-interrupt");
+			mockAgents();
 
-		const order: string[] = [];
-		const inFlight = Promise.withResolvers<void>();
-		const waiting = Promise.withResolvers<void>();
-		const sawAbort = Promise.withResolvers<void>();
-		const release = Promise.withResolvers<void>();
-		// Stands in for the isolation merge: notices the abort, then keeps going.
-		vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => {
-			options.signal?.addEventListener(
-				"abort",
-				() => {
-					order.push("agent-saw-abort");
-					sawAbort.resolve();
+			const order: string[] = [];
+			const inFlight = Promise.withResolvers<void>();
+			const waiting = Promise.withResolvers<void>();
+			const sawAbort = Promise.withResolvers<void>();
+			const release = Promise.withResolvers<void>();
+			// Stands in for the isolation merge: notices the abort, then keeps going.
+			vi.spyOn(taskExecutor, "runSubprocess").mockImplementation(async options => {
+				options.signal?.addEventListener(
+					"abort",
+					() => {
+						order.push("agent-saw-abort");
+						sawAbort.resolve();
+					},
+					{ once: true },
+				);
+				inFlight.resolve();
+				await release.promise;
+				order.push("agent-returned");
+				return singleResult(options, { output: "merged" });
+			});
+
+			const ac = new AbortController();
+			const cell = executeJs('const handle = await agent("merge"); return await handle.wait();', {
+				cwd: tempDir.path(),
+				sessionId: "agent-bridge-js-interrupt",
+				session,
+				sessionFile,
+				signal: ac.signal,
+				onStatus: event => {
+					if (event.op === EVAL_TIMEOUT_PAUSE_OP) waiting.resolve();
 				},
-				{ once: true },
-			);
-			inFlight.resolve();
-			await release.promise;
-			order.push("agent-returned");
-			return singleResult(options, { output: "merged" });
-		});
+			}).finally(() => {
+				order.push("cell-settled");
+			});
 
-		const ac = new AbortController();
-		const cell = executeJs('const handle = await agent("merge"); return await handle.wait();', {
-			cwd: tempDir.path(),
-			sessionId: "agent-bridge-js-interrupt",
-			session,
-			sessionFile,
-			signal: ac.signal,
-			onStatus: event => {
-				if (event.op === EVAL_TIMEOUT_PAUSE_OP) waiting.resolve();
-			},
-		}).finally(() => {
-			order.push("cell-settled");
-		});
+			// Abort only once the cell is parked in `handle.wait()`: an abort landing
+			// before the wait reaches the host kills the cell while the background
+			// job keeps running, which is the unwaited-handle contract, not this one.
+			await inFlight.promise;
+			await waiting.promise;
+			ac.abort(new Error("external interrupt"));
+			// Delegated work is notified immediately, before anything is released.
+			await sawAbort.promise;
+			// Drain the microtask queue. An abort that settled the run outright would
+			// have resolved the cell by now; no wall clock is involved.
+			for (let i = 0; i < 200; i++) await Promise.resolve();
+			expect(order).toEqual(["agent-saw-abort"]);
 
-		// Abort only once the cell is parked in `handle.wait()`: an abort landing
-		// before the wait reaches the host kills the cell while the background
-		// job keeps running, which is the unwaited-handle contract, not this one.
-		await inFlight.promise;
-		await waiting.promise;
-		ac.abort(new Error("external interrupt"));
-		// Delegated work is notified immediately, before anything is released.
-		await sawAbort.promise;
-		// Drain the microtask queue. An abort that settled the run outright would
-		// have resolved the cell by now; no wall clock is involved.
-		for (let i = 0; i < 200; i++) await Promise.resolve();
-		expect(order).toEqual(["agent-saw-abort"]);
+			release.resolve();
+			const result = await cell;
 
-		release.resolve();
-		const result = await cell;
-
-		expect(order).toEqual(["agent-saw-abort", "agent-returned", "cell-settled"]);
-		expect(result.cancelled).toBe(true);
-	}, 30_000);
+			expect(order).toEqual(["agent-saw-abort", "agent-returned", "cell-settled"]);
+			expect(result.cancelled).toBe(true);
+		},
+		scaledTimeout(30000),
+	);
 });
 
 describe("runEvalAgent isolation", () => {
@@ -1351,11 +1356,11 @@ describe("runEvalAgent isolation", () => {
 		vi.spyOn(isolationRunner, "runIsolatedSubprocess").mockImplementation(async opts =>
 			singleResult(opts.baseOptions, {
 				output: "ran",
-				branchName: `omp/task/${opts.agentId}`,
+				branchName: `mars/task/${opts.agentId}`,
 			}),
 		);
 		vi.spyOn(isolationRunner, "mergeIsolatedChanges").mockResolvedValue({
-			summary: "\n\n<system-notification>Branch merge failed: omp/task/x.\nConflict: foo.ts</system-notification>",
+			summary: "\n\n<system-notification>Branch merge failed: mars/task/x.\nConflict: foo.ts</system-notification>",
 			changesApplied: false,
 			hadAnyChanges: false,
 			mergedBranchForNestedPatches: false,
@@ -1363,7 +1368,7 @@ describe("runEvalAgent isolation", () => {
 
 		const session = isolatedSession({ "task.isolation.merge": "branch" });
 		await expect(runEvalAgentAndWait({ prompt: "scout", isolated: true }, { session })).rejects.toThrow(
-			/isolated apply failed.*Branch merge failed.*Captured branch preserved as omp\/task\//s,
+			/isolated apply failed.*Branch merge failed.*Captured branch preserved as mars\/task\//s,
 		);
 	});
 
@@ -1470,7 +1475,7 @@ describe("runEvalAgent isolation", () => {
 		vi.spyOn(isolationRunner, "runIsolatedSubprocess").mockImplementation(async opts =>
 			singleResult(opts.baseOptions, {
 				output: "branched",
-				branchName: `omp/task/${opts.agentId}`,
+				branchName: `mars/task/${opts.agentId}`,
 			}),
 		);
 		const mergeSpy = vi.spyOn(isolationRunner, "mergeIsolatedChanges");
@@ -1479,8 +1484,8 @@ describe("runEvalAgent isolation", () => {
 		const result = await runEvalAgentAndWait({ prompt: "scout", isolated: true, apply: false }, { session });
 
 		expect(mergeSpy).not.toHaveBeenCalled();
-		expect(result.details.branchName).toMatch(/^omp\/task\//);
-		expect(result.text).toContain("omp/task/");
+		expect(result.details.branchName).toMatch(/^mars\/task\//);
+		expect(result.text).toContain("mars/task/");
 		expect(result.text).toContain("apply=false");
 	});
 
@@ -1546,7 +1551,7 @@ describe("runEvalAgent isolation", () => {
 
 		expect(result.details.patchPath).toMatch(/\.patch$/);
 		const removedArtifactsDir = rmSpy.mock.calls.some(
-			([target]) => typeof target === "string" && target.includes("omp-eval-agent-"),
+			([target]) => typeof target === "string" && target.includes("mars-eval-agent-"),
 		);
 		expect(removedArtifactsDir).toBe(false);
 	});
@@ -1568,7 +1573,7 @@ describe("runEvalAgent isolation", () => {
 		await runEvalAgentAndWait({ prompt: "scout", isolated: true }, { session: isolatedSession() });
 
 		const removedArtifactsDir = rmSpy.mock.calls.some(
-			([target]) => typeof target === "string" && target.includes("omp-eval-agent-"),
+			([target]) => typeof target === "string" && target.includes("mars-eval-agent-"),
 		);
 		expect(removedArtifactsDir).toBe(false);
 	});

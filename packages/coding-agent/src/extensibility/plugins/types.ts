@@ -1,5 +1,5 @@
 // =============================================================================
-// Plugin Manifest Types (from package.json omp/pi field)
+// Plugin Manifest Types (from package.json mars/pi field)
 // =============================================================================
 
 /**
@@ -22,7 +22,7 @@ export interface PluginFeature {
 }
 
 /**
- * Plugin manifest from package.json omp or pi field.
+ * Plugin manifest from package.json mars or pi field.
  */
 export interface PluginManifest {
 	/** Plugin display name (defaults to package name) */
@@ -46,6 +46,27 @@ export interface PluginManifest {
 
 	/** Settings schema for plugin configuration */
 	settings?: Record<string, PluginSettingSchema>;
+}
+
+/** A `package.json`-shaped object carrying the plugin manifest under one of its keys. */
+export interface PluginManifestCarrier {
+	/** Canonical manifest key. */
+	mars?: PluginManifest;
+	/** Pre-rebrand manifest key; still read so installed plugins keep working. */
+	omp?: PluginManifest;
+	/** Original Pi manifest key, read for cross-harness packages. */
+	pi?: PluginManifest;
+}
+
+/**
+ * Resolve the plugin manifest from a package's `mars`, `omp`, or `pi` key.
+ *
+ * `mars` is canonical. `omp` is the pre-rebrand key and stays a fallback so an
+ * installed plugin that has not migrated keeps loading; `pi` remains last for
+ * packages authored for the original harness.
+ */
+export function resolvePluginManifest(pkg: PluginManifestCarrier): PluginManifest | undefined {
+	return pkg.mars ?? pkg.omp ?? pkg.pi;
 }
 
 // =============================================================================
@@ -106,7 +127,7 @@ export interface InstalledPlugin {
 	version: string;
 	/** Absolute path to package directory */
 	path: string;
-	/** Parsed omp/pi manifest */
+	/** Parsed mars/pi manifest */
 	manifest: PluginManifest;
 	/**
 	 * Enabled features:
@@ -119,7 +140,7 @@ export interface InstalledPlugin {
 }
 
 // =============================================================================
-// Runtime Config Types (stored in omp-plugins.lock.json)
+// Runtime Config Types (stored in mars-plugins.lock.json)
 // =============================================================================
 
 /**
@@ -135,7 +156,7 @@ export interface PluginRuntimeState {
 }
 
 /**
- * Runtime configuration persisted to omp-plugins.lock.json.
+ * Runtime configuration persisted to mars-plugins.lock.json.
  * Tracks plugin states and settings across sessions.
  */
 export interface PluginRuntimeConfig {
@@ -150,7 +171,7 @@ export interface PluginRuntimeConfig {
 // =============================================================================
 
 /**
- * Project-local plugin overrides (stored in .omp/plugin-overrides.json).
+ * Project-local plugin overrides (stored in .mars/plugin-overrides.json).
  * Allows per-project plugin configuration without modifying global state.
  */
 export interface ProjectPluginOverrides {

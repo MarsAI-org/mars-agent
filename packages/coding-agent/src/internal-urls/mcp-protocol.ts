@@ -210,7 +210,7 @@ export class McpResourceNotFoundError extends Error {
  *
  * URL forms:
  * - mcp://<resource-uri> (e.g. mcp://test://notes, mcp://ibkr://portfolio/positions)
- * - A resource's native URI when its scheme has no OMP handler (e.g. ags://capabilities/current-host)
+ * - A resource's native URI when its scheme has no Mars handler (e.g. ags://capabilities/current-host)
  */
 export class McpProtocolHandler implements ProtocolHandler {
 	readonly scheme = "mcp";

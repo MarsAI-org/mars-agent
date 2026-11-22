@@ -1,6 +1,7 @@
 /**
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
  * Wire contract for Skillshare (`skills.omp.sh`): an npm-style registry for
- * omp skills. Shared by the omp CLI (`omp skill …`), the Go server
+ * Mars skills. Shared by the Mars CLI (`mars skill …`), the Go server
  * (`stencil/apps/skills`), and its web UI (which mirrors this file).
  *
  * Packages are scoped: `@scope/name`. A scope is a Stencil username claimed on
@@ -14,7 +15,10 @@
  * (comma-separated), `metadata.repository`, `metadata.homepage`.
  */
 
-/** Default registry; `skills.registryUrl` overrides it. */
+/**
+ * Default registry; `skills.registryUrl` overrides it.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const DEFAULT_SKILLS_URL = "https://skills.omp.sh";
 
 /** Scopes are Stencil usernames (or registry orgs): lowercase letters, digits, underscores; 3–32 chars. */
@@ -68,7 +72,10 @@ export const SKILL_HEADERS = {
 	githubOidc: "X-Skill-GitHub-OIDC",
 } as const;
 
-/** Audience CI must request for GitHub Actions OIDC tokens. */
+/**
+ * Audience CI must request for GitHub Actions OIDC tokens.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const SKILLS_OIDC_AUDIENCE = "skills.omp.sh";
 
 /** Env var holding a registry publish token for CI (`sks_…`); wins over the Stencil login. */

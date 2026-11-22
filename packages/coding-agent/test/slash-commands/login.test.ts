@@ -9,6 +9,7 @@ type RuntimeHarness = {
 	getWarning: () => string | undefined;
 	getSelectorMode: () => "login" | "logout" | undefined;
 	getSelectorProvider: () => string | undefined;
+	getEndpointWizardCalls: () => number;
 };
 
 const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarness => {
@@ -16,6 +17,7 @@ const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarn
 	let warningMessage: string | undefined;
 	let selectorMode: "login" | "logout" | undefined;
 	let selectorProvider: string | undefined;
+	let endpointWizardCalls = 0;
 	const ctx = {
 		oauthManualInput: manualInput,
 		editor: {
@@ -31,6 +33,9 @@ const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarn
 			selectorMode = mode;
 			selectorProvider = providerId;
 		},
+		showCustomEndpointWizard: async () => {
+			endpointWizardCalls += 1;
+		},
 	} as InteractiveModeContext;
 
 	return {
@@ -41,6 +46,7 @@ const createRuntimeHarness = (manualInput: OAuthManualInputManager): RuntimeHarn
 		getWarning: () => warningMessage,
 		getSelectorMode: () => selectorMode,
 		getSelectorProvider: () => selectorProvider,
+		getEndpointWizardCalls: () => endpointWizardCalls,
 	};
 };
 
@@ -89,6 +95,31 @@ describe("/login slash command", () => {
 		expect(handled).toBe(true);
 		expect(harness.getSelectorMode()).toBe("login");
 		expect(harness.getSelectorProvider()).toBe("parallel");
+	});
+
+	it.each(["custom", "endpoint", "custom-endpoint"])(
+		"routes /login %s to the custom endpoint wizard instead of a provider",
+		async alias => {
+			const manualInput = new OAuthManualInputManager();
+			const harness = createRuntimeHarness(manualInput);
+
+			const handled = await executeBuiltinSlashCommand(`/login ${alias}`, harness.runtime);
+
+			expect(handled).toBe(true);
+			expect(harness.getEndpointWizardCalls()).toBe(1);
+			expect(harness.getSelectorMode()).toBeUndefined();
+		},
+	);
+
+	it("opens the custom endpoint wizard from /endpoint", async () => {
+		const manualInput = new OAuthManualInputManager();
+		const harness = createRuntimeHarness(manualInput);
+
+		const handled = await executeBuiltinSlashCommand("/endpoint", harness.runtime);
+
+		expect(handled).toBe(true);
+		expect(harness.getEndpointWizardCalls()).toBe(1);
+		expect(harness.getSelectorMode()).toBeUndefined();
 	});
 
 	it("warns when no pending login exists for manual callback", async () => {

@@ -60,6 +60,9 @@
 ### Changed
 
 - Updated Bun engine requirement to ≥1.4.4
+### Changed
+
+- **Tool cards shorten home paths the same way the header does.** The tool renderers carried their own `shortenPath`, so a long path in a tool card stayed whole while the header elided it. Both now use one helper.
 
 ## [18.8.0] - 2026-10-07
 

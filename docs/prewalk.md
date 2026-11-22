@@ -9,10 +9,10 @@ Prewalk is off by default. Its target is `prewalk.into`, which defaults to the m
 Enable prewalk persistently in the global config:
 
 ```bash
-omp config set prewalk.enabled true
+mars config set prewalk.enabled true
 ```
 
-The equivalent YAML in `~/.omp/agent/config.yml` or a project `.omp/config.yml` is:
+The equivalent YAML in `~/.mars/agent/config.yml` or a project `.mars/config.yml` is:
 
 ```yaml
 prewalk:
@@ -38,12 +38,12 @@ The configured setting arms new sessions, not resumed/imported sessions. Explici
 For example:
 
 ```bash
-omp --prewalk
-omp --prewalk-into @smol
-omp --prewalk-into openai/gpt-5-mini
+mars --prewalk
+mars --prewalk-into @smol
+mars --prewalk-into openai/gpt-5-mini
 ```
 
-At startup, OMP resolves the target with the normal model-role and model-matching rules, trying configured role candidates in order for an authenticated, enabled provider. Extension-provided targets may resolve after extension registration. If no usable target remains, OMP prints a warning and starts with prewalk unarmed.
+At startup, Mars resolves the target with the normal model-role and model-matching rules, trying configured role candidates in order for an authenticated, enabled provider. Extension-provided targets may resolve after extension registration. If no usable target remains, Mars prints a warning and starts with prewalk unarmed.
 
 `--no-prewalk` cannot be combined with `--prewalk` or `--prewalk-into`. An explicit `--prewalk-into @default` resolves against the default role from before `--model` overrides it.
 
@@ -57,7 +57,7 @@ A model or thinking-level selection made while the handoff is still switching wi
 
 An armed prewalk injects a planning nudge. When the `todo` tool is active, any successful `todo` call—including the read-only `view` operation—opens the handoff gate. Without an active `todo` tool, the gate is already open.
 
-OMP switches at the completed assistant-turn boundary containing the first eligible `edit` or `write` result, after persisting that turn's assistant message and tool results. Unlike the todo gate, the edit/write trigger does not require a successful result.
+Mars switches at the completed assistant-turn boundary containing the first eligible `edit` or `write` result, after persisting that turn's assistant message and tool results. Unlike the todo gate, the edit/write trigger does not require a successful result.
 
 Calls to other tools do not trigger the handoff. Neither do `write` calls that change no files: messages to `agent://` peers, replies, and `proc://` stdin, mode, or kill writes. A `bash` call that ran tool commands counts only when its dispatch records classify the run as a workspace write; a read-only dispatch such as LSP navigation or a `<tool> --help` lookup does not arm the handoff, and neither does an execution-tier dispatch such as a test runner or remote command.
 
@@ -71,7 +71,7 @@ In a top-level session, changing `prewalk.enabled` live also takes effect:
 turning it on arms the `prewalk.into` target when none is armed; turning it off
 disarms a pending handoff. This does not control subagent prewalk.
 
-Run these slash commands without restarting OMP:
+Run these slash commands without restarting Mars:
 
 ```text
 /prewalk [into]

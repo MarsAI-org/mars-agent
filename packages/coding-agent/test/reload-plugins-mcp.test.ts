@@ -70,7 +70,7 @@ describe("/reload-plugins runtime refresh", () => {
 	let projectDir = "";
 
 	beforeEach(async () => {
-		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-reload-plugins-mcp-"));
+		projectDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-reload-plugins-mcp-"));
 		setProjectDir(projectDir);
 	});
 
@@ -107,7 +107,7 @@ describe("/reload-plugins runtime refresh", () => {
 	});
 
 	test("republishes edited agents to an existing task tool", async () => {
-		const agentDir = path.join(projectDir, ".omp", "agents");
+		const agentDir = path.join(projectDir, ".mars", "agents");
 		const agentFile = path.join(agentDir, "reload-agent.md");
 		await fs.mkdir(agentDir, { recursive: true });
 		await Bun.write(agentFile, agentDefinition("VERSION_ONE"));

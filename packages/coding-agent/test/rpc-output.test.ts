@@ -1,4 +1,5 @@
 import { afterEach, expect, it, mock, spyOn } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { Writable } from "node:stream";
@@ -10,64 +11,68 @@ afterEach(() => {
 	mock.restore();
 });
 
-it("drains RPC command responses after stdin EOF while the real stdout pipe is backpressured", async () => {
-	const child = Bun.spawn(
-		[
-			process.execPath,
-			path.join(import.meta.dir, "../src/cli.ts"),
-			"--mode",
-			"rpc",
-			"--no-extensions",
-			"--no-skills",
-			"--no-tools",
-			"--no-session",
-			"--provider",
-			"anthropic",
-			"--model",
-			"claude-sonnet-4-5",
-		],
-		{
-			cwd: import.meta.dir,
-			env: { ...process.env, PI_NO_TITLE: "1" },
-			stdin: "pipe",
-			stdout: "pipe",
-			stderr: "pipe",
-		},
-	);
-	const stderr = new Response(child.stderr).text();
-	const reader = child.stdout.getReader();
-	const chunks: Uint8Array[] = [];
-	try {
-		const ready = await reader.read();
-		if (ready.done) throw new Error(`RPC exited before ready: ${await stderr}`);
-		chunks.push(ready.value);
-		for (let id = 0; id < 128; id++) {
-			child.stdin.write(`${JSON.stringify({ type: "get_state", id: `${id}:${"x".repeat(32768)}` })}\n`);
-		}
-		await child.stdin.flush();
-		child.stdin.end();
-		await Bun.sleep(300);
-		while (true) {
-			const next = await reader.read();
-			if (next.done) break;
-			chunks.push(next.value);
-		}
-		const output = Buffer.concat(chunks).toString();
-		const replies: { id: string; type: string; success?: boolean }[] = output
-			.trimEnd()
-			.split("\n")
-			.map(line => JSON.parse(line));
-		expect(replies.filter(reply => reply.type === "response").map(reply => reply.id.split(":")[0])).toEqual(
-			Array.from({ length: 128 }, (_, id) => String(id)),
+it(
+	"drains RPC command responses after stdin EOF while the real stdout pipe is backpressured",
+	async () => {
+		const child = Bun.spawn(
+			[
+				process.execPath,
+				path.join(import.meta.dir, "../src/cli.ts"),
+				"--mode",
+				"rpc",
+				"--no-extensions",
+				"--no-skills",
+				"--no-tools",
+				"--no-session",
+				"--provider",
+				"anthropic",
+				"--model",
+				"claude-sonnet-4-5",
+			],
+			{
+				cwd: import.meta.dir,
+				env: { ...process.env, PI_NO_TITLE: "1" },
+				stdin: "pipe",
+				stdout: "pipe",
+				stderr: "pipe",
+			},
 		);
-		expect(await child.exited).toBe(0);
-	} finally {
-		reader.releaseLock();
-		child.kill();
-		await child.exited.catch(() => {});
-		await stderr;
-	}
-}, 30_000);
+		const stderr = new Response(child.stderr).text();
+		const reader = child.stdout.getReader();
+		const chunks: Uint8Array[] = [];
+		try {
+			const ready = await reader.read();
+			if (ready.done) throw new Error(`RPC exited before ready: ${await stderr}`);
+			chunks.push(ready.value);
+			for (let id = 0; id < 128; id++) {
+				child.stdin.write(`${JSON.stringify({ type: "get_state", id: `${id}:${"x".repeat(32768)}` })}\n`);
+			}
+			await child.stdin.flush();
+			child.stdin.end();
+			await Bun.sleep(300);
+			while (true) {
+				const next = await reader.read();
+				if (next.done) break;
+				chunks.push(next.value);
+			}
+			const output = Buffer.concat(chunks).toString();
+			const replies: { id: string; type: string; success?: boolean }[] = output
+				.trimEnd()
+				.split("\n")
+				.map(line => JSON.parse(line));
+			expect(replies.filter(reply => reply.type === "response").map(reply => reply.id.split(":")[0])).toEqual(
+				Array.from({ length: 128 }, (_, id) => String(id)),
+			);
+			expect(await child.exited).toBe(0);
+		} finally {
+			reader.releaseLock();
+			child.kill();
+			await child.exited.catch(() => {});
+			await stderr;
+		}
+	},
+	scaledTimeout(30000),
+);
 
 it("delivers ordered v1 and chunked v2 frames through a slow sink before close completes", async () => {
 	const chunks: Buffer[] = [];

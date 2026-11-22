@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -30,41 +31,45 @@ const TEST_ADAPTER: DapResolvedAdapter = {
 	acceptsDirectoryProgram: false,
 };
 
-it("rejects pending DAP work and terminates an adapter with invalid framing", async () => {
-	const client = await DapClient.spawn({
-		adapter: {
-			...TEST_ADAPTER,
-			command: process.execPath,
-			resolvedCommand: process.execPath,
-			args: ["run", path.join(import.meta.dir, "../fixtures/malformed-jsonrpc-peer.ts")],
-		},
-		cwd: process.cwd(),
-	});
-	try {
-		const request = client.sendRequest("initialize", {}, undefined, 60_000);
-		const event = client.waitForEvent("stopped", undefined, undefined, 60_000);
-		const results = await withTimeout(
-			Promise.allSettled([request, event]),
-			5_000,
-			"Invalid framing did not reject pending DAP work",
-		);
-		for (const result of results) {
-			expect(result.status).toBe("rejected");
-			if (result.status === "rejected") {
-				expect(result.reason).toBeInstanceOf(Error);
-				expect((result.reason as Error).message).toMatch(/Content-Length.*limit/);
+it(
+	"rejects pending DAP work and terminates an adapter with invalid framing",
+	async () => {
+		const client = await DapClient.spawn({
+			adapter: {
+				...TEST_ADAPTER,
+				command: process.execPath,
+				resolvedCommand: process.execPath,
+				args: ["run", path.join(import.meta.dir, "../fixtures/malformed-jsonrpc-peer.ts")],
+			},
+			cwd: process.cwd(),
+		});
+		try {
+			const request = client.sendRequest("initialize", {}, undefined, 60_000);
+			const event = client.waitForEvent("stopped", undefined, undefined, 60_000);
+			const results = await withTimeout(
+				Promise.allSettled([request, event]),
+				5_000,
+				"Invalid framing did not reject pending DAP work",
+			);
+			for (const result of results) {
+				expect(result.status).toBe("rejected");
+				if (result.status === "rejected") {
+					expect(result.reason).toBeInstanceOf(Error);
+					expect((result.reason as Error).message).toMatch(/Content-Length.*limit/);
+				}
 			}
+			await expect(client.sendRequest("threads", {})).rejects.toThrow(/not running/);
+			await withTimeout(
+				client.proc.exited.catch(() => {}),
+				5_000,
+				"Malformed adapter remained alive",
+			);
+		} finally {
+			await client.dispose();
 		}
-		await expect(client.sendRequest("threads", {})).rejects.toThrow(/not running/);
-		await withTimeout(
-			client.proc.exited.catch(() => {}),
-			5_000,
-			"Malformed adapter remained alive",
-		);
-	} finally {
-		await client.dispose();
-	}
-}, 10_000);
+	},
+	scaledTimeout(10000),
+);
 
 const DELAYED_UNIX_SOCKET_ADAPTER = `
 const listenPrefix = "--listen=unix:";
@@ -389,7 +394,7 @@ describe("DAP launch failure handling", () => {
 
 	it("waits for delayed Unix socket adapters before connecting on Linux", async () => {
 		if (process.platform !== "linux") return;
-		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-socket-"));
+		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-socket-"));
 		const adapterPath = path.join(cwd, "delayed-unix-socket-adapter.mjs");
 		await fs.writeFile(adapterPath, DELAYED_UNIX_SOCKET_ADAPTER);
 		const adapter: DapResolvedAdapter = {
@@ -525,7 +530,7 @@ describe("DAP launch failure handling", () => {
 
 	it("kills the detached adapter process when the Unix socket never appears (Linux)", async () => {
 		if (process.platform !== "linux") return;
-		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-unix-leak-"));
+		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-unix-leak-"));
 		try {
 			const adapterPath = path.join(cwd, "wedged-unix-adapter.mjs");
 			const pidFilePath = path.join(cwd, "adapter.pid");
@@ -564,7 +569,7 @@ describe("DAP launch failure handling", () => {
 		const originalPlatform = process.platform;
 		Object.defineProperty(process, "platform", { value: "darwin", configurable: true });
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-tcp-leak-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-tcp-leak-"));
 			try {
 				const adapterPath = path.join(cwd, "wedged-tcp-adapter.mjs");
 				const pidFilePath = path.join(cwd, "adapter.pid");
@@ -610,7 +615,7 @@ describe("connectSocket unix transport", () => {
 		// so `await connectSocket(...)` hung the launch forever.
 		const deadSocket = path.join(
 			os.tmpdir(),
-			`omp-dap-dead-${Date.now()}-${Math.random().toString(36).slice(2)}.sock`,
+			`mars-dap-dead-${Date.now()}-${Math.random().toString(36).slice(2)}.sock`,
 		);
 		const start = Date.now();
 		await expect(connectSocket({ unix: deadSocket }, 5_000)).rejects.toThrow();
@@ -644,7 +649,7 @@ await Bun.sleep(60_000);
 		source: string,
 		run: (adapter: DapResolvedAdapter, cwd: string) => Promise<void>,
 	): Promise<void> {
-		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-tcp-"));
+		const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-tcp-"));
 		const adapterPath = path.join(cwd, "tcp-adapter.mjs");
 		await fs.writeFile(adapterPath, source);
 		const adapter: DapResolvedAdapter = {
@@ -659,36 +664,44 @@ await Bun.sleep(60_000);
 		}
 	}
 
-	it("rejects a pending request fast when the transport closes cleanly without answering", async () => {
-		await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
-			const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
-			try {
-				// The ghost socket ends the read stream cleanly. The reader must wake
-				// the pending request with a connection-closed error; a wake regression
-				// rejects with `DAP request initialize timed out` instead.
-				await expect(client.sendRequest("initialize", {}, undefined, 60_000)).rejects.toThrow(
-					/DAP connection closed/,
-				);
-			} finally {
-				await client.dispose();
-			}
-		});
-	}, 20_000);
+	it(
+		"rejects a pending request fast when the transport closes cleanly without answering",
+		async () => {
+			await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
+				const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
+				try {
+					// The ghost socket ends the read stream cleanly. The reader must wake
+					// the pending request with a connection-closed error; a wake regression
+					// rejects with `DAP request initialize timed out` instead.
+					await expect(client.sendRequest("initialize", {}, undefined, 60_000)).rejects.toThrow(
+						/DAP connection closed/,
+					);
+				} finally {
+					await client.dispose();
+				}
+			});
+		},
+		scaledTimeout(20000),
+	);
 
-	it("wakes an event waiter when the transport closes instead of waiting out its timeout", async () => {
-		await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
-			const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
-			try {
-				// A close must wake the event waiter with the connection error rather
-				// than letting it wait out its own timeout.
-				await expect(client.waitForEvent("stopped", undefined, undefined, 60_000)).rejects.toThrow(
-					/DAP connection closed/,
-				);
-			} finally {
-				await client.dispose();
-			}
-		});
-	}, 20_000);
+	it(
+		"wakes an event waiter when the transport closes instead of waiting out its timeout",
+		async () => {
+			await withTcpAdapter(GHOST_ADAPTER, async (adapter, cwd) => {
+				const client = await DapClient.spawn({ adapter, cwd, socketReadyTimeoutMs: 5_000 });
+				try {
+					// A close must wake the event waiter with the connection error rather
+					// than letting it wait out its own timeout.
+					await expect(client.waitForEvent("stopped", undefined, undefined, 60_000)).rejects.toThrow(
+						/DAP connection closed/,
+					);
+				} finally {
+					await client.dispose();
+				}
+			});
+		},
+		scaledTimeout(20000),
+	);
 
 	// Deterministic gate contract: the client must not open its first connect
 	// until the adapter's stdout mentions the reserved port. Driven with a
@@ -743,7 +756,7 @@ describe("DebugTool launch validation", () => {
 			adapter: TEST_ADAPTER,
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-program-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-program-"));
 			try {
 				await fs.mkdir(path.join(cwd, "python"));
 				const session: ToolSession = {
@@ -783,7 +796,7 @@ describe("DebugTool launch validation", () => {
 			throw Object.assign(new Error("captured launch"), { capturedOptions: opts });
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-dir-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-dir-"));
 			try {
 				await fs.mkdir(path.join(cwd, "cmd"));
 				const session: ToolSession = {
@@ -818,7 +831,7 @@ describe("DebugTool launch validation", () => {
 			throw Object.assign(new Error("captured launch"), { capturedOptions: opts });
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-mixed-roots-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-mixed-roots-"));
 			try {
 				await fs.writeFile(path.join(cwd, "go.mod"), "module hello\n\ngo 1.22\n");
 				await fs.writeFile(path.join(cwd, "Makefile"), "all:\n\tgo build ./...\n");
@@ -866,7 +879,7 @@ describe("DebugTool launch validation", () => {
 			throw Object.assign(new Error("captured launch"), { capturedOptions: opts });
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-exec-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-exec-"));
 			try {
 				await fs.writeFile(path.join(cwd, "hello"), "#!/usr/bin/env sh\necho hi\n");
 				const session: ToolSession = {
@@ -899,7 +912,7 @@ describe("DebugTool launch validation", () => {
 			command: "python",
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-debugpy-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-debugpy-"));
 			try {
 				await fs.writeFile(path.join(cwd, "main.py"), "print('hi')");
 				const session: ToolSession = {
@@ -980,7 +993,7 @@ describe("DebugTool launch validation", () => {
 	it("throws targeted 'python not found in PATH' when adapter:'debugpy' is unresolvable for attach", async () => {
 		const attachSpy = spyOn(dapModule, "selectAttachAdapter").mockResolvedValue(null);
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-debugpy-attach-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-debugpy-attach-"));
 			try {
 				const session: ToolSession = {
 					cwd,
@@ -1009,7 +1022,7 @@ describe("DebugTool launch validation", () => {
 			command: "dlv",
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-hint-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-hint-"));
 			try {
 				await fs.writeFile(path.join(cwd, "main.go"), "package main\n\nfunc main() {}\n");
 				const session: ToolSession = {
@@ -1039,7 +1052,7 @@ describe("DebugTool launch validation", () => {
 			command: "./bin/missing-dlv",
 		});
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-dlv-config-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-dlv-config-"));
 			try {
 				await fs.writeFile(path.join(cwd, "main.go"), "package main\n\nfunc main() {}\n");
 				const session: ToolSession = {
@@ -1065,7 +1078,7 @@ describe("DebugTool launch validation", () => {
 	it("falls back to the generic 'No debugger adapter' error when adapter is unspecified", async () => {
 		const launchSpy = spyOn(dapModule, "selectLaunchAdapter").mockReturnValue({ kind: "none" });
 		try {
-			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "omp-debug-noadapter-"));
+			const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "mars-debug-noadapter-"));
 			try {
 				await fs.writeFile(path.join(cwd, "main.py"), "print('hi')");
 				const session: ToolSession = {

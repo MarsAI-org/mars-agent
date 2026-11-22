@@ -10,6 +10,7 @@
  * `stderr`) instead of throwing or blocking.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { scaledTimeout } from "../test-timeout";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -21,7 +22,7 @@ let binDir: string;
 let originalPath: string | undefined;
 
 beforeAll(async () => {
-	binDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-ssh-timeout-"));
+	binDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-ssh-timeout-"));
 	// Fake `ssh` that traps SIGTERM and sleeps far past any test bound.
 	// Simulates a wedged control-master / unreachable host.
 	const fake = path.join(binDir, "ssh");
@@ -37,25 +38,33 @@ afterAll(async () => {
 });
 
 describe("SSH pre-command helpers bound their own runtime (#4232)", () => {
-	it("runSshSync returns a failure result within the timeout on a wedged host", async () => {
-		const timeoutMs = 200;
-		const started = Date.now();
-		const result = await runSshSync(["-o", "BatchMode=yes", "unreachable", "true"], timeoutMs);
-		const elapsed = Date.now() - started;
+	it(
+		"runSshSync returns a failure result within the timeout on a wedged host",
+		async () => {
+			const timeoutMs = 200;
+			const started = Date.now();
+			const result = await runSshSync(["-o", "BatchMode=yes", "unreachable", "true"], timeoutMs);
+			const elapsed = Date.now() - started;
 
-		expect(elapsed).toBeLessThan(5_000);
-		// timeout → aborted child, so exit code is null (aborted) or non-zero.
-		expect(result.exitCode).not.toBe(0);
-	}, 10_000);
+			expect(elapsed).toBeLessThan(5_000);
+			// timeout → aborted child, so exit code is null (aborted) or non-zero.
+			expect(result.exitCode).not.toBe(0);
+		},
+		scaledTimeout(10000),
+	);
 
-	it("runSshCaptureSync returns a failure result within the timeout on a wedged host", async () => {
-		const timeoutMs = 200;
-		const started = Date.now();
-		const result = await runSshCaptureSync(["-o", "BatchMode=yes", "unreachable", "true"], timeoutMs);
-		const elapsed = Date.now() - started;
+	it(
+		"runSshCaptureSync returns a failure result within the timeout on a wedged host",
+		async () => {
+			const timeoutMs = 200;
+			const started = Date.now();
+			const result = await runSshCaptureSync(["-o", "BatchMode=yes", "unreachable", "true"], timeoutMs);
+			const elapsed = Date.now() - started;
 
-		expect(elapsed).toBeLessThan(5_000);
-		expect(result.exitCode).not.toBe(0);
-		expect(result.stdout).toBe("");
-	}, 10_000);
+			expect(elapsed).toBeLessThan(5_000);
+			expect(result.exitCode).not.toBe(0);
+			expect(result.stdout).toBe("");
+		},
+		scaledTimeout(10000),
+	);
 });

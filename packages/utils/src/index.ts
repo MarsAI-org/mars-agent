@@ -6,6 +6,7 @@ export * from "./bytes";
 export * from "./color";
 export * from "./dirs";
 export * from "./env";
+export * from "./env-compat";
 export * from "./executable";
 export * from "./fetch-retry";
 export * from "./file-lock";
@@ -45,6 +46,7 @@ export * from "./tls-fetch";
 export * from "./type-guards";
 export * from "./version";
 export * from "./which";
+export * from "./platform";
 export * from "./yaml-config";
 
 function isPlainObject(val: object): val is Record<string, unknown> {

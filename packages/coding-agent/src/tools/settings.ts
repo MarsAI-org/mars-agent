@@ -882,7 +882,7 @@ export const cfgGithubCacheEnabled = register({
 		tab: "tools",
 		group: "GitHub",
 		label: "GitHub View Cache",
-		description: "Cache rendered issue/PR view output in ~/.omp/cache/github-cache.db so repeated reads are free",
+		description: "Cache rendered issue/PR view output in ~/.mars/cache/github-cache.db so repeated reads are free",
 	},
 });
 
@@ -932,7 +932,7 @@ export const cfgSecurityEnabled = register({
 		group: "Available Tools",
 		label: "Security",
 		description:
-			"Enable OMP-native security scan planning, execution, and the read-only security:// resource namespace",
+			"Enable Mars-native security scan planning, execution, and the read-only security:// resource namespace",
 	},
 });
 
@@ -1170,12 +1170,16 @@ export const cfgDevAutoqa = register({
 export const cfgDevAutoqaPushEndpoint = register({
 	id: "dev.autoqaPush.endpoint",
 	type: "string",
+	// TODO(rebrand): Mars does not operate a grievance collector. The default
+	// remains the upstream endpoint so existing consent-based pushes keep
+	// working; set an empty value to disable pushing entirely.
 	default: "https://qa.omp.sh/v1/grievances" as const,
 	ui: {
 		tab: "tools",
 		group: "Developer",
 		label: "Auto QA Push Endpoint",
-		description: "Full URL receiving Auto QA JSON reports (default https://qa.omp.sh/v1/grievances)",
+		description:
+			"Full URL receiving Auto QA JSON reports. The built-in default is an upstream collector that Mars does not operate; clear this setting to disable pushing",
 	},
 });
 

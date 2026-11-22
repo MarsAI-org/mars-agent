@@ -32,7 +32,7 @@ let capturedChildShellEnv: Record<string, string> | undefined;
 /**
  * Project whose dotenv values the spawn environment filters out: the one current
  * when it was first built or captured.
- * That is normally the launch project, whose dotenv files Bun and omp load into
+ * That is normally the launch project, whose dotenv files Bun and mars load into
  * `process.env`; a later session in another project must not receive them.
  */
 let spawnEnvProjectDir: string | undefined;
@@ -125,6 +125,10 @@ export function resolveBasicShell(): string | undefined {
 
 	if (process.platform !== "win32") {
 		const searchPaths = ["/bin", "/usr/bin", "/usr/local/bin", "/opt/homebrew/bin"];
+		const termuxPrefix = process.env.PREFIX;
+		if (termuxPrefix) {
+			searchPaths.unshift(path.join(termuxPrefix, "bin"));
+		}
 		const candidates = ["bash", "sh"];
 
 		for (const name of candidates) {

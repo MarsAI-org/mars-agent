@@ -1,7 +1,7 @@
 import type { CommandMetadata } from "@marsai-org/utils/cli";
 
 export const acpHelp = {
-	description: "Run omp as an ACP (Agent Client Protocol) server over stdio",
+	description: "Run Mars as an ACP (Agent Client Protocol) server over stdio",
 } satisfies CommandMetadata;
 
 export const agentsHelp = { description: "Manage bundled task agents" } satisfies CommandMetadata;
@@ -16,7 +16,7 @@ export const authHelp = {
 } satisfies CommandMetadata;
 
 export const authBrokerHelp = {
-	description: "Manage the omp auth-broker (credential vault)",
+	description: "Manage the Mars auth-broker (credential vault)",
 } satisfies CommandMetadata;
 
 export const authGatewayHelp = {
@@ -44,7 +44,9 @@ export const collabHelp = {
 } satisfies CommandMetadata;
 
 export const clipHelp = {
-	description: "Upload a /record recording to live.omp.sh as a public clip and print its URL",
+	// TODO(rebrand): Mars does not operate a clip host. The default server is
+	// still the upstream one (`stream.serverUrl`); do not present it as Mars's.
+	description: "Upload a /record recording to the configured stream server as a public clip and print its URL",
 } satisfies CommandMetadata;
 
 export const commitHelp = { description: "Generate a commit message and update changelogs" } satisfies CommandMetadata;
@@ -102,7 +104,9 @@ export const installHelp = {
 
 export const joinHelp = { description: "Join a shared collab session (same as /join)" } satisfies CommandMetadata;
 
-export const modelsHelp = { description: "List, search, and refresh available models" } satisfies CommandMetadata;
+export const modelsHelp = {
+	description: "List, search, refresh models, and configure custom providers",
+} satisfies CommandMetadata;
 
 export const pluginHelp = { description: "Manage plugins (install, uninstall, list, etc.)" } satisfies CommandMetadata;
 
@@ -167,7 +171,9 @@ export function nativeShellHelp(name: keyof typeof NATIVE_SHELL_DESCRIPTIONS) {
 }
 
 export const skillHelp = {
-	description: "Install, search, publish, and manage skills on the Skillshare registry (skills.omp.sh)",
+	// TODO(rebrand): Mars does not operate a skill registry. The default registry
+	// is still the upstream one (`skills.registryUrl`); do not present it as Mars's.
+	description: "Install, search, publish, and manage skills on the configured Skillshare registry",
 } satisfies CommandMetadata;
 
 export const sshHelp = { description: "Manage SSH host configurations" } satisfies CommandMetadata;
@@ -175,7 +181,7 @@ export const sshHelp = { description: "Manage SSH host configurations" } satisfi
 export const statsHelp = { description: "View usage statistics" } satisfies CommandMetadata;
 
 export const streamHelp = {
-	description: "Broadcast local omp session screens and chat to your public live channel",
+	description: "Broadcast local Mars session screens and chat to your public live channel",
 } satisfies CommandMetadata;
 
 export const tinyModelsHelp = {

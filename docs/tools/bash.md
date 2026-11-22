@@ -256,7 +256,7 @@ Choose the setting by the desired outcome:
   - A redirect to a handler-written URL (`: > proc://<id>/kill`, `echo hi > agent://<id>`, `cfg://`, `ssh://`, …) opens a write-only handle; on close its bytes (UTF-8 only) reach the scheme's handler as one write, as with the `write` tool. The handler's answer (or refusal reason) is appended to the result as a notice; a refusal also fails the close, so the command exits non-zero. Appends (`>>`) are refused except for the `proc://`, `out://`, and `agent://` channels that hold no content, since a handler write replaces its target.
   - A redirect to `out://` (`printf '…' > out://`) opens a write-only handle; on close its text becomes a reply shown to the user as assistant prose after the call. Replies ride every progress frame and the result as `details.replies`, so the transcript draws each once, live and on rebuild. They are accepted only while the call waits on the command (a backgrounded job's writes fail), and a reply past 64 KiB fails with `EFBIG` and is dropped whole.
 - Subprocesses / native bindings / client terminal
-  - Non-PTY local execution uses native shell execution via `@oh-my-pi/pi-natives` (`Shell.run()` or `executeShell()`).
+  - Non-PTY local execution uses native shell execution via `@marsai-org/natives` (`Shell.run()` or `executeShell()`).
   - PTY uses native `PtySession.start()`.
   - Client-terminal mode delegates process execution to the connected client terminal capability.
   - Named services run in the project-scoped launch broker and retain logs/status for `proc://`.

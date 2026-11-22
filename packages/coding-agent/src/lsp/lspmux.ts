@@ -107,10 +107,7 @@ async function checkServerRunning(binaryPath: string): Promise<boolean> {
 			windowsHide: true,
 		});
 
-		const exited = await Promise.race([
-			proc.exited,
-			new Promise<null>(resolve => setTimeout(() => resolve(null), LIVENESS_TIMEOUT_MS)),
-		]);
+		const exited = await Promise.race([proc.exited, Bun.sleep(LIVENESS_TIMEOUT_MS).then(() => null)]);
 
 		if (exited === null) {
 			proc.kill();

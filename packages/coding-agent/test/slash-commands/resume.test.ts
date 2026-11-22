@@ -15,7 +15,7 @@ const fallbackAgentDir = path.join(getConfigRootDir(), "agent");
 const storage = new FileSessionStorage();
 
 beforeEach(async () => {
-	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "omp-resume-command-"));
+	tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-resume-command-"));
 	setAgentDir(path.join(tempDir, "agent"));
 });
 
@@ -232,8 +232,8 @@ describe("/resume slash command", () => {
 
 	it.skipIf(process.platform === "win32")("lists and resumes sessions stored in XDG_DATA_HOME", async () => {
 		const xdgDataDir = path.join(tempDir, "xdg-data");
-		const xdgOmpDir = path.join(xdgDataDir, "omp");
-		await fs.mkdir(xdgOmpDir, { recursive: true });
+		const xdgMarsDir = path.join(xdgDataDir, "mars");
+		await fs.mkdir(xdgMarsDir, { recursive: true });
 
 		const originalXdgData = process.env.XDG_DATA_HOME;
 		const originalPiCodingAgentDir = process.env.PI_CODING_AGENT_DIR;
@@ -250,7 +250,7 @@ describe("/resume slash command", () => {
 			const sessionDirA = computeDefaultSessionDir(projA, storage);
 			const sessionPathA = await writeSession("019ed999-02fb-7000-8dac-396e2f84d484", projA, sessionDirA);
 
-			expect(sessionPathA.startsWith(xdgOmpDir)).toBe(true);
+			expect(sessionPathA.startsWith(xdgMarsDir)).toBe(true);
 
 			const allSessions = await listAllSessions(storage);
 			expect(allSessions.some(s => s.id === "019ed999-02fb-7000-8dac-396e2f84d484")).toBe(true);

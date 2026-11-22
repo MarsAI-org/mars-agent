@@ -50,8 +50,8 @@ packages/ai/test/.temp-images/
 *.db-wal
 
 # Project specific
-!.omp/
-.omp/plugins/
+!.mars/
+.mars/plugins/
 .pi_config/
 .opencode/
 .worktrees/
@@ -100,3 +100,6 @@ packages/coding-agent/bench/boot-baseline.json
 /.bazelrc.user
 
 .parity/
+
+# graphify index output (local tooling)
+graphify-out/

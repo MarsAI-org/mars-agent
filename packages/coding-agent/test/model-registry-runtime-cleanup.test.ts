@@ -92,7 +92,7 @@ describe("ModelRegistry runtime source cleanup", () => {
 	});
 
 	test("extension rebinding preserves unrelated credential-scoped cached models", async () => {
-		using tempDir = TempDir.createSync("@omp-model-registry-rebind-");
+		using tempDir = TempDir.createSync("@mars-model-registry-rebind-");
 		const provider = "opencode-go";
 		const apiKey = "opencode-go-test-key";
 		const cachedModel = buildModel({
@@ -142,7 +142,7 @@ describe("ModelRegistry runtime source cleanup", () => {
 	});
 
 	test("unloading an override-only extension keeps a built-in provider's hydrated discoveries", async () => {
-		using tempDir = TempDir.createSync("@omp-model-registry-override-only-");
+		using tempDir = TempDir.createSync("@mars-model-registry-override-only-");
 		const provider = "opencode-go";
 		const apiKey = "opencode-go-test-key";
 		const cachedModel = buildModel({
@@ -183,7 +183,7 @@ describe("ModelRegistry runtime source cleanup", () => {
 	});
 
 	test("extension rebinding discards discoveries removed from the model config", async () => {
-		using tempDir = TempDir.createSync("@omp-model-registry-config-rebind-");
+		using tempDir = TempDir.createSync("@mars-model-registry-config-rebind-");
 		const modelsPath = tempDir.join("models.json");
 		const cacheDbPath = tempDir.join("models.db");
 		const provider = "configured-ollama";
@@ -244,7 +244,7 @@ describe("ModelRegistry runtime source cleanup", () => {
 	});
 
 	test("extension rebinding discards discoveries whose model overrides changed", async () => {
-		using tempDir = TempDir.createSync("@omp-model-registry-override-rebind-");
+		using tempDir = TempDir.createSync("@mars-model-registry-override-rebind-");
 		const modelsPath = tempDir.join("models.json");
 		const cacheDbPath = tempDir.join("models.db");
 		const provider = "configured-ollama";

@@ -4,7 +4,7 @@ import { needsNativeTeardown } from "@marsai-org/coding-agent/task/isolation-own
 
 const { IsoBackendKind } = natives;
 
-// The sidecar set decides which retained workspaces `omp worktree clear`
+// The sidecar set decides which retained workspaces `mars worktree clear`
 // routes through native `isoStop` instead of plain recursive `rm`.
 describe("retained workspace teardown set", () => {
 	it("routes mounts and subvolumes through native teardown, nothing else", () => {

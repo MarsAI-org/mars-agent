@@ -50,6 +50,11 @@
 - Fixed per-model message counts on the Frustration page to include all answered messages.
 - Improved dashboard responsiveness by keeping other pages and Live status available while Spotlight rebuilds.
 - Fixed daily usage charts to group activity by the user's local calendar day instead of UTC.
+### Fixed
+
+- The Frustration page's per-model table counts every answered message again; since agent notices began landing before replies, about half went uncounted ([#19114](https://github.com/can1357/oh-my-pi/pull/19114) by [@will-bogusz](https://github.com/will-bogusz))
+- Fixed the `omp stats` Traces tab leaving every background job open to the end of the session, which hid all idle time and stretched each turn bar across the whole timeline ([#19115](https://github.com/can1357/oh-my-pi/pull/19115) by [@will-bogusz](https://github.com/will-bogusz))
+- The stats Gain tab counts the context snapcompact compactions free, beside imaged tool results, so sessions that compact with snapcompact no longer show zero savings ([#19120](https://github.com/can1357/oh-my-pi/pull/19120) by [@will-bogusz](https://github.com/will-bogusz))
 
 ## [18.20.0] - 2026-11-12
 
@@ -96,6 +101,8 @@
 
 ### Fixed
 
+- Fixed the stats dashboard serving index.html at /favicon.ico; it now returns the omp icon (image/x-icon), so dashboard tabs and bookmarks show a real icon ([#15162](https://github.com/can1357/oh-my-pi/pull/15162) by [@yuzu-octopus](https://github.com/yuzu-octopus)).
+- Daily charts (7d, 30d, 90d, All, Costs and Gain) now group usage by your local calendar day instead of the UTC day, so evening work west of UTC no longer shows under the previous date ([#16605](https://github.com/can1357/oh-my-pi/pull/16605) by [@GarrettShrop](https://github.com/GarrettShrop))
 - Fixed tool error rates counting skipped tool calls that were explicitly marked as not executed ([#17463](https://github.com/can1357/oh-my-pi/pull/17463) by [@Xytronix](https://github.com/Xytronix)).
 
 ## [18.14.0] - 2026-10-29

@@ -1,9 +1,11 @@
 /**
- * Wire types for `omp stream`: Twitch-style live screen sharing at
+ * Wire types for `mars stream`: Twitch-style live screen sharing at
  * `live.omp.sh/<username>`.
  *
- * Independent from collab. A publisher (`omp stream`) sends plaintext JSON
- * screen deltas for one or more panes (one pane per omp session attached in
+ * TODO(rebrand): no Mars domain decided — see HANDOFF.md
+ *
+ * Independent from collab. A publisher (`mars stream`) sends plaintext JSON
+ * screen deltas for one or more panes (one pane per mars session attached in
  * the same working directory); the stream server materializes each pane
  * (viewport + bounded history) so late viewers receive a snapshot without
  * touching the publisher, fans frames out to viewers, and hosts chat.
@@ -13,7 +15,10 @@
  * secrets before a row leaves the session process.
  */
 
-/** Default stream server; its host route derives the channel from the bearer identity. */
+/**
+ * Default stream server; its host route derives the channel from the bearer identity.
+ * TODO(rebrand): upstream service URL pending domain decision — see HANDOFF.md and Issue #11.
+ */
 export const DEFAULT_STREAM_URL = "https://live.omp.sh";
 
 /** Protocol version carried in `hello`/`snapshot`; the server rejects mismatches. */
@@ -145,9 +150,10 @@ export const STREAM_AUTH_ENV = "STENCIL_API_KEY";
 export const CLIP_DESCRIPTION_MAX = 5000;
 
 /**
- * `POST /api/clips` answer. The body is an `.ompcast` recording (optionally
+ * `POST /api/clips` answer. The body is a `.marscast` recording (optionally
  * `Content-Encoding: gzip`) whose header may carry `title` and `description`;
- * the bearer identifies the uploading Stencil account.
+ * legacy `.ompcast` bodies remain accepted by the server. The bearer
+ * identifies the uploading Stencil account.
  */
 export interface ClipUploadResponse {
 	id: string;

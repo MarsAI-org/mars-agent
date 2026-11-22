@@ -1,5 +1,5 @@
 /**
- * CLI handler for `omp grievances` — view, clean, and manually push reported tool issues.
+ * CLI handler for `mars grievances` — view, clean, and manually push reported tool issues.
  */
 import chalk from "@marsai-org/utils/chalk";
 import { Settings } from "../config/settings";
@@ -167,7 +167,7 @@ export async function cleanGrievances(options: CleanGrievancesOptions): Promise<
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// Manual push (`omp grievances push`)
+// Manual push (`mars grievances push`)
 // ───────────────────────────────────────────────────────────────────────────
 
 /**
@@ -207,7 +207,9 @@ function makeProgressBar(total: number, width = 30): ProgressBar {
  * ignoring the user-facing consent gate (manual push is the user's
  * explicit "yes ship these now" intent).
  *
- * Requires endpoint configuration (default `qa.omp.sh/v1/grievances`).
+ * Requires endpoint configuration (`dev.autoqaPush.endpoint`). The built-in
+ * default is an upstream collector that Mars does not operate; clearing the
+ * setting disables pushing.
  */
 export async function pushGrievances(options: PushGrievancesOptions): Promise<void> {
 	const db = openAutoQaDb();
@@ -255,7 +257,7 @@ export async function pushGrievances(options: PushGrievancesOptions): Promise<vo
 		if (rejected > 0) {
 			console.log(
 				chalk.yellow(
-					`${rejected} grievance${rejected === 1 ? " was" : "s were"} refused by the server and marked rejected (see \`omp grievances list\`).`,
+					`${rejected} grievance${rejected === 1 ? " was" : "s were"} refused by the server and marked rejected (see \`mars grievances list\`).`,
 				),
 			);
 		}

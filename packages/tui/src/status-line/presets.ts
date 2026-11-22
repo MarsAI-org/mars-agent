@@ -23,6 +23,25 @@ export const STATUS_LINE_PRESETS: Record<StatusLinePreset, PresetDef> = {
 		},
 	},
 
+	/**
+	 * Mars: the information a long session actually needs, in one line.
+	 *
+	 * Unlike `compact`, this keeps the live signals — subagents and context
+	 * pressure — because those are the two that change what you do next, and it
+	 * drops the ones that are only interesting in retrospect (PR, hostname,
+	 * token rate). `pi` carries the brand mark at the far left.
+	 */
+	mars: {
+		leftSegments: ["pi", "vim", "model", "mode", "path", "git", "subagents"],
+		rightSegments: ["session_name", "cost", "context_pct"],
+		separator: "powerline-thin",
+		segmentOptions: {
+			model: { showThinkingLevel: true },
+			path: { abbreviate: true, maxLength: 36, stripWorkPrefix: true },
+			git: { showBranch: true, showStaged: true, showUnstaged: true, showUntracked: true },
+		},
+	},
+
 	compact: {
 		leftSegments: ["vim", "model", "mode", "git", "pr"],
 		rightSegments: ["session_name", "cost", "context_pct"],

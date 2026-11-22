@@ -1,11 +1,11 @@
-# @oh-my-pi/pi-coding-agent
+# @marsai-org/coding-agent
 
-Core implementation package for the `omp` coding agent in the `omp` monorepo.
+Core implementation package for the `mars` coding agent in the `mars` monorepo.
 
 For installation, setup, provider configuration, model roles, slash commands, and full CLI reference, see:
 
 - [Monorepo README (local)](../../README.md)
-- [Monorepo README (GitHub)](https://github.com/can1357/oh-my-pi#readme)
+- [Monorepo README (GitHub)](https://github.com/MarsAI-org/mars-agent#readme)
 
 Package-specific references:
 
@@ -25,7 +25,7 @@ Replay retains up to 20,000 records, 2 MiB output and 8 MiB payload; evictions a
 
 ## Memory backends
 
-The agent supports three mutually-exclusive memory backends, selected via the `memory.backend` setting (Settings → Memory tab, or `~/.omp/config.yml`):
+The agent supports three mutually-exclusive memory backends, selected via the `memory.backend` setting (Settings → Memory tab, or `~/.mars/config.yml`):
 
 - `off` (default) — no memory subsystem runs.
 - `local` — existing rollout-summarisation pipeline; writes `memory_summary.md` and consolidated artifacts under the agent dir.

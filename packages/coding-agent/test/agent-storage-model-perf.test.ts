@@ -1,5 +1,6 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
+import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { Agent } from "@marsai-org/agent-core";
 import { createMockModel } from "@marsai-org/ai/providers/mock";
@@ -50,7 +51,7 @@ describe("AgentStorage model perf aggregates", () => {
 	});
 
 	async function openStorage(): Promise<AgentStorage> {
-		tempDir = TempDir.createSync("@omp-agent-storage-perf-");
+		tempDir = TempDir.createSync("@mars-agent-storage-perf-");
 		return AgentStorage.open(path.join(tempDir.path(), "agent.db"));
 	}
 
@@ -110,7 +111,7 @@ describe("AgentStorage model perf aggregates", () => {
 		// The session's turn loop schedules real timers; only the deferred perf
 		// batch needs the fake clock, and closing the storage flushes it.
 		vi.useRealTimers();
-		tempDir = TempDir.createSync("@omp-served-tier-perf-");
+		tempDir = TempDir.createSync("@mars-served-tier-perf-");
 		const dbPath = path.join(tempDir.path(), "agent.db");
 		const storage = await AgentStorage.open(dbPath);
 		const settings = Settings.isolated({ "tier.openai": "ultrafast" }, { storage });
@@ -188,7 +189,7 @@ describe("AgentStorage model perf aggregates", () => {
 	});
 
 	it("records task subagent samples in the shared model performance aggregate", async () => {
-		tempDir = TempDir.createSync("@omp-subagent-perf-");
+		tempDir = TempDir.createSync("@mars-subagent-perf-");
 		const parent = await Settings.loadIsolated({ cwd: tempDir.path(), agentDir: tempDir.path() });
 		const subagent = createSubagentSettings(parent);
 
@@ -283,7 +284,7 @@ describe("AgentStorage model perf aggregates", () => {
 		expect(stats?.ttftMs).toBeNull();
 	});
 
-	it("backfills perf aggregates from an omp stats database, excluding errored and stale turns", async () => {
+	it("backfills perf aggregates from a mars stats database, excluding errored and stale turns", async () => {
 		const storage = await openStorage();
 
 		// Minimal stats.db fixture: only the columns the backfill query reads.
@@ -374,16 +375,16 @@ describe("AgentStorage model perf aggregates", () => {
 	});
 
 	it("keeps live aggregates and skips the re-import when the v1 import already ran", async () => {
-		tempDir = TempDir.createSync("@omp-agent-storage-perf-v1-");
+		tempDir = TempDir.createSync("@mars-agent-storage-perf-v1-");
 		const homeDir = tempDir.join("home");
 		const agentDir = tempDir.join("agent");
 		const env = {
 			...process.env,
 			HOME: homeDir,
 			USERPROFILE: homeDir,
-			OMP_PROFILE: "",
+			MARS_PROFILE: "",
 			PI_CODING_AGENT_DIR: agentDir,
-			PI_CONFIG_DIR: ".omp",
+			PI_CONFIG_DIR: ".mars",
 			PI_PROFILE: "",
 			XDG_CACHE_HOME: tempDir.join("xdg-cache"),
 			XDG_CONFIG_HOME: tempDir.join("xdg-config"),
@@ -436,16 +437,16 @@ describe("AgentStorage model perf aggregates", () => {
 	});
 
 	it("does not start the stats backfill while flushing a live batch on exit", async () => {
-		tempDir = TempDir.createSync("@omp-agent-storage-exit-backfill-");
+		tempDir = TempDir.createSync("@mars-agent-storage-exit-backfill-");
 		const homeDir = tempDir.join("home");
 		const agentDir = tempDir.join("agent");
 		const env = {
 			...process.env,
 			HOME: homeDir,
 			USERPROFILE: homeDir,
-			OMP_PROFILE: "",
+			MARS_PROFILE: "",
 			PI_CODING_AGENT_DIR: agentDir,
-			PI_CONFIG_DIR: ".omp",
+			PI_CONFIG_DIR: ".mars",
 			PI_PROFILE: "",
 			XDG_CACHE_HOME: tempDir.join("xdg-cache"),
 			XDG_CONFIG_HOME: tempDir.join("xdg-config"),
@@ -502,31 +503,37 @@ describe("AgentStorage model perf aggregates", () => {
 		}
 	});
 
-	it("lets a process exit naturally mid-window and still persists the pending batch", async () => {
-		tempDir = TempDir.createSync("@omp-agent-storage-natural-exit-");
-		const dbPath = tempDir.join("agent.db");
-		const startedAt = Date.now();
-		const exiting = await runProbe(
-			[
-				`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
-				`const storage = await AgentStorage.open(${JSON.stringify(dbPath)});`,
-				'void storage.recordModelPerf("openai/natural-exit", { outputTokens: 10, durationMs: 1000 });',
-			].join("\n"),
-			{ ...process.env, HOME: tempDir.path(), USERPROFILE: tempDir.path() },
-		);
-		expect(exiting.exitCode, exiting.stderr).toBe(0);
-		// A referenced batch timer would hold the process open for the whole window.
-		expect(Date.now() - startedAt).toBeLessThan(MODEL_PERF_FLUSH_DELAY_MS / 2);
+	it(
+		"lets a process exit naturally mid-window and still persists the pending batch",
+		async () => {
+			tempDir = TempDir.createSync("@mars-agent-storage-natural-exit-");
+			const dbPath = tempDir.join("agent.db");
+			const startedAt = Date.now();
+			const exiting = await runProbe(
+				[
+					`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
+					`const storage = await AgentStorage.open(${JSON.stringify(dbPath)});`,
+					'void storage.recordModelPerf("openai/natural-exit", { outputTokens: 10, durationMs: 1000 });',
+				].join("\n"),
+				{ ...process.env, HOME: tempDir.path(), USERPROFILE: tempDir.path() },
+			);
+			expect(exiting.exitCode, exiting.stderr).toBe(0);
+			// A referenced batch timer would hold the process open for the whole window.
+			expect(Date.now() - startedAt).toBeLessThan(MODEL_PERF_FLUSH_DELAY_MS / 2);
 
-		const db = new Database(dbPath, { readonly: true });
-		try {
-			expect(
-				db
-					.query<{ samples: number }, []>("SELECT samples FROM model_perf WHERE model_key = 'openai/natural-exit'")
-					.get(),
-			).toEqual({ samples: 1 });
-		} finally {
-			db.close();
-		}
-	}, 30_000);
+			const db = new Database(dbPath, { readonly: true });
+			try {
+				expect(
+					db
+						.query<{ samples: number }, []>(
+							"SELECT samples FROM model_perf WHERE model_key = 'openai/natural-exit'",
+						)
+						.get(),
+				).toEqual({ samples: 1 });
+			} finally {
+				db.close();
+			}
+		},
+		scaledTimeout(30000),
+	);
 });

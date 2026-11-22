@@ -8,6 +8,7 @@ import { parseFrontmatter, prompt } from "@marsai-org/utils";
 import { parseAgentFields } from "../discovery/helpers";
 // Embed agent markdown files at build time
 import agentFrontmatterTemplate from "../prompts/agents/frontmatter.md" with { type: "text" };
+import integratorMd from "../prompts/agents/integrator.md" with { type: "text" };
 import reviewerMd from "../prompts/agents/reviewer.md" with { type: "text" };
 import scoutMd from "../prompts/agents/scout.md" with { type: "text" };
 import securityReviewerMd from "../prompts/agents/security-reviewer.md" with { type: "text" };
@@ -70,6 +71,10 @@ const EMBEDDED_AGENT_DEFS: EmbeddedAgentDef[] = [
 		},
 		template: taskMd,
 	},
+	// The integrator lands finished worker branches: it is the agent the
+	// orchestrator spawns to own the merge and the worktree cleanup, so the
+	// parent session never has to hand-resolve conflicts across parallel runs.
+	{ fileName: "integrator.md", template: integratorMd },
 ];
 
 // Computed lazily on first loadBundledAgents() call to avoid eager prompt.render at module load.

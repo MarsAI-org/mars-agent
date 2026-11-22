@@ -7,7 +7,7 @@
  *
  * Pipeline under test:
  *   client → POST /v1/responses (OpenAI shape)
- *     → openai-responses parser → omp Context
+ *     → openai-responses parser → mars Context
  *     → pi-ai anthropic provider (auto cache_control via cacheRetention)
  *     → upstream Anthropic (Messages API)
  *     → assistant stream → openai-responses encoder
@@ -20,13 +20,14 @@
  * mutates the cached prefix bytes.
  *
  * Skips unless a local gateway is reachable at the default `127.0.0.1:4000`
- * (override via `OMP_E2E_GATEWAY_URL`) AND the bearer token file exists at
- * `~/.omp/auth-gateway.token`.
+ * (override via `MARS_E2E_GATEWAY_URL`) AND the bearer token file exists at
+ * `~/.mars/auth-gateway.token`.
  *
  * To run: `bun --cwd packages/ai test test/auth-gateway-cross-protocol-caching.test.ts`
- * with the gateway live (`omp auth-gateway serve` or pm2).
+ * with the gateway live (`mars auth-gateway serve` or pm2).
  */
 import { describe, expect, it } from "bun:test";
+import { scaledTimeout } from "./timeout";
 import { AUTH_GATEWAY_E2E_URL, checkAuthGatewayE2EAvailable } from "./helpers";
 
 interface OpenAIResponsesUsage {
@@ -47,7 +48,7 @@ interface OpenAIResponse {
 	error?: { type?: string; message: string };
 }
 
-const MODEL = Bun.env.OMP_E2E_ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
+const MODEL = Bun.env.MARS_E2E_ANTHROPIC_MODEL ?? "claude-sonnet-4-5";
 
 const gateway = await checkAuthGatewayE2EAvailable();
 
@@ -55,7 +56,7 @@ const gateway = await checkAuthGatewayE2EAvailable();
 // cache floor for Sonnet.
 const INSTRUCTIONS_PARAGRAPH = `
 You are a precise assistant participating in an automated end-to-end test of
-the omp auth-gateway's cross-protocol prompt-caching pipeline. The request
+the mars auth-gateway's cross-protocol prompt-caching pipeline. The request
 arrives over the OpenAI Responses wire format but is fulfilled by an
 Anthropic backend, so the gateway must preserve the cached prefix across the
 translation. Always respond with extreme brevity: a single short word or
@@ -114,66 +115,70 @@ describe.skipIf(!gateway.ok)("auth-gateway: openai-responses → anthropic cachi
 	const token = gateway.token;
 	if (!token) throw new Error("invariant: token must be present when gateway.ok is true");
 
-	it("caches the instructions prefix across a cross-protocol translate (responses→anthropic)", async () => {
-		// Prepend nonce so prefix-tree caching (chunk-level) starts cold on every run.
-		const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
-		const instructionsWithNonce = `[run-nonce: ${nonce}]\n\n${INSTRUCTIONS}`;
+	it(
+		"caches the instructions prefix across a cross-protocol translate (responses→anthropic)",
+		async () => {
+			// Prepend nonce so prefix-tree caching (chunk-level) starts cold on every run.
+			const nonce = `${Date.now().toString(36)}-${crypto.randomUUID()}`;
+			const instructionsWithNonce = `[run-nonce: ${nonce}]\n\n${INSTRUCTIONS}`;
 
-		// ── Turn 1 ───────────────────────────────────────────────────────
-		const turn1Input: ResponseInputMessage[] = [{ role: "user", content: "Respond with the single word: alpha" }];
-		const turn1 = await callGateway(
-			{
-				model: MODEL,
-				max_output_tokens: 4,
-				instructions: instructionsWithNonce,
-				input: turn1Input,
-			},
-			token,
-		);
+			// ── Turn 1 ───────────────────────────────────────────────────────
+			const turn1Input: ResponseInputMessage[] = [{ role: "user", content: "Respond with the single word: alpha" }];
+			const turn1 = await callGateway(
+				{
+					model: MODEL,
+					max_output_tokens: 4,
+					instructions: instructionsWithNonce,
+					input: turn1Input,
+				},
+				token,
+			);
 
-		const turn1Text = extractAssistantText(turn1);
-		expect(turn1Text.length).toBeGreaterThan(0);
+			const turn1Text = extractAssistantText(turn1);
+			expect(turn1Text.length).toBeGreaterThan(0);
 
-		// First turn cannot hit the cache (nothing to read yet thanks to the nonce).
-		const turn1Cached = turn1.usage.input_tokens_details?.cached_tokens ?? 0;
-		expect(turn1Cached).toBe(0);
-		// Confirm the request actually crossed the 1024-token caching floor;
-		// otherwise no cache entry gets created and turn 2 can't possibly read.
-		expect(turn1.usage.input_tokens).toBeGreaterThan(1024);
+			// First turn cannot hit the cache (nothing to read yet thanks to the nonce).
+			const turn1Cached = turn1.usage.input_tokens_details?.cached_tokens ?? 0;
+			expect(turn1Cached).toBe(0);
+			// Confirm the request actually crossed the 1024-token caching floor;
+			// otherwise no cache entry gets created and turn 2 can't possibly read.
+			expect(turn1.usage.input_tokens).toBeGreaterThan(1024);
 
-		// ── Turn 2: append assistant + new user, re-send with same instructions ──
-		const turn2Input: ResponseInputMessage[] = [
-			...turn1Input,
-			{ role: "assistant", content: turn1Text },
-			{ role: "user", content: "Respond with the single word: beta" },
-		];
-		const turn2 = await callGateway(
-			{
-				model: MODEL,
-				max_output_tokens: 4,
-				instructions: instructionsWithNonce,
-				input: turn2Input,
-			},
-			token,
-		);
+			// ── Turn 2: append assistant + new user, re-send with same instructions ──
+			const turn2Input: ResponseInputMessage[] = [
+				...turn1Input,
+				{ role: "assistant", content: turn1Text },
+				{ role: "user", content: "Respond with the single word: beta" },
+			];
+			const turn2 = await callGateway(
+				{
+					model: MODEL,
+					max_output_tokens: 4,
+					instructions: instructionsWithNonce,
+					input: turn2Input,
+				},
+				token,
+			);
 
-		const turn2Text = extractAssistantText(turn2);
-		expect(turn2Text.length).toBeGreaterThan(0);
+			const turn2Text = extractAssistantText(turn2);
+			expect(turn2Text.length).toBeGreaterThan(0);
 
-		// Second turn MUST hit the cache populated by turn 1. The Anthropic
-		// provider auto-places cache markers via the default `short` retention,
-		// and the openai-responses encoder maps Anthropic's
-		// cache_read_input_tokens → input_tokens_details.cached_tokens.
-		// If cached_tokens is 0, one of:
-		//   - openai-responses parser stripped per-turn content into different
-		//     bytes (so the cache prefix moved),
-		//   - the anthropic provider failed to apply cache_control markers,
-		//   - the encoder forgot to surface the cached-tokens subfield.
-		const turn2Cached = turn2.usage.input_tokens_details?.cached_tokens ?? 0;
-		expect(turn2Cached).toBeGreaterThan(0);
-		// The cached prefix should cover at least the instructions block we
-		// established on turn 1 — sanity check that we're not catching a
-		// trivial overlap.
-		expect(turn2Cached).toBeGreaterThan(1024);
-	}, 90_000);
+			// Second turn MUST hit the cache populated by turn 1. The Anthropic
+			// provider auto-places cache markers via the default `short` retention,
+			// and the openai-responses encoder maps Anthropic's
+			// cache_read_input_tokens → input_tokens_details.cached_tokens.
+			// If cached_tokens is 0, one of:
+			//   - openai-responses parser stripped per-turn content into different
+			//     bytes (so the cache prefix moved),
+			//   - the anthropic provider failed to apply cache_control markers,
+			//   - the encoder forgot to surface the cached-tokens subfield.
+			const turn2Cached = turn2.usage.input_tokens_details?.cached_tokens ?? 0;
+			expect(turn2Cached).toBeGreaterThan(0);
+			// The cached prefix should cover at least the instructions block we
+			// established on turn 1 — sanity check that we're not catching a
+			// trivial overlap.
+			expect(turn2Cached).toBeGreaterThan(1024);
+		},
+		scaledTimeout(90000),
+	);
 });

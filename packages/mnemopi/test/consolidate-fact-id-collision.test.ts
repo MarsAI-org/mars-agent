@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
+import { logger } from "@marsai-org/utils";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -134,7 +135,7 @@ describe("consolidate_fact id collision behavior", () => {
 			const conflict = cons.getConflicts()[0];
 			if (conflict === undefined) throw new Error("expected Grace conflict");
 
-			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
 			cons.resolveConflict(conflict.id, "cf_definitely_not_in_db_0000000000");
 			expect(warnSpy).toHaveBeenCalledTimes(1);
 			expect(warnSpy.mock.calls[0]?.[0]).toContain("matches neither fact_a_id");

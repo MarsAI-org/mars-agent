@@ -65,17 +65,17 @@ describe("libkitty end-to-end", () => {
 		const pending = mode.getUserInput();
 		await term.waitForRender();
 
-		term.sendInput("hi there omp");
+		term.sendInput("hi there mars");
 		await term.waitForRender();
 		term.sendInput("\r");
 		const input = await pending;
-		expect(input.text).toBe("hi there omp");
+		expect(input.text).toBe("hi there mars");
 
 		// The optimistic user-message block must be on the physical screen now,
 		// before any assistant output exists.
-		await term.waitForRender(() => plainRows(term.getViewport()).some(row => row.includes("hi there omp")));
+		await term.waitForRender(() => plainRows(term.getViewport()).some(row => row.includes("hi there mars")));
 		const viewport = plainRows(term.getViewport());
-		const hits = viewport.filter(row => row.includes("hi there omp"));
+		const hits = viewport.filter(row => row.includes("hi there mars"));
 		if (hits.length !== 1) dump("viewport after submit", viewport);
 		expect(hits.length).toBe(1);
 	});
@@ -223,8 +223,12 @@ describe("libkitty end-to-end", () => {
 		void mode.getUserInput();
 		await term.waitForRender();
 
-		// Observed reasoning content unlocks Ctrl+T and renders the block visible.
+		// Observed reasoning content unlocks Ctrl+T. Thinking starts hidden, so
+		// pin it visible through the real keybinding path first: this test needs a
+		// visible block in retired history to prove the toggle clears scrollback.
 		mode.noteDisplayableThinkingContent(thinkingMessage);
+		term.sendInput("\x14");
+		await term.waitForRender();
 		mode.addMessageToChat(thinkingMessage);
 		for (let i = 0; i < 12; i++) {
 			mode.addMessageToChat(assistantText(`Filler answer number ${i} occupying a transcript row.`));
@@ -336,5 +340,48 @@ describe("libkitty end-to-end", () => {
 		expect(mode.hideToolActivity).toBe(true);
 		expect(plainRows(term.getScrollBuffer()).some(row => row.includes(TOOL_MARKER))).toBe(false);
 		expect(plainRows(term.getViewport()).some(row => row.includes("LIVE_EDITOR_DRAFT"))).toBe(true);
+	});
+
+	it("reveals thinking with Ctrl+O and hides it again on the same key", async () => {
+		const usage: Usage = {
+			input: 0,
+			output: 0,
+			cacheRead: 0,
+			cacheWrite: 0,
+			totalTokens: 0,
+			cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
+		};
+		const THINK = "CTRL_O_REASONING_MARKER";
+		const thinkingMessage: AssistantMessage = {
+			role: "assistant",
+			content: [
+				{ type: "thinking", thinking: THINK },
+				{ type: "text", text: "Visible answer." },
+			],
+			api: "anthropic-messages",
+			provider: "anthropic",
+			model: "claude-sonnet",
+			usage,
+			stopReason: "stop",
+			timestamp: 1,
+		};
+
+		await mode.init({ suppressWelcomeIntro: true });
+		void mode.getUserInput();
+		await term.waitForRender();
+		mode.noteDisplayableThinkingContent(thinkingMessage);
+		mode.addMessageToChat(thinkingMessage);
+		await term.waitForRender();
+
+		// Thinking is hidden by default, so the block is on screen but not rendered.
+		expect(plainRows(term.getViewport()).some(row => row.includes(THINK))).toBe(false);
+
+		// Ctrl+O (0x0f): expand reveals the block's reasoning alongside tool output.
+		term.sendInput("\x0f");
+		await term.waitForRender(() => plainRows(term.getViewport()).some(row => row.includes(THINK)));
+
+		// The same key collapses; the reasoning leaves the screen again.
+		term.sendInput("\x0f");
+		await term.waitForRender(() => !plainRows(term.getViewport()).some(row => row.includes(THINK)));
 	});
 });

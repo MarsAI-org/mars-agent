@@ -78,6 +78,9 @@ describe("#4297 anthropic-messages replay-unsigned-thinking hint", () => {
 		expect(surfaced).toContain("compat.replayUnsignedThinking: false");
 		expect(surfaced).toContain("providers.cf-anthropic");
 		expect(surfaced).toContain(SIGNATURE_400);
+		// The remediation points at this project's issue tracker, not upstream.
+		expect(surfaced).toContain("https://github.com/MarsAI-org/mars-agent/issues");
+		expect(surfaced).not.toContain("can1357/oh-my-pi");
 	});
 
 	it("passes through when the user already set `compat.replayUnsignedThinking`", () => {

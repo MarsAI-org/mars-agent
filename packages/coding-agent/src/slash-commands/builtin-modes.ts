@@ -45,6 +45,7 @@ import { formatSlowModeResetClock } from "../session/anthropic-slow-mode";
 import { cfgExtendedContext } from "../session/context-settings";
 import { cfgGoalEnabled } from "../goals/settings";
 import { cfgPlanEnabled } from "../plan-mode/settings";
+import { applyOrchestratorCommand, describeOrchestratorMode } from "../orchestrator/mode";
 
 export function refreshStatusLine(ctx: InteractiveModeContext): void {
 	ctx.statusLine.invalidate();
@@ -52,7 +53,7 @@ export function refreshStatusLine(ctx: InteractiveModeContext): void {
 }
 
 /**
- * Resolve a `/model` / `/switch` selector the way `omp bench` and `--model`
+ * Resolve a `/model` / `/switch` selector the way `mars bench` and `--model`
  * do: exact `provider/id`, fuzzy ids (`opus`), role aliases (`@smol`, `smol`),
  * and `:level` thinking suffixes. Unqualified selectors prefer the session's
  * `--models` scope, else the authenticated set, before the full catalog.
@@ -236,7 +237,7 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 	{
 		name: "security",
 		icon: "shield",
-		description: "Plan, run, inspect, import, and compare OMP-native security scans",
+		description: "Plan, run, inspect, import, and compare Mars-native security scans",
 		allowArgs: true,
 		acpInputHint: "<plan|scan|status|cancel|scans|show|import|export|validate|compare|disposition>",
 		subcommands: [
@@ -248,7 +249,7 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 			{ name: "show", description: "Render a scan or security:// resource" },
 			{ name: "import", description: "Import SARIF or a Codex Security bundle" },
 			{ name: "export", description: "Export a canonical bundle, SARIF, or report" },
-			{ name: "validate", description: "Validate one finding with OMP-native tools" },
+			{ name: "validate", description: "Validate one finding with Mars-native tools" },
 			{ name: "compare", description: "Compare finding lineage across two scans" },
 			{ name: "disposition", description: "Set a finding disposition with rationale" },
 		],
@@ -367,6 +368,29 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 			await runWithDetachedDraft(command, runtime, () =>
 				runtime.ctx.handleGuidedGoalCommand(command.args || undefined, runtime.input),
 			);
+		},
+	},
+	{
+		name: "orchestrate",
+		icon: "action",
+		description: "Toggle orchestrator mode (multi-agent fan-out through the orchestrate tool)",
+		inlineHint: "[on|off|status|mode|workers]",
+		allowArgs: true,
+		subcommands: [
+			{ name: "on", description: "Enable orchestrator mode and expose the orchestrate tool" },
+			{ name: "off", description: "Disable it and drop the orchestrate tool" },
+			{ name: "status", description: "Show the mode, fan-out policy, and worker cap" },
+			{ name: "mode", description: "Set the fan-out policy", usage: "<auto|single|parallel>" },
+			{ name: "workers", description: "Cap concurrent workers", usage: "<n>" },
+		],
+		getTuiAutocompleteDescription: runtime => describeOrchestratorMode(runtime.ctx.settings),
+		handleTui: async (command, runtime) => {
+			// The mode owns the toolset swap, so the draft must survive: a user who
+			// typed half a prompt, then toggles the mode, keeps that text.
+			runtime.ctx.showStatus(
+				await applyOrchestratorCommand(runtime.ctx.settings, runtime.ctx.session, command.args),
+			);
+			clearSubmittedText(runtime);
 		},
 	},
 	{

@@ -76,7 +76,7 @@ describe("config list output", () => {
 
 	beforeEach(() => {
 		resetSettingsForTest();
-		agentDir = TempDir.createSync("@omp-config-credentials-");
+		agentDir = TempDir.createSync("@mars-config-credentials-");
 		setAgentDir(agentDir.path());
 	});
 

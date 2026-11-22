@@ -8,7 +8,7 @@ import { runSearchCommand } from "../../../src/cli/web-search-cli";
 import { cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
-const originalOmpProfile = process.env.OMP_PROFILE;
+const originalOmpProfile = process.env.MARS_PROFILE;
 const originalPiProfile = process.env.PI_PROFILE;
 
 let tempAgentDir: TempDir | undefined;
@@ -51,7 +51,7 @@ beforeEach(async () => {
 	originalExitCode = process.exitCode;
 	process.exitCode = undefined;
 	resetSettingsForTest();
-	tempAgentDir = TempDir.createSync("@omp-search-cli-");
+	tempAgentDir = TempDir.createSync("@mars-search-cli-");
 	setAgentDir(tempAgentDir.path());
 	const settings = await Settings.init({ inMemory: true, cwd: tempAgentDir.path() });
 	settings.setModelRole("web", "web/startpage");
@@ -63,7 +63,7 @@ afterEach(async () => {
 	resetSettingsForTest();
 	process.exitCode = originalExitCode;
 	restoreEnv("PI_CODING_AGENT_DIR", originalAgentDir);
-	restoreEnv("OMP_PROFILE", originalOmpProfile);
+	restoreEnv("MARS_PROFILE", originalOmpProfile);
 	restoreEnv("PI_PROFILE", originalPiProfile);
 	__resetDirsFromEnvForTests();
 	// runSearchCommand opens <agentDir>/models.db; Windows cannot delete an open database.

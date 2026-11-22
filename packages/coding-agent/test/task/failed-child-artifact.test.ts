@@ -115,7 +115,7 @@ afterEach(() => {
 
 describe("failed child evidence", () => {
 	it("hands the parent the finished child's exit status and readable artifact when the merge throws", async () => {
-		using tempDir = TempDir.createSync("@omp-failed-child-");
+		using tempDir = TempDir.createSync("@mars-failed-child-");
 		vi.spyOn(discoveryModule, "discoverAgents").mockResolvedValue({ agents: [AGENT], projectAgentsDir: null });
 		await initRepo(tempDir.path());
 		let artifactPath = "";
@@ -170,7 +170,7 @@ describe("failed child evidence", () => {
 		{ lane: "one child's merge throws", isolated: true },
 		{ lane: "both children finish", isolated: false },
 	])("marks a two-child call an error only when a child failed: $lane", async ({ isolated }) => {
-		using tempDir = TempDir.createSync("@omp-failed-child-");
+		using tempDir = TempDir.createSync("@mars-failed-child-");
 		vi.spyOn(discoveryModule, "discoverAgents").mockResolvedValue({ agents: [AGENT], projectAgentsDir: null });
 		await finishChildrenThenBreakMerge(tempDir.path());
 
@@ -189,7 +189,7 @@ describe("failed child evidence", () => {
 	});
 
 	it("marks a mixed call an error when its blocking child's merge throws", async () => {
-		using tempDir = TempDir.createSync("@omp-failed-child-");
+		using tempDir = TempDir.createSync("@mars-failed-child-");
 		vi.spyOn(discoveryModule, "discoverAgents").mockResolvedValue({
 			agents: [AGENT, BLOCKING_AGENT],
 			projectAgentsDir: null,

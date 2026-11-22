@@ -1,5 +1,5 @@
 {
-  description = "OMP coding agent and development environment";
+  description = "Mars coding agent and development environment";
 
   nixConfig = {
     extra-substituters = [ "https://nix-community.cachix.org" ];
@@ -113,8 +113,8 @@
       apps = forAllSystems (system: {
         default = {
           type = "app";
-          program = "${self.packages.${system}.default}/bin/omp";
-          meta.description = "Run OMP";
+          program = "${self.packages.${system}.default}/bin/mars";
+          meta.description = "Run Mars";
         };
         mars = self.apps.${system}.default;
       });
@@ -150,8 +150,8 @@
               }
               self.homeManagerModules.default
               {
-                programs.omp.enable = true;
-                programs.omp.settings.startup.quiet = true;
+                programs.mars.enable = true;
+                programs.mars.settings.startup.quiet = true;
               }
             ];
           };
@@ -165,18 +165,18 @@
                 };
               }
               self.nixosModules.default
-              { programs.omp.enable = true; }
+              { programs.mars.enable = true; }
             ];
           };
           modulesEvaluate =
             assert builtins.elem self.packages.${system}.default homeManagerEvaluation.config.home.packages;
-            assert homeManagerEvaluation.config.home.activation ? ompConfig;
+            assert homeManagerEvaluation.config.home.activation ? marsConfig;
             assert builtins.elem self.packages.${system}.default
               nixosEvaluation.config.environment.systemPackages;
-            pkgs.runCommand "omp-module-evaluation" { } "touch $out";
+            pkgs.runCommand "mars-module-evaluation" { } "touch $out";
         in
         {
-          bun-lock = pkgs.runCommand "omp-bun-lock" { nativeBuildInputs = [ bun2nix ]; } ''
+          bun-lock = pkgs.runCommand "mars-bun-lock" { nativeBuildInputs = [ bun2nix ]; } ''
             cp -R ${self.outPath} source
             chmod -R u+w source
             cd source
@@ -198,8 +198,8 @@
       };
 
       homeManagerModules.default = import ./nix/home-manager.nix { inherit self; };
-      homeManagerModules.omp = self.homeManagerModules.default;
+      homeManagerModules.mars = self.homeManagerModules.default;
       nixosModules.default = import ./nix/nixos-module.nix { inherit self; };
-      nixosModules.omp = self.nixosModules.default;
+      nixosModules.mars = self.nixosModules.default;
     };
 }

@@ -1019,7 +1019,7 @@ export interface AfterToolCallContext {
  *
  * @example
  * ```typescript
- * declare module "@oh-my-pi/agent" {
+ * declare module "@marsai-org/agent" {
  *   interface CustomAgentMessages {
  *     artifact: ArtifactMessage;
  *     notification: NotificationMessage;

@@ -1,10 +1,10 @@
 /**
  * Speculative composer state for the next first frame, kept in one SQLite store
- * (`~/.omp/agent/cache/composer.db`).
+ * (`~/.mars/agent/cache/composer.db`).
  *
  * Each row is one JSON payload keyed by project (the resolved cwd) and kind.
  * Settings-derived kinds (theme/composer preferences, status-bar inputs) are
- * also written under the empty project, so a folder that never ran omp still
+ * also written under the empty project, so a folder that never ran Mars still
  * paints with the user's theme and status bar: those are rarely
  * project-specific, and path/branch render live. Status inputs naming a
  * project-scoped default model stay out of that fallback.

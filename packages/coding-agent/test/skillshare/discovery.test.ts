@@ -42,11 +42,11 @@ describe("skillshare discovery provider", () => {
 
 	beforeEach(async () => {
 		originalAgentDir = getAgentDir();
-		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "omp-skillshare-disco-"));
+		tempHome = await fs.mkdtemp(path.join(os.tmpdir(), "mars-skillshare-disco-"));
 		project = path.join(tempHome, "work", "proj");
 		await fs.mkdir(path.join(project, ".git"), { recursive: true });
 		vi.spyOn(os, "homedir").mockReturnValue(tempHome);
-		setAgentDir(path.join(tempHome, ".omp", "agent"));
+		setAgentDir(path.join(tempHome, ".mars", "agent"));
 	});
 
 	afterEach(async () => {
@@ -162,7 +162,7 @@ describe("skillshare discovery provider", () => {
 			},
 		};
 		const userLock: SkillsLock = { version: 1, skills: { "@bob/review": lockEntry("bob", "review", "2.0.0") } };
-		await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), projectLock);
+		await writeSkillsLock(path.join(project, ".mars", "skills.lock.json"), projectLock);
 		await writeSkillsLock(path.join(getAgentDir(), "skills.lock.json"), userLock);
 		const pdfDir = await storeSkill("alice", "pdf-tools", "1.2.0", "PDF helpers");
 		await storeSkill("bob", "review", "2.0.0", "Code review");
@@ -200,7 +200,7 @@ describe("skillshare discovery provider", () => {
 		await fs.mkdir(realStore, { recursive: true });
 		await fs.mkdir(path.dirname(getSkillshareStoreDir()), { recursive: true });
 		await fs.symlink(realStore, getSkillshareStoreDir());
-		await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), {
+		await writeSkillsLock(path.join(project, ".mars", "skills.lock.json"), {
 			version: 1,
 			skills: { "@alice/pdf-tools": lockEntry("alice", "pdf-tools", "1.2.0") },
 		});
@@ -217,12 +217,12 @@ describe("skillshare discovery provider", () => {
 	});
 
 	it("lets an authored project skill win a name collision", async () => {
-		await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), {
+		await writeSkillsLock(path.join(project, ".mars", "skills.lock.json"), {
 			version: 1,
 			skills: { "@alice/pdf-tools": lockEntry("alice", "pdf-tools", "1.2.0") },
 		});
 		await storeSkill("alice", "pdf-tools", "1.2.0", "Registry PDF helpers");
-		const authored = path.join(project, ".omp", "skills", "pdf-tools", "SKILL.md");
+		const authored = path.join(project, ".mars", "skills", "pdf-tools", "SKILL.md");
 		await fs.mkdir(path.dirname(authored), { recursive: true });
 		await Bun.write(authored, "---\nname: pdf-tools\ndescription: Local PDF helpers\n---\n# local\n");
 
@@ -241,7 +241,7 @@ describe("skillshare discovery provider", () => {
 			// the directory scanner's checks: the boundary that must hold is `loadSkills`.
 			const collisions = path.resolve(import.meta.dirname, "../fixtures/skills-collision");
 			const [first, second] = [path.join(collisions, "first"), path.join(collisions, "second")];
-			await writeSkillsLock(path.join(project, ".omp", "skills.lock.json"), {
+			await writeSkillsLock(path.join(project, ".mars", "skills.lock.json"), {
 				version: 1,
 				skills: { "@mallory/evil": lockEntry("mallory", "evil", "1.0.0") },
 			});

@@ -199,4 +199,41 @@ describe("OAuthSelectorComponent", () => {
 			expect(rendered).toContain("OpenCode Go");
 		});
 	});
+
+	it("offers a custom endpoint entry at the end of the login list", () => {
+		const selected: string[] = [];
+		const component = new OAuthSelectorComponent(
+			"login",
+			authStorage,
+			providerId => selected.push(providerId),
+			() => {},
+		);
+
+		// The entry sits at the end of a catalog longer than the visible window,
+		// so reach it the way a user would: by typing part of its label.
+		for (const char of "custom endpoint") component.handleInput(char);
+		expect(
+			component
+				.render(80)
+				.map(line => Bun.stripANSI(line))
+				.join("\n"),
+		).toContain("Custom Endpoint / Provider");
+
+		component.handleInput("\n");
+		expect(selected).toEqual(["custom"]);
+	});
+
+	it("does not offer the custom endpoint entry as a logout target", () => {
+		const component = new OAuthSelectorComponent(
+			"logout",
+			authStorage,
+			() => {},
+			() => {},
+		);
+		const rendered = component
+			.render(80)
+			.map(line => Bun.stripANSI(line))
+			.join("\n");
+		expect(rendered).not.toContain("Custom Endpoint / Provider");
+	});
 });
