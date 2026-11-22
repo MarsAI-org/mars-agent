@@ -7,6 +7,7 @@
  * - format the generic approval prompt body.
  */
 import type { AgentTool, ToolApprovalDecision, ToolTier } from "@marsai-org/agent-core";
+import { logger } from "@marsai-org/utils";
 import type { Settings } from "../config/settings";
 
 import { cfgToolsApproval, cfgToolsApprovalMode } from "./settings";
@@ -76,10 +77,16 @@ export function resolveApprovalFromContext(context?: ApprovalContextSource | nul
 		return { approvalMode: "always-ask", userPolicies: {} };
 	}
 	const configured: unknown = cfgToolsApprovalMode.get(settings);
-	return {
-		approvalMode: isApprovalMode(configured) ? configured : "yolo",
-		userPolicies: asPolicyMap(cfgToolsApproval.get(settings)),
-	};
+	const userPolicies = asPolicyMap(cfgToolsApproval.get(settings));
+	if (isApprovalMode(configured)) {
+		return { approvalMode: configured, userPolicies };
+	}
+	// The setting registry validates this enum, so reaching here means the value
+	// bypassed it (a hand-edited settings object, a merged config, an enum member a
+	// newer build wrote). Falling back to `yolo` made an unrecognised value the most
+	// permissive grant in the system; fail closed to the tier that prompts.
+	logger.warn("tools.approvalMode has an unrecognised value; falling back to always-ask", { value: configured });
+	return { approvalMode: "always-ask", userPolicies };
 }
 
 export interface ResolvedApproval {

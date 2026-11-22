@@ -4,6 +4,7 @@
 
 ### Fixed
 
+- **An unrecognised `tools.approvalMode` no longer means "approve everything".** A value outside `always-ask`/`write`/`yolo` fell back to `yolo`, the most permissive tier, so a mangled or merged settings file silently turned approvals off; it now falls back to `always-ask` and logs a warning.
 - **Browser MP4 recording works on ffmpeg builds without `libx264`.** The MP4 branch hard-coded the `libx264` encoder, so recording failed outright with "Unknown encoder" on ffmpeg builds that ship a different H.264 encoder (e.g. distro packages linking OpenH264). It now probes the available H.264 encoders and falls back through them, mirroring the WebM path's VP9→VP8 fallback.
 - **The debug flamegraph and DAP debugging no longer assume `/tmp`.** Both wrote their SVG export and debugger socket to a hard-coded `/tmp` path, which does not exist on Windows; the flamegraph also used a predictable name in a world-writable directory. They use the platform temp directory now, and the flamegraph gets a private directory with a `0600` file.
 - **Archive writes survive a crash and concurrent edits.** Rewriting an entry inside a `.zip`/`.tar` used a per-process temp name, so two concurrent writes to the same archive could install each other's bytes, and the rename ran before the data was flushed. The temp name is per write now and the file is synced before the swap.

@@ -12,6 +12,7 @@ import {
 } from "@marsai-org/coding-agent/tools/approval";
 import { BashTool } from "@marsai-org/coding-agent/tools/bash";
 import { Settings } from "../../src/config/settings";
+import { cfgToolsApprovalMode } from "../../src/tools/settings";
 import { EditTool } from "../../src/edit";
 import type { ToolSession } from "../../src/tools";
 
@@ -945,6 +946,21 @@ describe("resolveApprovalFromContext fail-closed default", () => {
 			approvalMode: "yolo",
 			userPolicies: {},
 		});
+	});
+
+	it("fails closed to always-ask when the configured mode is not a known tier", () => {
+		// A value the enum does not know can only reach here by bypassing the setting
+		// registry (hand-edited settings object, merged config, a newer enum member).
+		// It used to resolve to yolo, the most permissive tier in the system.
+		// The setting registry rejects the write, so the read is stubbed to stand in for
+		// any path that bypasses validation entirely.
+		const settings = Settings.isolated();
+		const get = spyOn(cfgToolsApprovalMode, "get").mockReturnValue("hold-everything" as ApprovalMode);
+		try {
+			expect(resolveApprovalFromContext({ settings })).toEqual({ approvalMode: "always-ask", userPolicies: {} });
+		} finally {
+			get.mockRestore();
+		}
 	});
 
 	it("lets --auto-approve force yolo while still reading user policies", () => {

@@ -620,6 +620,21 @@ export class WriteTool implements AgentTool<typeof writeSchema, WriteToolDetails
 				await handle.close();
 			}
 			await fs.rename(tmpPath, finalPath);
+			// The rename is atomic, but the directory entry it created needs its own sync
+			// to survive a crash; without it recovery can undo the swap. Windows does not
+			// open directories as file handles, so this is POSIX-only and best-effort.
+			if (process.platform !== "win32") {
+				try {
+					const dirHandle = await fs.open(parentDir || ".", "r");
+					try {
+						await dirHandle.sync();
+					} finally {
+						await dirHandle.close();
+					}
+				} catch {
+					/* durability only: the rename itself already succeeded */
+				}
+			}
 		} catch (error) {
 			await fs.rm(tmpPath, { force: true }).catch(() => {});
 			throw new ToolError(error instanceof Error ? error.message : String(error));

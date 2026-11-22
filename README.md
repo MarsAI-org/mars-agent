@@ -25,7 +25,7 @@
 Continuously tuned by real-world use — complete out of the box, open all the
 way down.
 
-**75** providers · **36** built-in tools · **~240k** lines of Rust core ·
+**75** providers · **34** built-in tools · **~300k** lines of Rust core ·
 **~50k** more vendored in-process.
 
 > [!NOTE]

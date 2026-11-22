@@ -13,7 +13,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 
 // ---------------------------------------------------------------------------
 // Configuration & Inputs
@@ -56,6 +56,43 @@ function run(cmd, cwd = process.cwd(), ignoreError = false) {
       return (error.stdout || "") + "\n" + (error.stderr || error.message);
     }
     throw error;
+  }
+}
+
+/**
+ * Run a program with an argv array and no shell. Every value that came from the
+ * model — a commit message, a PR title — must travel this way: `execSync` with an
+ * interpolated string re-parses it, so a backtick or `$(…)` in a model-authored
+ * commit message was executable.
+ */
+function runFile(file, args, opts = {}) {
+  try {
+    return execFileSync(file, args, {
+      cwd: opts.cwd || process.cwd(),
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      maxBuffer: 10 * 1024 * 1024,
+    }).trim();
+  } catch (error) {
+    if (opts.ignoreError) {
+      return (error.stdout || "") + "\n" + (error.stderr || error.message);
+    }
+    throw error;
+  }
+}
+
+/** Exit status plus combined output, for checks whose verdict is the exit code. */
+function runCheck(file, args, cwd = process.cwd()) {
+  try {
+    const output = execFileSync(file, args, {
+      cwd,
+      encoding: "utf8",
+      stdio: ["pipe", "pipe", "pipe"],
+      maxBuffer: 10 * 1024 * 1024,
+    });
+    return { ok: true, output: output.trim() };
+  } catch (error) {
+    return { ok: false, output: `${(error.stdout || "").trim()}\n${(error.stderr || error.message || "").trim()}`.trim() };
   }
 }
 
@@ -110,18 +147,63 @@ function parseTask() {
 // ---------------------------------------------------------------------------
 // Verification Pipeline per Repo
 // ---------------------------------------------------------------------------
+function verifyMarsAgent() {
+  const result = runCheck("bun", ["check"]);
+  return {
+    passed: result.ok,
+    command: "bun check",
+    output: result.output.slice(0, 4000),
+    note: result.ok ? "exited 0" : "exited non-zero",
+  };
+}
+
+/**
+ * The site has no build step, so the check is what a broken page actually breaks
+ * on: every local asset the page points at has to exist, and the installer files
+ * the copy names have to be there. The old check only asserted that index.html
+ * existed, which stayed green for a page referenced by deleted images — and it
+ * was reported to the PR as "Build/Lint/Typecheck: Passed".
+ */
+function verifyMarsSite() {
+  const root = process.cwd();
+  const htmlPath = path.resolve(root, "index.html");
+  if (!fs.existsSync(htmlPath)) {
+    return { passed: false, command: "static-check", output: "index.html missing", note: "index.html missing" };
+  }
+
+  const html = fs.readFileSync(htmlPath, "utf8");
+  const refs = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(match => match[1]);
+  const missing = [];
+  for (const ref of refs) {
+    // Remote, in-page, and root-absolute references (the site deploys at the
+    // domain root) are not resolvable from the checkout.
+    if (/^(https?:|mailto:|data:|#)/.test(ref) || ref.startsWith("/")) continue;
+    const target = path.resolve(root, ref.split("#")[0].split("?")[0]);
+    if (!target.startsWith(root + path.sep)) continue;
+    if (!fs.existsSync(target)) missing.push(ref);
+  }
+  for (const file of ["install", "install.ps1"]) {
+    if (!fs.existsSync(path.resolve(root, file))) missing.push(file);
+  }
+
+  return {
+    passed: missing.length === 0,
+    command: "static-check",
+    output:
+      missing.length === 0
+        ? `${refs.length} local references resolved; both installers present`
+        : `missing: ${missing.join(", ")}`,
+    note: missing.length === 0 ? "every local reference resolves" : "broken local references",
+  };
+}
+
 function runVerification() {
   console.log(`\n[Stage: Self-Verification] Running automated checks for ${REPO_TYPE}...`);
-  if (REPO_TYPE === "mars-agent") {
-    const checkOut = run("bun check", process.cwd(), true);
-    const hasError = checkOut.toLowerCase().includes("error") || checkOut.includes("Failed");
-    return { passed: !hasError, command: "bun check", output: checkOut };
-  } else if (REPO_TYPE === "mars-site") {
-    // Check if HTML has unclosed tags or broken local links
-    const htmlExists = fs.existsSync(path.resolve(process.cwd(), "index.html"));
-    return { passed: htmlExists, command: "static-check", output: htmlExists ? "index.html present and verified" : "index.html missing" };
-  }
-  return { passed: true, command: "none", output: "No verification step configured" };
+  if (REPO_TYPE === "mars-agent") return verifyMarsAgent();
+  if (REPO_TYPE === "mars-site") return verifyMarsSite();
+  // Fail closed: an unconfigured repo has no verdict to report, and reporting one
+  // anyway is how "verified" stopped meaning anything.
+  return { passed: false, command: "none", output: `no verification configured for REPO_TYPE=${REPO_TYPE}`, note: "no verification configured" };
 }
 
 // ---------------------------------------------------------------------------
@@ -241,6 +323,46 @@ function assertSafePath(targetPath) {
   return resolved;
 }
 
+/**
+ * Reads may look anywhere in the workspace; writes may not. The runner holds
+ * `contents: write` and a bot token, and it pushes whatever the agent changed, so
+ * a model-steered edit to a workflow (or to `.git/hooks`, or to the installers
+ * this site documents) would hand the bot its own release path on the next run.
+ * Those files stay the human's to change.
+ */
+const PROTECTED_WRITE_RE = /(^|[\\/])(?:\.git|\.github)([\\/]|$)|(^|[\\/])install(?:\.ps1)?$|(^|[\\/])\.bot-/i;
+
+function assertWritablePath(targetPath) {
+  const resolved = assertSafePath(targetPath);
+  if (PROTECTED_WRITE_RE.test(resolved)) {
+    throw new Error(
+      `Access denied: '${targetPath}' is protected (workflows, git internals, installers, bot scratch files)`,
+    );
+  }
+  return resolved;
+}
+
+/**
+ * `execute_command` still runs a shell — that is the tool's contract — but the
+ * few shapes that hand the bot a surface it should not reach are refused here
+ * rather than trusted to the prompt.
+ */
+const FORBIDDEN_COMMAND_PATTERNS = [
+  { re: /(^|[\s;&|])git\s+push(\s|$)/, why: "the runner pushes its own branch" },
+  { re: /(^|[\s;&|])gh\s+(api|release|secret|workflow|auth)\b/, why: "the token's release and settings surface is not the agent's" },
+  { re: /\.github\/|\.git\/hooks/, why: "workflows and git hooks are protected" },
+  { re: /\b(curl|wget)\b[^|;]*\|\s*(sudo\s+)?(ba)?sh\b/, why: "piping a download into a shell" },
+  { re: /\b(sudo|doas)\b/, why: "the runner has nothing to escalate here" },
+];
+
+function assertCommandAllowed(command) {
+  for (const { re, why } of FORBIDDEN_COMMAND_PATTERNS) {
+    if (re.test(command)) {
+      throw new Error(`Command refused: ${why}. Command was: ${command.slice(0, 160)}`);
+    }
+  }
+}
+
 function handleToolCall(name, args) {
   try {
     switch (name) {
@@ -255,13 +377,13 @@ function handleToolCall(name, args) {
         return { content: fs.readFileSync(filePath, "utf8") };
       }
       case "write_file": {
-        const filePath = assertSafePath(args.path);
+        const filePath = assertWritablePath(args.path);
         fs.mkdirSync(path.dirname(filePath), { recursive: true });
         fs.writeFileSync(filePath, args.content, "utf8");
         return { success: true, path: args.path };
       }
       case "edit_file": {
-        const filePath = assertSafePath(args.path);
+        const filePath = assertWritablePath(args.path);
         if (!fs.existsSync(filePath)) return { error: `File not found: ${args.path}` };
         const fileContent = fs.readFileSync(filePath, "utf8");
         if (!fileContent.includes(args.oldString)) {
@@ -281,6 +403,7 @@ function handleToolCall(name, args) {
         return { entries };
       }
       case "execute_command": {
+        assertCommandAllowed(args.command);
         const output = run(args.command, process.cwd(), true);
         return { output: output.slice(0, 8000) };
       }
@@ -380,7 +503,7 @@ function postGitHubComment(issueNumber, body) {
   const commentFile = path.resolve(process.cwd(), ".bot-comment.md");
   fs.writeFileSync(commentFile, body, "utf8");
   try {
-    run(`gh issue comment ${issueNumber} --repo ${GITHUB_REPOSITORY} --body-file .bot-comment.md`);
+    runFile("gh", ["issue", "comment", String(issueNumber), "--repo", GITHUB_REPOSITORY, "--body-file", ".bot-comment.md"]);
   } catch (err) {
     console.warn("Failed to post comment:", err.message);
   } finally {
@@ -393,9 +516,20 @@ function createPullRequest(branchName, title, body) {
   const prBodyFile = path.resolve(process.cwd(), ".bot-pr-body.md");
   fs.writeFileSync(prBodyFile, body, "utf8");
   try {
-    const out = run(
-      `gh pr create --repo ${GITHUB_REPOSITORY} --head ${branchName} --base main --title "${title.replace(/"/g, '\\"')}" --body-file .bot-pr-body.md`
-    );
+    const out = runFile("gh", [
+      "pr",
+      "create",
+      "--repo",
+      GITHUB_REPOSITORY,
+      "--head",
+      branchName,
+      "--base",
+      "main",
+      "--title",
+      title,
+      "--body-file",
+      ".bot-pr-body.md",
+    ]);
     return out;
   } catch (err) {
     console.warn("Failed to create PR:", err.message);
@@ -459,6 +593,7 @@ ${repoGuidance}`,
 
   let turn = 0;
   let finalResult = null;
+  let verificationRecord = null;
 
   while (turn < MAX_TURNS) {
     turn++;
@@ -481,8 +616,8 @@ ${repoGuidance}`,
         const result = handleToolCall(fnName, fnArgs);
 
         if (fnName === "submit_task" && result.completed) {
-          // INTERCEPT: Automated verification and Self-Review Pass before allowing submission!
           const verification = runVerification();
+          verificationRecord = verification;
           const currentDiff = run("git diff", process.cwd(), true);
 
           if (!verification.passed) {
@@ -495,7 +630,7 @@ ${repoGuidance}`,
                 error: `Cannot submit yet! Automated verification '${verification.command}' failed:\n${verification.output}\n\nPlease analyze this error, fix your code, and verify again.`,
               }),
             });
-            continue; // Force agent to self-fix
+            continue;
           }
 
           if (currentDiff && currentDiff.trim().length > 0) {
@@ -512,11 +647,10 @@ ${repoGuidance}`,
                   error: `Self-Review rejected your diff! Critique: ${selfReviewVerdict}\n\nPlease self-correct these issues before submitting again.`,
                 }),
               });
-              continue; // Force agent to self-fix its own review critique
+              continue;
             }
           }
 
-          // Both Verification and Self-Review Passed!
           finalResult = result;
         }
 
@@ -541,49 +675,81 @@ ${repoGuidance}`,
     if (task.issueNumber) {
       postGitHubComment(
         task.issueNumber,
-        `🤖 **Mars Bot**: Evaluated and audited code for: "${task.prompt}". No changes required.\n\n**Self-Review**: All existing tests and conventions passed.`
+        `🤖 **Mars Bot**: Evaluated and audited code for: "${task.prompt}". No changes required.\n\n**Verification**: ${
+          verificationRecord ? `\`${verificationRecord.command}\` ${verificationRecord.passed ? "passed" : "failed"}` : "the agent never submitted, so no check ran"
+        }.`,
       );
     }
     return;
   }
 
-  // Create branch, commit, push, PR
-  const commitMsg = finalResult?.commitMessage || `fix: automated autonomous repair (${task.issueNumber ? '#' + task.issueNumber : 'self-governed'})`;
+  // Nothing leaves the runner unless the agent submitted AND the check it
+  // reported actually passed. A run that hit MAX_TURNS used to commit whatever
+  // happened to be in the tree and describe it in the PR as verified.
+  if (!finalResult) {
+    console.log(`No submission after ${turn} turn(s); leaving the working tree uncommitted.`);
+    if (task.issueNumber) {
+      postGitHubComment(
+        task.issueNumber,
+        `🤖 **Mars Bot** stopped after ${turn} turn(s) without submitting, so nothing was committed or pushed.\n\nThe working tree was left as-is:\n\n\`\`\`\n${gitStatus
+          .split("\n")
+          .slice(0, 20)
+          .join("\n")}\n\`\`\``,
+      );
+    }
+    return;
+  }
+  if (!verificationRecord?.passed) {
+    const detail = verificationRecord ? `${verificationRecord.command}: ${verificationRecord.output}` : "no check ran";
+    console.log(`Verification did not pass (${detail}); leaving the working tree uncommitted.`);
+    if (task.issueNumber) {
+      postGitHubComment(
+        task.issueNumber,
+        `🤖 **Mars Bot** implemented changes but verification did not pass, so nothing was committed or pushed.\n\n\`\`\`\n${detail.slice(0, 2000)}\n\`\`\``,
+      );
+    }
+    return;
+  }
+
+  const commitMsg = finalResult.commitMessage || `fix: automated autonomous repair (${task.issueNumber ? `#${task.issueNumber}` : "self-governed"})`;
   const branchName = `mars-bot/${Date.now()}-${task.issueNumber || "auto"}`;
 
   console.log(`Committing verified changes to: ${branchName}`);
-  run(`git checkout -b ${branchName}`);
-  run("git add -A");
-  run(`git commit -m "${commitMsg.replace(/"/g, '\\"')}"`);
+  runFile("git", ["checkout", "-b", branchName]);
+  runFile("git", ["add", "-A"]);
+  // argv, never an interpolated string: the commit message is model output.
+  runFile("git", ["commit", "-m", commitMsg]);
 
   if (GITHUB_TOKEN) {
     console.log("Pushing branch to remote...");
-    run(`git push origin ${branchName}`);
+    runFile("git", ["push", "origin", branchName]);
 
+    // Report the check that actually ran, and what it actually said.
+    const verificationLine = `- \`${verificationRecord.command}\`: **${verificationRecord.passed ? "passed" : "failed"}** (${verificationRecord.note})`;
     const prBody = `## Summary
-${finalResult?.summary || "Autonomous self-directed code update."}
+${finalResult.summary || "Autonomous self-directed code update."}
 
-## 🛡️ Autonomous Self-Review & Verification
-- **Build/Lint/Typecheck**: Passed autonomously without human intervention.
-- **Self-Review Critique**: ${finalResult?.selfReviewNotes || "Code diff audited and verified safe."}
+## 🛡️ Verification & Self-Review
+${verificationLine}
+- Self-review: ${finalResult.selfReviewNotes || "no notes returned"}
 
 ${task.issueNumber ? `Closes #${task.issueNumber}` : ""}
 
 ---
-*Built, verified, and self-reviewed autonomously by Mars Bot*`;
+*Committed by Mars Bot after the check above passed*`;
 
     if (!task.isPr) {
       const prUrl = createPullRequest(branchName, commitMsg, prBody);
       if (task.issueNumber) {
         postGitHubComment(
           task.issueNumber,
-          `🤖 **Mars Bot** has autonomously resolved and self-reviewed this issue!\n\n${finalResult?.summary || ""}\n\n**PR Opened**: ${prUrl || branchName}`
+          `🤖 **Mars Bot** resolved this issue and opened a PR.\n\n${finalResult.summary || ""}\n\n${verificationLine}\n\n**PR**: ${prUrl || branchName}`,
         );
       }
     } else if (task.issueNumber) {
       postGitHubComment(
         task.issueNumber,
-        `🤖 **Mars Bot** has autonomously applied verified fixes to branch \`${branchName}\`.\n\n${finalResult?.summary || ""}`
+        `🤖 **Mars Bot** pushed verified changes to \`${branchName}\`.\n\n${finalResult.summary || ""}\n\n${verificationLine}`,
       );
     }
   }
