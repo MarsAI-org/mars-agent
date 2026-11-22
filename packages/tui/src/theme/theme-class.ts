@@ -263,6 +263,13 @@ export class Theme {
 				logger.debug("Invalid symbol key in override", { key, availableKeys: Object.keys(this.#symbols) });
 			}
 		}
+		// `icon.omp` is the deprecated alias of `icon.mars`. A theme that still
+		// overrides only the old key keeps its custom glyph; an explicit
+		// `icon.mars` override always wins.
+		const legacyBrand = symbolOverrides["icon.omp"];
+		if (legacyBrand !== undefined && symbolOverrides["icon.mars"] === undefined) {
+			this.#symbols["icon.mars"] = legacyBrand;
+		}
 		// `status.done` aliases `status.success` unless a theme overrides it explicitly.
 		if (!("status.done" in symbolOverrides)) this.#symbols["status.done"] = this.#symbols["status.success"];
 		this.#spinnerFramesOverrides = spinnerFramesOverrides;
@@ -694,6 +701,8 @@ export class Theme {
 			advisor: this.#symbols["icon.advisor"],
 			advisorClosed: this.#symbols["icon.advisorClosed"],
 			time: this.#symbols["icon.time"],
+			// `icon.omp` is the deprecated alias of `icon.mars`. A theme that still
+			// overrides the old name keeps working; an explicit `icon.mars` override wins.
 			mars: this.#symbols["icon.mars"],
 			omp: this.#symbols["icon.omp"],
 			ghost: this.#symbols["icon.ghost"],

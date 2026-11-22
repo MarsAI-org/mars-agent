@@ -175,7 +175,7 @@ const BUSY_TIMEOUT_MS = 5000;
  * connections this module opens; for tests that hold the write lock. Read at
  * open time, so worker threads inherit it from the spawning process.
  */
-export const STATS_BUSY_TIMEOUT_MS_ENV = "OMP_STATS_BUSY_TIMEOUT_MS";
+export const STATS_BUSY_TIMEOUT_MS_ENV = "MARS_STATS_BUSY_TIMEOUT_MS";
 
 function busyTimeoutPragma(): string {
 	return `PRAGMA busy_timeout = ${$envpos(STATS_BUSY_TIMEOUT_MS_ENV, BUSY_TIMEOUT_MS)}`;

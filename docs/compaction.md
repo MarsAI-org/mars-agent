@@ -82,10 +82,10 @@ Compaction/context maintenance can run in six ways:
 
 ACP sessions forward automatic maintenance as JSON-RPC extension notifications:
 
-| Method | Params |
-| --- | --- |
-| `_omp/compaction/start` | `sessionId`, `reason`, `action` |
-| `_omp/compaction/end` | `sessionId`, `action`, `aborted`, `willRetry`, optional `skipped`, `errorMessage`, `tokensBefore` |
+| Method                  | Params                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| `_omp/compaction/start` | `sessionId`, `reason`, `action`                                                                   |
+| `_omp/compaction/end`   | `sessionId`, `action`, `aborted`, `willRetry`, optional `skipped`, `errorMessage`, `tokensBefore` |
 
 Clients that do not implement them can ignore them.
 

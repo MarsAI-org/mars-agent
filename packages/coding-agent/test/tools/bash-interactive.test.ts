@@ -47,7 +47,7 @@ describe("runInteractiveBashPty", () => {
 
 	/** Run the env probe on a real PTY as a program started from the session exports `env`. */
 	async function probe(env: Record<string, string>): Promise<string> {
-		const command = `printf 'probe=%s term=%s ci=%s no_color=%s git_editor=%s gpg_tty=%s tty=%s\\n' "\${OMP_PTY_PROBE-unset}" "$TERM" "\${CI-unset}" "\${NO_COLOR-unset}" "\${GIT_EDITOR-unset}" "\${GPG_TTY-unset}" "$([ -t 0 ] && echo yes)"`;
+		const command = `printf 'probe=%s term=%s ci=%s no_color=%s git_editor=%s gpg_tty=%s tty=%s\\n' "\${MARS_PTY_PROBE-unset}" "$TERM" "\${CI-unset}" "\${NO_COLOR-unset}" "\${GIT_EDITOR-unset}" "\${GPG_TTY-unset}" "$([ -t 0 ] && echo yes)"`;
 		const result = await runInteractiveBashPty(headlessUi(), {
 			command,
 			application: "/bin/bash",
@@ -64,11 +64,11 @@ describe("runInteractiveBashPty", () => {
 		"starts the program on a terminal from the session's exports, without the guards of unattended commands",
 		async () => {
 			// What the launch environment itself gives the program for the guarded names.
-			const launch = await probe({ OMP_PTY_PROBE: "from-session" });
+			const launch = await probe({ MARS_PTY_PROBE: "from-session" });
 
 			// What the session shell exports while it runs a command nobody can answer.
 			const output = await probe({
-				OMP_PTY_PROBE: "from-session",
+				MARS_PTY_PROBE: "from-session",
 				TERM: "dumb",
 				CI: "true",
 				NO_COLOR: "1",

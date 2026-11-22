@@ -5,7 +5,7 @@ import type { EncodeGifRequest, EncodeGifResult } from "./messages";
 
 const CYAN = "#5ad8e6";
 const PINK = "#ed4abf";
-const OMP_MARK = new Path2D("M10 14h44v9H43v33h-9V23h-9v22h-9V23H10z");
+const MARS_MARK = new Path2D("M10 14h44v9H43v33h-9V23h-9v22h-9V23H10z");
 
 function drawClick(ctx: CanvasRenderingContext2D, point: Point): void {
 	ctx.lineWidth = 2;
@@ -93,7 +93,7 @@ function drawMark(ctx: CanvasRenderingContext2D, { x, y, size }: Point & { size:
 	gradient.addColorStop(0.5, "oklch(0.62 0.21 295)");
 	gradient.addColorStop(1, "oklch(0.81 0.14 200)");
 	ctx.fillStyle = gradient;
-	ctx.fill(OMP_MARK);
+	ctx.fill(MARS_MARK);
 	ctx.restore();
 }
 

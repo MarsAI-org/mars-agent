@@ -3,11 +3,11 @@
  * and putting every one back afterwards. It only touches `<head>` when the working state changes or the page
  * navigates in place, never in response to input.
  */
-import { OMP_MARK_PATH } from "./dom";
+import { MARS_MARK_PATH } from "./dom";
 
 /** The mark as a data-SVG; hex stops because a favicon renderer may predate `oklch()`. */
 const MARK_HREF = `data:image/svg+xml,${encodeURIComponent(
-	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 9 52 52"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f84fcc"/><stop offset=".5" stop-color="#9362f4"/><stop offset="1" stop-color="#00dbe4"/></linearGradient></defs><path fill="url(#g)" d="${OMP_MARK_PATH}"/></svg>`,
+	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 9 52 52"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f84fcc"/><stop offset=".5" stop-color="#9362f4"/><stop offset="1" stop-color="#00dbe4"/></linearGradient></defs><path fill="url(#g)" d="${MARS_MARK_PATH}"/></svg>`,
 )}`;
 
 /** Single-page apps rewrite their icon links as they navigate; the mark goes back on this long after. */

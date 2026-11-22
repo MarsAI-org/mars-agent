@@ -4,7 +4,7 @@ import { HostLink, type HostLinkReattach } from "@marsai-org/coding-agent/mcp/li
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, REMOTE_SPEC, settled, unauthorized } from "./link-fake-host";
 
-const TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 
 function withToken(token: string): McpRemoteSpec {
 	return { ...REMOTE_SPEC, headers: { Authorization: `Bearer ${token}` } };

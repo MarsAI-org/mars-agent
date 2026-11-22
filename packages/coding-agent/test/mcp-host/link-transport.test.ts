@@ -12,7 +12,7 @@ import { MCP_CLIENT_INFO, MCP_PROTOCOL_VERSION, MCPMeta } from "@marsai-org/codi
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, metaOf, paramsOf, REMOTE_SPEC, settled } from "./link-fake-host";
 
-const TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 const ROOTS = [{ uri: "file:///work/project", name: "project" }];
 
 describe("HostLink", () => {

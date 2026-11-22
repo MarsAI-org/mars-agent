@@ -10,7 +10,7 @@ import { restoreEnvValue } from "../helpers/settings-test-state";
 
 describe("PI_CONFIG_DIR", () => {
 	const original = new Map<string, string | undefined>(
-		["PI_CONFIG_DIR", "PI_CODING_AGENT_DIR", "OMP_PROFILE", "PI_PROFILE"].map(key => [key, process.env[key]]),
+		["PI_CONFIG_DIR", "PI_CODING_AGENT_DIR", "MARS_PROFILE", "PI_PROFILE"].map(key => [key, process.env[key]]),
 	);
 	afterEach(() => {
 		for (const [key, value] of original) restoreEnvValue(key, value);
@@ -21,7 +21,7 @@ describe("PI_CONFIG_DIR", () => {
 	function startWith(env: { PI_CONFIG_DIR?: string; PI_CODING_AGENT_DIR?: string }): void {
 		restoreEnvValue("PI_CONFIG_DIR", env.PI_CONFIG_DIR);
 		restoreEnvValue("PI_CODING_AGENT_DIR", env.PI_CODING_AGENT_DIR);
-		restoreEnvValue("OMP_PROFILE", undefined);
+		restoreEnvValue("MARS_PROFILE", undefined);
 		restoreEnvValue("PI_PROFILE", undefined);
 		__resetDirsFromEnvForTests();
 	}

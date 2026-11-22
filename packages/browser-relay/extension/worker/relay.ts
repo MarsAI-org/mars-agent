@@ -39,9 +39,9 @@ import { snapshot } from "./tabs";
  * (`stampRelayExtensionScript`); undeclared in an unstamped build. Read from the script, not the manifest:
  * after the files change, a Chrome restart re-reads manifest.json but keeps running the old service worker.
  */
-declare const OMP_INSTALL_VERSION: string | undefined;
-/** The extension build this script belongs to, declared beside `OMP_INSTALL_VERSION`; undeclared when unstamped. */
-declare const OMP_INSTALL_BUILD: string | undefined;
+declare const MARS_INSTALL_VERSION: string | undefined;
+/** The extension build this script belongs to, declared beside `MARS_INSTALL_VERSION`; undeclared when unstamped. */
+declare const MARS_INSTALL_BUILD: string | undefined;
 
 const RECONNECT_MIN_MS = 1_000;
 const RECONNECT_MAX_MS = 10_000;
@@ -129,7 +129,7 @@ export function relayStatus(): RelayStatus {
 	return {
 		connected: link !== null,
 		extensionVersion:
-			typeof OMP_INSTALL_VERSION === "string" ? OMP_INSTALL_VERSION : undefined,
+			typeof MARS_INSTALL_VERSION === "string" ? MARS_INSTALL_VERSION : undefined,
 	};
 }
 
@@ -168,9 +168,9 @@ async function buildHello(): Promise<ExtToRelayMessage> {
 		browserVersion: versionMatch?.[0] ?? "Chrome/unknown",
 		discardedTabsProtocol: 1, // Keep in sync with the relay protocol version.
 		ompVersion:
-			typeof OMP_INSTALL_VERSION === "string" ? OMP_INSTALL_VERSION : undefined,
+			typeof MARS_INSTALL_VERSION === "string" ? MARS_INSTALL_VERSION : undefined,
 		ompBuild:
-			typeof OMP_INSTALL_BUILD === "string" ? OMP_INSTALL_BUILD : undefined,
+			typeof MARS_INSTALL_BUILD === "string" ? MARS_INSTALL_BUILD : undefined,
 		reloadProtocol: EXTENSION_RELOAD_PROTOCOL_VERSION,
 		// A degraded worker (no downloads API) omits the capability, so the relay answers lookups with
 		// the actionable "predates download tracking" error instead of a generic not-found.

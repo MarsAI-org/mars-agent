@@ -6,7 +6,7 @@ import { walkUpForPackageDir } from "../../config";
  * frames in omp's own code and in its dependencies both fall under it. Taken from this module's location, not
  * `getPackageDir()`, whose `PI_PACKAGE_DIR` override names an asset folder. Compiled binaries run from `$bunfs`.
  */
-const OMP_ROOT = (() => {
+const MARS_ROOT = (() => {
 	const packageDir = walkUpForPackageDir(import.meta.dir);
 	return packageDir ? path.dirname(path.dirname(packageDir)) : undefined;
 })();
@@ -41,7 +41,7 @@ export function formatCellError(stack: string, source: CellErrorSource): string 
 		}
 		if (stack !== header && !stack.startsWith(`${header}\n`)) return stack;
 	}
-	const ompRoot = "ompRoot" in source ? source.ompRoot : OMP_ROOT;
+	const ompRoot = "ompRoot" in source ? source.ompRoot : MARS_ROOT;
 	const rootPrefix = ompRoot === undefined ? undefined : path.join(ompRoot, path.sep);
 	const cwdPrefix = path.join(source.cwd, path.sep);
 	// Only a project-local install or work inside omp's tree shares the cell's dependency ownership.

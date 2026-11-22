@@ -15,7 +15,7 @@
  */
 export const MNEMOPI_EMBED_WORKER_ARG = "__omp_worker_mnemopi_embed";
 /** Env var overriding the unit's idle grace (milliseconds); for tests. */
-export const MNEMOPI_EMBED_IDLE_MS_ENV = "OMP_MNEMOPI_EMBED_IDLE_MS";
+export const MNEMOPI_EMBED_IDLE_MS_ENV = "MARS_MNEMOPI_EMBED_IDLE_MS";
 
 /** Identifier of the fastembed model the worker should load (e.g. `fast-bge-base-en-v1.5`). */
 export type MnemopiEmbedModelId = string;

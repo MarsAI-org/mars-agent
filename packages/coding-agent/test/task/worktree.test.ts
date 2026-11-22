@@ -274,10 +274,10 @@ describe("worktree isolation helpers", () => {
 		});
 
 		it("uses compact isolation paths that do not embed long task ids", async () => {
-			const originalWorktreeDir = process.env.OMP_WORKTREE_DIR;
+			const originalWorktreeDir = process.env.MARS_WORKTREE_DIR;
 			const worktreeBase = await fs.mkdtemp(path.join(os.tmpdir(), "omp-worktree-base-"));
 			tempDirs.push(worktreeBase);
-			delete process.env.OMP_WORKTREE_DIR;
+			delete process.env.MARS_WORKTREE_DIR;
 			setWorktreesDir(worktreeBase);
 			vi.spyOn(natives, "isoResolve").mockResolvedValue({
 				kind: natives.IsoBackendKind.Rcopy,
@@ -298,9 +298,9 @@ describe("worktree isolation helpers", () => {
 				expect(isolationSegment.length).toBeLessThanOrEqual(12);
 			} finally {
 				if (originalWorktreeDir === undefined) {
-					delete process.env.OMP_WORKTREE_DIR;
+					delete process.env.MARS_WORKTREE_DIR;
 				} else {
-					process.env.OMP_WORKTREE_DIR = originalWorktreeDir;
+					process.env.MARS_WORKTREE_DIR = originalWorktreeDir;
 				}
 				setWorktreesDir(undefined);
 			}
@@ -975,8 +975,8 @@ describe("detachGitDir", () => {
 		});
 		const worktreeBase = await fs.mkdtemp(path.join(os.tmpdir(), "omp-detach-submodule-base-"));
 		tempDirs.push(worktreeBase);
-		const originalWorktreeDir = process.env.OMP_WORKTREE_DIR;
-		delete process.env.OMP_WORKTREE_DIR;
+		const originalWorktreeDir = process.env.MARS_WORKTREE_DIR;
+		delete process.env.MARS_WORKTREE_DIR;
 		setWorktreesDir(worktreeBase);
 		let lastBranchName = "";
 		let lastModuleCommit = "";
@@ -1041,8 +1041,8 @@ describe("detachGitDir", () => {
 			expect(await runGit(wt, ["ls-tree", "HEAD", "packages/module"])).toContain(lastModuleCommit);
 		} finally {
 			setWorktreesDir(undefined);
-			if (originalWorktreeDir === undefined) delete process.env.OMP_WORKTREE_DIR;
-			else process.env.OMP_WORKTREE_DIR = originalWorktreeDir;
+			if (originalWorktreeDir === undefined) delete process.env.MARS_WORKTREE_DIR;
+			else process.env.MARS_WORKTREE_DIR = originalWorktreeDir;
 		}
 	}, 30_000);
 
@@ -1063,8 +1063,8 @@ describe("detachGitDir", () => {
 		});
 		const worktreeBase = await fs.mkdtemp(path.join(os.tmpdir(), "omp-added-submodule-base-"));
 		tempDirs.push(worktreeBase);
-		const originalWorktreeDir = process.env.OMP_WORKTREE_DIR;
-		delete process.env.OMP_WORKTREE_DIR;
+		const originalWorktreeDir = process.env.MARS_WORKTREE_DIR;
+		delete process.env.MARS_WORKTREE_DIR;
 		setWorktreesDir(worktreeBase);
 		try {
 			const handle = await ensureIsolation(wt, "added-submodule");
@@ -1086,8 +1086,8 @@ describe("detachGitDir", () => {
 			expect(await runGit(wt, ["cat-file", "-t", addedCommit])).toBe("commit");
 		} finally {
 			setWorktreesDir(undefined);
-			if (originalWorktreeDir === undefined) delete process.env.OMP_WORKTREE_DIR;
-			else process.env.OMP_WORKTREE_DIR = originalWorktreeDir;
+			if (originalWorktreeDir === undefined) delete process.env.MARS_WORKTREE_DIR;
+			else process.env.MARS_WORKTREE_DIR = originalWorktreeDir;
 		}
 	}, 30_000);
 
@@ -1101,8 +1101,8 @@ describe("detachGitDir", () => {
 		});
 		const worktreeBase = await fs.mkdtemp(path.join(os.tmpdir(), "omp-detach-wtbase-"));
 		tempDirs.push(worktreeBase);
-		const originalWorktreeDir = process.env.OMP_WORKTREE_DIR;
-		delete process.env.OMP_WORKTREE_DIR;
+		const originalWorktreeDir = process.env.MARS_WORKTREE_DIR;
+		delete process.env.MARS_WORKTREE_DIR;
 		setWorktreesDir(worktreeBase);
 		try {
 			const handle = await ensureIsolation(wt, "parent-isolation-guard");
@@ -1121,8 +1121,8 @@ describe("detachGitDir", () => {
 			expect(await runGit(handle.mergedDir, ["rev-parse", "HEAD^"])).toBe(baseSha);
 		} finally {
 			setWorktreesDir(undefined);
-			if (originalWorktreeDir === undefined) delete process.env.OMP_WORKTREE_DIR;
-			else process.env.OMP_WORKTREE_DIR = originalWorktreeDir;
+			if (originalWorktreeDir === undefined) delete process.env.MARS_WORKTREE_DIR;
+			else process.env.MARS_WORKTREE_DIR = originalWorktreeDir;
 		}
 	});
 });

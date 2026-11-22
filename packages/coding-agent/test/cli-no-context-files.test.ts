@@ -28,7 +28,7 @@ const MARKERS = [
 	EXTRA_CLAUDE_MARKER,
 	NESTED_LISTING,
 ];
-const ENV_KEYS = ["PI_CODING_AGENT_DIR", "OMP_PROFILE", "PI_PROFILE"] as const;
+const ENV_KEYS = ["PI_CODING_AGENT_DIR", "MARS_PROFILE", "PI_PROFILE"] as const;
 
 describe("--no-context-files", () => {
 	let tempDir: TempDir;

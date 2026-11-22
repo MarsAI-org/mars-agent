@@ -99,7 +99,7 @@ export interface MCPFetchInit {
  * surface. MCP calls are long-poll shaped — a server may stay silent for as
  * long as the work takes — and that timer would end such a wait even where the
  * operator disabled MCP deadlines outright (`timeout: 0`,
- * `OMP_MCP_TIMEOUT_MS=0`). Deadlines and cancellation stay with `init.signal`,
+ * `MARS_MCP_TIMEOUT_MS=0`). Deadlines and cancellation stay with `init.signal`,
  * which each upstream composes from caller cancellation and its own close.
  */
 export async function mcpFetch(

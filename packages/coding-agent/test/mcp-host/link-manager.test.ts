@@ -17,7 +17,7 @@ import type { MCPHttpServerConfig } from "@marsai-org/coding-agent/mcp/types";
 import { removeSyncWithRetries } from "@marsai-org/utils";
 import { FakeHost, type FakeTunnel, type Message, paramsOf, settled, unauthorized } from "./link-fake-host";
 
-const TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 const SERVER = "srv";
 const URL = "https://mcp.example.test/mcp";
 const PONG = { content: [{ type: "text", text: "pong" }] };

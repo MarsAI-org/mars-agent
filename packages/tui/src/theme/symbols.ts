@@ -498,8 +498,8 @@ const UNICODE_SYMBOLS: SymbolMap = {
 	"icon.advisor": "👁",
 	"icon.advisorClosed": "🙈",
 	"icon.time": "⏱",
-	"icon.omp": "π",
-	"icon.mars": "π",
+	"icon.omp": "♂",
+	"icon.mars": "♂",
 	"icon.ghost": "👻",
 	"icon.agents": "👥",
 	"icon.job": "⚙",
@@ -893,8 +893,8 @@ const NERD_SYMBOLS: SymbolMap = {
 	// INTENTIONAL: U+F0D57 is the chosen glyph here. It has been "fixed" to
 	// U+F03FF before (2ec52b8bdd) and reverted because it renders the wrong glyph;
 	// do not swap it again.
-	"icon.omp": "\u{f0d57}",
-	"icon.mars": "\u{f0d57}",
+	"icon.omp": "\u{f222}",
+	"icon.mars": "\u{f222}",
 	// pick: 󰊠 (nf-md-ghost) | alt: 👻
 	"icon.ghost": "\u{f02a0}",
 	// pick:  | alt: 
@@ -1309,8 +1309,8 @@ const ASCII_SYMBOLS: SymbolMap = {
 	"icon.advisor": "(adv)",
 	"icon.advisorClosed": "(adv)",
 	"icon.time": "t:",
-	"icon.omp": "pi",
-	"icon.mars": "pi",
+	"icon.omp": "mars",
+	"icon.mars": "mars",
 	"icon.ghost": "@",
 	"icon.agents": "AG",
 	"icon.job": "bg",

@@ -42,20 +42,20 @@
 
 Every call returns a promise. JavaScript and Python expose the same methods; Python uses `set_type` / `make_function` and keyword options.
 
-| Call                                   | Description                                                                                                                                                           |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dsm.open(path)`                       | Open (or create) a database for an executable, a `<bin>:@<arch>` universal slice, an existing IDA `.i64`/`.idb` or Binary Ninja `.bndb`, or a portable `db.handle()` string. Returns a handle. |
-| `dsm.list()`                           | Descriptors of every open database for the active backend, with portable `handle` strings and live reference counts.                                                 |
-| `dsm.get(id?)`                         | Attach to an already-open database; `id` may be omitted only when exactly one is open.                                                                               |
-| `db.view(view = "overview")`           | Rendered view using the `read` suffix grammar: `overview`, `<func\|0xaddr>` (pseudocode), `<func>:asm`, `imports`, `exports`, `strings`, `xrefs:<func\|0xaddr>`.       |
-| `db.exec(code, { timeout })`           | Run Python in the backend worker. Returns `{ output, value, error }`.                                                                                                 |
-| `db.rename(target, name)`              | Rename a symbol/address.                                                                                                                                              |
-| `db.comment(target, text, { repeatable })` | Set a comment.                                                                                                                                                    |
-| `db.setType(target, decl)`             | Apply a C declaration (IDA) or prototype/type expression (Ghidra, Binary Ninja).                                                                                      |
-| `db.makeFunction(target)`              | Create a function at an address.                                                                                                                                      |
-| `db.save()`                            | Save now.                                                                                                                                                             |
-| `db.close({ save = true })`            | Release this handle's reference; the final release closes the database.                                                                                              |
-| `db.handle()`                          | Portable string bound to this live database incarnation, for passing to subagents.                                                                                  |
+| Call                                       | Description                                                                                                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dsm.open(path)`                           | Open (or create) a database for an executable, a `<bin>:@<arch>` universal slice, an existing IDA `.i64`/`.idb` or Binary Ninja `.bndb`, or a portable `db.handle()` string. Returns a handle. |
+| `dsm.list()`                               | Descriptors of every open database for the active backend, with portable `handle` strings and live reference counts.                                                                           |
+| `dsm.get(id?)`                             | Attach to an already-open database; `id` may be omitted only when exactly one is open.                                                                                                         |
+| `db.view(view = "overview")`               | Rendered view using the `read` suffix grammar: `overview`, `<func\|0xaddr>` (pseudocode), `<func>:asm`, `imports`, `exports`, `strings`, `xrefs:<func\|0xaddr>`.                               |
+| `db.exec(code, { timeout })`               | Run Python in the backend worker. Returns `{ output, value, error }`.                                                                                                                          |
+| `db.rename(target, name)`                  | Rename a symbol/address.                                                                                                                                                                       |
+| `db.comment(target, text, { repeatable })` | Set a comment.                                                                                                                                                                                 |
+| `db.setType(target, decl)`                 | Apply a C declaration (IDA) or prototype/type expression (Ghidra, Binary Ninja).                                                                                                               |
+| `db.makeFunction(target)`                  | Create a function at an address.                                                                                                                                                               |
+| `db.save()`                                | Save now.                                                                                                                                                                                      |
+| `db.close({ save = true })`                | Release this handle's reference; the final release closes the database.                                                                                                                        |
+| `db.handle()`                              | Portable string bound to this live database incarnation, for passing to subagents.                                                                                                             |
 
 Handles expose `id`, `backend`, `ref`, `path`, and `info`. Targets accept a symbol name, `0x` string, or integer address. Reserved view names win over same-named symbols; use an address for those.
 

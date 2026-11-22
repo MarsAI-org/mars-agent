@@ -477,8 +477,8 @@ The active profile's user file supplies two cross-source overrides:
 
 OMP recognizes some MCP servers and changes how it treats them without being asked. The only transform so far is a drop: a server whose job one of OMP's own tools already does is not connected.
 
-| Server | Recognized by | Dropped while |
-| --- | --- | --- |
+| Server                                                                                          | Recognized by                                                                            | Dropped while                                 |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------- |
 | Codex Desktop's bundled Node REPL (Codex registers it as `node_repl` in `~/.codex/config.toml`) | a stdio command whose file name is `node_repl` or `node_repl.exe`, under any server name | the `eval` tool is active and `eval.js` is on |
 
 A drop is decided from the server's config at discovery (startup and `/mcp reload`), before the server starts. `/mcp list` shows dropped servers under **Replaced by built-ins** with the reason and the file each came from, and the `/extensions` dashboard shows them as disabled.

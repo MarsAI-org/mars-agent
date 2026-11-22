@@ -32,7 +32,7 @@ import { loadBundledAgents, parseAgent } from "./agents";
 import type { AgentSource } from "@marsai-org/tui/tools/task";
 import type { AgentDefinition } from "./types";
 
-const TASK_AGENT_CONFIG_SOURCE = ".omp";
+const TASK_AGENT_CONFIG_SOURCE = ".mars";
 
 /** Result of agent discovery */
 export interface DiscoveryResult {

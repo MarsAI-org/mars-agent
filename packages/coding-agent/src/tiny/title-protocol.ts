@@ -18,9 +18,9 @@ import type { TinyLocalModelKey } from "./models";
  */
 export const TINY_WORKER_ARG = "__omp_worker_tiny_inference";
 /** Env var naming the single local model the ONNX worker serves. */
-export const TINY_WORKER_MODEL_ENV = "OMP_TINY_WORKER_MODEL";
+export const TINY_WORKER_MODEL_ENV = "MARS_TINY_WORKER_MODEL";
 /** Env var overriding the unit's idle grace (milliseconds); for tests. */
-export const TINY_WORKER_IDLE_MS_ENV = "OMP_TINY_WORKER_IDLE_MS";
+export const TINY_WORKER_IDLE_MS_ENV = "MARS_TINY_WORKER_IDLE_MS";
 
 /** Inference engine a worker runs; part of the unit key so ONNX and MLX workers for one model coexist. */
 export type TinyWorkerBackend = "onnx" | "mlx";

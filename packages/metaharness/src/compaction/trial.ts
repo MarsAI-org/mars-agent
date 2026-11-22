@@ -44,7 +44,7 @@ import {
 } from "./programbench";
 import { type RemoteHost, shq } from "./remote";
 
-const OMP_PATH = "/opt/omp/omp";
+const MARS_PATH = "/opt/omp/omp";
 /** Read-only bind mount holding prompts, the relay, and omp config. */
 const SUPPORT_DIR = "/opt/cbench";
 const GATEWAY_SOCKET_DIR = "/run/omp-gw";
@@ -562,7 +562,7 @@ async function runSegment(
 	const { host } = config;
 	await host.write(`${supportDir}/prompt-${index}.md`, text);
 	const argv = [
-		OMP_PATH,
+		MARS_PATH,
 		"--mode",
 		"json",
 		"-p",
@@ -620,7 +620,7 @@ async function startContainer(
 			"-v",
 			shq(`${dirs.socketDir}:${GATEWAY_SOCKET_DIR}`),
 			"-v",
-			shq(`${dirs.remoteBinary}:${OMP_PATH}:ro`),
+			shq(`${dirs.remoteBinary}:${MARS_PATH}:ro`),
 			shq(config.image),
 			"sleep infinity",
 		].join(" "),

@@ -541,12 +541,12 @@ Navigation uses the `tui.select.*` bindings: up/down select and scroll, confirm 
 
 **Result.** The bundled `reviewer` declares this `output` schema in its frontmatter:
 
-| Field | Type | Meaning |
-| ----- | ---- | ------- |
-| `overall_correctness` | `correct` or `incorrect` | Whether the change has bugs or blockers |
-| `explanation` | string | Verdict summary, 1 to 3 sentences |
-| `confidence` | number, 0.0 to 1.0 | Confidence in the verdict |
-| `findings` (optional) | list | One entry per issue: `title`, `body`, `priority` (0 blocks release to 3 nice to have), `confidence`, `file_path`, `line_start`, `line_end` |
+| Field                 | Type                     | Meaning                                                                                                                                    |
+| --------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `overall_correctness` | `correct` or `incorrect` | Whether the change has bugs or blockers                                                                                                    |
+| `explanation`         | string                   | Verdict summary, 1 to 3 sentences                                                                                                          |
+| `confidence`          | number, 0.0 to 1.0       | Confidence in the verdict                                                                                                                  |
+| `findings` (optional) | list                     | One entry per issue: `title`, `body`, `priority` (0 blocks release to 3 nice to have), `confidence`, `file_path`, `line_start`, `line_end` |
 
 The schema applies only to structured runs: `task.structured` on, or `structured: true` in the agent definition. The bundled `reviewer` does not set `structured`, so with the default `task.structured: false` the task result is the reviewer's final message as text. The `/review` request also asks reviewers to report through incremental `yield` sections, and the `yield` tool exists only on structured runs. See [model and structured-output precedence](./task-agent-discovery.md#model-and-structured-output-precedence).
 

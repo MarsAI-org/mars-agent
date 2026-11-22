@@ -202,14 +202,14 @@ export function isOlderOmpVersion(version: string, than: string): boolean {
 }
 
 /**
- * The extension's service worker script with `ompVersion` and `build` declared above it as `OMP_INSTALL_VERSION` and
- * `OMP_INSTALL_BUILD`, which the extension reports in its hello. The stamp sits in the script, not only the manifest,
+ * The extension's service worker script with `ompVersion` and `build` declared above it as `MARS_INSTALL_VERSION` and
+ * `MARS_INSTALL_BUILD`, which the extension reports in its hello. The stamp sits in the script, not only the manifest,
  * because after the files change a Chrome restart re-reads manifest.json but keeps running the service worker it
  * registered before. `build` names the exact extension files, so a relay can tell a stale running build apart from
  * its own even when both carry the same omp version (a source checkout between releases).
  */
 export function stampRelayExtensionScript(script: string, ompVersion: string, build: string): string {
-	return `const OMP_INSTALL_VERSION = ${JSON.stringify(ompVersion)};\nconst OMP_INSTALL_BUILD = ${JSON.stringify(build)};\n${script}`;
+	return `const MARS_INSTALL_VERSION = ${JSON.stringify(ompVersion)};\nconst MARS_INSTALL_BUILD = ${JSON.stringify(build)};\n${script}`;
 }
 
 /** `POST` path on the relay after install folders change: connected extensions reload into the new files once idle. */
@@ -231,7 +231,7 @@ export interface RelayExtensionStamp {
 /** The stamp declared at the top of an installed `background.js`, or null when the script carries none. */
 export function readRelayExtensionStamp(script: string): RelayExtensionStamp | null {
 	const match =
-		/^const OMP_INSTALL_VERSION = ("(?:[^"\\]|\\.)*");\n(?:const OMP_INSTALL_BUILD = ("(?:[^"\\]|\\.)*");\n)?/.exec(
+		/^const MARS_INSTALL_VERSION = ("(?:[^"\\]|\\.)*");\n(?:const MARS_INSTALL_BUILD = ("(?:[^"\\]|\\.)*");\n)?/.exec(
 			script,
 		);
 	const [, version, build] = match ?? [];

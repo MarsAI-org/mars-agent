@@ -444,7 +444,7 @@ export function formatStatsDashboardUrl(hostname: string, port: number): string 
 }
 
 /** Extra Host names (comma-separated) the dashboard answers to; `*.example.com` allows its subdomains. */
-export const STATS_ALLOWED_HOSTS_ENV = "OMP_STATS_ALLOWED_HOSTS";
+export const STATS_ALLOWED_HOSTS_ENV = "MARS_STATS_ALLOWED_HOSTS";
 
 /**
  * Suffixes no public DNS server can hand out: loopback, mDNS, private-use names, Tailscale MagicDNS, and the

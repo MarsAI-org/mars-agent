@@ -5,7 +5,7 @@ import {
 	downloadBuildFile,
 	fetchBuild,
 	isMuslLinuxForTest,
-	OMP_BUILD,
+	MARS_BUILD,
 	parseBuildAnswer,
 	resolveBuildHost,
 } from "@marsai-org/coding-agent/cli/build-service";
@@ -35,7 +35,7 @@ function answer(overrides: Record<string, unknown> = {}): Record<string, unknown
 
 describe("build service answers", () => {
 	it("keeps a complete file patch and the version the check named as installed", () => {
-		const parsed = parseBuildAnswer(answer(), OMP_BUILD, host, "18.8.8");
+		const parsed = parseBuildAnswer(answer(), MARS_BUILD, host, "18.8.8");
 
 		expect(parsed).toEqual({
 			version: "18.8.9",
@@ -53,7 +53,7 @@ describe("build service answers", () => {
 
 	it("rejects answers that cannot be installed safely", () => {
 		const file = (fields: Record<string, unknown>) => ({ file: { ...(answer().file as object), ...fields } });
-		const parse = (body: Record<string, unknown>) => parseBuildAnswer(body, OMP_BUILD, host);
+		const parse = (body: Record<string, unknown>) => parseBuildAnswer(body, MARS_BUILD, host);
 		expect(() => parse(answer(file({ sha256: sha("new").toUpperCase() })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ sha256: "abc" })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ size: 0 })))).toThrow("invalid size");
@@ -65,7 +65,7 @@ describe("build service answers", () => {
 	});
 
 	it("installs the whole file when the patch is incomplete or not a file patch", () => {
-		const parse = (body: Record<string, unknown>) => parseBuildAnswer(body, OMP_BUILD, host);
+		const parse = (body: Record<string, unknown>) => parseBuildAnswer(body, MARS_BUILD, host);
 		const { url: _url, ...withoutUrl } = answer().patch as Record<string, unknown>;
 		expect(parse(answer({ patch: withoutUrl })).patch).toBeUndefined();
 		expect(parse(answer({ patch: { ...(answer().patch as object), format: "tree" } })).patch).toBeUndefined();
@@ -79,7 +79,7 @@ describe("build service targets", () => {
 	it("maps platform, architecture, and libc to the service target and omp's release file name", () => {
 		const resolve = (platform: NodeJS.Platform, arch: string, musl: boolean) => {
 			const resolved = resolveBuildHost(platform, arch, musl);
-			return { target: resolved.target, fileName: OMP_BUILD.fileName(resolved, "18.8.9") };
+			return { target: resolved.target, fileName: MARS_BUILD.fileName(resolved, "18.8.9") };
 		};
 		expect(resolve("darwin", "arm64", false)).toEqual({ target: "macos-arm64", fileName: "mars-darwin-arm64" });
 		expect(resolve("linux", "x64", true)).toEqual({ target: "linux-musl-x86_64", fileName: "mars-linux-musl-x64" });

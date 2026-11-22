@@ -1,8 +1,10 @@
 {
-  "name": "my-plugin",
-  "version": "0.1.0",
-  "homepage": "https://github.com/MarsAI-org/mars-agent",
-  "mars": {
-    "extensions": ["./index.ts"]
-  }
+	"name": "my-plugin",
+	"version": "0.1.0",
+	"homepage": "https://github.com/MarsAI-org/mars-agent",
+	"mars": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
 }

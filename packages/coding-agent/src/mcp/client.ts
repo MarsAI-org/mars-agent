@@ -440,7 +440,7 @@ export async function discoverServer(
 /**
  * Connect to an MCP server through the MCP host.
  * Bounded by the server's timeout (30 seconds by default) so a server that
- * cannot be probed does not block startup; set OMP_MCP_TIMEOUT_MS=0 to disable.
+ * cannot be probed does not block startup; set MARS_MCP_TIMEOUT_MS=0 to disable.
  *
  * @throws MCPConnectionTimeoutError past the bound; otherwise the host's or server's failure.
  */

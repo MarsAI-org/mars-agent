@@ -668,7 +668,7 @@ describe("relay tabs Chrome detaches omp from", () => {
 				await compiled.promise;
 				return await wrapCode(code);
 			});
-			const probe = `OMP_DETACH_PROBE_${process.pid}`;
+			const probe = `MARS_DETACH_PROBE_${process.pid}`;
 			try {
 				const code = `process.env.${probe} = "ran"; return await page.evaluate(() => window.mark);`;
 				const next = invoke({ action: "run", code, timeout: 10 }).catch((error: unknown) => error);

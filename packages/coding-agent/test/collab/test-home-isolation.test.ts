@@ -31,11 +31,11 @@ import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memor
 
 const REAL_HOMEDIR = os.homedir();
 const ISOLATED_DIR_ENV_KEYS = [
-	"OMP_PROFILE",
+	"MARS_PROFILE",
 	"PI_PROFILE",
-	"OMP_CODING_AGENT_DIR",
+	"MARS_CODING_AGENT_DIR",
 	"PI_CODING_AGENT_DIR",
-	"OMP_CONFIG_DIR",
+	"MARS_CONFIG_DIR",
 	"PI_CONFIG_DIR",
 ] as const;
 const ORIGINAL_DIR_ENV = new Map<string, string | undefined>(

@@ -347,7 +347,7 @@ async function runPrintModeCore(
 		// (`session.retry()` posts the continuation as a post-prompt task),
 		// so run `promptTurn`'s pre-turn prep BEFORE the command executes:
 		// the readiness binding (`waitForStartup` + `refreshMCPTools`), the
-		// strict `OMP_MCP_REQUIRE_READY` gate, the working indicator, and
+		// strict `MARS_MCP_REQUIRE_READY` gate, the working indicator, and
 		// the uncommitted text output. Without it the retried turn would
 		// stream without the MCP tools turn one gets, strict automation
 		// would pass on a run it should fail, and turn recovery would treat
@@ -412,7 +412,7 @@ async function runPrintModeCore(
 	});
 
 	const timeoutMs = resolveMCPTimeoutMs();
-	const strict = $flag("OMP_MCP_REQUIRE_READY");
+	const strict = $flag("MARS_MCP_REQUIRE_READY");
 	let strictMCPFailure = false;
 	// Warn once per unavailable server across evaluations: readiness is
 	// re-evaluated after a dispatched recovery command, and a still-broken
@@ -511,7 +511,7 @@ async function runPrintModeCore(
 		await promptTurn(message);
 	}
 	// A run with no model turn (every input consumed locally, or none) still
-	// reports strict unreadiness: `OMP_MCP_REQUIRE_READY=1 omp -p '/mcp reauth
+	// reports strict unreadiness: `MARS_MCP_REQUIRE_READY=1 omp -p '/mcp reauth
 	// foo'` that failed to repair its server exits with the strict error, not
 	// only the builtin's own failure.
 	if (strict && !admittedAgentTurn && !strictMCPFailure) {

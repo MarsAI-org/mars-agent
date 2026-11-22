@@ -10,9 +10,9 @@
  * imports run, so it restores the user's real working directory in time for
  * import-time snapshots (e.g. `getProjectDir()` in `@marsai-org/utils/dirs`).
  */
-const launchCwd = process.env.OMP_LAUNCH_CWD;
+const launchCwd = process.env.MARS_LAUNCH_CWD;
 if (launchCwd) {
-	delete process.env.OMP_LAUNCH_CWD;
+	delete process.env.MARS_LAUNCH_CWD;
 	try {
 		process.chdir(launchCwd);
 	} catch {}

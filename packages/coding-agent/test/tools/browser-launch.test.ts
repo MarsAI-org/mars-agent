@@ -38,7 +38,7 @@ function probeEnv(): Record<string, string | undefined> {
 	for (const key in env) {
 		if (key.startsWith("XDG_") || key.startsWith("PUPPETEER_")) delete env[key];
 	}
-	for (const key of ["PI_CODING_AGENT_DIR", "PI_CONFIG_DIR", "OMP_PROFILE", "PI_PROFILE"]) delete env[key];
+	for (const key of ["PI_CODING_AGENT_DIR", "PI_CONFIG_DIR", "MARS_PROFILE", "PI_PROFILE"]) delete env[key];
 	return env;
 }
 
@@ -272,7 +272,7 @@ describe("browser executable selection", () => {
 			const result = Bun.spawnSync([process.execPath, EXECUTABLE_PROBE], {
 				env: {
 					...probeEnv(),
-					OMP_BROWSER_PROBE_PLATFORM: "win32",
+					MARS_BROWSER_PROBE_PLATFORM: "win32",
 					ProgramFiles: tempDir.path(),
 					"ProgramFiles(x86)": path.join(tempDir.path(), "missing-x86"),
 					LOCALAPPDATA: path.join(tempDir.path(), "missing-local"),
@@ -312,7 +312,7 @@ describe("browser executable selection", () => {
 					XDG_CACHE_HOME: xdgCache,
 					XDG_DATA_HOME: path.join(tempDir.path(), "data"),
 					XDG_STATE_HOME: path.join(tempDir.path(), "state"),
-					OMP_BROWSER_PROBE_PLATFORM: "darwin",
+					MARS_BROWSER_PROBE_PLATFORM: "darwin",
 					PUPPETEER_EXECUTABLE_PATH: "",
 				};
 
@@ -376,7 +376,7 @@ describe("browser executable selection", () => {
 				};
 				const probe = (purpose: string) => {
 					const result = Bun.spawnSync([process.execPath, EXECUTABLE_PROBE], {
-						env: { ...env, OMP_BROWSER_PROBE_PURPOSE: purpose },
+						env: { ...env, MARS_BROWSER_PROBE_PURPOSE: purpose },
 						stdout: "pipe",
 						stderr: "pipe",
 					});

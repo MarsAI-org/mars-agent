@@ -3457,7 +3457,7 @@ export class AcpAgent implements Agent {
 		}
 
 		// Honor the user's startup window like the interactive path does
-		// (`sdk.ts`); `OMP_MCP_STARTUP_TIMEOUT_MS` still takes precedence.
+		// (`sdk.ts`); `MARS_MCP_STARTUP_TIMEOUT_MS` still takes precedence.
 		const result = await manager.connectServers(
 			configs,
 			sources,

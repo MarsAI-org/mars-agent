@@ -29,7 +29,7 @@ async function runScenario(scenario: Scenario): Promise<Observation> {
 	await Bun.write(
 		extension,
 		`export default pi => pi.registerProvider("resume-fixture", {
-			baseUrl: process.env.OMP_TEST_BASE_URL, api: "openai-completions", apiKey: "fixture-only",
+			baseUrl: process.env.MARS_TEST_BASE_URL, api: "openai-completions", apiKey: "fixture-only",
 			models: [{ id: "fresh", name: "Fresh", reasoning: false, input: ["text"],
 				cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
 				contextWindow: 131072, maxTokens: 1024 }]
@@ -57,7 +57,7 @@ async function runScenario(scenario: Scenario): Promise<Observation> {
 					{ headers: { "Content-Type": "text/event-stream" } });
 			}
 		});
-		process.env.OMP_TEST_BASE_URL = providerServer.url.origin + "/v1";
+		process.env.MARS_TEST_BASE_URL = providerServer.url.origin + "/v1";
 		const readClock = Date.now;
 		const savedModel = scenario === "restorable" ? "resume-fixture/fresh" : "lost/missing";
 		const stamp = "2026-10-22T09:00:00+09:00";
@@ -241,7 +241,7 @@ describe("implicit auto-resume model restoration", () => {
 				PI_CODING_AGENT_DIR: agentDir,
 				TZ: "Asia/Tokyo",
 				TERM: "xterm-256color",
-				OMP_TUI_NATIVE: "0",
+				MARS_TUI_NATIVE: "0",
 				PI_TUI_NATIVE: "0",
 				AWS_EC2_METADATA_DISABLED: "true",
 			};

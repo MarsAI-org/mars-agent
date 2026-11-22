@@ -35,6 +35,7 @@ await archive.sessions();
 const hits = await archive.search("migration", { project: "~/work/api", limit: 5, silent: true });
 const detail = await archive.session(hits[0].id);
 ```
+
 </examples>
 
 <critical>

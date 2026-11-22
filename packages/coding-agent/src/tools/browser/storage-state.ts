@@ -473,7 +473,7 @@ export function storageStatePath(tabName: string, requestedPath: string | undefi
 	const fileName = safeName === "." || safeName === ".." ? "_" : safeName || "main";
 	return requestedPath
 		? resolveToCwd(requestedPath, cwd)
-		: path.join(os.homedir(), ".omp", "browser-state", `${fileName}.json`);
+		: path.join(os.homedir(), ".mars", "browser-state", `${fileName}.json`);
 }
 
 /** Save cookies and current-origin Web Storage to a Playwright-compatible state file. */

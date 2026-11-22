@@ -91,15 +91,15 @@ Identity (`mcpIdentity`): for stdio the command, arguments, working directory, d
 
 ### Lifetime and garbage collection
 
-| Resource | Ends when |
-| --- | --- |
-| A session's lease on a unit | its link closes, or the session process dies (leases are bound to the daemon connection) |
-| A unit | nothing holds a lease for `mcp.idleStopMinutes` (modern) or at once (handshake-era); daemon shutdown |
-| A modern server process | its unit stops, or it had no request in flight and no resource subscription for `mcp.idleStopMinutes`; the next request starts it again |
+| Resource                       | Ends when                                                                                                                                                         |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A session's lease on a unit    | its link closes, or the session process dies (leases are bound to the daemon connection)                                                                          |
+| A unit                         | nothing holds a lease for `mcp.idleStopMinutes` (modern) or at once (handshake-era); daemon shutdown                                                              |
+| A modern server process        | its unit stops, or it had no request in flight and no resource subscription for `mcp.idleStopMinutes`; the next request starts it again                           |
 | A handshake-era server process | its unit stops, i.e. its manager disconnected or died; or it has only served lists and reads so far (no session state yet) and sat idle for `mcp.idleStopMinutes` |
-| An upstream request | it is answered, or its link cancels or disconnects |
-| A probe process | always, before the probe returns |
-| Stored results | replaced on refetch, invalidated on list change, dropped after 30 days unread |
+| An upstream request            | it is answered, or its link cancels or disconnects                                                                                                                |
+| A probe process                | always, before the probe returns                                                                                                                                  |
+| Stored results                 | replaced on refetch, invalidated on list change, dropped after 30 days unread                                                                                     |
 
 Subprocess units survive a daemon re-exec with their pipes; sessions re-attach afterwards.
 
@@ -109,17 +109,17 @@ Subprocess units survive a daemon re-exec with their pipes; sessions re-attach a
 
 ## Failure modes
 
-| Scenario | Behavior |
-| --- | --- |
-| Config discovery throws | empty tool set plus a synthetic `.mcp.json` error; the session starts |
-| Invalid server config | that server is skipped with a validation error |
-| Server cannot start or connect | error recorded for that server; status `failed` with exit code and stderr tail; others continue |
-| Server slower than the startup window | no tools at startup; they register when it answers |
-| Server exits with requests in flight | those requests fail (non-retryable) with exit code and stderr; the next request starts a new process |
-| Server crashes repeatedly | crash guard: requests fail immediately for 30 s; `/mcp reconnect` clears it |
-| Daemon restarts | links re-attach; in-flight requests fail and are not replayed |
-| Daemon unreachable | the in-process host is used |
-| Owning session disposed | its manager disconnects (bounded to 3 s); leases drop and the host collects what is unused |
+| Scenario                              | Behavior                                                                                             |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Config discovery throws               | empty tool set plus a synthetic `.mcp.json` error; the session starts                                |
+| Invalid server config                 | that server is skipped with a validation error                                                       |
+| Server cannot start or connect        | error recorded for that server; status `failed` with exit code and stderr tail; others continue      |
+| Server slower than the startup window | no tools at startup; they register when it answers                                                   |
+| Server exits with requests in flight  | those requests fail (non-retryable) with exit code and stderr; the next request starts a new process |
+| Server crashes repeatedly             | crash guard: requests fail immediately for 30 s; `/mcp reconnect` clears it                          |
+| Daemon restarts                       | links re-attach; in-flight requests fail and are not replayed                                        |
+| Daemon unreachable                    | the in-process host is used                                                                          |
+| Owning session disposed               | its manager disconnects (bounded to 3 s); leases drop and the host collects what is unused           |
 
 ## Implementation files
 

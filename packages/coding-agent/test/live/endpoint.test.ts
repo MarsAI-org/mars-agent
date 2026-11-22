@@ -130,18 +130,18 @@ describe("live endpoint credentials", () => {
 	test("resolves live.apiKey like other configured secrets", async () => {
 		expect(await resolveLiveEndpoint(Settings.isolated())).toBeUndefined();
 		expect(await resolveLiveEndpoint(Settings.isolated({ "live.endpoint": "  " }))).toBeUndefined();
-		process.env.OMP_LIVE_ENDPOINT_TEST_KEY = "from-env";
+		process.env.MARS_LIVE_ENDPOINT_TEST_KEY = "from-env";
 		try {
 			const settings = Settings.isolated({
 				"live.endpoint": " http://127.0.0.1:8080/v1 ",
-				"live.apiKey": "OMP_LIVE_ENDPOINT_TEST_KEY",
+				"live.apiKey": "MARS_LIVE_ENDPOINT_TEST_KEY",
 			});
 			expect(await resolveLiveEndpoint(settings)).toEqual({
 				baseUrl: "http://127.0.0.1:8080/v1",
 				apiKey: "from-env",
 			});
 		} finally {
-			delete process.env.OMP_LIVE_ENDPOINT_TEST_KEY;
+			delete process.env.MARS_LIVE_ENDPOINT_TEST_KEY;
 		}
 		const literal = Settings.isolated({ "live.endpoint": "http://127.0.0.1:8080/v1", "live.apiKey": "sk-local" });
 		expect(await resolveLiveEndpoint(literal)).toEqual({ baseUrl: "http://127.0.0.1:8080/v1", apiKey: "sk-local" });

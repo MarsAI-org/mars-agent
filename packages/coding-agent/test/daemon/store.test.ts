@@ -48,7 +48,7 @@ describe.skipIf(process.platform === "win32")("daemon store", () => {
 		"readStoredUnits gives the offline reader each unit a running daemon persisted, with its launch env restored",
 		async () => {
 			const { daemon: d, conn, root } = await startDaemon();
-			const env = { PATH: process.env.PATH ?? "/usr/bin:/bin", OMP_STORE_MARK: "one" };
+			const env = { PATH: process.env.PATH ?? "/usr/bin:/bin", MARS_STORE_MARK: "one" };
 			const opened = await conn.openProc("stored", shProc("exec sleep 60", root, { env }), {
 				label: "Stored service",
 				owner: "store-owner",

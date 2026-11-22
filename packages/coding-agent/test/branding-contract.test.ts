@@ -34,10 +34,10 @@ const UPSTREAM_MAJOR_VERSION_RE = /(?<![\d.])18\.\d+\.\d+(?![\d.])/;
  * such as "component", "compact", "compare", and "compile" from matching,
  * while still catching `omp`, `omp.sh`, and `OMP` as separate words.
  */
-const OMP_BRAND_TOKEN_RE = /(?<![A-Za-z0-9_])omp(?![A-Za-z0-9_])/i;
+const MARS_BRAND_TOKEN_RE = /(?<![A-Za-z0-9_])omp(?![A-Za-z0-9_])/i;
 
 /** Legacy upstream environment variables are user-visible when help documents them. */
-const OMP_ENV_VAR_RE = /(?<![A-Za-z0-9_])OMP_[A-Z0-9_]+/;
+const MARS_ENV_VAR_RE = /(?<![A-Za-z0-9_])MARS_[A-Z0-9_]+/;
 
 /** Longest expected line when reporting a leak, to keep failure output readable. */
 const MAX_LEAK_LINE = 200;
@@ -203,11 +203,11 @@ describe("branding contract", () => {
 			const spaced = findLeaks(help, /oh\s+my\s+pi/i);
 			expect(spaced.count, leakMessage("--help", /oh\s+my\s+pi/i, spaced)).toBe(0);
 
-			const token = findLeaks(help, OMP_BRAND_TOKEN_RE);
-			expect(token.count, leakMessage("--help", OMP_BRAND_TOKEN_RE, token)).toBe(0);
+			const token = findLeaks(help, MARS_BRAND_TOKEN_RE);
+			expect(token.count, leakMessage("--help", MARS_BRAND_TOKEN_RE, token)).toBe(0);
 
-			const envVars = findLeaks(help, OMP_ENV_VAR_RE);
-			expect(envVars.count, leakMessage("--help", OMP_ENV_VAR_RE, envVars)).toBe(0);
+			const envVars = findLeaks(help, MARS_ENV_VAR_RE);
+			expect(envVars.count, leakMessage("--help", MARS_ENV_VAR_RE, envVars)).toBe(0);
 		},
 		60_000,
 	);
@@ -263,8 +263,8 @@ describe("branding contract", () => {
 			const hyphenated = findLeaks(output, /oh-my-pi/i);
 			expect(hyphenated.count, leakMessage("usage-error output", /oh-my-pi/i, hyphenated)).toBe(0);
 
-			const token = findLeaks(output, OMP_BRAND_TOKEN_RE);
-			expect(token.count, leakMessage("usage-error output", OMP_BRAND_TOKEN_RE, token)).toBe(0);
+			const token = findLeaks(output, MARS_BRAND_TOKEN_RE);
+			expect(token.count, leakMessage("usage-error output", MARS_BRAND_TOKEN_RE, token)).toBe(0);
 		},
 		60_000,
 	);

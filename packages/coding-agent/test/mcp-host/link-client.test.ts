@@ -13,7 +13,7 @@ import { MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, type FakeTunnel, type Message, metaOf, paramsOf, settled } from "./link-fake-host";
 
-const TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 const ROOTS = [{ uri: "file:///work/project", name: "project" }];
 const DISCOVER = {
 	resultType: "complete",

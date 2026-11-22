@@ -7,31 +7,31 @@ import {
 } from "@marsai-org/coding-agent/mcp/timeout";
 import { logger } from "@marsai-org/utils";
 
-const ORIGINAL_TIMEOUT = process.env.OMP_MCP_TIMEOUT_MS;
+const ORIGINAL_TIMEOUT = process.env.MARS_MCP_TIMEOUT_MS;
 
 afterEach(() => {
 	if (ORIGINAL_TIMEOUT === undefined) {
-		delete process.env.OMP_MCP_TIMEOUT_MS;
+		delete process.env.MARS_MCP_TIMEOUT_MS;
 	} else {
-		process.env.OMP_MCP_TIMEOUT_MS = ORIGINAL_TIMEOUT;
+		process.env.MARS_MCP_TIMEOUT_MS = ORIGINAL_TIMEOUT;
 	}
 });
 
 describe("MCP timeout configuration", () => {
 	test("uses the default timeout when no config or env override is set", () => {
-		delete process.env.OMP_MCP_TIMEOUT_MS;
+		delete process.env.MARS_MCP_TIMEOUT_MS;
 
 		expect(resolveMCPTimeoutMs()).toBe(30_000);
 	});
 
 	test("uses per-server timeout when env override is unset", () => {
-		delete process.env.OMP_MCP_TIMEOUT_MS;
+		delete process.env.MARS_MCP_TIMEOUT_MS;
 
 		expect(resolveMCPTimeoutMs(120_000)).toBe(120_000);
 	});
 
 	test("allows the env override to disable MCP client-side timeouts", () => {
-		process.env.OMP_MCP_TIMEOUT_MS = "0";
+		process.env.MARS_MCP_TIMEOUT_MS = "0";
 
 		const timeout = resolveMCPTimeoutMs(30_000);
 		expect(timeout).toBe(0);
@@ -39,26 +39,26 @@ describe("MCP timeout configuration", () => {
 	});
 
 	test("allows the env override to set one timeout for every server", () => {
-		process.env.OMP_MCP_TIMEOUT_MS = "180000";
+		process.env.MARS_MCP_TIMEOUT_MS = "180000";
 
 		expect(resolveMCPTimeoutMs(30_000)).toBe(180_000);
 	});
 
 	test("rejects negative env values and warns, falling back to the default", () => {
-		process.env.OMP_MCP_TIMEOUT_MS = "-1";
+		process.env.MARS_MCP_TIMEOUT_MS = "-1";
 		const warn = spyOn(logger, "warn").mockImplementation(() => {});
 
 		try {
 			expect(resolveMCPTimeoutMs(120_000)).toBe(120_000);
 			expect(warn).toHaveBeenCalledTimes(1);
-			expect(warn.mock.calls[0]?.[0]).toContain("OMP_MCP_TIMEOUT_MS");
+			expect(warn.mock.calls[0]?.[0]).toContain("MARS_MCP_TIMEOUT_MS");
 		} finally {
 			warn.mockRestore();
 		}
 	});
 
 	test("rejects non-numeric env values and falls back to the default", () => {
-		process.env.OMP_MCP_TIMEOUT_MS = "not-a-number";
+		process.env.MARS_MCP_TIMEOUT_MS = "not-a-number";
 		const warn = spyOn(logger, "warn").mockImplementation(() => {});
 
 		try {
@@ -72,7 +72,7 @@ describe("MCP timeout configuration", () => {
 
 describe("MCP per-request timeout", () => {
 	test("gives tool calls a long progress-extended default and keeps configured timeouts hard", () => {
-		delete process.env.OMP_MCP_TIMEOUT_MS;
+		delete process.env.MARS_MCP_TIMEOUT_MS;
 		expect(resolveMCPRequestDeadline(undefined, "tools/list")).toEqual({ timeoutMs: 30_000, maxTotalMs: 30_000 });
 		expect(resolveMCPRequestDeadline(undefined, "tools/call", { name: "x", arguments: {} })).toEqual({
 			timeoutMs: 600_000,
@@ -85,7 +85,7 @@ describe("MCP per-request timeout", () => {
 	});
 
 	test("raises a tool call's deadline to the wait its arguments request", () => {
-		delete process.env.OMP_MCP_TIMEOUT_MS;
+		delete process.env.MARS_MCP_TIMEOUT_MS;
 		const call = (args: Record<string, unknown>) =>
 			resolveMCPRequestDeadline(30_000, "tools/call", { arguments: args }).timeoutMs;
 		expect(call({ timeout: 1_500_000 })).toBe(1_530_000);

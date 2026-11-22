@@ -144,7 +144,7 @@ describe("WelcomeComponent", () => {
 		expect(rows(80, true).slice(0, 4)).toEqual(rows(80, false).slice(0, 4));
 		expect(versionRow(80)).toMatch(/v1\.0\.0 → v1\.1\.0 \S+ 50%$/);
 		// Too narrow for the bar: the percent alone; narrower still: the bare version.
-		expect(versionRow(56).trimStart()).toBe("██       v1.0.0 → v1.1.0 50%");
+		expect(versionRow(56).trimStart()).toBe("▀████████▀     v1.0.0 → v1.1.0 50%");
 		expect(versionRow(38)).not.toContain("→");
 		for (const columns of [80, 56, 38]) expect(visibleWidth(versionRow(columns))).toBeLessThan(columns);
 	});

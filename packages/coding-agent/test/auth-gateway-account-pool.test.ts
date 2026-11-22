@@ -91,7 +91,7 @@ describe("auth-gateway account pool", () => {
 		await brokerStorage!.credentials.upsert("anthropic", { type: "api_key", key: "hidden-anthropic-key" });
 		await brokerStorage!.credentials.upsert("openrouter", { type: "api_key", key: "hidden-openrouter-key" });
 		await Bun.write(
-			process.env.OMP_AUTH_BROKER_ACCOUNT_POOL_FILE!,
+			process.env.MARS_AUTH_BROKER_ACCOUNT_POOL_FILE!,
 			JSON.stringify({ "*": false, anthropic: { accounts: ["email:allowed@example.com"], apiKeys: false } }),
 		);
 		let output = "";

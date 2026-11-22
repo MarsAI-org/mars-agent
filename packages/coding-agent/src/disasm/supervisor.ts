@@ -35,7 +35,7 @@ const CONNECT_RETRY_MS = 100;
 const LOG_TAIL_BYTES = 64 * 1024;
 const LOG_TAIL_LINES = 20;
 /** Environment key carrying the token the worker requires as the first line of every connection. */
-const WORKER_TOKEN_ENV = "OMP_DISASM_WORKER_TOKEN";
+const WORKER_TOKEN_ENV = "MARS_DISASM_WORKER_TOKEN";
 
 /** RPC methods shared by disassembler workers. */
 export type WorkerMethod =

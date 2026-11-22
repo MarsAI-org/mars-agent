@@ -1,9 +1,11 @@
 {
-  "name": "hello-extension",
-  "version": "1.0.0",
-  "description": "Minimal mars extension example",
-  "homepage": "https://github.com/MarsAI-org/mars-agent",
-  "mars": {
-    "extensions": ["./index.ts"]
-  }
+	"name": "hello-extension",
+	"version": "1.0.0",
+	"description": "Minimal mars extension example",
+	"homepage": "https://github.com/MarsAI-org/mars-agent",
+	"mars": {
+		"extensions": [
+			"./index.ts"
+		]
+	}
 }

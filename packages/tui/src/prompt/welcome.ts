@@ -432,17 +432,36 @@ export function lockupNode(version: string, update: VersionUpdate | null = null)
 	);
 }
 
-/** Block-grid brand mark shared by the welcome and setup surfaces. */
-export const MARS_LOGO = ["████████████", "   ██  ██   ", "   ██  ██   ", "   ▒▒  ██   ", "       ██   "];
+/**
+ * Block-grid Mars mark shared by the welcome and setup surfaces: the pixel-art
+ * mark from `assets/mars-logo.svg` — the round body, two eyes, and the legs —
+ * reduced to a 12×12 half-block grid.
+ */
+export const MARS_LOGO = [
+	"  ▄██████▄  ",
+	" ██████████ ",
+	"████▀██▀▀███",
+	"▀██████████▀",
+	" ▀████████▀ ",
+	"  ▄█▀▀▀▀█▄  ",
+];
+
+/**
+ * Five-row form of {@link MARS_LOGO} for short terminals, where the extra row
+ * would push a menu item out of the frame. Same 12-column silhouette, sampled
+ * from a 10×10 grid instead of 12×12.
+ */
+export const MARS_LOGO_COMPACT = ["  ▄█████▄ ", "▄████████▄", "██████▄███", " ▀███████ ", "  ▄█▀▀▀█  "];
 
 /** Columns of {@link MARS_LOGO}. */
 const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
 
 /**
- * The `omp` wordmark in half-blocks, set beside {@link MARS_LOGO} from its second
- * row: the `p` descends into the fourth, the version takes the fifth.
+ * The `mars` wordmark in half-blocks, set beside {@link MARS_LOGO} from its
+ * second row: the letters sit in the first two rows and the version takes the
+ * third.
  */
-const WORDMARK = ["▄▀▀▄ █▀▄▀▄ █▀▀▄", "▀▄▄▀ █ █ █ █▄▄▀", "           █"];
+const WORDMARK = ["█▄█ ▄▀▄ █▀▄ ▄▀▀", "█ █ █▀█ █    ▀▄", "▀ ▀ ▀ ▀ ▀   ▀▀ "];
 
 /** Columns of {@link WORDMARK}. */
 const WORDMARK_WIDTH = Math.max(...WORDMARK.map(row => row.length));

@@ -1,6 +1,6 @@
 /**
  * Client for Stencil's build service, the source of omp's standalone binaries
- * ({@link OMP_BUILD}) and of the engine its WebKit browser downloads (ABKit).
+ * ({@link MARS_BUILD}) and of the engine its WebKit browser downloads (ABKit).
  *
  * `omp update` on a standalone binary install, the binary takeover of a
  * package-manager install, and the startup update check of a compiled binary
@@ -77,7 +77,7 @@ export interface BuildProduct {
 }
 
 /** omp's standalone binary, named like its GitHub release asset: `mars-darwin-arm64`, `mars-windows-x64.exe`. */
-export const OMP_BUILD: BuildProduct = {
+export const MARS_BUILD: BuildProduct = {
 	id: "omp",
 	fileName: host => `${APP_NAME}-${host.asset}${host.windows ? ".exe" : ""}`,
 };
@@ -267,7 +267,7 @@ export function parseBuildAnswer(
 export type BuildSelector = { channel: UpdateChannel } | { version: string };
 
 export interface FetchBuildOptions {
-	/** Defaults to {@link OMP_BUILD}. */
+	/** Defaults to {@link MARS_BUILD}. */
 	product?: BuildProduct;
 	/** Installed version to ask a patch from (`from_version`). */
 	fromVersion?: string;
@@ -279,7 +279,7 @@ export interface FetchBuildOptions {
 
 /** Ask the build service for a build of this host's target ({@link BuildSelector}). */
 export async function fetchBuild(selector: BuildSelector, options: FetchBuildOptions = {}): Promise<BuildAnswer> {
-	const product = options.product ?? OMP_BUILD;
+	const product = options.product ?? MARS_BUILD;
 	const host = options.host ?? (await currentBuildHost());
 	const origin = buildServiceUrl();
 	const timeoutMs = options.timeoutMs ?? BUILD_CHECK_TIMEOUT_MS;
@@ -321,7 +321,7 @@ export async function fetchBuild(selector: BuildSelector, options: FetchBuildOpt
 
 	if (response.status === 404 && isRecord(body) && body.error === "no_build") {
 		const hint =
-			product === OMP_BUILD && "channel" in selector && selector.channel === "canary"
+			product === MARS_BUILD && "channel" in selector && selector.channel === "canary"
 				? ` Try \`${APP_NAME} update --stable\`.`
 				: "";
 		throw new Error(`No ${what} is published on ${origin} yet.${hint}`);

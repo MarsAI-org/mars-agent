@@ -221,7 +221,7 @@ describe("direct Google response observers", () => {
 	it(
 		vertexFallbackTestName,
 		async () => {
-			if (Bun.env.OMP_TEST_VERTEX_RESPONSE_OBSERVER_CHILD !== "1") {
+			if (Bun.env.MARS_TEST_VERTEX_RESPONSE_OBSERVER_CHILD !== "1") {
 				// Only an ambient location enables global fallback. Keep it out of this
 				// runner's shared environment by exercising that path in a child process.
 				const child = Bun.spawn(
@@ -230,7 +230,7 @@ describe("direct Google response observers", () => {
 						env: {
 							...process.env,
 							GOOGLE_VERTEX_LOCATION: "us-central1",
-							OMP_TEST_VERTEX_RESPONSE_OBSERVER_CHILD: "1",
+							MARS_TEST_VERTEX_RESPONSE_OBSERVER_CHILD: "1",
 						},
 						stdout: "pipe",
 						stderr: "pipe",

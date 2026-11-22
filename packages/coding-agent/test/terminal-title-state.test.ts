@@ -381,7 +381,7 @@ describe("disposeTerminalTitleState", () => {
 		resetObserved(writes, windowsTitleMock);
 		setTerminalTitleState("working");
 
-		expect(observedTitles(writes, windowsTitleMock)).toEqual(["π : my-project"]);
+		expect(observedTitles(writes, windowsTitleMock)).toEqual(["mars : my-project"]);
 		expect(vi.getTimerCount()).toBe(0);
 		resetObserved(writes, windowsTitleMock);
 		vi.advanceTimersByTime(DEFAULT_SPINNER_INTERVAL_MS * 10);
@@ -389,7 +389,7 @@ describe("disposeTerminalTitleState", () => {
 
 		// Other states are unaffected by the static spinner.
 		setTerminalTitleState("idle");
-		expect(observedTitles(writes, windowsTitleMock)).toEqual(["π > my-project"]);
+		expect(observedTitles(writes, windowsTitleMock)).toEqual(["mars > my-project"]);
 	});
 
 	it("clears the title before popping the saved one on shutdown", () => {
@@ -411,7 +411,7 @@ describe("disposeTerminalTitleState", () => {
 
 			initTerminalTitleState();
 			setSessionTerminalTitle("running-session");
-			expect(native.titles).toContain("π > running-session");
+			expect(native.titles).toContain("mars > running-session");
 
 			resetObserved(writes, native);
 			// The `InteractiveMode.shutdown()` order: dispose, then pop.

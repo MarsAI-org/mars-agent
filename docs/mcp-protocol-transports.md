@@ -30,14 +30,14 @@ Constants and helpers are in `src/mcp/protocol.ts`.
 
 Declared in `src/mcp/host/contract.ts`; the host strips `omp/*` `_meta` keys before anything reaches a server.
 
-| Extension | Direction | Meaning |
-| --- | --- | --- |
-| `_meta["omp/cache"] = "stale-ok"` | request | answer from the store even past its TTL without starting the server; the host revalidates and notifies on change |
-| `_meta["omp/cache"] = "no-store"` | request | ask the server itself and leave the store untouched (connection tests, auth probes) |
-| `_meta["omp/stale"] = true` | result | the served entry was past its TTL |
-| `omp/status` | host → session | era, state (`idle`, `starting`, `running`, `failed`), pid, attached sessions, last exit |
-| `omp/restart` | session → host | stop the upstream now and clear its crash history |
-| `omp/roots` | session → host | the session's roots, for a handshake-era server's `roots/list` |
+| Extension                         | Direction      | Meaning                                                                                                          |
+| --------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `_meta["omp/cache"] = "stale-ok"` | request        | answer from the store even past its TTL without starting the server; the host revalidates and notifies on change |
+| `_meta["omp/cache"] = "no-store"` | request        | ask the server itself and leave the store untouched (connection tests, auth probes)                              |
+| `_meta["omp/stale"] = true`       | result         | the served entry was past its TTL                                                                                |
+| `omp/status`                      | host → session | era, state (`idle`, `starting`, `running`, `failed`), pid, attached sessions, last exit                          |
+| `omp/restart`                     | session → host | stop the upstream now and clear its crash history                                                                |
+| `omp/roots`                       | session → host | the session's roots, for a handshake-era server's `roots/list`                                                   |
 
 ### Errors
 
@@ -95,12 +95,12 @@ Revision 2024-11-05: GET the configured URL, read the `endpoint` event (same ori
 
 For a handshake-era server the peer performs `initialize` (revision 2025-11-25, roots capability) and `notifications/initialized`, then translates:
 
-| Modern request | What the adapter does |
-| --- | --- |
-| `server/discover` | built from the `initialize` result |
-| list methods | forwarded; result completed with `resultType`, a 30-day `ttlMs`, `cacheScope: "private"`; `resources/templates/list` answering `-32601` is an empty list |
-| `tools/call`, `prompts/get`, `resources/read` | forwarded without modern-only `_meta` and MRTR fields |
-| `subscriptions/listen` | acknowledged with what the server's capabilities support; resource URIs become refcounted `resources/subscribe`/`unsubscribe`; the server's notifications are routed to matching subscriptions |
+| Modern request                                | What the adapter does                                                                                                                                                                          |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `server/discover`                             | built from the `initialize` result                                                                                                                                                             |
+| list methods                                  | forwarded; result completed with `resultType`, a 30-day `ttlMs`, `cacheScope: "private"`; `resources/templates/list` answering `-32601` is an empty list                                       |
+| `tools/call`, `prompts/get`, `resources/read` | forwarded without modern-only `_meta` and MRTR fields                                                                                                                                          |
+| `subscriptions/listen`                        | acknowledged with what the server's capabilities support; resource URIs become refcounted `resources/subscribe`/`unsubscribe`; the server's notifications are routed to matching subscriptions |
 
 Server requests are answered in the adapter: `ping` with `{}`, `roots/list` with the session's roots (`omp/roots`), anything else with `-32601`.
 

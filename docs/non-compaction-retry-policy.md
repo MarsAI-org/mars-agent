@@ -89,8 +89,8 @@ Flow (`#handleRetryableError`):
 7. When allowed, consult configured model fallback chains. `retry.fallbackOn` decides whether this error class may (`any`, `usage-limit`, `except-usage-limit`). A switch uses delay `0`; classifier refusals and account-policy denials otherwise only continue when a credential or model switch succeeds. Thinking-loop redirects stay on the same model; a temporarily blocked sibling credential within the wait cap is preferred over model fallback.
 8. If the current model's retry budget is exhausted, stop unless a model switch or confirmed credential reset permits continuation. A fallback model receives a fresh retry budget; credential recovery keeps the cumulative count. Known thinking-only stream-close routes have a one-retry cap rather than the full configured budget.
 9. If the final delay exceeds `retry.maxDelayMs` and no credential/model switch happened, emit final failure without sleeping, except an authoritative usage-reset wait explicitly allowed by `retry.waitForUsageReset`.
-10. Record the recoverable error, emit `auto_retry_start`, and remove the failed assistant from active context unless preserving a resolved interrupted tool turn or proven-unexecuted tool-call/result pairs.
-11. Sleep with abort support, then schedule `agent.continue()` through the post-prompt task scheduler for the same prompt generation.
+10.   Record the recoverable error, emit `auto_retry_start`, and remove the failed assistant from active context unless preserving a resolved interrupted tool turn or proven-unexecuted tool-call/result pairs.
+11.   Sleep with abort support, then schedule `agent.continue()` through the post-prompt task scheduler for the same prompt generation.
 
 ### What resets retry counters
 

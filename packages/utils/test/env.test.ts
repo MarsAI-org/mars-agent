@@ -105,11 +105,11 @@ describe("parseEnvFile", () => {
 		});
 	});
 
-	it("mirrors valid OMP_ variables to PI_ variables", () => {
-		const filePath = writeTempEnv("OMP_FEATURE=enabled\nOMP_BAD=before\0after\n");
+	it("mirrors valid MARS_ variables to PI_ variables", () => {
+		const filePath = writeTempEnv("MARS_FEATURE=enabled\nMARS_BAD=before\0after\n");
 
 		expect(parseEnvFile(filePath)).toEqual({
-			OMP_FEATURE: "enabled",
+			MARS_FEATURE: "enabled",
 			PI_FEATURE: "enabled",
 		});
 	});
@@ -457,7 +457,7 @@ describe("OTEL_* from omp's own .env files", () => {
 			path.join(home, ".env"),
 			["OTEL_PROBE_HOME=home", "OTEL_PROBE_AGENT=home-loses", "OTEL_PROBE_CONFIG=home-loses"].join("\n"),
 		);
-		await Bun.write(path.join(home, ".omp", ".env"), ["OTEL_PROBE_CONFIG=config-root"].join("\n"));
+		await Bun.write(path.join(home, ".mars", ".env"), ["OTEL_PROBE_CONFIG=config-root"].join("\n"));
 		await Bun.write(path.join(cwd, ".env"), ["OTEL_PROBE_PROJECT=project", "OTEL_PROBE_BOTH=project"].join("\n"));
 		const envModulePath = path.join(import.meta.dir, "..", "src", "env.ts");
 		const names = [

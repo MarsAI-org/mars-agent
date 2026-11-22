@@ -10,12 +10,15 @@
 		"llm",
 		"tui"
 	],
-	"homepage": "https://omp.sh",
+	"homepage": "https://github.com/MarsAI-org/mars-agent#readme",
 	"bugs": {
 		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"contributors": [
 		"Mario Zechner"
 	],

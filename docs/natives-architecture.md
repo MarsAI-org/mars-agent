@@ -28,11 +28,11 @@
 
 The package exports five entrypoints:
 
-| Import                           | Runtime               | Types                   | Load behavior                                                                           |
-| -------------------------------- | --------------------- | ----------------------- | --------------------------------------------------------------------------------------- |
-| `@oh-my-pi/pi-natives`           | `native/index.js`     | `native/index.d.ts`     | Loads the addon immediately, then binds every generated class/function and enum object. |
+| Import                           | Runtime               | Types                   | Load behavior                                                                                                                                                                                            |
+| -------------------------------- | --------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@oh-my-pi/pi-natives`           | `native/index.js`     | `native/index.d.ts`     | Loads the addon immediately, then binds every generated class/function and enum object.                                                                                                                  |
 | `@oh-my-pi/pi-natives/desktop`   | `native/desktop.js`   | `native/desktop.d.ts`   | Exposes `createDesktopSession(options)`, `desktopEscapeStops(key)`, `forgetDesktopEscapeStops(key)`, `closeDesktopEventTaps()`, and `desktopWindowRoster()`; addon loading is deferred until invocation. |
-| `@oh-my-pi/pi-natives/clipboard` | `native/clipboard.js` | `native/clipboard.d.ts` | Exposes lazy `copyToClipboard` and `readImageFromClipboard` wrappers.                   |
+| `@oh-my-pi/pi-natives/clipboard` | `native/clipboard.js` | `native/clipboard.d.ts` | Exposes lazy `copyToClipboard` and `readImageFromClipboard` wrappers.                                                                                                                                    |
 
 The other lazy entrypoints are `@oh-my-pi/pi-natives/path` (`native/path.js` / `path.d.ts`) and `@oh-my-pi/pi-natives/vcs` (`native/vcs.js` / `vcs.d.ts`). The path wrapper loads only for Windows path operations and returns its input unchanged elsewhere. The VCS wrapper memoizes bindings on its first native-backed operation; its error predicates and watch helper can be imported without loading the addon.
 

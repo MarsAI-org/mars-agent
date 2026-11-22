@@ -10,8 +10,8 @@
  * persona line.
  *
  * Off by default. A model opts in through the `prompt-perturbation` KDL axis
- * (see `packages/catalog/src/compat/rules/`); `OMP_PROMPT_PERTURBATION=1`
- * forces it on for every model and `OMP_PROMPT_PERTURBATION=0` forces it off.
+ * (see `packages/catalog/src/compat/rules/`); `MARS_PROMPT_PERTURBATION=1`
+ * forces it on for every model and `MARS_PROMPT_PERTURBATION=0` forces it off.
  */
 import { createHash } from "node:crypto";
 import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
@@ -86,9 +86,9 @@ function perturbTools(tools: Tool[] | undefined): Tool[] | undefined {
 	return changed ? next : tools;
 }
 
-/** Whether requests to `model` are perturbed: `OMP_PROMPT_PERTURBATION` (`0`/`1`) wins over the KDL axis. */
+/** Whether requests to `model` are perturbed: `MARS_PROMPT_PERTURBATION` (`0`/`1`) wins over the KDL axis. */
 export function isPromptPerturbationEnabled(model: Model): boolean {
-	const env = process.env.OMP_PROMPT_PERTURBATION;
+	const env = process.env.MARS_PROMPT_PERTURBATION;
 	if (env === "0") return false;
 	if (env === "1") return true;
 	return resolveCatalogPolicy(model).promptPerturbation === true;

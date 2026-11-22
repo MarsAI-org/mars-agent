@@ -43,7 +43,7 @@ it.skipIf(process.platform === "win32")(
 					HOME: home,
 					USERPROFILE: home,
 					PI_CODING_AGENT_DIR: tempDir.join("agent"),
-					OMP_PROFILE: "",
+					MARS_PROFILE: "",
 					PI_PROFILE: "",
 					XDG_CONFIG_HOME: tempDir.join("config"),
 					XDG_CACHE_HOME: tempDir.join("cache"),

@@ -158,7 +158,7 @@ await wait(5_000);`,
 			await call("evaluate", [
 				`(() => {
 					setTimeout(() => {
-						Promise.reject({ name: "ProbeObject", message: "OMP_OBJECT_DETAILS", code: "SAFE_TEST", detail: { stage: "synthetic" } });
+						Promise.reject({ name: "ProbeObject", message: "MARS_OBJECT_DETAILS", code: "SAFE_TEST", detail: { stage: "synthetic" } });
 						Promise.reject("plain rejection reason");
 						Promise.reject({ blob: "x".repeat(20000) });
 					}, 0);
@@ -171,7 +171,7 @@ await wait(5_000);`,
 				entries = ((await call("errors")) as CaptureResult).entries;
 			}
 			expect(entries.map(entry => entry.text).slice(0, 2)).toEqual([
-				'{"name":"ProbeObject","message":"OMP_OBJECT_DETAILS","code":"SAFE_TEST","detail":{"stage":"synthetic"}}',
+				'{"name":"ProbeObject","message":"MARS_OBJECT_DETAILS","code":"SAFE_TEST","detail":{"stage":"synthetic"}}',
 				"plain rejection reason",
 			]);
 			const oversized = entries[2]?.text ?? "";
@@ -218,7 +218,7 @@ await wait(5_000);`,
 			const result = await call("evaluate", [
 				`(async () => {
 					${CMUX_CONSOLE_CAPTURE_SCRIPT};
-					Promise.reject({ name: "ProbeObject", message: "OMP_OBJECT_DETAILS", code: "SAFE_TEST" });
+					Promise.reject({ name: "ProbeObject", message: "MARS_OBJECT_DETAILS", code: "SAFE_TEST" });
 					Promise.reject(new Error("native rejection"));
 					const capture = globalThis.__ompConsoleCapture;
 					for (let attempt = 0; attempt < 100 && capture.entries.length < 2; attempt++) {
@@ -228,7 +228,7 @@ await wait(5_000);`,
 				})()`,
 			]);
 			expect(result).toEqual([
-				'{"name":"ProbeObject","message":"OMP_OBJECT_DETAILS","code":"SAFE_TEST"}',
+				'{"name":"ProbeObject","message":"MARS_OBJECT_DETAILS","code":"SAFE_TEST"}',
 				"native rejection",
 			]);
 		} finally {

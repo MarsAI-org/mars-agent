@@ -6,7 +6,7 @@ import type { MCPProgress } from "@marsai-org/tui/tools/mcp";
 import { rejectionOf, trackUnhandled } from "../helpers/rejection";
 import { FakeHost, type Message, metaOf, paramsOf, REMOTE_SPEC, settled, unauthorized } from "./link-fake-host";
 
-const TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 const CANCELLED = "notifications/cancelled";
 
 /**

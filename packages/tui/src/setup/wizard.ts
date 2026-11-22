@@ -41,7 +41,7 @@ function setupSkipEnvEnabled(value: string | undefined): boolean {
 
 /**
  * Whether this launch may show onboarding at all: a TTY and, unless forced,
- * not resuming, not skipped by `OMP_SKIP_SETUP` or `startup.setupWizard`.
+ * not resuming, not skipped by `MARS_SKIP_SETUP` or `startup.setupWizard`.
  */
 export function setupWizardAllowed(options: SetupSceneSelectionOptions = {}): boolean {
 	const isTTY = options.isTTY ?? (process.stdin.isTTY && process.stdout.isTTY);
@@ -49,7 +49,7 @@ export function setupWizardAllowed(options: SetupSceneSelectionOptions = {}): bo
 	if (options.force) return true;
 	return (
 		!options.resuming &&
-		!setupSkipEnvEnabled(options.skipEnv ?? Bun.env.OMP_SKIP_SETUP) &&
+		!setupSkipEnvEnabled(options.skipEnv ?? Bun.env.MARS_SKIP_SETUP) &&
 		options.setupWizardEnabled !== false
 	);
 }

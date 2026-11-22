@@ -127,7 +127,7 @@ The `agents` provider (`.agent[s]/skills`) has its own `enableAgentsUser`/`enabl
 
 ```yaml
 skills:
-  manualSkills: ["third-party-*", "pdf"]
+   manualSkills: ["third-party-*", "pdf"]
 ```
 
 - Matches stay reachable through `/skill:<name>` (when skill commands are enabled) and `skill://<name>`, and report `hide: true` in `omp skill list --json`.

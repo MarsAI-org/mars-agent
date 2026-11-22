@@ -20,7 +20,7 @@ import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@mar
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const MOCK_API_SOURCE = "test/subagent-cost-cap";
-const ENV_KEYS = ["HOME", "PI_CODING_AGENT_DIR", "OMP_PROFILE", "PI_PROFILE"] as const;
+const ENV_KEYS = ["HOME", "PI_CODING_AGENT_DIR", "MARS_PROFILE", "PI_PROFILE"] as const;
 let savedEnv: Record<string, string | undefined> = {};
 let root: string;
 

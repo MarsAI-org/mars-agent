@@ -3,7 +3,7 @@
  * connection to it, for tests of `proc` units, leases and the store.
  *
  * Nothing here touches `process.env` or `~/.omp`: the daemon runs as a child
- * process whose env names the temp dir (`OMP_DAEMON_DIR`), and connections dial
+ * process whose env names the temp dir (`MARS_DAEMON_DIR`), and connections dial
  * its endpoint and read its token directly. {@link TestDaemon.dispose} stops
  * every unit it saw (detached ones outlive the daemon), shuts the daemon down,
  * kills whatever survived, and deletes the dir.
@@ -198,7 +198,7 @@ export class DaemonConn {
 export class TestDaemon {
 	/** Temp root: `cwd` for units, stderr captures, and the daemon dir below it. */
 	readonly root: string;
-	/** `OMP_DAEMON_DIR` of the daemon. */
+	/** `MARS_DAEMON_DIR` of the daemon. */
 	readonly dir: string;
 	readonly #env: Record<string, string>;
 	readonly #conns = new Set<DaemonConn>();

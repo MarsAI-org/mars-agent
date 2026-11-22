@@ -20,7 +20,7 @@ export interface RuntimeIdentity {
 	branch?: string;
 	/** Historical uncommitted-diff hash from older session entries; new entries omit it. */
 	diff?: string;
-	/** Free-form name from `OMP_BUILD_LABEL`. */
+	/** Free-form name from `MARS_BUILD_LABEL`. */
 	label?: string;
 }
 
@@ -41,7 +41,7 @@ function findSourceCheckout(): VcsGitRepo | null {
 /** Resolve the build stamp on first use so commands that write no session skip VCS reads. */
 function resolveRuntimeIdentity(): RuntimeIdentity {
 	if (current) return current;
-	const label = $env.OMP_BUILD_LABEL?.replace(/\s+/g, " ").trim().slice(0, MAX_LABEL_LENGTH);
+	const label = $env.MARS_BUILD_LABEL?.replace(/\s+/g, " ").trim().slice(0, MAX_LABEL_LENGTH);
 	current = { version: VERSION, label: label || undefined };
 	try {
 		const repo = findSourceCheckout();

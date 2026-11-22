@@ -136,7 +136,7 @@ endpoint. To opt in from OMP, set this in `config.yml`:
 
 ```yaml
 providers:
-  openaiResponsesWebsockets: true
+   openaiResponsesWebsockets: true
 ```
 
 The catalog's `supports-websockets` KDL rule marks capability, not enablement.
@@ -155,12 +155,12 @@ and disable WS for the affected model:
 
 ```yaml
 providers:
-  openai:
-    api: openai-responses
-    baseUrl: https://gateway.example.com/v1
-    modelOverrides:
-      gpt-5:
-        preferWebsockets: false
+   openai:
+      api: openai-responses
+      baseUrl: https://gateway.example.com/v1
+      modelOverrides:
+         gpt-5:
+            preferWebsockets: false
 ```
 
 Custom `models` entries accept the same boolean. WS uses the existing `/responses`

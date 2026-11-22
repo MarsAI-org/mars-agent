@@ -286,13 +286,13 @@ ${bashFlagCase(bin, c.flags)}
 	}
 	parts.push(`_mars() {
 	local cur prev cmd i
-	cur="\${COMP_WORDS[COMP_CWORD]}"
-	prev="\${COMP_WORDS[COMP_CWORD-1]}"
+	cur="\${CMARS_WORDS[CMARS_CWORD]}"
+	prev="\${CMARS_WORDS[CMARS_CWORD-1]}"
 	cmd=""
-	for (( i=1; i < COMP_CWORD; i++ )); do
-		case "\${COMP_WORDS[i]}" in
+	for (( i=1; i < CMARS_CWORD; i++ )); do
+		case "\${CMARS_WORDS[i]}" in
 			-*) ;;
-			*) cmd="\${COMP_WORDS[i]}"; break ;;
+			*) cmd="\${CMARS_WORDS[i]}"; break ;;
 		esac
 	done
 	case "$cmd" in

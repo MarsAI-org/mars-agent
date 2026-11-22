@@ -275,12 +275,12 @@ describe.skipIf(process.platform === "win32")("daemon unit lifecycle", () => {
 	it(
 		"a unit runs with exactly the env of its open request, never inheriting the daemon's env",
 		async () => {
-			const { conn, root } = await startDaemon({ OMP_UNIT_MARKER: "daemon", OMP_DAEMON_ONLY: "leak" });
+			const { conn, root } = await startDaemon({ MARS_UNIT_MARKER: "daemon", MARS_DAEMON_ONLY: "leak" });
 			await conn.openProc(
 				"env",
 				// oxlint-disable-next-line no-template-curly-in-string -- shell parameter expansion, not a JS template
-				shProc('echo "marker=$OMP_UNIT_MARKER only=${OMP_DAEMON_ONLY-unset}"; read hold', root, {
-					env: { OMP_UNIT_MARKER: "request" },
+				shProc('echo "marker=$MARS_UNIT_MARKER only=${MARS_DAEMON_ONLY-unset}"; read hold', root, {
+					env: { MARS_UNIT_MARKER: "request" },
 				}),
 			);
 

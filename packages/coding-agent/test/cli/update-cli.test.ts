@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { removeWithRetries, setAgentDir, setProjectDir, VERSION } from "@marsai-org/utils";
-import { currentBuildHost, OMP_BUILD } from "../../src/cli/build-service";
+import { currentBuildHost, MARS_BUILD } from "../../src/cli/build-service";
 import { fixedNpmRegistry } from "../../src/cli/npm-registry";
 import { getLatestRelease, runUpdateCommand } from "../../src/cli/update-cli";
 import { cfgUpdateChannel } from "../../src/modes/settings";
@@ -101,7 +101,7 @@ describe("runUpdateCommand version source", () => {
 			const next = "#!/bin/sh\necho omp/999.0.0\n";
 			const host = await currentBuildHost();
 			const { target } = host;
-			const fileName = OMP_BUILD.fileName(host, "999.0.0");
+			const fileName = MARS_BUILD.fileName(host, "999.0.0");
 			process.env.PI_BUILD_URL = "https://build.test";
 			const check = `https://build.test/api/products/omp/latest/${target}?channel=stable&from_version=${VERSION}`;
 			const { logs } = quiet();

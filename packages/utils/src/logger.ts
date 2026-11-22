@@ -1,7 +1,7 @@
 /**
  * Centralized logger for omp.
  *
- * Default: rotating `~/.omp/logs/omp.<DATE>.<PID>.log`, no console output (writing
+ * Default: rotating `~/.mars/logs/mars.<DATE>.<PID>.log`, no console output (writing
  * to stdout/stderr would corrupt the TUI). Long-running headless services
  * (the auth broker, etc.) call {@link setTransports} to swap in a console
  * transport so a process supervisor (pm2, journald, k8s) captures the logs.
@@ -12,7 +12,7 @@
  * on the first record written. Records are batched — one write per second or
  * per 64 KiB — while `warn`/`error` records are written at once together with
  * everything buffered before them; exit, fatal, and signal paths flush the
- * rest. `OMP_LOG_LEVEL` optionally limits the levels written to the file and
+ * rest. `MARS_LOG_LEVEL` optionally limits the levels written to the file and
  * the console (default: all).
  */
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -20,7 +20,7 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { isPromise } from "node:util/types";
-import { getLogsDir, localDay } from "./dirs";
+import { APP_NAME, getLogsDir, localDay } from "./dirs";
 import { RotatingFileSink } from "./logger/rotating-file";
 import { isPidAlive } from "./pid";
 import { setStderrRedirectTarget } from "./stderr-guard";
@@ -172,11 +172,11 @@ function dispatchToSinks(event: LogEvent): void {
 	}
 }
 
-const PROCESS_LOG_PATTERN = /^omp\.(\d{4}-\d{2}-\d{2})\.(\d+)\.log(?:\.(\d+))?$/;
+const PROCESS_LOG_PATTERN = /^(?:mars|omp)\.(\d{4}-\d{2}-\d{2})\.(\d+)\.log(?:\.(\d+))?$/;
 /** Per-process audit files written by earlier releases; current sinks track rotations in memory. */
-const PROCESS_AUDIT_PATTERN = /^\.omp\.(\d+)-audit\.json$/;
+const PROCESS_AUDIT_PATTERN = /^\.(?:mars|omp)\.(\d+)-audit\.json$/;
 /** Shared daily logs (plain, size-rolled, or gzipped) written by the winston-era logger. */
-const LEGACY_LOG_PATTERN = /^omp\.(\d{4}-\d{2}-\d{2})\.log(?:\.\d+)?(?:\.gz)?$/;
+const LEGACY_LOG_PATTERN = /^(?:mars|omp)\.(\d{4}-\d{2}-\d{2})\.log(?:\.\d+)?(?:\.gz)?$/;
 /** Hash-named audit files written by winston-daily-rotate-file. */
 const LEGACY_AUDIT_PATTERN = /^\.[0-9a-f]{8,}-audit\.json$/;
 const RETAINED_STALE_LOGS_PER_PROCESS_DAY = 1;
@@ -442,7 +442,7 @@ function makeFileTransport(dir?: string): RotatingFileSink {
 	// The sink opens (and creates) its file on the first batch written.
 	return new RotatingFileSink({
 		directory: logsDir,
-		filenamePrefix: "omp",
+		filenamePrefix: APP_NAME,
 		filenameSuffix: String(process.pid),
 		maxBytes: 10 * 1024 * 1024,
 		maxFiles: 5,
@@ -458,11 +458,11 @@ const IMMEDIATE_FLUSH_RANK = LOG_LEVEL_RANK.warn;
 
 /**
  * Rank of the most verbose level the local transports (file and console)
- * write: `OMP_LOG_LEVEL` (error|warn|info|debug, case-insensitive), default
+ * write: `MARS_LOG_LEVEL` (error|warn|info|debug, case-insensitive), default
  * `debug` (everything).
  */
 function resolveLevelRank(): number {
-	const requested = process.env.OMP_LOG_LEVEL?.trim().toLowerCase();
+	const requested = process.env.MARS_LOG_LEVEL?.trim().toLowerCase();
 	return requested && Object.hasOwn(LOG_LEVEL_RANK, requested)
 		? LOG_LEVEL_RANK[requested as LogLevel]
 		: LOG_LEVEL_RANK.debug;
@@ -539,7 +539,7 @@ function emitLocally(
  * long-running services (the auth broker, etc.) that want their structured
  * logs piped into a process supervisor instead of the rotating file.
  * The previous file transport writes its buffered records before closing, and
- * the level (`OMP_LOG_LEVEL`) is re-read on each reconfiguration.
+ * the level (`MARS_LOG_LEVEL`) is re-read on each reconfiguration.
  */
 export function setTransports(opts: { console?: boolean; file?: boolean | string }): void {
 	transportOpts = opts;

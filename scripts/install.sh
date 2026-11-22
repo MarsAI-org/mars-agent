@@ -316,8 +316,8 @@ install_binary() {
 
     mkdir -p "$INSTALL_DIR"
     # Download next to the destination and move it into place only once the
-    # checksum matches, so a bad download never replaces a working omp.
-    DOWNLOAD_PATH="${INSTALL_DIR}/.omp.download.$$"
+    # checksum matches, so a bad download never replaces a working mars binary.
+    DOWNLOAD_PATH="${INSTALL_DIR}/.mars.download.$$"
     trap 'rm -f "$DOWNLOAD_PATH"' EXIT
     echo "Downloading ${BINARY}..."
     curl -fsSL --connect-timeout 10 --speed-limit 1024 --speed-time 30 "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH"

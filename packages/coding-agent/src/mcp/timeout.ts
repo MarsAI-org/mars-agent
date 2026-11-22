@@ -4,9 +4,9 @@ const DEFAULT_MCP_TIMEOUT_MS = 30_000;
 const DEFAULT_MCP_TOOL_CALL_TIMEOUT_MS = 600_000;
 /** Hard cap on a default-deadline tool call that keeps reporting progress. */
 const DEFAULT_MCP_TOOL_CALL_MAX_TOTAL_MS = 3_600_000;
-const MCP_TIMEOUT_ENV = "OMP_MCP_TIMEOUT_MS";
+const MCP_TIMEOUT_ENV = "MARS_MCP_TIMEOUT_MS";
 const DEFAULT_MCP_STARTUP_TIMEOUT_MS = 250;
-const MCP_STARTUP_TIMEOUT_ENV = "OMP_MCP_STARTUP_TIMEOUT_MS";
+const MCP_STARTUP_TIMEOUT_ENV = "MARS_MCP_STARTUP_TIMEOUT_MS";
 
 let neverAbortController: AbortController | undefined;
 
@@ -15,7 +15,7 @@ function envTimeoutMs(): number | undefined {
 	if (!raw) return undefined;
 	const value = Number(raw);
 	if (Number.isFinite(value) && value >= 0) return value;
-	logger.warn("Ignoring invalid OMP_MCP_TIMEOUT_MS env value; expected a non-negative number", {
+	logger.warn("Ignoring invalid MARS_MCP_TIMEOUT_MS env value; expected a non-negative number", {
 		value: raw,
 	});
 	return undefined;
@@ -54,7 +54,7 @@ export interface MCPRequestDeadline {
 }
 
 /**
- * Deadline for one request. A configured timeout (`OMP_MCP_TIMEOUT_MS` or the server's `timeout`) is a
+ * Deadline for one request. A configured timeout (`MARS_MCP_TIMEOUT_MS` or the server's `timeout`) is a
  * hard cap, as are handshakes and listings. A `tools/call` without one gets
  * {@link DEFAULT_MCP_TOOL_CALL_TIMEOUT_MS}, restarted by progress up to
  * {@link DEFAULT_MCP_TOOL_CALL_MAX_TOTAL_MS}. Neither is ever shorter than the wait the call's own
@@ -84,7 +84,7 @@ export function resolveMCPStartupTimeoutMs(configTimeout?: number): number {
 	if (raw) {
 		const value = Number(raw);
 		if (Number.isFinite(value) && value >= 0) return value;
-		logger.warn("Ignoring invalid OMP_MCP_STARTUP_TIMEOUT_MS env value; expected a non-negative number", {
+		logger.warn("Ignoring invalid MARS_MCP_STARTUP_TIMEOUT_MS env value; expected a non-negative number", {
 			value: raw,
 		});
 	}

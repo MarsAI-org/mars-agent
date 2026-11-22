@@ -79,14 +79,14 @@ describe("omp auth-broker serve shutdown", () => {
 			for (const key of [
 				"PI_CODING_AGENT_DIR",
 				"PI_CONFIG_DIR",
-				"OMP_PROFILE",
+				"MARS_PROFILE",
 				"PI_PROFILE",
 				"XDG_CACHE_HOME",
 				"XDG_CONFIG_HOME",
 				"XDG_DATA_HOME",
 				"XDG_STATE_HOME",
-				// The test waits for an info-level line, which OMP_LOG_LEVEL can silence.
-				"OMP_LOG_LEVEL",
+				// The test waits for an info-level line, which MARS_LOG_LEVEL can silence.
+				"MARS_LOG_LEVEL",
 			]) {
 				delete env[key];
 			}

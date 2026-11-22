@@ -70,7 +70,7 @@ Removed in the unified-flow refactor:
 | Grammar-flavored OpenAI-compatible hosts (`toolSchemaFlavor: "grammar"`)    | `sanitizeSchemaForGrammar`                                                   |
 | `ollama-chat` (`ollama` / `ollama-cloud`) tool parameters                   | `toolWireSchema` → `sanitizeSchemaForOllama`                                 |
 | `cursor-agent` with `requiresCursorToolSchemaProjection: true`              | `toolWireSchema` → `sanitizeSchemaForCursor`                                 |
-| `google-generative-ai`, `google-vertex`                         | `normalizeSchemaForGoogle`                                                   |
+| `google-generative-ai`, `google-vertex`                                     | `normalizeSchemaForGoogle`                                                   |
 | Google-family models with `compat.ccaLegacyParametersSchema`                | `normalizeSchemaForCCA` on the legacy `parameters` path                      |
 | `apple-foundation-models`                                                   | `toolWireSchema` → `toFoundationModelsSchema`; argument decoding afterward   |
 | MCP `inputSchema` ingestion                                                 | `normalizeSchemaForMCP`                                                      |

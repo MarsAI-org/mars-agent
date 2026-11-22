@@ -179,7 +179,7 @@ describe("/fork terminal placement", () => {
 		const command = request?.command ?? [];
 		expect(command[0]).toBe("env");
 		expect(command).toContain("PI_CODING_AGENT_DIR=/user/agent");
-		expect(command).toContain("OMP_PROFILE=active-profile");
+		expect(command).toContain("MARS_PROFILE=active-profile");
 		expect(command).toContain("PI_PROFILE=active-profile");
 		expect(command.slice(command.indexOf("omp-entry") + 1)).toEqual([
 			"--profile",
@@ -229,7 +229,7 @@ describe("/fork terminal placement", () => {
 		await controller.handleForkCommand("pane");
 		const command = launchTerminal.mock.calls[0]?.[0].command ?? [];
 		const envArgs = command.slice(0, command.indexOf("omp-entry"));
-		for (const name of ["XDG_DATA_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME", "OMP_PROFILE", "PI_PROFILE"]) {
+		for (const name of ["XDG_DATA_HOME", "XDG_STATE_HOME", "XDG_CACHE_HOME", "MARS_PROFILE", "PI_PROFILE"]) {
 			expect(envArgs[envArgs.indexOf(name) - 1]).toBe("-u");
 			expect(envArgs.some(arg => arg.startsWith(`${name}=`))).toBe(false);
 		}
@@ -275,7 +275,7 @@ describe("/fork terminal placement", () => {
 				({
 					TMUX: "server,1,0",
 					TMUX_PANE: "%1",
-					OMP_PROFILE: "stale-server-profile",
+					MARS_PROFILE: "stale-server-profile",
 					PI_PROFILE: "stale-server-profile",
 					PI_CODING_AGENT_DIR: "/stale/server/agent",
 					PI_CONFIG_FILES: configFiles,

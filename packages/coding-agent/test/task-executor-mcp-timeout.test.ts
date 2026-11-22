@@ -104,8 +104,8 @@ test("MCP proxy tool aborts underlying operation on caller abort", async () => {
 
 test.each([180_000, 0])("MCP proxy honors a link deadline of %i beyond 60s", async timeout => {
 	// The link owns the deadline; an environment override would replace both rows' values.
-	const savedTimeout = Bun.env.OMP_MCP_TIMEOUT_MS;
-	delete Bun.env.OMP_MCP_TIMEOUT_MS;
+	const savedTimeout = Bun.env.MARS_MCP_TIMEOUT_MS;
+	delete Bun.env.MARS_MCP_TIMEOUT_MS;
 	const host = new FakeHost();
 	const link = new HostLink({
 		name: "test-server",
@@ -145,7 +145,7 @@ test.each([180_000, 0])("MCP proxy honors a link deadline of %i beyond 60s", asy
 		vi.useRealTimers();
 		await link.close();
 		vi.restoreAllMocks();
-		if (savedTimeout === undefined) delete Bun.env.OMP_MCP_TIMEOUT_MS;
-		else Bun.env.OMP_MCP_TIMEOUT_MS = savedTimeout;
+		if (savedTimeout === undefined) delete Bun.env.MARS_MCP_TIMEOUT_MS;
+		else Bun.env.MARS_MCP_TIMEOUT_MS = savedTimeout;
 	}
 });

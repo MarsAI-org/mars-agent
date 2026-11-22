@@ -52,7 +52,7 @@ export interface InferParams {
 	cwd: string;
 	/** Complete child environment (from `inferenceWorkerEnv`). */
 	env: Record<string, string>;
-	/** Idle grace override (`OMP_TINY_WORKER_IDLE_MS` / `OMP_MNEMOPI_EMBED_IDLE_MS`). */
+	/** Idle grace override (`MARS_TINY_WORKER_IDLE_MS` / `MARS_MNEMOPI_EMBED_IDLE_MS`). */
 	idleMs?: number;
 }
 

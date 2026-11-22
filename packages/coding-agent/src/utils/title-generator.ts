@@ -39,9 +39,9 @@ import { DEFAULT_SPINNER_INTERVAL_MS, SPINNER_INTERVAL_STATIC } from "@marsai-or
 const TITLE_SYSTEM_PROMPT = prompt.render(titleSystemPrompt);
 const TITLE_MARKER_INSTRUCTION = prompt.render(titleMarkerInstruction);
 
-// Plain π, not the nerd-font `icon.omp` glyph: window/tab titles render in the
+// Plain "mars", not the nerd-font `icon.mars` glyph: window/tab titles render in the
 // OS UI font, which has no nerd-font PUA coverage.
-const DEFAULT_TERMINAL_TITLE = "π";
+const DEFAULT_TERMINAL_TITLE = "mars";
 /** The native tab title without a session name. */
 const NATIVE_TERMINAL_TITLE = "omp";
 const TERMINAL_TITLE_CONTROL_CHARS = /[\u0000-\u001f\u007f-\u009f]/g;
@@ -939,13 +939,13 @@ const terminalTitleRuntime: {
 };
 
 /**
- * Compose the terminal title from the `π` brand, a state-carrying separator, and
+ * Compose the terminal title from the `mars` brand, a state-carrying separator, and
  * the session label. Pure (no I/O) so the state→separator contract is testable:
- *   - `idle` (user's turn):  `π > label`;
- *   - `working`:             `π ⠋ label` (static `π : label` under WSL, or when `staticSpinner` is set);
- *   - `attention`:           `π ! label`;
- *   - disabled:              `π: label`.
- * Without a label the separator trails the brand (`π >`) so the state stays visible.
+ *   - `idle` (user's turn):  `mars > label`;
+ *   - `working`:             `mars ⠋ label` (static `mars : label` under WSL, or when `staticSpinner` is set);
+ *   - `attention`:           `mars ! label`;
+ *   - disabled:              `mars: label`.
+ * Without a label the separator trails the brand (`mars >`) so the state stays visible.
  * The `working` separator cycles `TERMINAL_TITLE_SPINNER_STYLES[style]`; `style`
  * defaults to `braille` so existing 5-arg callers keep the historical frames.
  * `staticSpinner` is the caller's own reasons to pin the working separator: the
@@ -1134,7 +1134,7 @@ export function initTerminalTitleState(): void {
 	// state — a frozen spinner frame. Mirror the enable path and re-arm.
 	if (terminalTitleRuntime.state === "working" && terminalTitleRuntime.enabled) startTerminalTitleSpinner();
 	// A TSP terminal takes the plain native title while it renders; the
-	// classic `π > label` (and its spinner) comes back when it stops.
+	// classic `mars > label` (and its spinner) comes back when it stops.
 	terminalTitleRuntime.unwatchNative ??= onNativeRenderingChange(native => {
 		if (native) stopTerminalTitleSpinner();
 		else if (terminalTitleRuntime.state === "working" && terminalTitleRuntime.enabled) startTerminalTitleSpinner();
