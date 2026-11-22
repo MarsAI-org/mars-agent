@@ -3,7 +3,7 @@
 /**
  * Mars Bot Fully Autonomous Coding & Self-Review Engine
  * 
- * Drives an autonomous agentic loop powered by Mars 9Router with built-in:
+ * Drives an autonomous agentic loop powered by an OpenAI-compatible gateway with built-in:
  * 1. Autonomous Implementation & Coding
  * 2. Automated Test & Build Execution (Self-Verification)
  * 3. Autonomous Self-Review & Security Audit Pass (Reviews its own code before pushing)
@@ -18,22 +18,27 @@ import { execSync } from "node:child_process";
 // ---------------------------------------------------------------------------
 // Configuration & Inputs
 // ---------------------------------------------------------------------------
-const ROUTER_URL = (
-  process.env.MARS_ROUTER_URL ||
+const LLM_URL = (
+  process.env.MARS_LLM_URL ||
   process.env.OPENAI_BASE_URL ||
   process.env.API_BASE ||
-  "http://localhost:20128/v1"
+  ""
 ).replace(/\/+$/, "");
 
-const ROUTER_KEY = process.env.MARS_ROUTER_API_KEY || process.env.OPENAI_API_KEY || "mars-bot-secret";
+const LLM_KEY = process.env.MARS_LLM_API_KEY || process.env.OPENAI_API_KEY || "mars-bot-secret";
 const MODEL = process.env.MARS_MODEL || process.env.LLM_MODEL || "gpt-4o";
 const GITHUB_TOKEN = process.env.MARS_BOT_TOKEN || process.env.GITHUB_TOKEN;
 const MAX_TURNS = parseInt(process.env.MAX_TURNS || "20", 10);
-const REPO_TYPE = process.env.REPO_TYPE || "unknown"; // "mars-agent" | "mars-router" | "mars-site"
+const REPO_TYPE = process.env.REPO_TYPE || "unknown"; // "mars-agent" | "mars-site"
 
 const EVENT_PATH = process.env.GITHUB_EVENT_PATH;
 const EVENT_NAME = process.env.GITHUB_EVENT_NAME || "workflow_dispatch";
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY || "";
+
+if (!LLM_URL) {
+  // Any OpenAI-compatible endpoint works; there is no bundled default.
+  throw new Error("MARS_LLM_URL (or OPENAI_BASE_URL / API_BASE) must be set");
+}
 
 // ---------------------------------------------------------------------------
 // Helper: Child Process Exec
@@ -111,10 +116,6 @@ function runVerification() {
     const checkOut = run("bun check", process.cwd(), true);
     const hasError = checkOut.toLowerCase().includes("error") || checkOut.includes("Failed");
     return { passed: !hasError, command: "bun check", output: checkOut };
-  } else if (REPO_TYPE === "mars-router") {
-    const lintOut = run("npx eslint .", process.cwd(), true);
-    const hasError = lintOut.includes("error");
-    return { passed: !hasError, command: "npx eslint .", output: lintOut };
   } else if (REPO_TYPE === "mars-site") {
     // Check if HTML has unclosed tags or broken local links
     const htmlExists = fs.existsSync(path.resolve(process.cwd(), "index.html"));
@@ -302,10 +303,10 @@ function handleToolCall(name, args) {
 }
 
 // ---------------------------------------------------------------------------
-// LLM API Client (9Router)
+// LLM API Client
 // ---------------------------------------------------------------------------
 async function callChatCompletion(messages, tools) {
-  const url = `${ROUTER_URL}/chat/completions`;
+  const url = `${LLM_URL}/chat/completions`;
   const body = {
     model: MODEL,
     messages,
@@ -318,14 +319,14 @@ async function callChatCompletion(messages, tools) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ROUTER_KEY}`,
+      Authorization: `Bearer ${LLM_KEY}`,
     },
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`9Router API call failed (${response.status}): ${errorText}`);
+    throw new Error(`LLM API call failed (${response.status}): ${errorText}`);
   }
 
   const data = await response.json();
@@ -411,7 +412,7 @@ async function main() {
   console.log("=================================================");
   console.log("Mars Bot: Autonomous Coding + Self-Review Engine");
   console.log(`Repository: ${GITHUB_REPOSITORY} (${REPO_TYPE})`);
-  console.log(`Gateway: ${ROUTER_URL} [Model: ${MODEL}]`);
+  console.log(`Gateway: ${LLM_URL} [Model: ${MODEL}]`);
   console.log("=================================================");
 
   const task = parseTask();
@@ -425,13 +426,6 @@ Repo: mars-agent (Bun + TypeScript + Rust)
 - Avoid 'any' and ReturnType<>.
 - ES private #fields on classes.
 - Never manually edit catalog/models.json or rules.json.
-    `;
-  } else if (REPO_TYPE === "mars-router") {
-    repoGuidance = `
-Repo: mars-router (9Router, Plain JavaScript ESM)
-- No TypeScript.
-- Security-first: check auth, token leaks, X-Forwarded-For stripping, SSRF risks.
-- Conventional commit messages.
     `;
   } else if (REPO_TYPE === "mars-site") {
     repoGuidance = `
@@ -576,7 +570,7 @@ ${finalResult?.summary || "Autonomous self-directed code update."}
 ${task.issueNumber ? `Closes #${task.issueNumber}` : ""}
 
 ---
-*Built, verified, and self-reviewed autonomously by Mars Bot via 9Router Gateway*`;
+*Built, verified, and self-reviewed autonomously by Mars Bot*`;
 
     if (!task.isPr) {
       const prUrl = createPullRequest(branchName, commitMsg, prBody);

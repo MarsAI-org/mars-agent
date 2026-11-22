@@ -4,26 +4,31 @@
  * Mars PR Auto-Reviewer
  * 
  * Automatically analyzes Pull Requests, performs security audits, checks repo-specific
- * conventions, and posts structured review feedback via GitHub CLI and 9Router.
+ * conventions, and posts structured review feedback via GitHub CLI and the LLM gateway.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { execSync } from "node:child_process";
 
-const ROUTER_URL = (
-  process.env.MARS_ROUTER_URL ||
+const LLM_URL = (
+  process.env.MARS_LLM_URL ||
   process.env.OPENAI_BASE_URL ||
   process.env.API_BASE ||
-  "http://localhost:20128/v1"
+  ""
 ).replace(/\/+$/, "");
 
-const ROUTER_KEY = process.env.MARS_ROUTER_API_KEY || process.env.OPENAI_API_KEY || "mars-bot-secret";
+const LLM_KEY = process.env.MARS_LLM_API_KEY || process.env.OPENAI_API_KEY || "mars-bot-secret";
 const MODEL = process.env.MARS_MODEL || process.env.LLM_MODEL || "gpt-4o";
 const GITHUB_TOKEN = process.env.MARS_BOT_TOKEN || process.env.GITHUB_TOKEN;
 const REPO_TYPE = process.env.REPO_TYPE || "unknown";
 const PR_NUMBER = process.env.PR_NUMBER;
 const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
+
+if (!LLM_URL) {
+  // Any OpenAI-compatible endpoint works; there is no bundled default.
+  throw new Error("MARS_LLM_URL (or OPENAI_BASE_URL / API_BASE) must be set");
+}
 
 function run(cmd, cwd = process.cwd(), ignoreError = false) {
   try {
@@ -42,7 +47,7 @@ function run(cmd, cwd = process.cwd(), ignoreError = false) {
 }
 
 async function callChatCompletion(messages) {
-  const url = `${ROUTER_URL}/chat/completions`;
+  const url = `${LLM_URL}/chat/completions`;
   const body = {
     model: MODEL,
     messages,
@@ -53,14 +58,14 @@ async function callChatCompletion(messages) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${ROUTER_KEY}`,
+      Authorization: `Bearer ${LLM_KEY}`,
     },
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`9Router API call failed (${response.status}): ${errorText}`);
+    throw new Error(`LLM API call failed (${response.status}): ${errorText}`);
   }
 
   const data = await response.json();
@@ -72,7 +77,7 @@ async function main() {
   console.log("Mars PR Auto-Reviewer Starting");
   console.log(`Repo: ${GITHUB_REPOSITORY || "local"} (Type: ${REPO_TYPE})`);
   console.log(`PR Number: ${PR_NUMBER || "unknown"}`);
-  console.log(`Gateway: ${ROUTER_URL} (Model: ${MODEL})`);
+  console.log(`Gateway: ${LLM_URL} (Model: ${MODEL})`);
   console.log("=========================================");
 
   if (!PR_NUMBER) {
@@ -106,14 +111,6 @@ Special rules for mars-agent:
 - Model Policy: Never hard-code model/provider policy in TS. Rules belong in KDL under packages/catalog/src/compat/rules/.
 - Generated Files: models.json and rules.json must NEVER be hand-edited.
 - TUI Sanitization: Output renderers must sanitize tabs (replaceTabs) and paths (shortenPath).
-    `;
-  } else if (REPO_TYPE === "mars-router") {
-    stackSpecificGuidance = `
-Special rules for mars-router:
-- SECURITY FIRST: Audit authentication, token/credential leaks, X-Forwarded-For spoofing risks, and SSRF vulnerabilities.
-- Plain JavaScript (ESM) only. There is NO TypeScript in this repository.
-- Persistence is SQLite under src/lib/db/.
-- Commit style: Conventional Commits.
     `;
   } else if (REPO_TYPE === "mars-site") {
     stackSpecificGuidance = `
@@ -149,7 +146,7 @@ Clear, concrete recommendations (with code snippets if applicable). If the PR is
     },
   ];
 
-  console.log("Requesting review from 9Router...");
+  console.log("Requesting review from the LLM gateway...");
   const reviewContent = await callChatCompletion(messages);
 
   console.log("\n--- Review Output ---\n");
@@ -157,7 +154,7 @@ Clear, concrete recommendations (with code snippets if applicable). If the PR is
 
   // Post review comment to GitHub PR
   const reviewFile = path.resolve(process.cwd(), ".bot-pr-review.md");
-  fs.writeFileSync(reviewFile, reviewContent + "\n\n---\n*Reviewed autonomously by Mars PR Reviewer via 9Router*", "utf8");
+  fs.writeFileSync(reviewFile, reviewContent + "\n\n---\n*Reviewed autonomously by Mars PR Reviewer*", "utf8");
 
   try {
     run(`gh pr review ${PR_NUMBER} --repo ${GITHUB_REPOSITORY} --comment --body-file .bot-pr-review.md`);

@@ -29,8 +29,8 @@ jobs:
 
       - name: Run Mars PR Reviewer
         env:
-          MARS_ROUTER_URL: ${{ secrets.MARS_ROUTER_URL || 'http://localhost:20128/v1' }}
-          MARS_ROUTER_API_KEY: ${{ secrets.MARS_ROUTER_API_KEY || 'default-secret' }}
+          MARS_LLM_URL: ${{ secrets.MARS_LLM_URL || '' }}
+          MARS_LLM_API_KEY: ${{ secrets.MARS_LLM_API_KEY || '' }}
           MARS_MODEL: ${{ vars.MARS_MODEL || 'gpt-4o' }}
           GITHUB_TOKEN: ${{ secrets.MARS_BOT_TOKEN || secrets.GITHUB_TOKEN }}
           REPO_TYPE: "mars-agent"

@@ -433,36 +433,6 @@ OpenAI-compatible `/v1/models`. Local instances skip the key.
 
 Ollama `local` · Ollama Cloud · LM Studio `local` · llama.cpp `local` · vLLM `local` · LiteLLM
 
-### Local gateway: Mars Router
-
-[Mars Router](https://github.com/Veldris88/mars-router) is a local, OpenAI-compatible
-routing gateway that fronts 40+ providers with auto-fallback (subscription → cheap
-→ free), RTK token saving, and a self-hosted OpenCode Unlimited free tier. Point
-Mars Agent at it and every model it routes shows up as a normal provider:
-
-```bash
-docker run -d --name mars-router -p 20128:20128 \
-  -v "$HOME/.mars-router:/app/data" \
-  ghcr.io/veldris88/mars-router:latest
-```
-
-```yaml
-providers:
-  mars-router:
-    baseUrl: http://localhost:20128/v1
-    api: openai-completions
-    apiKey: sk-your-mars-router-key
-    models:
-      - id: oc/beam-free
-        name: OpenCode Beam Free
-        contextWindow: 200000
-        maxTokens: 64000
-```
-
-Source, docs, and the published image:
-[`Veldris88/mars-router`](https://github.com/Veldris88/mars-router) ·
-[`ghcr.io/veldris88/mars-router`](https://github.com/Veldris88/mars-router/pkgs/container/mars-router).
-
 ### Custom OpenAI-compatible providers
 
 Define custom providers in `~/.mars/agent/models.yml`:

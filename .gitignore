@@ -94,3 +94,6 @@ packages/coding-agent/bench/boot-baseline.json
 /.bazelrc.user
 
 .parity/
+
+# graphify index output (local tooling)
+graphify-out/
