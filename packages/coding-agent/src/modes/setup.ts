@@ -1,3 +1,4 @@
+import { CustomEndpointWizardComponent } from "@marsai-org/tui/overlays/custom-endpoint-wizard";
 import { runProviderSetupWizard as runProviderWizard } from "@marsai-org/tui/setup/lazy";
 import type { SetupHost, SetupScene } from "@marsai-org/tui/setup/scenes/types";
 import {
@@ -82,8 +83,6 @@ export function createSetupHost(ctx: InteractiveModeContext): SetupHost {
 		openCustomEndpoint: () => {
 			// The setup wizard owns the screen, so the flow opens as an overlay on
 			// top of it rather than replacing the (absent) editor slot.
-			const { CustomEndpointWizardComponent } =
-				require("@marsai-org/tui/overlays/custom-endpoint-wizard.js") as typeof import("@marsai-org/tui/overlays/custom-endpoint-wizard");
 			let handle: { hide(): void } | undefined;
 			const close = () => {
 				handle?.hide();

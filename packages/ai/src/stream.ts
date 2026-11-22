@@ -559,10 +559,13 @@ function waitForProviderInFlightSignal(provider: string, signal?: AbortSignal): 
 	};
 	signal?.addEventListener("abort", onAbort, { once: true });
 	try {
-		watcher = fsSync.watch(providerInFlightDir(provider), (_event, filename) => {
+		watcher = fsSync.watch(providerInFlightDir(provider), { persistent: false }, (_event, filename) => {
 			if (filename === ".wakeup" || filename === null) {
 				finish(resolve);
 			}
+		});
+		watcher.on("error", () => {
+			finish(resolve);
 		});
 		void fs.stat(signalPath).then(
 			stat => {
@@ -602,6 +605,7 @@ async function removeProviderInFlightLeaseDir(leasePath: string): Promise<void> 
 // write `.wakeup` into an unrelated provider directory.
 async function releaseProviderInFlightLease(lease: ProviderInFlightLease): Promise<void> {
 	const heartbeatFlush = lease.stopHeartbeat();
+	void heartbeatFlush.catch(() => {});
 	const flushTimeout = Promise.withResolvers<"timeout">();
 	const flushTimer = setTimeout(
 		() => flushTimeout.resolve("timeout"),
@@ -625,7 +629,9 @@ async function releaseProviderInFlightLease(lease: ProviderInFlightLease): Promi
 	releaseTimer.unref?.();
 	try {
 		const removeLease = providerInFlightLeaseRemoverOverride ?? removeProviderInFlightLeaseDir;
-		await Promise.race([removeLease(lease.path), releaseTimeout.promise]);
+		const removal = removeLease(lease.path);
+		void removal.catch(() => {});
+		await Promise.race([removal, releaseTimeout.promise]);
 	} finally {
 		clearTimeout(releaseTimer);
 	}

@@ -344,8 +344,23 @@ async function handleStatic(requestPath: string): Promise<Response> {
 		return file ? new Response(file) : new Response("Not Found", { status: 404 });
 	}
 
-	const filePath = requestPath === "/" ? "/index.html" : requestPath;
-	const fullPath = path.join(STATIC_DIR, filePath);
+	let decodedPath: string;
+	try {
+		decodedPath = decodeURIComponent(requestPath);
+	} catch {
+		return new Response("Bad Request", { status: 400 });
+	}
+	if (decodedPath.includes("\\") || decodedPath.includes("\0")) {
+		return new Response("Forbidden", { status: 403 });
+	}
+
+	const filePath = decodedPath === "/" ? "/index.html" : decodedPath;
+	const staticRoot = path.resolve(STATIC_DIR);
+	const fullPath = path.resolve(staticRoot, filePath.startsWith("/") ? `.${filePath}` : filePath);
+	const rel = path.relative(staticRoot, fullPath);
+	if (rel.startsWith("..") || path.isAbsolute(rel)) {
+		return new Response("Forbidden", { status: 403 });
+	}
 
 	const file = Bun.file(fullPath);
 	if (await file.exists()) {

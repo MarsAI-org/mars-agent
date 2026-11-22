@@ -233,19 +233,40 @@ function killTunnelProcess(proc: Bun.Subprocess): void {
  * eventually block — or SIGPIPE-kill — the Go tunnel binaries. A file sink
  * has neither failure mode, so `exited` remains a trustworthy death signal.
  */
+function removeLogFile(logPath: string): void {
+	try {
+		fs.unlinkSync(logPath);
+	} catch {
+		// Best-effort cleanup; file may already be gone or held briefly on Windows.
+	}
+}
+
 async function spawnUrlTunnel(
 	argv: string[],
 	extract: (line: string) => string | null,
 	readyPattern?: RegExp,
-): Promise<{ proc: Bun.Subprocess; baseUrl: string }> {
-	const logPath = path.join(os.tmpdir(), `mars-blob-tunnel-${Date.now().toString(36)}-${process.pid}.log`);
-	const fd = fs.openSync(logPath, "w");
+	extraEnv?: Record<string, string>,
+): Promise<{ proc: Bun.Subprocess; baseUrl: string; logPath: string }> {
+	const logPath = path.join(
+		os.tmpdir(),
+		`mars-blob-tunnel-${Date.now().toString(36)}-${process.pid}-${crypto.randomUUID()}.log`,
+	);
+	const fd = fs.openSync(logPath, fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL, 0o600);
 	let proc: Bun.Subprocess;
 	try {
-		proc = Bun.spawn(argv, { env: process.env, stdin: "ignore", stdout: fd, stderr: fd, cwd: getSafeProjectCwd() });
-	} finally {
+		proc = Bun.spawn(argv, {
+			env: extraEnv ? { ...process.env, ...extraEnv } : process.env,
+			stdin: "ignore",
+			stdout: fd,
+			stderr: fd,
+			cwd: getSafeProjectCwd(),
+		});
+	} catch (error) {
 		fs.closeSync(fd);
+		removeLogFile(logPath);
+		throw error;
 	}
+	fs.closeSync(fd);
 
 	const deadline = Date.now() + READY_TIMEOUT_MS;
 	let scanned = 0;
@@ -275,25 +296,32 @@ async function spawnUrlTunnel(
 			// The URL banner can precede edge registration (cloudflared prints the
 			// hostname before any connection is live); wait for the ready marker.
 			if (baseUrl !== undefined && (!readyPattern || readyPattern.test(text))) {
-				return { proc, baseUrl };
+				return { proc, baseUrl, logPath };
 			}
 		}
 		if (exitCode !== null) {
+			removeLogFile(logPath);
 			throw new Error(`${argv[0]} exited with code ${exitCode} before reporting a tunnel URL`);
 		}
 		await Bun.sleep(150);
 	}
 	killTunnelProcess(proc);
+	removeLogFile(logPath);
 	throw new Error(`${argv[0]} did not report a tunnel URL within ${READY_TIMEOUT_MS / 1000}s`);
 }
 
-function processExposure(kind: ExposureKind, baseUrl: string, proc: Bun.Subprocess): ActiveExposure {
+function processExposure(kind: ExposureKind, baseUrl: string, proc: Bun.Subprocess, logPath?: string): ActiveExposure {
 	proc.unref();
 	return {
 		kind,
 		baseUrl,
-		exited: proc.exited.then(() => undefined),
-		stop: () => killTunnelProcess(proc),
+		exited: proc.exited.then(() => {
+			if (logPath) removeLogFile(logPath);
+		}),
+		stop: () => {
+			killTunnelProcess(proc);
+			if (logPath) removeLogFile(logPath);
+		},
 	};
 }
 
@@ -302,22 +330,31 @@ function processExposure(kind: ExposureKind, baseUrl: string, proc: Bun.Subproce
  * Random-hostname modes deliberately return their child exit to the broker:
  * restarting those would silently invalidate every already-published URL.
  */
-function restartingPinggyExposure(baseUrl: string, argv: string[], initialProc: Bun.Subprocess): ActiveExposure {
+function restartingPinggyExposure(
+	baseUrl: string,
+	argv: string[],
+	initialProc: Bun.Subprocess,
+	initialLogPath: string,
+): ActiveExposure {
 	let proc = initialProc;
+	let logPath = initialLogPath;
 	let stopping = false;
 	proc.unref();
 	const exited = (async () => {
 		while (true) {
 			await proc.exited;
+			removeLogFile(logPath);
 			if (stopping) return;
 			try {
 				const restarted = await spawnUrlTunnel(argv, parsePinggyUrl);
 				if (stopping) {
 					killTunnelProcess(restarted.proc);
 					await restarted.proc.exited;
+					removeLogFile(restarted.logPath);
 					return;
 				}
 				proc = restarted.proc;
+				logPath = restarted.logPath;
 				proc.unref();
 			} catch {
 				logger.warn("blob-broker: authenticated Pinggy tunnel failed to reconnect");
@@ -332,6 +369,7 @@ function restartingPinggyExposure(baseUrl: string, argv: string[], initialProc: 
 		stop: () => {
 			stopping = true;
 			killTunnelProcess(proc);
+			removeLogFile(logPath);
 		},
 	};
 }
@@ -348,29 +386,29 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 		}
 		case "cloudflared": {
 			const binary = requireBinary("cloudflared");
-			const { proc, baseUrl } = await spawnUrlTunnel(
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
 				[binary, "tunnel", "--no-autoupdate", "--url", `http://127.0.0.1:${port}`],
 				parseCloudflaredUrl,
 				/Registered tunnel connection/,
 			);
-			return processExposure("cloudflared", baseUrl, proc);
+			return processExposure("cloudflared", baseUrl, proc, logPath);
 		}
 		case "ngrok": {
 			const binary = requireBinary("ngrok");
-			const { proc, baseUrl } = await spawnUrlTunnel(
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
 				[binary, "http", String(port), "--log", "stdout", "--log-format", "json"],
 				parseNgrokUrl,
 			);
-			return processExposure("ngrok", baseUrl, proc);
+			return processExposure("ngrok", baseUrl, proc, logPath);
 		}
 		case "tailscale": {
 			const binary = requireBinary("tailscale");
-			const { proc, baseUrl } = await spawnUrlTunnel([binary, "funnel", String(port)], parseTailscaleUrl);
-			return processExposure("tailscale", baseUrl, proc);
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel([binary, "funnel", String(port)], parseTailscaleUrl);
+			return processExposure("tailscale", baseUrl, proc, logPath);
 		}
 		case "localhost-run": {
 			const binary = requireBinary("ssh");
-			const { proc, baseUrl } = await spawnUrlTunnel(
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
 				[
 					binary,
 					"-o",
@@ -392,11 +430,14 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 				],
 				parseLocalhostRunUrl,
 			);
-			return processExposure("localhost-run", baseUrl, proc);
+			return processExposure("localhost-run", baseUrl, proc, logPath);
 		}
 		case "pinggy": {
 			const binary = requireBinary("ssh");
 			const token = credentialString(config, "token");
+			if (token?.startsWith("-")) {
+				throw new Error('imageUrls exposure "pinggy" credentials.token must not start with "-"');
+			}
 			const argv = token
 				? [
 						binary,
@@ -408,6 +449,7 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 						"StrictHostKeyChecking=accept-new",
 						"-R",
 						`0:127.0.0.1:${port}`,
+						"--",
 						`${token}@pro.pinggy.io`,
 					]
 				: [
@@ -428,27 +470,27 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 						`0:127.0.0.1:${port}`,
 						"free.pinggy.io",
 					];
-			const { proc, baseUrl } = await spawnUrlTunnel(argv, parsePinggyUrl);
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(argv, parsePinggyUrl);
 			if (token && config.publicBaseUrl) {
-				return restartingPinggyExposure(normalizeBaseUrl(config.publicBaseUrl), argv, proc);
+				return restartingPinggyExposure(normalizeBaseUrl(config.publicBaseUrl), argv, proc, logPath);
 			}
-			return processExposure("pinggy", baseUrl, proc);
+			return processExposure("pinggy", baseUrl, proc, logPath);
 		}
 		case "devtunnel": {
 			const binary = requireBinary("devtunnel");
-			const { proc, baseUrl } = await spawnUrlTunnel(
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
 				[binary, "host", "-p", String(port), "--allow-anonymous", "--protocol", "http"],
 				parseDevtunnelUrl,
 			);
-			return processExposure("devtunnel", baseUrl, proc);
+			return processExposure("devtunnel", baseUrl, proc, logPath);
 		}
 		case "zrok": {
 			const binary = requireBinary("zrok");
-			const { proc, baseUrl } = await spawnUrlTunnel(
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
 				[binary, "share", "public", `http://127.0.0.1:${port}`, "--headless", "--backend-mode", "proxy"],
 				parseZrokUrl,
 			);
-			return processExposure("zrok", baseUrl, proc);
+			return processExposure("zrok", baseUrl, proc, logPath);
 		}
 		case "bore": {
 			const server = optionString(config, "server", "bore.pub");
@@ -456,9 +498,14 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 			const secret = credentialString(config, "secret");
 			const binary = requireBinary("bore");
 			const argv = [binary, "local", String(port), "--to", server];
-			if (secret) argv.push("--secret", secret);
-			const { proc, baseUrl } = await spawnUrlTunnel(argv, line => parseBoreUrl(line, server));
-			return processExposure("bore", baseUrl, proc);
+			const extraEnv = secret ? { BORE_SECRET: secret } : undefined;
+			const { proc, baseUrl, logPath } = await spawnUrlTunnel(
+				argv,
+				line => parseBoreUrl(line, server),
+				undefined,
+				extraEnv,
+			);
+			return processExposure("bore", baseUrl, proc, logPath);
 		}
 		case "named-cloudflared": {
 			if (!config.publicBaseUrl) {
@@ -466,8 +513,10 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 			}
 			const token = credentialString(config, "tunnelToken");
 			let args: string[];
+			let extraEnv: Record<string, string> | undefined;
 			if (token) {
-				args = ["tunnel", "--no-autoupdate", "run", "--token", token];
+				args = ["tunnel", "--no-autoupdate", "run"];
+				extraEnv = { TUNNEL_TOKEN: token };
 			} else {
 				const configFile = optionString(config, "configFile");
 				const tunnelName = optionString(config, "tunnelName");
@@ -480,16 +529,20 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 			}
 			const argv = [requireBinary("cloudflared"), ...args];
 			const baseUrl = normalizeBaseUrl(config.publicBaseUrl);
-			const { proc } = await spawnUrlTunnel(
+			const { proc, logPath } = await spawnUrlTunnel(
 				argv,
 				() => baseUrl,
 				/Registered tunnel connection|Connection [a-z0-9-]+ registered/i,
+				extraEnv,
 			);
-			return processExposure("named-cloudflared", baseUrl, proc);
+			return processExposure("named-cloudflared", baseUrl, proc, logPath);
 		}
 		case "ssh": {
 			if (!config.publicBaseUrl) throw new Error('imageUrls exposure "ssh" requires imageUrls.publicBaseUrl');
 			if (!config.sshTarget) throw new Error('imageUrls exposure "ssh" requires imageUrls.sshTarget');
+			if (config.sshTarget.trim().startsWith("-")) {
+				throw new Error('imageUrls exposure "ssh" sshTarget must not start with "-"');
+			}
 			const binary = requireBinary("ssh");
 			const remotePort = config.sshRemotePort ?? 8787;
 			const proc = Bun.spawn(
@@ -502,6 +555,7 @@ export async function startExposure(config: ExposureConfig, port: number): Promi
 					"-N",
 					"-R",
 					`${remotePort}:127.0.0.1:${port}`,
+					"--",
 					config.sshTarget,
 				],
 				{ env: process.env, stdin: "ignore", stdout: "ignore", stderr: "ignore", cwd: os.homedir() },

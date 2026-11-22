@@ -63,8 +63,11 @@ export async function withModelDiscoveryTimeout<T>(timeoutMs: number, run: () =>
 	const timer = setTimeout(() => {
 		timeoutReject(new Error(`model discovery timed out after ${timeoutMs}ms`));
 	}, timeoutMs);
+	timer.unref?.();
+	const inner = run();
+	void inner.catch(() => {});
 	try {
-		return await Promise.race([run(), timeoutPromise]);
+		return await Promise.race([inner, timeoutPromise]);
 	} finally {
 		clearTimeout(timer);
 	}

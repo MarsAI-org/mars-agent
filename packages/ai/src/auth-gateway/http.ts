@@ -263,12 +263,17 @@ const CORS_HEADERS: Record<string, string> = {
 	"Access-Control-Max-Age": "86400",
 };
 
+export interface CorsOptions {
+	/** Whether cross-origin headers should be emitted. Disabled in `--no-auth` mode. */
+	enabled?: boolean;
+}
+
 /**
- * CORS headers for the auth-gateway. Currently echoes a wildcard origin; the
- * request is accepted so future tightening can mirror `Origin` without
- * threading the request through every caller.
+ * CORS headers for the auth-gateway. Disabled when authentication is off so
+ * arbitrary web pages cannot read loopback gateway responses.
  */
-export function corsHeaders(_req: Request): Record<string, string> {
+export function corsHeaders(_req: Request, options?: CorsOptions): Record<string, string> {
+	if (options?.enabled === false) return {};
 	return { ...CORS_HEADERS };
 }
 
@@ -277,9 +282,10 @@ export function corsHeaders(_req: Request): Record<string, string> {
  * passed through unchanged. Used by the gateway wrapper so every outbound
  * format-endpoint response carries the same CORS surface as the preflight.
  */
-export function withCors(response: Response, req: Request): Response {
+export function withCors(response: Response, req: Request, options?: CorsOptions): Response {
+	if (options?.enabled === false) return response;
 	const headers = new Headers(response.headers);
-	const cors = corsHeaders(req);
+	const cors = corsHeaders(req, options);
 	for (const k in cors) headers.set(k, cors[k]);
 	return new Response(response.body, {
 		status: response.status,

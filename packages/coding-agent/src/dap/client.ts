@@ -295,6 +295,8 @@ export class DapClient {
 		timeoutMs: number;
 	}): Promise<DapClient> {
 		const { promise: connPromise, resolve: resolveConn } = Promise.withResolvers<Bun.Socket<undefined>>();
+		let accepted = false;
+		let aborted = false;
 
 		// Listen on port 0 (OS picks a free port)
 		const server = Bun.listen({
@@ -302,6 +304,11 @@ export class DapClient {
 			port: 0,
 			socket: {
 				open(socket) {
+					if (aborted || accepted) {
+						socket.end();
+						return;
+					}
+					accepted = true;
 					resolveConn(socket);
 				},
 				data() {},
@@ -310,23 +317,25 @@ export class DapClient {
 			},
 		});
 
-		const port = server.port;
-		const proc = ptree.spawn([adapter.resolvedCommand, ...adapter.args, `--client-addr=127.0.0.1:${port}`], {
-			cwd,
-			stdin: "pipe",
-			env,
-			detached: true,
-		});
-
-		// Wait for the adapter to dial back. On timeout (or any other failure
-		// before we've wired up the client) kill `proc` — otherwise the detached
-		// adapter process is orphaned.
-		const { promise: timeoutPromise, reject: rejectTimeout } = Promise.withResolvers<never>();
-		const connectTimeout = setTimeout(
-			() => rejectTimeout(new Error(`${adapter.name} did not connect within ${timeoutMs}ms`)),
-			timeoutMs,
-		);
+		let proc: ptree.ChildProcess<"pipe"> | undefined;
+		let connectTimeout: Timer | undefined;
 		try {
+			const port = server.port;
+			proc = ptree.spawn([adapter.resolvedCommand, ...adapter.args, `--client-addr=127.0.0.1:${port}`], {
+				cwd,
+				stdin: "pipe",
+				env,
+				detached: true,
+			});
+
+			// Wait for the adapter to dial back. On timeout (or any other failure
+			// before we've wired up the client) kill `proc` — otherwise the detached
+			// adapter process is orphaned.
+			const { promise: timeoutPromise, reject: rejectTimeout } = Promise.withResolvers<never>();
+			connectTimeout = setTimeout(() => {
+				aborted = true;
+				rejectTimeout(new Error(`${adapter.name} did not connect within ${timeoutMs}ms`));
+			}, timeoutMs);
 			const rawSocket = await Promise.race([connPromise, timeoutPromise]);
 			const { readable, writeSink, socket } = wrapBunSocket(rawSocket);
 			const client = new DapClient(adapter, cwd, proc, { readable, writeSink, socket });
@@ -334,8 +343,9 @@ export class DapClient {
 			void client.#startMessageReader();
 			return client;
 		} catch (error) {
+			aborted = true;
 			try {
-				proc.kill();
+				proc?.kill();
 			} catch {
 				/* proc may already be dead */
 			}

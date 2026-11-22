@@ -146,6 +146,23 @@ describe("GitIntegrator", () => {
 		}
 	});
 
+	test("never deletes the primary worktree when a branch matches the current checkout", async () => {
+		const repo = await makeRepo();
+		try {
+			const baseSha = git(repo, "rev-parse", "HEAD");
+			// Integrating the already-checked-out main branch must never delete the main worktree.
+			const report = await new GitIntegrator({ cwd: repo }).integrate(
+				[{ taskId: "main-task", workerId: "w1", branchName: "main", baseSha, targetFiles: [] }],
+				new AbortController().signal,
+			);
+
+			expect(report.merged).toEqual(["main"]);
+			expect(await Bun.file(path.join(repo, "base.txt")).text()).toBe("base\n");
+		} finally {
+			await cleanup(repo);
+		}
+	});
+
 	test("an empty plan touches nothing", async () => {
 		const repo = await makeRepo();
 		try {

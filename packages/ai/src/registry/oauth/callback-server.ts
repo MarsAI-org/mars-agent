@@ -589,11 +589,26 @@ export abstract class OAuthCallbackFlow {
 			});
 		}
 
+		const htmlState: { ok: true } | { ok: false; error?: string } = resultState.ok
+			? { ok: true }
+			: { ok: false, error: resultState.error };
+		const safeJson = JSON.stringify(htmlState)
+			.replaceAll("<", "\\u003c")
+			.replaceAll(">", "\\u003e")
+			.replaceAll("&", "\\u0026")
+			.replaceAll("\u2028", "\\u2028")
+			.replaceAll("\u2029", "\\u2029");
+
 		return new Response(
-			(templateHtml as unknown as string).replaceAll("__OAUTH_STATE__", JSON.stringify(resultState)),
+			(templateHtml as unknown as string).replaceAll("__OAUTH_STATE__", () => safeJson),
 			{
 				status: resultState.ok ? 200 : 500,
-				headers: { "Content-Type": "text/html" },
+				headers: {
+					"Content-Type": "text/html; charset=utf-8",
+					"Content-Security-Policy":
+						"default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+					"X-Content-Type-Options": "nosniff",
+				},
 			},
 		);
 	}

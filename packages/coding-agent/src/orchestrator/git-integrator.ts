@@ -20,7 +20,10 @@
  */
 
 import * as fs from "node:fs/promises";
-import { logger } from "@marsai-org/utils";
+import * as path from "node:path";
+import type { VcsWorktreeEntry } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getWorktreesDir, logger } from "@marsai-org/utils";
 import { cleanupTaskBranches, getRepoRoot, mergeTaskBranches } from "../task/worktree";
 import type { IntegrationReport, Integrator, PendingIntegration } from "./engine";
 
@@ -100,30 +103,71 @@ export class GitIntegrator implements Integrator {
  * integration whose commits already landed. The branch is already deleted by
  * the caller, so a leftover directory is inert rather than misleading.
  */
-async function removeWorktreeForBranch(repoRoot: string, branch: string): Promise<void> {
-	const list = Bun.spawnSync(["git", "worktree", "list", "--porcelain"], { cwd: repoRoot });
-	if (list.exitCode !== 0) return;
+async function isSafeLinkedWorktreeFallback(
+	worktreePath: string,
+	primaryRoot: string,
+	resolvedRepoRoot: string,
+): Promise<boolean> {
+	if (worktreePath === primaryRoot || worktreePath === resolvedRepoRoot) return false;
+	const worktreeBase = path.resolve(getWorktreesDir());
+	const relToBase = path.relative(worktreeBase, worktreePath);
+	if (relToBase === "" || relToBase.startsWith("..") || path.isAbsolute(relToBase)) {
+		return false;
+	}
+	try {
+		const gitEntry = path.join(worktreePath, ".git");
+		const stat = await fs.lstat(gitEntry);
+		if (!stat.isFile()) return false;
+		const content = await Bun.file(gitEntry).text();
+		return content.startsWith("gitdir:");
+	} catch {
+		return false;
+	}
+}
 
-	let current: string | undefined;
-	for (const line of list.stdout.toString("utf8").split("\n")) {
-		if (line.startsWith("worktree ")) {
-			current = line.slice("worktree ".length).trim();
-			continue;
-		}
-		if (line.trim() !== `branch refs/heads/${branch}` || current === undefined) continue;
-		const path = current;
-		const removed = Bun.spawnSync(["git", "worktree", "remove", "--force", path], { cwd: repoRoot });
-		if (removed.exitCode === 0) {
-			logger.debug("orchestration integration removed worktree", { branch, path });
-		} else {
+async function removeWorktreeForBranch(repoRoot: string, branch: string): Promise<void> {
+	const repo = vcs.git(repoRoot);
+	if (!repo) return;
+
+	let entries: VcsWorktreeEntry[];
+	try {
+		entries = await repo.worktrees();
+	} catch {
+		return;
+	}
+
+	const primaryRoot = path.resolve(repo.primaryRoot());
+	const resolvedRepoRoot = path.resolve(repoRoot);
+	const expectedRef = `refs/heads/${branch}`;
+
+	// Entry 0 in `git worktree list` is always the primary/main worktree; never touch it.
+	for (let i = 1; i < entries.length; i++) {
+		const entry = entries[i];
+		if (!entry) continue;
+		if (entry.branch !== expectedRef && entry.branch !== branch) continue;
+
+		const worktreePath = path.resolve(entry.path);
+		if (worktreePath === primaryRoot || worktreePath === resolvedRepoRoot) continue;
+
+		try {
+			const removed = await repo.worktreeRemove(worktreePath, true);
+			if (removed) {
+				logger.debug("orchestration integration removed worktree", { branch, path: worktreePath });
+				return;
+			}
+			logger.debug("orchestration integration could not remove worktree", { branch, path: worktreePath });
+		} catch (error) {
 			logger.debug("orchestration integration could not remove worktree", {
 				branch,
-				path,
-				stderr: removed.stderr.toString("utf8").trim(),
+				path: worktreePath,
+				stderr: vcs.isVcsError(error) ? error.stderr.trim() : String(error),
 			});
-			// Fall back to deleting the directory: the branch is already gone, so
-			// the checkout cannot be used for anything.
-			await fs.rm(path, { recursive: true, force: true }).catch(() => undefined);
+		}
+
+		// Fall back to deleting the directory only when verified as a linked worktree
+		// under the managed worktree base directory — never risk removing the primary checkout.
+		if (await isSafeLinkedWorktreeFallback(worktreePath, primaryRoot, resolvedRepoRoot)) {
+			await fs.rm(worktreePath, { recursive: true, force: true }).catch(() => undefined);
 		}
 		return;
 	}

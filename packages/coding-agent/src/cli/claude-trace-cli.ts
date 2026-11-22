@@ -9,6 +9,7 @@ import * as net from "node:net";
 import * as path from "node:path";
 import * as tls from "node:tls";
 import * as zlib from "node:zlib";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
 import { PtySession } from "@marsai-org/natives";
 import xterm from "@marsai-org/utils/vterm";
 
@@ -386,7 +387,10 @@ function isMessagesRequest(message: ParsedHttpMessage): boolean {
 function isBackgroundModelRequest(message: ParsedHttpMessage): boolean {
 	try {
 		const parsed = JSON.parse(decodeBody(message.headers, message.body)) as { model?: unknown };
-		return typeof parsed.model === "string" && parsed.model.toLowerCase().includes("haiku");
+		return (
+			typeof parsed.model === "string" &&
+			classifyModel("anthropic", parsed.model, { lenient: true }).family === "haiku"
+		);
 	} catch {
 		return false;
 	}

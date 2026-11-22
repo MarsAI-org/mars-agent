@@ -47,6 +47,7 @@ export class WidthAwareText implements Component {
 
 	invalidate(): void {
 		this.#cachedContentWidth = -1;
+		this.#nativeCols = -1;
 		this.#cachedText = undefined;
 		this.#inner.invalidate();
 	}
@@ -81,6 +82,7 @@ export class WidthAwareText implements Component {
 		const contentWidth = Math.max(1, width - paddingX * 2);
 		if (this.#cachedText === undefined || contentWidth !== this.#cachedContentWidth) {
 			this.#cachedContentWidth = contentWidth;
+			this.#nativeCols = -1;
 			this.#cachedText = this.#format(contentWidth);
 			this.#inner.setText(this.#cachedText);
 		}

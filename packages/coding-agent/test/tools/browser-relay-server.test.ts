@@ -168,4 +168,11 @@ describe("browser relay discovery endpoint", () => {
 		// Clients measure the redial window from the disconnect.
 		expect(info.disconnectedMs).toBeGreaterThanOrEqual(0);
 	});
+
+	it("reports the actual bound ephemeral port when started with port 0", async () => {
+		relay = startRelayServer({ port: 0 });
+		expect(relay.port).toBeGreaterThan(0);
+		const response = await fetch(`http://127.0.0.1:${relay.port}/json/version`);
+		expect(response.status).toBe(503);
+	});
 });

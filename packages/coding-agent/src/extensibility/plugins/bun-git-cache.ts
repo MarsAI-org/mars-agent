@@ -1,8 +1,12 @@
 import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent } from "@marsai-org/utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { isEnoent, ptree } from "@marsai-org/utils";
 import type { GitSource } from "./git-url";
+
+const LOCAL_COMMAND_TIMEOUT_MS = 10_000;
+const GIT_FETCH_TIMEOUT_MS = 60_000;
 
 interface CommandResult {
 	readonly exitCode: number;
@@ -10,20 +14,35 @@ interface CommandResult {
 	readonly stderr: string;
 }
 
-async function runCommand(command: string[], cwd: string): Promise<CommandResult> {
-	const proc = Bun.spawn(command, {
+async function runCommand(
+	command: string[],
+	cwd: string,
+	timeoutMs = LOCAL_COMMAND_TIMEOUT_MS,
+): Promise<CommandResult> {
+	const result = await ptree.exec(command, {
 		cwd,
-		stdin: "ignore",
-		stdout: "pipe",
-		stderr: "pipe",
-		windowsHide: true,
+		env: {
+			...process.env,
+			GIT_TERMINAL_PROMPT: "0",
+			GCM_INTERACTIVE: "never",
+		},
+		timeout: timeoutMs,
+		allowNonZero: true,
+		allowAbort: true,
+		stderr: "full",
 	});
-	const [exitCode, stdout, stderr] = await Promise.all([
-		proc.exited,
-		new Response(proc.stdout).text(),
-		new Response(proc.stderr).text(),
-	]);
-	return { exitCode, stdout, stderr };
+	if (result.exitError instanceof ptree.TimeoutError) {
+		return {
+			exitCode: 124,
+			stdout: result.stdout,
+			stderr: `${command[0] ?? "command"} timed out after ${timeoutMs}ms`,
+		};
+	}
+	return {
+		exitCode: result.exitCode ?? 1,
+		stdout: result.stdout,
+		stderr: result.stderr,
+	};
 }
 
 function normalizeRepositoryUrl(repository: string): string {
@@ -67,9 +86,25 @@ export async function refreshBunGitCache(source: GitSource, cwd: string): Promis
 	for (const entry of entries) {
 		if (!entry.isDirectory() || !entry.name.endsWith(".git")) continue;
 		const repositoryDir = path.join(cacheDir, entry.name);
-		const originResult = await runCommand(["git", "-C", repositoryDir, "config", "--get", "remote.origin.url"], cwd);
-		if (originResult.exitCode !== 0 || normalizeRepositoryUrl(originResult.stdout.trim()) !== repositoryUrl) continue;
+		let originUrl: string | undefined;
+		try {
+			originUrl = (await vcs.git(repositoryDir)?.remoteUrl("origin"))?.trim() || undefined;
+		} catch {
+			// Bare cache directories may not be opened by repo discovery; fall back to bounded git config.
+		}
+		if (!originUrl) {
+			const originResult = await runCommand(
+				["git", "-C", repositoryDir, "config", "--get", "remote.origin.url"],
+				cwd,
+				LOCAL_COMMAND_TIMEOUT_MS,
+			);
+			if (originResult.exitCode !== 0) continue;
+			originUrl = originResult.stdout.trim();
+		}
+		if (!originUrl || normalizeRepositoryUrl(originUrl) !== repositoryUrl) continue;
 
+		// `VcsGitRepo.fetch` takes a single refspec without `--prune`; keep a bounded non-interactive
+		// git fetch here so Bun's bare cache updates both heads and tags atomically.
 		const fetchResult = await runCommand(
 			[
 				"git",
@@ -83,6 +118,7 @@ export async function refreshBunGitCache(source: GitSource, cwd: string): Promis
 				"+refs/tags/*:refs/tags/*",
 			],
 			cwd,
+			GIT_FETCH_TIMEOUT_MS,
 		);
 		if (fetchResult.exitCode !== 0) {
 			throw new Error(`Failed to refresh Bun's git cache for ${source.host}/${source.path}: ${fetchResult.stderr}`);

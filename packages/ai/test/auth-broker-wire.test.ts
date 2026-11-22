@@ -109,6 +109,17 @@ describe("auth-broker wire surface", () => {
 		expect(body.ok).toBe(true);
 	});
 
+	test("rejects binding a non-loopback host when bearerTokens is empty", () => {
+		expect(() =>
+			startAuthBroker({
+				storage: storage!,
+				bind: "0.0.0.0:0",
+				bearerTokens: [],
+				disableRefresher: true,
+			}),
+		).toThrow("non-loopback");
+	});
+
 	test("GET /v1/snapshot requires bearer and redacts refresh tokens", async () => {
 		const unauthorized = await fetch(`${handle!.url}/v1/snapshot`);
 		expect(unauthorized.status).toBe(401);

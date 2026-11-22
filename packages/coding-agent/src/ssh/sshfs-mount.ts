@@ -110,6 +110,12 @@ export async function isMounted(mountPath: string, options: MountCheckOptions = 
 
 let registered = false;
 
+function ensureCleanupRegistered(): void {
+	if (registered) return;
+	registered = true;
+	postmortem.register("sshfs-cleanup", unmountAll);
+}
+
 export async function mountRemote(host: SSHConnectionTarget, remotePath = "/"): Promise<string | undefined> {
 	if (!hasSshfs()) return undefined;
 
@@ -118,17 +124,18 @@ export async function mountRemote(host: SSHConnectionTarget, remotePath = "/"): 
 	await Promise.all([ensureDir(REMOTE_DIR), ensureDir(mountPath)]);
 
 	if (await isMounted(mountPath)) {
-		if (!registered) {
-			registered = true;
-			postmortem.register("sshfs-cleanup", unmountAll);
-		}
+		ensureCleanupRegistered();
 		mountedPaths.add(mountPath);
 		return mountPath;
 	}
 
-	const target = `${buildSshTarget(host.username, host.host)}:${remotePath}`;
+	const sshTarget = buildSshTarget(host.username, host.host);
+	if (sshTarget.startsWith("-")) {
+		throw new Error(`Invalid SSH target for sshfs mount: ${sshTarget}`);
+	}
+	const target = `${sshTarget}:${remotePath}`;
 	const args = buildSshfsArgs(host);
-	const result = await $`sshfs ${args} ${target} ${mountPath}`.nothrow();
+	const result = await $`sshfs ${args} -- ${target} ${mountPath}`.quiet().nothrow();
 
 	if (result.exitCode !== 0) {
 		const detail = result.stderr.toString().trim();
@@ -136,6 +143,7 @@ export async function mountRemote(host: SSHConnectionTarget, remotePath = "/"): 
 		throw new Error(`Failed to mount ${target}${suffix}`);
 	}
 
+	ensureCleanupRegistered();
 	mountedPaths.add(mountPath);
 	return mountPath;
 }

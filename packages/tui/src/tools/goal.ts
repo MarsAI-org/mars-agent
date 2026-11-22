@@ -2,7 +2,7 @@ import type { Component } from "../tui";
 import { Text } from "../components/text";
 import type { Theme, ThemeColor } from "../theme/theme";
 import { formatDuration, formatErrorDetail, formatNumber, TRUNCATE_LENGTHS } from "../render/render-utils";
-import { renderStatusLine, truncateToWidth } from "../render/index";
+import { renderStatusLine, replaceTabs, truncateToWidth } from "../render/index";
 import { framedToolCard } from "../render/tool-card";
 import type { TspSpan } from "@marsai-org/wire";
 import { compact, node, span, text } from "../native/describe";
@@ -108,7 +108,7 @@ export const goalToolRenderer = {
 		const meta: string[] = [];
 		const trimmedObjective = args.objective?.trim();
 		if (args.op === "create" && trimmedObjective) {
-			const objective = truncateToWidth(trimmedObjective, TRUNCATE_LENGTHS.TITLE);
+			const objective = truncateToWidth(replaceTabs(trimmedObjective), TRUNCATE_LENGTHS.TITLE);
 			meta.push(uiTheme.italic(uiTheme.fg("muted", `"${objective}"`)));
 		}
 		if (args.op === "create" && args.token_budget !== undefined) {
@@ -158,7 +158,7 @@ export const goalToolRenderer = {
 		);
 
 		const lines: string[] = [];
-		const objectiveText = truncateToWidth(goal.objective.trim(), TRUNCATE_LENGTHS.LONG);
+		const objectiveText = truncateToWidth(replaceTabs(goal.objective.trim()), TRUNCATE_LENGTHS.LONG);
 		lines.push(uiTheme.italic(uiTheme.fg("muted", `"${objectiveText}"`)));
 
 		const used = formatNumber(goal.tokensUsed);

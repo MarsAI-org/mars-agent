@@ -17,6 +17,35 @@ function proxyLogTarget(proxyUrl: string): string {
 	}
 }
 
+function isLocalOrMetadataIpv4(ip: string): boolean {
+	const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(ip);
+	if (!v4) return false;
+	const a = Number(v4[1]);
+	const b = Number(v4[2]);
+	const c = Number(v4[3]);
+	const d = Number(v4[4]);
+	if (a > 255 || b > 255 || c > 255 || d > 255) return false;
+	if (a === 127 || a === 10 || a === 0) return true;
+	if (a === 169 && b === 254) return true;
+	if (a === 192 && b === 168) return true;
+	if (a === 172 && b >= 16 && b <= 31) return true;
+	return false;
+}
+
+/**
+ * Decode an IPv4-mapped IPv6 literal (`::ffff:127.0.0.1`, `::ffff:7f00:1`,
+ * `0:0:0:0:0:ffff:169.254.169.254`, `0:0:0:0:0:ffff:a9fe:a9fe`) to dotted-quad IPv4.
+ */
+function extractIpv4MappedIpv6(ip: string): string | undefined {
+	const dotted = /^(?:::ffff:|(?:0{1,4}:){5}ffff:)(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/.exec(ip);
+	if (dotted) return dotted[1];
+	const hex = /^(?:::ffff:|(?:0{1,4}:){5}ffff:)([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(ip);
+	if (!hex) return undefined;
+	const hi = Number.parseInt(hex[1], 16);
+	const lo = Number.parseInt(hex[2], 16);
+	return `${(hi >> 8) & 0xff}.${hi & 0xff}.${(lo >> 8) & 0xff}.${lo & 0xff}`;
+}
+
 /**
  * Checks if a host is local or cloud metadata, which should always bypass the proxy
  * (e.g. localhost, 127/8, ::1, 169.254.169.254, metadata.google.internal).
@@ -29,23 +58,18 @@ export function isLocalOrMetadataHost(host: string): boolean {
 		return true;
 	}
 
-	// Strip IPv6 brackets before numeric checks.
-	const ip = lowerHost.replace(/^\[|\]$/g, "");
+	// Strip IPv6 brackets and zone identifiers before numeric checks.
+	const ip = lowerHost.replace(/^\[|\]$/g, "").replace(/%.*$/, "");
 
 	// IPv4 loopback (127/8), unspecified (0/8), RFC1918 private (10/8, 172.16/12,
 	// 192.168/16) and link-local (169.254/16 — covers IMDS 169.254.169.254 and
 	// ECS credentials 169.254.170.2). None are reachable through a remote egress
 	// proxy, and credential/metadata probes must never leak to one.
-	const v4 = ip.match(/^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/);
-	if (v4) {
-		const a = Number(v4[1]);
-		const b = Number(v4[2]);
-		if (a === 127 || a === 10 || a === 0) return true;
-		if (a === 169 && b === 254) return true;
-		if (a === 192 && b === 168) return true;
-		if (a === 172 && b >= 16 && b <= 31) return true;
-		return false;
-	}
+	if (isLocalOrMetadataIpv4(ip)) return true;
+
+	// IPv4-mapped IPv6 addresses (dotted-quad and normalized hex forms).
+	const mappedIpv4 = extractIpv4MappedIpv6(ip);
+	if (mappedIpv4 && isLocalOrMetadataIpv4(mappedIpv4)) return true;
 
 	// IPv6 loopback (::1), unspecified (::), link-local (fe80::/10) and
 	// unique-local (fc00::/7 — covers EC2 IPv6 IMDS fd00:ec2::254).
@@ -308,10 +332,13 @@ export async function connectProxiedSocket(
 
 	const { promise, resolve, reject } = Promise.withResolvers<tls.TLSSocket>();
 
+	const MAX_CONNECT_RESPONSE_BYTES = 16 * 1024;
+	const HEADER_END = Buffer.from("\r\n\r\n", "latin1");
 	const readyEvent = useProxySsl ? "secureConnect" : "connect";
 	let tunnelSocket: tls.TLSSocket | undefined;
 	let timeout: NodeJS.Timeout | undefined;
-	let responseData = "";
+	const responseChunks: Buffer[] = [];
+	let responseBytes = 0;
 	let settled = false;
 
 	const cleanup = (): void => {
@@ -321,6 +348,8 @@ export async function connectProxiedSocket(
 		}
 		options?.signal?.removeEventListener("abort", onAbort);
 		rawSocket?.off("error", onRawError);
+		rawSocket?.off("close", onRawClose);
+		rawSocket?.off("end", onRawClose);
 		rawSocket?.off(readyEvent, onProxyReady);
 		rawSocket?.off("data", onProxyData);
 		tunnelSocket?.off("secureConnect", onTunnelReady);
@@ -351,6 +380,7 @@ export async function connectProxiedSocket(
 	};
 	const onAbort = (): void => rejectOnce(new AbortError("Proxy tunnel aborted"));
 	const onRawError = (error: Error): void => rejectOnce(error);
+	const onRawClose = (): void => rejectOnce(new ValidationError("Proxy closed connection during CONNECT handshake"));
 	const onTunnelError = (error: Error): void => rejectOnce(error);
 	const onTunnelReady = (): void => {
 		if (!tunnelSocket) return;
@@ -366,21 +396,41 @@ export async function connectProxiedSocket(
 	};
 	const onProxyData = (chunk: Buffer): void => {
 		if (!rawSocket) return;
-		responseData += chunk.toString("binary");
-		if (!responseData.includes("\r\n\r\n")) return;
+		responseChunks.push(chunk);
+		responseBytes += chunk.byteLength;
+		const combined = responseChunks.length === 1 ? responseChunks[0] : Buffer.concat(responseChunks);
+		const headerEnd = combined.indexOf(HEADER_END);
+		if (headerEnd === -1) {
+			if (responseBytes > MAX_CONNECT_RESPONSE_BYTES) {
+				rejectOnce(new ValidationError("Proxy CONNECT response headers exceeded 16 KiB limit"));
+			}
+			return;
+		}
+		if (headerEnd > MAX_CONNECT_RESPONSE_BYTES) {
+			rejectOnce(new ValidationError("Proxy CONNECT response headers exceeded 16 KiB limit"));
+			return;
+		}
 
 		rawSocket.off("data", onProxyData);
 		rawSocket.off("error", onRawError);
+		rawSocket.off("close", onRawClose);
+		rawSocket.off("end", onRawClose);
 
-		const firstLine = responseData.split("\r\n")[0];
+		const headerText = combined.subarray(0, headerEnd).toString("latin1");
+		const firstLine = headerText.split("\r\n", 1)[0] ?? "";
 		logger.debug("proxy tunnel CONNECT reply", {
 			proxy: `${proxyHost}:${proxyPort}`,
 			target: `${targetHost}:${targetPort}`,
 			reply: firstLine,
 		});
-		if (!firstLine.includes(" 200 ")) {
+		if (!/^HTTP\/1\.[01] 200\b/.test(firstLine)) {
 			rejectOnce(new ValidationError(`Proxy tunnel failed: ${firstLine}`));
 			return;
+		}
+
+		const trailingOffset = headerEnd + HEADER_END.byteLength;
+		if (trailingOffset < combined.byteLength) {
+			rawSocket.unshift(combined.subarray(trailingOffset));
 		}
 
 		const tlsOptions = options?.tls;
@@ -434,6 +484,8 @@ export async function connectProxiedSocket(
 				port: proxyPort,
 			});
 	rawSocket.once("error", onRawError);
+	rawSocket.once("close", onRawClose);
+	rawSocket.once("end", onRawClose);
 	rawSocket.once(readyEvent, onProxyReady);
 
 	return promise;

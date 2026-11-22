@@ -22,6 +22,7 @@ const activeExposures: ActiveExposure[] = [];
 
 interface FakeInvocation {
 	argsFile: string;
+	envFile: string;
 	runsFile: string;
 	signalsFile: string;
 }
@@ -46,6 +47,7 @@ function prepareFake(output: string, options: { exitCode?: number; restartPort?:
 	const invocationDir = path.join(fakeBinDir, suffix);
 	fs.mkdirSync(invocationDir);
 	const argsFile = path.join(invocationDir, "args.txt");
+	const envFile = path.join(invocationDir, "env.json");
 	const runsFile = path.join(invocationDir, "runs.txt");
 	const signalsFile = path.join(invocationDir, "signals.txt");
 	const restartMarker = path.join(invocationDir, "restart.txt");
@@ -54,10 +56,11 @@ function prepareFake(output: string, options: { exitCode?: number; restartPort?:
 	// complete by then, and a restarted process replacing it mid-read never
 	// exposes a partial file.
 	const source = `import * as fs from "node:fs";
-const config = ${JSON.stringify({ argsFile, runsFile, signalsFile, restartMarker, output, exitCode: options.exitCode, restartPort: options.restartPort })};
+const config = ${JSON.stringify({ argsFile, envFile, runsFile, signalsFile, restartMarker, output, exitCode: options.exitCode, restartPort: options.restartPort })};
 const tmp = \`\${config.argsFile}.\${process.pid}\`;
 fs.writeFileSync(tmp, process.argv.slice(2).map(arg => \`\${arg}\\n\`).join(""));
 fs.renameSync(tmp, config.argsFile);
+fs.writeFileSync(config.envFile, JSON.stringify({ BORE_SECRET: process.env.BORE_SECRET, TUNNEL_TOKEN: process.env.TUNNEL_TOKEN }));
 fs.appendFileSync(config.runsFile, "run\\n");
 for (const signal of ["SIGINT", "SIGTERM"]) {
 	process.on(signal, () => {
@@ -82,12 +85,16 @@ setInterval(() => {}, 60_000);
 		writeFakeExecutable(invocationDir, name, source);
 	}
 	process.env.PATH = invocationDir;
-	return { argsFile, runsFile, signalsFile };
+	return { argsFile, envFile, runsFile, signalsFile };
 }
 
 function recordedArgs(invocation: FakeInvocation): string[] {
 	const text = fs.readFileSync(invocation.argsFile, "utf8");
 	return text === "" ? [] : text.replace(/\n$/, "").split("\n");
+}
+
+function recordedEnv(invocation: FakeInvocation): { BORE_SECRET?: string; TUNNEL_TOKEN?: string } {
+	return JSON.parse(fs.readFileSync(invocation.envFile, "utf8")) as { BORE_SECRET?: string; TUNNEL_TOKEN?: string };
 }
 
 async function stopAndObserve(exposure: ActiveExposure, invocation: FakeInvocation): Promise<void> {
@@ -272,7 +279,7 @@ describe("startExposure tunnel adapters", () => {
 		await stopAndObserve(zrok, zrokInvocation);
 	});
 
-	it("publishes bore as HTTP and forwards server and secret as separate argv", async () => {
+	it("publishes bore as HTTP and passes secret via BORE_SECRET env rather than argv", async () => {
 		const invocation = prepareFake("INFO bore_cli::client: listening at tunnel.example.test:38912");
 		const active = await startExposure(
 			exposure("bore", {
@@ -283,18 +290,12 @@ describe("startExposure tunnel adapters", () => {
 		);
 		activeExposures.push(active);
 		expect(active.baseUrl).toBe("http://tunnel.example.test:38912");
-		expect(recordedArgs(invocation)).toEqual([
-			"local",
-			String(PORT),
-			"--to",
-			"tunnel.example.test",
-			"--secret",
-			"fake-bore-secret",
-		]);
+		expect(recordedArgs(invocation)).toEqual(["local", String(PORT), "--to", "tunnel.example.test"]);
+		expect(recordedEnv(invocation).BORE_SECRET).toBe("fake-bore-secret");
 		await stopAndObserve(active, invocation);
 	});
 
-	it("starts named Cloudflare token and local-config modes only after registration", async () => {
+	it("starts named Cloudflare token (via TUNNEL_TOKEN env) and local-config modes only after registration", async () => {
 		const tokenInvocation = prepareFake("Registered tunnel connection connIndex=0 location=sjc");
 		const token = await startExposure(
 			exposure("named-cloudflared", {
@@ -305,13 +306,8 @@ describe("startExposure tunnel adapters", () => {
 		);
 		activeExposures.push(token);
 		expect(token.baseUrl).toBe("https://blobs.example.test");
-		expect(recordedArgs(tokenInvocation)).toEqual([
-			"tunnel",
-			"--no-autoupdate",
-			"run",
-			"--token",
-			"super-secret-token",
-		]);
+		expect(recordedArgs(tokenInvocation)).toEqual(["tunnel", "--no-autoupdate", "run"]);
+		expect(recordedEnv(tokenInvocation).TUNNEL_TOKEN).toBe("super-secret-token");
 		await stopAndObserve(token, tokenInvocation);
 
 		const configInvocation = prepareFake("Connection abc123 registered with protocol quic");
@@ -333,6 +329,18 @@ describe("startExposure tunnel adapters", () => {
 			"blob-tunnel",
 		]);
 		await stopAndObserve(configured, configInvocation);
+	});
+
+	it("rejects sshTarget values starting with a dash to prevent SSH option injection", async () => {
+		await expect(
+			startExposure(
+				exposure("ssh", {
+					publicBaseUrl: "https://blobs.example.test",
+					sshTarget: "-oProxyCommand=id",
+				}),
+				PORT,
+			),
+		).rejects.toThrow('must not start with "-"');
 	});
 
 	it("reports invalid adapter configuration without echoing named Cloudflare tokens", async () => {
@@ -369,7 +377,8 @@ describe("startExposure tunnel adapters", () => {
 		}
 		expect(failure).toContain("exited with code 19");
 		expect(failure).not.toContain(secret);
-		expect(recordedArgs(invocation)).toContain(secret);
+		expect(recordedArgs(invocation)).not.toContain(secret);
+		expect(recordedEnv(invocation).TUNNEL_TOKEN).toBe(secret);
 	});
 
 	it("reports absent adapter binaries without invoking the network", async () => {

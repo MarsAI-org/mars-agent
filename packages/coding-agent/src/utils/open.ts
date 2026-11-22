@@ -69,12 +69,29 @@ function windowsOpenerCommand(target: string): string[] {
 		Buffer.from(script, "utf16le").toString("base64"),
 	];
 }
+/** Strip query strings and fragments from URLs before logging so OAuth/query tokens never hit disk logs. */
+function redactTargetForLog(urlOrPath: string): string {
+	if (!URL_SCHEME_PATTERN.test(urlOrPath)) return urlOrPath;
+	try {
+		const parsed = new URL(urlOrPath);
+		return `${parsed.origin}${parsed.pathname}`;
+	} catch {
+		const queryIndex = urlOrPath.indexOf("?");
+		const hashIndex = urlOrPath.indexOf("#");
+		const cut = Math.min(
+			queryIndex === -1 ? urlOrPath.length : queryIndex,
+			hashIndex === -1 ? urlOrPath.length : hashIndex,
+		);
+		return urlOrPath.slice(0, cut);
+	}
+}
+
 /** Open a URL or file path in the default browser/application. Best-effort, never throws. */
 export function openPath(urlOrPath: string): void {
 	let cmd: string[];
 	switch (process.platform) {
 		case "darwin":
-			cmd = ["open", urlOrPath];
+			cmd = URL_SCHEME_PATTERN.test(urlOrPath) ? ["open", urlOrPath] : ["open", "--", urlOrPath];
 			break;
 		case "win32":
 			cmd = windowsOpenerCommand(urlOrPath);
@@ -85,6 +102,7 @@ export function openPath(urlOrPath: string): void {
 			break;
 		}
 	}
+	const logTarget = redactTargetForLog(urlOrPath);
 	let child: Bun.Subprocess | undefined;
 	try {
 		child = Bun.spawn(cmd, {
@@ -99,7 +117,7 @@ export function openPath(urlOrPath: string): void {
 		// still letting the caller advertise a copy-URL fallback.
 		logger.warn("Failed to open external URL/path", {
 			command: cmd[0],
-			target: urlOrPath,
+			target: logTarget,
 			error: error instanceof Error ? error.message : String(error),
 		});
 		return;
@@ -113,7 +131,7 @@ export function openPath(urlOrPath: string): void {
 			if (typeof exitCode === "number" && exitCode !== 0) {
 				logger.warn("External opener exited with non-zero status", {
 					command: cmd[0],
-					target: urlOrPath,
+					target: logTarget,
 					exitCode,
 				});
 			}

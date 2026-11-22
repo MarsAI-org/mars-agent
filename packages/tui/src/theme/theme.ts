@@ -483,7 +483,7 @@ async function startThemeWatcher(): Promise<void> {
 	};
 
 	try {
-		themeWatcher = fs.watch(customThemesDir, (_eventType, filename) => {
+		themeWatcher = fs.watch(customThemesDir, { persistent: false }, (_eventType, filename) => {
 			if (currentThemeName !== watchedThemeName) {
 				return;
 			}
@@ -496,6 +496,10 @@ async function startThemeWatcher(): Promise<void> {
 				return;
 			}
 			scheduleReload();
+		});
+		themeWatcher.on("error", err => {
+			logger.debug("Theme watcher failed; disabling hot reload", { error: String(err) });
+			stopThemeWatcher();
 		});
 	} catch {
 		// Ignore errors starting watcher

@@ -87,7 +87,36 @@ describe("OAuthCallbackFlow callback security", () => {
 
 			const response = await fetch(`${redirectUri}?code=legitimate-code&state=${encodeURIComponent(state)}`);
 			expect(response.status).toBe(200);
+			expect(response.headers.get("content-type")).toBe("text/html; charset=utf-8");
+			expect(response.headers.get("content-security-policy")).toContain("default-src 'none'");
+			const body = await response.text();
+			expect(body).not.toContain("legitimate-code");
+			expect(body).not.toContain(state);
 			expect((await login).access).toBe("legitimate-code");
+		} finally {
+			abort.abort("test cleanup");
+			await login.catch(() => undefined);
+		}
+	});
+
+	it("escapes HTML-breaking sequences in OAuth error descriptions to prevent reflected XSS", async () => {
+		const { info, abort, login } = await startFlow();
+		const authUrl = new URL(info.url);
+		const redirectUri = authUrl.searchParams.get("redirect_uri");
+		if (!redirectUri) throw new Error("OAuth test flow did not advertise its redirect_uri");
+
+		try {
+			const payload = "</script><img src=x onerror=alert(1)>&$&";
+			const response = await fetch(
+				`${redirectUri}?error=access_denied&error_description=${encodeURIComponent(payload)}`,
+			);
+			expect(response.status).toBe(500);
+			expect(response.headers.get("content-type")).toBe("text/html; charset=utf-8");
+			expect(response.headers.get("content-security-policy")).toContain("default-src 'none'");
+			const html = await response.text();
+			expect(html).not.toContain("</script><img");
+			expect(html).toContain("\\u003c/script\\u003e\\u003cimg");
+			expect(html).toContain("\\u0026$\\u0026");
 		} finally {
 			abort.abort("test cleanup");
 			await login.catch(() => undefined);

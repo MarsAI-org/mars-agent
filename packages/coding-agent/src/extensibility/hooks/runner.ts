@@ -2,7 +2,7 @@
  * Hook runner - executes hooks and manages their lifecycle.
  */
 import { type AgentMessage, isNonBlankContext, joinAdditionalContext } from "@marsai-org/agent-core";
-import type { Model } from "@marsai-org/ai";
+import type { ImageContent, Model } from "@marsai-org/ai";
 import type { ModelRegistry } from "../../config/model-registry";
 import type { SessionManager } from "../../session/session-manager";
 import { createNoOpUIContext } from "../utils";
@@ -406,7 +406,7 @@ export class HookRunner {
 	 */
 	async emitBeforeAgentStart(
 		prompt: string,
-		images?: import("@marsai-org/ai").ImageContent[],
+		images?: ImageContent[],
 	): Promise<BeforeAgentStartEventResult | undefined> {
 		const ctx = this.#createContext();
 		let result: BeforeAgentStartEventResult | undefined;

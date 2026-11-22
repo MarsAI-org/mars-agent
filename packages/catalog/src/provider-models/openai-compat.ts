@@ -7226,7 +7226,7 @@ const MODELS_DEV_PROVIDER_DESCRIPTORS_SPECIALIZED: readonly ModelsDevProviderDes
 			if (m.tool_call !== true) return false;
 			// OpenAI-family only (not Foundry/DeepSeek/Claude/Llama/Mistral/Phi, which
 			// Azure serves via non-Responses APIs under a per-model provider override).
-			return /^(gpt-|o1|o3|o4|codex|chatgpt)/.test(modelId);
+			return classifyModel("azure", modelId, { lenient: true }).class === "openai";
 		},
 	}),
 	// --- Cloudflare AI Gateway ---

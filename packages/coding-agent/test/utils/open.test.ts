@@ -211,7 +211,21 @@ describe("openPath", () => {
 		}
 	});
 
-	it("logs when the opener exits non-zero so Start-Process failures are diagnosable", async () => {
+	it("passes -- to macOS open for file paths but not URLs", () => {
+		setPlatform("darwin");
+		const spawnCalls: SpawnCall[] = [];
+		spySpawn(spawnCalls);
+
+		openPath("-leading-dash.txt");
+		openPath("https://example.com/auth?code=secret");
+
+		expect(spawnCalls.map(call => call.cmd)).toEqual([
+			["open", "--", "-leading-dash.txt"],
+			["open", "https://example.com/auth?code=secret"],
+		]);
+	});
+
+	it("logs when the opener exits non-zero and redacts URL query parameters", async () => {
 		setPlatform("win32");
 		vi.spyOn(fs, "existsSync").mockReturnValue(true);
 		const warnSpy = vi.spyOn(piUtils.logger, "warn").mockImplementation((() => {}) as never);
@@ -222,13 +236,16 @@ describe("openPath", () => {
 		} as unknown as Subprocess;
 		vi.spyOn(Bun, "spawn").mockImplementation(() => failing);
 
-		openPath("https://example.com");
+		openPath("https://example.com/oauth/authorize?code=secret-token&state=xyz#frag");
 		await failing.exited;
 		await Promise.resolve();
 
 		expect(warnSpy).toHaveBeenCalledWith(
 			"External opener exited with non-zero status",
-			expect.objectContaining({ exitCode: 1 }),
+			expect.objectContaining({
+				exitCode: 1,
+				target: "https://example.com/oauth/authorize",
+			}),
 		);
 	});
 });

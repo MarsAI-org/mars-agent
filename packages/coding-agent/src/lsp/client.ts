@@ -159,8 +159,11 @@ export async function checkIdleClients(): Promise<void> {
 function startIdleChecker(): void {
 	if (idleCheckInterval) return;
 	idleCheckInterval = setInterval(() => {
-		void checkIdleClients();
+		void checkIdleClients().catch(err => {
+			logger.debug("LSP idle client sweep failed", { error: String(err) });
+		});
 	}, IDLE_CHECK_INTERVAL_MS);
+	idleCheckInterval.unref?.();
 }
 
 function stopIdleChecker(): void {

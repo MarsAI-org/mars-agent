@@ -82,7 +82,7 @@ export function startRelayServer(opts: RelayServerOptions): RelayServer {
 		hostname: "127.0.0.1",
 		port: opts.port,
 		fetch(req, srv): Response | undefined {
-			const fallback = `127.0.0.1:${opts.port}`;
+			const fallback = `127.0.0.1:${srv.port ?? opts.port}`;
 			const rawHost = req.headers.get("host")?.trim();
 			const host = rawHost && isWsAuthority(rawHost) ? rawHost : fallback;
 			const requestUrl =
@@ -170,10 +170,11 @@ export function startRelayServer(opts: RelayServerOptions): RelayServer {
 	}, WS_KEEPALIVE_MS);
 	keepalive.unref();
 
-	log("relay listening", { port: opts.port });
+	const boundPort = server.port ?? opts.port;
+	log("relay listening", { port: boundPort });
 	return {
 		bridge,
-		port: opts.port,
+		port: boundPort,
 		stop() {
 			clearInterval(keepalive);
 			server.stop(true);

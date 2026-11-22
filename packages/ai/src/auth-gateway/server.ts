@@ -928,6 +928,8 @@ export function createAuthGatewayRouter(opts: AuthGatewayRouteOptions): AuthGate
 export function startAuthGateway(opts: AuthGatewayBootOptions): AuthGatewayServerHandle {
 	const bind = parseBind(opts.bind ?? DEFAULT_AUTH_GATEWAY_BIND);
 	const tokens = new Set<string>(opts.bearerTokens);
+	const corsEnabled = tokens.size > 0;
+	const corsOpts = { enabled: corsEnabled };
 	const version = opts.version;
 	const router = createAuthGatewayRouter(opts);
 
@@ -938,14 +940,20 @@ export function startAuthGateway(opts: AuthGatewayBootOptions): AuthGatewayServe
 			const url = new URL(req.url);
 			const pathname = url.pathname;
 			const socketPeer = server.requestIP(req)?.address ?? "unknown";
-			// CORS preflight is always answered without auth — browsers send
-			// preflights pre-authentication and a 401 here breaks the actual
-			// request before the bearer is ever attached.
+			// CORS preflight is answered without auth only when bearer auth is enabled.
+			// In `--no-auth` mode, reject cross-origin requests and never emit wildcard CORS
+			// headers so arbitrary web pages cannot drive or read a loopback gateway.
 			if (req.method === "OPTIONS") {
-				return new Response(null, { status: 204, headers: corsHeaders(req) });
+				if (!corsEnabled) {
+					return new Response(null, { status: 403 });
+				}
+				return new Response(null, { status: 204, headers: corsHeaders(req, corsOpts) });
+			}
+			if (!corsEnabled && req.headers.get("origin")) {
+				return json(403, { error: "cross-origin requests are not allowed when auth is disabled" });
 			}
 			if (req.method === "GET" && pathname === "/healthz") {
-				return withCors(json(200, { ok: true, version }), req);
+				return withCors(json(200, { ok: true, version }), req, corsOpts);
 			}
 			if (!isAuthorized(req, tokens)) {
 				logger.info("auth-gateway request unauthorized", {
@@ -953,13 +961,13 @@ export function startAuthGateway(opts: AuthGatewayBootOptions): AuthGatewayServe
 					path: loggablePath(pathname),
 					peer: socketPeer,
 				});
-				return withCors(json(401, { error: "unauthorized" }), req);
+				return withCors(json(401, { error: "unauthorized" }), req, corsOpts);
 			}
 			if (hasMisplacedBearer(req, url, tokens)) {
-				return withCors(json(400, { error: "gateway bearer token outside Authorization" }), req);
+				return withCors(json(400, { error: "gateway bearer token outside Authorization" }), req, corsOpts);
 			}
 			const peer = resolvePeer(req, socketPeer, opts.trustProxyHeaders);
-			return withCors(await router.route(req, peer), req);
+			return withCors(await router.route(req, peer), req, corsOpts);
 		},
 		// Max-out Bun's idle timeout. Long thinking-budget calls can sit idle
 		// for minutes before the first token arrives; the default kills them.

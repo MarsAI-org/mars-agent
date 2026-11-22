@@ -2,6 +2,8 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { type } from "@marsai-org/omptype";
 import { seedModels } from "../compat/providers";
+import { parseRevision } from "../compat/revision";
+import { classifyModel } from "../compat/taxonomy";
 import type { FetchImpl, ModelSpec } from "../types";
 import { discoveryFetch, isRecord } from "../utils";
 
@@ -17,21 +19,20 @@ const GITLAB_DUO_WORKFLOW_MAX_GROUP_PAGES = 50;
 // The Duo Workflow Service streams the real per-agent window in each checkpoint's
 // `agent_context_usage` (claude_opus_4_8 observed at 1_000_000), but Mars's context
 // panel / auto-compaction read `model.contextWindow` from the catalog ModelSpec, which
-// the provider cannot backfill at runtime. Match the model ref to a static window the
-// same way other providers ship static values; DWS' own global fallback is 200_000
-// (duo_workflow_service/conversation/trimmer.py).
+// the provider cannot backfill at runtime. Classify the model ref via catalog taxonomy;
+// DWS' own global fallback is 200_000 (duo_workflow_service/conversation/trimmer.py).
 const GITLAB_DUO_WORKFLOW_DEFAULT_CONTEXT_WINDOW = 200_000;
-const GITLAB_DUO_WORKFLOW_CONTEXT_WINDOW_RULES: readonly { pattern: RegExp; contextWindow: number }[] = [
-	{ pattern: /claude[_-]?opus/i, contextWindow: 1_000_000 },
-	{ pattern: /claude[_-]?sonnet/i, contextWindow: 1_000_000 },
-	{ pattern: /claude[_-]?haiku/i, contextWindow: 200_000 },
-	{ pattern: /gemini/i, contextWindow: 1_000_000 },
-	{ pattern: /gpt[_-]?5/i, contextWindow: 400_000 },
-];
 
 function resolveGitLabDuoWorkflowContextWindow(modelRef: string): number {
-	for (const rule of GITLAB_DUO_WORKFLOW_CONTEXT_WINDOW_RULES) {
-		if (rule.pattern.test(modelRef)) return rule.contextWindow;
+	const identity = classifyModel("gitlab-duo-agent", modelRef.replaceAll("_", "-"), { lenient: true });
+	if (identity.class === "anthropic") {
+		if (identity.family === "opus" || identity.family === "sonnet") return 1_000_000;
+		if (identity.family === "haiku") return 200_000;
+	}
+	if (identity.class === "gemini") return 1_000_000;
+	if (identity.class === "openai" && identity.family === "gpt") {
+		const revision = identity.revision ? parseRevision(identity.revision) : undefined;
+		if (revision?.[0] === 5) return 400_000;
 	}
 	return GITLAB_DUO_WORKFLOW_DEFAULT_CONTEXT_WINDOW;
 }

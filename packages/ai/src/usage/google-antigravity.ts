@@ -1,4 +1,5 @@
 import { quotaTierFor } from "@marsai-org/catalog/compat/behavior";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
 import { getAntigravityUserAgent } from "@marsai-org/catalog/wire/gemini-headers";
 import * as AIError from "../error";
 import type {
@@ -286,14 +287,21 @@ function getQuotaSummaryCounterKeys(
 	group: AntigravityQuotaSummaryGroup | undefined,
 	bucket: AntigravityQuotaSummaryBucket,
 ): string[] {
-	const bucketId = bucket.bucketId?.toLowerCase() ?? "";
-	const groupName = group?.displayName?.toLowerCase() ?? "";
-	if (bucketId.startsWith("gemini-") || groupName.includes("gemini")) return ["google"];
+	const bucketId = bucket.bucketId?.trim().toLowerCase() ?? "";
+	const groupName = group?.displayName?.trim().toLowerCase() ?? "";
+	const normalizedGroup = groupName.replace(/\s+/g, "-");
+	const bucketClass = bucketId ? classifyModel("google-antigravity", bucketId, { lenient: true }).class : "unknown";
+	const groupClass = normalizedGroup
+		? classifyModel("google-antigravity", normalizedGroup, { lenient: true }).class
+		: "unknown";
+	if (bucketClass === "gemini" || groupClass === "gemini") return ["google"];
 	if (
 		bucketId.startsWith("3p-") ||
-		groupName.includes("claude") ||
-		groupName.includes("gpt") ||
-		groupName.includes("third party")
+		groupName.includes("third party") ||
+		bucketClass === "anthropic" ||
+		bucketClass === "openai" ||
+		groupClass === "anthropic" ||
+		groupClass === "openai"
 	) {
 		// Antigravity exposes one shared third-party group. Duplicate its limits
 		// into the existing model-family scopes so Claude and GPT requests both

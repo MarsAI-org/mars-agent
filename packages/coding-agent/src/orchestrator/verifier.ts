@@ -12,7 +12,8 @@
  * Design reference: ORCHESTRATOR_DESIGN.md, Milestone 3.
  */
 
-import { spawn, type ChildProcess } from "node:child_process";
+import * as path from "node:path";
+import { ptree } from "@marsai-org/utils";
 
 /** One command the verifier runs. */
 export interface VerificationCheck {
@@ -61,85 +62,107 @@ const OUTPUT_LIMIT = 8_000;
 /** Default per-check deadline. */
 const DEFAULT_TIMEOUT_SECONDS = 600;
 
+/** Resolve `check.cwd` and ensure it does not escape `root`. */
+function resolveCheckCwd(root: string, checkCwd: string | undefined): string {
+	const resolvedRoot = path.resolve(root);
+	if (checkCwd === undefined) return resolvedRoot;
+	const resolvedCwd = path.resolve(resolvedRoot, checkCwd);
+	const rel = path.relative(resolvedRoot, resolvedCwd);
+	if (rel.startsWith("..") || path.isAbsolute(rel)) {
+		throw new Error(`Verification check cwd escapes root: ${checkCwd}`);
+	}
+	return resolvedCwd;
+}
+
 /** Run one shell command, capturing combined output under a deadline. */
-function runCheck(root: string, check: VerificationCheck): Promise<CheckResult> {
+async function runCheck(root: string, check: VerificationCheck): Promise<CheckResult> {
 	const startedAt = Date.now();
-	const cwd = check.cwd === undefined ? root : `${root}/${check.cwd}`;
+	let cwd: string;
+	try {
+		cwd = resolveCheckCwd(root, check.cwd);
+	} catch (error) {
+		return {
+			id: check.id,
+			command: check.command,
+			ok: false,
+			exitCode: null,
+			output: "",
+			durationMs: Date.now() - startedAt,
+			failure: error instanceof Error ? error.message : String(error),
+		};
+	}
+
 	const timeoutMs = (check.timeoutSeconds ?? DEFAULT_TIMEOUT_SECONDS) * 1_000;
 	const isWindows = process.platform === "win32";
+	const cmd = isWindows ? ["cmd", "/c", check.command] : ["sh", "-c", check.command];
 
-	return new Promise<CheckResult>(resolve => {
-		let settled = false;
-		const finish = (result: CheckResult): void => {
-			if (settled) return;
-			settled = true;
-			clearTimeout(timer);
-			resolve(result);
+	let child: ptree.ChildProcess<"ignore">;
+	try {
+		child = ptree.spawn(cmd, {
+			cwd,
+			env: { ...process.env, ...check.env },
+			stdin: "ignore",
+			stderr: "full",
+			detached: true,
+			subreaper: true,
+			timeout: timeoutMs,
+		});
+	} catch (error) {
+		return {
+			id: check.id,
+			command: check.command,
+			ok: false,
+			exitCode: null,
+			output: "",
+			durationMs: Date.now() - startedAt,
+			failure: error instanceof Error ? error.message : String(error),
 		};
+	}
 
-		let child: ChildProcess;
-		try {
-			child = spawn(isWindows ? "cmd" : "sh", isWindows ? ["/c", check.command] : ["-c", check.command], {
-				cwd,
-				env: { ...process.env, ...check.env },
-				stdio: ["ignore", "pipe", "pipe"],
-			});
-		} catch (error) {
-			finish({
+	try {
+		const result = await child.wait({ allowNonZero: true, allowAbort: true, stderr: "full" });
+		const combined = `${result.stdout}${result.stderr}`.slice(0, OUTPUT_LIMIT);
+		if (result.exitError instanceof ptree.TimeoutError) {
+			return {
 				id: check.id,
 				command: check.command,
 				ok: false,
 				exitCode: null,
-				output: "",
-				durationMs: Date.now() - startedAt,
-				failure: error instanceof Error ? error.message : String(error),
-			});
-			return;
-		}
-
-		let output = "";
-		const append = (chunk: Buffer): void => {
-			if (output.length >= OUTPUT_LIMIT) return;
-			output += chunk.toString("utf8").slice(0, OUTPUT_LIMIT - output.length);
-		};
-		child.stdout?.on("data", append);
-		child.stderr?.on("data", append);
-
-		const timer = setTimeout(() => {
-			child.kill("SIGKILL");
-			finish({
-				id: check.id,
-				command: check.command,
-				ok: false,
-				exitCode: null,
-				output,
+				output: combined,
 				durationMs: Date.now() - startedAt,
 				failure: `timed out after ${timeoutMs / 1000}s`,
-			});
-		}, timeoutMs);
-
-		child.on("error", error => {
-			finish({
+			};
+		}
+		if (result.exitError?.aborted) {
+			return {
 				id: check.id,
 				command: check.command,
 				ok: false,
 				exitCode: null,
-				output,
+				output: combined,
 				durationMs: Date.now() - startedAt,
-				failure: error.message,
-			});
-		});
-		child.on("close", code => {
-			finish({
-				id: check.id,
-				command: check.command,
-				ok: code === 0,
-				exitCode: code,
-				output,
-				durationMs: Date.now() - startedAt,
-			});
-		});
-	});
+				failure: result.exitError.message,
+			};
+		}
+		return {
+			id: check.id,
+			command: check.command,
+			ok: result.exitCode === 0,
+			exitCode: result.exitCode,
+			output: combined,
+			durationMs: Date.now() - startedAt,
+		};
+	} catch (error) {
+		return {
+			id: check.id,
+			command: check.command,
+			ok: false,
+			exitCode: null,
+			output: "",
+			durationMs: Date.now() - startedAt,
+			failure: error instanceof Error ? error.message : String(error),
+		};
+	}
 }
 
 /**

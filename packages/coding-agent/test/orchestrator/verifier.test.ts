@@ -97,6 +97,22 @@ describe("verifier", () => {
 		expect(result.checks[0]?.exitCode).toBe(3);
 	});
 
+	test("rejects a check cwd that escapes the verification root", async () => {
+		const verifier = new ShellVerifier();
+		const result = await verifier.verify(process.cwd(), [{ id: "escape", command: "true", cwd: "../.." }]);
+		expect(result.ok).toBe(false);
+		expect(result.firstFailure).toBe("escape");
+		expect(result.checks[0]?.failure).toContain("escapes root");
+	});
+
+	test("times out a hanging check and reports timeout failure", async () => {
+		const verifier = new ShellVerifier();
+		const result = await verifier.verify(process.cwd(), [{ id: "hang", command: "sleep 10", timeoutSeconds: 0.1 }]);
+		expect(result.ok).toBe(false);
+		expect(result.firstFailure).toBe("hang");
+		expect(result.checks[0]?.failure).toContain("timed out");
+	});
+
 	test("no-op verifier accepts everything without running anything", async () => {
 		const result = await new NoopVerifier().verify("/nowhere", CHECKS);
 		expect(result.ok).toBe(true);

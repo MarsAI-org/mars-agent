@@ -54,3 +54,16 @@ export function parseBind(raw: string): ParsedBind {
 	}
 	return { hostname: hostPart, port: parsePort(portPart, raw) };
 }
+
+/** True when `hostname` refers exclusively to a local loopback interface. */
+export function isLoopbackHostname(hostname: string): boolean {
+	const bare = hostname
+		.trim()
+		.toLowerCase()
+		.replace(/^\[|\]$/g, "");
+	if (bare === "localhost" || bare === "::1") return true;
+	const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(bare);
+	if (!v4) return false;
+	const octets = [Number(v4[1]), Number(v4[2]), Number(v4[3]), Number(v4[4])];
+	return octets[0] === 127 && octets.every(octet => octet >= 0 && octet <= 255);
+}

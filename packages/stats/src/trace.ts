@@ -991,7 +991,21 @@ interface SessionMetadata {
 	cwd: string | null;
 }
 
+const MAX_METADATA_CACHE_ENTRIES = 500;
 const metadataCache = new Map<string, SessionMetadata & { mtimeMs: number }>();
+
+function setMetadataCache(file: string, metadata: SessionMetadata & { mtimeMs: number }): void {
+	if (metadataCache.has(file)) {
+		metadataCache.delete(file);
+	} else {
+		while (metadataCache.size >= MAX_METADATA_CACHE_ENTRIES) {
+			const oldest = metadataCache.keys().next().value;
+			if (oldest === undefined) break;
+			metadataCache.delete(oldest);
+		}
+	}
+	metadataCache.set(file, metadata);
+}
 
 /** Read enough decompressed transcript bytes to cover the title slot and session header. */
 async function readSessionMetadataHead(file: string): Promise<string> {
@@ -1028,7 +1042,12 @@ async function readSessionMetadata(file: string): Promise<SessionMetadata> {
 		return { title: null, cwd: null };
 	}
 	const cached = metadataCache.get(file);
-	if (cached && cached.mtimeMs === mtimeMs) return cached;
+	if (cached && cached.mtimeMs === mtimeMs) {
+		// Refresh LRU recency on hit.
+		metadataCache.delete(file);
+		metadataCache.set(file, cached);
+		return cached;
+	}
 
 	let title: string | null = null;
 	let cwd: string | null = null;
@@ -1057,7 +1076,7 @@ async function readSessionMetadata(file: string): Promise<SessionMetadata> {
 		// Unreadable head (gc'd, gz, permission) → keep the row with path-derived metadata.
 	}
 	const metadata = { mtimeMs, title, cwd };
-	metadataCache.set(file, metadata);
+	setMetadataCache(file, metadata);
 	return metadata;
 }
 

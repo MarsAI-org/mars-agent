@@ -130,4 +130,40 @@ describe("auth-gateway diagnostic response headers", () => {
 			await gw.close();
 		}
 	});
+
+	it("disables wildcard CORS and rejects cross-origin requests in --no-auth mode", async () => {
+		registerMockApi();
+		const dir = await fs.mkdtemp(path.join(os.tmpdir(), "gw-no-auth-cors-"));
+		const storage = await AuthStorage.create(path.join(dir, "auth.db"));
+		const mock = createMockModel({ provider: "openrouter", id: "mock/header-model" });
+		const handle = startAuthGateway({
+			bind: "127.0.0.1:0",
+			bearerTokens: [],
+			storage,
+			resolveModel: () => mock.model,
+			version: "test",
+		});
+		try {
+			const preflight = await fetch(`${handle.url}/v1/models`, {
+				method: "OPTIONS",
+				headers: { Origin: "https://evil.example" },
+			});
+			expect(preflight.status).toBe(403);
+			expect(preflight.headers.get("access-control-allow-origin")).toBeNull();
+
+			const crossOrigin = await fetch(`${handle.url}/healthz`, {
+				headers: { Origin: "https://evil.example" },
+			});
+			expect(crossOrigin.status).toBe(403);
+			expect(crossOrigin.headers.get("access-control-allow-origin")).toBeNull();
+
+			const local = await fetch(`${handle.url}/healthz`);
+			expect(local.status).toBe(200);
+			expect(local.headers.get("access-control-allow-origin")).toBeNull();
+		} finally {
+			await handle.close();
+			storage.close();
+			await fs.rm(dir, { recursive: true, force: true });
+		}
+	});
 });

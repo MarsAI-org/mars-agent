@@ -12,8 +12,10 @@
 
 import { type Type, type } from "@marsai-org/omptype";
 import { logger } from "@marsai-org/utils";
+import { isAuthorized } from "../auth-gateway/http";
 import type { AuthCredentialSnapshotEntry, AuthStorage, StoredCredentialBlock } from "../auth-storage";
-import { parseBind } from "../utils/parse-bind";
+import * as AIError from "../error";
+import { isLoopbackHostname, parseBind } from "../utils/parse-bind";
 import { resolvePeer } from "../utils/resolve-peer";
 import { AuthBrokerRefresher, type AuthBrokerRefresherSchedule } from "./refresher";
 import type {
@@ -103,15 +105,6 @@ function json(status: number, body: unknown, headers?: Record<string, string>): 
 
 function empty(status: number, headers?: Record<string, string>): Response {
 	return new Response(null, { status, headers });
-}
-
-function isAuthorized(req: Request, tokens: ReadonlySet<string>): boolean {
-	if (tokens.size === 0) return true;
-	const header = req.headers.get("authorization");
-	if (!header) return false;
-	const match = header.match(/^Bearer\s+(.+)$/i);
-	if (!match) return false;
-	return tokens.has(match[1].trim());
 }
 
 function supportsCodexMeterBlockScopes(req: Request): boolean {
@@ -809,6 +802,11 @@ function serveSnapshotStream(
 export function startAuthBroker(opts: AuthBrokerServerOptions): AuthBrokerServerHandle {
 	const bind = parseBind(opts.bind ?? DEFAULT_AUTH_BROKER_BIND);
 	const tokens = new Set<string>(opts.bearerTokens);
+	if (tokens.size === 0 && !isLoopbackHostname(bind.hostname)) {
+		throw new AIError.ConfigurationError(
+			`Auth broker cannot bind non-loopback host '${bind.hostname}' without bearer tokens.`,
+		);
+	}
 	const version = opts.version;
 	const streamKeepaliveMs = opts.streamKeepaliveMs ?? DEFAULT_STREAM_KEEPALIVE_MS;
 	const externalChangePollMs = opts.externalChangePollMs ?? DEFAULT_EXTERNAL_CHANGE_POLL_MS;

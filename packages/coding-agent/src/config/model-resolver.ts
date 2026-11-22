@@ -37,7 +37,6 @@ import { modelKind } from "@marsai-org/catalog/types";
 import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models";
 import { fuzzyMatch } from "@marsai-org/tui";
 import { logger } from "@marsai-org/utils";
-import chalk from "@marsai-org/utils/chalk";
 import MODEL_PRIO from "../priority.json" with { type: "json" };
 import {
 	AUTO_THINKING,
@@ -2359,8 +2358,9 @@ export async function findInitialModel(options: {
 	if (cliProvider && cliModel) {
 		const found = modelRegistry.find(cliProvider, cliModel);
 		if (!found) {
-			console.error(chalk.red(`Model ${cliProvider}/${cliModel} not found`));
-			process.exit(1);
+			const message = `Model ${cliProvider}/${cliModel} not found`;
+			logger.error(message, { provider: cliProvider, model: cliModel });
+			throw new Error(message);
 		}
 		return { model: found, thinkingLevel: undefined, fallbackMessage: undefined };
 	}
@@ -2421,7 +2421,7 @@ export async function restoreModelFromSession(
 
 	if (restoredModel && hasApiKey) {
 		if (shouldPrintMessages) {
-			console.log(chalk.dim(`Restored model: ${savedProvider}/${savedModelId}`));
+			logger.info("Restored model from session", { provider: savedProvider, model: savedModelId });
 		}
 		return { model: restoredModel, fallbackMessage: undefined };
 	}
@@ -2430,13 +2430,13 @@ export async function restoreModelFromSession(
 	const reason = !restoredModel ? "model no longer exists" : "no API key available";
 
 	if (shouldPrintMessages) {
-		console.error(chalk.yellow(`Warning: Could not restore model ${savedProvider}/${savedModelId} (${reason}).`));
+		logger.warn("Could not restore model from session", { provider: savedProvider, model: savedModelId, reason });
 	}
 
 	// If we already have a model, use it as fallback
 	if (currentModel) {
 		if (shouldPrintMessages) {
-			console.log(chalk.dim(`Falling back to: ${currentModel.provider}/${currentModel.id}`));
+			logger.info("Falling back to current model", { provider: currentModel.provider, model: currentModel.id });
 		}
 		return {
 			model: currentModel,
@@ -2452,7 +2452,7 @@ export async function restoreModelFromSession(
 	);
 	if (fallbackModel) {
 		if (shouldPrintMessages) {
-			console.log(chalk.dim(`Falling back to: ${fallbackModel.provider}/${fallbackModel.id}`));
+			logger.info("Falling back to available model", { provider: fallbackModel.provider, model: fallbackModel.id });
 		}
 
 		return {

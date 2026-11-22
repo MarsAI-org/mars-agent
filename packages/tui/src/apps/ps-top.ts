@@ -202,29 +202,37 @@ export class PsTopComponent implements Component {
 	}
 
 	#openLogs(): void {
+		this.#stopLogsPoll();
 		const entry = this.#flat[this.#selected];
 		if (!entry) return;
 		this.#view = "logs";
 		this.#logsLines = [];
 		this.#logsState = "";
 		this.#logsError = undefined;
+		let polling = false;
 		const poll = async (): Promise<void> => {
+			if (polling) return;
 			const current = this.#flat[this.#selected];
 			if (this.#disposed || this.#view !== "logs" || !current) return;
+			polling = true;
 			try {
 				const result = await this.#host.logs(
 					current.scope,
 					current.row.snapshot.name,
 					Math.max(10, this.#ui.terminal.rows - 4),
 				);
+				if (this.#disposed || this.#view !== "logs") return;
 				this.#logsLines = result.terminalRows ?? result.text.replace(/\n$/, "").split("\n");
 				this.#logsState = result.state;
 				this.#logsError = undefined;
 				this.#ui.requestRender();
 			} catch (error) {
+				if (this.#disposed || this.#view !== "logs") return;
 				this.#logsError = error instanceof Error ? error.message : String(error);
 				this.#logsLines = [chalk.red(this.#logsError)];
 				this.#ui.requestRender();
+			} finally {
+				polling = false;
 			}
 		};
 		void poll();
