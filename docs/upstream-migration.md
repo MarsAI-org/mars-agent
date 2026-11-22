@@ -6,14 +6,14 @@ finishing the job, so the measurements are not repeated from scratch.
 
 ## Where the trees stand
 
-| Fact | Value |
-| --- | --- |
-| Upstream head when measured | `e1a9f4b41d` (version 19.1.0) |
-| Fork point (merge-base) | `579da1d661` |
-| Commits behind | 12,364 total, 9,263 non-merge |
-| Commits ahead (local work) | 114 |
-| Files upstream changed since the fork | 8,733 |
-| Files we never touched that upstream changed | 5,665 |
+| Fact                                         | Value                         |
+| -------------------------------------------- | ----------------------------- |
+| Upstream head when measured                  | `e1a9f4b41d` (version 19.1.0) |
+| Fork point (merge-base)                      | `579da1d661`                  |
+| Commits behind                               | 12,364 total, 9,263 non-merge |
+| Commits ahead (local work)                   | 114                           |
+| Files upstream changed since the fork        | 8,733                         |
+| Files we never touched that upstream changed | 5,665                         |
 
 ## What is applied today
 
