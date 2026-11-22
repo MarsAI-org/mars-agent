@@ -39,6 +39,7 @@ import {
 	type ToolChoice,
 	type Usage,
 } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -657,14 +658,13 @@ export function recordTelemetryWarning(telemetry: AgentTelemetry | undefined, wa
 function emitTelemetryWarning(telemetry: AgentTelemetry | undefined, warning: AgentTelemetryWarning): void {
 	const hook = telemetry?.config.onTelemetryWarning;
 	if (!hook) {
-		if (warning.error === undefined) console.warn(`[pi-agent] ${warning.message}`);
-		else console.warn(`[pi-agent] ${warning.message}`, warning.error);
+		logger.warn(`telemetry: ${warning.message}`, { code: warning.code, error: warning.error });
 		return;
 	}
 	try {
 		hook(warning);
 	} catch (err) {
-		console.warn("[pi-agent] onTelemetryWarning threw; swallowing:", err);
+		logger.warn("telemetry: onTelemetryWarning threw; swallowing", { code: warning.code, error: err });
 	}
 }
 

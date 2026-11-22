@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
+import { logger } from "@marsai-org/utils";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -28,7 +29,7 @@ describe("VeracityConsolidator sibling write methods", () => {
 			const conflict = cons.getConflicts()[0];
 			if (conflict === undefined) throw new Error("expected Alice conflict");
 
-			const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+			const warnSpy = vi.spyOn(logger, "warn").mockImplementation(() => {});
 			cons.resolveConflict(conflict.id, conflict.fact_a_id);
 			cons.resolveConflict(conflict.id, conflict.fact_b_id);
 			expect(warnSpy).toHaveBeenCalledTimes(1);

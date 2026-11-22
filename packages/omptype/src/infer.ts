@@ -13,7 +13,7 @@ type Trim<s extends string> = TrimLeft<TrimRight<s>>;
  * `never` is intentionally absent: the parser rejects it and the fallback in
  * `InferMember` treats a missing entry as "not a primitive".
  */
-type ArkAny = ReturnType<typeof JSON.parse>;
+type ArkAny = any;
 
 interface PrimitiveMap {
 	string: string;

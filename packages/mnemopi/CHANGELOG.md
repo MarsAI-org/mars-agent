@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Memory extraction, veracity, and migration warnings no longer write to stderr; they are recorded in the Mars log file instead, keeping the terminal UI intact.
+
 ## [18.8.5] - 2026-10-08
 
 ### Fixed
