@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import importlib.util
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -73,6 +74,24 @@ def main() -> int:
         report = module.Report(generated_at="", mode="normalize", rules=rules)
         return module.apply_rules(path, text, rules, report)
 
+    def fold(text: str) -> str:
+        """Collapse every brand token to one placeholder so a pure rebrand difference
+        compares equal on both sides. Both spellings fold to the same string, so the
+        comparison never depends on which side renamed what."""
+        for pattern, canonical in (
+            (r"@?[Mm]ars[ai]*-?[Oo]rg/mars-agent|@?can1357/oh-my-pi|@?oh-my-pi/mars-agent", "@REPO"),
+            (r"@[Mm]ars[ai]*-?[Oo]rg|@oh-my-pi", "@SCOPE"),
+            (r"\b[Mm]ars[Aa][Ii]-org/|\bMarsAI-org\b|\bMarsAI\b", "@REPO"),
+            (r"\bMARS_", "APP_"),
+            (r"\bOMP_", "APP_"),
+            (r"\bmars_", "app_"),
+            (r"\bomp_", "app_"),
+            (r"\b[Mm]ars\b", "app"),
+            (r"\b[Oo]mp\b", "app"),
+        ):
+            text = re.sub(pattern, canonical, text)
+        return text
+
     unmerged = git("diff", "--name-only", "--diff-filter=U").stdout.split()
     stats = {"took upstream": 0, "accepted deletion": 0, "manual": 0}
     manual: list[tuple[str, str]] = []
@@ -103,7 +122,16 @@ def main() -> int:
             stats["manual"] += 1
             continue
 
-        if rebrand(path, base_text) == our_text:
+        if rebrand(path, base_text) == our_text or fold(rebrand(path, base_text)) == fold(our_text):
+            # Our side is the base plus the rebrand (possibly with an older spelling of
+            # the same tokens): upstream's version, rebranded, is the resolution.
+            Path(path).write_text(rebrand(path, their_text), encoding="utf-8", errors="surrogateescape")
+            git("add", path)
+            stats["took upstream"] += 1
+            continue
+
+        if fold(our_text) == fold(their_text):
+            # Both sides already carry the same content; only the brand tokens differ.
             Path(path).write_text(rebrand(path, their_text), encoding="utf-8", errors="surrogateescape")
             git("add", path)
             stats["took upstream"] += 1
