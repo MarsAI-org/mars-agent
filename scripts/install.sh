@@ -2,7 +2,7 @@
 set -e
 
 # Mars Coding Agent Installer
-# Usage: curl -fsSL https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.sh | sh
+# Usage: curl -fsSL https://getmars.eu.cc/install | sh
 #
 # Options:
 #   --source       Install via bun (installs bun if needed)
@@ -61,14 +61,42 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-# If a ref is provided, default to source install
-if [ -n "$REF" ] && [ -z "$MODE" ]; then
-    MODE="source"
+# Validate --ref / -r values so malformed refs cannot manipulate GitHub API URL paths.
+validate_ref() {
+    case "$1" in
+        ''|-*|*..*|*[[:space:]]*|*[\?\*\#\;\`\$\\]*)
+            echo "Invalid ref: $1"
+            exit 1
+            ;;
+    esac
+}
+
+# If a ref is provided, validate it and default to source install
+if [ -n "$REF" ]; then
+    validate_ref "$REF"
+    if [ -z "$MODE" ]; then
+        MODE="source"
+    fi
 fi
 
 # Check if bun is available
 has_bun() {
     command -v bun >/dev/null 2>&1
+}
+
+# Render a byte count as a short human-readable size (e.g. 37562240 -> "36 MiB").
+# Pure shell so it works on any POSIX system without coreutils' numfmt.
+numfmt_bytes() {
+    BYTES="$1"
+    if [ "$BYTES" -lt 1024 ]; then
+        echo "${BYTES} B"
+    elif [ "$BYTES" -lt 1048576 ]; then
+        echo "$((BYTES / 1024)) KiB"
+    elif [ "$BYTES" -lt 1073741824 ]; then
+        echo "$((BYTES / 1048576)) MiB"
+    else
+        echo "$((BYTES / 1073741824)) GiB"
+    fi
 }
 
 # Normalized host architecture (x64|arm64). On macOS this uses
@@ -107,17 +135,35 @@ version_ge() {
     current="$1"
     minimum="$2"
 
-    current_major="${current%%.*}"
-    current_rest="${current#*.}"
-    current_minor="${current_rest%%.*}"
-    current_patch="${current_rest#*.}"
-    current_patch="${current_patch%%.*}"
+    # Missing components count as 0, so "1.4" is 1.4.0. The old derivation read the
+    # patch out of the minor when the version had only two components, which made
+    # "1.4" compare as 1.4.4 (version_ge 1.4.0 1.4 was false). Disable globbing
+    # around unquoted splitting so malformed version strings cannot expand filenames.
+    saved_ifs="$IFS"
+    case "$-" in
+        *f*) had_noglob=1 ;;
+        *)   had_noglob=0; set -f ;;
+    esac
+    IFS=.
+    set -- $current
+    current_major="${1:-0}"
+    current_minor="${2:-0}"
+    current_patch="${3:-0}"
+    set -- $minimum
+    minimum_major="${1:-0}"
+    minimum_minor="${2:-0}"
+    minimum_patch="${3:-0}"
+    IFS="$saved_ifs"
+    if [ "$had_noglob" -eq 0 ]; then
+        set +f
+    fi
 
-    minimum_major="${minimum%%.*}"
-    minimum_rest="${minimum#*.}"
-    minimum_minor="${minimum_rest%%.*}"
-    minimum_patch="${minimum_rest#*.}"
-    minimum_patch="${minimum_patch%%.*}"
+    # A version string that is not three integers (a -canary tag that survived
+    # the trim, a vendor suffix) compares as older than the minimum instead of
+    # making `test` fail and aborting the installer with a shell error.
+    case "${current_major}${current_minor}${current_patch}${minimum_major}${minimum_minor}${minimum_patch}" in
+        ''|*[!0-9]*) return 1 ;;
+    esac
 
     if [ "$current_major" -ne "$minimum_major" ]; then
         [ "$current_major" -gt "$minimum_major" ]
@@ -145,6 +191,16 @@ require_bun_version() {
         echo "Upgrade Bun at https://bun.sh/docs/installation"
         exit 1
     fi
+}
+
+# Host is Android (Termux, Android shell). `uname -s` says Linux there, but the
+# released binaries link the glibc loader Android does not ship, so the download
+# only fails later with a relocation error.
+is_android() {
+    if [ -n "${TERMUX_VERSION:-}" ] || [ -n "${ANDROID_ROOT:-}" ]; then
+        return 0
+    fi
+    [ "$(uname -o 2>/dev/null || echo)" = "Android" ]
 }
 
 # Check if git is available
@@ -181,7 +237,7 @@ install_via_bun() {
         fi
 
         TMP_DIR="$(mktemp -d)"
-        trap 'rm -rf "$TMP_DIR"' EXIT
+        trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
 
         if git clone --depth 1 --branch "$REF" "https://github.com/${REPO}.git" "$TMP_DIR" >/dev/null 2>&1; then
             :
@@ -217,6 +273,12 @@ install_via_bun() {
 
 # Install binary from GitHub releases
 install_binary() {
+    if is_android; then
+        echo "Android/Termux has no prebuilt binary: the Linux builds link the glibc loader, which Android does not ship."
+        echo "Re-run without --binary to install from source instead."
+        exit 1
+    fi
+
     # Detect platform
     OS="$(uname -s)"
     ARCH="$(host_arch)"
@@ -240,10 +302,19 @@ install_binary() {
 
     BINARY="mars-${PLATFORM}-${ARCH}"
     # Get release tag
+    AUTH_HEADER=""
+    if [ -n "$GITHUB_TOKEN" ]; then
+        AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
+    fi
     if [ -n "$REF" ]; then
         echo "Fetching release $REF..."
-        if RELEASE_JSON=$(curl -fsSL --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/tags/${REF}"); then
-            LATEST=$(echo "$RELEASE_JSON" | grep '"tag_name"' | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
+        if [ -n "$AUTH_HEADER" ]; then
+            RELEASE_JSON=$(curl -fsSL -H "User-Agent: Mars-Installer" -H "$AUTH_HEADER" --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/tags/${REF}" || true)
+        else
+            RELEASE_JSON=$(curl -fsSL -H "User-Agent: Mars-Installer" --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/tags/${REF}" || true)
+        fi
+        if [ -n "$RELEASE_JSON" ]; then
+            LATEST=$(echo "$RELEASE_JSON" | grep '"tag_name"' | head -n 1 | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
         else
             echo "Release tag not found: $REF"
             echo "For branch/commit installs, use --source with --ref."
@@ -251,43 +322,144 @@ install_binary() {
         fi
     else
         echo "Fetching latest release..."
-        RELEASE_JSON=$(curl -fsSL --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/latest")
-        LATEST=$(echo "$RELEASE_JSON" | grep '"tag_name"' | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
+        if [ -n "$AUTH_HEADER" ]; then
+            RELEASE_JSON=$(curl -fsSL -H "User-Agent: Mars-Installer" -H "$AUTH_HEADER" --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/latest" || true)
+        else
+            RELEASE_JSON=$(curl -fsSL -H "User-Agent: Mars-Installer" --connect-timeout 10 --max-time 60 "https://api.github.com/repos/${REPO}/releases/latest" || true)
+        fi
+        LATEST=$(echo "$RELEASE_JSON" | grep '"tag_name"' | head -n 1 | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
     fi
 
     if [ -z "$LATEST" ]; then
-        echo "Failed to fetch release tag"
+        if [ -n "$REF" ]; then
+            echo "Release tag not found: $REF"
+        else
+            echo "Failed to fetch the latest release tag (network error or GitHub API rate limit)."
+        fi
+        echo "For branch/commit installs, use --source with --ref."
         exit 1
     fi
     echo "Using version: $LATEST"
 
     mkdir -p "$INSTALL_DIR"
-    # Download binary
+    # Download binary and SHA256SUMS.txt for checksum verification
     BINARY_URL="https://github.com/${REPO}/releases/download/${LATEST}/${BINARY}"
-    echo "Downloading ${BINARY}..."
-    curl -fsSL --connect-timeout 10 --speed-limit 1024 --speed-time 30 "$BINARY_URL" -o "${INSTALL_DIR}/mars"
-    chmod +x "${INSTALL_DIR}/mars"
+    CHECKSUM_URL="https://github.com/${REPO}/releases/download/${LATEST}/SHA256SUMS.txt"
+    # Stage the download beside the destination using mktemp and only rename it
+    # into place once it verifies and starts. curl truncates its output file as
+    # soon as the body arrives, so writing straight to ${INSTALL_DIR}/mars
+    # destroyed a working install whenever a transfer was cut short or a checksum
+    # differed. The final rename also replaces a running binary cleanly.
+    STAGED="$(mktemp "${INSTALL_DIR}/.mars-download.XXXXXX")"
+    trap 'rm -f "$STAGED"' EXIT HUP INT TERM
+    if [ -t 2 ]; then
+        # Interactive terminal: show a progress meter.
+        echo "Downloading ${BINARY}..."
+        if ! curl -fL --connect-timeout 10 --speed-limit 1024 --speed-time 30 --progress-bar "$BINARY_URL" -o "$STAGED"; then
+            echo "Download failed for ${BINARY}; ${INSTALL_DIR}/mars was left untouched."
+            exit 1
+        fi
+        # Progress meter writes to stderr; close it out with a summary line.
+        DOWNLOADED_SIZE=$(wc -c < "$STAGED" 2>/dev/null | tr -d ' ')
+        case "$DOWNLOADED_SIZE" in
+            ''|*[!0-9]*) ;;
+            *) echo "Downloaded ${BINARY} ($(numfmt_bytes "$DOWNLOADED_SIZE"))" ;;
+        esac
+    else
+        # Piped (curl | sh): keep stderr quiet, but still report stall-safe progress.
+        echo "Downloading ${BINARY}..."
+        if ! curl -fsSL --connect-timeout 10 --speed-limit 1024 --speed-time 30 "$BINARY_URL" -o "$STAGED"; then
+            echo "Download failed for ${BINARY}; ${INSTALL_DIR}/mars was left untouched."
+            exit 1
+        fi
+    fi
+
+    echo "Verifying checksum..."
+    CHECKSUMS_DATA=$(curl -fsSL --connect-timeout 10 --max-time 30 "$CHECKSUM_URL" || true)
+    EXPECTED_SHA=""
+    if [ -n "$CHECKSUMS_DATA" ]; then
+        # Strip CR (CRLF files) and match both text ("  name") and binary (" *name")
+        # or path-prefixed (" ./name", " dir/name") sha256sum output formats.
+        EXPECTED_SHA=$(printf '%s\n' "$CHECKSUMS_DATA" | tr -d '\r' | awk -v bin="$BINARY" '
+            NF >= 2 {
+                name = $2
+                sub(/^\*/, "", name)
+                sub(/^.*\//, "", name)
+                if (name == bin) {
+                    print tolower($1)
+                    exit
+                }
+            }
+        ')
+    fi
+
+    ACTUAL_SHA=""
+    if command -v sha256sum >/dev/null 2>&1; then
+        ACTUAL_SHA=$(sha256sum "$STAGED" | awk '{print tolower($1)}')
+    elif command -v shasum >/dev/null 2>&1; then
+        ACTUAL_SHA=$(shasum -a 256 "$STAGED" | awk '{print tolower($1)}')
+    fi
+
+    # Fail closed. SHA256SUMS.txt ships in the same release as the binary, so it
+    # proves the download was not corrupted or swapped in transit — skipping it
+    # silently removes even that. MARS_ALLOW_UNVERIFIED=1 is the explicit opt-out
+    # for hosts with no sha256 tool.
+    VERIFY_PROBLEM=""
+    if [ -z "$CHECKSUMS_DATA" ]; then
+        VERIFY_PROBLEM="could not fetch SHA256SUMS.txt"
+    elif [ -z "$EXPECTED_SHA" ]; then
+        VERIFY_PROBLEM="binary ${BINARY} is not listed in SHA256SUMS.txt"
+    elif [ -z "$ACTUAL_SHA" ]; then
+        VERIFY_PROBLEM="neither sha256sum nor shasum is available to verify the download"
+    elif [ "$EXPECTED_SHA" != "$ACTUAL_SHA" ]; then
+        echo "Checksum verification failed for ${BINARY}!"
+        echo "Expected: $EXPECTED_SHA"
+        echo "Actual:   $ACTUAL_SHA"
+        echo "The staged download was discarded; ${INSTALL_DIR}/mars was left untouched."
+        exit 1
+    fi
+
+    if [ -n "$VERIFY_PROBLEM" ]; then
+        if [ "${MARS_ALLOW_UNVERIFIED:-0}" = "1" ]; then
+            echo "Warning: ${VERIFY_PROBLEM}; continuing because MARS_ALLOW_UNVERIFIED=1."
+        else
+            echo "Error: ${VERIFY_PROBLEM}."
+            echo "Refusing to install an unverified binary. Set MARS_ALLOW_UNVERIFIED=1 to override."
+            echo "The staged download was discarded; ${INSTALL_DIR}/mars was left untouched."
+            exit 1
+        fi
+    else
+        echo "✓ Checksum verified ($EXPECTED_SHA)"
+    fi
+
+    chmod +x "$STAGED"
 
     # Verify the freshly installed binary can actually start before reporting
     # success. Bun's musl-target binaries link libstdc++/libgcc dynamically,
     # which stock Alpine/musl systems do not ship, so the download succeeds while
     # the binary exits 127 with relocation errors. Never claim success for a
     # binary that cannot run.
-    if ! SMOKE_OUTPUT="$("${INSTALL_DIR}/mars" --version 2>&1)"; then
+    if ! SMOKE_OUTPUT="$("$STAGED" --version 2>&1)"; then
         echo ""
-        echo "✗ mars was downloaded to ${INSTALL_DIR}/mars but cannot start:"
+        echo "✗ mars was downloaded and verified, but cannot start:"
         echo "$SMOKE_OUTPUT" | sed 's/^/    /'
         if [ "$PLATFORM" = "linux-musl" ]; then
             echo ""
-            echo "The musl build links libstdc++/libgcc dynamically. Install them, then re-run 'mars':"
+            echo "The musl build links libstdc++/libgcc dynamically. Install them, then re-run this installer:"
             if command -v apk >/dev/null 2>&1; then
                 echo "    apk add libstdc++ libgcc"
             else
                 echo "    (install the libstdc++ and libgcc runtime packages for your distro)"
             fi
         fi
+        echo "The staged download was discarded; ${INSTALL_DIR}/mars was left untouched."
         exit 1
     fi
+
+    # Everything passed: swap the staged download in. A rename is atomic within
+    # the directory, so a reader (or a running 'mars') sees either the old binary
+    # or the new one, never a half-written file.
+    mv -f "$STAGED" "${INSTALL_DIR}/mars"
 
     echo ""
     echo "✓ Installed mars to ${INSTALL_DIR}/mars"
@@ -319,16 +491,33 @@ case "$MODE" in
         install_binary
         ;;
     *)
-        # Default: use bun only when it matches the host architecture, otherwise
-        # fall back to the prebuilt binary so Rosetta bun can't force an x86_64 build.
-        if has_bun && bun_arch_matches_host; then
+        # Default: prefer prebuilt binary for supported platforms
+        OS="$(uname -s)"
+        ARCH="$(host_arch)"
+
+        if is_android; then
+            echo "Android/Termux detected: no prebuilt binary matches (the Linux builds link the glibc loader)."
+            echo "Installing from source instead..."
+            if ! has_bun; then
+                install_bun
+            fi
             require_bun_version
             install_via_bun
-        else
-            if has_bun; then
-                echo "Detected bun with architecture '$(bun_arch)' on a '$(host_arch)' host; using the prebuilt binary instead."
-            fi
-            install_binary
+            exit 0
         fi
+
+        case "$OS-$ARCH" in
+            Linux-x64|Linux-arm64|Darwin-x64|Darwin-arm64)
+                install_binary
+                ;;
+            *)
+                echo "No prebuilt binary for $OS-$ARCH; falling back to source install..."
+                if ! has_bun; then
+                    install_bun
+                fi
+                require_bun_version
+                install_via_bun
+                ;;
+        esac
         ;;
 esac

@@ -1,12 +1,12 @@
-# Mars Coding Agent Installer for Windows
-# Usage: irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1 | iex
+﻿# Mars Coding Agent Installer for Windows
+# Usage: irm https://getmars.eu.cc/install.ps1 | iex
 #
 # Or with options:
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1))) -Source
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1))) -Binary
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1))) -Source -Ref v3.20.1
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1))) -Source -Ref main
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1))) -Binary -Ref v3.20.1
+#   & ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Source
+#   & ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Binary
+#   & ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Source -Ref v0.1.0
+#   & ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Source -Ref main
+#   & ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Binary -Ref v0.1.0
 
 param(
     [switch]$Source,
@@ -26,7 +26,13 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
 
 $Repo = "MarsAI-org/mars-agent"
 $Package = "@marsai-org/coding-agent"
-$InstallDir = if ($env:MARS_INSTALL_DIR) { $env:MARS_INSTALL_DIR } elseif ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\mars" }
+$InstallDir = if ($env:MARS_INSTALL_DIR) {
+    $env:MARS_INSTALL_DIR
+} elseif ($env:PI_INSTALL_DIR) {
+    $env:PI_INSTALL_DIR
+} else {
+    "$env:LOCALAPPDATA\mars"
+}
 # Windows PowerShell 5.1 (.NET Framework) does not reliably resolve
 # [System.Runtime.InteropServices.RuntimeInformation] without an
 # assembly-qualified name, while PowerShell 7+ (Core) loads that type from a
@@ -129,19 +135,44 @@ function Test-GitLfsInstalled {
 }
 
 function Find-BashShell {
-    # Check Git Bash first (most common on Windows)
-    $gitBash = "C:\Program Files\Git\bin\bash.exe"
-    if (Test-Path $gitBash) {
-        return $gitBash
+    # Git Bash first (most common on Windows), including per-user installs that sit
+    # neither under C:\Program Files nor on PATH.
+    $candidates = @(
+        "C:\Program Files\Git\bin\bash.exe",
+        "C:\Program Files (x86)\Git\bin\bash.exe",
+        (Join-Path $env:LOCALAPPDATA "Programs\Git\bin\bash.exe")
+    )
+    foreach ($candidate in $candidates) {
+        if ($candidate -and (Test-Path -LiteralPath $candidate)) {
+            return $candidate
+        }
     }
 
-    # Check bash.exe on PATH (Cygwin, MSYS2, WSL)
+    # Ask git where it lives: <Git>\mingw64\libexec\git-core -> <Git>\bin\bash.exe.
+    if (Test-GitInstalled) {
+        $execPath = [string](Invoke-Native { git --exec-path } | Select-Object -First 1)
+        if ($execPath) {
+            $gitRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $execPath.Trim()))
+            $gitBash = Join-Path $gitRoot "bin\bash.exe"
+            if (Test-Path -LiteralPath $gitBash) {
+                return $gitBash
+            }
+        }
+    }
+
+    # Then bash.exe on PATH, but never the WSL shim: `C:\Windows\System32\bash.exe`
+    # launches a Linux distribution whose filesystem namespace is not the one the
+    # agent will be editing, so handing it to settings.json made every shell call
+    # see a different tree (and fail outright with no distro installed).
     try {
-        $bashCmd = Get-Command bash.exe -ErrorAction Stop
-        return $bashCmd.Source
+        $bashCmd = Get-Command bash.exe -ErrorAction Stop | Select-Object -First 1
+        if ($bashCmd -and $bashCmd.Source -and $bashCmd.Source -notmatch '(?i)\\Windows\\System32\\') {
+            return $bashCmd.Source
+        }
     } catch {
         return $null
     }
+    return $null
 }
 
 function Configure-BashShell {
@@ -281,17 +312,34 @@ function Install-ViaBun {
     Write-Host "Run 'mars' to get started!"
 }
 
+function Assert-SafeRef {
+    param([string]$Value)
+    if ($Value -and ($Value -match '(^-|\.\.|[\s\?\*\#\;`\$\\])')) {
+        throw "Invalid ref: $Value"
+    }
+}
+
+function Get-GitHubHeaders {
+    $headers = @{ "User-Agent" = "Mars-Installer" }
+    if ($env:GITHUB_TOKEN) {
+        $headers["Authorization"] = "token $($env:GITHUB_TOKEN)"
+    }
+    return $headers
+}
+
 function Install-Binary {
+    $headers = Get-GitHubHeaders
     if ($Ref) {
+        Assert-SafeRef $Ref
         Write-Host "Fetching release $Ref..."
         try {
-            $Release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/tags/$Ref" -TimeoutSec 60
+            $Release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/tags/$Ref" -Headers $headers -TimeoutSec 60
         } catch {
             throw "Release tag not found: $Ref`nFor branch/commit installs, use -Source with -Ref."
         }
     } else {
         Write-Host "Fetching latest release..."
-        $Release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -TimeoutSec 60
+        $Release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repo/releases/latest" -Headers $headers -TimeoutSec 60
     }
 
     $Latest = $Release.tag_name
@@ -304,19 +352,110 @@ function Install-Binary {
 
     # Download binary
     $BinaryUrl = "https://github.com/$Repo/releases/download/$Latest/$BinaryName"
+    $ChecksumUrl = "https://github.com/$Repo/releases/download/$Latest/SHA256SUMS.txt"
     Write-Host "Downloading $BinaryName..."
     $OutPath = Join-Path $InstallDir "mars.exe"
-    Invoke-WebRequest -Uri $BinaryUrl -OutFile $OutPath -TimeoutSec 900
+    # Stage the download beside the destination using a `.exe` suffix so Windows
+    # PowerShell can execute the smoke test directly via CreateProcess (non-PATHEXT
+    # suffixes like `.download` fail or open via ShellExecuteEx). Swap into place
+    # only after checksum verification and `--version` succeed.
+    $StagedPath = Join-Path $InstallDir "mars.$PID.download.exe"
+    $BackupPath = Join-Path $InstallDir "mars.$PID.old.exe"
+    try {
+        # Invoke-WebRequest renders a transfer progress bar by default; whether
+        # that is useful is the host's call, since a non-interactive host sets
+        # $ProgressPreference = 'SilentlyContinue' itself.
+        Invoke-WebRequest -Uri $BinaryUrl -Headers $headers -OutFile $StagedPath -TimeoutSec 900
+        $DownloadedInfo = Get-Item -LiteralPath $StagedPath
+        Write-Host ("Downloaded {0} ({1:N0} bytes)" -f $BinaryName, $DownloadedInfo.Length)
+
+        Write-Host "Verifying checksum..."
+        # Fail closed. SHA256SUMS.txt ships in the same release as the binary, so it
+        # proves the download was not corrupted or swapped in transit — skipping it
+        # silently removes even that. This never sits inside a `catch`: the
+        # checksum-mismatch `throw` below used to be caught by the same `catch`
+        # that reports a fetch failure, so a corrupted binary only produced a
+        # warning and stayed installed. The surrounding `try` has a `finally` for
+        # staged-file cleanup only, so every failure here still propagates.
+        $AllowUnverified = $env:MARS_ALLOW_UNVERIFIED -eq "1"
+        $ExpectedSha = $null
+        $VerifyProblem = $null
+        try {
+            $ChecksumsText = Invoke-RestMethod -Uri $ChecksumUrl -Headers $headers -TimeoutSec 30
+            $Match = $ChecksumsText -split "`r?`n" | Where-Object { $_ -match "\s+\*?([\\/].*[\\/])?$([regex]::Escape($BinaryName))$" } | Select-Object -First 1
+            if ($Match) {
+                $ExpectedSha = ($Match -split "\s+")[0].Trim().ToLowerInvariant()
+            } else {
+                $VerifyProblem = "binary $BinaryName is not listed in SHA256SUMS.txt"
+            }
+        } catch {
+            $VerifyProblem = "could not fetch SHA256SUMS.txt: $_"
+        }
+
+        if (-not $VerifyProblem) {
+            $ActualSha = (Get-FileHash -Path $StagedPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($ExpectedSha -ne $ActualSha) {
+                throw "Checksum verification failed for $BinaryName!`nExpected: $ExpectedSha`nActual:   $ActualSha`nThe staged download was discarded; $OutPath was left untouched."
+            }
+            Write-Host "[OK] Checksum verified ($ExpectedSha)" -ForegroundColor Green
+        } elseif ($AllowUnverified) {
+            Write-Host "[WARN] $VerifyProblem; continuing because MARS_ALLOW_UNVERIFIED=1." -ForegroundColor Yellow
+        } else {
+            throw "$VerifyProblem. Refusing to install an unverified binary. Set MARS_ALLOW_UNVERIFIED=1 to override.`nThe staged download was discarded; $OutPath was left untouched."
+        }
+
+        # Prove the binary starts before it replaces anything. The POSIX installer
+        # has done this for a while; without it a Windows run reported success for
+        # an .exe that immediately failed, and the previously working install was
+        # already gone by then.
+        $SmokeOutput = Invoke-Native { & $StagedPath --version 2>&1 }
+        if ($LASTEXITCODE -ne 0) {
+            throw "mars.exe downloaded and verified, but cannot start:`n$SmokeOutput`nThe staged download was discarded; $OutPath was left untouched."
+        }
+
+        # On Windows, overwriting a running .exe fails with sharing violation,
+        # whereas renaming the running image aside and moving the new .exe into
+        # place succeeds. Clean up any stale backup on best effort.
+        if (Test-Path -LiteralPath $OutPath) {
+            Move-Item -LiteralPath $OutPath -Destination $BackupPath -Force
+        }
+        try {
+            Move-Item -LiteralPath $StagedPath -Destination $OutPath -Force
+        } catch {
+            if ((Test-Path -LiteralPath $BackupPath) -and -not (Test-Path -LiteralPath $OutPath)) {
+                Move-Item -LiteralPath $BackupPath -Destination $OutPath -Force -ErrorAction SilentlyContinue
+            }
+            throw
+        }
+        Remove-Item -Force -LiteralPath $BackupPath -ErrorAction SilentlyContinue
+    } finally {
+        if (Test-Path -LiteralPath $StagedPath) {
+            Remove-Item -Force -LiteralPath $StagedPath -ErrorAction SilentlyContinue
+        }
+    }
 
     Write-Host ""
     Write-Host "[OK] Installed mars to $OutPath" -ForegroundColor Green
 
-    # Add to PATH if not already there
+    # Add to PATH if not already there (exact segment match, avoiding empty segments)
     $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
-    $needsRestart = $UserPath -notlike "*$InstallDir*"
+    $NormalizedInstallDir = $InstallDir.TrimEnd('\', '/').ToLowerInvariant()
+    $PathEntries = @()
+    if ($UserPath) {
+        $PathEntries = $UserPath -split ';' | Where-Object { $_ -and $_.Trim() -ne "" }
+    }
+    $AlreadyInPath = $false
+    foreach ($entry in $PathEntries) {
+        if ($entry.Trim().TrimEnd('\', '/').ToLowerInvariant() -eq $NormalizedInstallDir) {
+            $AlreadyInPath = $true
+            break
+        }
+    }
+    $needsRestart = -not $AlreadyInPath
     if ($needsRestart) {
         Write-Host "Adding $InstallDir to PATH..."
-        [Environment]::SetEnvironmentVariable("Path", "$UserPath;$InstallDir", "User")
+        $NewPath = if ($PathEntries.Count -gt 0) { ($PathEntries + $InstallDir) -join ';' } else { $InstallDir }
+        [Environment]::SetEnvironmentVariable("Path", $NewPath, "User")
     }
 
     Configure-BashShell
@@ -329,6 +468,9 @@ function Install-Binary {
 }
 
 # Main logic
+if ($Ref) {
+    Assert-SafeRef $Ref
+}
 if ($Ref -and -not $Source -and -not $Binary) {
     $Source = $true
 }
@@ -342,11 +484,6 @@ if ($Source) {
 } elseif ($Binary) {
     Install-Binary
 } else {
-    # Default: use bun if available, otherwise binary
-    if (Test-BunInstalled) {
-        Assert-BunVersion $MinimumBunVersion
-        Install-ViaBun
-    } else {
-        Install-Binary
-    }
+    # Default: prefer prebuilt binary on supported Windows architectures (matching POSIX installer)
+    Install-Binary
 }

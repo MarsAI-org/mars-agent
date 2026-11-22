@@ -22,7 +22,7 @@
 #     FROM ${PI_BASE} AS mars-base
 ###############################################################################
 
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.3
 
 ############################
 # 1) natives-builder — Rust + Bun → pi_natives.linux-<arch>.node (local cargo)
@@ -166,8 +166,9 @@ RUN pip install /tmp/wheels/omp_rpc-*.whl && rm -rf /tmp/wheels
 # Legal payload for the reusable SDKs and the Mars product installed in this image.
 COPY LICENSE  THIRD-PARTY-NOTICES.txt /usr/share/doc/mars/
 
-# `mars` shim — runs the coding-agent CLI against $PI_ROOT via Bun. Derived
-# images override PI_ROOT to point at wherever their pi source lives.
+# `mars` shim (plus `omp` backwards-compatibility symlink) — runs the
+# coding-agent CLI against $PI_ROOT via Bun. Derived images override PI_ROOT to
+# point at wherever their pi source lives.
 RUN printf '%s\n' \
     '#!/usr/bin/env bash' \
     'set -euo pipefail' \
@@ -178,7 +179,8 @@ RUN printf '%s\n' \
     'fi' \
     'exec bun "$PI_ROOT/packages/coding-agent/src/cli.ts" "$@"' \
     > /usr/local/bin/mars \
-    && chmod +x /usr/local/bin/mars
+    && chmod +x /usr/local/bin/mars \
+    && ln -s /usr/local/bin/mars /usr/local/bin/omp
 
 ############################
 # 4) mars-runtime — mars-base + mars source + bun install (DEFAULT)
@@ -212,6 +214,18 @@ COPY . /pi/
 # Regenerate the tool views that `--ignore-scripts` skipped above. The root
 # package.json's `prepare` script normally handles these on a vanilla install.
 RUN bun --cwd=packages/coding-agent run gen:tool-views
+
+# Run the standalone runtime image as an unprivileged user. Derived images that
+# manage their own UID isolation (such as Dockerfile.robomp) explicitly switch
+# back to `USER root` before installing packages or creating slot users.
+RUN groupadd --gid 1000 mars \
+    && useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash mars \
+    && mkdir -p /home/mars/.mars /work \
+    && chown -R mars:mars /home/mars /work \
+    && chmod -R a+rX /pi
+
+ENV HOME=/home/mars
+USER mars
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/mars"]
 CMD ["--help"]

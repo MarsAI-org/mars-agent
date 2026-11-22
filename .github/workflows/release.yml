@@ -1,22 +1,32 @@
-name: Release
+name: Release (Manual Fallback)
+
+# Manual workflow_dispatch fallback / dry-run pipeline (glibc, darwin, win32 only).
+#
+# `ci.yml` is the single authoritative release pipeline for `v*` tags: it runs
+# full validation, Bazel musl cross-targets, macOS Developer ID signing and
+# notarization, browser-relay packaging, THIRD-PARTY-NOTICES.txt, and curated
+# release notes. This workflow never triggers on tag pushes; it exists only for
+# manual dry-runs or emergency non-Bazel fallback builds.
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run (build and test without publishing GitHub Release)"
+        description: "Dry run (build and test without publishing GitHub Release or npm leaves)"
         required: true
         type: boolean
         default: true
+      release_tag:
+        description: "Explicit semver release tag (e.g. v0.3.2) required when dry_run is false"
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-manual-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -30,13 +40,22 @@ jobs:
     steps:
       - id: meta
         shell: bash
+        env:
+          INPUT_DRY_RUN: ${{ inputs.dry_run }}
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG="v0.1.0-dryrun"
-            DRY_RUN="${{ inputs.dry_run }}"
+          set -euo pipefail
+          DRY_RUN="${INPUT_DRY_RUN:-true}"
+          TAG="${INPUT_RELEASE_TAG:-}"
+          if [ "$DRY_RUN" = "true" ]; then
+            TAG="${TAG:-v0.1.0-dryrun}"
           else
-            TAG="${GITHUB_REF#refs/tags/}"
-            DRY_RUN="false"
+            # Never publish a placeholder tag such as v0.1.0-dryrun; require an
+            # explicit semver vX.Y.Z tag for any live manual release.
+            if ! [[ "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[A-Za-z0-9.]+)?$ ]] || [[ "$TAG" == *-dryrun* ]]; then
+              echo "::error::Non-dry-run release requires an explicit semver release_tag (e.g. v0.3.2); refusing '$TAG'"
+              exit 1
+            fi
           fi
           echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "is_dry_run=$DRY_RUN" >> "$GITHUB_OUTPUT"
@@ -95,23 +114,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Manual fallback covers glibc/darwin/win32 only. Linux musl targets
+        # require Bazel musl cross-compiled native addons and are built
+        # exclusively by the authoritative release pipeline in `ci.yml`.
         include:
           - os: ubuntu-22.04
             target_id: linux-x64
             native_id: linux-x64
             binary_name: mars-linux-x64
-          - os: ubuntu-22.04
-            target_id: linux-musl-x64
-            native_id: linux-x64
-            binary_name: mars-linux-musl-x64
           - os: ubuntu-24.04-arm
             target_id: linux-arm64
             native_id: linux-arm64
             binary_name: mars-linux-arm64
-          - os: ubuntu-24.04-arm
-            target_id: linux-musl-arm64
-            native_id: linux-arm64
-            binary_name: mars-linux-musl-arm64
           - os: macos-15-intel
             target_id: darwin-x64
             native_id: darwin-x64
@@ -159,17 +173,9 @@ jobs:
           - os: ubuntu-22.04
             target_id: linux-x64
             binary_name: mars-linux-x64
-          - os: ubuntu-22.04
-            target_id: linux-musl-x64
-            binary_name: mars-linux-musl-x64
-            alpine: true
           - os: ubuntu-24.04-arm
             target_id: linux-arm64
             binary_name: mars-linux-arm64
-          - os: ubuntu-24.04-arm
-            target_id: linux-musl-arm64
-            binary_name: mars-linux-musl-arm64
-            alpine: true
           - os: macos-15-intel
             target_id: darwin-x64
             binary_name: mars-darwin-x64
@@ -189,31 +195,38 @@ jobs:
           name: binary-${{ matrix.target_id }}
           path: bin
       - name: Test (POSIX)
-        if: runner.os != 'Windows' && !matrix.alpine
+        if: runner.os != 'Windows'
         shell: bash
+        env:
+          BINARY: bin/${{ matrix.binary_name }}
         run: |
-          chmod +x bin/${{ matrix.binary_name }}
-          bin/${{ matrix.binary_name }} --version
-          bin/${{ matrix.binary_name }} --help
-          bin/${{ matrix.binary_name }} --platform-check --json
-      - name: Test (Alpine Docker)
-        if: matrix.alpine
-        shell: bash
-        run: |
-          chmod +x bin/${{ matrix.binary_name }}
-          docker run --rm -v "$(pwd)/bin/${{ matrix.binary_name }}:/usr/local/bin/mars:ro" alpine:3.22 sh -ec '
-            apk add --no-cache libstdc++ libgcc >/dev/null
-            mars --version
-            mars --help
-            mars --platform-check --json
-          '
+          set -euo pipefail
+          chmod +x "$BINARY"
+          runtime_dir="$(mktemp -d)"
+          HOME="$runtime_dir/home" XDG_DATA_HOME="$runtime_dir/xdg" "$BINARY" --version
+          HOME="$runtime_dir/home" XDG_DATA_HOME="$runtime_dir/xdg" "$BINARY" --help
+          HOME="$runtime_dir/home" XDG_DATA_HOME="$runtime_dir/xdg" "$BINARY" --smoke-test
+          HOME="$runtime_dir/home" XDG_DATA_HOME="$runtime_dir/xdg" "$BINARY" --platform-check --json
       - name: Test (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          BINARY: bin/${{ matrix.binary_name }}
         run: |
-          & .\bin\${{ matrix.binary_name }} --version
-          & .\bin\${{ matrix.binary_name }} --help
-          & .\bin\${{ matrix.binary_name }} --platform-check --json
+          $runtimeDir = Join-Path $env:RUNNER_TEMP "mars-smoke"
+          $env:HOME = Join-Path $runtimeDir "home"
+          $env:USERPROFILE = $env:HOME
+          $env:LOCALAPPDATA = Join-Path $runtimeDir "local"
+          $env:XDG_DATA_HOME = Join-Path $runtimeDir "xdg"
+          New-Item -ItemType Directory -Force -Path $env:HOME, $env:LOCALAPPDATA, $env:XDG_DATA_HOME | Out-Null
+          & $env:BINARY --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $env:BINARY --help
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $env:BINARY --smoke-test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $env:BINARY --platform-check --json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
   publish_native_leaves:
     name: Publish native leaf packages
@@ -264,6 +277,7 @@ jobs:
       - name: Publish native leaf packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          MARS_PUBLISH_PROVENANCE: "1"
         run: |
           set -uo pipefail
           logs="$RUNNER_TEMP/native-leaf-logs"

@@ -9,7 +9,7 @@
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const LLM_URL = (
   process.env.MARS_LLM_URL ||
@@ -18,7 +18,7 @@ const LLM_URL = (
   ""
 ).replace(/\/+$/, "");
 
-const LLM_KEY = process.env.MARS_LLM_API_KEY || process.env.OPENAI_API_KEY || "mars-bot-secret";
+const LLM_KEY = process.env.MARS_LLM_API_KEY || process.env.OPENAI_API_KEY || "";
 const MODEL = process.env.MARS_MODEL || process.env.LLM_MODEL || "gpt-4o";
 const GITHUB_TOKEN = process.env.MARS_BOT_TOKEN || process.env.GITHUB_TOKEN;
 const REPO_TYPE = process.env.REPO_TYPE || "unknown";
@@ -29,17 +29,20 @@ if (!LLM_URL) {
   // Any OpenAI-compatible endpoint works; there is no bundled default.
   throw new Error("MARS_LLM_URL (or OPENAI_BASE_URL / API_BASE) must be set");
 }
+if (!LLM_KEY) {
+  throw new Error("MARS_LLM_API_KEY (or OPENAI_API_KEY) must be set");
+}
 
-function run(cmd, cwd = process.cwd(), ignoreError = false) {
+function runFile(file, args, opts = {}) {
   try {
-    return execSync(cmd, {
-      cwd,
+    return execFileSync(file, args, {
+      cwd: opts.cwd || process.cwd(),
       encoding: "utf8",
       stdio: ["pipe", "pipe", "pipe"],
       maxBuffer: 10 * 1024 * 1024,
     }).trim();
   } catch (error) {
-    if (ignoreError) {
+    if (opts.ignoreError) {
       return (error.stdout || "") + "\n" + (error.stderr || error.message);
     }
     throw error;
@@ -61,6 +64,7 @@ async function callChatCompletion(messages) {
       Authorization: `Bearer ${LLM_KEY}`,
     },
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(120_000),
   });
 
   if (!response.ok) {
@@ -84,15 +88,14 @@ async function main() {
     console.error("Missing PR_NUMBER. Exiting.");
     process.exit(1);
   }
-
-  // Fetch PR Diff
-  let diff = "";
-  try {
-    diff = run(`gh pr diff ${PR_NUMBER} --repo ${GITHUB_REPOSITORY}`);
-  } catch (err) {
-    console.warn("Could not get diff via gh CLI, falling back to git diff:", err.message);
-    diff = run("git diff origin/main...HEAD", process.cwd(), true);
+  if (!GITHUB_REPOSITORY) {
+    console.error("Missing GITHUB_REPOSITORY. Exiting.");
+    process.exit(1);
   }
+
+  // Fetch PR Diff via GitHub API (the checkout is pinned to the base commit, so
+  // a local git diff cannot produce the PR diff; fail loudly if gh pr diff fails).
+  const diff = runFile("gh", ["pr", "diff", String(PR_NUMBER), "--repo", GITHUB_REPOSITORY]);
 
   if (!diff || diff.trim().length === 0) {
     console.log("No diff found for PR. Exiting.");
@@ -157,12 +160,12 @@ Clear, concrete recommendations (with code snippets if applicable). If the PR is
   fs.writeFileSync(reviewFile, reviewContent + "\n\n---\n*Reviewed autonomously by Mars PR Reviewer*", "utf8");
 
   try {
-    run(`gh pr review ${PR_NUMBER} --repo ${GITHUB_REPOSITORY} --comment --body-file .bot-pr-review.md`);
+    runFile("gh", ["pr", "review", String(PR_NUMBER), "--repo", GITHUB_REPOSITORY, "--comment", "--body-file", ".bot-pr-review.md"]);
     console.log(`Successfully posted auto-review to PR #${PR_NUMBER}!`);
   } catch (err) {
     console.warn("Failed to post PR review using 'gh pr review', trying issue comment fallback:", err.message);
     try {
-      run(`gh issue comment ${PR_NUMBER} --repo ${GITHUB_REPOSITORY} --body-file .bot-pr-review.md`);
+      runFile("gh", ["issue", "comment", String(PR_NUMBER), "--repo", GITHUB_REPOSITORY, "--body-file", ".bot-pr-review.md"]);
       console.log(`Posted review as comment to PR #${PR_NUMBER}.`);
     } catch (commentErr) {
       console.error("Failed to post comment fallback:", commentErr.message);

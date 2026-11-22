@@ -17,7 +17,7 @@
 ###############################################################################
 
 ARG PI_BASE=mars/agent:dev
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.3
 
 ############################
 # 1) web-builder — Bun + Vite, builds the SolidJS dashboard bundle.
@@ -31,7 +31,7 @@ COPY python/robomp/web/package.json ./python/robomp/web/package.json
 # Root package.json declares patchedDependencies, so the patch file must be
 # present before any root-level `bun install` (even a filtered one).
 COPY patches/*.patch ./patches/
-RUN bun install --filter robomp-web
+RUN bun install --filter robomp-web --frozen-lockfile --ignore-scripts
 COPY --exclude=node_modules --exclude=dist python/robomp/web/ ./python/robomp/web/
 RUN bun --cwd=python/robomp/web run build
 
@@ -39,6 +39,11 @@ RUN bun --cwd=python/robomp/web run build
 # 2) runtime — pi-base + robomp src + web bundle + pip install
 ############################
 FROM ${PI_BASE} AS runtime
+
+# `mars-runtime` runs as non-root `USER mars`; switch back to root here for
+# package installation and because `robomp-entrypoint` creates/chowns isolated
+# per-slot `omp-*` users at container startup.
+USER root
 
 # robomp runs against the host mars checkout mounted at /work/pi read-only.
 ENV PI_ROOT=/work/pi
@@ -51,8 +56,9 @@ COPY LICENSE THIRD-PARTY-NOTICES.txt /usr/share/doc/robomp/
 
 # robomp itself. Drop the Vite-built dashboard into the package tree before
 # `pip install` so it lands in the installed wheel (`static/**/*` is declared
-# as package-data in pyproject.toml).
-COPY python/robomp/pyproject.toml ./
+# as package-data in pyproject.toml). README.md and LICENSE are required by
+# pyproject.toml (`readme = "README.md"`, `license-files = ["LICENSE"]`).
+COPY python/robomp/pyproject.toml python/robomp/README.md python/robomp/LICENSE ./
 COPY python/robomp/src/ ./src/
 COPY --from=web-builder /work/python/robomp/web/dist/ ./src/static/
 

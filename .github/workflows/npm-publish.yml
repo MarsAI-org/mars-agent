@@ -41,8 +41,10 @@ on:
 permissions:
   contents: read
 
+# Shared across all npm write workflows (publish, trusted publish, republish,
+# dist-tag, token-probe) so registry mutations can never race each other.
 concurrency:
-  group: npm-publish-${{ github.ref }}
+  group: npm-registry-write
   cancel-in-progress: false
 
 jobs:
@@ -85,8 +87,13 @@ jobs:
           DISPATCH_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
           DISPATCH_DIST_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.dist_tag || 'next' }}
         run: |
+          set -euo pipefail
           echo "PACK_DIR=$RUNNER_TEMP/mars-npm-pack" >> "$GITHUB_ENV"
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if ! [[ "$DISPATCH_DIST_TAG" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+              echo "::error::Invalid dist_tag '$DISPATCH_DIST_TAG' (must match ^[a-zA-Z0-9._-]+$)"
+              exit 1
+            fi
             echo "dry_run=$DISPATCH_DRY_RUN" >> "$GITHUB_OUTPUT"
             echo "dist_tag=$DISPATCH_DIST_TAG" >> "$GITHUB_OUTPUT"
           else
@@ -128,8 +135,8 @@ jobs:
         run: |
           set -uo pipefail
           if [ -z "${NPM_TOKEN:-}" ]; then
-            echo "::warning title=npm publish skipped::NPM_TOKEN is missing, so nothing was published. Configure the secret and re-run."
-            exit 0
+            echo "::error title=npm publish failed::NPM_TOKEN is missing on a live publish run. Configure the secret and re-run."
+            exit 1
           fi
           manifest="$PACK_DIR/publish-manifest.tsv"
           if [ ! -f "$manifest" ]; then

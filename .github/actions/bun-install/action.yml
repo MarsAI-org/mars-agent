@@ -24,6 +24,10 @@ runs:
              echo "::error::could not read pinned bun version from package.json packageManager"
              exit 1
            fi
+           if ! [[ "$want" =~ ^(>=)?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+             echo "::error::invalid bun version specifier in package.json packageManager: '$want'"
+             exit 1
+           fi
            case "$want" in
              '>='*) floor="${want#>=}"; install="latest" ;;
              *)     floor="$want";      install="bun-v$want" ;;
@@ -65,6 +69,8 @@ runs:
       - name: Install pinned bun when missing or mismatched
         if: steps.env.outputs.setup_bun == 'true'
         shell: bash
+        env:
+           BUN_INSTALL_TAG: ${{ steps.env.outputs.bun_install }}
         run: |
            # On omp-kata the shared store PVC is mounted under ~/.bun, so ~/.bun
            # itself can be owned by root and unwritable. Fall back to a job-local
@@ -77,9 +83,11 @@ runs:
              echo "BUN_INSTALL=${BUN_INSTALL}" >> "$GITHUB_ENV"
              echo "BUN_INSTALL_CACHE_DIR=${BUN_INSTALL_CACHE_DIR:-${HOME}/.bun/install/cache}" >> "$GITHUB_ENV"
            fi
-           # Unquoted on purpose: an empty tag (floor pin) must pass no argument, which the
-           # script reads as "latest".
-           curl -fsSL https://bun.sh/install | bash -s -- ${{ steps.env.outputs.bun_install }}
+           if [ -n "${BUN_INSTALL_TAG:-}" ]; then
+             curl -fsSL https://bun.sh/install | bash -s -- "$BUN_INSTALL_TAG"
+           else
+             curl -fsSL https://bun.sh/install | bash
+           fi
            echo "${BUN_INSTALL}/bin" >> "$GITHUB_PATH"
 
       # Off-infra (GitHub-hosted): actions/cache for the bun store, split into

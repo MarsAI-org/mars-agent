@@ -678,7 +678,10 @@ async function publishNativeLeafPackage(tag: string): Promise<string[]> {
 	const pkgDir = path.join(repoRoot, pkg.dir);
 	const coreManifest = (await Bun.file(path.join(pkgDir, "package.json")).json()) as PackageManifest;
 	if (typeof coreManifest.version !== "string") throw new Error(`Missing version in ${pkg.dir}/package.json`);
-	await stageLegalPayloads(pkgDir, coreManifest.license ?? "MIT", writeManifests);
+	// Do NOT stage legal payloads into the shared `pkgDir` here: leaf publishers
+	// run in parallel, so mutating `packages/natives/` races across processes.
+	// `generateNpmPackages` resolves legal payloads directly into each isolated
+	// `packages/natives/npm/<tag>` directory.
 	const leaves = await generateNpmPackages({
 		packageDir: pkgDir,
 		dryRun: isDryRun,

@@ -38,8 +38,10 @@ on:
 permissions:
   contents: read
 
+# Shared across all npm write workflows (publish, trusted publish, republish,
+# dist-tag, token-probe) so registry mutations can never race each other.
 concurrency:
-  group: npm-publish-trusted-${{ github.ref }}
+  group: npm-registry-write
   cancel-in-progress: false
 
 jobs:
@@ -79,6 +81,11 @@ jobs:
           DISPATCH_DRY_RUN: ${{ inputs.dry_run }}
           DISPATCH_DIST_TAG: ${{ inputs.dist_tag }}
         run: |
+          set -euo pipefail
+          if ! [[ "$DISPATCH_DIST_TAG" =~ ^[a-zA-Z0-9._-]+$ ]]; then
+            echo "::error::Invalid dist_tag '$DISPATCH_DIST_TAG' (must match ^[a-zA-Z0-9._-]+$)"
+            exit 1
+          fi
           echo "PACK_DIR=$RUNNER_TEMP/mars-npm-pack" >> "$GITHUB_ENV"
           echo "dry_run=$DISPATCH_DRY_RUN" >> "$GITHUB_OUTPUT"
           echo "dist_tag=$DISPATCH_DIST_TAG" >> "$GITHUB_OUTPUT"

@@ -39,10 +39,10 @@ on:
 permissions:
   contents: read
 
-# Same version-scoped group as the publish/republish workflows: a tag write must
-# not race a release that is publishing these packages.
+# Shared across all npm write workflows (publish, trusted publish, republish,
+# dist-tag, token-probe) so a tag write cannot race an in-flight publish.
 concurrency:
-  group: npm-dist-tag
+  group: npm-registry-write
   cancel-in-progress: false
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install a publishing npm
         # dist-tag writes under a granular token need npm >= 11.21.0.
-        run: npm install -g npm@11.17.0
+        run: npm install -g npm@11.21.0
       - name: Dist-tag
         shell: bash
         env:

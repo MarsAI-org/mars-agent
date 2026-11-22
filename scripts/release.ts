@@ -258,6 +258,39 @@ async function cmdDeps(): Promise<void> {
 	console.log("let CI go green BEFORE the next release; `release` no longer refreshes third-party deps.");
 }
 
+export function updatePackageJsonVersion(raw: string, version: string): string {
+	const parsed = JSON.parse(raw) as Record<string, unknown>;
+	if (typeof parsed.version !== "string") {
+		throw new Error("package.json is missing a string top-level version field");
+	}
+	const indentMatch = raw.match(/^\{\r?\n([ \t]+)"/);
+	const indent = indentMatch ? indentMatch[1] : "\t";
+	parsed.version = version;
+	return `${JSON.stringify(parsed, null, indent)}\n`;
+}
+
+export function updateWorkspaceCargoVersion(toml: string, version: string): string {
+	const lines = toml.split(/\r?\n/);
+	let inWorkspacePackage = false;
+	let replaced = false;
+	for (let i = 0; i < lines.length; i++) {
+		const trimmed = lines[i].trim();
+		if (trimmed.startsWith("[")) {
+			inWorkspacePackage = trimmed === "[workspace.package]";
+			continue;
+		}
+		if (inWorkspacePackage && /^version\s*=\s*"[^"]*"/.test(lines[i])) {
+			lines[i] = lines[i].replace(/^(\s*version\s*=\s*)"[^"]*"/, `$1"${version}"`);
+			replaced = true;
+			break;
+		}
+	}
+	if (!replaced) {
+		throw new Error('Could not find `version = "..."` under [workspace.package] in Cargo.toml');
+	}
+	return lines.join("\n");
+}
+
 async function cmdRelease(versionOrBump: string): Promise<void> {
 	console.log("\n=== Release Script ===\n");
 	// Validate explicit versions before any compare: the shared compareVersions
@@ -344,7 +377,10 @@ async function cmdRelease(versionOrBump: string): Promise<void> {
 		publicPkgPaths.push(pkgPath);
 	}
 
-	await $`sd '"version": "[^"]+"' ${`"version": "${version}"`} ${publicPkgPaths}`;
+	for (const pkgPath of publicPkgPaths) {
+		const raw = await Bun.file(pkgPath).text();
+		await Bun.write(pkgPath, updatePackageJsonVersion(raw, version));
+	}
 
 	// Verify
 	console.log("  Verifying versions:");
@@ -363,7 +399,9 @@ async function cmdRelease(versionOrBump: string): Promise<void> {
 
 	// 3. Update Rust workspace version
 	console.log(`Updating Rust workspace version to ${version}…`);
-	await $`sd '^version = "[^"]+"' ${`version = "${version}"`} Cargo.toml`;
+	const rawCargoToml = await Bun.file("Cargo.toml").text();
+	const updatedCargoToml = updateWorkspaceCargoVersion(rawCargoToml, version);
+	await Bun.write("Cargo.toml", updatedCargoToml);
 
 	// Verify
 	const cargoToml = await Bun.file("Cargo.toml").text();

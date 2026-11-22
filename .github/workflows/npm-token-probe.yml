@@ -23,10 +23,10 @@ on:
 permissions:
   contents: read
 
-# Shared with npm-republish.yml: both remove the same leaf, so they must not
-# overlap on one version.
+# Shared across all npm write workflows (publish, trusted publish, republish,
+# dist-tag, token-probe) so registry mutations can never race each other.
 concurrency:
-  group: npm-version-${{ inputs.version }}
+  group: npm-registry-write
   cancel-in-progress: false
 
 jobs:

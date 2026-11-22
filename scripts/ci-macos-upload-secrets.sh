@@ -74,9 +74,15 @@ fi
 # into a throwaway keychain — and confirm a Developer ID identity is inside, so a
 # typo or wrong cert fails here instead of in CI. (We avoid `openssl pkcs12`:
 # OpenSSL 3.x can't read the legacy RC2-40-CBC algorithm Keychain Access still
-# uses, which `security import` handles fine.)
+# uses, which `security import` handles fine. Note: macOS `security import` has
+# no stdin/file flag for the PKCS#12 passphrase and requires `-P`, so run this
+# only on a single-user workstation and keep xtrace disabled.)
 validate_p12=$(
-	kc="$(mktemp -d)/validate.keychain-db"
+	set +x
+	tmp="$(mktemp -d)"
+	chmod 700 "$tmp"
+	kc="$tmp/validate.keychain-db"
+	trap 'security delete-keychain "$kc" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
 	kp="$(openssl rand -hex 16)"
 	security create-keychain -p "$kp" "$kc" >/dev/null 2>&1
 	security unlock-keychain -p "$kp" "$kc" >/dev/null 2>&1
@@ -84,7 +90,6 @@ validate_p12=$(
 		&& security find-identity -v -p codesigning "$kc" 2>/dev/null | grep -q "Developer ID Application"; then
 		echo ok
 	fi
-	security delete-keychain "$kc" >/dev/null 2>&1 || true
 )
 [[ "$validate_p12" == ok ]] \
 	|| die "the .p12 did not import with the password in p12-password.txt, or holds no Developer ID Application identity"

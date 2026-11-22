@@ -18,9 +18,10 @@ name: npm republish
 # The `latest` dist-tag points at an older version for the whole window between
 # the two, so run this when a broken install is worse than a missing one.
 #
-# CREDENTIAL: NPM_TOKEN is referenced by name only, never printed. Unlike
-# npm-publish.yml there is no credential-free pack phase — this workflow packs
-# and publishes in one step — so the token sits in the publish steps' env.
+# CREDENTIAL: NPM_TOKEN is referenced by name only, never printed. Like
+# npm-publish.yml, workspace packages are built and packed with `--pack-only`
+# BEFORE `Unpublish` and with no credential in scope, so a pack failure can
+# never strand an unpublished release and no lifecycle script sees NPM_TOKEN.
 
 on:
   workflow_dispatch:
@@ -47,10 +48,10 @@ on:
 permissions:
   contents: read
 
-# Shared with npm-token-probe.yml: both remove the same packages, so they must
-# not overlap on one version.
+# Shared across all npm write workflows (publish, trusted publish, republish,
+# dist-tag, token-probe) so registry mutations can never race each other.
 concurrency:
-  group: npm-version-${{ inputs.version }}
+  group: npm-registry-write
   cancel-in-progress: false
 
 env:
@@ -73,8 +74,9 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ inputs.ref }}
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2.0.1
-      - name: Check the version, the ref, and the confirmation
+      - name: Check the repository, ref ancestry, version, and confirmation
         shell: bash
         env:
           VERSION: ${{ inputs.version }}
@@ -82,8 +84,21 @@ jobs:
           CONFIRM: ${{ inputs.confirm_unpublish }}
         run: |
           set -euo pipefail
+          if [ "$GITHUB_REPOSITORY" != "MarsAI-org/mars-agent" ]; then
+            echo "::error::npm republish is restricted to MarsAI-org/mars-agent (got '$GITHUB_REPOSITORY')"
+            exit 1
+          fi
           if ! [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
             echo "::error::version must be a bare X.Y.Z, got '$VERSION'"
+            exit 1
+          fi
+          # Only commits reachable from origin/main or a v* release tag may be
+          # republished, preventing arbitrary unreviewed branch/PR commits from
+          # overwriting a published release.
+          git fetch --no-tags origin main
+          git fetch origin 'refs/tags/v*:refs/tags/v*'
+          if ! git merge-base --is-ancestor HEAD origin/main && ! git tag --contains HEAD --list 'v*' | grep -q '^v'; then
+            echo "::error::checked-out ref ($(git rev-parse --short HEAD)) must be an ancestor of origin/main or a v* tag"
             exit 1
           fi
           # The checkout has to be the release being replaced, or the republished
@@ -252,6 +267,19 @@ jobs:
           path: native-artifacts
           merge-multiple: false
 
+      # coding-agent's `prepack` loads the Linux x64 native addon; stage it and
+      # pack every workspace package WITHOUT credentials BEFORE unpublishing so
+      # a build or pack failure can never strand an unpublished release.
+      - name: Stage Linux x64 native addon and pack workspace packages (no credentials)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p packages/natives/native
+          cp native-artifacts/native-linux-x64/*.node packages/natives/native/
+          PACK_DIR="$RUNNER_TEMP/mars-npm-pack"
+          echo "PACK_DIR=$PACK_DIR" >> "$GITHUB_ENV"
+          bun scripts/ci-release-publish.ts --pack-only "$PACK_DIR"
+
       - name: Unpublish
         if: inputs.dry_run != true
         shell: bash
@@ -294,16 +322,41 @@ jobs:
             exit 1
           fi
 
-      # `--provenance` (opt-in inside ci-release-publish.ts) keeps the rebuilt
-      # tarballs attested; without it a republish silently downgrades packages
-      # that the normal publish path attested. The job already has id-token.
+      # Publish the pre-packed tarballs from the credential-free pack phase in
+      # dependency order with `--ignore-scripts --provenance`.
       - name: Publish workspace packages
         if: inputs.dry_run != true
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          MARS_PUBLISH_PROVENANCE: "1"
-        run: bun scripts/ci-release-publish.ts
+        run: |
+          set -uo pipefail
+          manifest="$PACK_DIR/publish-manifest.tsv"
+          if [ ! -f "$manifest" ]; then
+            echo "::error title=Republish incomplete::publish manifest not found at $manifest"
+            exit 1
+          fi
+          failed=0
+          while IFS=$'\t' read -r name version tag tarball; do
+            [ -n "$name" ] || continue
+            if npm view "${name}@${version}" version >/dev/null 2>&1; then
+              echo "Skipping ${name}@${version} (already published)"
+              continue
+            fi
+            echo "Publishing ${name}@${version} (tag ${tag})"
+            rc=0
+            out="$(npm publish "$tarball" --access public --tag "$tag" --ignore-scripts --provenance 2>&1)" || rc=$?
+            if [ -n "$out" ]; then echo "$out"; fi
+            if [ "$rc" -ne 0 ]; then
+              if printf '%s' "$out" | grep -qiE "E409|EPUBLISHCONFLICT|cannot publish over"; then
+                echo "Skipping ${name}@${version} (already published)"
+              else
+                echo "::error title=Republish incomplete::failed to publish ${name}@${version}"
+                failed=1
+              fi
+            fi
+          done < "$manifest"
+          exit "$failed"
 
       - name: Publish native leaves
         if: inputs.dry_run != true
@@ -336,20 +389,38 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ inputs.version }}
+          DRY_RUN: ${{ inputs.dry_run }}
         run: |
-          set -uo pipefail
-          missing=""
-          for name in $CORE $LEAVES; do
-            if npm view "@marsai-org/${name}@${VERSION}" version >/dev/null 2>&1; then
-              echo "ok @marsai-org/${name}@${VERSION}"
-            else
-              missing="$missing $name"
+          set -euo pipefail
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "dry run: workspace packages packed cleanly; nothing was unpublished or published"
+            cat "$PACK_DIR/publish-manifest.tsv"
+            exit 0
+          fi
+          # npm is eventually consistent, and large native leaf packages can
+          # take several minutes to replicate. Poll all pending packages against
+          # one shared deadline instead of failing on a single immediate pass.
+          deadline=$(( SECONDS + 1200 ))
+          pending=($CORE $LEAVES)
+          while [ "${#pending[@]}" -gt 0 ] && [ "$SECONDS" -lt "$deadline" ]; do
+            still=()
+            for name in "${pending[@]}"; do
+              if npm view "@marsai-org/${name}@${VERSION}" version >/dev/null 2>&1; then
+                echo "ok      @marsai-org/${name}@${VERSION}"
+              else
+                still+=("$name")
+              fi
+            done
+            pending=("${still[@]+"${still[@]}"}")
+            if [ "${#pending[@]}" -gt 0 ]; then
+              echo "waiting on ${pending[*]} (${SECONDS}s elapsed)"
+              sleep 20
             fi
           done
-          if [ -n "$missing" ]; then
-            echo "::error title=Republish incomplete::missing on npm:$missing"
+          if [ "${#pending[@]}" -gt 0 ]; then
+            for name in "${pending[@]}"; do
+              echo "::error::missing @marsai-org/${name}@${VERSION}"
+            done
+            echo "::error title=Republish incomplete::missing on npm: ${pending[*]}"
             exit 1
-          fi
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "dry run: nothing was unpublished or published"
           fi
