@@ -4,6 +4,8 @@
  * Provides tools for debugging, bug report generation, and system diagnostics.
  */
 import * as fs from "node:fs/promises";
+import * as os from "node:os";
+import * as path from "node:path";
 import * as url from "node:url";
 import { getWorkProfile } from "@marsai-org/natives";
 import {
@@ -239,9 +241,13 @@ export class DebugSelectorComponent extends OverlayPanel {
 				return;
 			}
 
-			// Write SVG to temp file and open in browser
-			const tmpPath = `/tmp/work-profile-${Date.now()}.svg`;
-			await Bun.write(tmpPath, workProfile.svg);
+			// A private mkdtemp directory, not a literal `/tmp/...svg`: `/tmp` is
+			// world-writable, so a predictable name lets another local user pre-create
+			// the path (symlink or hardlink) and have the agent write through it and
+			// then hand the result to the OS opener.
+			const profileDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-work-profile-"));
+			const tmpPath = path.join(profileDir, "flamegraph.svg");
+			await fs.writeFile(tmpPath, workProfile.svg, { encoding: "utf-8", mode: 0o600 });
 
 			openPath(tmpPath);
 

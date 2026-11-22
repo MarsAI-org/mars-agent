@@ -9,7 +9,7 @@ import {
 	systemChromiumCandidatesForTest,
 } from "@marsai-org/coding-agent/tools/browser/launch";
 import { TempDir } from "@marsai-org/utils";
-import { computeExecutablePath, detectBrowserPlatform } from "@marsai-org/utils/browsers";
+import { BrowserPlatform, computeExecutablePath } from "@marsai-org/utils/browsers";
 import { APP_NAME } from "@marsai-org/utils/dirs";
 import { PUPPETEER_REVISIONS } from "puppeteer-core/internal/revisions.js";
 
@@ -217,10 +217,13 @@ describe("browser executable selection", () => {
 		}
 	});
 
-	// The child pins its puppeteer cache via XDG_CACHE_HOME, which the dirs
-	// resolver honors only on Linux/macOS hosts; on Windows it would resolve the
-	// real user cache and attempt a network download.
-	it.skipIf(process.platform === "win32")(
+	// darwin-only, and it has to be: the probe reads the real host through
+	// `os.platform()` (packages/utils/src/browsers.ts), so the fixture's
+	// `process.platform` pin cannot make a Linux or Windows host take the macOS
+	// branch — off darwin the child falls through to a network download and burns
+	// the test budget. The child pins its puppeteer cache via XDG_CACHE_HOME,
+	// which the dirs resolver honors only on Linux/macOS hosts.
+	it.skipIf(process.platform !== "darwin")(
 		"prefers Chrome for Testing over a detected system Chrome on macOS (#8673)",
 		async () => {
 			const tempDir = TempDir.createSync("@browser-macos-cft-");
@@ -233,15 +236,25 @@ describe("browser executable selection", () => {
 				for (const xdg of [xdgCache, path.join(tempDir.path(), "data"), path.join(tempDir.path(), "state")]) {
 					fs.mkdirSync(path.join(xdg, APP_NAME), { recursive: true });
 				}
-				const env = {
-					...process.env,
+				// The probe child inherits this process's environment, and ANY agent-dir
+				// override in that namespace (MARS_CODING_AGENT_DIR, the legacy
+				// PI_CODING_AGENT_DIR, or a profile/config dir) makes the dirs resolver treat
+				// the install as non-default and skip the XDG roots below. The seed would
+				// then sit in a cache the child never reads, and the probe would fall
+				// through to a network download that outlives the test budget. Strip the
+				// whole namespace and re-add only the switches this test means to set.
+				const inherited = Object.entries(process.env).filter(
+					([key, value]) => value !== undefined && !key.startsWith("MARS_") && !key.startsWith("PI_"),
+				) as [string, string][];
+				const env: Record<string, string> = Object.fromEntries(inherited);
+				Object.assign(env, {
 					HOME: home,
 					XDG_CACHE_HOME: xdgCache,
 					XDG_DATA_HOME: path.join(tempDir.path(), "data"),
 					XDG_STATE_HOME: path.join(tempDir.path(), "state"),
 					MARS_BROWSER_PROBE_PLATFORM: "darwin",
 					PUPPETEER_EXECUTABLE_PATH: "",
-				};
+				});
 
 				// System Google Chrome bundle (com.google.Chrome) — the LaunchServices
 				// hijacker the fix must avoid selecting.
@@ -253,8 +266,10 @@ describe("browser executable selection", () => {
 				// probe resolves it without a network download. getPuppeteerDir() resolves
 				// to `<XDG_CACHE_HOME>/mars/puppeteer` given the dirs created above.
 				const cacheDir = path.join(xdgCache, APP_NAME, "puppeteer");
-				const platform = detectBrowserPlatform();
-				if (!platform) throw new Error("unsupported host platform for Chrome-for-Testing selection test");
+				// Seeded (and compared) in the same shape the module resolves on this
+				// host, so a macOS x64 and a macOS arm64 runner each look where the seed
+				// actually landed instead of at a hard-coded arch directory.
+				const platform = process.arch === "arm64" ? BrowserPlatform.MAC_ARM : BrowserPlatform.MAC;
 				const buildId = PUPPETEER_REVISIONS.chrome;
 				const chromeForTesting = computeExecutablePath({ buildId, cacheDir, platform });
 				await Bun.write(chromeForTesting, "#!/bin/sh\necho 'Chrome for Testing'\n");

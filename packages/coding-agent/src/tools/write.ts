@@ -1,5 +1,6 @@
 import type { WriteToolDetails } from "@marsai-org/tui/tools/write";
 import { Database } from "bun:sqlite";
+import { randomUUID } from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 
@@ -572,8 +573,13 @@ export class WriteTool implements AgentTool<typeof writeSchema, WriteToolDetails
 			throw new ToolError(`Writing entries inside ${format} archives is not supported (read-only format).`);
 		}
 		// Rewrites are whole-archive: write to a temp file and rename so a
-		// crash/disk-full mid-write can't destroy the original archive.
-		const tmpPath = `${finalPath}.tmp-${process.pid}`;
+		// crash/disk-full mid-write can't destroy the original archive. The suffix is
+		// per-write, not per-process: two writes to the same archive from concurrent
+		// tool calls share a pid, and a shared temp path means one rename installs the
+		// other call's bytes. The fsync before the rename keeps the swap meaningful —
+		// without it a crash can leave the renamed file empty even though the rename
+		// itself was atomic.
+		const tmpPath = `${finalPath}.tmp-${process.pid}-${randomUUID().slice(0, 8)}`;
 
 		const parentDir = path.dirname(resolvedArchivePath.absolutePath);
 		if (parentDir && parentDir !== ".") {
@@ -607,6 +613,12 @@ export class WriteTool implements AgentTool<typeof writeSchema, WriteToolDetails
 
 		try {
 			await writeArchive(tmpPath, format, entries);
+			const handle = await fs.open(tmpPath, "r+");
+			try {
+				await handle.sync();
+			} finally {
+				await handle.close();
+			}
 			await fs.rename(tmpPath, finalPath);
 		} catch (error) {
 			await fs.rm(tmpPath, { force: true }).catch(() => {});

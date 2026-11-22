@@ -1005,7 +1005,10 @@ function writeReport(st: RenderState, benchDir: string, exitCode: number): strin
 // ──────────────────────────────────────────────────────────────────── setup
 
 function which(bin: string): string | null {
-	const r = spawnSync("bash", ["-lc", `command -v ${bin}`], { encoding: "utf8" });
+	// `$1` and `--`, never `${bin}`: `bash -lc` re-parses the string and every caller
+	// here happens to pass a literal, so the interpolation is only a landmine for the
+	// next caller that forwards a value.
+	const r = spawnSync("bash", ["-lc", 'command -v "$1"', "--", bin], { encoding: "utf8" });
 	const out = r.stdout?.trim();
 	return r.status === 0 && out ? out : null;
 }

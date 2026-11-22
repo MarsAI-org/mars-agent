@@ -1,4 +1,7 @@
+import { randomUUID } from "node:crypto";
 import * as fs from "node:fs/promises";
+import * as os from "node:os";
+import * as path from "node:path";
 import { isEnoent, logger, ptree } from "@marsai-org/utils";
 import { NON_INTERACTIVE_ENV } from "../exec/non-interactive-env";
 import { encodeMessageFrame, MessageFramer, MessageFramingError } from "../jsonrpc/message-framing";
@@ -247,7 +250,12 @@ export class DapClient {
 		env: Record<string, string | undefined>;
 		timeoutMs: number;
 	}): Promise<DapClient> {
-		const socketPath = `/tmp/dap-${adapter.name}-${Date.now()}-${Math.random().toString(36).slice(2)}.sock`;
+		// `os.tmpdir()` rather than a literal `/tmp`: these adapters run wherever the
+		// host puts temp files (and the path only has to stay inside the ~104-byte
+		// `sun_path` budget, so no per-run directory). The name is unguessable, not
+		// `Math.random()`-derived, so another local user cannot pre-create the path
+		// and win the bind race.
+		const socketPath = path.join(os.tmpdir(), `dap-${adapter.name}-${randomUUID()}.sock`);
 		const proc = ptree.spawn([adapter.resolvedCommand, ...adapter.args, `--listen=unix:${socketPath}`], {
 			cwd,
 			stdin: "pipe",
