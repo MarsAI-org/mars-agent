@@ -1326,13 +1326,14 @@ let cachedInstallId: string | null = null;
 const INSTALL_ID_FILE = "install-id";
 /**
  * Application label for usage attribution (`MARS_APP_NAME`), defaulting to
- * `omp`. Embedders that drive omp programmatically (robomp, CI bots, …) set
- * the env var so broker-side per-client burn tracking can answer "what did
- * app X use" instead of folding everything into one install-wide bucket.
+ * `APP_NAME`. Embedders that drive the agent programmatically (robomp, CI
+ * bots, …) set the env var so broker-side per-client burn tracking can answer
+ * "what did app X use" instead of folding everything into one install-wide
+ * bucket.
  */
 export function getAppName(): string {
 	const value = process.env.MARS_APP_NAME?.trim();
-	return value ? value : "omp";
+	return value ? value : APP_NAME;
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

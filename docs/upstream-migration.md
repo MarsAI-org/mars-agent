@@ -83,7 +83,8 @@ upstream/main --`) and re-ran the codemod on them.
 | Gate                      | Result                                                          |
 | ------------------------- | --------------------------------------------------------------- |
 | `bun run check:ts`        | green (oxlint + every package's `check:types`)                  |
-| `bun test packages/utils` | 1,069 pass; the only failures come from the stale native addon  |
+| `bun test packages/utils` | 1,071 pass, 1 fail — the stale native addon prints on stderr    |
+| `bun test packages/ai`    | 7 fail, the same seven the pre-merge head fails                 |
 | `bun test packages/tui`   | 85 fail against 83 on the pre-merge head, 4,821 tests vs 4,789  |
 | Rust (`fmt:rs`)           | clean; `check:rs` not run here (needs the pinned nightly build) |
 
@@ -101,6 +102,14 @@ upstream/main --`) and re-ran the codemod on them.
   `frames that change nothing > skips the write when the body rewrites no row and the
 cursor is already parked`. Our TUI writes one frame more than upstream's no-op
   skip expects.
+- The full `packages/coding-agent` suite does not finish in one process: it stops
+  after `rpc-live.test.ts` (~5,450 assertions, ~350 failures, most of them the
+  native-backed groups that fail on the pre-merge head too). Each file around the
+  stall runs green on its own, so the stall is a suite-level leak rather than a
+  failing test, and it needs a per-file split to locate.
+- Upstream's prompt rewrites were not adopted: the prompt set and its perturbation
+  pool stay this repository's, and 103 pool entries were added for the lines the
+  merge introduced so the coverage test keeps its promise.
 - 35 source comments still link upstream issue numbers (`can1357/oh-my-pi#…`); this
   repository's `main` keeps 30 of the same links, so the counts are at parity.
 - Package versions come from upstream (`19.1.0`); `main` stays at `0.3.1` until the

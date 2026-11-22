@@ -4,6 +4,7 @@ import {
 	discoverGitLabDuoWorkflowRuntimeNamespace,
 	type GitLabDuoWorkflowNamespaceSelection,
 } from "@marsai-org/catalog/discovery/gitlab-duo-workflow";
+import { APP_NAME } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { parseToolCallArguments } from "../utils/tool-call-arguments";
 import type {
@@ -2305,7 +2306,7 @@ function buildGitLabMcpToolDefinition(tool: Tool): GitLabMcpToolDefinition {
 	return {
 		name: tool.name,
 		originalToolName: tool.name,
-		serverName: "omp",
+		serverName: APP_NAME,
 		description: tool.description || "",
 		inputSchema: JSON.stringify(
 			schema && typeof schema === "object" ? schema : { type: "object", properties: {}, required: [] },

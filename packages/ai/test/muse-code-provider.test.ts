@@ -171,7 +171,7 @@ describe("Muse Code provider", () => {
 						{
 							type: "response.output_item.done",
 							output_index: outputIndex,
-							item: { ...call, arguments: '{"query":"omp"}', status: "completed" },
+							item: { ...call, arguments: '{"query":"mars"}', status: "completed" },
 						},
 					]),
 					{ type: "response.completed", response: { id: "resp_1", status: "completed", output: [] } },
@@ -185,8 +185,8 @@ describe("Muse Code provider", () => {
 		expect(muse.body.tools.map(tool => tool.name)).toEqual(["_bash", "_web_search", mcpName]);
 		expect(muse.body.input.filter(item => item.type === "function_call").map(item => item.name)).toEqual(["_bash"]);
 		expect(muse.result.content).toEqual([
-			expect.objectContaining({ type: "toolCall", name: "web_search", arguments: { query: "omp" } }),
-			expect.objectContaining({ type: "toolCall", name: mcpName, arguments: { query: "omp" } }),
+			expect.objectContaining({ type: "toolCall", name: "web_search", arguments: { query: "mars" } }),
+			expect.objectContaining({ type: "toolCall", name: mcpName, arguments: { query: "mars" } }),
 		]);
 
 		// Direct Meta API keys are not attested and keep the plain names.
