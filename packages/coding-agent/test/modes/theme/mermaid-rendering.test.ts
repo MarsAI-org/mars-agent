@@ -3,12 +3,7 @@ import { Markdown } from "@marsai-org/tui";
 import { Settings } from "../../../src/config/settings";
 import { fgAnsi } from "@marsai-org/tui/theme/color";
 import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
-import {
-	getMarkdownTheme,
-	getThemeByName,
-	setMarkdownMermaidRendering,
-	setThemeInstance,
-} from "@marsai-org/tui/theme";
+import { getMarkdownTheme, getThemeByName, setMarkdownMermaidRendering, setThemeInstance } from "@marsai-org/tui/theme";
 import { buildSystemPrompt } from "../../../src/system-prompt";
 
 const workspaceTree = {

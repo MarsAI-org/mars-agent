@@ -1,16 +1,9 @@
 import { describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
 import { BlobStore } from "@marsai-org/coding-agent/session/blob-store";
-import type {
-	CompactionEntry,
-	FileEntry,
-	SessionMessageEntry,
-} from "@marsai-org/coding-agent/session/session-entries";
+import type { CompactionEntry, FileEntry, SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
 import { formatSessionHistoryMarkdown } from "@marsai-org/coding-agent/session/session-history-format";
-import {
-	loadSessionMessagesReadOnly,
-	resolveBlobRefsInEntries,
-} from "@marsai-org/coding-agent/session/session-loader";
+import { loadSessionMessagesReadOnly, resolveBlobRefsInEntries } from "@marsai-org/coding-agent/session/session-loader";
 import { TempDir } from "@marsai-org/utils";
 import * as snapcompact from "@marsai-org/snapcompact";
 

@@ -16,7 +16,7 @@
  * user's logged-in browser.
  */
 import { macOSFrontApp } from "@marsai-org/natives";
-import { logger, parseFlag } from "@marsai-org/utils";
+import { parseFlag } from "@marsai-org/utils";
 import { VERSION } from "@marsai-org/utils/dirs";
 import { RelayBridge } from "./bridge";
 import { extensionIdForPath, installedRelayExtensionStamp } from "./extension-files";

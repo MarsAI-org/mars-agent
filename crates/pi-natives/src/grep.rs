@@ -401,8 +401,12 @@ async fn grep_async(
 			..Default::default()
 		},
 		sink,
-		..pi_walker::grep::GrepOptions::compile(request.pattern, request.ignore_case, request.multiline)
-			.map_err(Error::from_reason)?
+		..pi_walker::grep::GrepOptions::compile(
+			request.pattern,
+			request.ignore_case,
+			request.multiline,
+		)
+		.map_err(Error::from_reason)?
 	};
 	let search = pi_walker::grep::grep(&fs, &root, opts);
 	let result = match batches {

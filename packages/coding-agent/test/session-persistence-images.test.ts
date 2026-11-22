@@ -4,11 +4,7 @@ import * as path from "node:path";
 import type { AgentMessage } from "@marsai-org/agent-core";
 import type { ImageContent, TextContent } from "@marsai-org/ai";
 import { BlobStore, isBlobRef, lazyImageDataSync, parseBlobRef } from "@marsai-org/coding-agent/session/blob-store";
-import type {
-	CompactionEntry,
-	FileEntry,
-	SessionMessageEntry,
-} from "@marsai-org/coding-agent/session/session-entries";
+import type { CompactionEntry, FileEntry, SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
 import { resolveBlobRefsInEntries } from "@marsai-org/coding-agent/session/session-loader";
 import {
 	forgetExternalizedImages,

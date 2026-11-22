@@ -149,8 +149,8 @@ impl MinimizerConfig {
 					let actual_hex = format!("{actual:016x}");
 					if !actual_hex.eq_ignore_ascii_case(expected) {
 						eprintln!(
-							"[pi-natives minimizer] settings_hash mismatch for {} (expected {}, got \
-							 {}); ignoring file",
+							"[pi-natives minimizer] settings_hash mismatch for {} (expected {}, got {}); \
+							 ignoring file",
 							expanded.display(),
 							expected,
 							actual_hex

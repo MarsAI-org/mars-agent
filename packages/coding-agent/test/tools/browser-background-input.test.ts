@@ -11,10 +11,7 @@ import {
 	type BrowserKind,
 	releaseBrowser,
 } from "@marsai-org/coding-agent/tools/browser/registry";
-import {
-	unpackedExtensionId,
-	writeRelayExtension,
-} from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
+import { unpackedExtensionId, writeRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
 import { waitForRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/probe";
 import { startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 import {

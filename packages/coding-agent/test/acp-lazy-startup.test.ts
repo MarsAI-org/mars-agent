@@ -23,10 +23,7 @@ import {
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 import { cfgAsyncEnabled, cfgAsyncMaxJobs } from "@marsai-org/coding-agent/tools/settings";
-import {
-	cfgBashAutoBackgroundEnabled,
-	cfgBashAutoBackgroundThresholdMs,
-} from "@marsai-org/coding-agent/exec/settings";
+import { cfgBashAutoBackgroundEnabled, cfgBashAutoBackgroundThresholdMs } from "@marsai-org/coding-agent/exec/settings";
 
 const TEST_MODEL: Model = buildModel({
 	id: "claude-sonnet-4-20250514",

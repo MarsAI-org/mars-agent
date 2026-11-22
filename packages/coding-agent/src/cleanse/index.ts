@@ -1,9 +1,5 @@
 import { getProjectDir } from "@marsai-org/utils";
-import {
-	type CleanseTargetChoice,
-	pickCleanseTarget,
-	promptCleanseRequest,
-} from "@marsai-org/tui/apps/cleanse-picker";
+import { type CleanseTargetChoice, pickCleanseTarget, promptCleanseRequest } from "@marsai-org/tui/apps/cleanse-picker";
 import { shortenPath } from "@marsai-org/tui/render/render-utils";
 import { type CleanseAgentHooks, type CleanseAgentRuntime, createCleanseAgentRuntime } from "./agent";
 import { groupDiagnosticsByFile } from "./balance";

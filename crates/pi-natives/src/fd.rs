@@ -370,7 +370,9 @@ async fn fuzzy_find_async(
 	let entries =
 		pi_walker::walk::collect(&pi_walker::Fs::new(fs, &root), &root, &opts, false, |_, entry| {
 			match entry.file_type {
-				pi_walker::FileType::File | pi_walker::FileType::Dir => pi_walker::walk::Action::Continue,
+				pi_walker::FileType::File | pi_walker::FileType::Dir => {
+					pi_walker::walk::Action::Continue
+				},
 				pi_walker::FileType::Symlink => pi_walker::walk::Action::Skip,
 			}
 		})

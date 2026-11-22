@@ -12,9 +12,8 @@
 //!   [`host::PiHost`], [`session::Session`] (a persistent shell driven by a
 //!   task on the caller's runtime), [`commands`] (the host's session commands
 //!   of a run), [`tools`] (`timeout`, `nohup`, `git` and the command-running
-//!   extras as host callouts), [`extras`] (pi's utilities from `pi-builtins`
-//!   as engine commands) and [`git`] (the guard and in-process worktree
-//!   layers).
+//!   extras as host callouts), [`extras`] (pi's utilities from `pi-builtins` as
+//!   engine commands) and [`git`] (the guard and in-process worktree layers).
 //! - The API pi-natives uses: [`Shell`], [`execute_shell`],
 //!   [`execute_shell_streams`], [`minimizer`], [`taps`], [`cancel`],
 //!   [`proctree`].
@@ -68,14 +67,14 @@ pub use commands::{
 	SessionCommandFuture, SessionCommandHandler, SessionCommandRequest, SessionCommandResult,
 	SessionCommands, reserved_command_names,
 };
+// Windows path spellings for host paths presented by the CLI.
+pub use paths::{expand_to_long_path, get_short_path};
 // Re-exported for `pi-natives`: the builtins live in `pi-builtins`,
 // but the native layer only ever depends on the shell.
 pub use pi_builtins::{
 	extras::{SpeechAudio, SpeechHost, SpeechOutcome, SpeechRequest, SpeechVoice},
 	panic_scope_active, rayon_global_pool_available, set_rayon_global_pool_available,
 };
-// Windows path spellings for host paths presented by the CLI.
-pub use paths::{expand_to_long_path, get_short_path};
 pub use shell::{
 	MinimizerResult, Shell, ShellExecuteOptions, ShellExecuteResult, ShellOptions, ShellRunOptions,
 	ShellRunResult, StreamSinks, execute_shell, execute_shell_streams,

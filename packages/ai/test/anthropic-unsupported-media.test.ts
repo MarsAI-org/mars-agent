@@ -1,12 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { convertAnthropicMessages, streamAnthropic } from "@marsai-org/ai/providers/anthropic";
-import type {
-	AssistantMessage,
-	DeveloperMessage,
-	Message,
-	ToolResultMessage,
-	UserMessage,
-} from "@marsai-org/ai/types";
+import type { AssistantMessage, DeveloperMessage, Message, ToolResultMessage, UserMessage } from "@marsai-org/ai/types";
 import { buildModel } from "@marsai-org/catalog/build";
 
 // Claude reads JPEG, PNG, GIF and WebP only. A video, PDF or HEIC attached to the

@@ -4,10 +4,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
-import type {
-	ExtensionAgentIdentity,
-	ExtensionFactory,
-} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import type { ExtensionAgentIdentity, ExtensionFactory } from "@marsai-org/coding-agent/extensibility/extensions/types";
 import { type CreateAgentSessionOptions, createAgentSession } from "@marsai-org/coding-agent/sdk";
 import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
 import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";

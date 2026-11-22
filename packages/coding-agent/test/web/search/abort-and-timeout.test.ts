@@ -26,10 +26,7 @@ import { SearchProviderError } from "@marsai-org/coding-agent/web/search/types";
 import { type SearchProviderId, type SearchResponse } from "@marsai-org/coding-agent/web/search/types";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
-import {
-	cfgProvidersWebSearchTimeoutSeconds,
-	cfgRetryFallbackChains,
-} from "@marsai-org/coding-agent/session/settings";
+import { cfgProvidersWebSearchTimeoutSeconds, cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
 
 const openAuthStorages: AuthStorage[] = [];
 

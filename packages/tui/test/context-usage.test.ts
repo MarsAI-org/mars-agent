@@ -11,11 +11,7 @@ import { buildModel } from "@marsai-org/catalog/build";
 import type { Model, ModelSpec } from "@marsai-org/catalog/types";
 import { Tokenizer } from "@marsai-org/agent-core";
 import { normalizeTools } from "@marsai-org/agent-core/agent-loop";
-import {
-	compactionContextTokens,
-	DEFAULT_COMPACTION_SETTINGS,
-	shouldCompact,
-} from "@marsai-org/agent-core/compaction";
+import { compactionContextTokens, DEFAULT_COMPACTION_SETTINGS, shouldCompact } from "@marsai-org/agent-core/compaction";
 import { arkToWireSchema } from "@marsai-org/ai/utils/schema";
 import {
 	type NonMessageTokenSource,

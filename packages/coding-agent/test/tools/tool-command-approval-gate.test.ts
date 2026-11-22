@@ -7,12 +7,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { type } from "@marsai-org/omptype";
-import {
-	type AgentTool,
-	type AgentToolContext,
-	type AgentToolResult,
-	type ToolApproval,
-} from "@marsai-org/agent-core";
+import { type AgentTool, type AgentToolContext, type AgentToolResult, type ToolApproval } from "@marsai-org/agent-core";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";

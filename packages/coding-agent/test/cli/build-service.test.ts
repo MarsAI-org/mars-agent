@@ -57,7 +57,9 @@ describe("build service answers", () => {
 		expect(() => parse(answer(file({ sha256: sha("new").toUpperCase() })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ sha256: "abc" })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ size: 0 })))).toThrow("invalid size");
-		expect(() => parse(answer(file({ name: "mars-darwin-x64" })))).toThrow("mars-darwin-x64 is not mars-darwin-arm64");
+		expect(() => parse(answer(file({ name: "mars-darwin-x64" })))).toThrow(
+			"mars-darwin-x64 is not mars-darwin-arm64",
+		);
 		expect(() => parse(answer({ download: "http://r2.test/omp" }))).toThrow("no HTTPS download");
 		expect(() => parse(answer({ build: { version: "latest" } }))).toThrow("no valid version");
 	});

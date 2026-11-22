@@ -11,10 +11,7 @@ import {
 	RENDERER_PRIORITY_ARGS,
 } from "@marsai-org/coding-agent/tools/browser/launch";
 import { acquireBrowser, releaseBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
-import {
-	unpackedExtensionId,
-	writeRelayExtension,
-} from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
+import { unpackedExtensionId, writeRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
 import { waitForRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/probe";
 import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 import type {

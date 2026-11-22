@@ -11,11 +11,7 @@ import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type { CustomToolContext, CustomToolResult } from "@marsai-org/coding-agent/extensibility/custom-tools";
 import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
-import {
-	getImageGenTools,
-	getImageGenToolsWithRegistry,
-	imageGenTool,
-} from "@marsai-org/coding-agent/tools/image-gen";
+import { getImageGenTools, getImageGenToolsWithRegistry, imageGenTool } from "@marsai-org/coding-agent/tools/image-gen";
 import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
 import { hasFsCode, removeWithRetries, TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";

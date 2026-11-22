@@ -29,11 +29,7 @@ import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/ext
 import { GoalRuntime } from "@marsai-org/coding-agent/goals/runtime";
 import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
 import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
-import {
-	convertToLlm,
-	isUserInterruptAbort,
-	shouldRenderAbortReason,
-} from "@marsai-org/coding-agent/session/messages";
+import { convertToLlm, isUserInterruptAbort, shouldRenderAbortReason } from "@marsai-org/coding-agent/session/messages";
 import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";

@@ -1,15 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import {
-	$env,
-	getGhidraDir,
-	isEnoent,
-	isEnotdir,
-	isRecord,
-	logger,
-	USER_AGENT,
-	withFileLock,
-} from "@marsai-org/utils";
+import { $env, getGhidraDir, isEnoent, isEnotdir, isRecord, logger, USER_AGENT, withFileLock } from "@marsai-org/utils";
 import { extractArchive } from "@marsai-org/utils/ar";
 import { $ } from "bun";
 import { DisasmUnavailableError } from "../disasm/backend";

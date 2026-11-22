@@ -3,11 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { type AgentToolResult, Tokenizer } from "@marsai-org/agent-core";
-import {
-	pruneSupersededToolResults,
-	readToolSupersedeKey,
-	type SessionEntry,
-} from "@marsai-org/agent-core/compaction";
+import { pruneSupersededToolResults, readToolSupersedeKey, type SessionEntry } from "@marsai-org/agent-core/compaction";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import { ReadTool } from "@marsai-org/coding-agent/tools/read";

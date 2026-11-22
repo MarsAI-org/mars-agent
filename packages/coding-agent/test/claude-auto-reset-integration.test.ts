@@ -1,11 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { Agent } from "@marsai-org/agent-core";
-import type {
-	ResetCreditAccountStatus,
-	ResetCreditTarget,
-	SessionRestrictionLease,
-	UsageReport,
-} from "@marsai-org/ai";
+import type { ResetCreditAccountStatus, ResetCreditTarget, SessionRestrictionLease, UsageReport } from "@marsai-org/ai";
 import { createMockModel } from "@marsai-org/ai/providers/mock";
 import * as envApiKey from "@marsai-org/ai/env-api-key";
 import { closeModelCache } from "@marsai-org/catalog/model-cache";

@@ -10,21 +10,11 @@ import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls/router
 import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
 import { ChainJudge } from "@marsai-org/coding-agent/judgment";
 import { FIND_TIMEOUT_MS, FindTool } from "@marsai-org/coding-agent/tools/jfind";
-import {
-	type SpotlightClient,
-	SpotlightError,
-	type SpotlightRequest,
-} from "@marsai-org/coding-agent/spotlight/client";
+import { type SpotlightClient, SpotlightError, type SpotlightRequest } from "@marsai-org/coding-agent/spotlight/client";
 import { type CascadeSpotlight, runCascade } from "@marsai-org/coding-agent/tools/jfind/cascade";
 import { keywordsFromQuery } from "@marsai-org/coding-agent/tools/jfind/keywords";
 import { grepIndex } from "@marsai-org/coding-agent/tools/jfind/lexical";
-import {
-	mergeHeat,
-	type Passage,
-	selectWindows,
-	sketch,
-	windows,
-} from "@marsai-org/coding-agent/tools/jfind/passages";
+import { mergeHeat, type Passage, selectWindows, sketch, windows } from "@marsai-org/coding-agent/tools/jfind/passages";
 import { readText, ReadTextError } from "@marsai-org/coding-agent/tools/jfind/text";
 import { eligibleFile, renderTree, resolveSearchRoot } from "@marsai-org/coding-agent/tools/jfind/tree";
 import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";

@@ -10,11 +10,7 @@ import type { AgentMessage, AgentTool, AgentToolContext } from "@marsai-org/agen
 import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
 import type { MessageCreateParams } from "@marsai-org/ai/providers/anthropic-wire";
 import type { ImageContent, TextContent, TSchema } from "@marsai-org/ai";
-import {
-	isPerCallContextMessage,
-	kCursorExecResolved,
-	kStreamingBlockIndex,
-} from "@marsai-org/ai/utils/block-symbols";
+import { isPerCallContextMessage, kCursorExecResolved, kStreamingBlockIndex } from "@marsai-org/ai/utils/block-symbols";
 import { getBundledModel } from "@marsai-org/catalog/models";
 import { convertToLlm, wrapSteeringForModel } from "@marsai-org/coding-agent/session/messages";
 import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";

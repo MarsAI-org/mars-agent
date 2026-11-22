@@ -7,13 +7,7 @@ import type {
 	WebSearchServerToolUseBlockParam,
 	WebSearchToolResultBlockParam,
 } from "@marsai-org/ai/providers/anthropic-wire";
-import type {
-	AssistantMessage,
-	AssistantMessageEvent,
-	Model,
-	ToolCall,
-	ToolResultMessage,
-} from "@marsai-org/ai/types";
+import type { AssistantMessage, AssistantMessageEvent, Model, ToolCall, ToolResultMessage } from "@marsai-org/ai/types";
 import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@marsai-org/ai/utils/block-symbols";
 import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import { buildModel } from "@marsai-org/catalog/build";

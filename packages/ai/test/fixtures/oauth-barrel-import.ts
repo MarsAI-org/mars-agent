@@ -1,7 +1,4 @@
-import {
-	getOAuthProviders as rootGetOAuthProviders,
-	refreshOAuthToken as rootRefreshOAuthToken,
-} from "@marsai-org/ai";
+import { getOAuthProviders as rootGetOAuthProviders, refreshOAuthToken as rootRefreshOAuthToken } from "@marsai-org/ai";
 import {
 	getOAuthProviders as oauthGetOAuthProviders,
 	refreshOAuthToken as oauthRefreshOAuthToken,

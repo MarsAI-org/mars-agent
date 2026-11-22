@@ -1,13 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { convertAnthropicMessages } from "@marsai-org/ai/providers/anthropic";
-import type {
-	AssistantMessage,
-	Message,
-	Model,
-	ModelSpec,
-	ToolResultMessage,
-	UserMessage,
-} from "@marsai-org/ai/types";
+import type { AssistantMessage, Message, Model, ModelSpec, ToolResultMessage, UserMessage } from "@marsai-org/ai/types";
 import { buildModel } from "@marsai-org/catalog/build";
 
 // These tests pin the wire-validity contract that was verified end-to-end against the

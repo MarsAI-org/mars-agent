@@ -1,8 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import {
-	isOpenAICompletionsProgressChunk,
-	streamOpenAICompletions,
-} from "@marsai-org/ai/providers/openai-completions";
+import { isOpenAICompletionsProgressChunk, streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
 import type { Context, FetchImpl, Model, ModelSpec } from "@marsai-org/ai/types";
 import { buildModel } from "@marsai-org/catalog/build";
 import { getBundledModel } from "@marsai-org/catalog/models";

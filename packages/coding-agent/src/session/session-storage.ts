@@ -4,12 +4,7 @@ import * as path from "node:path";
 import { FileLock as NativeFileLock } from "@marsai-org/natives";
 import { getSessionOwnersDir, getTestTempDir } from "@marsai-org/utils/dirs";
 import { isBunTestRuntime } from "@marsai-org/utils/env";
-import {
-	type FileLockHandle,
-	isFileLockHeld,
-	tryAcquireFileLock,
-	withFileLockSync,
-} from "@marsai-org/utils/file-lock";
+import { type FileLockHandle, isFileLockHeld, tryAcquireFileLock, withFileLockSync } from "@marsai-org/utils/file-lock";
 import { type FsError, hasFsCode, isEnoent } from "@marsai-org/utils/fs-error";
 import * as logger from "@marsai-org/utils/logger";
 import { popLoopPhase, pushLoopPhase, withLoopPhase } from "@marsai-org/utils/loop-phase";

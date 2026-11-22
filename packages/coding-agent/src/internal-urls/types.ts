@@ -7,12 +7,7 @@
  * names, and the system prompt lists schemes from {@link ProtocolHandler.promptDoc}.
  */
 
-import type {
-	AgentToolContext,
-	AgentToolUpdateCallback,
-	ToolApprovalDecision,
-	ToolTier,
-} from "@marsai-org/agent-core";
+import type { AgentToolContext, AgentToolUpdateCallback, ToolApprovalDecision, ToolTier } from "@marsai-org/agent-core";
 import type { ImageContent, TextContent } from "@marsai-org/ai";
 import type { ShellFsDirEntry } from "@marsai-org/natives";
 import type { Settings } from "../config/settings";

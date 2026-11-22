@@ -10,11 +10,7 @@ import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
 import { ReadTool } from "@marsai-org/coding-agent/tools/read";
 import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import { wrapToolWithMetaNotice } from "@marsai-org/coding-agent/tools/output-meta";
-import {
-	demangleSymbol,
-	parseSampleProfile,
-	renderSampleProfile,
-} from "@marsai-org/coding-agent/utils/sample-profile";
+import { demangleSymbol, parseSampleProfile, renderSampleProfile } from "@marsai-org/coding-agent/utils/sample-profile";
 import { removeWithRetries } from "@marsai-org/utils";
 
 const BOX_MEASURE = "_RNvNtCsfMEenOU8j5j_11slab_kernel6layout11box_measure";

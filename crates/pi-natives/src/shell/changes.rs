@@ -17,8 +17,8 @@ use ignore::{
 	gitignore::{Gitignore, GitignoreBuilder, gitconfig_excludes_path},
 };
 use napi::{bindgen_prelude::Buffer, threadsafe_function::ThreadsafeFunctionCallMode};
-use pi_vfs::ChangeSink;
 use parking_lot::Mutex;
+use pi_vfs::ChangeSink;
 
 use super::vfs::{ShellFileChange, ShellFileChangeHandler};
 

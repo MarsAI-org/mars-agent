@@ -36,10 +36,7 @@ import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensio
 import { initTheme } from "@marsai-org/tui/theme";
 import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
 import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
-import {
-	type ServingModel,
-	validateRetryFallbackChains,
-} from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { type ServingModel, validateRetryFallbackChains } from "@marsai-org/coding-agent/session/retry-fallback-chains";
 import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import { computerTurnInFlight, registerComputerController } from "@marsai-org/coding-agent/tools/computer/supervisor";
 import { convertToLlm, USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";

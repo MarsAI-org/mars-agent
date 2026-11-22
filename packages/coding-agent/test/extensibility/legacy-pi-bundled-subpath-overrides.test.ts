@@ -144,9 +144,7 @@ export const observed = {
 		// fall-through. The generator now globs each wildcard's source pattern
 		// and registers every concrete `.ts` match against the virtual namespace.
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@marsai-org/ai/oauth/anthropic"]).toBe(
-			"omp-legacy-pi-bundled:@marsai-org/ai/oauth/anthropic",
-		);
+		expect(overrides["@marsai-org/ai/oauth/anthropic"]).toBe("omp-legacy-pi-bundled:@marsai-org/ai/oauth/anthropic");
 		// Sanity: the wildcard expansion also reaches deeper subroots so plugins
 		// pinned to e.g. `@marsai-org/ai/providers/openai` keep resolving.
 		expect(bundledModuleKeys.has("@marsai-org/ai/oauth/anthropic")).toBe(true);

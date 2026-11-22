@@ -7,10 +7,7 @@ import { buildModel } from "@marsai-org/catalog/build";
 import { writeModelCache } from "@marsai-org/catalog/model-cache";
 import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
 import { getBundledModels } from "@marsai-org/catalog/models";
-import {
-	googleModelManagerOptions,
-	googleVertexModelManagerOptions,
-} from "@marsai-org/catalog/provider-models/google";
+import { googleModelManagerOptions, googleVertexModelManagerOptions } from "@marsai-org/catalog/provider-models/google";
 import {
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,

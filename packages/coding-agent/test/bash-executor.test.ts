@@ -16,11 +16,7 @@ import {
 import * as direnvModule from "@marsai-org/coding-agent/exec/direnv";
 import { evaluateLoopCondition } from "@marsai-org/coding-agent/modes/loop-condition";
 import { DEFAULT_MAX_BYTES } from "@marsai-org/tui/tools/streaming-output";
-import {
-	defaultShellVizPreferences,
-	readShellPresentation,
-	shellVisualization,
-} from "@marsai-org/tui/tools/shell-viz";
+import { defaultShellVizPreferences, readShellPresentation, shellVisualization } from "@marsai-org/tui/tools/shell-viz";
 import * as shellSnapshot from "@marsai-org/coding-agent/utils/shell-snapshot";
 import { encodeTerminalImage } from "@marsai-org/coding-agent/utils/terminal-graphics";
 import { saveImagesToTemp } from "@marsai-org/coding-agent/utils/image-temp";
