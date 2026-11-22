@@ -15,7 +15,7 @@
  *   can resolve to that same object; an unchanged reference does not re-render.
  */
 
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
+import { toError } from "@marsai-org/utils/type-guards";
 import { startTransition, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { currentLiveVersion, useLiveVersion } from "./live";
 import { cachedEntry, type Inflight, inflightRequest, loadQuery, type QueryFetcher, releaseQuery } from "./query-store";

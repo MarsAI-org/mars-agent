@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
@@ -11,8 +11,8 @@ import {
 	HybridAuthCredentialStore,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { registerOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
+} from "@marsai-org/ai/auth-broker";
+import { registerOAuthProvider, unregisterOAuthProviders } from "@marsai-org/ai/registry/oauth";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const TOKEN = "test-bearer";

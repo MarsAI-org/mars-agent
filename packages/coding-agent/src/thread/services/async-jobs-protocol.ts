@@ -15,8 +15,8 @@
  * `ASYNC_JOB_MANAGER_SHUTDOWN_REASON` to a plain sentinel and
  * {@link fromWireReason} maps it back on the receiving thread.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
-import type { JobWidgetView } from "@oh-my-pi/pi-tui/tools/job-widget";
+import { isRecord } from "@marsai-org/utils";
+import type { JobWidgetView } from "@marsai-org/tui/tools/job-widget";
 import {
 	ASYNC_JOB_MANAGER_SHUTDOWN_REASON,
 	type AsyncJob,

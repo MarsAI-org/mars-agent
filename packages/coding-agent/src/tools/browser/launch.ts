@@ -11,8 +11,8 @@ import {
 	toError,
 	untilAborted,
 	withTimeout,
-} from "@oh-my-pi/pi-utils";
-import type * as BrowsersNs from "@oh-my-pi/pi-utils/browsers";
+} from "@marsai-org/utils";
+import type * as BrowsersNs from "@marsai-org/utils/browsers";
 import type { BunFile } from "bun";
 import type {
 	Browser,
@@ -42,7 +42,7 @@ import stealthPluginsScript from "../puppeteer/10_stealth_plugins.txt" with { ty
 import stealthHardwareScript from "../puppeteer/11_stealth_hardware.txt" with { type: "text" };
 import stealthCodecsScript from "../puppeteer/12_stealth_codecs.txt" with { type: "text" };
 import stealthWorkerScript from "../puppeteer/13_stealth_worker.txt" with { type: "text" };
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { withDownload } from "../../downloads/activity";
 import { TOOL_TIMEOUTS } from "../tool-timeouts";
 import { findUserDataDirInArgs, gracefulKillTreeOnce, killTreeOnce, probeCdpResponse } from "./attach";
@@ -327,7 +327,7 @@ export function loadedNetworkConditions(): Readonly<Record<string, NetworkCondit
 let browsersModule: typeof BrowsersNs | undefined;
 async function loadBrowsers(): Promise<typeof BrowsersNs> {
 	if (!browsersModule) {
-		browsersModule = await import("@oh-my-pi/pi-utils/browsers");
+		browsersModule = await import("@marsai-org/utils/browsers");
 	}
 	return browsersModule;
 }

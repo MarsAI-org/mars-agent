@@ -2,10 +2,10 @@
  * Get the API key or OAuth token for a provider.
  */
 
-import { PROVIDER_REGISTRY } from "@oh-my-pi/pi-ai";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
-import { getActiveProfile } from "@oh-my-pi/pi-utils/dirs";
+import { PROVIDER_REGISTRY } from "@marsai-org/ai";
+import chalk from "@marsai-org/utils/chalk";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
+import { getActiveProfile } from "@marsai-org/utils/dirs";
 import { tokenHelp as commandHelp } from "../cli/command-help";
 import { isAuthenticated, ModelRegistry } from "../config/model-registry";
 import { refreshStoredManagedMcpOAuthCredential } from "../mcp/oauth-credentials";

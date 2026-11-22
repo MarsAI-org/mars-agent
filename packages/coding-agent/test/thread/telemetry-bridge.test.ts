@@ -7,7 +7,7 @@ import type {
 	CostEstimatorContext,
 	TelemetryAttributeContext,
 	TelemetryHookContext,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import { context, type Span, SpanStatusCode, trace } from "@opentelemetry/api";
 import { AsyncLocalStorageContextManager } from "@opentelemetry/context-async-hooks";
 import {

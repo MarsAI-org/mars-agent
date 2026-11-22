@@ -1,17 +1,17 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createSubagentSettings } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { createSubagentSettings } from "@marsai-org/coding-agent/task/executor";
+import { TempDir } from "@marsai-org/utils";
 
 const MODEL_PERF_FLUSH_DELAY_MS = 60_000;
 const REPO_ROOT = path.resolve(import.meta.dir, "../../..");
@@ -395,7 +395,7 @@ describe("AgentStorage model perf aggregates", () => {
 				'import { Database } from "bun:sqlite";',
 				'import * as fs from "node:fs";',
 				'import * as path from "node:path";',
-				'import { getAgentDbPath, getStatsDbPath } from "@oh-my-pi/pi-utils";',
+				'import { getAgentDbPath, getStatsDbPath } from "@marsai-org/utils";',
 				`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 				// A stale stats.db that never saw the live Astra turns.
 				"const statsPath = getStatsDbPath();",
@@ -457,7 +457,7 @@ describe("AgentStorage model perf aggregates", () => {
 				'import { Database } from "bun:sqlite";',
 				'import * as fs from "node:fs";',
 				'import * as path from "node:path";',
-				'import { getStatsDbPath } from "@oh-my-pi/pi-utils";',
+				'import { getStatsDbPath } from "@marsai-org/utils";',
 				`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 				"const statsPath = getStatsDbPath();",
 				"fs.mkdirSync(path.dirname(statsPath), { recursive: true });",

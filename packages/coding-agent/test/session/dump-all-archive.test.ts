@@ -6,15 +6,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { readArchiveEntries } from "@oh-my-pi/pi-utils/ar";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+import { Agent } from "@marsai-org/agent-core";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
+import { readArchiveEntries } from "@marsai-org/utils/ar";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 function subagentJsonl(id: string, userText: string | null): string {

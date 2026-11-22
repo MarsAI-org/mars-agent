@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, initDb } from "@oh-my-pi/omp-stats/db";
-import type { SpotlightAgentScope, SpotlightDashboardStats } from "@oh-my-pi/omp-stats/shared-types";
-import { buildSpotlightDashboard } from "@oh-my-pi/omp-stats/spotlight-aggregator";
-import { getSessionsDir, spillFileName, spillUrl } from "@oh-my-pi/pi-utils";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
+import { closeDb, initDb } from "@marsai-org/stats/db";
+import type { SpotlightAgentScope, SpotlightDashboardStats } from "@marsai-org/stats/shared-types";
+import { buildSpotlightDashboard } from "@marsai-org/stats/spotlight-aggregator";
+import { getSessionsDir, spillFileName, spillUrl } from "@marsai-org/utils";
 import { type ShapeSpec, SpotlightSessionBuilder } from "./helpers/spotlight-session";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 

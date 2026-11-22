@@ -1,7 +1,7 @@
 import * as stream from "node:stream";
 import { inspect } from "node:util";
-import { getLogsDir, postmortem } from "@oh-my-pi/pi-utils";
-import { AgentSideConnection, ndJsonStream, type Stream } from "@oh-my-pi/pi-utils/acp";
+import { getLogsDir, postmortem } from "@marsai-org/utils";
+import { AgentSideConnection, ndJsonStream, type Stream } from "@marsai-org/utils/acp";
 import type { ExtensionUIContext } from "../../extensibility/extensions/types";
 import type { AgentSession } from "../../session/agent-session";
 import { AcpAgent } from "./acp-agent";

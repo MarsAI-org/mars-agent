@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
 import { type Component } from "../tui";
 import { Container } from "../tui";
 import { Text } from "../components/text";
@@ -29,8 +29,8 @@ import { internalUrlSchemeSpec, splitUrlScheme } from "../tools/url-scheme-host"
 import { SpotlightNotices } from "./spotlight";
 import type { ToolExecutionHandle } from "./tool-execution";
 import { formatUsageRow } from "../overlays/usage-row";
-import { formatCount, isUrlLikePath, sanitizeText, sanitizeTextDeep } from "@oh-my-pi/pi-utils";
-import type { TspCardStatus, TspSpan, TspText } from "@oh-my-pi/pi-wire";
+import { formatCount, isUrlLikePath, sanitizeText, sanitizeTextDeep } from "@marsai-org/utils";
+import type { TspCardStatus, TspSpan, TspText } from "@marsai-org/wire";
 import type { NativeToolHead } from "../tools/renderer";
 import { card, code, col, keyed, md, node, span, text, withHidden } from "../native/describe";
 import {

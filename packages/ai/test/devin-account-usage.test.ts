@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { gzipSync } from "node:zlib";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import type { UsageFetchParams, UsageLimit, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { devinUsageProvider } from "@oh-my-pi/pi-ai/usage/devin";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import type { UsageFetchParams, UsageLimit, UsageReport } from "@marsai-org/ai/usage";
+import { devinUsageProvider } from "@marsai-org/ai/usage/devin";
 import {
 	BillingStrategy,
 	DevinPlanInfoSchema,
@@ -15,8 +15,8 @@ import {
 	TeamsTier,
 	TimestampSchema,
 	UserStatusSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 const USER_STATUS_URL = "https://server.codeium.com/exa.seat_management_pb.SeatManagementService/GetUserStatus";
 const PLAN_START_MS = 1_767_225_600_000;

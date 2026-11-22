@@ -25,8 +25,8 @@ import type {
 	SessionState,
 	SubagentLifecyclePayload,
 	SubagentProgressPayload,
-} from "@oh-my-pi/pi-wire";
-import { takeAutoRejoin } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
+import { takeAutoRejoin } from "@marsai-org/wire";
 import { importRoomKey } from "./codec";
 import { COLLAB_PROTO, encodeBase64Url, parseCollabLink } from "./link";
 import { CollabSocket } from "./socket";

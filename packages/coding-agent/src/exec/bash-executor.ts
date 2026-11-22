@@ -4,7 +4,7 @@
  * Uses the embedded bash engine through native bindings for shell
  * execution.
  */
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import {
 	type MinimizerOptions,
 	type PipeStreams,
@@ -15,16 +15,16 @@ import {
 	type ShellFilesystem,
 	type ShellRunResult,
 	type ShellSpeech,
-} from "@oh-my-pi/pi-natives";
-import { isShellTrace, type ShellTrace } from "@oh-my-pi/pi-wire";
-import { logger } from "@oh-my-pi/pi-utils";
-import { formatRawOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { $env } from "@oh-my-pi/pi-utils/env";
-import { isCmdShell, isExecutable, type ShellConfig } from "@oh-my-pi/pi-utils/procmgr";
+} from "@marsai-org/natives";
+import { isShellTrace, type ShellTrace } from "@marsai-org/wire";
+import { logger } from "@marsai-org/utils";
+import { formatRawOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { $env } from "@marsai-org/utils/env";
+import { isCmdShell, isExecutable, type ShellConfig } from "@marsai-org/utils/procmgr";
 import { Settings } from "../config/settings";
-import type { MinimizedMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { type ArtifactAllocator, OutputSink, type OutputSummary } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { attachShellTrace } from "@oh-my-pi/pi-tui/tools/shell-viz";
+import type { MinimizedMeta } from "@marsai-org/tui/tools/output-meta";
+import { type ArtifactAllocator, OutputSink, type OutputSummary } from "@marsai-org/tui/tools/streaming-output";
+import { attachShellTrace } from "@marsai-org/tui/tools/shell-viz";
 import {
 	resolveOutputMaxColumns,
 	resolveOutputSinkArtifactMaxBytes,

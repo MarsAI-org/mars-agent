@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { Markdown } from "@oh-my-pi/pi-tui/components/markdown";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
-import { getMarkdownTheme, setMarkdownColorful, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import { Markdown } from "@marsai-org/tui/components/markdown";
+import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
+import { getMarkdownTheme, setMarkdownColorful, setThemeInstance, theme } from "@marsai-org/tui/theme";
+import type { Theme } from "@marsai-org/tui/theme";
 
 const DOC = [
 	"# One",

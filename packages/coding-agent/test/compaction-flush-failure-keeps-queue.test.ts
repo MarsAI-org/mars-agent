@@ -6,19 +6,19 @@
  * discarded with the failed batch.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Skill } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import type { CompactionQueuedMessage } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Skill } from "@marsai-org/coding-agent/extensibility/skills";
+import type { CompactionQueuedMessage } from "@marsai-org/coding-agent/modes/types";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 describe("flushCompactionQueue failure", () => {

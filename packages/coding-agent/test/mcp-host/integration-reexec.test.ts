@@ -7,18 +7,18 @@
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { daemonClient, probeDaemon } from "@oh-my-pi/pi-coding-agent/daemon/client";
+import { daemonClient, probeDaemon } from "@marsai-org/coding-agent/daemon/client";
 import {
 	DAEMON_RESUME_LEASE_GRACE_ENV,
 	type DaemonClient,
 	type UnitSnapshot,
-} from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import { holdSharedMcp } from "@oh-my-pi/pi-coding-agent/mcp/host/access";
-import { MCP_MODULE_KIND } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { disposeLocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
+} from "@marsai-org/coding-agent/daemon/protocol";
+import { holdSharedMcp } from "@marsai-org/coding-agent/mcp/host/access";
+import { MCP_MODULE_KIND } from "@marsai-org/coding-agent/mcp/host/contract";
+import { disposeLocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPTool } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import type { MCPStdioServerConfig } from "@marsai-org/coding-agent/mcp/types";
 import { IsolatedDaemon, isAlive, waitFor } from "../fixtures/daemon-harness";
 import { type LegacyServerState, STATE_TOOL } from "./reexec-legacy-server";
 import { forceDaemonReexec } from "./reexec-support";

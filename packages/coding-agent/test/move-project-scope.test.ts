@@ -7,14 +7,14 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { executeAcpBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/acp-builtins";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { executeAcpBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/acp-builtins";
 import {
 	getAgentDir,
 	getMCPConfigPath,
@@ -22,7 +22,7 @@ import {
 	removeSyncWithRetries,
 	setAgentDir,
 	setProjectDir,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /** Newline-delimited JSON-RPC MCP server exposing one `<server>_probe` tool. */

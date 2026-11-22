@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import type { Api, Message, Model } from "@oh-my-pi/pi-ai";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionProviderBoundary } from "@oh-my-pi/pi-coding-agent/session/session-provider-boundary";
+import type { Api, Message, Model } from "@marsai-org/ai";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import { SessionProviderBoundary } from "@marsai-org/coding-agent/session/session-provider-boundary";
 import {
 	normalizeModelContextImages,
 	normalizeModelContextMessages,
-} from "@oh-my-pi/pi-coding-agent/utils/image-loading";
-import { modelLacksWebpSupport, webpExclusionForModel } from "@oh-my-pi/pi-tui/chat/image-loading";
+} from "@marsai-org/coding-agent/utils/image-loading";
+import { modelLacksWebpSupport, webpExclusionForModel } from "@marsai-org/tui/chat/image-loading";
 
 // 1x1 red PNG seed, upscaled + re-encoded as WebP at test time so no binary
 // fixture is checked in. Bun.Image sniffs format from bytes.

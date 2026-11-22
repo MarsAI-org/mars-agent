@@ -1,20 +1,20 @@
 import { afterEach, expect, it, vi } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import * as autoThinking from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import * as sdk from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import * as settingsStream from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { VibeSessionRegistry } from "@oh-my-pi/pi-coding-agent/vibe/runtime";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildParams } from "@marsai-org/ai/providers/openai-responses";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import * as autoThinking from "@marsai-org/coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import * as sdk from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import * as settingsStream from "@marsai-org/coding-agent/session/settings-stream-fn";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { VibeSessionRegistry } from "@marsai-org/coding-agent/vibe/runtime";
+import { TempDir } from "@marsai-org/utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();

@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { classifyGatewayError } from "../../error/gateway";
 import { ValidationError } from "../../error/validation";
 import * as speechWire from "../../providers/speech-server";

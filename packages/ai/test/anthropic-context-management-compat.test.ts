@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { completeSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import { completeSimple } from "@marsai-org/ai/stream";
+import type { Context, Model, ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 function makeModel(supportsContextManagement?: boolean): Model<"anthropic-messages"> {
 	return buildModel({

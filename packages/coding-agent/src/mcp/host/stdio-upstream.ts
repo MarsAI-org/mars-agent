@@ -10,7 +10,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isRecord, logger, Snowflake } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, Snowflake } from "@marsai-org/utils";
 import type { ChildExit, ChildSpawn, ManagedChild, ManagedChildState } from "../../daemon/module";
 import { createMCPJsonRpcError, MCPTransportError, normalizeMCPTransportError } from "../errors";
 import { routeProgressNotification, withProgressToken } from "../progress";

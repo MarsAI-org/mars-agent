@@ -4,7 +4,7 @@
  */
 import type { Database } from "bun:sqlite";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	getDbBusyTimeoutMs,
 	getModelDbPath,
@@ -13,8 +13,8 @@ import {
 	logger,
 	openSqliteDatabaseSync,
 	VERSION,
-} from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+} from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
 import RULES from "./compat/rules.json" with { type: "json" };
 import type { Api, Model } from "./types";
 

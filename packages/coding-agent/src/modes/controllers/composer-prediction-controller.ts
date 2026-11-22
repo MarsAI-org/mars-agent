@@ -1,7 +1,7 @@
-import { type AgentMessage, isExcludedFromContext } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { type AgentMessage, isExcludedFromContext } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
 import type { MeterProvider } from "@opentelemetry/api";
-import { logger, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
+import { logger, prompt, sanitizeText } from "@marsai-org/utils";
 import composerPredictionPrompt from "../../prompts/system/composer-prediction-user.md" with { type: "text" };
 import type { AgentViewSession } from "../../session/agent-session-handle";
 import { completionRecord } from "../../session/model-usage-journal";

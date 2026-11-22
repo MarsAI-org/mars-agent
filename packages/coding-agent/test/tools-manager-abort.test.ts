@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type DownloadActivity, onDownloadActivity } from "@oh-my-pi/pi-coding-agent/downloads/activity";
-import { ensureTool } from "@oh-my-pi/pi-coding-agent/utils/tools-manager";
-import * as ptree from "@oh-my-pi/pi-utils/ptree";
+import { type DownloadActivity, onDownloadActivity } from "@marsai-org/coding-agent/downloads/activity";
+import { ensureTool } from "@marsai-org/coding-agent/utils/tools-manager";
+import * as ptree from "@marsai-org/utils/ptree";
 
 describe("ensureTool signal abort handling", () => {
 	const originalPath = process.env.PATH;

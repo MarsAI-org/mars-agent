@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { dereferenceJsonSchema } from "@oh-my-pi/pi-ai/utils/schema";
+import { dereferenceJsonSchema } from "@marsai-org/ai/utils/schema";
 
 describe("dereferenceJsonSchema", () => {
 	for (const referenced of [false, true]) {

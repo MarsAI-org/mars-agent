@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { loginXiaomi } from "@oh-my-pi/pi-ai/registry/oauth/xiaomi";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import * as authRules from "@oh-my-pi/pi-catalog/compat/auth";
+import { loginXiaomi } from "@marsai-org/ai/registry/oauth/xiaomi";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import * as authRules from "@marsai-org/catalog/compat/auth";
 
 afterEach(() => {
 	vi.restoreAllMocks();

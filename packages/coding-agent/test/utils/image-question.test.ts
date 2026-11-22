@@ -1,16 +1,16 @@
 import { describe, expect, it } from "bun:test";
-import type { Api, completeSimple, Model } from "@oh-my-pi/pi-ai";
-import type { ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { CostCapError, CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import type { Api, completeSimple, Model } from "@marsai-org/ai";
+import type { ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { CostCapError, CostGate } from "@marsai-org/coding-agent/session/cost-gate";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	askImageQuestion,
 	type ResolvedImageQuestionModel,
 	resolveImageQuestionModel,
-} from "@oh-my-pi/pi-coding-agent/utils/image-question";
+} from "@marsai-org/coding-agent/utils/image-question";
 import { rejectionOf } from "../helpers/rejection";
 
 function makeProxyModel(id: string, compat?: ModelSpec["compat"]): Model<Api> {

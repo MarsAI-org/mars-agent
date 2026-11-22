@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as http2 from "node:http2";
-import { AuthGatewaySessionStateStore } from "@oh-my-pi/pi-ai/auth-gateway";
-import { encodeStream as encodeAnthropicMessagesStream } from "@oh-my-pi/pi-ai/providers/anthropic-messages-server";
-import { buildGrpcRequest, type CursorOptions, streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import { encodeStream as encodeChatCompletionsStream } from "@oh-my-pi/pi-ai/providers/openai-chat-server";
+import { AuthGatewaySessionStateStore } from "@marsai-org/ai/auth-gateway";
+import { encodeStream as encodeAnthropicMessagesStream } from "@marsai-org/ai/providers/anthropic-messages-server";
+import { buildGrpcRequest, type CursorOptions, streamCursor } from "@marsai-org/ai/providers/cursor";
+import { encodeStream as encodeChatCompletionsStream } from "@marsai-org/ai/providers/openai-chat-server";
 import type {
 	AssistantMessage,
 	Message,
@@ -12,8 +12,8 @@ import type {
 	Tool,
 	ToolCall,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	type AgentClientMessage,
 	AgentClientMessageSchema,
@@ -39,8 +39,8 @@ import {
 	ToolCallStartedUpdateSchema,
 	ToolRequestsListedUpdateSchema,
 	TurnEndedUpdateSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, encodeJsonValue, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, encodeJsonValue, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 // An auth-gateway runs Cursor for a client that owns every tool and is reached
 // only through the pi-native wire, which carries no `kCursorExecResolved`

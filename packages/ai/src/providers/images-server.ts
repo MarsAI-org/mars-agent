@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import * as AIError from "../error";
 import { isDataUrlMimeType } from "../images/shared";
 import type { ImageGenerationRequest, ImageGenerationResult } from "../images/types";

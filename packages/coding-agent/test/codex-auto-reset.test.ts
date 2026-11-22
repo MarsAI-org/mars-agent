@@ -18,8 +18,8 @@
  *   consent, live credit eligibility, terminal dedupe, and account cooldown.
  */
 import { describe, expect, it } from "bun:test";
-import type { UsageReport } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { UsageReport } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	ATTEMPT_COOLDOWN_MS,
 	blockedAttemptKey,
@@ -30,8 +30,8 @@ import {
 	resetWindowMode,
 	SALVAGE_MIN_USED_FRACTION,
 	salvageAttemptKey,
-} from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { resetWindowModes } from "@oh-my-pi/pi-coding-agent/session/settings";
+} from "@marsai-org/coding-agent/session/codex-auto-reset";
+import { resetWindowModes } from "@marsai-org/coding-agent/session/settings";
 
 // Epoch ms divisible by 60_000 so minute-boundary reset/expiry times let the
 // debounce-jitter cases reason about bucket crossings precisely.

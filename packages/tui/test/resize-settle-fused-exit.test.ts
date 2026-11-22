@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { Text, TUI } from "@oh-my-pi/pi-tui";
+import { Text, TUI } from "@marsai-org/tui";
 import { BackloggedTerminal } from "./backlogged-terminal";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";

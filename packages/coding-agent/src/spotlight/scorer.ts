@@ -1,5 +1,5 @@
-import type { SpotlightRequestParams } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { SpotlightRequestParams } from "@marsai-org/tui/chat/spotlight";
+import { logger } from "@marsai-org/utils";
 import type { SpotlightClient, SpotlightRequest } from "./client";
 import { SpotlightError } from "./client";
 import { SHAPE_PROBE } from "./shape";

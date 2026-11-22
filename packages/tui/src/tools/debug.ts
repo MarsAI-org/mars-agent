@@ -12,7 +12,7 @@ import {
 	truncateToWidth,
 	clipCollapsed,
 } from "../render/render-utils";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { singleLine } from "../utils";
 import type { NativeToolView, RenderResultOptions, ToolRenderer, ToolRenderResult } from "./renderer";
 import { ansi, kv } from "../native/describe";

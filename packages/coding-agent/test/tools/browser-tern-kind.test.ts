@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveBrowserKind, resolveTernKind, type TernKind } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { TERMINAL_OWNER_ENV } from "@oh-my-pi/pi-coding-agent/tools/browser/terminal-owner";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { resolveBrowserKind, resolveTernKind, type TernKind } from "@marsai-org/coding-agent/tools/browser";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { TERMINAL_OWNER_ENV } from "@marsai-org/coding-agent/tools/browser/terminal-owner";
 
 const TERN_ENV = { TERN_PANE_SOCKET: "/tmp/tern.sock", TERN_PANE: "42" };
 const TERN: TernKind = { kind: "tern", socketPath: "/tmp/tern.sock", pane: 42 };

@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getTerminalId } from "@oh-my-pi/pi-tui/ttyid";
+import { getTerminalId } from "@marsai-org/tui/ttyid";
 import {
 	getCustomSessionFilesDir,
 	getSessionsDir,
@@ -10,9 +10,9 @@ import {
 	hashPath,
 	pathIsWithin,
 	resolveEquivalentPath,
-} from "@oh-my-pi/pi-utils/dirs";
-import { isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+} from "@marsai-org/utils/dirs";
+import { isEnoent } from "@marsai-org/utils/fs-error";
+import * as logger from "@marsai-org/utils/logger";
 import type { Settings } from "../config/settings";
 import { worktreeFamily } from "../worktree/worktrees";
 import type { SessionStorage } from "./session-storage";

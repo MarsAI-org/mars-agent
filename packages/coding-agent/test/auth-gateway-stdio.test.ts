@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type ModelKind, modelKind } from "@oh-my-pi/pi-catalog/types";
-import { selectorCandidates, stdioModelResolver } from "@oh-my-pi/pi-coding-agent/cli/auth-gateway-stdio";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { type ModelKind, modelKind } from "@marsai-org/catalog/types";
+import { selectorCandidates, stdioModelResolver } from "@marsai-org/coding-agent/cli/auth-gateway-stdio";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
+import { TempDir } from "@marsai-org/utils";
 
 const cliEntry = path.resolve(import.meta.dir, "../src/cli.ts");
 

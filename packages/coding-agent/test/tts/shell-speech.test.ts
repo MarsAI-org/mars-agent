@@ -2,22 +2,22 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { MissingApiKeyError } from "@oh-my-pi/pi-ai/error";
-import type { SpeechRequest, SpeechResult } from "@oh-my-pi/pi-ai/speech";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import type { Model } from "@marsai-org/ai";
+import { MissingApiKeyError } from "@marsai-org/ai/error";
+import type { SpeechRequest, SpeechResult } from "@marsai-org/ai/speech";
+import { type GeneratedProvider, getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	ShellSpeechHost,
 	type ShellSpeechServices,
 	type ShellSpeechSession,
-} from "@oh-my-pi/pi-coding-agent/tts/shell-speech";
-import type { TtsStreamHandle, TtsStreamOptions } from "@oh-my-pi/pi-coding-agent/tts/tts-client";
-import type { VocalizerPlayer } from "@oh-my-pi/pi-coding-agent/tts/vocalizer";
-import { encodeWav } from "@oh-my-pi/pi-coding-agent/tts/wav";
-import { ShellSpeechOp } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/coding-agent/tts/shell-speech";
+import type { TtsStreamHandle, TtsStreamOptions } from "@marsai-org/coding-agent/tts/tts-client";
+import type { VocalizerPlayer } from "@marsai-org/coding-agent/tts/vocalizer";
+import { encodeWav } from "@marsai-org/coding-agent/tts/wav";
+import { ShellSpeechOp } from "@marsai-org/natives";
 
 function requireModel(provider: GeneratedProvider, id: string): Model {
 	const model = getBundledModel(provider, id);

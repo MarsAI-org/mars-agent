@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { TempDir } from "@marsai-org/utils";
 import { Settings } from "../../src/config/settings";
 import {
 	disposeAllVmContexts,

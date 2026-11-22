@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { resolveCodexResponsesUrl } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { CODEX_BASE_URL } from "@oh-my-pi/pi-catalog/wire/codex";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { SearchParams } from "@oh-my-pi/pi-coding-agent/web/search/providers/base";
-import { searchCodex } from "@oh-my-pi/pi-coding-agent/web/search/providers/codex";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { resolveCodexResponsesUrl } from "@marsai-org/ai/providers/openai-codex-responses";
+import { CODEX_BASE_URL } from "@marsai-org/catalog/wire/codex";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import type { SearchParams } from "@marsai-org/coding-agent/web/search/providers/base";
+import { searchCodex } from "@marsai-org/coding-agent/web/search/providers/codex";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 function makeSseResponse(): string {

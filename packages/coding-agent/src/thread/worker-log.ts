@@ -14,7 +14,7 @@
  * ({@link WorkerLogPort.connectFlush}), `logger.flush()` in the worker blocks
  * until main wrote every record posted before it.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { ThreadId } from "./identity";
 
 /** Raw message a subagent worker posts on `parentPort` for each log record. */

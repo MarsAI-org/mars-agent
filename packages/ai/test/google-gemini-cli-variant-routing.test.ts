@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveVariantSelector } from "@oh-my-pi/pi-catalog/compat/collapse";
-import { fetchAntigravityDiscoveryModels } from "@oh-my-pi/pi-catalog/discovery/antigravity";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { googleAntigravityModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/google";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { Effort, type FetchImpl } from "@marsai-org/ai";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveVariantSelector } from "@marsai-org/catalog/compat/collapse";
+import { fetchAntigravityDiscoveryModels } from "@marsai-org/catalog/discovery/antigravity";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { googleAntigravityModelManagerOptions } from "@marsai-org/catalog/provider-models/google";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 interface CapturedRequestBody {
 	model?: string;

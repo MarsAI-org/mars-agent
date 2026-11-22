@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { handleSecEdgar } from "@oh-my-pi/pi-coding-agent/web/scrapers/sec-edgar";
-import * as scrapers from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
+import { handleSecEdgar } from "@marsai-org/coding-agent/web/scrapers/sec-edgar";
+import * as scrapers from "@marsai-org/coding-agent/web/scrapers/types";
 
 const COMPANY = {
 	cik: "0002120882",

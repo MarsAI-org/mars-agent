@@ -1,4 +1,4 @@
-import type { ShellVizLayer, ShellVizPreferences, ShellVizView } from "@oh-my-pi/pi-wire";
+import type { ShellVizLayer, ShellVizPreferences, ShellVizView } from "@marsai-org/wire";
 import type { NativeUiEvent } from "../native/node";
 import { isShellVizNode } from "./shell-viz";
 

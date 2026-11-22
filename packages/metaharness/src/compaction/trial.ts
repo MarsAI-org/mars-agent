@@ -24,7 +24,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import { type FreshStart, HISTORY_DIR } from "./fresh";
 import continuePrompt from "./prompts/continue.md" with { type: "text" };
@@ -207,7 +207,7 @@ export async function runTrial(config: TrialConfig): Promise<TrialSummary> {
 	const remoteRun = path.posix.join(config.remoteRoot, "runs", config.runName);
 	const supportDir = path.posix.join(remoteRun, "support");
 	const socketDir = path.posix.join(remoteRun, "gw");
-	const remoteBinary = path.posix.join(config.remoteRoot, "bin", `omp-linux-x64-${config.binary.version}`);
+	const remoteBinary = path.posix.join(config.remoteRoot, "bin", `mars-linux-x64-${config.binary.version}`);
 	await fs.mkdir(config.localDir, { recursive: true });
 
 	await host.sh(`mkdir -p ${shq(supportDir)} ${shq(socketDir)} ${shq(path.posix.dirname(remoteBinary))}`);

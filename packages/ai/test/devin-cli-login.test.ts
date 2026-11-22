@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { devinCliCredentialPaths, readDevinCliCredentials } from "@oh-my-pi/pi-ai/registry/oauth/devin-cli";
+import { devinCliCredentialPaths, readDevinCliCredentials } from "@marsai-org/ai/registry/oauth/devin-cli";
 
 let tempDir = "";
 

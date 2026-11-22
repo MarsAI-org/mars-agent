@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
 import {
 	AuthBrokerError,
 	type AuthBrokerServerHandle,
@@ -12,9 +12,9 @@ import {
 	type SnapshotResponse,
 	startAuthBroker,
 	writeAuthBrokerSnapshotCache,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import { discoverAuthStorage } from "@oh-my-pi/pi-coding-agent/sdk";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/auth-broker";
+import { discoverAuthStorage } from "@marsai-org/coding-agent/sdk";
+import { removeWithRetries } from "@marsai-org/utils";
 import { rejectionOf } from "./helpers/rejection";
 
 const ENV_KEYS = [

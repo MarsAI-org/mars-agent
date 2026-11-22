@@ -1,4 +1,4 @@
-import { asRecord, tryParseJson } from "@oh-my-pi/pi-utils";
+import { asRecord, tryParseJson } from "@marsai-org/utils";
 import type { RenderResult, SpecialHandler } from "./types";
 import { buildResult, htmlToBasicMarkdown, loadPage } from "./types";
 

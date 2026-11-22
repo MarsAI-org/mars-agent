@@ -1,7 +1,7 @@
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { calculateUsageCost } from "@oh-my-pi/pi-catalog/models";
-import type { Api, Model, ModelSpec, OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { calculateUsageCost } from "@marsai-org/catalog/models";
+import type { Api, Model, ModelSpec, OpenAICompat } from "@marsai-org/catalog/types";
+import { USER_AGENT } from "@marsai-org/utils";
 import { describe, expect, it, spyOn } from "bun:test";
 import {
 	type ApiKeyResolveContext,
@@ -19,10 +19,10 @@ import {
 	renderJudgmentState,
 	type TextBackend,
 	TextJudge,
-} from "@oh-my-pi/pi-ai";
-import type { ImageContent } from "@oh-my-pi/pi-ai/types";
-import { ConfigurationError, ValidationError } from "@oh-my-pi/pi-ai/error";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
+} from "@marsai-org/ai";
+import type { ImageContent } from "@marsai-org/ai/types";
+import { ConfigurationError, ValidationError } from "@marsai-org/ai/error";
+import { withCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
 import { withEnv } from "./helpers";
 
 const LEVELS = ["low", "medium", "high", "xhigh", "max"] as const;

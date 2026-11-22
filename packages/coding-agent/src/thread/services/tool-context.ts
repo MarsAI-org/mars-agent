@@ -18,8 +18,8 @@
  *   values are not visible to main-side tool code); main sends its instance, which the worker mirrors.
  * - `modelRegistry`, `model`, `localProtocolOptions`, `autoApprove` cross as values/proxies.
  */
-import type { Model } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import type { ModelRegistry } from "../../config/model-registry";
 import { Settings } from "../../config/settings";
 import type { CustomToolContext } from "../../extensibility/custom-tools/types";

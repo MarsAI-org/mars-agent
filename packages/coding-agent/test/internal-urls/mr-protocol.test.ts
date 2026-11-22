@@ -9,11 +9,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { resetDefaultGitlabProjectMemoForTests } from "@oh-my-pi/pi-coding-agent/tools/glab-mr";
-import { resetForTests as resetCacheForTests } from "@oh-my-pi/pi-coding-agent/tools/github-cache";
-import { gitlab } from "@oh-my-pi/pi-coding-agent/utils/gitlab";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { resetDefaultGitlabProjectMemoForTests } from "@marsai-org/coding-agent/tools/glab-mr";
+import { resetForTests as resetCacheForTests } from "@marsai-org/coding-agent/tools/github-cache";
+import { gitlab } from "@marsai-org/coding-agent/utils/gitlab";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const diffText = `diff --git a/src/one.ts b/src/one.ts
 --- a/src/one.ts

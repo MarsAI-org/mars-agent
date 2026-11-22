@@ -4,7 +4,7 @@
  * `initialize` session and presents it in modern terms, the probe that tells
  * the two apart, and re-adoption of subprocess peers after a daemon re-exec.
  */
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+import { isRecord, logger } from "@marsai-org/utils";
 import type { ManagedChild, ManagedChildState } from "../../daemon/module";
 import { type MCPTransportKind, MCPTransportError, normalizeMCPTransportError } from "../errors";
 import {

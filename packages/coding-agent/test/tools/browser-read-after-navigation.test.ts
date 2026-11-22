@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { acquireBrowser, type BrowserHandle, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { acquireTab, releaseTab, runInTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { acquireBrowser, type BrowserHandle, releaseBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
+import { acquireTab, releaseTab, runInTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { chromiumAvailable } from "./chromium-probe";
 const CHROMIUM_AVAILABLE = await chromiumAvailable();
 

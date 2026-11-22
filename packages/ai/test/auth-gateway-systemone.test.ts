@@ -2,14 +2,14 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { NativeJudge, type ImageContent, type JudgmentRequest } from "@oh-my-pi/pi-ai";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { buildGatewayApiKeyResolver } from "@oh-my-pi/pi-ai/auth-gateway/dispatch";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { NativeJudge, type ImageContent, type JudgmentRequest } from "@marsai-org/ai";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import { buildGatewayApiKeyResolver } from "@marsai-org/ai/auth-gateway/dispatch";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { FetchImpl, ModelSpec } from "@marsai-org/catalog/types";
 
 const REQUEST = {
 	state: "Help! My payouts have been failing for 3 days.",

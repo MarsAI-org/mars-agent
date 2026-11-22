@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getTinyModelsCacheDir } from "@oh-my-pi/pi-utils";
+import { getTinyModelsCacheDir } from "@marsai-org/utils";
 import type {
 	AutomaticSpeechRecognitionOutput,
 	AutomaticSpeechRecognitionPipeline,

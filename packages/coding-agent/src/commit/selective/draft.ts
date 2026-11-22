@@ -15,9 +15,9 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { BINARY_SNIFF_BYTES, isEnoent, isProbablyBinaryHeader } from "@oh-my-pi/pi-utils";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { BINARY_SNIFF_BYTES, isEnoent, isProbablyBinaryHeader } from "@marsai-org/utils";
 import { parseDirtyPathsWithStatus } from "../../autoresearch/git";
 import {
 	type Attribution,

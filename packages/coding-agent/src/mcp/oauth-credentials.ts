@@ -1,7 +1,7 @@
-import { REMOTE_REFRESH_SENTINEL, type StoredOAuthRefreshResult } from "@oh-my-pi/pi-ai";
-import { isDefinitiveOAuthFailure } from "@oh-my-pi/pi-ai/error";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/oauth/types";
-import { getActiveProfile } from "@oh-my-pi/pi-utils/dirs";
+import { REMOTE_REFRESH_SENTINEL, type StoredOAuthRefreshResult } from "@marsai-org/ai";
+import { isDefinitiveOAuthFailure } from "@marsai-org/ai/error";
+import type { OAuthCredentials } from "@marsai-org/ai/oauth/types";
+import { getActiveProfile } from "@marsai-org/utils/dirs";
 import { expandEnvVarsDeep } from "../discovery/helpers";
 import type { AuthStorage } from "../session/auth-storage";
 import {

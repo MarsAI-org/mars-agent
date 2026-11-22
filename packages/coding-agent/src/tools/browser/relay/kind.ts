@@ -7,7 +7,7 @@
  * (registry, tab supervisor, tab workers) applies unchanged.
  */
 import { discoverRelayEndpoints } from "./discovery";
-import { parseFlag } from "@oh-my-pi/pi-utils";
+import { parseFlag } from "@marsai-org/utils";
 
 /** Browser kind selecting the omp browser relay. */
 export interface RelayKind {

@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import {
 	type CompactionPreparation,
 	compact,
 	DEFAULT_COMPACTION_SETTINGS,
 	generateHandoff,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/agent-core/compaction";
+import * as snapcompact from "@marsai-org/snapcompact";
+import type { AssistantMessage, Model } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 // Pins the fix for the "raw 401 surfaced as Compaction failed:" bug.
 //

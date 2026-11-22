@@ -5,13 +5,13 @@ import {
 	restoreConsoleInputMode,
 	TtyWriter,
 	translateWindowsAltGrSequence,
-} from "@oh-my-pi/pi-natives";
-import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { popLoopPhase, pushLoopPhase } from "@oh-my-pi/pi-utils/loop-phase";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
-import { restoreTerminalStderr, suppressTerminalStderr } from "@oh-my-pi/pi-utils/stderr-guard";
-import { TSP_VERSION } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/natives";
+import { $env, isBunTestRuntime, isTerminalHeadless, isWsl } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
+import { popLoopPhase, pushLoopPhase } from "@marsai-org/utils/loop-phase";
+import * as postmortem from "@marsai-org/utils/postmortem";
+import { restoreTerminalStderr, suppressTerminalStderr } from "@marsai-org/utils/stderr-guard";
+import { TSP_VERSION } from "@marsai-org/wire";
 import { getActiveTerminal, registerStdoutErrorHandler, setActiveTerminal } from "./active-terminal";
 import {
 	encodeBundledGlyphRegistrations,

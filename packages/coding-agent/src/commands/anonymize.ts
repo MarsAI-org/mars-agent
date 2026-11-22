@@ -1,7 +1,7 @@
 /**
  * Write a shareable, anonymized copy of a session and its subagent transcripts.
  */
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { runAnonymizeCommand } from "../cli/anonymize-cli";
 import { reportCliUsageError } from "../cli/args";
 import { anonymizeHelp as commandHelp } from "../cli/command-help";

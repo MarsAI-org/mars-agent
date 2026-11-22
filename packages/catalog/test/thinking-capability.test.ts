@@ -3,20 +3,20 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fetchOpenAICompatibleModels } from "@oh-my-pi/pi-catalog/discovery/openai-compatible";
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { clampThinkingLevelForModel, withoutUnverifiedThinking } from "@oh-my-pi/pi-catalog/model-thinking";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
+import { buildModel } from "@marsai-org/catalog/build";
+import { fetchOpenAICompatibleModels } from "@marsai-org/catalog/discovery/openai-compatible";
+import { Effort, THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { clampThinkingLevelForModel, withoutUnverifiedThinking } from "@marsai-org/catalog/model-thinking";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
 import {
 	applyThinkingCapability,
 	readThinkingCapability,
 	type ThinkingCapability,
 	withThinkingCapability,
 	writeThinkingCapability,
-} from "@oh-my-pi/pi-catalog/thinking-capability";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/thinking-capability";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 
 function spec(overrides: Partial<ModelSpec<"openai-completions">> = {}): ModelSpec<"openai-completions"> {
 	return {

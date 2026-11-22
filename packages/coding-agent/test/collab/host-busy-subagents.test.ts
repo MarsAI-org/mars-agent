@@ -8,13 +8,13 @@
  * uplink throttled by hand.
  */
 import { afterEach, expect, it } from "bun:test";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { TASK_SUBAGENT_LIFECYCLE_CHANNEL, TASK_SUBAGENT_PROGRESS_CHANNEL } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import { importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabHost } from "@marsai-org/coding-agent/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import type { SessionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { TASK_SUBAGENT_LIFECYCLE_CHANNEL, TASK_SUBAGENT_PROGRESS_CHANNEL } from "@marsai-org/coding-agent/task/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 import type { FakeWebSocket } from "./helpers/in-memory-relay";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 import {

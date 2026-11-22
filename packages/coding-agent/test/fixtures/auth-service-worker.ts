@@ -1,6 +1,6 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import { AuthStorage, type SessionRestrictionLease } from "@oh-my-pi/pi-ai";
-import { MissingApiKeyError } from "@oh-my-pi/pi-ai/error";
+import { AuthStorage, type SessionRestrictionLease } from "@marsai-org/ai";
+import { MissingApiKeyError } from "@marsai-org/ai/error";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { anthropicSlowModeLanes } from "../../src/session/anthropic-slow-mode";
 import type { WorkerThreadLink } from "../../src/thread/protocol";

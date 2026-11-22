@@ -16,12 +16,12 @@ import {
 	type OAuthAccess,
 	withAuth,
 	withOAuthAccess,
-} from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel, resolveWireModelId } from "@oh-my-pi/pi-catalog/model-thinking";
-import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
-import { getAntigravityHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
-import { fetchWithRetry, USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { clampThinkingLevelForModel, resolveWireModelId } from "@marsai-org/catalog/model-thinking";
+import { parseCloudflareCredential } from "@marsai-org/catalog/wire/cloudflare";
+import { getAntigravityHeaders } from "@marsai-org/catalog/wire/gemini-headers";
+import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@marsai-org/tui/thinking";
+import { fetchWithRetry, USER_AGENT } from "@marsai-org/utils";
 
 import type { SearchCitation, SearchResponse, SearchSource } from "../types";
 import type { ModelRegistry } from "../../../config/model-registry";

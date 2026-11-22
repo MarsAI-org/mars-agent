@@ -7,7 +7,7 @@
  * blank-sensitive formats (markdown, yaml) keep exact formatted equality.
  */
 import * as path from "node:path";
-import { diffLines } from "@oh-my-pi/pi-natives";
+import { diffLines } from "@marsai-org/natives";
 import { formatContent } from "./formatter";
 import { listFiles } from "./shared";
 

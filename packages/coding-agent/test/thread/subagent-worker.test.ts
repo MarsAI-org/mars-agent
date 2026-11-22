@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { logger, TempDir } from "@marsai-org/utils";
 import { RpcClosedError } from "../../src/thread/rpc";
 import type { ThreadService, WorkerPeer } from "../../src/thread/services";
 import { THREAD_SERVICES } from "../../src/thread/services/index";

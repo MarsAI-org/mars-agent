@@ -2,8 +2,8 @@
  * What the next request finds in the prompt cache, for the status line's
  * `cache` marker and its details. Display only: nothing here changes a request.
  */
-import { isPromptCachePersistent } from "@oh-my-pi/pi-catalog/compat/prompt-cache-persistent";
-import type { PromptCacheColdReason, PromptCacheStatus } from "@oh-my-pi/pi-tui/status-line/host";
+import { isPromptCachePersistent } from "@marsai-org/catalog/compat/prompt-cache-persistent";
+import type { PromptCacheColdReason, PromptCacheStatus } from "@marsai-org/tui/status-line/host";
 import type { CacheWarmingStatus, ConfirmedPromptCacheEntry } from "./cache-warmer";
 
 /**

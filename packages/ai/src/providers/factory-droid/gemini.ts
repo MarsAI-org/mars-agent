@@ -1,8 +1,8 @@
-import { resolveFactoryDroidPolicy } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import type { RequestPolicy } from "@oh-my-pi/pi-catalog/compat/types";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { readSseJson } from "@oh-my-pi/pi-utils";
+import { resolveFactoryDroidPolicy } from "@marsai-org/catalog/compat/factory-droid";
+import type { RequestPolicy } from "@marsai-org/catalog/compat/types";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { readSseJson } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type {
 	AssistantMessage,

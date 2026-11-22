@@ -2,7 +2,7 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { installSqliteLockShim } from "@oh-my-pi/pi-natives/sqlite-locks";
+import { installSqliteLockShim } from "@marsai-org/natives/sqlite-locks";
 import { getDbBusyTimeoutMs } from "./env";
 import { withFileLockSync } from "./file-lock";
 import { isEnoent } from "./fs-error";

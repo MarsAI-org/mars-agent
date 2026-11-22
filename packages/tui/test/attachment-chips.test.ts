@@ -1,13 +1,13 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { AttachmentChipsBand } from "@oh-my-pi/pi-tui/prompt/attachment-chips";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { chipLabel } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { ImageBudget } from "@oh-my-pi/pi-tui";
-import { setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
-import { getCellDimensions, ImageProtocol, setCellDimensions, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { getAvailableSymbolPresets, SYMBOL_PRESETS } from "@oh-my-pi/pi-tui/theme/symbols";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { AttachmentChipsBand } from "@marsai-org/tui/prompt/attachment-chips";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { chipLabel } from "@marsai-org/tui/prompt/composer-attachments";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme";
+import { ImageBudget } from "@marsai-org/tui";
+import { setKittyGraphics } from "@marsai-org/tui/kitty-graphics";
+import { getCellDimensions, ImageProtocol, setCellDimensions, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { getAvailableSymbolPresets, SYMBOL_PRESETS } from "@marsai-org/tui/theme/symbols";
+import { visibleWidth } from "@marsai-org/tui/utils";
 
 // 2x2 red PNG — real header so the band's dimension probe decodes 2x2.
 const TINY_PNG =

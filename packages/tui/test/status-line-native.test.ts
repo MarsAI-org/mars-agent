@@ -2,8 +2,8 @@ import { afterEach, beforeAll, describe, expect, it, setSystemTime, vi } from "b
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getProjectDir, removeSyncWithRetries, setProjectDir } from "@oh-my-pi/pi-utils";
-import type { TspProps } from "@oh-my-pi/pi-wire";
+import { getProjectDir, removeSyncWithRetries, setProjectDir } from "@marsai-org/utils";
+import type { TspProps } from "@marsai-org/wire";
 import type { NativeChild, NativeNode } from "../src/native/node";
 import { setNativeRendering } from "../src/native/state";
 import { StatusLineComponent } from "../src/status-line/component";

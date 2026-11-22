@@ -6,41 +6,41 @@
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import type { AsyncJob } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { DaemonCompletionEvent } from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AcpAgent } from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
-import { buildAsyncResultBlock } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { ArtifactManager } from "@oh-my-pi/pi-coding-agent/session/artifacts";
+import { Agent } from "@marsai-org/agent-core";
+import type { ImageContent } from "@marsai-org/ai";
+import { createMockModel, type MockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import type { AsyncJob } from "@marsai-org/coding-agent/async/job-manager";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { DaemonCompletionEvent } from "@marsai-org/coding-agent/daemon/protocol";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import type { ExtensionAPI } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { AcpAgent } from "@marsai-org/coding-agent/modes/acp/acp-agent";
+import { buildAsyncResultBlock } from "@marsai-org/tui/chat/transcript-render-helpers";
+import { initTheme } from "@marsai-org/tui/theme";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { ArtifactManager } from "@marsai-org/coding-agent/session/artifacts";
 import {
 	buildAsyncResultBatchMessage,
 	type AsyncResultDetails,
 	type AsyncResultEntry,
-} from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, type CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { formatTaskResultSummary, INLINE_OUTPUT_CHARS } from "@oh-my-pi/pi-coding-agent/task/result-summary";
+} from "@marsai-org/coding-agent/session/async-job-delivery";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, type CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { formatTaskResultSummary, INLINE_OUTPUT_CHARS } from "@marsai-org/coding-agent/task/result-summary";
 
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { type OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { AgentSideConnection, SessionNotification } from "@oh-my-pi/pi-utils/acp";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { type OutputMeta } from "@marsai-org/tui/tools/output-meta";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir } from "@marsai-org/utils";
+import type { AgentSideConnection, SessionNotification } from "@marsai-org/utils/acp";
 /**
  * Wait out the session's owned jobs, their deliveries, and the run their results start.
  * These jobs are registered outside any run, so no open run waits for them on its own.

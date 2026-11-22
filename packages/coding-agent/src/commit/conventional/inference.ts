@@ -1,9 +1,9 @@
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Api, ApiKey, AuthStorage, Model } from "@oh-my-pi/pi-ai";
-import { completeSimple } from "@oh-my-pi/pi-ai";
-import { toError } from "@oh-my-pi/pi-utils";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Api, ApiKey, AuthStorage, Model } from "@marsai-org/ai";
+import { completeSimple } from "@marsai-org/ai";
+import { toError } from "@marsai-org/utils";
 import { journalCompletion, type ModelUsageLedger } from "../../session/model-usage-journal";
-import { toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { toReasoningEffort } from "@marsai-org/tui/thinking";
 import type { ResolvedCommitModel } from "../model-selection";
 import { extractTextContent } from "../utils";
 import { type CommitInferenceCache, computeCommitCacheKey } from "./cache";

@@ -2,18 +2,18 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
 import {
 	DEFAULT_MODEL_PER_PROVIDER,
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
 	modelsDevCatalogFallback,
 	PROVIDER_DESCRIPTORS,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 import { removeWithRetries } from "../../utils/src/temp";
 
 // A stencil.so "azure" payload: two OpenAI-family models (one reasoning), a

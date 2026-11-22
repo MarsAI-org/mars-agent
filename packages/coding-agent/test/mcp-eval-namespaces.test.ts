@@ -2,19 +2,19 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
 import * as vm from "node:vm";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { type DownloadActivity, onDownloadActivity } from "@oh-my-pi/pi-coding-agent/downloads/activity";
-import { SkillDescriptionStore } from "@oh-my-pi/pi-coding-agent/extensibility/skill-descriptions";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls/local-protocol";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { type DownloadActivity, onDownloadActivity } from "@marsai-org/coding-agent/downloads/activity";
+import { SkillDescriptionStore } from "@marsai-org/coding-agent/extensibility/skill-descriptions";
+import { resolveLocalUrlToPath } from "@marsai-org/coding-agent/internal-urls/local-protocol";
 import {
 	EVAL_MCP_BRIDGE_NAME,
 	groupMCPNamespaces,
 	MCPEvalNamespaceCatalog,
 	mcpNamespaceValue,
-} from "@oh-my-pi/pi-coding-agent/mcp/eval-namespaces";
-import { createMCPToolName } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mcp/eval-namespaces";
+import { createMCPToolName } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 function mcpTool(server: string, tool: string, description = `${tool} on ${server}`): AgentTool {
 	// A registry entry carries its MCP route beside the AgentTool fields.

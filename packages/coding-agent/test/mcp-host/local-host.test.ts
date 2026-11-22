@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { type McpAttachRequest, type McpEra, mcpIdentity } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { LocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCP_ERA_RECHECK_MS, McpStore } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { McpEraResolver } from "@oh-my-pi/pi-coding-agent/mcp/host/endpoint";
+import { type McpAttachRequest, type McpEra, mcpIdentity } from "@marsai-org/coding-agent/mcp/host/contract";
+import { LocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCP_ERA_RECHECK_MS, McpStore } from "@marsai-org/coding-agent/mcp/host/store";
+import { McpEraResolver } from "@marsai-org/coding-agent/mcp/host/endpoint";
 import { linkOver, ScriptedUpstreams, settle, stdioSpec, until } from "./scripted";
 
 function attachRequest(era: McpEra, instance: string, idleMs = 60_000): McpAttachRequest {

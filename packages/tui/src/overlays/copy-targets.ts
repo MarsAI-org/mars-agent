@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ToolCall } from "@oh-my-pi/pi-ai";
-import type { Token, Tokens } from "@oh-my-pi/pi-utils/marked";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { ToolCall } from "@marsai-org/ai";
+import type { Token, Tokens } from "@marsai-org/utils/marked";
 import { extractMarkdownLinks, lexDocument } from "../index";
 
 /** A fenced code block extracted from assistant markdown. */

@@ -1,5 +1,5 @@
-import { type } from "@oh-my-pi/omptype";
-import { getProjectDir, isRecord, prompt } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { getProjectDir, isRecord, prompt } from "@marsai-org/utils";
 import { ModelRegistry } from "../config/model-registry";
 import { formatModelString, resolveCliModel } from "../config/model-resolver";
 import { Settings } from "../config/settings";
@@ -10,7 +10,7 @@ import { MAIN_AGENT_ID } from "../registry/agent-registry";
 import { discoverAuthStorage } from "../sdk";
 import { SessionManager } from "../session/session-manager";
 import { reserveStructuredSubagentId, runStructuredSubagent } from "../task/structured-subagent";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
 import type { ToolSession } from "../tools";
 import { EventBus } from "../utils/event-bus";
 import type { CleanseCheckerDescriptor, CustomCleanseCheckerSpec } from "./checkers";

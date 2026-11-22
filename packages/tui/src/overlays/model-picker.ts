@@ -6,9 +6,9 @@
  * rail. Model entries switch the current session only; a search beginning
  * with `@` exposes the configured ctrl+p quick roles.
  */
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel, getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { clampThinkingLevelForModel, getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
 import { addKeyAliases, canonicalKeyId } from "../keybindings";
 import { type KeyId, matchesKey, parseKey } from "../keys";
 import type { Component, TUI } from "../tui";
@@ -30,7 +30,7 @@ import { editorKey, editorKeys } from "../chrome/keybinding-hints";
 import { card, span, text } from "../native/describe";
 import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";
 import { CLOSE_ACTION, picker, pickerAction, pickerEvent } from "../native/picker";
-import type { TspPickerLevel, TspPickerScope } from "@oh-my-pi/pi-wire";
+import type { TspPickerLevel, TspPickerScope } from "@marsai-org/wire";
 import { actionHint, hintsRow, type NativeHint } from "../native/overlay";
 
 /** Configured role resolved to a concrete model. */

@@ -5,7 +5,7 @@
  * decorative motion off every `fx` is dropped. Untouched subtrees keep their identity (the reconciler
  * memoizes on it); translations are cached per described node until a switch changes.
  */
-import type { TspSpan, TspSpinnerProps, TspText } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspSpinnerProps, TspText } from "@marsai-org/wire";
 import { motionEffectsEnabled } from "../motion-effects";
 import { spinnerAnimated } from "../spinner-clock";
 import type { NativeChild, NativeNode } from "./node";

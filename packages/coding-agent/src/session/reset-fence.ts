@@ -6,7 +6,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDbPath, isEnoent, withFileLock } from "@oh-my-pi/pi-utils";
+import { getAgentDbPath, isEnoent, withFileLock } from "@marsai-org/utils";
 import type { ResetCreditAccountStatus, ResetCreditRedeemOutcome } from "./auth-storage";
 import { ATTEMPT_COOLDOWN_MS } from "./codex-auto-reset";
 

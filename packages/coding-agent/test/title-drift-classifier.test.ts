@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { Judge, JudgmentRequest } from "@oh-my-pi/pi-ai";
-import { classifyTitleDrift } from "@oh-my-pi/pi-coding-agent/session/title-drift-classifier";
+import type { Judge, JudgmentRequest } from "@marsai-org/ai";
+import { classifyTitleDrift } from "@marsai-org/coding-agent/session/title-drift-classifier";
 
 /** A judge answering `fits` with `noul`, recording each request's state. */
 function fitsJudge(noul: number, states: unknown[] = []): Judge {

@@ -11,7 +11,7 @@
  * mentions `agent(` or `workpool(` (the eval subagent helpers; most cells never
  * spawn, so the name alone is no signal; counted as one spawn).
  */
-import type { AssistantMessageEvent } from "@oh-my-pi/pi-ai";
+import type { AssistantMessageEvent } from "@marsai-org/ai";
 import { BatchArgsScanner } from "../task/speculative-launch";
 
 /** Eval helpers that spawn subagents, as they appear in streamed cell code. */

@@ -31,7 +31,7 @@
 import * as fs from "node:fs";
 import { Transform } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import { $env, APP_NAME, isEnoent, isRecord, VERSION } from "@oh-my-pi/pi-utils";
+import { $env, APP_NAME, isEnoent, isRecord, VERSION } from "@marsai-org/utils";
 import { $ } from "bun";
 import {
 	isTimeoutError,
@@ -76,7 +76,7 @@ export interface BuildProduct {
 	fileName(host: BuildHost, version: string): string;
 }
 
-/** omp's standalone binary, named like its GitHub release asset: `omp-darwin-arm64`, `omp-windows-x64.exe`. */
+/** omp's standalone binary, named like its GitHub release asset: `mars-darwin-arm64`, `mars-windows-x64.exe`. */
 export const OMP_BUILD: BuildProduct = {
 	id: "omp",
 	fileName: host => `${APP_NAME}-${host.asset}${host.windows ? ".exe" : ""}`,

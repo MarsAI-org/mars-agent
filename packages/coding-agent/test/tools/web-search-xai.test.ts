@@ -1,12 +1,12 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, setSystemTime, vi } from "bun:test";
-import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { cfgModelProviderOrder } from "@oh-my-pi/pi-coding-agent/config/model-settings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { rankXAIProviders, searchXAI, XAIProvider } from "@oh-my-pi/pi-coding-agent/web/search/providers/xai";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { cfgModelProviderOrder } from "@marsai-org/coding-agent/config/model-settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { rankXAIProviders, searchXAI, XAIProvider } from "@marsai-org/coding-agent/web/search/providers/xai";
+import { SearchProviderError } from "@marsai-org/coding-agent/web/search/types";
 
 type CapturedRequest = {
 	url: string;

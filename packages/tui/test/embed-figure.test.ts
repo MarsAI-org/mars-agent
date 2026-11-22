@@ -1,17 +1,17 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { EmbedFigure } from "@oh-my-pi/pi-tui/chat/embed-figure";
-import { setEmbedHost } from "@oh-my-pi/pi-tui/chat/embed-host";
-import { type Embed, splitEmbeds } from "@oh-my-pi/pi-tui/chat/embed-source";
-import { applyHyperlinkSetting } from "@oh-my-pi/pi-tui/render/hyperlink";
+import { rasterizeSvg } from "@marsai-org/natives";
+import { EmbedFigure } from "@marsai-org/tui/chat/embed-figure";
+import { setEmbedHost } from "@marsai-org/tui/chat/embed-host";
+import { type Embed, splitEmbeds } from "@marsai-org/tui/chat/embed-source";
+import { applyHyperlinkSetting } from "@marsai-org/tui/render/hyperlink";
 import {
 	getCellDimensions,
 	ImageProtocol,
 	setCellDimensions,
 	setTerminalImageProtocol,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/terminal-capabilities";
+import { initTheme } from "@marsai-org/tui/theme";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 
 withoutTerminalMultiplexer();

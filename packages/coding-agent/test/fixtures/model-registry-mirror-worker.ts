@@ -1,7 +1,7 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import { Type } from "@oh-my-pi/omptype/typebox";
-import { type AgentTool, normalizeTools } from "@oh-my-pi/pi-agent-core";
-import { type Api, type Context, type Model, streamSimple } from "@oh-my-pi/pi-ai";
+import { Type } from "@marsai-org/omptype/typebox";
+import { type AgentTool, normalizeTools } from "@marsai-org/agent-core";
+import { type Api, type Context, type Model, streamSimple } from "@marsai-org/ai";
 import type { ModelRegistry } from "../../src/config/model-registry";
 import type { WorkerThreadLink } from "../../src/thread/protocol";
 import { type RpcFrame, RpcLink } from "../../src/thread/rpc";

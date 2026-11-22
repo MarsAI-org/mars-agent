@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+import { postmortem, TempDir } from "@marsai-org/utils";
 import { JsRuntime, type RuntimeHooks } from "../../src/eval/js/shared/runtime";
 import {
 	bindRunFacade,
@@ -165,7 +165,7 @@ describe("browser run cancellation", () => {
 	it("keeps a later cause-wrapped rejection on the fatal path", async () => {
 		vi.useRealTimers();
 		const script = `
-			import { postmortem } from "@oh-my-pi/pi-utils";
+			import { postmortem } from "@marsai-org/utils";
 			import { markBrowserRunRejection } from ${JSON.stringify(runScopeModuleUrl)};
 			postmortem.installProcessHandlers();
 

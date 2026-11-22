@@ -1,9 +1,9 @@
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { type } from "@marsai-org/omptype";
+import { isRecord, untilAborted } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { Cookie, CookieParam, Page } from "puppeteer-core";
 import { resolveToCwd } from "../path-utils";
 import { throwIfAborted } from "../tool-errors";

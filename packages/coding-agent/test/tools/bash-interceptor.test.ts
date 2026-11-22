@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { BashInterceptorRule } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import { DEFAULT_BASH_INTERCEPTOR_RULES } from "@oh-my-pi/pi-coding-agent/exec/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool, type BashToolInput } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { checkBashInterception } from "@oh-my-pi/pi-coding-agent/tools/bash-interceptor";
+import type { AgentToolContext } from "@marsai-org/agent-core";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { BashInterceptorRule } from "@marsai-org/coding-agent/exec/settings";
+import { DEFAULT_BASH_INTERCEPTOR_RULES } from "@marsai-org/coding-agent/exec/settings";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool, type BashToolInput } from "@marsai-org/coding-agent/tools/bash";
+import { checkBashInterception } from "@marsai-org/coding-agent/tools/bash-interceptor";
 
 function createBashTool(rules: BashInterceptorRule[]): BashTool {
 	const session = {

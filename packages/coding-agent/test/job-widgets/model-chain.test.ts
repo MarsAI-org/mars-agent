@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createModelJobWidgetAuthor } from "@oh-my-pi/pi-coding-agent/job-widgets/author";
-import { createModelJobCaptionWriter } from "@oh-my-pi/pi-coding-agent/job-widgets/caption";
-import { CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
+import * as ai from "@marsai-org/ai";
+import type { Api, AssistantMessage, Model, ModelSpec } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createModelJobWidgetAuthor } from "@marsai-org/coding-agent/job-widgets/author";
+import { createModelJobCaptionWriter } from "@marsai-org/coding-agent/job-widgets/caption";
+import { CostGate } from "@marsai-org/coding-agent/session/cost-gate";
 import { createAssistantMessage } from "../helpers/agent-session-setup";
 import { rejectionOf } from "../helpers/rejection";
 

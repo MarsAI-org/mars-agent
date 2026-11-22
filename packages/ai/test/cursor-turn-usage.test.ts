@@ -4,16 +4,16 @@ import {
 	handleServerMessage,
 	processInteractionUpdate,
 	type ToolCallState,
-} from "@oh-my-pi/pi-ai/providers/cursor";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+} from "@marsai-org/ai/providers/cursor";
+import type { AssistantMessage } from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import {
 	AgentServerMessageSchema,
 	ConversationStateStructureSchema,
 	ConversationTokenDetailsSchema,
 	type InteractionUpdate,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, fromBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 /**
  * Live `AgentServerMessage` frame captured from a Cursor turn: `turn_ended`

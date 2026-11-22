@@ -1,4 +1,4 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { sanitizeDisplayText } from "./extensions/display-text";
 
 export interface BtwHistoryTurn {

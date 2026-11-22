@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { glob } from "@oh-my-pi/pi-natives";
-import { isEnoent, logger, postmortem, ptree, stableStringifyJson, untilAborted } from "@oh-my-pi/pi-utils";
+import { glob } from "@marsai-org/natives";
+import { isEnoent, logger, postmortem, ptree, stableStringifyJson, untilAborted } from "@marsai-org/utils";
 import { encodeMessageFrame, MessageFramer } from "../jsonrpc/message-framing";
 import { ToolAbortError, throwIfAborted } from "../tools/tool-errors";
 import { resolveSyscallTarget } from "../tools/path-utils";

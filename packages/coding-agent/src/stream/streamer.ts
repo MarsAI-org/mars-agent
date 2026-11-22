@@ -1,5 +1,5 @@
 import * as readline from "node:readline";
-import { IpcConnection, IpcServer } from "@oh-my-pi/pi-natives";
+import { IpcConnection, IpcServer } from "@marsai-org/natives";
 import {
 	STREAM_CHAT_TEXT_MAX,
 	STREAM_CLOSE_HOST_CONFLICT,
@@ -9,7 +9,7 @@ import {
 	type StreamChatMessage,
 	type StreamPaneFrame,
 	type StreamServerToHost,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import {
 	applyScreenFrame,
 	isSessionFrame,

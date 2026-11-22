@@ -1,9 +1,9 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
-import * as db from "@oh-my-pi/omp-stats/db";
-import { refreshRollups } from "@oh-my-pi/omp-stats/rollup";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getStatsDbPath } from "@oh-my-pi/pi-utils";
+import * as db from "@marsai-org/stats/db";
+import { refreshRollups } from "@marsai-org/stats/rollup";
+import type { MessageStats } from "@marsai-org/stats/types";
+import { getStatsDbPath } from "@marsai-org/utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-open-lock-");

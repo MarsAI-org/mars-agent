@@ -11,9 +11,9 @@
  * massage shapes the LLM almost got right.
  */
 
-import { type Type, type } from "@oh-my-pi/omptype";
-import { parseLocalRefPointer } from "@oh-my-pi/omptype";
-import { isRecord, structuredCloneJSON } from "@oh-my-pi/pi-utils";
+import { type Type, type } from "@marsai-org/omptype";
+import { parseLocalRefPointer } from "@marsai-org/omptype";
+import { isRecord, structuredCloneJSON } from "@marsai-org/utils";
 import * as AIError from "../error";
 import type { Tool, ToolCall } from "../types";
 import { upgradeJsonSchemaTo202012 } from "./schema/draft";

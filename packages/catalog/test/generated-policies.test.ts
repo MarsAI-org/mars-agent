@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Api, Model, ModelSpec, Provider, Usage } from "@oh-my-pi/pi-catalog/types";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { Api, Model, ModelSpec, Provider, Usage } from "@marsai-org/catalog/types";
 import {
 	applyGeneratedModelPolicies,
 	applyOllamaCloudOutputCap,

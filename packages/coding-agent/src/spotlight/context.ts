@@ -1,7 +1,7 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { Message } from "@marsai-org/ai";
+import { isRecord } from "@marsai-org/utils";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import { type CallContext, CONTEXT_FIELD_CHARS } from "./types";
 
 /** Earlier bash commands a {@link CallContext} carries. */

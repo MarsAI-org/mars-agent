@@ -1,5 +1,5 @@
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type AgentSessionHandle, isLocalAgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session-handle";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { type AgentSessionHandle, isLocalAgentSession } from "@marsai-org/coding-agent/session/agent-session-handle";
 
 /** Narrow a registry/lifecycle/reviver session handle to the in-process session it is in these tests. */
 export function localSession(session: AgentSessionHandle | null | undefined): AgentSession {

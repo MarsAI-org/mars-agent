@@ -10,9 +10,9 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { IpcConnection, Process, reapChild } from "@oh-my-pi/pi-natives";
-import { type FileLockHandle, logger, TempDir, untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { IpcConnection, Process, reapChild } from "@marsai-org/natives";
+import { type FileLockHandle, logger, TempDir, untilAborted } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { hostHasInheritableConsole, shouldHideKernelWindow } from "../eval/py/spawn-options";
 import { stageRunnerScript } from "../eval/runner-cache";
 import type { DisasmBackend, WorkerRuntime } from "./backend";

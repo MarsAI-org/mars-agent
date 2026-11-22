@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { ImageBudget } from "@oh-my-pi/pi-tui/components/image";
-import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { ImageBudget } from "@marsai-org/tui/components/image";
+import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { initTheme } from "@marsai-org/tui/theme";
+import { writeToolRenderer } from "@marsai-org/tui/tools/write";
 
 const originalImageProtocol = TERMINAL.imageProtocol;
 const SVG = "<svg viewBox='0 0 160 40'><rect width='160' height='40' fill='#3b82f6'/></svg>";

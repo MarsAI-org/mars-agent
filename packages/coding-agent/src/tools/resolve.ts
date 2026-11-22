@@ -10,8 +10,8 @@
  * shape at the moment it becomes relevant (the preview reminder for
  * resolve/reject, the plan-mode prompt for propose).
  */
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult, CustomMessage } from "@oh-my-pi/pi-agent-core";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult, CustomMessage } from "@marsai-org/agent-core";
 import {
 	PROPOSE_COMMAND_NAME,
 	REJECT_COMMAND_NAME,
@@ -19,9 +19,9 @@ import {
 	type ResolveAction,
 	type ResolveDetails,
 	type ResolveInvocation,
-} from "@oh-my-pi/pi-tui/tools/resolve";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/tools/resolve";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { prompt } from "@marsai-org/utils";
 import resolveReminderPrompt from "../prompts/system/resolve-reminder.md" with { type: "text" };
 import type { Tool, ToolSession } from ".";
 import { createReportIssueTool, isAutoQaEnabled } from "./report-tool-issue";

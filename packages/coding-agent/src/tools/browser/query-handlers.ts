@@ -1,4 +1,4 @@
-import { sleepLong, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
+import { sleepLong, untilAborted, withTimeout } from "@marsai-org/utils";
 import type {
 	CustomQueryHandler,
 	ElementHandle,

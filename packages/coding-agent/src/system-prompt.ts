@@ -4,10 +4,10 @@
 
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { ToolExample, TSchema } from "@oh-my-pi/pi-ai";
-import { renderToolInventory } from "@oh-my-pi/pi-ai/dialect";
-import type { DelegationBias } from "@oh-my-pi/pi-catalog/compat/delegation";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { ToolExample, TSchema } from "@marsai-org/ai";
+import { renderToolInventory } from "@marsai-org/ai/dialect";
+import type { DelegationBias } from "@marsai-org/catalog/compat/delegation";
 import {
 	$env,
 	getAgentDir,
@@ -17,7 +17,7 @@ import {
 	isInteractiveHost,
 	logger,
 	prompt,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { contextFileCapability } from "./capability/context-file";
 import { systemPromptCapability } from "./capability/system-prompt";
 import { findConfigFile } from "./config";
@@ -38,8 +38,8 @@ import pragmaticPersonality from "./prompts/system/personalities/pragmatic.md" w
 import projectPromptTemplate from "./prompts/system/project-prompt.md" with { type: "text" };
 import systemPromptTemplate from "./prompts/system/system-prompt.md" with { type: "text" };
 import userAppendPromptTemplate from "./prompts/system/user-append.md" with { type: "text" };
-import type { SystemPromptSource, SystemPromptSources } from "@oh-my-pi/pi-tui/status-line/context-usage";
-import type { ActiveRepoContext } from "@oh-my-pi/pi-tui/status-line/host";
+import type { SystemPromptSource, SystemPromptSources } from "@marsai-org/tui/status-line/context-usage";
+import type { ActiveRepoContext } from "@marsai-org/tui/status-line/host";
 import { resolveActiveRepoContext } from "./utils/active-repo-context";
 import { normalizePromptPath } from "./utils/prompt-path";
 import { quotePosixArgument } from "./utils/shell-quote";

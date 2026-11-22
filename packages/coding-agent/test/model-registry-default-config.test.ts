@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getAgentDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import type { SimpleStreamOptions } from "@oh-my-pi/pi-ai";
+import { ModelRegistry, type ProviderConfigInput } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { getAgentDir, setAgentDir, TempDir } from "@marsai-org/utils";
+import type { Model } from "@marsai-org/catalog/types";
+import type { SimpleStreamOptions } from "@marsai-org/ai";
 import { CacheWarmer, getPromptCacheTtlMs } from "../src/session/cache-warmer";
 
 const originalAgentDir = getAgentDir();

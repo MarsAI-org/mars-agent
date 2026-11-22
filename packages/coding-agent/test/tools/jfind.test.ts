@@ -2,34 +2,34 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@oh-my-pi/pi-ai";
-import { tokenUsage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { ChainJudge } from "@oh-my-pi/pi-coding-agent/judgment";
-import { FIND_TIMEOUT_MS, FindTool } from "@oh-my-pi/pi-coding-agent/tools/jfind";
+import type { Judge, JudgmentRequest, JudgmentResult, NoulAnswer, Questions } from "@marsai-org/ai";
+import { tokenUsage } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls/router";
+import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
+import { ChainJudge } from "@marsai-org/coding-agent/judgment";
+import { FIND_TIMEOUT_MS, FindTool } from "@marsai-org/coding-agent/tools/jfind";
 import {
 	type SpotlightClient,
 	SpotlightError,
 	type SpotlightRequest,
-} from "@oh-my-pi/pi-coding-agent/spotlight/client";
-import { type CascadeSpotlight, runCascade } from "@oh-my-pi/pi-coding-agent/tools/jfind/cascade";
-import { keywordsFromQuery } from "@oh-my-pi/pi-coding-agent/tools/jfind/keywords";
-import { grepIndex } from "@oh-my-pi/pi-coding-agent/tools/jfind/lexical";
+} from "@marsai-org/coding-agent/spotlight/client";
+import { type CascadeSpotlight, runCascade } from "@marsai-org/coding-agent/tools/jfind/cascade";
+import { keywordsFromQuery } from "@marsai-org/coding-agent/tools/jfind/keywords";
+import { grepIndex } from "@marsai-org/coding-agent/tools/jfind/lexical";
 import {
 	mergeHeat,
 	type Passage,
 	selectWindows,
 	sketch,
 	windows,
-} from "@oh-my-pi/pi-coding-agent/tools/jfind/passages";
-import { readText, ReadTextError } from "@oh-my-pi/pi-coding-agent/tools/jfind/text";
-import { eligibleFile, renderTree, resolveSearchRoot } from "@oh-my-pi/pi-coding-agent/tools/jfind/tree";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { resolveSearchResultPath } from "@oh-my-pi/pi-coding-agent/tools/path-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/jfind/passages";
+import { readText, ReadTextError } from "@marsai-org/coding-agent/tools/jfind/text";
+import { eligibleFile, renderTree, resolveSearchRoot } from "@marsai-org/coding-agent/tools/jfind/tree";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { resolveSearchResultPath } from "@marsai-org/coding-agent/tools/path-utils";
+import { removeWithRetries } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 import { rejectionOf } from "../helpers/rejection";
 

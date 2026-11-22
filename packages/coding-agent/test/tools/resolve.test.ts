@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
 import {
 	isPreviewResolutionToolCall,
 	isProposeToolCall,
@@ -8,17 +8,17 @@ import {
 	proposeDispatchDetails,
 	resolveDispatchDetails,
 	specialToolCommands,
-} from "@oh-my-pi/pi-coding-agent/tools/resolve";
-import type { ToolCommandDispatch } from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
+} from "@marsai-org/coding-agent/tools/resolve";
+import type { ToolCommandDispatch } from "@marsai-org/coding-agent/tools/tool-commands";
 import {
 	PROPOSE_COMMAND_NAME,
 	REJECT_COMMAND_NAME,
 	RESOLVE_COMMAND_NAME,
 	resolveRenderer,
 	type ResolveDetails,
-} from "@oh-my-pi/pi-tui/tools/resolve";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/tools/resolve";
+import { getThemeByName } from "@marsai-org/tui/theme";
+import { sanitizeText } from "@marsai-org/utils";
 
 function createSession(
 	options: {

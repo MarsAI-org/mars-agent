@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type ContextFile, contextFileCapability } from "@oh-my-pi/pi-coding-agent/capability/context-file";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability, resetCapabilityForTests } from "@oh-my-pi/pi-coding-agent/discovery";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { __resetDirsFromEnvForTests, getProjectAgentDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { type ContextFile, contextFileCapability } from "@marsai-org/coding-agent/capability/context-file";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeWithSettings, loadCapability, resetCapabilityForTests } from "@marsai-org/coding-agent/discovery";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { __resetDirsFromEnvForTests, getProjectAgentDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 function restoreEnv(key: string, value: string | undefined): void {
 	if (value === undefined) {

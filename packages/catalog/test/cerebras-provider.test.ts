@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { cerebrasModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { cerebrasModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 async function discoverModels(data: readonly Record<string, unknown>[]) {
 	const options = cerebrasModelManagerOptions({

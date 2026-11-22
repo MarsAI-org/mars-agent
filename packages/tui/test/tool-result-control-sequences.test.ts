@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { applyHyperlinkSetting } from "@oh-my-pi/pi-tui/render/hyperlink";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { ReadToolGroupComponent } from "@marsai-org/tui/chat/read-tool-group";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { applyHyperlinkSetting } from "@marsai-org/tui/render/hyperlink";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { initTheme } from "@marsai-org/tui/theme";
 
 /**
  * Tool `details` carry raw file text (grep/read `displayContent`) straight to

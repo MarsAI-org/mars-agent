@@ -7,8 +7,8 @@
  * another — an advisor's, a speculative read's — sets its own `state` so it
  * never shares this with the session it was copied from.
  */
-import type { EditStore, SummaryResult } from "@oh-my-pi/pi-natives";
-import type { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import type { EditStore, SummaryResult } from "@marsai-org/natives";
+import type { LRUCache } from "@marsai-org/utils/lru";
 import type { DiagnosticsLedger } from "../lsp/diagnostics-ledger";
 import type { ConflictHistory } from "./conflict-detect";
 import type { ToolSession } from "./index";

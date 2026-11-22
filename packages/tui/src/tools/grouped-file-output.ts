@@ -7,8 +7,8 @@ import {
 	type PathTreeInput,
 	sanitizeText,
 	walkPathTree,
-} from "@oh-my-pi/pi-utils";
-import type { TspTone } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/utils";
+import type { TspTone } from "@marsai-org/wire";
 import { code, col, keyed } from "../native/describe";
 import type { NativeNode } from "../native/node";
 import { getLanguageFromPath } from "../lang-from-path";

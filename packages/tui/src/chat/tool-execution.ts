@@ -1,4 +1,4 @@
-import { RunTrace } from "@oh-my-pi/pi-natives";
+import { RunTrace } from "@marsai-org/natives";
 import {
 	INTENT_FIELD,
 	isShellTrace,
@@ -10,7 +10,7 @@ import {
 	type TspPreview,
 	type TspText,
 	type TspTone,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import {
 	defaultShellVizPreferences,
 	readShellPresentation,
@@ -21,8 +21,8 @@ import { type ShellStepView, ShellSteps } from "../tools/shell-steps";
 import { changeShellVizPreferences, shellVizEventAction } from "../tools/shell-trace";
 import { ShellVisualizer } from "../apps/shell-visualizer";
 import { chatTranscriptDisplayPreferences } from "./display-preferences";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { ImageContent } from "@marsai-org/ai";
+import type { AgentTool } from "@marsai-org/agent-core";
 import { Box } from "../components/box";
 import {
 	onSpinnerIntervalChange,
@@ -37,7 +37,7 @@ import { Text } from "../components/text";
 import { getImageDimensions, ImageProtocol, imageFallback, TERMINAL } from "../terminal-capabilities";
 import { type Component, Container, type TUI } from "../tui";
 import { truncateToWidth } from "../utils";
-import { getProjectDir, isRecord, logger, sanitizeText, sanitizeTextDeep } from "@oh-my-pi/pi-utils";
+import { getProjectDir, isRecord, logger, sanitizeText, sanitizeTextDeep } from "@marsai-org/utils";
 import type { Theme } from "../theme/theme";
 import { ensureThemeSync, getThemeEpoch, theme } from "../theme/theme";
 import {

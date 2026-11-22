@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { convertMessages } from "@oh-my-pi/pi-ai/providers/google-shared";
-import type { Context, Model, ToolCall, Usage } from "@oh-my-pi/pi-ai/types";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { convertMessages } from "@marsai-org/ai/providers/google-shared";
+import type { Context, Model, ToolCall, Usage } from "@marsai-org/ai/types";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 const ZERO_USAGE: Usage = {
 	input: 0,

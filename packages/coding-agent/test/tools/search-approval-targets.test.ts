@@ -6,21 +6,21 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { recordApprovalGrant, resolveApproval } from "@oh-my-pi/pi-coding-agent/tools/approval";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { recordApprovalGrant, resolveApproval } from "@marsai-org/coding-agent/tools/approval";
 import {
 	type ApprovalGrantStore,
 	approvalDirectoryKey,
 	approvalGrantKey,
 	getApprovalGrants,
-} from "@oh-my-pi/pi-coding-agent/tools/approval-cache";
-import { approvalTargetKey, approvalTreeSearchKey } from "@oh-my-pi/pi-coding-agent/tools/approval-targets";
-import { AstGrepTool } from "@oh-my-pi/pi-coding-agent/tools/ast-grep";
-import { GlobTool } from "@oh-my-pi/pi-coding-agent/tools/glob";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/approval-cache";
+import { approvalTargetKey, approvalTreeSearchKey } from "@marsai-org/coding-agent/tools/approval-targets";
+import { AstGrepTool } from "@marsai-org/coding-agent/tools/ast-grep";
+import { GlobTool } from "@marsai-org/coding-agent/tools/glob";
+import { GrepTool } from "@marsai-org/coding-agent/tools/grep";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
+import { TempDir } from "@marsai-org/utils";
 
 /** Minimal tool session for directly exercising a search tool's approval-cache keys. */
 function createToolSession(cwd: string): ToolSession {

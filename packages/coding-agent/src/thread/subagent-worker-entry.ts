@@ -19,9 +19,9 @@
  */
 import "./worker-log-install";
 import { MessagePort, parentPort } from "node:worker_threads";
-import { installGlobalProxyFetch } from "@oh-my-pi/pi-ai/utils/proxy";
-import { logger } from "@oh-my-pi/pi-utils";
-import { consumeWorkerInbox } from "@oh-my-pi/pi-utils/worker-host";
+import { installGlobalProxyFetch } from "@marsai-org/ai/utils/proxy";
+import { logger } from "@marsai-org/utils";
+import { consumeWorkerInbox } from "@marsai-org/utils/worker-host";
 import { isThreadId, setCurrentThreadId } from "./identity";
 import type { SubagentWorkerInit, SubagentWorkerReady, WorkerThreadLink } from "./protocol";
 import { type RpcFrame, RpcLink } from "./rpc";

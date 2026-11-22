@@ -1,61 +1,61 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse, type MockResponseSource } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { resolveThresholdTokens, shouldCompact } from "@oh-my-pi/pi-agent-core/compaction";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel, type MockResponse, type MockResponseSource } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import { resolveThresholdTokens, shouldCompact } from "@marsai-org/agent-core/compaction";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { parseModelPattern } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgCompaction } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import type { PreparedExtension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { RpcSubagentRegistry } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-subagents";
-import type { RpcSubagentFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import type { AgentRef } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { ModelMentionRegistry } from "@oh-my-pi/pi-coding-agent/session/model-mentions";
+import type { EffectiveExtensionRoots } from "@marsai-org/coding-agent/capability/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { parseModelPattern } from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgCompaction } from "@marsai-org/coding-agent/session/context-settings";
+import type { PreparedExtension } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import { RpcSubagentRegistry } from "@marsai-org/coding-agent/modes/rpc/rpc-subagents";
+import type { RpcSubagentFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import type { AgentRef } from "@marsai-org/coding-agent/registry/agent-registry";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { registerPersistedSubagents } from "@marsai-org/coding-agent/registry/persisted-agents";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { ModelMentionRegistry } from "@marsai-org/coding-agent/session/model-mentions";
 import {
 	findRetryFallbackCandidates,
 	getRetryFallbackChains,
 	type RetryFallbackResolutionContext,
 	type RetryFallbackRole,
 	resolveRetryFallbackChainKey,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import { createPersistedSubagentReviverFactory } from "@oh-my-pi/pi-coding-agent/task/persisted-revive";
-import { PerCallModelError, PerCallModelUnavailableError } from "@oh-my-pi/pi-coding-agent/task/model-approval";
-import { cfgTaskMaxEffort } from "@oh-my-pi/pi-coding-agent/task/settings";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { buildWakeRelayBody } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { type IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import { createPersistedSubagentReviverFactory } from "@marsai-org/coding-agent/task/persisted-revive";
+import { PerCallModelError, PerCallModelUnavailableError } from "@marsai-org/coding-agent/task/model-approval";
+import { cfgTaskMaxEffort } from "@marsai-org/coding-agent/task/settings";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import { buildWakeRelayBody } from "@marsai-org/coding-agent/task/executor";
+import type { SingleResult } from "@marsai-org/tui/tools/task";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import { type IrcMessage } from "@marsai-org/tui/tools/irc";
+import { TempDir } from "@marsai-org/utils";
 import { localSession } from "../helpers/local-session";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
-import { cfgAdvisorEnabled } from "@oh-my-pi/pi-coding-agent/advisor/settings";
+import { cfgAdvisorEnabled } from "@marsai-org/coding-agent/advisor/settings";
 
 const tempDirs: TempDir[] = [];
 

@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { resolveOpenAIRequestSetup } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import { resolveOpenAIRequestSetup } from "@marsai-org/ai/providers/openai-shared";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { FetchImpl } from "@marsai-org/ai/types";
 
 describe("Xiaomi Token Plan request-time host", () => {
 	// Mirrors the bundled `mimo-v2.6-pro` catalog entry, whose baseUrl is

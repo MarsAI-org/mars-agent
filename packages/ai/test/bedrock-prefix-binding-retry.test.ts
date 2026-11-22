@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { AssistantMessage, Context, Model, Tool } from "@oh-my-pi/pi-ai/types";
-import { logger } from "@oh-my-pi/pi-utils";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type } from "@marsai-org/omptype";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import type { AssistantMessage, Context, Model, Tool } from "@marsai-org/ai/types";
+import { logger } from "@marsai-org/utils";
+import { Effort } from "@marsai-org/catalog/effort";
 import {
 	bedrockEvent,
 	bedrockHappyPathFrames,

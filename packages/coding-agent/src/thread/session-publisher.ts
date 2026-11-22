@@ -46,9 +46,9 @@
  * A claimed message that goes back to a queue loses its id and mark, so main
  * sees it as a fresh, restorable entry.
  */
-import type { AgentMessage, AgentTool, QueuedMessageGate } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage, AgentTool, QueuedMessageGate } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import type { Rule } from "../capability/rule";
 import type { OverlayLayers, Settings } from "../config/settings";
 import type { Skill } from "../extensibility/skills";

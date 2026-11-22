@@ -16,7 +16,7 @@
  * });
  * ```
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { CredentialRefreshLeaseFence, AuthCredentialStore } from "../auth/store";
 import type { SqliteAuthCredentialStore } from "../auth/sqlite-credential-store";
 import type {

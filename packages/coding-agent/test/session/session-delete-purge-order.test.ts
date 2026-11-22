@@ -4,13 +4,13 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@marsai-org/utils";
 import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
 	type SessionStorageIndexEntry,
-} from "@oh-my-pi/pi-coding-agent/session/indexed-session-storage";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+} from "@marsai-org/coding-agent/session/indexed-session-storage";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
 
 /**
  * Backend whose first removal fails and whose body disappears once removal

@@ -36,7 +36,7 @@
  * 	onCancel: () => resolve(undefined),
  * });
  */
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { formatKeyHint } from "../app-keybindings";
 import { BracketedPasteHandler } from "../bracketed-paste";
 import { editorKey, editorKeys } from "../chrome/keybinding-hints";

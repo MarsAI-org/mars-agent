@@ -16,7 +16,7 @@ import {
 	type AgentTelemetryConfig,
 	recordJudgmentTelemetry,
 	resolveTelemetry,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	type Answer,
 	type AssistantMessage,
@@ -46,13 +46,13 @@ import {
 	TYPESAFE_PROVIDER,
 	tokenUsage,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { isEmbeddedImageContent } from "@oh-my-pi/pi-ai/images/shared";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
-import type { JudgmentImageInput } from "@oh-my-pi/pi-catalog/compat/judgment-images";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { isEmbeddedImageContent } from "@marsai-org/ai/images/shared";
+import { sendsImageInputOnWire } from "@marsai-org/ai/providers/vision-guard";
+import type { JudgmentImageInput } from "@marsai-org/catalog/compat/judgment-images";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { logger, prompt, untilAborted } from "@marsai-org/utils";
 import { normalizeModelContextImages } from "../utils/image-loading";
 import { type FittedImage, fitImage } from "../utils/image-resize";
 import { cfgNoJudge, cfgOffline } from "../config/auxiliary-model-policy";

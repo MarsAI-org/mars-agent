@@ -1,11 +1,11 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { TempDir } from "@marsai-org/utils";
 
 describe("SQLite row selectors with shadowed rowid names", () => {
 	let dir: TempDir;

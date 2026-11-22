@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { managedInstallName } from "@oh-my-pi/pi-coding-agent/cli/managed-install";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { managedInstallName } from "@marsai-org/coding-agent/cli/managed-install";
+import { TempDir } from "@marsai-org/utils";
 
 let temp: TempDir;
 

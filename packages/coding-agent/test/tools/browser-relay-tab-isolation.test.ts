@@ -2,37 +2,37 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import type { BrowserDownload } from "@oh-my-pi/pi-coding-agent/tools/browser/downloads";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
+import type { BrowserDownload } from "@marsai-org/coding-agent/tools/browser/downloads";
 import {
 	closeLaunchedBrowser,
 	ensureChromiumExecutable,
 	RENDERER_PRIORITY_ARGS,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { acquireBrowser, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { acquireBrowser, releaseBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
 import {
 	unpackedExtensionId,
 	writeRelayExtension,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/extension-files";
-import { waitForRelayExtension } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
+} from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
+import { waitForRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/probe";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 import type {
 	WorkerInbound,
 	WorkerInitPayload,
 	WorkerOutbound,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
+} from "@marsai-org/coding-agent/tools/browser/tab-protocol";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	releaseTabsForOwner,
 	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { WorkerCore } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { getPuppeteerDir } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { WorkerCore } from "@marsai-org/coding-agent/tools/browser/tab-worker";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { getPuppeteerDir } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
 import puppeteer, { type Browser, type Page, type Protocol } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

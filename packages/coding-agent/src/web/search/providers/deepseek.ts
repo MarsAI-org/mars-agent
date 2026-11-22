@@ -6,7 +6,7 @@
  * Endpoint: POST https://api.deepseek.com/v1/tools/search
  * Docs: https://api-docs.deepseek.com/guides/search
  */
-import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@oh-my-pi/pi-ai";
+import { type ApiKey, type AuthStorage, type FetchImpl, getEnvApiKey, withAuth } from "@marsai-org/ai";
 import type { SearchResponse, SearchSource } from "../types";
 import { SearchProviderError } from "../../../web/search/types";
 import type { StructuredQuery } from "../query";

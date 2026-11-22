@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as utils from "@oh-my-pi/pi-utils";
+import * as utils from "@marsai-org/utils";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import {
 	resolveCliEntryCmd,

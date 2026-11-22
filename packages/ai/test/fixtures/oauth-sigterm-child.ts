@@ -1,6 +1,6 @@
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { postmortem } from "@oh-my-pi/pi-utils";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { postmortem } from "@marsai-org/utils";
 
 const db = process.argv[2];
 const release = process.argv[3];

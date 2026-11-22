@@ -69,13 +69,13 @@ import type {
 	UsageProvider,
 	UsageReport,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import type {
 	ImageGenerationOptions,
 	ImageGenerationRequest,
 	ImageGenerationResult,
-} from "@oh-my-pi/pi-ai/images/types";
-import type { ModelRefreshStrategy } from "@oh-my-pi/pi-catalog/model-manager";
+} from "@marsai-org/ai/images/types";
+import type { ModelRefreshStrategy } from "@marsai-org/catalog/model-manager";
 import type {
 	ModelRegistryMirrorBatch,
 	ModelRegistryMirrorChange,

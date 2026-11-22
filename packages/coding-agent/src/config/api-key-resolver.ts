@@ -3,10 +3,10 @@ import {
 	type ApiKeyResolver,
 	createOAuthProvenance,
 	resolveAfterRotation,
-} from "@oh-my-pi/pi-ai/auth-retry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import type { AuthApiKeyOptions, AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/auth-retry";
+import * as AIError from "@marsai-org/ai/error";
+import type { AuthApiKeyOptions, AuthStorage } from "@marsai-org/ai/auth-storage";
+import type { Api, Model } from "@marsai-org/ai/types";
 
 /** Model slice accepted by the model-form `resolver(model, sessionId)` overload. */
 export type ApiKeyResolverModel = Pick<Model<Api>, "provider" | "baseUrl" | "id">;

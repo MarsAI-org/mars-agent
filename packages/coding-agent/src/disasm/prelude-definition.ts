@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
-import { type } from "@oh-my-pi/omptype";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { logger, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { logger, untilAborted } from "@marsai-org/utils";
 import type { HostEvalPreludeDefinition } from "../eval/preludes";
 import dsmDocumentation from "../prompts/tools/dsm.md" with { type: "text" };
 import dsmGuidance from "../prompts/tools/dsm-guidance.md" with { type: "text" };

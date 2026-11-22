@@ -2,7 +2,7 @@
  * The Teach sheet: record clicks and typing on the tab (with optional spoken narration), prune bad steps, then
  * have the session turn them into a shortcut prompt.
  */
-import type { ImageContent } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/wire";
 import { Mic, MicOff, Pause, Play, Trash2 } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import type { TabContext, TeachStep } from "../../messages";

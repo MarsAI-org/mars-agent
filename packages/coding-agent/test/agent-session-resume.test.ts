@@ -7,17 +7,17 @@
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import { createMockModel, type MockHandler, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@marsai-org/agent-core";
+import * as compactionModule from "@marsai-org/agent-core/compaction";
+import { createMockModel, type MockHandler, type MockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, SKILL_PROMPT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import manualContinuePrompt from "../src/prompts/system/manual-continue.md" with { type: "text" };
 
 /** A response that stalls until aborted; `started` resolves once the request is in flight. */

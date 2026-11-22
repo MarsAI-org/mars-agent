@@ -11,12 +11,12 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 
-import { type BeamMemoryState, initBeam } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { recall } from "@oh-my-pi/pi-mnemopi/core/beam/recall";
-import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
-import { PolyphonicRecallEngine } from "@oh-my-pi/pi-mnemopi/core/polyphonic-recall";
-import { closeQuietly, openDatabase } from "@oh-my-pi/pi-mnemopi/db";
+import { type BeamMemoryState, initBeam } from "@marsai-org/mnemopi/core/beam";
+import { recall } from "@marsai-org/mnemopi/core/beam/recall";
+import { currentEmbeddingModel } from "@marsai-org/mnemopi/core/embeddings";
+import { Mnemopi } from "@marsai-org/mnemopi/core/memory";
+import { PolyphonicRecallEngine } from "@marsai-org/mnemopi/core/polyphonic-recall";
+import { closeQuietly, openDatabase } from "@marsai-org/mnemopi/db";
 
 const OLD_MODEL = "BAAI/bge-small-en-v1.5";
 const NEW_MODEL = "intfloat/multilingual-e5-large";

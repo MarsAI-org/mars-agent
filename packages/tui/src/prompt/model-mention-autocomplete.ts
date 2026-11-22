@@ -1,5 +1,5 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
+import type { Model } from "@marsai-org/ai";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
 import type { AutocompleteItem, ModelMentionCompletion } from "../index";
 import type { ModelBrowserRegistry, ModelBrowserSource } from "../overlays/model-browser";
 import { sameItems } from "../native/memo";

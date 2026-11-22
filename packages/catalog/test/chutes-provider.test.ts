@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { createModelManager } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { chutesModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { createModelManager } from "@marsai-org/catalog/model-manager";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { chutesModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 /**
  * Entries mirror live `https://llm.chutes.ai/v1/models` payloads: flat

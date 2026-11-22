@@ -1,13 +1,13 @@
 import { afterEach, expect, it, vi } from "bun:test";
-import type { Context } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SnapcompactInlineTransformer } from "@oh-my-pi/pi-coding-agent/session/snapcompact-inline";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Context } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { SnapcompactInlineTransformer } from "@marsai-org/coding-agent/session/snapcompact-inline";
+import { TempDir } from "@marsai-org/utils";
 
 afterEach(() => vi.restoreAllMocks());
 

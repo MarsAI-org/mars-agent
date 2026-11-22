@@ -2,12 +2,12 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as configValue from "@oh-my-pi/pi-coding-agent/config/resolve-config-value";
-import * as mcpClient from "@oh-my-pi/pi-coding-agent/mcp/client";
-import { disposeLocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPServerCapabilities, MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { removeWithRetries, withTimeout } from "@oh-my-pi/pi-utils";
+import * as configValue from "@marsai-org/coding-agent/config/resolve-config-value";
+import * as mcpClient from "@marsai-org/coding-agent/mcp/client";
+import { disposeLocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPServerCapabilities, MCPStdioServerConfig } from "@marsai-org/coding-agent/mcp/types";
+import { removeWithRetries, withTimeout } from "@marsai-org/utils";
 import { TOOL_NAME as DELAYED_TOOL_NAME } from "./fixtures/delayed-tool-mcp";
 import { FakeHost } from "./mcp-host/link-fake-host";
 

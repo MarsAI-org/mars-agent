@@ -6,9 +6,9 @@ import {
 	externalizeImageData,
 	parseBlobRef,
 	resolveImageData,
-} from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import { blobExtensionForImageMimeType } from "@oh-my-pi/pi-tui/prompt/image-format";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/blob-store";
+import { blobExtensionForImageMimeType } from "@marsai-org/tui/prompt/image-format";
+import { TempDir } from "@marsai-org/utils";
 
 describe("BlobStore image display paths", () => {
 	it("creates an extension-bearing sidecar for image blobs while keeping canonical refs extensionless", async () => {

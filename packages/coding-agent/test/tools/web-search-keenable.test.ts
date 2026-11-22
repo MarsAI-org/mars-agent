@@ -1,8 +1,8 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getSearchProvider } from "@oh-my-pi/pi-coding-agent/web/search/provider";
-import { searchKeenable } from "@oh-my-pi/pi-coding-agent/web/search/providers/keenable";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getSearchProvider } from "@marsai-org/coding-agent/web/search/provider";
+import { searchKeenable } from "@marsai-org/coding-agent/web/search/providers/keenable";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const TEST_KEY = "keen_test_key";

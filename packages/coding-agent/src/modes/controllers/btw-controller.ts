@@ -1,7 +1,7 @@
-import type { AssistantMessage, ImageContent } from "@oh-my-pi/pi-ai";
-import { type Component, type OverlayHandle, replaceTabs } from "@oh-my-pi/pi-tui";
-import type { TspMenuEntry } from "@oh-my-pi/pi-wire";
-import { logger, toError, withTimeout } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage, ImageContent } from "@marsai-org/ai";
+import { type Component, type OverlayHandle, replaceTabs } from "@marsai-org/tui";
+import type { TspMenuEntry } from "@marsai-org/wire";
+import { logger, toError, withTimeout } from "@marsai-org/utils";
 import {
 	type BtwHistoryRecord,
 	type BtwHistoryTurn,
@@ -13,15 +13,15 @@ import {
 	getBtwTurns,
 } from "../../session/btw-history";
 import { beginBtwTurn, patchLatestBtwTurn, runBtwTurn } from "../../session/btw-turn";
-import { TRUNCATE_LENGTHS } from "@oh-my-pi/pi-tui/render/render-utils";
+import { TRUNCATE_LENGTHS } from "@marsai-org/tui/render/render-utils";
 import { copyToClipboard } from "../../utils/clipboard";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
+import { BtwHistoryPanel } from "@marsai-org/tui/overlays/btw-history-panel";
 import { focusActiveEditorArea } from "./selector-controller";
-import { BtwPanelComponent } from "@oh-my-pi/pi-tui/overlays/btw-panel";
-import { BTW_INJECT_LABEL, type BtwInjectState } from "@oh-my-pi/pi-tui/overlays/btw-inject";
-import { type BtwNoteAction, BtwNoteComponent, type BtwNoteHost } from "@oh-my-pi/pi-tui/overlays/btw-note";
-import { sanitizeErrorLine } from "@oh-my-pi/pi-tui/chrome/error-block";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
+import { BtwPanelComponent } from "@marsai-org/tui/overlays/btw-panel";
+import { BTW_INJECT_LABEL, type BtwInjectState } from "@marsai-org/tui/overlays/btw-inject";
+import { type BtwNoteAction, BtwNoteComponent, type BtwNoteHost } from "@marsai-org/tui/overlays/btw-note";
+import { sanitizeErrorLine } from "@marsai-org/tui/chrome/error-block";
+import { appKey } from "@marsai-org/tui/chrome/keybinding-hints";
 import type { AgentViewSession, AgentViewSessionManager } from "../../session/agent-session-handle";
 import type { DroppedPrompt } from "../../session/agent-session-types";
 import { cfgBtwInject } from "../settings";

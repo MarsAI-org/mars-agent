@@ -7,7 +7,7 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { $env, logger } from "@oh-my-pi/pi-utils";
+import { $env, logger } from "@marsai-org/utils";
 import { cfgIdaInstallDir } from "./settings";
 
 const IDALIB =

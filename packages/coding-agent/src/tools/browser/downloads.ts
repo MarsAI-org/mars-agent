@@ -1,9 +1,9 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { hasFsCode, isEnoent, toError, untilAborted } from "@oh-my-pi/pi-utils";
+import { hasFsCode, isEnoent, toError, untilAborted } from "@marsai-org/utils";
 import type { Browser, CDPSession, Page } from "puppeteer-core";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { replaceFileAcrossDevices, replaceFileAtomically } from "../../utils/atomic-file";
 import { devtoolsFrameId } from "./frames";
 

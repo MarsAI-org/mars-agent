@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { MacAppearanceObserver, MacOSAppearance, rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Image } from "@oh-my-pi/pi-tui/components/image";
-import type { TerminalAppearance } from "@oh-my-pi/pi-tui/terminal";
+import { MacAppearanceObserver, MacOSAppearance, rasterizeSvg } from "@marsai-org/natives";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { Image } from "@marsai-org/tui/components/image";
+import type { TerminalAppearance } from "@marsai-org/tui/terminal";
 import {
 	type CellDimensions,
 	getCellDimensions,
@@ -14,9 +14,9 @@ import {
 	setTerminalBackgroundColor,
 	setTerminalImageProtocol,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme, setTheme, stopThemeWatcher } from "@oh-my-pi/pi-tui/theme";
-import { type TerminalFramePlan, type TerminalFrameProvider, TUI, type ViewportSize } from "@oh-my-pi/pi-tui";
+} from "@marsai-org/tui/terminal-capabilities";
+import { initTheme, setTheme, stopThemeWatcher } from "@marsai-org/tui/theme";
+import { type TerminalFramePlan, type TerminalFrameProvider, TUI, type ViewportSize } from "@marsai-org/tui";
 import { parseSixelPalettePercent } from "./helpers/sixel-palette";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { ManualScheduler, TspHarness, TspTestTerminal } from "./native/tsp-harness";

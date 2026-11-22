@@ -1,6 +1,6 @@
-import { isAnthropicServerToolHistoryBlock } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { countNewlines, isRecord, stringifyJson } from "@oh-my-pi/pi-utils";
-import { PRESERVE_KEY as SNAPCOMPACT_PRESERVE_KEY } from "@oh-my-pi/snapcompact";
+import { isAnthropicServerToolHistoryBlock } from "@marsai-org/ai/providers/anthropic-wire";
+import { countNewlines, isRecord, stringifyJson } from "@marsai-org/utils";
+import { PRESERVE_KEY as SNAPCOMPACT_PRESERVE_KEY } from "@marsai-org/snapcompact";
 import {
 	type BlobStore,
 	externalizeImageDataSync,

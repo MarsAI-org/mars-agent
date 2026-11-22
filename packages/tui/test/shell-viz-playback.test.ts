@@ -1,10 +1,10 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { RunTrace, Shell } from "@oh-my-pi/pi-natives";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { setChatTranscriptDisplayPreferences } from "@oh-my-pi/pi-tui/chat/display-preferences";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { isShellTrace, type ShellTrace, type ShellVizPresentation } from "@oh-my-pi/pi-wire";
+import { RunTrace, Shell } from "@marsai-org/natives";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { setChatTranscriptDisplayPreferences } from "@marsai-org/tui/chat/display-preferences";
+import type { DescribeContext, NativeNode } from "@marsai-org/tui/native/node";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import { isShellTrace, type ShellTrace, type ShellVizPresentation } from "@marsai-org/wire";
 
 const context: DescribeContext = {
 	cols: 100,

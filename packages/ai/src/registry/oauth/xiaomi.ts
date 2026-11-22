@@ -8,10 +8,10 @@
  * (`tp-...`/`ttp-...`) keys, probing the regional Token Plan clusters in fallback order.
  */
 
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { isXiaomiTokenPlanKey } from "@oh-my-pi/pi-catalog/wire/xiaomi-token-plan";
-import { toError } from "@oh-my-pi/pi-utils";
+import { authPolicyFor } from "@marsai-org/catalog/compat/auth";
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import { isXiaomiTokenPlanKey } from "@marsai-org/catalog/wire/xiaomi-token-plan";
+import { toError } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { FetchImpl } from "../../types";
 import type { OAuthController } from "./types";

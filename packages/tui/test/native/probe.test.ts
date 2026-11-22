@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { TspHello } from "@oh-my-pi/pi-tui/native/encode";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import * as utils from "@oh-my-pi/pi-utils";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import type { TspHello } from "@marsai-org/tui/native/encode";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@marsai-org/tui/terminal-multiplexer";
+import * as utils from "@marsai-org/utils";
+import { setTerminalHeadless } from "@marsai-org/utils";
+import * as logger from "@marsai-org/utils/logger";
 
 const DA1_REPLY = "\x1b[?1;2c";
 const HELLO_REPLY = '\x1b_tsp;r;{"r":"hello","v":1,"term":"tern","kinds":["col","text"],"credits":3,"future":1}\x1b\\';

@@ -1,4 +1,4 @@
-import { logger, slugify } from "@oh-my-pi/pi-utils";
+import { logger, slugify } from "@marsai-org/utils";
 import { collapseVariants, type EffortVariantFamily } from "../compat/collapse";
 import { Effort, THINKING_EFFORTS } from "../effort";
 import type { DevinCompat, FetchImpl, ModelCost, ModelSpec } from "../types";

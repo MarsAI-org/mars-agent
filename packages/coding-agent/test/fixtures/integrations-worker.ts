@@ -1,5 +1,5 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolResult } from "@marsai-org/agent-core";
 import type { ModelRegistry } from "../../src/config/model-registry";
 import type { CustomTool, CustomToolContext } from "../../src/extensibility/custom-tools/types";
 import { bindPreparedExtensions } from "../../src/extensibility/extensions/loader";

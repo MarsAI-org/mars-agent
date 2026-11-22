@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { getDocsDiskRoot } from "@oh-my-pi/pi-coding-agent/internal-urls/docs-index";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { getDocsDiskRoot } from "@marsai-org/coding-agent/internal-urls/docs-index";
 
 describe("OmpProtocolHandler", () => {
 	it("treats omp://docs as the documentation root", async () => {

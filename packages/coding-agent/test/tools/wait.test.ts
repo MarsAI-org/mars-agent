@@ -4,23 +4,23 @@ import {
 	type AgentMessage,
 	type AgentToolResult,
 	TOOL_INTERRUPT_ABORT_REASON,
-} from "@oh-my-pi/pi-agent-core";
-import { buildJobResult } from "@oh-my-pi/pi-coding-agent/async/job-control";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as daemonClient from "@oh-my-pi/pi-coding-agent/daemon/client";
-import type { DaemonClient } from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import { runEvalWait } from "@oh-my-pi/pi-coding-agent/eval/handle-bridge";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { USER_AWAIT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-awaits";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
+} from "@marsai-org/agent-core";
+import { buildJobResult } from "@marsai-org/coding-agent/async/job-control";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as daemonClient from "@marsai-org/coding-agent/daemon/client";
+import type { DaemonClient } from "@marsai-org/coding-agent/daemon/protocol";
+import { runEvalWait } from "@marsai-org/coding-agent/eval/handle-bridge";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import { USER_AWAIT_ID } from "@marsai-org/coding-agent/registry/agent-awaits";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { IrcBridge, type IrcBridgeHost } from "@marsai-org/coding-agent/session/irc-bridge";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { WaitTool } from "@marsai-org/coding-agent/tools/wait";
+import type { IrcMessage } from "@marsai-org/tui/tools/irc";
+import type { CoordinationDetails } from "@marsai-org/tui/tools/wait";
 
 function session(
 	manager?: AsyncJobManager,

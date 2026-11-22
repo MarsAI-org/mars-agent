@@ -11,9 +11,9 @@ import { afterEach, beforeEach, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import Plugin from "@oh-my-pi/pi-coding-agent/commands/plugin";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import type { CliConfig } from "@oh-my-pi/pi-utils/cli";
+import Plugin from "@marsai-org/coding-agent/commands/plugin";
+import * as piUtils from "@marsai-org/utils";
+import type { CliConfig } from "@marsai-org/utils/cli";
 
 const CLI_CONFIG: CliConfig = { bin: "omp", version: "0.0.0-test", commands: new Map() };
 

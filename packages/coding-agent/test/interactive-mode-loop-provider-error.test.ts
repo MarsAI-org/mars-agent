@@ -1,17 +1,17 @@
 import { expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import type { SubmittedUserInput } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import type { SubmittedUserInput } from "@marsai-org/coding-agent/modes/types";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 
 it("pauses an armed loop after a terminal provider error instead of duplicating its @file attachment", async () => {
 	initTheme();

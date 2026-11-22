@@ -7,10 +7,10 @@ import {
 	hasPositiveMovedProjectEvidence,
 	readCwdIdentity,
 	writeTerminalBreadcrumb,
-} from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getTerminalId } from "@oh-my-pi/pi-tui";
+} from "@marsai-org/coding-agent/session/session-paths";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { FileSessionStorage, MemorySessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { getTerminalId } from "@marsai-org/tui";
 import {
 	getAgentDir,
 	getCustomSessionFilesDir,
@@ -18,8 +18,8 @@ import {
 	getTerminalSessionsDir,
 	hashPath,
 	setAgentDir,
-} from "@oh-my-pi/pi-utils";
-import { resolveEquivalentPath } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/utils";
+import { resolveEquivalentPath } from "@marsai-org/utils/dirs";
 
 const cleanup: string[] = [];
 

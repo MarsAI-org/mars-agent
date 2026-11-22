@@ -19,8 +19,8 @@ import {
 	flushTelemetryExport,
 	initTelemetryExport,
 	isTelemetryExportEnabled,
-} from "@oh-my-pi/pi-coding-agent/telemetry-export";
-import { logger, withOmpOtelEnv } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/telemetry-export";
+import { logger, withOmpOtelEnv } from "@marsai-org/utils";
 import { metrics, trace } from "@opentelemetry/api";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";

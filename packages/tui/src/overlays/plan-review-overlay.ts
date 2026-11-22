@@ -41,7 +41,7 @@ import {
 	truncateToWidth,
 	visibleWidth,
 } from "../index";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { sanitizeStatusText } from "../chrome/shared";
 import { getEditorTheme, getMarkdownTheme, getThemeEpoch, theme } from "../theme/theme";
 import {
@@ -71,7 +71,7 @@ import { col, item, keyed, keyNames, md, node, row as rowNode, span, text } from
 import { type DescribeContext, leafKey, type NativeChild, type NativeNode, type NativeUiEvent } from "../native/node";
 import { actionButton, actionHint, hintsRow, itemIndex, type NativeHint, selectList } from "../native/overlay";
 import { isNativeRendering } from "../native/state";
-import type { TspDocComment, TspMenuItem } from "@oh-my-pi/pi-wire";
+import type { TspDocComment, TspMenuItem } from "@marsai-org/wire";
 import { getKeybindings } from "../keybindings";
 
 /** Title shown in the overlay's top border. */

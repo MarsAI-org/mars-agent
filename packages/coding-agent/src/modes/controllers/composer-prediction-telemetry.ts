@@ -29,7 +29,7 @@ export type PredictionOutcome = "offered" | "skipped" | "stale" | "cancelled" | 
 /** What became of a shown prediction: one of its alternatives inserted with Tab/Right, or retired without that. */
 export type PredictionResolution = { result: "accepted"; rank: number } | { result: "ignored" };
 
-const METER_NAME = "@oh-my-pi/pi-coding-agent/composer-prediction";
+const METER_NAME = "@marsai-org/coding-agent/composer-prediction";
 const OUTCOME = "omp.composer.prediction.outcome";
 const RESULT = "omp.composer.prediction.result";
 const MODEL = "omp.composer.prediction.model";

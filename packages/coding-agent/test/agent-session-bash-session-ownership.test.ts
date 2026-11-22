@@ -1,21 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { createBashTool } from "@oh-my-pi/pi-coding-agent/extensibility/legacy-pi-coding-agent-shim";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import * as bashExecutor from "@marsai-org/coding-agent/exec/bash-executor";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import { createBashTool } from "@marsai-org/coding-agent/extensibility/legacy-pi-coding-agent-shim";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage, createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
-import { cfgShellPath } from "@oh-my-pi/pi-coding-agent/exec/settings";
+import { cfgShellPath } from "@marsai-org/coding-agent/exec/settings";
 
 const bashResult = {
 	output: "old-output",

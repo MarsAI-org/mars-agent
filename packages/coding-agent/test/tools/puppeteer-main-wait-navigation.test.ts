@@ -3,7 +3,7 @@ import {
 	closeLaunchedBrowser,
 	launchHeadlessBrowser,
 	removeUserDataDir,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+} from "@marsai-org/coding-agent/tools/browser/launch";
 import { rejectionOf } from "../helpers/rejection";
 import { chromiumAvailable } from "./chromium-probe";
 

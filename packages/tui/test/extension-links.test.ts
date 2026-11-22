@@ -1,25 +1,25 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { type Component, TUI } from "@oh-my-pi/pi-tui";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { Markdown } from "@oh-my-pi/pi-tui/components/markdown";
-import { COMPOSER_DEFAULTS, Composer } from "@oh-my-pi/pi-tui/prompt/composer";
+import { type Component, TUI } from "@marsai-org/tui";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { Markdown } from "@marsai-org/tui/components/markdown";
+import { COMPOSER_DEFAULTS, Composer } from "@marsai-org/tui/prompt/composer";
 import {
 	extensionLinkLabels,
 	formatExtensionLink,
 	setExtensionLinks,
 	stripExtensionLinkMarkers,
-} from "@oh-my-pi/pi-tui/render/extension-links";
+} from "@marsai-org/tui/render/extension-links";
 import {
 	ImageProtocol,
 	setTerminalImageProtocol,
 	setTerminalTextSizing,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { LinkHints } from "@oh-my-pi/pi-tui/render/link-hints";
-import { sliceByColumn } from "@oh-my-pi/pi-tui/utils";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/terminal-capabilities";
+import { LinkHints } from "@marsai-org/tui/render/link-hints";
+import { sliceByColumn } from "@marsai-org/tui/utils";
+import { getMarkdownTheme, initTheme } from "@marsai-org/tui/theme";
 import { VirtualTerminal } from "./virtual-terminal";
 
 beforeAll(async () => {

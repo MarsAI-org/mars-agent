@@ -1,6 +1,6 @@
 import { type Component, Container, type HistoryBatch, ownDescription } from "../tui";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { popLoopPhase, pushLoopPhase } from "@oh-my-pi/pi-utils";
+import * as logger from "@marsai-org/utils/logger";
+import { popLoopPhase, pushLoopPhase } from "@marsai-org/utils";
 import { measureRender, renderForScrollback } from "../components/image";
 import { col } from "../native/describe";
 import type { DescribeContext, NativeNode } from "../native/node";

@@ -8,8 +8,8 @@
  * a tunnel speaking newline-delimited MCP 2026-07-28. The store with era
  * records and cached results lives in the module's state directory.
  */
-import { type } from "@oh-my-pi/omptype";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isRecord } from "@marsai-org/utils";
 import { normalizeMCPTransportError } from "../../mcp/errors";
 import {
 	encodeHostError,

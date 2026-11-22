@@ -18,9 +18,9 @@
  * - history://current/full - Full, caller-bound current branch history (experimental);
  *   bare history://current reads the same unless an agent is named `current`
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { LRUCache } from "@marsai-org/utils/lru";
 import type { AgentRef } from "../registry/agent-registry";
 import { AgentRegistry } from "../registry/agent-registry";
 import { ensurePersistedRoster } from "../registry/persisted-agents";

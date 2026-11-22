@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { BuildSessionContextOptions, SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { buildSessionContextView } from "@oh-my-pi/pi-coding-agent/session/context-view";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import type { BuildSessionContextOptions, SessionContext } from "@marsai-org/coding-agent/session/session-context";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { buildSessionContextView } from "@marsai-org/coding-agent/session/context-view";
+import { TempDir } from "@marsai-org/utils";
 
 /**
  * Regression for issue #3846: in-TUI `/resume` rebuilt the *previous*

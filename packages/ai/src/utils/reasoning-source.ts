@@ -12,8 +12,8 @@
  * signature), so a pass that rewrites any of that drops the envelope with
  * {@link dropReasoningDetailsEnvelopes}.
  */
-import type { OpenAICompat } from "@oh-my-pi/pi-catalog/types";
-import { isRecord, tryParseJson } from "@oh-my-pi/pi-utils";
+import type { OpenAICompat } from "@marsai-org/catalog/types";
+import { isRecord, tryParseJson } from "@marsai-org/utils";
 import type { AssistantMessage } from "../types";
 
 /** `thinkingSignature` marking thinking decoded from Mistral typed content parts. */

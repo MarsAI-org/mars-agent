@@ -1,8 +1,8 @@
-import { getOAuthCredentialProvider } from "@oh-my-pi/pi-ai/oauth";
+import { getOAuthCredentialProvider } from "@marsai-org/ai/oauth";
 import type { AgentSession } from "../../session/agent-session";
 import type { AuthStorage, OAuthAccountIdentity, StoredAuthCredential } from "../../session/auth-storage";
 
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
+import type { LogoutAccount } from "@marsai-org/tui/overlays/logout-account-selector";
 
 interface LogoutAccountOptions {
 	activeIdentity?: OAuthAccountIdentity;

@@ -1,5 +1,5 @@
-import { deriveClaudeDeviceId } from "@oh-my-pi/pi-ai";
-import { getInstallId } from "@oh-my-pi/pi-utils";
+import { deriveClaudeDeviceId } from "@marsai-org/ai";
+import { getInstallId } from "@marsai-org/utils";
 import type { AuthStorage } from "./auth-storage";
 
 /**

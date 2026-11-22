@@ -23,7 +23,7 @@
  * the instance driving process-wide effects, and a `watch` subscription for capability provider
  * switches and the active rule snapshot.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import {
 	installProviderSwitches,
 	onProviderSwitchesChange,

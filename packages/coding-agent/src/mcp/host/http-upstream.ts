@@ -13,7 +13,7 @@
  * session bounds its requests and, on a 401/403, re-resolves its headers and
  * attaches to the unit those headers identify.
  */
-import { isRecord, logger, postmortem, readSseEvents, readSseJson } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, postmortem, readSseEvents, readSseJson } from "@marsai-org/utils";
 import {
 	createMCPJsonRpcError,
 	type MCPFailureStage,

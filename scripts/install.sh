@@ -2,8 +2,8 @@
 set -e
 
 # OMP Coding Agent Installer
-# Usage: curl -fsSL https://omp.sh/install | sh
-#        curl -fsSL https://omp.sh/install | sh -s -- --binary --ref v18.8.9
+# Usage: curl -fsSL https://mars.sh/install | sh
+#        curl -fsSL https://mars.sh/install | sh -s -- --binary --ref v18.8.9
 #
 # Options:
 #   --source       Install via bun (installs bun if needed)
@@ -15,8 +15,8 @@ set -e
 # Prebuilt binaries come from the build service (PI_BUILD_URL, default
 # https://build.stencil.so) and are checked against its sha256 before install.
 
-REPO="can1357/oh-my-pi"
-PACKAGE="@oh-my-pi/pi-coding-agent"
+REPO="MarsAI-org/mars-agent"
+PACKAGE="@marsai-org/coding-agent"
 INSTALL_DIR="${PI_INSTALL_DIR:-$HOME/.local/bin}"
 BUILD_URL="${PI_BUILD_URL:-https://build.stencil.so}"
 while [ "${BUILD_URL%/}" != "$BUILD_URL" ]; do
@@ -226,8 +226,8 @@ install_via_bun() {
         }
     fi
     echo ""
-    echo "✓ Installed omp via bun"
-    echo "Run 'omp' to get started!"
+    echo "✓ Installed mars via bun"
+    echo "Run 'mars' to get started!"
 }
 
 # The string value of field "$1" in the one-line JSON on stdin (last
@@ -289,14 +289,14 @@ install_binary() {
             echo "For branch/commit installs, use --source with --ref."
             exit 1
         fi
-        echo "Fetching omp ${REF#v}..."
-        API_URL="${BUILD_URL}/api/products/omp/versions/${REF#v}/${TARGET}"
+        echo "Fetching mars ${REF#v}..."
+        API_URL="${BUILD_URL}/api/products/mars/versions/${REF#v}/${TARGET}"
     else
         echo "Fetching latest release..."
-        API_URL="${BUILD_URL}/api/products/omp/latest/${TARGET}?channel=stable"
+        API_URL="${BUILD_URL}/api/products/mars/latest/${TARGET}?channel=stable"
     fi
     if ! BUILD_JSON=$(curl -fsSL --connect-timeout 10 --max-time 60 "$API_URL"); then
-        echo "Failed to resolve an omp build for ${TARGET} from ${API_URL}"
+        echo "Failed to resolve an mars build for ${TARGET} from ${API_URL}"
         exit 1
     fi
     BUILD_JSON=$(printf '%s' "$BUILD_JSON" | tr -d '\r\n')
@@ -327,20 +327,20 @@ install_binary() {
         exit 1
     fi
     chmod +x "$DOWNLOAD_PATH"
-    mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/omp"
+    mv -f "$DOWNLOAD_PATH" "${INSTALL_DIR}/mars"
 
     # Verify the freshly installed binary can actually start before reporting
     # success. Bun's musl-target binaries link libstdc++/libgcc dynamically,
     # which stock Alpine/musl systems do not ship, so the download succeeds while
     # the binary exits 127 with relocation errors. Never claim success for a
     # binary that cannot run.
-    if ! SMOKE_OUTPUT="$("${INSTALL_DIR}/omp" --version 2>&1)"; then
+    if ! SMOKE_OUTPUT="$("${INSTALL_DIR}/mars" --version 2>&1)"; then
         echo ""
-        echo "✗ omp was downloaded to ${INSTALL_DIR}/omp but cannot start:"
+        echo "✗ mars was downloaded to ${INSTALL_DIR}/mars but cannot start:"
         echo "$SMOKE_OUTPUT" | sed 's/^/    /'
         if [ "$PLATFORM" = "linux-musl" ]; then
             echo ""
-            echo "The musl build links libstdc++/libgcc dynamically. Install them, then re-run 'omp':"
+            echo "The musl build links libstdc++/libgcc dynamically. Install them, then re-run 'mars':"
             if command -v apk >/dev/null 2>&1; then
                 echo "    apk add libstdc++ libgcc"
             else
@@ -351,19 +351,19 @@ install_binary() {
     fi
 
     echo ""
-    echo "✓ Installed omp to ${INSTALL_DIR}/omp"
+    echo "✓ Installed mars to ${INSTALL_DIR}/mars"
 
-    # An omp earlier on PATH (a previous `bun install -g`, Homebrew, ...) keeps
+    # An mars earlier on PATH (a previous `bun install -g`, Homebrew, ...) keeps
     # winning over this install until it is removed or INSTALL_DIR moves ahead.
-    ACTIVE_OMP="$(command -v omp 2>/dev/null || true)"
-    if [ -n "$ACTIVE_OMP" ] && ! [ "$ACTIVE_OMP" -ef "${INSTALL_DIR}/omp" ]; then
-        echo "'omp' still resolves to ${ACTIVE_OMP}; remove that install or put ${INSTALL_DIR} ahead of it on PATH."
+    ACTIVE_OMP="$(command -v mars 2>/dev/null || true)"
+    if [ -n "$ACTIVE_OMP" ] && ! [ "$ACTIVE_OMP" -ef "${INSTALL_DIR}/mars" ]; then
+        echo "'mars' still resolves to ${ACTIVE_OMP}; remove that install or put ${INSTALL_DIR} ahead of it on PATH."
         return
     fi
 
     # Check if in PATH
     case ":$PATH:" in
-        *":$INSTALL_DIR:"*) echo "Run 'omp' to get started!" ;;
+        *":$INSTALL_DIR:"*) echo "Run 'mars' to get started!" ;;
         *) print_path_hint ;;
     esac
 }
@@ -455,7 +455,7 @@ print_path_hint() {
     # line break.
     printf '\n%s is not in your PATH. To add it, run:\n\n' "$INSTALL_DIR"
     printf '  %s\n\n' "$path_cmd"
-    echo "Then run 'omp' to get started!"
+    echo "Then run 'mars' to get started!"
 }
 
 # Main logic

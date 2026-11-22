@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { envFlag } from "@oh-my-pi/pi-mnemopi/util/env";
+import { envFlag } from "@marsai-org/mnemopi/util/env";
 
 describe("envFlag", () => {
 	it("keeps the default only when the variable is unset or blank", () => {

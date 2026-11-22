@@ -12,7 +12,7 @@
  * title says the model saw the original): folds, labels and notes come from the would-be text. Esc, Close or a
  * backdrop click closes it; nothing enters the transcript.
  */
-import { formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
+import { formatNumber, sanitizeText } from "@marsai-org/utils";
 import {
 	toolIntentLabel,
 	type TspCodeFold,
@@ -20,7 +20,7 @@ import {
 	type TspPropNode,
 	type TspSpan,
 	type TspTone,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import {
 	SPOTLIGHT_VIEW_LINES,
 	type SpotlightDetails,

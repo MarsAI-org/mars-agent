@@ -1,8 +1,8 @@
 /** Shared inference request identity headers. */
 
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import type { CatalogPolicyInputs } from "@oh-my-pi/pi-catalog/types";
-import { APP_NAME, APP_URL, USER_AGENT } from "@oh-my-pi/pi-utils";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import type { CatalogPolicyInputs } from "@marsai-org/catalog/types";
+import { APP_NAME, APP_URL, USER_AGENT } from "@marsai-org/utils";
 
 /** Options controlling provider and protocol inference headers. */
 export interface InferenceHeaderOptions {

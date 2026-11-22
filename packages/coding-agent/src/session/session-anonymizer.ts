@@ -12,8 +12,8 @@
  * line and file it processes. Path segments and placeholders share the index space:
  * `name: "Probe"` → `PLACEHOLDER_7` and `agent://Probe` → `agent://seg7`.
  */
-import { editErrorKinds } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { editErrorKinds } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import { getBundledAgentsMap } from "../task/agents";
 import { BUILTIN_TOOL_NAMES, isMCPToolName } from "../tools/builtin-names";
 import { lexShellCommand } from "../tools/shell-tokenize";

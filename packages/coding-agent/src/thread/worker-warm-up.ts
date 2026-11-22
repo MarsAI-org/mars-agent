@@ -14,7 +14,7 @@
  *    manager, a derived settings overlay with the memory backend and
  *    auto-learn off, no extensions, MCP, LSP, IRC, or UI, and no prompt.
  */
-import { getAgentDir, logger } from "@oh-my-pi/pi-utils";
+import { getAgentDir, logger } from "@marsai-org/utils";
 import { discoverAdvisorConfigs } from "../advisor/config";
 import { discoverWatchdogFiles } from "../advisor/watchdog";
 import { AgentRegistry } from "../registry/agent-registry";

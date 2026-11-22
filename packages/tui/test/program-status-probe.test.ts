@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@marsai-org/tui/terminal-multiplexer";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 const QUERY = "\x1b]7501;?\x1b\\\x1b[c";
 const DA1_REPLY = "\x1b[?1;2c";

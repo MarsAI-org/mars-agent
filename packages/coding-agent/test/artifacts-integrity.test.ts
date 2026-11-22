@@ -3,8 +3,8 @@ import * as fs from "node:fs";
 import * as fsPromises from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ArtifactManager, writeArtifact } from "@oh-my-pi/pi-coding-agent/session/artifacts";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { ArtifactManager, writeArtifact } from "@marsai-org/coding-agent/session/artifacts";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 describe("ArtifactManager write integrity", () => {
 	const dirs: string[] = [];

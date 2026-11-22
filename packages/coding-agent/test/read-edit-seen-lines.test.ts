@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { GrepTool } from "@oh-my-pi/pi-coding-agent/tools/grep";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { getEditStore } from "@oh-my-pi/pi-coding-agent/edit/store";
-import { generateFileMentionMessages } from "@oh-my-pi/pi-coding-agent/utils/file-mentions";
-import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { GrepTool } from "@marsai-org/coding-agent/tools/grep";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { getEditStore } from "@marsai-org/coding-agent/edit/store";
+import { generateFileMentionMessages } from "@marsai-org/coding-agent/utils/file-mentions";
+import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@marsai-org/tui/tools/streaming-output";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // A call whose arguments span several lines, so a structural read elides the
 // inner rows (3-4) and displays the rest.

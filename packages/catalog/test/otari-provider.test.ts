@@ -2,9 +2,9 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { otariModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { otariModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 const BASE_URL = "https://api.otari.ai/api/v1";
 

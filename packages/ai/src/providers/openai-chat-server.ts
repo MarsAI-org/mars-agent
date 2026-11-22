@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	isOpenAIReasoningEffort,
 	isOpenAIServiceTier,

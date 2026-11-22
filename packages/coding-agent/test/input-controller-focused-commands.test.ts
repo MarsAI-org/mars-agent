@@ -13,12 +13,12 @@
  * the agent.
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { CommandController } from "@marsai-org/coding-agent/modes/controllers/command-controller";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import * as clipboard from "@marsai-org/coding-agent/utils/clipboard";
 import { beginSettingsTest, restoreSettingsTestState } from "./helpers/settings-test-state";
 
 function createFocusedContext() {

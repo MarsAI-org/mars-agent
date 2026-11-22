@@ -10,7 +10,7 @@ import {
 	type AgentToolUpdateCallback,
 	isNonBlankContext,
 	joinAdditionalContext,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	AssistantMessage,
 	CredentialDisabledEvent,
@@ -18,24 +18,24 @@ import type {
 	Model,
 	ProviderResponseMetadata,
 	TextContent,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	clearContextHistoryIndex,
 	getContextHistoryIndex,
 	markPerCallContextMessage,
 	setContextHistoryIndex,
-} from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { addKeyAliases, canonicalKeyId, type KeyId, type Keybinding } from "@oh-my-pi/pi-tui";
-import { KEYBINDINGS, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appApproveKeys, appFollowUpKeys } from "@oh-my-pi/pi-tui/keybinding-matchers";
-import { logger } from "@oh-my-pi/pi-utils";
-import { refreshShellConfigCache } from "@oh-my-pi/pi-utils/procmgr";
+} from "@marsai-org/ai/utils/block-symbols";
+import { addKeyAliases, canonicalKeyId, type KeyId, type Keybinding } from "@marsai-org/tui";
+import { KEYBINDINGS, KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { appApproveKeys, appFollowUpKeys } from "@marsai-org/tui/keybinding-matchers";
+import { logger } from "@marsai-org/utils";
+import { refreshShellConfigCache } from "@marsai-org/utils/procmgr";
 import { MAIN_AGENT_RULE_NAME } from "../../capability/rule";
 import type { ModelRegistry } from "../../config/model-registry";
 import { type Settings, withActiveSettings } from "../../config/settings";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { MemoryRuntimeContext } from "../../memory-backend";
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { type Theme, theme } from "@marsai-org/tui/theme";
 import type { AsyncJobSnapshot, SendUserMessageOptions } from "../../session/agent-session";
 import { MAIN_AGENT_ID } from "../../registry/agent-registry";
 import type { SessionManager } from "../../session/session-manager";
@@ -46,12 +46,12 @@ import { accumulateToolCallResult, buildAggregatedToolCallResult } from "../shar
 import { ManagedTimers } from "./managed-timers";
 import { createExtensionModelQuery } from "./model-api";
 import { trackUserWaits, type UserWaitTracker } from "./user-wait";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import { extensionLinkClicksAvailable } from "@oh-my-pi/pi-tui/render/extension-links";
+import type { ComposerShapeDefinition } from "@marsai-org/tui/overlays/composer-shape-registry";
+import { extensionLinkClicksAvailable } from "@marsai-org/tui/render/extension-links";
 import {
 	notifyTranscriptPresentersChanged,
 	readTranscriptPresentation,
-} from "@oh-my-pi/pi-tui/chat/transcript-presentation";
+} from "@marsai-org/tui/chat/transcript-presentation";
 import type {
 	AfterProviderResponseEvent,
 	AssistantMessageRewriteEvent,

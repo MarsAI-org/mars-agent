@@ -1,22 +1,22 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AutocompleteItem } from "@oh-my-pi/pi-tui";
-import { getMCPConfigPath, getProjectDir, logger, sanitizeText } from "@oh-my-pi/pi-utils";
+import type { AutocompleteItem } from "@marsai-org/tui";
+import { getMCPConfigPath, getProjectDir, logger, sanitizeText } from "@marsai-org/utils";
 import { formatModelRoleAlias, getKnownRoleIds } from "../config/model-roles";
 import { cfgCycleOrder } from "../config/model-settings";
 import { readMCPConfigFile } from "../mcp/config-writer";
 import { collectMcpServerNames } from "../modes/controllers/mcp-command-controller";
 import { InternalUrlRouter } from "../internal-urls";
-import { replaceTabs } from "@oh-my-pi/pi-tui/render/render-utils";
+import { replaceTabs } from "@marsai-org/tui/render/render-utils";
 import { sessionLocalProtocolOptions } from "../internal-urls/context";
 import { encodeLocalPath } from "../modes/local-file-editor";
 import { createModelBrowserSource } from "../modes/model-browser-source";
 import {
 	createModelMentionSource,
 	type ModelMentionCandidateSource,
-} from "@oh-my-pi/pi-tui/prompt/model-mention-autocomplete";
-import { getConfiguredThinkingLevelMetadata } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/prompt/model-mention-autocomplete";
+import { getConfiguredThinkingLevelMetadata } from "@marsai-org/tui/thinking";
 import { expandTilde } from "../tools/path-utils";
 import type { SubcommandDef, TuiSlashCommandRuntime } from "./types";
 

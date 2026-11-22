@@ -1,15 +1,15 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { SessionSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Text, type TUI } from "@oh-my-pi/pi-tui";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import type { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
+import type { SessionSelectorComponent } from "@marsai-org/tui/overlays/session-selector";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { SelectorController } from "@marsai-org/coding-agent/modes/controllers/selector-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { Text, type TUI } from "@marsai-org/tui";
+import { HistorySearchComponent } from "@marsai-org/tui/overlays/history-search";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import type { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
 
 beforeAll(async () => {
 	await initTheme();

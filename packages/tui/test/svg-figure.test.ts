@@ -1,8 +1,8 @@
 import * as path from "node:path";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { SvgFigure } from "@oh-my-pi/pi-tui/chat/svg-figure";
-import { Markdown } from "@oh-my-pi/pi-tui/components/markdown";
-import { getKittyGraphics, setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
+import { SvgFigure } from "@marsai-org/tui/chat/svg-figure";
+import { Markdown } from "@marsai-org/tui/components/markdown";
+import { getKittyGraphics, setKittyGraphics } from "@marsai-org/tui/kitty-graphics";
 import {
 	type CellDimensions,
 	getCellDimensions,
@@ -10,9 +10,9 @@ import {
 	setCellDimensions,
 	setTerminalImageProtocol,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TUI } from "@oh-my-pi/pi-tui/tui";
+} from "@marsai-org/tui/terminal-capabilities";
+import { getMarkdownTheme, initTheme } from "@marsai-org/tui/theme";
+import { TUI } from "@marsai-org/tui/tui";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";
@@ -247,7 +247,7 @@ describe("SvgFigure", () => {
 	// raster, so the figure was marked failed and showed its source instead.
 	it("draws in a process that never installed a theme", async () => {
 		const script = `
-			import { SvgFigure } from "@oh-my-pi/pi-tui/chat/svg-figure";
+			import { SvgFigure } from "@marsai-org/tui/chat/svg-figure";
 			const landed = Promise.withResolvers();
 			const svg = new SvgFigure({ onChange: () => landed.resolve() });
 			svg.update(${JSON.stringify(SVG)}, true);

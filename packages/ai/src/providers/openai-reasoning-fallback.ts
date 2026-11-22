@@ -1,4 +1,4 @@
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import type { CapturedHttpErrorResponse } from "../utils/http-inspector";
 import { isOpenAIRequestValidationError, OpenAIResponsesRequestRejection } from "./openai-request-error";
 

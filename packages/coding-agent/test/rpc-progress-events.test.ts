@@ -7,9 +7,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const FIXTURE = path.join(import.meta.dir, "fixtures", "progress-events-rpc-agent.ts");
 

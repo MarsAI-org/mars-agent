@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import { ensureAgyInstalled, updateAgyBinary } from "../src/providers/antigravity-cli/binary";
 import type { FetchImpl } from "../src/types";
 

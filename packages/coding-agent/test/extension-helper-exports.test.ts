@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import * as PiCodingAgent from "@oh-my-pi/pi-coding-agent";
+import * as PiCodingAgent from "@marsai-org/coding-agent";
 
 /**
  * Extensions import host helpers from the package root: a static import of an

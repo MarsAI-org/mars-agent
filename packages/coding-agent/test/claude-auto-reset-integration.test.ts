@@ -1,33 +1,33 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
+import { Agent } from "@marsai-org/agent-core";
 import type {
 	ResetCreditAccountStatus,
 	ResetCreditTarget,
 	SessionRestrictionLease,
 	UsageReport,
-} from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { runUsageCommand } from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+} from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import * as envApiKey from "@marsai-org/ai/env-api-key";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { runUsageCommand } from "@marsai-org/coding-agent/cli/usage-cli";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { initializeExtensions } from "@marsai-org/coding-agent/modes/runtime-init";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	type CodexAutoRedeemCoordinator,
 	createCodexAutoRedeemCoordinator,
-} from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/codex-auto-reset";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@marsai-org/utils";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 
-import { resetWindowModes } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { resetWindowModes } from "@marsai-org/coding-agent/session/settings";
 
 const ACCOUNT_ID = "claude-account";
 const EMAIL = "claude@example.com";

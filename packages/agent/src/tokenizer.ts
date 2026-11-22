@@ -1,25 +1,25 @@
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect/demotion";
-import { isFactoryDroidGeminiWire, keepsFactoryGeminiReasoning } from "@oh-my-pi/pi-ai/providers/factory-droid/gemini";
-import { ollamaChatDropsOwnThinking } from "@oh-my-pi/pi-ai/providers/ollama";
-import { completionsDropsOwnThinking, isLiteLLMThinkingSignature } from "@oh-my-pi/pi-ai/providers/openai-completions";
+import type { Api, AssistantMessage, Model } from "@marsai-org/ai";
+import { renderDemotedThinking } from "@marsai-org/ai/dialect/demotion";
+import { isFactoryDroidGeminiWire, keepsFactoryGeminiReasoning } from "@marsai-org/ai/providers/factory-droid/gemini";
+import { ollamaChatDropsOwnThinking } from "@marsai-org/ai/providers/ollama";
+import { completionsDropsOwnThinking, isLiteLLMThinkingSignature } from "@marsai-org/ai/providers/openai-completions";
 import {
 	getNativeResponsesHistoryItems,
 	getReplayableNativeResponsesHistoryItems,
 	replaysNativeResponsesTurn,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
+} from "@marsai-org/ai/providers/openai-shared";
 import {
 	dropsForeignReasoningPayload,
 	isSameModelTurn,
 	shouldDropTruncatedThinkingOnlyAssistant,
-} from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { replaysSignedReasoningText } from "@oh-my-pi/pi-ai/utils/reasoning-source";
-import { resolveThinkingReplayTokens, type ThinkingReplayTokens } from "@oh-my-pi/pi-catalog/compat/thinking-replay";
-import type { ModelTokenizer } from "@oh-my-pi/pi-catalog/types";
-import * as natives from "@oh-my-pi/pi-natives";
-import { materializeString, stringifyJson } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai/providers/transform-messages";
+import { replaysSignedReasoningText } from "@marsai-org/ai/utils/reasoning-source";
+import { resolveThinkingReplayTokens, type ThinkingReplayTokens } from "@marsai-org/catalog/compat/thinking-replay";
+import type { ModelTokenizer } from "@marsai-org/catalog/types";
+import * as natives from "@marsai-org/natives";
+import { materializeString, stringifyJson } from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { isEstimateCacheable, messageEstimateVersion } from "./compaction/message-cache";
 import { base64ImageSize, estimateImageTokens, type ImageDetail, type ImageSize } from "./image-tokens";
 import type { AgentMessage } from "./types";

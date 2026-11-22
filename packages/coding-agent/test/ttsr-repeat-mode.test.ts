@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "bun:test";
-import type { Agent, AgentEvent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { buildRuleFromMarkdown, createSourceMeta } from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { TtsrManager, type TtsrMatchContext } from "@oh-my-pi/pi-coding-agent/export/ttsr";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TtsrCoordinator, type TtsrCoordinatorHost } from "@oh-my-pi/pi-coding-agent/session/ttsr-coordinator";
+import type { Agent, AgentEvent, AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { buildRuleFromMarkdown, createSourceMeta } from "@marsai-org/coding-agent/discovery/helpers";
+import { TtsrManager, type TtsrMatchContext } from "@marsai-org/coding-agent/export/ttsr";
+import type { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TtsrCoordinator, type TtsrCoordinatorHost } from "@marsai-org/coding-agent/session/ttsr-coordinator";
 
 const TEXT: TtsrMatchContext = { source: "text" };
 

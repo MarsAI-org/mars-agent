@@ -6,7 +6,7 @@ import type {
 	StreamFn,
 	ThinkingLevel,
 	ToolCallContext,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	AssistantMessage,
 	Context,
@@ -19,9 +19,9 @@ import type {
 	ServiceTierByFamily,
 	SimpleStreamOptions,
 	ToolChoice,
-} from "@oh-my-pi/pi-ai";
-import type { postmortem } from "@oh-my-pi/pi-utils";
-import type { AdvisorConfig } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+} from "@marsai-org/ai";
+import type { postmortem } from "@marsai-org/utils";
+import type { AdvisorConfig } from "@marsai-org/tui/overlays/advisor-config";
 import type { AsyncJob, AsyncJobDeliveryState, AsyncJobManager, AsyncJobManagerApi } from "../async";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { AgentDefinition } from "../task/types";
@@ -32,7 +32,7 @@ import type { PromptTemplate } from "../config/prompt-templates";
 import type { Settings } from "../config/settings";
 import type { SkillsSettings } from "../extensibility/settings";
 import type { CursorMcpResourceAdapter } from "../cursor";
-import type { RawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
+import type { RawSseDebugBuffer } from "@marsai-org/tui/apps/debug/raw-sse-buffer";
 import type { EvalPreludeDefinition } from "../eval/preludes";
 import type { TtsrManager } from "../export/ttsr";
 import type { LoadedCustomCommand } from "../extensibility/custom-commands";
@@ -46,11 +46,11 @@ import type { MCPEvalNamespaceCatalog } from "../mcp/eval-namespaces";
 import type { Skill, SkillWarning } from "../extensibility/skills";
 import type { FileSlashCommand } from "../extensibility/slash-commands";
 import type { SecretObfuscator } from "../secrets/obfuscator";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { ShellStream } from "@oh-my-pi/pi-tui/tools/shell-steps";
-import type { JobWidgetView } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { ShellTrace } from "@oh-my-pi/pi-wire";
-import type { SystemPromptSources } from "@oh-my-pi/pi-tui/status-line/context-usage";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import type { ShellStream } from "@marsai-org/tui/tools/shell-steps";
+import type { JobWidgetView } from "@marsai-org/tui/tools/job-widget";
+import type { ShellTrace } from "@marsai-org/wire";
+import type { SystemPromptSources } from "@marsai-org/tui/status-line/context-usage";
 import type { ToolSession } from "../tools";
 import type { ToolCommandState } from "../tools/tool-commands";
 import type { CodexAutoRedeemCoordinator } from "./codex-auto-reset";
@@ -571,8 +571,8 @@ export interface RoleModelCycleResult {
 	role: string;
 }
 
-import type { ResolvedRoleModel } from "@oh-my-pi/pi-tui/overlays/model-picker";
-export type { ResolvedRoleModel } from "@oh-my-pi/pi-tui/overlays/model-picker";
+import type { ResolvedRoleModel } from "@marsai-org/tui/overlays/model-picker";
+export type { ResolvedRoleModel } from "@marsai-org/tui/overlays/model-picker";
 
 /** Resolvable role models and the currently active index. */
 export interface RoleModelCycle {

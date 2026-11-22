@@ -1,10 +1,10 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { TempDir } from "@marsai-org/utils";
 
 const AMBIENT_ENV = ["LITELLM_API_KEY", "LITELLM_BASE_URL"] as const;
 

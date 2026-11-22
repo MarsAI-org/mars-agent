@@ -19,7 +19,7 @@
  * const committed = fromLines(buildContent(attribution, new Set(attribution.ops.filter(op => status[op.id] === "own").map(op => op.id))));
  * ```
  */
-import { type DiffRun, diffLineRuns, diffLineRunsWithin } from "@oh-my-pi/pi-natives";
+import { type DiffRun, diffLineRuns, diffLineRunsWithin } from "@marsai-org/natives";
 
 /** Lines already in the file (relative to HEAD) before its first recorded edit. */
 export const PRE = "~pre";

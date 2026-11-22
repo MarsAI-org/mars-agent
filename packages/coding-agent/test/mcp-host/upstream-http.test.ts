@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { McpRemoteSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { encodeMcpHeaderValue, HttpUpstream } from "@oh-my-pi/pi-coding-agent/mcp/host/http-upstream";
-import type { McpPeer } from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
-import { mcpUpstreams } from "@oh-my-pi/pi-coding-agent/mcp/host/peers";
-import { analyzeAuthError } from "@oh-my-pi/pi-coding-agent/mcp/oauth-discovery";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { McpRemoteSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import { encodeMcpHeaderValue, HttpUpstream } from "@marsai-org/coding-agent/mcp/host/http-upstream";
+import type { McpPeer } from "@marsai-org/coding-agent/mcp/host/peer";
+import { mcpUpstreams } from "@marsai-org/coding-agent/mcp/host/peers";
+import { analyzeAuthError } from "@marsai-org/coding-agent/mcp/oauth-discovery";
 import {
 	MCP_LEGACY_PROTOCOL_VERSION,
 	MCP_PROTOCOL_VERSION,
 	MCPMeta,
 	requestMeta,
-} from "@oh-my-pi/pi-coding-agent/mcp/protocol";
-import { postmortem, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mcp/protocol";
+import { postmortem, withTimeout } from "@marsai-org/utils";
 import { rejectionOf, trackUnhandled } from "../helpers/rejection";
 import { httpSpec, realDeps } from "./upstream-support";
 

@@ -1,6 +1,6 @@
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { slugify } from "@oh-my-pi/pi-utils";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { slugify } from "@marsai-org/utils";
 import type { ExtensionAPI } from "../extensibility/extensions";
 import { normalizePathSpec } from "./helpers";
 

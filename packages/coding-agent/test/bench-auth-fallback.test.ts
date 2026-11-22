@@ -8,18 +8,18 @@ import type {
 	AssistantMessageEvent,
 	Model,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { type BenchSummary, runBenchCommand } from "@oh-my-pi/pi-coding-agent/cli/bench-cli";
-import { type BenchModelRegistry, resolveBenchTargets } from "@oh-my-pi/pi-coding-agent/cli/bench-runtime";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { getModelDbPath, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { type BenchSummary, runBenchCommand } from "@marsai-org/coding-agent/cli/bench-cli";
+import { type BenchModelRegistry, resolveBenchTargets } from "@marsai-org/coding-agent/cli/bench-runtime";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { getModelDbPath, TempDir } from "@marsai-org/utils";
 import { endpoint as responsesEndpoint } from "../../ai/test/fixtures/openai-responses-server";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 

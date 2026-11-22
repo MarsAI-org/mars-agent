@@ -3,8 +3,8 @@ import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { closeSessionIndex, recordSessionTitle } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { getHistoryDbPath, openSqliteDatabaseSync, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { closeSessionIndex, recordSessionTitle } from "@marsai-org/coding-agent/session/session-index";
+import { getHistoryDbPath, openSqliteDatabaseSync, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 
 /**
  * Quarantining a corrupt history.db unlinks the file and its sidecars, then

@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { postmortem } from "@marsai-org/utils";
+import { theme } from "@marsai-org/tui/theme";
 import { extractUriScheme } from "../internal-urls/parse";
 import { InternalUrlRouter } from "../internal-urls/router";
 import { expandPath } from "../tools/path-utils";

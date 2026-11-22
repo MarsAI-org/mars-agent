@@ -2,12 +2,12 @@ import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as daemonClients from "@oh-my-pi/pi-coding-agent/daemon/client";
-import type { DaemonClient, DaemonOp } from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import type { UnitSnapshot } from "@oh-my-pi/pi-tui/tools/daemon";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as daemonClients from "@marsai-org/coding-agent/daemon/client";
+import type { DaemonClient, DaemonOp } from "@marsai-org/coding-agent/daemon/protocol";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import type { UnitSnapshot } from "@marsai-org/tui/tools/daemon";
 
 const MARKER = "omp-bash-cd-root-marker";
 const FILESYSTEM_ROOT = path.resolve("/");

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import type { AssistantMessage, Message, Model, ModelSpec, Usage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage, Message, Model, ModelSpec, Usage } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import * as snapcompact from "../src";
 
 // Small frames keep render time negligible. Legacy 5x8 shape: 320px → 64 cols

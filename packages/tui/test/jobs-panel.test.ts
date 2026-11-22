@@ -1,17 +1,17 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
-import { RunTrace, Shell } from "@oh-my-pi/pi-natives";
-import type { DescribeContext, NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
+import { RunTrace, Shell } from "@marsai-org/natives";
+import type { DescribeContext, NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
 import {
 	type JobsPanelDetail,
 	type JobsPanelJob,
 	type JobsPanelSnapshot,
 	JobsSheet,
 	type JobsSheetSource,
-} from "@oh-my-pi/pi-tui/overlays/jobs-panel";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { ShellStream } from "@oh-my-pi/pi-tui/tools/shell-steps";
-import { isShellTrace, type ShellTrace, type ShellTraceNode } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/overlays/jobs-panel";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { ShellStream } from "@marsai-org/tui/tools/shell-steps";
+import { isShellTrace, type ShellTrace, type ShellTraceNode } from "@marsai-org/wire";
 import { modelEval } from "./fixtures/job-widget-views";
 
 const DOWN = "\x1b[B";

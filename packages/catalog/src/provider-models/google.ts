@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { isExcludedModel } from "../compat/behavior";
 import { providerEntry } from "../compat/providers";
 import { fetchAntigravityDiscoveryModels } from "../discovery/antigravity";
@@ -26,7 +26,7 @@ export interface GoogleAntigravityAccount {
 	accessToken: string;
 	/**
 	 * Credential identity recorded in {@link ModelSpec.accountAccess} for every
-	 * model this account serves (see `oauthAccountKey` in `@oh-my-pi/pi-ai`).
+	 * model this account serves (see `oauthAccountKey` in `@marsai-org/ai`).
 	 * When any account lacks one, no model records per-account access.
 	 */
 	accountKey?: string;

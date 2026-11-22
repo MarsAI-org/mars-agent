@@ -15,7 +15,7 @@
  */
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
-import { createWorkerSubprocess, type SpawnedSubprocess } from "@oh-my-pi/pi-coding-agent/subprocess/worker-client";
+import { createWorkerSubprocess, type SpawnedSubprocess } from "@marsai-org/coding-agent/subprocess/worker-client";
 
 interface FakeWorkerOutbound {
 	type: "pong";

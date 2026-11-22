@@ -1,6 +1,6 @@
 import { describe, expect, it, mock } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { type } from "@oh-my-pi/omptype";
+import { Effort } from "@marsai-org/catalog/effort";
+import { type } from "@marsai-org/omptype";
 import { type FactoryDroidGeminiOptions, streamFactoryDroidGemini } from "../src/providers/factory-droid/gemini";
 import * as AIError from "../src/error";
 import { SKIP_THOUGHT_SIGNATURE } from "../src/providers/google-shared";

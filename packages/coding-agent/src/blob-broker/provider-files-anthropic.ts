@@ -1,6 +1,6 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import { resolveAnthropicApiVersion } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { isAnthropicOAuthToken } from "@oh-my-pi/pi-catalog/utils";
+import type { Model } from "@marsai-org/ai";
+import { resolveAnthropicApiVersion } from "@marsai-org/catalog/compat/anthropic";
+import { isAnthropicOAuthToken } from "@marsai-org/catalog/utils";
 import type { ProviderFileClient, ProviderFileHandle, ProviderFileUploadRequest } from "./provider-file-types";
 import type { FetchImpl } from "./uploader-runtime";
 

@@ -7,19 +7,19 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { loadExtensions } from "@marsai-org/coding-agent/extensibility/extensions";
 import {
 	partitionStartupExtensions,
 	recordStartupVerdicts,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/startup-deferral";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions/startup-deferral";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const DEFERRED_TOOL_EXTENSION = (logPath: string) => `

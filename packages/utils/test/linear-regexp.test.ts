@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { type EngineLimits, LinearRegExp } from "@oh-my-pi/pi-utils/regex";
-import { canUseNativeExec } from "@oh-my-pi/pi-utils/regex/native-exec";
-import { CharClasses } from "@oh-my-pi/pi-utils/regex/nfa";
-import { parsePattern } from "@oh-my-pi/pi-utils/regex/parse";
+import { type EngineLimits, LinearRegExp } from "@marsai-org/utils/regex";
+import { canUseNativeExec } from "@marsai-org/utils/regex/native-exec";
+import { CharClasses } from "@marsai-org/utils/regex/nfa";
+import { parsePattern } from "@marsai-org/utils/regex/parse";
 
 /** Deterministic xorshift32, so a failure reproduces from its seed. */
 function rng(seed: number): () => number {

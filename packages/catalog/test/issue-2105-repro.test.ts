@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
 	aimlApiModelManagerOptions,
 	isLikelyAimlApiChatModelId,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+} from "@marsai-org/catalog/provider-models/openai-compat";
 
 describe("AIML API built-in provider (issue #2105)", () => {
 	test("uses the OpenAI-compatible completions transport and AIML API base URL", async () => {

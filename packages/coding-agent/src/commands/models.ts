@@ -2,9 +2,9 @@
  * List, search, and refresh available models.
  */
 
-import { MODEL_KINDS, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { APP_NAME } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { MODEL_KINDS, type ModelKind } from "@marsai-org/catalog/types";
+import { APP_NAME } from "@marsai-org/utils";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { modelsHelp as commandHelp } from "../cli/command-help";
 import { resolveModelsArgs, runModelsCommand } from "../cli/models-cli";
 

@@ -1,8 +1,8 @@
 /** Side panel entry: theme before first paint, a port to the worker for this window, then the app. */
-import "@oh-my-pi/collab-web/src/styles/tokens.css";
-import "@oh-my-pi/collab-web/src/styles/base.css";
-import "@oh-my-pi/collab-web/src/components/shell/shell.css";
-import "@oh-my-pi/collab-web/src/components/transcript/transcript.css";
+import "@marsai-org/collab-web/src/styles/tokens.css";
+import "@marsai-org/collab-web/src/styles/base.css";
+import "@marsai-org/collab-web/src/components/shell/shell.css";
+import "@marsai-org/collab-web/src/components/transcript/transcript.css";
 import "./panel.css";
 import { createRoot } from "react-dom/client";
 import { App } from "./app";

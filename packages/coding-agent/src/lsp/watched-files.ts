@@ -16,9 +16,9 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { DirectoryChangeAction, type DirectoryChanges, DirectoryWatcher } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { DirectoryChangeAction, type DirectoryChanges, DirectoryWatcher } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import { mapWithConcurrencyLimit } from "../task/parallel";
 import { FileChangeType, type FileEvent } from "./types";
 import { fileToUri, uriToFile } from "./utils";

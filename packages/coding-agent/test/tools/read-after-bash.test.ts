@@ -8,14 +8,14 @@ import {
 	type AgentToolContext,
 	agentLoop,
 	type ToolCallContext,
-} from "@oh-my-pi/pi-agent-core";
-import type { Message, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import type { Message, ToolResultMessage } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const temporaryDirectories: string[] = [];
 

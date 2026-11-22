@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import { Settings } from "../src/config/settings";
 import { hindsightBackend } from "../src/hindsight/backend";
 import { HindsightApi } from "../src/hindsight/client";

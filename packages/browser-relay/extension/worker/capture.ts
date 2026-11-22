@@ -2,7 +2,7 @@
  * Tab screenshots for the panel: the visible viewport, or a region or element the user picks with the overlay,
  * cropped from the viewport capture. The overlay is hidden around every capture so it never shows in the image.
  */
-import type { ImageContent } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/wire";
 import type { Capture, PickResult, Rect, Size } from "../messages";
 import { overlay } from "./overlay-host";
 

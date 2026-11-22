@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { requestBodyText } from "@marsai-org/ai/utils/request-body";
 
 const context: Context = { messages: [{ role: "user", content: "hi", timestamp: 1 }] };
 

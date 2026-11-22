@@ -1,8 +1,8 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessage, ImageContent, Model } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { TempDir } from "@marsai-org/utils";
 import { $ } from "bun";
 import { AsyncJobManager } from "../../src/async";
 import { ModelRegistry } from "../../src/config/model-registry";

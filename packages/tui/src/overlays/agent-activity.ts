@@ -1,4 +1,4 @@
-import { toolIntentLabel } from "@oh-my-pi/pi-wire";
+import { toolIntentLabel } from "@marsai-org/wire";
 import type { AgentProgress } from "../tools/task";
 
 export type AgentActivityKind = "response" | "tool" | "irc" | "lifecycle";

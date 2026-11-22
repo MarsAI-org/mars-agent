@@ -4,16 +4,16 @@ import { afterAll, beforeAll, describe, expect, it, spyOn } from "bun:test";
 declare const devicePixelRatio: number;
 declare const window: { open(url: string, target: string, features: string): unknown };
 
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	acquireBrowser,
 	type BrowserHandle,
 	holdBrowser,
 	type PuppeteerBrowserHandle,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { waitForDetached } from "@oh-my-pi/pi-coding-agent/tools/browser/selector-wait";
-import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
+} from "@marsai-org/coding-agent/tools/browser/registry";
+import { waitForDetached } from "@marsai-org/coding-agent/tools/browser/selector-wait";
+import type { ReadyInfo, WorkerInbound, WorkerOutbound } from "@marsai-org/coding-agent/tools/browser/tab-protocol";
 import {
 	acquireTab,
 	freezeTabsForOwner,
@@ -21,8 +21,8 @@ import {
 	initializeTabWorkerForTest,
 	releaseTab,
 	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import type { CDPSession } from "puppeteer-core";
 import { chromiumAvailable, visibleBrowserAvailable } from "./chromium-probe";
 

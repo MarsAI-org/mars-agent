@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TaskTool, taskSchema } from "@oh-my-pi/pi-coding-agent/task";
-import { loadBundledAgents } from "@oh-my-pi/pi-coding-agent/task/agents";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { cfgTaskPerCallModel, cfgTaskPerCallModelAllow } from "@oh-my-pi/pi-coding-agent/task/settings";
-import { getTaskSchema } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { TaskTool, taskSchema } from "@marsai-org/coding-agent/task";
+import { loadBundledAgents } from "@marsai-org/coding-agent/task/agents";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import { cfgTaskPerCallModel, cfgTaskPerCallModelAllow } from "@marsai-org/coding-agent/task/settings";
+import { getTaskSchema } from "@marsai-org/coding-agent/task/types";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { isRecord } from "@marsai-org/utils";
 
 let taskSchemaSessionIndex = 0;
 

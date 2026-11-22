@@ -5,15 +5,15 @@
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { withEvalBridgeToolCall } from "@oh-my-pi/pi-coding-agent/eval/tool-bridge-policy";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { Tool } from "@oh-my-pi/pi-coding-agent/tools";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { withEvalBridgeToolCall } from "@marsai-org/coding-agent/eval/tool-bridge-policy";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { Tool } from "@marsai-org/coding-agent/tools";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
 import {
 	dispatchToolCommand,
 	isMountableAsToolCommand,
@@ -32,8 +32,8 @@ import {
 	toolCommandDispatches,
 	toolCommandEntries,
 	toolCommandHelp,
-} from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/tool-commands";
+import { TempDir } from "@marsai-org/utils";
 
 const querySchema = type({ q: "string" });
 

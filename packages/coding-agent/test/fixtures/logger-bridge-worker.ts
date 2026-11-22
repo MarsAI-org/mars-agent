@@ -1,5 +1,5 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { setCurrentThreadId } from "../../src/thread/identity";
 import type { WorkerThreadLink } from "../../src/thread/protocol";
 import { type RpcFrame, RpcLink } from "../../src/thread/rpc";

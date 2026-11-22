@@ -2,34 +2,34 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage, AgentTool, AgentToolContext, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { Message } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { resolveToolCallIntent } from "@oh-my-pi/pi-coding-agent/job-widgets/intent";
-import type { CustomEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SpotlightClient } from "@oh-my-pi/pi-coding-agent/spotlight/client";
-import { type CalledToolResult, shapeCalledTool } from "@oh-my-pi/pi-coding-agent/spotlight/index";
-import { buildCallContext, callSummary } from "@oh-my-pi/pi-coding-agent/spotlight/context";
-import { RecordingScorer } from "@oh-my-pi/pi-coding-agent/spotlight/scorer";
-import { readArtifactText } from "@oh-my-pi/pi-coding-agent/spotlight/sink";
+import type { AgentMessage, AgentTool, AgentToolContext, AgentToolResult } from "@marsai-org/agent-core";
+import type { Message } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as bashExecutor from "@marsai-org/coding-agent/exec/bash-executor";
+import { resolveToolCallIntent } from "@marsai-org/coding-agent/job-widgets/intent";
+import type { CustomEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { SpotlightClient } from "@marsai-org/coding-agent/spotlight/client";
+import { type CalledToolResult, shapeCalledTool } from "@marsai-org/coding-agent/spotlight/index";
+import { buildCallContext, callSummary } from "@marsai-org/coding-agent/spotlight/context";
+import { RecordingScorer } from "@marsai-org/coding-agent/spotlight/scorer";
+import { readArtifactText } from "@marsai-org/coding-agent/spotlight/sink";
 import {
 	SpotlightExperiment,
 	type SpotlightExperimentOptions,
 	startSpotlightExperiment,
-} from "@oh-my-pi/pi-coding-agent/spotlight/session";
-import { countTokens } from "@oh-my-pi/pi-coding-agent/spotlight/shape/shape";
-import { SPOTLIGHT_ENTRY } from "@oh-my-pi/pi-coding-agent/spotlight/types";
-import { StencilCredential } from "@oh-my-pi/pi-coding-agent/stencil/credential";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as scrapers from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
-import { reasonShows, type SpotlightReason, spotlightDetails } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/spotlight/session";
+import { countTokens } from "@marsai-org/coding-agent/spotlight/shape/shape";
+import { SPOTLIGHT_ENTRY } from "@marsai-org/coding-agent/spotlight/types";
+import { StencilCredential } from "@marsai-org/coding-agent/stencil/credential";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { wrapToolWithMetaNotice } from "@marsai-org/coding-agent/tools/output-meta";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import * as scrapers from "@marsai-org/coding-agent/web/scrapers/types";
+import { reasonShows, type SpotlightReason, spotlightDetails } from "@marsai-org/tui/chat/spotlight";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tmpDirs: string[] = [];
 

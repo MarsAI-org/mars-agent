@@ -1,16 +1,16 @@
 import { describe, expect, it } from "bun:test";
-import { type Answer, type Judge, type JudgmentRequest, type Questions, tokenUsage } from "@oh-my-pi/pi-ai";
+import { type Answer, type Judge, type JudgmentRequest, type Questions, tokenUsage } from "@marsai-org/ai";
 import {
 	candidateCharts,
 	chartQuestions,
 	chosenChart,
 	pickTableChart,
 	readingQuestions,
-} from "@oh-my-pi/pi-coding-agent/auto-graph/planner";
-import type { ChainJudge, JudgeKind } from "@oh-my-pi/pi-coding-agent/judgment";
-import { planChart } from "@oh-my-pi/pi-tui/charts/chart-plan";
-import { analyzeTable } from "@oh-my-pi/pi-tui/charts/table-data";
-import type { TableChartRequest } from "@oh-my-pi/pi-tui/chat/table-chart";
+} from "@marsai-org/coding-agent/auto-graph/planner";
+import type { ChainJudge, JudgeKind } from "@marsai-org/coding-agent/judgment";
+import { planChart } from "@marsai-org/tui/charts/chart-plan";
+import { analyzeTable } from "@marsai-org/tui/charts/table-data";
+import type { TableChartRequest } from "@marsai-org/tui/chat/table-chart";
 
 /** A smart-mode request for a table given as rows of cells, header first. */
 function request(rows: string[][]): TableChartRequest {

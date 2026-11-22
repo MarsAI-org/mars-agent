@@ -8,7 +8,7 @@ import {
 	logger,
 	type RuntimeInstallSpec,
 	resolveRuntimeModule,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type * as Fastembed from "fastembed";
 import type * as Ort from "onnxruntime-node";
 import packageManifest from "../../package.json" with { type: "json" };

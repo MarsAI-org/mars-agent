@@ -1,4 +1,4 @@
-import nativesNotices from "@oh-my-pi/pi-natives/THIRD-PARTY-NOTICES.txt" with { type: "text" };
+import nativesNotices from "@marsai-org/natives/THIRD-PARTY-NOTICES.txt" with { type: "text" };
 import license from "../../LICENSE" with { type: "text" };
 import cliNotices from "../../THIRD-PARTY-NOTICES.txt" with { type: "text" };
 

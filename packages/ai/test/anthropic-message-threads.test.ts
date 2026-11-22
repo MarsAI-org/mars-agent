@@ -8,9 +8,9 @@
  * the same turn, and a refused thread stops threading the session.
  */
 import { afterEach, describe, expect, it, setSystemTime } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import type { AnthropicOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { MessageCreateParams } from "@marsai-org/ai/providers/anthropic-wire";
+import type { AnthropicOptions } from "@marsai-org/ai/providers/anthropic";
 import type {
 	AssistantMessage,
 	Context,
@@ -18,10 +18,10 @@ import type {
 	Message,
 	ProviderSessionState,
 	TextContent,
-} from "@oh-my-pi/pi-ai/types";
-import { markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/types";
+import { markPerCallContextMessage } from "@marsai-org/ai/utils/block-symbols";
+import { requestBodyText } from "@marsai-org/ai/utils/request-body";
+import { buildModel } from "@marsai-org/catalog/build";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 
 const THREADS_BETA = "message-threads-2026-08-12";

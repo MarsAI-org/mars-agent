@@ -11,15 +11,15 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { closeDaemonClient, daemonClient, probeDaemon } from "@oh-my-pi/pi-coding-agent/daemon/client";
-import { GLOBAL_SCOPE, type UnitSnapshot } from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import { DisasmDatabase, findDatabaseHandle, releaseDatabases } from "@oh-my-pi/pi-coding-agent/disasm/client";
+import { closeDaemonClient, daemonClient, probeDaemon } from "@marsai-org/coding-agent/daemon/client";
+import { GLOBAL_SCOPE, type UnitSnapshot } from "@marsai-org/coding-agent/daemon/protocol";
+import { DisasmDatabase, findDatabaseHandle, releaseDatabases } from "@marsai-org/coding-agent/disasm/client";
 import {
 	DISASM_UNIT_KIND,
 	type DisasmUnitParams,
 	disasmUnitKey,
 	parseDatabaseHandle,
-} from "@oh-my-pi/pi-coding-agent/disasm/protocol";
+} from "@marsai-org/coding-agent/disasm/protocol";
 import { daemonLockHeld, IsolatedDaemon, waitFor } from "../fixtures/daemon-harness";
 
 const PYTHON3 = Bun.which("python3");

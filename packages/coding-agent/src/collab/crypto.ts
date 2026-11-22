@@ -4,8 +4,8 @@
  * The room key lives only in the link fragment; the relay sees opaque bytes.
  * Sealed layout: `[12B IV][ciphertext+tag]`.
  */
-import { asStrictBytes } from "@oh-my-pi/pi-utils";
-import { ROOM_KEY_BYTES, WRITE_TOKEN_BYTES } from "@oh-my-pi/pi-wire";
+import { asStrictBytes } from "@marsai-org/utils";
+import { ROOM_KEY_BYTES, WRITE_TOKEN_BYTES } from "@marsai-org/wire";
 import type { CollabFrame } from "./protocol";
 
 const AES_ALGORITHM = "AES-GCM";

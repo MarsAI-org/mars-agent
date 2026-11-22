@@ -1,4 +1,4 @@
-import { extractHttpStatusFromError, isRecord } from "@oh-my-pi/pi-utils";
+import { extractHttpStatusFromError, isRecord } from "@marsai-org/utils";
 import type { CapturedHttpErrorResponse } from "../utils/http-inspector";
 import type { ResponseStreamEvent } from "./openai-responses-wire";
 

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "bun:test";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { modalModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { Effort } from "@marsai-org/catalog/effort";
+import { modalModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 const GATEWAY_URL = "https://inference.us-west.modal.direct/v1";
 

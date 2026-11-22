@@ -2,10 +2,10 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { EditStore } from "@oh-my-pi/pi-natives";
-import { encodeArchive } from "@oh-my-pi/pi-utils/ar";
-import { extractFileMentions, generateFileMentionMessages } from "@oh-my-pi/pi-coding-agent/utils/file-mentions";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { EditStore } from "@marsai-org/natives";
+import { encodeArchive } from "@marsai-org/utils/ar";
+import { extractFileMentions, generateFileMentionMessages } from "@marsai-org/coding-agent/utils/file-mentions";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 
 const tempDirs: string[] = [];

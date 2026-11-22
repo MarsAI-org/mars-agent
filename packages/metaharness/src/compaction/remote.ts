@@ -6,7 +6,7 @@
  * runner re-attaches to their logs (see `followJsonl`).
  */
 import * as path from "node:path";
-import { readLines } from "@oh-my-pi/pi-utils";
+import { readLines } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 
 const SSH_OPTIONS = ["-o", "BatchMode=yes", "-o", "ServerAliveInterval=30", "-o", "ServerAliveCountMax=4"];

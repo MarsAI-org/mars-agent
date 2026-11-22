@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { ImageContent } from "@marsai-org/ai";
 import {
 	type AutocompleteProvider,
 	BRACKETED_PASTE_END,
@@ -14,36 +14,36 @@ import {
 	parseSgrMouse,
 	type PasteOptions,
 	type SlashCommand,
-} from "@oh-my-pi/pi-tui";
-import { isEnoent, logger, postmortem, sanitizeText } from "@oh-my-pi/pi-utils";
-import { formatDoubleTap } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui";
+import { isEnoent, logger, postmortem, sanitizeText } from "@marsai-org/utils";
+import { formatDoubleTap } from "@marsai-org/tui/app-keybindings";
+import { appKey, editorKey } from "@marsai-org/tui/chrome/keybinding-hints";
+import { parseConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import { formatModelRoleAlias, roleCandidatePool } from "../../config/model-roles";
 import { resolveModelRoleValue } from "../../config/model-resolver";
 import { isSettingsInitialized, settings } from "../../config/settings";
 import { InternalUrlRouter, resolveLocalRoot } from "../../internal-urls";
-import { ApprovalDialogComponent } from "@oh-my-pi/pi-tui/overlays/approval-dialog";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { extractImagePathFromText } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
+import { ApprovalDialogComponent } from "@marsai-org/tui/overlays/approval-dialog";
+import { AskDialogComponent } from "@marsai-org/tui/overlays/ask-dialog";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { extractImagePathFromText } from "@marsai-org/tui/prompt/custom-editor";
+import { HistorySearchComponent } from "@marsai-org/tui/overlays/history-search";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import { ReadToolGroupComponent } from "@marsai-org/tui/chat/read-tool-group";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { TreeSelectorComponent } from "@marsai-org/tui/overlays/tree-selector";
 import {
 	chipLabel,
 	compactImageMarkers,
 	formatVisionMarker,
 	shiftImageMarkers,
-} from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { expandEmoticons } from "@oh-my-pi/pi-tui/prompt/emoji-autocomplete";
-import { setCachedImageDimensions } from "@oh-my-pi/pi-tui/prompt/image-references";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { createModelMentionSource } from "@oh-my-pi/pi-tui/prompt/model-mention-autocomplete";
+} from "@marsai-org/tui/prompt/composer-attachments";
+import { expandEmoticons } from "@marsai-org/tui/prompt/emoji-autocomplete";
+import { setCachedImageDimensions } from "@marsai-org/tui/prompt/image-references";
+import { createPromptActionAutocompleteProvider } from "@marsai-org/tui/prompt/prompt-action-autocomplete";
+import { createModelMentionSource } from "@marsai-org/tui/prompt/model-mention-autocomplete";
 import { createModelBrowserSource } from "../model-browser-source";
-import { formatQueueShorthand, parseQueueShorthand, splitQueuedMessages } from "@oh-my-pi/pi-tui/prompt/queue-input";
+import { formatQueueShorthand, parseQueueShorthand, splitQueuedMessages } from "@marsai-org/tui/prompt/queue-input";
 import { invokeSkillCommandFromText, isKnownSkillCommand } from "../../modes/skill-command";
 import { parseFileSlashInvocation, renderFileSlashCommand } from "../../extensibility/slash-commands";
 import type { InteractiveModeContext, SubmittedUserInput } from "../../modes/types";
@@ -59,7 +59,7 @@ import { parseSlashCommand, parseSubcommand } from "../../slash-commands/helpers
 import { isTinyLocalModelKey } from "../../tiny/models";
 import { tinyTitleClient } from "../../tiny/title-client";
 import { resolveReadPath } from "../../tools/path-utils";
-import { shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
+import { shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@marsai-org/tui/render/render-utils";
 import { vocalizer } from "../../tts/vocalizer";
 import {
 	copyToClipboard,
@@ -76,11 +76,11 @@ import { resendProgramStatus } from "../../utils/run-status";
 import { loadImageInput } from "../../utils/image-loading";
 import { materializeImageChipLinks } from "../utils/ui-helpers";
 import { type ConversationPosition, continuesConversation, conversationPosition } from "../utils/conversation-position";
-import { ensureSupportedImageInput, ImageInputTooLargeError } from "@oh-my-pi/pi-tui/chat/image-loading";
-import { type ImageAttachmentSource, tagImageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { blobExtensionForImageMimeType } from "@oh-my-pi/pi-tui/prompt/image-format";
+import { ensureSupportedImageInput, ImageInputTooLargeError } from "@marsai-org/tui/chat/image-loading";
+import { type ImageAttachmentSource, tagImageAttachmentSource } from "@marsai-org/tui/prompt/image-source";
+import { blobExtensionForImageMimeType } from "@marsai-org/tui/prompt/image-format";
 import { VideoError, buildVideoContactSheetPng, probeVideo } from "../../utils/video";
-import { isVideoPath } from "@oh-my-pi/pi-tui/prompt/video";
+import { isVideoPath } from "@marsai-org/tui/prompt/video";
 import { resizeImage } from "../../utils/image-resize";
 
 import { cfgCycleOrder } from "../../config/model-settings";

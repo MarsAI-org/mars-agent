@@ -1,25 +1,25 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Context, Model, ToolResultMessage, UserMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { type CompactionMethod, resolveSpeculationMethod } from "@oh-my-pi/pi-coding-agent/session/compaction-methods";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionMaintenance, type SessionMaintenanceHost } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgMemoryBackend } from "@oh-my-pi/pi-coding-agent/memory-backend/settings";
-import { hindsightBackend } from "@oh-my-pi/pi-coding-agent/hindsight/backend";
-import * as snapcompactModule from "@oh-my-pi/snapcompact";
+import { Agent, type AgentMessage } from "@marsai-org/agent-core";
+import * as compactionModule from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Context, Model, ToolResultMessage, UserMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { type CompactionMethod, resolveSpeculationMethod } from "@marsai-org/coding-agent/session/compaction-methods";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionMaintenance, type SessionMaintenanceHost } from "@marsai-org/coding-agent/session/session-maintenance";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { cfgMemoryBackend } from "@marsai-org/coding-agent/memory-backend/settings";
+import { hindsightBackend } from "@marsai-org/coding-agent/hindsight/backend";
+import * as snapcompactModule from "@marsai-org/snapcompact";
 
 import {
 	cfgCompaction,
 	cfgCompactionAsyncEnabled,
 	cfgCompactionMethodOrder,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
+} from "@marsai-org/coding-agent/session/context-settings";
 
 const CONTEXT_WINDOW = 100_000;
 const THRESHOLD = 50_000;

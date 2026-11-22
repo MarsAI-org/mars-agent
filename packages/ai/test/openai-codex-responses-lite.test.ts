@@ -4,24 +4,24 @@ import {
 	moveCodexInstructionsToInput,
 	transformRequestBody,
 	withCodexRoutingFieldsFirst,
-} from "@oh-my-pi/pi-ai/providers/openai-codex/request-transformer";
+} from "@marsai-org/ai/providers/openai-codex/request-transformer";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
 	streamOpenAICodexResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { resetOpenAICodexHistoryAfterCompaction } from "@oh-my-pi/pi-ai/providers/openai-codex-state";
-import { configureCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { isOpenAIResponsesProgressEvent } from "@oh-my-pi/pi-ai/utils/websocket";
+} from "@marsai-org/ai/providers/openai-codex-responses";
+import { resetOpenAICodexHistoryAfterCompaction } from "@marsai-org/ai/providers/openai-codex-state";
+import { configureCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
+import { isOpenAIResponsesProgressEvent } from "@marsai-org/ai/utils/websocket";
 import type {
 	CodexCompactionRequestContext,
 	Context,
 	FetchImpl,
 	ModelSpec,
 	ProviderSessionState,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as piUtils from "@marsai-org/utils";
 import { createCodexModel } from "./helpers";
 
 /** The base-instructions developer item codex-rs leads every request with. */

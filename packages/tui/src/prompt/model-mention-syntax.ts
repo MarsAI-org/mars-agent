@@ -3,8 +3,8 @@
  * rendering, and the session registry. Kept apart from `model-mentions.ts` so
  * the startup composer prepaint graph never loads the catalog or task agents.
  */
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+import type { Model } from "@marsai-org/ai";
+import type { Effort } from "@marsai-org/catalog/effort";
 
 /** Whitespace-delimited token; groups are leading delimiter and selector. Reset lastIndex before reuse. */
 export const MODEL_MENTION_RE = /(^|\s)\^([^\s^]+)(?=\s|$)/g;

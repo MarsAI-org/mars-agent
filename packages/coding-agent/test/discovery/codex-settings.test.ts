@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
 import {
 	type Settings as SettingsCapabilityItem,
 	settingsCapability,
-} from "@oh-my-pi/pi-coding-agent/capability/settings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgDisabledProviders } from "@oh-my-pi/pi-coding-agent/config/model-settings";
-import { initializeWithSettings, isProviderEnabled, loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { cfgPersonality } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { logger, removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/capability/settings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgDisabledProviders } from "@marsai-org/coding-agent/config/model-settings";
+import { initializeWithSettings, isProviderEnabled, loadCapability } from "@marsai-org/coding-agent/discovery";
+import { cfgPersonality } from "@marsai-org/coding-agent/session/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { logger, removeWithRetries } from "@marsai-org/utils";
 
 describe("Codex config.toml settings", () => {
 	let root = "";

@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { Message, Model } from "@oh-my-pi/pi-ai";
-import type { DescribeContext } from "@oh-my-pi/pi-tui/native/node";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { Message, Model } from "@marsai-org/ai";
+import type { DescribeContext } from "@marsai-org/tui/native/node";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme";
 import {
 	AggregationTemporality,
 	type DataPoint,
@@ -12,14 +12,14 @@ import {
 	MeterProvider,
 	PeriodicExportingMetricReader,
 } from "@opentelemetry/sdk-metrics";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	ComposerPredictionController,
 	parseComposerPrediction,
 	parseComposerPredictions,
-} from "@oh-my-pi/pi-coding-agent/modes/controllers/composer-prediction-controller";
-import type { EphemeralTurnOptions, EphemeralTurnResult } from "@oh-my-pi/pi-coding-agent/session/agent-session-types";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/modes/controllers/composer-prediction-controller";
+import type { EphemeralTurnOptions, EphemeralTurnResult } from "@marsai-org/coding-agent/session/agent-session-types";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 beforeAll(async () => {
 	await initTheme(false);

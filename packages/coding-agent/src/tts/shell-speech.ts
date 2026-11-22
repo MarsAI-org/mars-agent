@@ -12,17 +12,17 @@
  * minute) scales the speaking rate; a voice the model does not have and the
  * options with no equivalent are ignored.
  */
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai";
-import { MissingApiKeyError, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { isSpeechApi, synthesizeSpeech } from "@oh-my-pi/pi-ai/speech";
+import type { FetchImpl, Model } from "@marsai-org/ai";
+import { MissingApiKeyError, ProviderHttpError } from "@marsai-org/ai/error";
+import { isSpeechApi, synthesizeSpeech } from "@marsai-org/ai/speech";
 import {
 	type ShellSpeech,
 	ShellSpeechOp,
 	type ShellSpeechRequest,
 	type ShellSpeechResponse,
 	type ShellSpeechVoice,
-} from "@oh-my-pi/pi-natives";
-import { toError } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/natives";
+import { toError } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";

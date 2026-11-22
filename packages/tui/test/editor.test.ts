@@ -10,11 +10,11 @@ import {
 	type EditorTheme,
 	registerComposerStyle,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import { CombinedAutocompleteProvider } from "@oh-my-pi/pi-tui/autocomplete";
-import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui/keybindings";
-import { setKittyProtocolActive } from "@oh-my-pi/pi-tui/keys";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+} from "@marsai-org/tui";
+import { CombinedAutocompleteProvider } from "@marsai-org/tui/autocomplete";
+import { KeybindingsManager, setKeybindings, TUI_KEYBINDINGS } from "@marsai-org/tui/keybindings";
+import { setKittyProtocolActive } from "@marsai-org/tui/keys";
+import { visibleWidth } from "@marsai-org/tui/utils";
 import { defaultEditorTheme } from "./test-themes";
 import { VirtualTerminal } from "./virtual-terminal";
 

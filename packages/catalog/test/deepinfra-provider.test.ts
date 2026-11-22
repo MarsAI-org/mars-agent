@@ -2,11 +2,11 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEEPINFRA_BASE_URL, deepinfraModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { DEEPINFRA_BASE_URL, deepinfraModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 const DISCOVERY_URL = "https://api.deepinfra.com/v1/openai/models?filter=with_meta&sort_by=omp";
 

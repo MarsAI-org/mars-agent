@@ -2,13 +2,13 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ImageTokenization } from "@oh-my-pi/pi-catalog/compat/image-tokenization";
-import { PointerSpace } from "@oh-my-pi/pi-coding-agent/tools/browser/pointer-space";
-import { RunOutput } from "@oh-my-pi/pi-coding-agent/tools/browser/run-output";
-import { emitScreenshot, type ScreenshotCapture } from "@oh-my-pi/pi-coding-agent/tools/browser/screenshot";
-import type { ScreenshotResult, SessionSnapshot } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import type { ImageTokenization } from "@marsai-org/catalog/compat/image-tokenization";
+import { PointerSpace } from "@marsai-org/coding-agent/tools/browser/pointer-space";
+import { RunOutput } from "@marsai-org/coding-agent/tools/browser/run-output";
+import { emitScreenshot, type ScreenshotCapture } from "@marsai-org/coding-agent/tools/browser/screenshot";
+import type { ScreenshotResult, SessionSnapshot } from "@marsai-org/coding-agent/tools/browser/tab-protocol";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 /** Claude's standard tier: images past 1,568 28px patches are shrunk by the API. */
 const STANDARD: ImageTokenization = { regime: "anthropic-patch", maxEdge: 1568, maxTokens: 1568 };

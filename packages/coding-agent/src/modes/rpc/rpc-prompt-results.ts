@@ -8,11 +8,11 @@
  * (`agent_pause` with `yielded`, or `agent_end`). Hosts correlate on the command `id` instead of inferring
  * ownership of an `agent_end` that carries no prompt identity.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { stripRawHttpRequestDiagnostics } from "@oh-my-pi/pi-ai/utils/http-inspector";
-import { toError } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { stripRawHttpRequestDiagnostics } from "@marsai-org/ai/utils/http-inspector";
+import { toError } from "@marsai-org/utils";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import type { CostCapRefusal } from "../../session/cost-gate";
 import { isSessionSettled, type SessionSettleState } from "../../session/session-settle";

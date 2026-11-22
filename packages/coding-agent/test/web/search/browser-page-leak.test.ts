@@ -10,17 +10,17 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getDaemonRuntimeDir, withTimeout } from "@oh-my-pi/pi-utils";
-import * as launch from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+import { getDaemonRuntimeDir, withTimeout } from "@marsai-org/utils";
+import * as launch from "@marsai-org/coding-agent/tools/browser/launch";
 import {
 	forgetSharedTarget,
 	recordSharedTarget,
 	resetOrphanRegistryForTest,
 	type SharedTargetScope,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/orphan-registry";
-import * as registry from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import type { PuppeteerBrowserHandle } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { browserFetch } from "@oh-my-pi/pi-coding-agent/web/search/providers/browser-page";
+} from "@marsai-org/coding-agent/tools/browser/orphan-registry";
+import * as registry from "@marsai-org/coding-agent/tools/browser/registry";
+import type { PuppeteerBrowserHandle } from "@marsai-org/coding-agent/tools/browser/registry";
+import { browserFetch } from "@marsai-org/coding-agent/web/search/providers/browser-page";
 import type { Page } from "puppeteer-core";
 
 const DAEMON_NAME = "omp.browser.headless";

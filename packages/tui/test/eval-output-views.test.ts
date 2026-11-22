@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { type EvalView, type EvalViewEntry, evalToolRenderer, splitEvalOutput } from "@oh-my-pi/pi-tui/tools/eval";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
+import { type EvalView, type EvalViewEntry, evalToolRenderer, splitEvalOutput } from "@marsai-org/tui/tools/eval";
 
 const json = (value: unknown): EvalView => ({ kind: "json", value });
 

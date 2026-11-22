@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { createMCPJsonRpcError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import { MCP_NO_STORE, MCP_STALE_OK, mcpIdentity, OmpMeta } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import type { McpEndpoint } from "@oh-my-pi/pi-coding-agent/mcp/host/endpoint";
-import { cacheParamsKey, McpStore } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+import { createMCPJsonRpcError } from "@marsai-org/coding-agent/mcp/errors";
+import { MCP_NO_STORE, MCP_STALE_OK, mcpIdentity, OmpMeta } from "@marsai-org/coding-agent/mcp/host/contract";
+import type { McpEndpoint } from "@marsai-org/coding-agent/mcp/host/endpoint";
+import { cacheParamsKey, McpStore } from "@marsai-org/coding-agent/mcp/host/store";
+import { MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { attachLink, ScriptedUpstreams, scriptedEndpoint, stdioSpec, until } from "./scripted";
 
 const STALE_OK = { [OmpMeta.cache]: MCP_STALE_OK };

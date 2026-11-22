@@ -1,5 +1,5 @@
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, withoutUnverifiedThinking } from "@oh-my-pi/pi-catalog/model-thinking";
+import { Effort, THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { clampThinkingLevelForModel, withoutUnverifiedThinking } from "@marsai-org/catalog/model-thinking";
 import {
 	applyThinkingCapability,
 	readThinkingCapability,
@@ -7,8 +7,8 @@ import {
 	type ThinkingProbeAttempt,
 	type ThinkingProbeFormat,
 	writeThinkingCapability,
-} from "@oh-my-pi/pi-catalog/thinking-capability";
-import { $env, logger, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/thinking-capability";
+import { $env, logger, untilAborted } from "@marsai-org/utils";
 import * as AIError from "./error";
 import prompt from "./prompts/thinking-probe.md" with { type: "text" };
 import type { Api, Context, FetchImpl, Model, SimpleStreamOptions } from "./types";

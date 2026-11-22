@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import { getEvalState } from "@oh-my-pi/pi-coding-agent/eval/state";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions } from "@marsai-org/coding-agent/eval/py/executor";
+import { getEvalState } from "@marsai-org/coding-agent/eval/state";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
 
 type Language = "py" | "js";
 

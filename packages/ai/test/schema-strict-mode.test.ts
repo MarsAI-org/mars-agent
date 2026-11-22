@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { formatLocalRefPointer, parseLocalRefPointer } from "@oh-my-pi/omptype";
-import type { Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
+import { type } from "@marsai-org/omptype";
+import { formatLocalRefPointer, parseLocalRefPointer } from "@marsai-org/omptype";
+import type { Tool, ToolCall } from "@marsai-org/ai/types";
 import {
 	adaptSchemaForStrict,
 	arkToWireSchema,
@@ -13,8 +13,8 @@ import {
 	sanitizeSchemaForStrictMode,
 	toolWireSchema,
 	tryEnforceStrictSchema,
-} from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
+} from "@marsai-org/ai/utils/schema";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
 
 describe("URI-fragment definition references", () => {
 	it("resolves percent-encoded and pointer-escaped names once across schema consumers", () => {

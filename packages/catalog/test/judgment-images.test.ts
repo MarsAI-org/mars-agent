@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveJudgmentImageInput } from "@oh-my-pi/pi-catalog/compat/judgment-images";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveJudgmentImageInput } from "@marsai-org/catalog/compat/judgment-images";
 
 const base = {
 	reasoning: false,

@@ -1,9 +1,9 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { Component, OverlayHandle, TUI } from "@oh-my-pi/pi-tui";
-import { Container, Spacer, Text } from "@oh-my-pi/pi-tui";
-import type { CollabUiRequestDraft, CollabUiSelectItem } from "@oh-my-pi/pi-wire";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { Component, OverlayHandle, TUI } from "@marsai-org/tui";
+import { Container, Spacer, Text } from "@marsai-org/tui";
+import type { CollabUiRequestDraft, CollabUiSelectItem } from "@marsai-org/wire";
 import type { CollabHost } from "../../collab/host";
-import { formatKeyHint, formatKeyHints, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { formatKeyHint, formatKeyHints, KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 import type {
 	CompactOptions,
 	ExtensionActions,
@@ -29,16 +29,16 @@ import type {
 } from "../../extensibility/extensions";
 import { getSessionSlashCommands } from "../../extensibility/extensions/get-commands-handler";
 import { cfgExtensionAssistantTextRenderers } from "../../extensibility/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { ApprovalDialogComponent } from "@oh-my-pi/pi-tui/overlays/approval-dialog";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { ApprovalDialogComponent } from "@marsai-org/tui/overlays/approval-dialog";
 import {
 	type AskDialogPrompt,
 	type AskDialogPromptDraft,
 	type AskDialogPromptValue,
 	AskDialogComponent,
 	normalizeDialogQuestions,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { installExtensionComposerShape } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
+} from "@marsai-org/tui/overlays/ask-dialog";
+import { installExtensionComposerShape } from "@marsai-org/tui/overlays/composer-shape-registry";
 import {
 	choiceValue,
 	fieldError,
@@ -46,24 +46,24 @@ import {
 	type HtmlFormData,
 	type HtmlFormValue,
 	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import { HtmlFormDialog } from "@oh-my-pi/pi-tui/html-form/dialog";
+} from "@marsai-org/tui/html-form/data";
+import { HtmlFormDialog } from "@marsai-org/tui/html-form/dialog";
 import {
 	type ChoiceField,
 	type HtmlForm,
 	parseHtmlForm,
 	spansText,
 	type TextField,
-} from "@oh-my-pi/pi-tui/html-form/parse";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import { boundPromptTitle, HookEditorComponent, type HookEditorOptions } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import { extensionLinkClicksAvailable } from "@oh-my-pi/pi-tui/render/extension-links";
-import { HookSelectorComponent, type HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
-import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/html-form/parse";
+import { EditorTopGap } from "@marsai-org/tui/prompt/editor-top-gap";
+import { boundPromptTitle, HookEditorComponent, type HookEditorOptions } from "@marsai-org/tui/overlays/hook-editor";
+import { HookInputComponent } from "@marsai-org/tui/overlays/hook-input";
+import { extensionLinkClicksAvailable } from "@marsai-org/tui/render/extension-links";
+import { HookSelectorComponent, type HookSelectorSlider } from "@marsai-org/tui/overlays/hook-selector";
+import { getAvailableThemesWithPaths, getThemeByName, setTheme, type Theme, theme } from "@marsai-org/tui/theme";
 import type { ComposerOwner, InteractiveModeContext, InteractiveSelectorDialogOptions } from "../../modes/types";
 import { normalizeCustomMessagePayload, USER_INTERRUPT_LABEL } from "../../session/messages";
-import { disambiguateDisplayLabels, sanitizeCarriageReturns } from "@oh-my-pi/pi-tui/render/render-utils";
+import { disambiguateDisplayLabels, sanitizeCarriageReturns } from "@marsai-org/tui/render/render-utils";
 import { type BlockedKind, type BlockedStatus, holdBlockedStatus } from "../../utils/run-status";
 import { setExtensionTerminalTitle, setSessionTerminalTitle } from "../../utils/title-generator";
 import { getEditorCommand, openInEditor } from "../../utils/external-editor";

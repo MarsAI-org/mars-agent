@@ -1,19 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createLspWritethrough } from "@oh-my-pi/pi-coding-agent/lsp";
-import { FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import type { LinterClient, ServerConfig } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { DeferredDiagnosticsEntry, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { addFileWriteFallback } from "@oh-my-pi/pi-coding-agent/tools/file-write-fallback";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentToolContext } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createLspWritethrough } from "@marsai-org/coding-agent/lsp";
+import { FileFormatResult } from "@marsai-org/tui/tools/lsp";
+import * as lspConfig from "@marsai-org/coding-agent/lsp/config";
+import type { LinterClient, ServerConfig } from "@marsai-org/coding-agent/lsp/types";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { DeferredDiagnosticsEntry, ToolSession } from "@marsai-org/coding-agent/tools";
+import { addFileWriteFallback } from "@marsai-org/coding-agent/tools/file-write-fallback";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { TempDir } from "@marsai-org/utils";
 
 function createFormatter(format: (filePath: string, content: string) => Promise<string>): ServerConfig {
 	return {

@@ -28,8 +28,8 @@ import {
 	resetOrphanRegistryForTest,
 	retryUnclosedSharedTargets,
 	type SharedTargetScope,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/orphan-registry";
-import { getDaemonRuntimeDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/browser/orphan-registry";
+import { getDaemonRuntimeDir } from "@marsai-org/utils";
 import type { Browser } from "puppeteer-core";
 
 const DAEMON_NAME = "omp.browser.headless";

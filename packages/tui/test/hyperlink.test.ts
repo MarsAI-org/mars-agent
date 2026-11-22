@@ -2,8 +2,8 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } fro
 import * as os from "node:os";
 import * as path from "node:path";
 import * as url from "node:url";
-import { logger } from "@oh-my-pi/pi-utils";
-import { getMarkdownTheme, initTheme } from "@oh-my-pi/pi-tui/theme";
+import { logger } from "@marsai-org/utils";
+import { getMarkdownTheme, initTheme } from "@marsai-org/tui/theme";
 import {
 	applyFileLinkSetting,
 	applyHyperlinkSetting,
@@ -15,8 +15,8 @@ import {
 	uriHyperlink,
 	urlHyperlink,
 	urlHyperlinkAlways,
-} from "@oh-my-pi/pi-tui/render/hyperlink";
-import * as terminalCaps from "@oh-my-pi/pi-tui";
+} from "@marsai-org/tui/render/hyperlink";
+import * as terminalCaps from "@marsai-org/tui";
 import { SkillMessageComponent } from "../src/chat/skill-message";
 import { openableImageProps } from "../src/native/blobs";
 import { fileHref } from "../src/tools/native-view";

@@ -1,15 +1,15 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { registerPersistedSubagents } from "@oh-my-pi/pi-coding-agent/registry/persisted-agents";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { startCompletionProbe } from "@oh-my-pi/pi-coding-agent/task/completion-probe";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { AssistantMessage, Model, Usage } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { registerPersistedSubagents } from "@marsai-org/coding-agent/registry/persisted-agents";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { startCompletionProbe } from "@marsai-org/coding-agent/task/completion-probe";
+import { TempDir } from "@marsai-org/utils";
 import * as path from "node:path";
 import { mkdir } from "node:fs/promises";
 

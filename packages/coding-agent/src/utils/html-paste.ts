@@ -9,8 +9,8 @@
  * HTML that is all preformatted and carries no image (code copied from an editor, a lone
  * code block) is pasted as that text alone, as its plain text would be.
  */
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { parseHtmlFragment, type TurndownNode } from "@oh-my-pi/pi-utils/turndown";
+import type { ImageContent } from "@marsai-org/ai";
+import { parseHtmlFragment, type TurndownNode } from "@marsai-org/utils/turndown";
 import { createTurndown } from "./turndown";
 
 /** One piece of a rich paste, in order: Markdown text or an image to attach. */

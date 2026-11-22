@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as url from "node:url";
-import { $which, isWsl, logger } from "@oh-my-pi/pi-utils";
+import { $which, isWsl, logger } from "@marsai-org/utils";
 import { redactUrlForLog } from "./redact-url";
 
 const URL_SCHEME_PATTERN = /^[a-zA-Z][a-zA-Z\d+.-]*:/;

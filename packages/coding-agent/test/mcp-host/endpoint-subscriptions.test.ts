@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { MCP_RESTART_METHOD, mcpIdentity } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import type { McpEndpoint } from "@oh-my-pi/pi-coding-agent/mcp/host/endpoint";
-import { cacheParamsKey, McpStore } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { MCP_SUBSCRIPTION_ACKNOWLEDGED, MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+import { MCP_RESTART_METHOD, mcpIdentity } from "@marsai-org/coding-agent/mcp/host/contract";
+import type { McpEndpoint } from "@marsai-org/coding-agent/mcp/host/endpoint";
+import { cacheParamsKey, McpStore } from "@marsai-org/coding-agent/mcp/host/store";
+import { MCP_SUBSCRIPTION_ACKNOWLEDGED, MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { attachLink, ScriptedUpstreams, scriptedEndpoint, settle, stdioSpec, until } from "./scripted";
 
 const ALL_LISTS = { toolsListChanged: true, promptsListChanged: true, resourcesListChanged: true };

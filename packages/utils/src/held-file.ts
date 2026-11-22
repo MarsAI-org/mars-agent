@@ -5,7 +5,7 @@
  * `-shm` also faults the connection's memory map), so tools that write
  * agent-chosen paths check here first.
  */
-import { heldFileKind } from "@oh-my-pi/pi-natives/sqlite-locks";
+import { heldFileKind } from "@marsai-org/natives/sqlite-locks";
 
 /**
  * Throws an `EBUSY` error when `filePath` is a file this process holds open with

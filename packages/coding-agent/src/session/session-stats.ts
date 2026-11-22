@@ -1,12 +1,12 @@
-import type { Agent, AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { Agent, AgentMessage } from "@marsai-org/agent-core";
 import {
 	calculatePromptTokens,
 	findTranscriptUsageAnchor,
 	isTranscriptUsageAnchor,
 	type SessionMessageEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, ProviderResponseMetadata, Usage } from "@oh-my-pi/pi-ai";
-import { type } from "@oh-my-pi/omptype";
+} from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Model, ProviderResponseMetadata, Usage } from "@marsai-org/ai";
+import { type } from "@marsai-org/omptype";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 
@@ -16,7 +16,7 @@ import {
 	computeNonMessageTokens,
 	estimateContextToolSchemaTokens,
 	type NonMessageTokenSource,
-} from "@oh-my-pi/pi-tui/status-line/context-usage";
+} from "@marsai-org/tui/status-line/context-usage";
 import type { ContextUsageBreakdown, SessionStats } from "./agent-session-types";
 import { getLatestCompactionEntry } from "./session-context";
 import type { SessionEntry } from "./session-entries";

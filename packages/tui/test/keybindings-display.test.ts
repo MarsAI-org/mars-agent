@@ -6,8 +6,8 @@ import {
 	getDefaultPasteImageKeys,
 	KeybindingsManager,
 	setKeyHintPlatform,
-} from "@oh-my-pi/pi-tui/app-keybindings";
-import { initTheme, setSymbolPreset } from "@oh-my-pi/pi-tui/theme/theme";
+} from "@marsai-org/tui/app-keybindings";
+import { initTheme, setSymbolPreset } from "@marsai-org/tui/theme/theme";
 
 describe("KeybindingsManager.getDisplayString", () => {
 	beforeEach(() => setKeyHintPlatform("linux"));

@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import type { InternalResource, InternalUrl, ProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import type { InternalResource, InternalUrl, ProtocolHandler } from "@marsai-org/coding-agent/internal-urls/types";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { TempDir } from "@marsai-org/utils";
 
 const text = (result: AgentToolResult<unknown>): string =>
 	result.content.map(part => (part.type === "text" ? part.text : "")).join("\n");

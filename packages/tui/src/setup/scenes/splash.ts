@@ -1,6 +1,6 @@
 import { centerLine, visibleWidth } from "../../utils";
 import { padToWidth } from "../../render/utils";
-import { APP_NAME, VERSION } from "@oh-my-pi/pi-utils";
+import { APP_NAME, VERSION } from "@marsai-org/utils";
 import { gradientEscape, gradientLogo, lockupNode, PI_LOGO, type ShineConfig } from "../../prompt/welcome";
 import { theme } from "../../theme/theme";
 import { formatKeyHint } from "../../app-keybindings";

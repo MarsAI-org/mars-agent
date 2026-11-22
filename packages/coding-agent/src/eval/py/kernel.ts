@@ -9,7 +9,7 @@
  * timeout.
  */
 import * as path from "node:path";
-import { $env, $flag, isBunTestRuntime, logger, Snowflake } from "@oh-my-pi/pi-utils";
+import { $env, $flag, isBunTestRuntime, logger, Snowflake } from "@marsai-org/utils";
 import { Settings } from "../../config/settings";
 import { registerOnBoard } from "../../daemon/client";
 import {

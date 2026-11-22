@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolContext } from "@marsai-org/agent-core";
 import { Settings } from "../src/config/settings";
 import type { ToolSession } from "../src/sdk";
 import { postProcessToolResult } from "../src/tools/output-meta";

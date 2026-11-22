@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 /**
  * Groq validates request properties strictly: an assistant turn carrying

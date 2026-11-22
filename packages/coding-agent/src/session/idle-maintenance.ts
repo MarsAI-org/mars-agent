@@ -8,9 +8,9 @@
  * invalidates everything captured before it: timers, the settling check and an in-flight recap, so
  * a late reply can never be announced.
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { isPromptCachePersistent } from "@oh-my-pi/pi-catalog/compat/prompt-cache-persistent";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { isPromptCachePersistent } from "@marsai-org/catalog/compat/prompt-cache-persistent";
+import { logger, prompt } from "@marsai-org/utils";
 import { combine } from "../config/registry";
 import { cfgRecap } from "../modes/settings";
 import idleRecapPrompt from "../prompts/system/recap-user.md" with { type: "text" };

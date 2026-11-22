@@ -13,13 +13,13 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { $env, isRecord, logger, Snowflake, toError } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { getOAuthProviders } from "@marsai-org/ai/oauth";
+import type { ImageContent } from "@marsai-org/ai";
+import { toolWireSchema } from "@marsai-org/ai/utils/schema";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { $env, isRecord, logger, Snowflake, toError } from "@marsai-org/utils";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
 import {
 	type ExtensionAskDialogQuestion,
@@ -41,7 +41,7 @@ import {
 	type SkillPromptInput,
 	type SkillRediscoverySource,
 } from "../../extensibility/skills";
-import { type Theme, theme } from "@oh-my-pi/pi-tui/theme";
+import { type Theme, theme } from "@marsai-org/tui/theme";
 import {
 	choiceValue,
 	defaultFormData,
@@ -50,15 +50,15 @@ import {
 	type HtmlFormValue,
 	isArrayChoice,
 	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import { type ChoiceField, type HtmlForm, parseHtmlForm, type TextField } from "@oh-my-pi/pi-tui/html-form/parse";
+} from "@marsai-org/tui/html-form/data";
+import { type ChoiceField, type HtmlForm, parseHtmlForm, type TextField } from "@marsai-org/tui/html-form/parse";
 import { AgentLifecycleManager } from "../../registry/agent-lifecycle";
 import {
 	type WordCompletionEngine,
 	type WordCompletionMethod,
 	type WordCompletionQuery,
 	wordCompletionQuery,
-} from "@oh-my-pi/pi-tui/prompt/word-completion";
+} from "@marsai-org/tui/prompt/word-completion";
 import { requestTextPrediction, textPredictionBackend } from "../../predict/client";
 import { type AgentSession, type NavigateTreeResult, SessionBusyError } from "../../session/agent-session";
 import type { AgentSessionHandle } from "../../session/agent-session-handle";

@@ -1,4 +1,4 @@
-import { sanitizeText, truncate } from "@oh-my-pi/pi-utils";
+import { sanitizeText, truncate } from "@marsai-org/utils";
 import type { MemoryBackendId } from "./types";
 
 /** Error text for a memory failure notice: it can carry server response text, so strip terminal controls and bound it. */

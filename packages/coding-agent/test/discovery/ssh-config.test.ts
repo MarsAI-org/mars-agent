@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type SSHHost, sshCapability } from "@oh-my-pi/pi-coding-agent/capability/ssh";
-import { loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { type SSHHost, sshCapability } from "@marsai-org/coding-agent/capability/ssh";
+import { loadCapability } from "@marsai-org/coding-agent/discovery";
+import { removeWithRetries } from "@marsai-org/utils";
 
 describe("ssh-config discovery", () => {
 	let home = "";

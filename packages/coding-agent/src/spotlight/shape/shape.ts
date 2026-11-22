@@ -11,11 +11,11 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { countNewlines, spillUrl } from "@oh-my-pi/pi-utils";
-import { reasonShows, type SpotlightReason } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { isMarkdownPath } from "@oh-my-pi/pi-tui/lang-from-path";
-import { splitPathAndSel } from "@oh-my-pi/pi-tui/tools/read";
+import { Tokenizer } from "@marsai-org/agent-core";
+import { countNewlines, spillUrl } from "@marsai-org/utils";
+import { reasonShows, type SpotlightReason } from "@marsai-org/tui/chat/spotlight";
+import { isMarkdownPath } from "@marsai-org/tui/lang-from-path";
+import { splitPathAndSel } from "@marsai-org/tui/tools/read";
 import shapeProbe from "../../prompts/spotlight/shape-probe.md" with { type: "text" };
 import shapeRule from "../../prompts/spotlight/shape-rule.md" with { type: "text" };
 import { parseSel } from "../../tools/read-selector";

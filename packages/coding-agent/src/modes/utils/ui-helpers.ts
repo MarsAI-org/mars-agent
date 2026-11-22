@@ -1,51 +1,51 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ImageContent, Usage } from "@oh-my-pi/pi-ai";
-import { getStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { type Component, Text } from "@oh-my-pi/pi-tui";
-import { RecapNotice } from "@oh-my-pi/pi-tui/chat/recap-notice";
-import { StatusNotice } from "@oh-my-pi/pi-tui/chrome/status-notice";
-import { QueuedMessagesBand } from "@oh-my-pi/pi-tui/prompt/queued-messages";
-import { previewLine, TRUNCATE_LENGTHS } from "@oh-my-pi/pi-tui/render/render-utils";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, ImageContent, Usage } from "@marsai-org/ai";
+import { getStreamingPartialJson } from "@marsai-org/ai/utils/block-symbols";
+import { type Component, Text } from "@marsai-org/tui";
+import { RecapNotice } from "@marsai-org/tui/chat/recap-notice";
+import { StatusNotice } from "@marsai-org/tui/chrome/status-notice";
+import { QueuedMessagesBand } from "@marsai-org/tui/prompt/queued-messages";
+import { previewLine, TRUNCATE_LENGTHS } from "@marsai-org/tui/render/render-utils";
+import { logger } from "@marsai-org/utils";
 import type { AdvisorMessageDetails } from "../../advisor";
 import { InternalUrlRouter } from "../../internal-urls";
 import { COLLAB_PROMPT_MESSAGE_TYPE, type CollabPromptDetails } from "../../collab/protocol";
 import { settings } from "../../config/settings";
 import { continuesConversation } from "./conversation-position";
-import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { readMediaPath } from "@oh-my-pi/pi-tui/native/blobs";
-import { createBackgroundTanDispatchBlock } from "@oh-my-pi/pi-tui/chat/background-tan-message";
-import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { detectCacheInvalidation } from "@oh-my-pi/pi-tui/chat/cache-invalidation-marker";
-import { ServedModelTracker } from "@oh-my-pi/pi-tui/chat/served-model-marker";
-import { CollabPromptMessageComponent } from "@oh-my-pi/pi-tui/chat/collab-prompt-message";
+import { createAdvisorMessageCard } from "@marsai-org/tui/chat/advisor-message";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { readMediaPath } from "@marsai-org/tui/native/blobs";
+import { createBackgroundTanDispatchBlock } from "@marsai-org/tui/chat/background-tan-message";
+import { BashExecutionComponent } from "@marsai-org/tui/chat/bash-execution";
+import { detectCacheInvalidation } from "@marsai-org/tui/chat/cache-invalidation-marker";
+import { ServedModelTracker } from "@marsai-org/tui/chat/served-model-marker";
+import { CollabPromptMessageComponent } from "@marsai-org/tui/chat/collab-prompt-message";
 import {
 	BranchSummaryMessageComponent,
 	CompactionSummaryMessageComponent,
 	createHandoffSummaryMessageComponent,
-} from "@oh-my-pi/pi-tui/chat/compaction-summary-message";
-import { CustomMessageComponent } from "@oh-my-pi/pi-tui/chat/custom-message";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
+} from "@marsai-org/tui/chat/compaction-summary-message";
+import { CustomMessageComponent } from "@marsai-org/tui/chat/custom-message";
+import { DynamicBorder } from "@marsai-org/tui/chrome/dynamic-border";
+import { EvalExecutionComponent } from "@marsai-org/tui/chat/eval-execution";
 import {
 	type LateDiagnosticsFile,
 	LateDiagnosticsMessageComponent,
 	routeLateDiagnostics,
-} from "@oh-my-pi/pi-tui/chat/late-diagnostics-message";
+} from "@marsai-org/tui/chat/late-diagnostics-message";
 import {
 	groupedReadUsageCallIds,
 	ReadToolGroupComponent,
 	readArgsCollapseIntoGroup,
-} from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ReplyWriteComponent, replyDisplayMessage, toolResultReplies } from "@oh-my-pi/pi-tui/chat/reply-write";
-import { SkillMessageComponent } from "@oh-my-pi/pi-tui/chat/skill-message";
-import { StrippedToolCallsPlaceholder } from "@oh-my-pi/pi-tui/chat/stripped-tool-calls-placeholder";
-import { imageContent, textContent } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { messageBlock, PresentedBlock } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { ToolActivityContainer } from "@oh-my-pi/pi-tui/chrome/tool-activity";
+} from "@marsai-org/tui/chat/read-tool-group";
+import { ReplyWriteComponent, replyDisplayMessage, toolResultReplies } from "@marsai-org/tui/chat/reply-write";
+import { SkillMessageComponent } from "@marsai-org/tui/chat/skill-message";
+import { StrippedToolCallsPlaceholder } from "@marsai-org/tui/chat/stripped-tool-calls-placeholder";
+import { imageContent, textContent } from "@marsai-org/tui/chat/transcript-entry";
+import { messageBlock, PresentedBlock } from "@marsai-org/tui/chat/transcript-presentation";
+import { ToolActivityContainer } from "@marsai-org/tui/chrome/tool-activity";
 import {
 	isSettledJobFrame,
 	parksAsBackground,
@@ -53,21 +53,21 @@ import {
 	ToolExecutionComponent,
 	type ToolExecutionHandle,
 	toolRenderName,
-} from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { noticeRow, TranscriptNotice } from "@oh-my-pi/pi-tui/chrome/transcript-notice";
-import { span } from "@oh-my-pi/pi-tui/native/describe";
-import { createUsageRowBlock, TurnUsageTally, turnElapsedMs } from "@oh-my-pi/pi-tui/overlays/usage-row";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
+} from "@marsai-org/tui/chat/tool-execution";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { noticeRow, TranscriptNotice } from "@marsai-org/tui/chrome/transcript-notice";
+import { span } from "@marsai-org/tui/native/describe";
+import { createUsageRowBlock, TurnUsageTally, turnElapsedMs } from "@marsai-org/tui/overlays/usage-row";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
 import { decodeStreamedToolArgs, streamingStringKeysForTool } from "../../modes/controllers/tool-args-reveal";
 import { createToolCallBlock } from "../../modes/controllers/tool-call-block";
 import {
 	materializeImageReferenceLinks,
 	materializeImageReferenceLinksSync,
-} from "@oh-my-pi/pi-tui/prompt/image-references";
-import { normalizeBlobExtension } from "@oh-my-pi/pi-tui/prompt/image-format";
-import { imageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/prompt/image-references";
+import { normalizeBlobExtension } from "@marsai-org/tui/prompt/image-format";
+import { imageAttachmentSource } from "@marsai-org/tui/prompt/image-source";
+import { theme } from "@marsai-org/tui/theme";
 import type {
 	CompactionQueuedMessage,
 	InteractiveModeContext,
@@ -76,7 +76,7 @@ import type {
 	ShowStatusOptions,
 } from "../../modes/types";
 import { extractVisibleAssistantText } from "../rpc/rpc-live";
-import { ASYNC_NOTIFY_MESSAGE_TYPE } from "@oh-my-pi/pi-tui/chat/messages";
+import { ASYNC_NOTIFY_MESSAGE_TYPE } from "@marsai-org/tui/chat/messages";
 import { LAUNCH_COMPLETION_MESSAGE_TYPE } from "../../session/launch-completion";
 import {
 	BACKGROUND_TAN_DISPATCH_MESSAGE_TYPE,
@@ -95,7 +95,7 @@ import {
 	createAssistantMessageComponent,
 	getAssistantMessageLinkTargets,
 	refreshAssistantMessageLinkTargets,
-} from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+} from "@marsai-org/tui/prompt/interactive-context-helpers";
 import {
 	assistantHasVisibleContent,
 	assistantUsageIsBilled,
@@ -108,7 +108,7 @@ import {
 	normalizeToolArgs,
 	resolveAssistantErrorPresentation,
 	splitAssistantMessageToolTimeline,
-} from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
+} from "@marsai-org/tui/chat/transcript-render-helpers";
 
 import {
 	cfgComposerRecallClearedDrafts,

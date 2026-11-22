@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
 import {
 	encodeNativeFrame,
 	NATIVE_FRAME_LIMIT,
@@ -12,9 +12,9 @@ import {
 	resolveSessionCwd,
 	serveNativeHost,
 	spawnRpcChild,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/native-host";
-import { requestRelayRestart, waitForRelayExtension } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import { RELAY_RESTART_PATH } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
+} from "@marsai-org/coding-agent/tools/browser/relay/native-host";
+import { requestRelayRestart, waitForRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/probe";
+import { RELAY_RESTART_PATH } from "@marsai-org/coding-agent/tools/browser/relay/protocol";
 import type { FromNativeHost, ToNativeHost } from "../../../browser-relay/extension/messages";
 
 /**

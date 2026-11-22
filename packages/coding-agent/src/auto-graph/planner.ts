@@ -24,7 +24,7 @@ import {
 	type Question,
 	type Questions,
 	renderQuestion,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	buildChart,
 	type ChartKind,
@@ -56,16 +56,16 @@ import {
 	type Takeaway,
 	tableLadders,
 	tableTakeaways,
-} from "@oh-my-pi/pi-tui/charts/chart-plan";
+} from "@marsai-org/tui/charts/chart-plan";
 import {
 	isMonotonic,
 	isNumber,
 	type TableAnalysis,
 	type TableColumn,
 	withMeasures,
-} from "@oh-my-pi/pi-tui/charts/table-data";
-import type { TableChartRequest } from "@oh-my-pi/pi-tui/chat/table-chart";
-import { prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/charts/table-data";
+import type { TableChartRequest } from "@marsai-org/tui/chat/table-chart";
+import { prompt } from "@marsai-org/utils";
 import type { ChainJudge } from "../judgment";
 import questionFile from "../prompts/judge/auto-graph.json" with { type: "json" };
 

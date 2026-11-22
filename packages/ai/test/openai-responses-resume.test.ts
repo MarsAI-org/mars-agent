@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import {
 	pollOpenAIResponsesResultForCompletion,
 	streamOpenAIResponses,
-} from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { configureProviderStoreResponses } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import type { AssistantMessageEvent, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai/providers/openai-responses";
+import { configureProviderStoreResponses } from "@marsai-org/ai/providers/openai-responses-state";
+import type { AssistantMessageEvent, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 const SOCKET_CLOSE =
 	"The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch()";

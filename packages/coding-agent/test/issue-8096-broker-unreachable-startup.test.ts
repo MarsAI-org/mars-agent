@@ -10,16 +10,16 @@
  * a silent fallback to local credentials.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AuthBrokerError } from "@oh-my-pi/pi-ai/auth-broker";
-import { MissingApiKeyError } from "@oh-my-pi/pi-ai/error";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
+import { AuthBrokerError } from "@marsai-org/ai/auth-broker";
+import { MissingApiKeyError } from "@marsai-org/ai/error";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { clearOmpExtensionCliRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
 import {
 	describeAuthBrokerStartupError,
 	discoverAuthStorage,
-} from "@oh-my-pi/pi-coding-agent/session/auth-broker-config";
-import { setInteractiveHost, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/auth-broker-config";
+import { setInteractiveHost, TempDir } from "@marsai-org/utils";
 
 class ProcessExitSignal extends Error {
 	constructor(readonly code: number) {

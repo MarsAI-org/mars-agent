@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as fsAsync from "node:fs/promises";
-import { hasFsCode, isEexist, isEnoent, logger, toError } from "@oh-my-pi/pi-utils";
+import { hasFsCode, isEexist, isEnoent, logger, toError } from "@marsai-org/utils";
 
 const RENAME_RETRY_BUDGET_MS = 2_000;
 const RENAME_RETRY_INITIAL_MS = 5;

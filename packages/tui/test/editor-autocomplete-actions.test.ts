@@ -7,9 +7,9 @@ import {
 	type AutocompleteProvider,
 	CombinedAutocompleteProvider,
 	findLeadingSlashCommandStart,
-} from "@oh-my-pi/pi-tui/autocomplete";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { applyEmojiCompletion, getEmojiSuggestions } from "@oh-my-pi/pi-tui/prompt/emoji-autocomplete";
+} from "@marsai-org/tui/autocomplete";
+import { Editor } from "@marsai-org/tui/components/editor";
+import { applyEmojiCompletion, getEmojiSuggestions } from "@marsai-org/tui/prompt/emoji-autocomplete";
 import { defaultEditorTheme } from "./test-themes";
 
 function onceAutocompleteUpdate(editor: Editor): Promise<void> {

@@ -8,23 +8,23 @@ import type {
 	ModelSpec,
 	TextContent,
 	Tool,
-} from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { streamFactoryDroid } from "@oh-my-pi/pi-ai/providers/factory-droid";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { factoryDroidRegistry } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { DEVIN_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/wire/devin";
-import { factoryDroidWireBaseUrl } from "@oh-my-pi/pi-catalog/wire/factory-droid";
-import { decorateContextImages } from "@oh-my-pi/pi-coding-agent/blob-broker/context-images";
+} from "@marsai-org/ai";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import { streamFactoryDroid } from "@marsai-org/ai/providers/factory-droid";
+import { buildModel } from "@marsai-org/catalog/build";
+import { factoryDroidRegistry } from "@marsai-org/catalog/compat/factory-droid";
+import { buildFactoryDroidModel } from "@marsai-org/catalog/discovery";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
+import { DEVIN_DEFAULT_BASE_URL } from "@marsai-org/catalog/wire/devin";
+import { factoryDroidWireBaseUrl } from "@marsai-org/catalog/wire/factory-droid";
+import { decorateContextImages } from "@marsai-org/coding-agent/blob-broker/context-images";
 import {
 	capArchiveFrameBytes,
 	clampProviderContextImageBytes,
 	clampProviderContextImages,
-} from "@oh-my-pi/pi-coding-agent/session/provider-image-budget";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/provider-image-budget";
+import { isRecord } from "@marsai-org/utils";
 
 const UMANS_MODEL = buildModel({
 	id: "umans-glm-5.2",

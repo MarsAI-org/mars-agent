@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import type {
 	ExtensionContext,
 	ExtensionFactory,
 	ModeChangedEvent,
 	SessionModeResult,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { initializeExtensions } from "@oh-my-pi/pi-coding-agent/modes/runtime-init";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import { resolveLocalUrlToPath } from "@marsai-org/coding-agent/internal-urls";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { initializeExtensions } from "@marsai-org/coding-agent/modes/runtime-init";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 function refusal(result: SessionModeResult): string {

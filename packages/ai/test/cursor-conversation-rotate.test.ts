@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as http2 from "node:http2";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import * as AIError from "@marsai-org/ai/error";
+import { streamCursor } from "@marsai-org/ai/providers/cursor";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	AgentClientMessageSchema,
 	AgentServerMessageSchema,
@@ -15,8 +15,8 @@ import {
 	InteractionUpdateSchema,
 	TextDeltaUpdateSchema,
 	TurnEndedUpdateSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 // #8345: a server-side per-conversation rejection (bare resource_exhausted,
 // zero tokens) poisons the wire conversationId; the next attempt must rotate

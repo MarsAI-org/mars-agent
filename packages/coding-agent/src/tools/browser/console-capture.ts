@@ -1,4 +1,4 @@
-import { toError } from "@oh-my-pi/pi-utils";
+import { toError } from "@marsai-org/utils";
 import type { Protocol } from "devtools-protocol";
 import type { CDPSession, ConsoleMessage, HTTPRequest, Page } from "puppeteer-core";
 

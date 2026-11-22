@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { cdpTargets, findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { cdpTargets, findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
 import {
 	DISCARDED_TABS_PROTOCOL_VERSION,
 	type TabSnapshot,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
-import { releaseTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/browser/relay/protocol";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
+import { releaseTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { isRecord } from "@marsai-org/utils";
 import { type FakeAnswer, type FakeDaemon, startFakeDaemon } from "./tern-fake-daemon";
 
 const PANE = 3;

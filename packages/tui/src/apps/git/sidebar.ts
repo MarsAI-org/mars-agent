@@ -21,7 +21,7 @@ import { col, compact, item, keyed, list, node, row, span, stableKey, text } fro
 import { Memo } from "../../native/memo";
 import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "../../native/node";
 import { actionButton, iconButton, quietButton, segmentedTabs } from "../../native/overlay";
-import type { TspProps, TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspProps, TspSpan } from "@marsai-org/wire";
 import { TERMINAL } from "../../terminal-capabilities";
 import { truncateToWidth, visibleWidth } from "../../utils";
 import { getEditorTheme, theme } from "../../theme/theme";

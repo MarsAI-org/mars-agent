@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
-import * as postmortem from "@oh-my-pi/pi-utils/postmortem";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { setTerminalHeadless } from "@marsai-org/utils";
+import * as postmortem from "@marsai-org/utils/postmortem";
 
 // Regression: a recycled terminal pane (Muxy's "terminal offline" sweep, a
 // dropped ssh session) revokes the pty. stdin EOFs, the disconnect path runs,

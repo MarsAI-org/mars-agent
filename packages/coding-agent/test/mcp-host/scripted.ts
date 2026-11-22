@@ -3,8 +3,8 @@
  * peers the test drives (pid, results, notifications, exit) and a session-side
  * link that speaks raw tunnel JSON-RPC.
  */
-import type { ModuleTunnel } from "@oh-my-pi/pi-coding-agent/daemon/module";
-import { createMCPJsonRpcError, MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
+import type { ModuleTunnel } from "@marsai-org/coding-agent/daemon/module";
+import { createMCPJsonRpcError, MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
 import {
 	encodeJsonLine,
 	JsonLineDecoder,
@@ -14,8 +14,8 @@ import {
 	type McpStdioSpec,
 	type McpTunnel,
 	type McpUpstreamExit,
-} from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { McpEndpoint } from "@oh-my-pi/pi-coding-agent/mcp/host/endpoint";
+} from "@marsai-org/coding-agent/mcp/host/contract";
+import { McpEndpoint } from "@marsai-org/coding-agent/mcp/host/endpoint";
 import type {
 	McpPeer,
 	McpPeerDeps,
@@ -23,9 +23,9 @@ import type {
 	McpPeerSubscription,
 	McpProbeResult,
 	McpUpstreams,
-} from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
-import type { McpStore } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { MCP_PROTOCOL_VERSION, type MCPSubscriptionFilter, requestMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+} from "@marsai-org/coding-agent/mcp/host/peer";
+import type { McpStore } from "@marsai-org/coding-agent/mcp/host/store";
+import { MCP_PROTOCOL_VERSION, type MCPSubscriptionFilter, requestMeta } from "@marsai-org/coding-agent/mcp/protocol";
 
 export type Message = Record<string, unknown>;
 export type Handler = (

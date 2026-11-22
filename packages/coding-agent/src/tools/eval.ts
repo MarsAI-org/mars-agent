@@ -1,21 +1,21 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import type {
 	AgentTool,
 	AgentToolContext,
 	AgentToolResult,
 	AgentToolUpdateCallback,
 	ToolSpeculationPolicy,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, ToolExample } from "@oh-my-pi/pi-ai";
-import { formatBackgroundNotice } from "@oh-my-pi/pi-tui/tools/bash";
+} from "@marsai-org/agent-core";
+import type { ImageContent, ToolExample } from "@marsai-org/ai";
+import { formatBackgroundNotice } from "@marsai-org/tui/tools/bash";
 import {
 	replaceTabs,
 	shortenEmbeddedPaths,
 	TRUNCATE_LENGTHS,
 	truncateToWidth,
-} from "@oh-my-pi/pi-tui/render/render-utils";
-import { parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import { isRecord, prompt, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/render/render-utils";
+import { parseConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import { isRecord, prompt, sanitizeText } from "@marsai-org/utils";
 import { raceJobSettlement, resolveAutoBackgroundWaitMs } from "../async";
 import { jsBackend, pythonBackend } from "../eval";
 import type { ExecutorBackend, ExecutorBackendResult } from "../eval/backend";
@@ -38,7 +38,7 @@ import type {
 	EvalStatusEvent,
 	EvalToolDetails,
 	EvalViewEntry,
-} from "@oh-my-pi/pi-tui/tools/eval";
+} from "@marsai-org/tui/tools/eval";
 import evalDescription from "../prompts/tools/eval.md" with { type: "text" };
 import { type EvalToolDescriptionOptions, evalTemplateContext, getEvalDocTopics } from "./eval-doc-topics";
 import {
@@ -47,20 +47,20 @@ import {
 	OutputSink,
 	type OutputSummary,
 	TailBuffer,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@marsai-org/tui/tools/streaming-output";
 import { sessionDelegationBias } from "../task/prompt-policy";
 import { canSpawnAtDepth } from "../task/types";
-import { webpExclusionForModel } from "@oh-my-pi/pi-tui/chat/image-loading";
+import { webpExclusionForModel } from "@marsai-org/tui/chat/image-loading";
 import { formatDimensionNote, resizeImage } from "../utils/image-resize";
 import type { ToolSession } from ".";
 import { truncateForPrompt } from "./approval";
 import { type EvalBackendsAllowance, resolveAdvertisedEvalBackends, resolveEvalBackends } from "./eval-backends";
-import { recordStatusEvent, type StatusEventLog } from "@oh-my-pi/pi-tui/tools/eval";
-import { formatOutputNotice } from "@oh-my-pi/pi-tui/tools/output-meta";
+import { recordStatusEvent, type StatusEventLog } from "@marsai-org/tui/tools/eval";
+import { formatOutputNotice } from "@marsai-org/tui/tools/output-meta";
 import { resolveOutputMaxColumns, resolveOutputSinkArtifactMaxBytes, resolveOutputSinkHeadBytes } from "./output-meta";
 import { ToolAbortError, throwIfAborted } from "./tool-errors";
 import { hasWaitTool } from "./wait";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { toolResult } from "./tool-result";
 import { clampTimeout, TOOL_TIMEOUTS } from "./tool-timeouts";
 import { docTopicsReadable } from "./doc-topics";

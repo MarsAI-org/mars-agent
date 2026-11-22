@@ -1,5 +1,5 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
 import { getSkillSlashCommandName, parseSkillInvocation } from "../extensibility/skills";
 import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE, type SkillPromptDetails } from "../session/messages";
 import type { InteractiveModeContext } from "./types";

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import { Database } from "bun:sqlite";
 import * as path from "node:path";
-import type { ChatUsageEvent } from "@oh-my-pi/pi-agent-core";
+import type { ChatUsageEvent } from "@marsai-org/agent-core";
 import type {
 	Api,
 	AssistantMessage,
@@ -10,12 +10,12 @@ import type {
 	Model,
 	NoulQuestion,
 	ScoreQuestion,
-} from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { cfgJudgmentAttemptTimeoutMs, cfgModelRoles } from "@oh-my-pi/pi-coding-agent/config/model-settings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { cfgJudgmentAttemptTimeoutMs, cfgModelRoles } from "@marsai-org/coding-agent/config/model-settings";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	ChainJudge,
 	hasNativeJudge,
@@ -23,14 +23,14 @@ import {
 	journalJudgmentUsage,
 	nativeJudgeRejection,
 	onJudgeRejection,
-} from "@oh-my-pi/pi-coding-agent/judgment";
-import type { ModelUsageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { tinyModelClient } from "@oh-my-pi/pi-coding-agent/tiny/title-client";
-import { FindTool, isFindEnabled } from "@oh-my-pi/pi-coding-agent/tools/jfind";
-import * as imageResize from "@oh-my-pi/pi-coding-agent/utils/image-resize";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/judgment";
+import type { ModelUsageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { tinyModelClient } from "@marsai-org/coding-agent/tiny/title-client";
+import { FindTool, isFindEnabled } from "@marsai-org/coding-agent/tools/jfind";
+import * as imageResize from "@marsai-org/coding-agent/utils/image-resize";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 

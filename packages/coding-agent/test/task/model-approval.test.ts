@@ -1,32 +1,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { factoryDroidRegistry } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { getModelMatchPreferences, parseModelPattern } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { Agent } from "@oh-my-pi/pi-agent-core";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SessionTools, type SessionToolsHost } from "@oh-my-pi/pi-coding-agent/session/session-tools";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { getProjectAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import { parseAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { factoryDroidRegistry } from "@marsai-org/catalog/compat/factory-droid";
+import { buildFactoryDroidModel } from "@marsai-org/catalog/discovery";
+import { getModelMatchPreferences, parseModelPattern } from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import type { Agent } from "@marsai-org/agent-core";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { SessionTools, type SessionToolsHost } from "@marsai-org/coding-agent/session/session-tools";
+import { TaskTool } from "@marsai-org/coding-agent/task";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { getProjectAgentDir, TempDir } from "@marsai-org/utils";
+import { parseAgent } from "@marsai-org/coding-agent/task/agents";
 import {
 	assertPerCallModelApproved,
 	getPerCallModelAdvertisement,
 	parentModelGrantPattern,
 	PerCallModelError,
 	type PerCallModelGrants,
-} from "@oh-my-pi/pi-coding-agent/task/model-approval";
-import { cfgTaskPerCallModelAllow, perCallModelEnabled } from "@oh-my-pi/pi-coding-agent/task/settings";
-import type { AgentSource } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/coding-agent/task/model-approval";
+import { cfgTaskPerCallModelAllow, perCallModelEnabled } from "@marsai-org/coding-agent/task/settings";
+import type { AgentSource } from "@marsai-org/tui/tools/task";
 import { YAML } from "bun";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "../helpers/settings-test-state";
 

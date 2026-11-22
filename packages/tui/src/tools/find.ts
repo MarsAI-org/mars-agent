@@ -4,7 +4,7 @@
  * its strongest verified line ranges with a verbatim snippet.
  */
 import * as path from "node:path";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
 import { renderProgressBar } from "../components/progress-bar";
 import { Text } from "../components/text";
 import { fileHyperlink, getTreeBranch, renderStatusLine, renderTreeList, uriHyperlink } from "../render";
@@ -30,7 +30,7 @@ import type {
 	RenderResultOptions,
 	ToolRenderer,
 } from "./renderer";
-import type { TspTone } from "@oh-my-pi/pi-wire";
+import type { TspTone } from "@marsai-org/wire";
 import { code, col, compact, keyed, node, span, text } from "../native/describe";
 import type { NativeChild, NativeNode } from "../native/node";
 import { fileHref, fileRow, inlineErrorView } from "./native-view";

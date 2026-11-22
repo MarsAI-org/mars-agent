@@ -13,7 +13,7 @@
  * @example
  * renderStepPrompts(["a", "b", "c", "d", "e"], true).length; // 4: steps 1–2, then 3, 4, 5
  */
-import { isRecord, logger, prompt } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, prompt } from "@marsai-org/utils";
 import { IrcBus } from "../irc/bus";
 import stepTemplate from "../prompts/system/subagent-step.md" with { type: "text" };
 import stepReportTemplate from "../prompts/system/subagent-step-report.md" with { type: "text" };

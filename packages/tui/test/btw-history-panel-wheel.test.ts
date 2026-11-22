@@ -1,9 +1,9 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { TUI } from "@oh-my-pi/pi-tui";
-import type { BtwHistoryRecord } from "@oh-my-pi/pi-tui/overlays/btw-history";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
+import { TUI } from "@marsai-org/tui";
+import type { BtwHistoryRecord } from "@marsai-org/tui/overlays/btw-history";
+import { BtwHistoryPanel } from "@marsai-org/tui/overlays/btw-history-panel";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";

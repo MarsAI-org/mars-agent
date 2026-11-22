@@ -4,16 +4,16 @@
  * outlives the drain must not be forwarded after dispose returns.
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const CALL_ID = "toolu_dispose_drain";

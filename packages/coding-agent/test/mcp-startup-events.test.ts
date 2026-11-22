@@ -4,7 +4,7 @@ import {
 	formatMCPConnectingMessage,
 	formatMCPConnectionStatusMessage,
 	isMcpConnectionStatusEvent,
-} from "@oh-my-pi/pi-coding-agent/mcp/startup-events";
+} from "@marsai-org/coding-agent/mcp/startup-events";
 
 // Cross-module contract guard.
 //

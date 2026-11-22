@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const model: Model<"openai-responses"> = buildModel({
 	id: "google/gemini-4-argon",

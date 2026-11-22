@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { Api, AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { attemptEditAutoRepair } from "@oh-my-pi/pi-coding-agent/edit/auto-repair";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CostCapError, CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
-import type { ModelUsageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessage, Model } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { attemptEditAutoRepair } from "@marsai-org/coding-agent/edit/auto-repair";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { CostCapError, CostGate } from "@marsai-org/coding-agent/session/cost-gate";
+import type { ModelUsageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 import { rejectionOf } from "./helpers/rejection";
 

@@ -1,4 +1,4 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { allowsModelMentions, allowsSkillTokens, SKILL_TOKEN_RE } from "./skill-tokens";
 import { MODEL_MENTION_RE, modelMentionToken, resolveModelMentionToken } from "./model-mention-syntax";
 import { SYMBOL_PRESETS } from "../theme/symbols";

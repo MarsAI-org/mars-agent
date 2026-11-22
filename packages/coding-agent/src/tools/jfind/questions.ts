@@ -6,8 +6,8 @@
  * State objects are built with alphabetically ordered keys, so the wire bytes
  * are deterministic.
  */
-import { type JsonValue, judgeQuestions, type NoulQuestion, renderQuestion } from "@oh-my-pi/pi-ai";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { type JsonValue, judgeQuestions, type NoulQuestion, renderQuestion } from "@marsai-org/ai";
+import { prompt } from "@marsai-org/utils";
 import questionFile from "../../prompts/judge/find.json" with { type: "json" };
 import spotlightProbe from "../../prompts/tools/find-spotlight-probe.md" with { type: "text" };
 import spotlightTask from "../../prompts/tools/find-spotlight-task.md" with { type: "text" };

@@ -1,5 +1,5 @@
-import { logger } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+import { logger } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
 import { cfgNoSpotlight, cfgOffline } from "../config/auxiliary-model-policy";
 import type { Settings } from "../config/settings";
 import type { CustomEntry } from "../session/session-entries";

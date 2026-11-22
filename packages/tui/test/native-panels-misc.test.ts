@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, setSystemTime, vi } from "bun:test";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { KeybindingsManager } from "../src/app-keybindings";
 import { MoveOverlay, type MoveOverlayResult } from "../src/overlays/move-overlay";
 import { AnnotationOverlay } from "../src/overlays/annotation-overlay";

@@ -24,8 +24,8 @@
  * in-process); `task.workerThreads` is read live on every placement.
  */
 import { MessageChannel } from "node:worker_threads";
-import { getProjectDir, logger, postmortem } from "@oh-my-pi/pi-utils";
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
+import { getProjectDir, logger, postmortem } from "@marsai-org/utils";
+import { workerHostEntry } from "@marsai-org/utils/worker-host";
 import { SUBAGENT_WORKER_ARG } from "../cli/worker-selectors";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";

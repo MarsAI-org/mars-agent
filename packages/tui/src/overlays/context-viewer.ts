@@ -1,4 +1,4 @@
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { CONTEXT_PRESENTATION } from "../chrome/context-presentation";
 import type { ContextViewCategory, ContextViewData, ContextViewEntry } from "../chrome/context-view-model";
 import { editorKey } from "../chrome/keybinding-hints";

@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getAdapterConfigs } from "@oh-my-pi/pi-coding-agent/dap/config";
+import { getAdapterConfigs } from "@marsai-org/coding-agent/dap/config";
 
 const ADAPTER = "omp-precedence-probe";
 

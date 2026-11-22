@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { setTerminalHeadless } from "@marsai-org/utils";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 
 const ITERM2_DA1_REPLY = "\x1b[?64;1;2;4;6;17;18;21;22c";

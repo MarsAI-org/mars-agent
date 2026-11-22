@@ -1,4 +1,4 @@
-import type { EmbeddingRequestFailure } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+import type { EmbeddingRequestFailure } from "@marsai-org/mnemopi/core/runtime-options";
 import { memoryNoticeErrorText } from "../memory-backend/messages";
 import { redactMemorySecrets } from "../memory-backend/redact";
 import type { AgentSession } from "../session/agent-session";

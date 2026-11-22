@@ -1,6 +1,6 @@
-import type { AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { AnthropicServerToolContent, AssistantMessage, ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { isSurvivingAssistant } from "@oh-my-pi/pi-ai/providers/transform-messages";
+import type { AgentMessage, Tokenizer } from "@marsai-org/agent-core";
+import type { AnthropicServerToolContent, AssistantMessage, ImageContent, TextContent } from "@marsai-org/ai";
+import { isSurvivingAssistant } from "@marsai-org/ai/providers/transform-messages";
 import {
 	CONTEXT_CATEGORIES,
 	type ContextCategoryId,
@@ -9,14 +9,14 @@ import {
 	type ContextViewData,
 	type ContextViewEntry,
 	type ContextViewSourceMarker,
-} from "@oh-my-pi/pi-tui/chrome/context-view-model";
+} from "@marsai-org/tui/chrome/context-view-model";
 import {
 	type ContextBreakdown,
 	claimPromptSources,
 	type SystemPromptSource,
 	toolSchemaFragments,
-} from "@oh-my-pi/pi-tui/status-line/context-usage";
-import { stringifyJson } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/status-line/context-usage";
+import { stringifyJson } from "@marsai-org/utils";
 import type { AgentSession } from "./agent-session";
 import { computeSessionContextBreakdown } from "./context-usage-runtime";
 import { type ContextViewMessage, convertMessagesForContextView } from "./messages";

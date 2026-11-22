@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { McpPeer } from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
-import { mcpUpstreams } from "@oh-my-pi/pi-coding-agent/mcp/host/peers";
-import { MCPMeta, requestMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { McpPeer } from "@marsai-org/coding-agent/mcp/host/peer";
+import { mcpUpstreams } from "@marsai-org/coding-agent/mcp/host/peers";
+import { MCPMeta, requestMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { FIXTURES, isAlive, realDeps, stdioSpec, toolJson } from "./upstream-support";
 
 const MODERN = path.join(FIXTURES, "modern-mcp.ts");

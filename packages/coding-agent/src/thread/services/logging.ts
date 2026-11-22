@@ -9,7 +9,7 @@
  * port with the records, so it returns once main wrote every record posted
  * before it.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { WorkerThreadLink } from "../protocol";
 import type { RemoteObject, RpcMethod } from "../rpc";
 import type { ThreadService } from "../services";

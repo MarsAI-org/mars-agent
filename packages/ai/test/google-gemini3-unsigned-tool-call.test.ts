@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { convertMessages } from "@oh-my-pi/pi-ai/providers/google-shared";
-import type { Context, Model, ToolCall, Usage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { convertMessages } from "@marsai-org/ai/providers/google-shared";
+import type { Context, Model, ToolCall, Usage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 // Regression for #9638 and #10602. A Gemini 3 parallel turn carries a thought
 // signature only on the first call, while cross-model replay can make the first

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { ASYNC_INLINE_RESULT_MAX_CHARS } from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { formatTaskResultSummary, INLINE_OUTPUT_CHARS } from "@oh-my-pi/pi-coding-agent/task/result-summary";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
+import { ASYNC_INLINE_RESULT_MAX_CHARS } from "@marsai-org/coding-agent/session/async-job-delivery";
+import { formatTaskResultSummary, INLINE_OUTPUT_CHARS } from "@marsai-org/coding-agent/task/result-summary";
+import type { SingleResult } from "@marsai-org/tui/tools/task";
 
 function settledResult(output: string): SingleResult {
 	return {

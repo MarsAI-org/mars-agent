@@ -13,11 +13,11 @@
  * low-signal request ("ok", "thanks"). Throws on every other failure (no key,
  * malformed answer, abort, timeout); the caller treats both as "do not arm".
  */
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { type ChoiceAnswer, judgeQuestions } from "@oh-my-pi/pi-ai";
-import { titleTextFromSkillPrompt } from "@oh-my-pi/pi-tui/chat/skill-title-input";
-import { textContent } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { assistantText } from "@oh-my-pi/pi-tui/overlays/copy-targets";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { type ChoiceAnswer, judgeQuestions } from "@marsai-org/ai";
+import { titleTextFromSkillPrompt } from "@marsai-org/tui/chat/skill-title-input";
+import { textContent } from "@marsai-org/tui/chat/transcript-entry";
+import { assistantText } from "@marsai-org/tui/overlays/copy-targets";
 import { hasNativeJudge, judgeNatively, type NativeJudgmentDeps } from "../judgment";
 import questionFile from "../prompts/judge/auto-prewalk.json" with { type: "json" };
 import { preprocessTinyMessage } from "../tiny/message-preproc";

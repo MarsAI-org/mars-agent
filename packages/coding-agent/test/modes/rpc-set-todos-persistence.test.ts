@@ -2,9 +2,9 @@ import { afterEach, beforeEach, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
+import { removeWithRetries } from "@marsai-org/utils";
 
 let client: RpcClient;
 let directory: string;

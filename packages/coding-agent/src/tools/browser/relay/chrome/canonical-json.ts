@@ -3,7 +3,7 @@
  * `services/preferences/tracked/pref_hash_calculator.cc`). Authenticators are HMACs over exactly these bytes, so a
  * difference of one escape character makes Chrome treat a written preference as tampered.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 
 /** JSON value accepted by {@link chromiumJson}. */
 export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };

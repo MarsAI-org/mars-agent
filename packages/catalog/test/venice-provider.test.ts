@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { veniceModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { veniceModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 describe("Venice provider catalog", () => {
 	it("caps Kimi K2.7 Code discovered at its context-sized output budget", async () => {

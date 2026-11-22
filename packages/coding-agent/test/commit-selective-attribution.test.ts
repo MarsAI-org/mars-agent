@@ -7,7 +7,7 @@ import {
 	historySteps,
 	type RecordedEdit,
 	toLines,
-} from "@oh-my-pi/pi-coding-agent/commit/selective/attribution";
+} from "@marsai-org/coding-agent/commit/selective/attribution";
 
 interface Edit {
 	actor: string;

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { convertTools } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { Tool } from "@oh-my-pi/pi-ai/types";
-import { adaptSchemaForStrict, sanitizeSchemaForOpenAIResponses } from "@oh-my-pi/pi-ai/utils/schema";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { convertOpenAICodexResponsesTools } from "@marsai-org/ai/providers/openai-codex-responses";
+import { convertTools } from "@marsai-org/ai/providers/openai-responses";
+import type { Tool } from "@marsai-org/ai/types";
+import { adaptSchemaForStrict, sanitizeSchemaForOpenAIResponses } from "@marsai-org/ai/utils/schema";
+import { buildModel } from "@marsai-org/catalog/build";
 import { createCodexModel } from "./helpers";
 
 describe("Codex itemless array schemas", () => {

@@ -23,7 +23,7 @@
  */
 
 import * as fs from "node:fs/promises";
-import { logger, postmortem, untilAborted } from "@oh-my-pi/pi-utils";
+import { logger, postmortem, untilAborted } from "@marsai-org/utils";
 import type { AgentSessionHandle } from "../session/agent-session-handle";
 import type { AgentSessionDisposeOptions } from "../session/agent-session-types";
 import { trackLateCleanup } from "../utils/late-cleanup";

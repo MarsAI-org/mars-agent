@@ -24,8 +24,8 @@
  * Main-side values that are plain functions (no type to match a codec on) are converted by
  * {@link bridgeIntegrationOptions} before an `ExecutorOptions` object crosses a link.
  */
-import type { TSchema } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { TSchema } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import type { CustomTool } from "../../extensibility/custom-tools/types";
 import { importExtensionModule } from "../../extensibility/extensions/loader";
 import type { ExtensionFactory, PreparedExtension } from "../../extensibility/extensions/types";

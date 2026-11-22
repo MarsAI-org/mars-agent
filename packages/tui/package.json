@@ -1,5 +1,5 @@
 {
-	"name": "@oh-my-pi/pi-tui",
+	"name": "@marsai-org/tui",
 	"version": "19.1.0",
 	"description": "Terminal User Interface library with differential rendering for efficient text-based applications",
 	"keywords": [
@@ -13,7 +13,7 @@
 	],
 	"homepage": "https://omp.sh",
 	"bugs": {
-		"url": "https://github.com/can1357/oh-my-pi/issues"
+		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
 	"author": {
@@ -25,7 +25,7 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/can1357/oh-my-pi.git",
+		"url": "git+https://github.com/MarsAI-org/mars-agent.git",
 		"directory": "packages/tui"
 	},
 	"files": [
@@ -93,14 +93,14 @@
 		"gen:glyphs": "bun scripts/gen-glyphs.ts"
 	},
 	"dependencies": {
-		"@oh-my-pi/omptype": "catalog:",
-		"@oh-my-pi/pi-agent-core": "catalog:",
-		"@oh-my-pi/pi-ai": "catalog:",
-		"@oh-my-pi/pi-catalog": "catalog:",
-		"@oh-my-pi/pi-natives": "catalog:",
-		"@oh-my-pi/pi-utils": "catalog:",
-		"@oh-my-pi/pi-wire": "catalog:",
-		"@oh-my-pi/snapcompact": "catalog:"
+		"@marsai-org/omptype": "catalog:",
+		"@marsai-org/agent-core": "catalog:",
+		"@marsai-org/ai": "catalog:",
+		"@marsai-org/catalog": "catalog:",
+		"@marsai-org/natives": "catalog:",
+		"@marsai-org/utils": "catalog:",
+		"@marsai-org/wire": "catalog:",
+		"@marsai-org/snapcompact": "catalog:"
 	},
 	"devDependencies": {
 		"kitty-vt-wasm": "catalog:"

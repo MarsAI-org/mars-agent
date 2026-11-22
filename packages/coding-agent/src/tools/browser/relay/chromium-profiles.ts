@@ -5,7 +5,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 
 /** A supported Chromium browser: user data location, install location, and OSCrypt keychain entry. */
 interface BrowserDefinition {

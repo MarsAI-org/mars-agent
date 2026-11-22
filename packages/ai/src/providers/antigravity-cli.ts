@@ -5,7 +5,7 @@
  * agy credential directory; inference always runs through the official CLI.
  */
 import * as path from "node:path";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+import type { Effort } from "@marsai-org/catalog/effort";
 import * as AIError from "../error";
 import type { Context, Model, StreamFunction, StreamOptions } from "../types";
 import { AssistantMessageEventStream } from "../utils/event-stream";

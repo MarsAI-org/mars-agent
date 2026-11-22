@@ -4,9 +4,9 @@ import {
 	readImageFromClipboard,
 	readMacFileUrlsFromClipboard,
 	readTextFromClipboard,
-} from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import * as native from "@oh-my-pi/pi-natives/clipboard";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+} from "@marsai-org/coding-agent/utils/clipboard";
+import * as native from "@marsai-org/natives/clipboard";
+import * as logger from "@marsai-org/utils/logger";
 import type { Subprocess } from "bun";
 
 type SpawnOptions = Bun.SpawnOptions.SpawnOptions<

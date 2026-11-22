@@ -1,10 +1,10 @@
 /** Session-owned named services: `proc` units of the omp daemon in the session's project scope. */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { TERMINAL_STATES } from "@oh-my-pi/pi-tui/apps/ps-data";
-import { formatDuration, replaceTabs } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { logger, sanitizeText } from "@oh-my-pi/pi-utils";
+import { TERMINAL_STATES } from "@marsai-org/tui/apps/ps-data";
+import { formatDuration, replaceTabs } from "@marsai-org/tui/render/render-utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { logger, sanitizeText } from "@marsai-org/utils";
 import { compileNotifyPattern } from "../async/notify";
 import { canonicalProjectDir, DaemonTimeoutError, daemonClient } from "../daemon/client";
 import { daemonDir, unitLogDir } from "../daemon/paths";

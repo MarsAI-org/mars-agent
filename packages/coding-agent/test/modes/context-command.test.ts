@@ -1,17 +1,17 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir, withTimeout } from "@marsai-org/utils";
 
 describe("context command viewer", () => {
 	let authStorage: AuthStorage;

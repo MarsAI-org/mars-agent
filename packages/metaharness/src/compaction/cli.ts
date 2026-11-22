@@ -15,7 +15,7 @@
  */
 import * as path from "node:path";
 import { parseArgs } from "node:util";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@marsai-org/utils";
 import { prepareAgentBinaries } from "../tb/agent";
 import { FreshStart } from "./fresh";
 import { jevKeepScorer } from "./jev";

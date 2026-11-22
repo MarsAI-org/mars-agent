@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { embeddingFailureNotifier, MNEMOPI_NOTICE_SOURCE } from "@oh-my-pi/pi-coding-agent/mnemopi/embedding-notice";
+import { embeddingFailureNotifier, MNEMOPI_NOTICE_SOURCE } from "@marsai-org/coding-agent/mnemopi/embedding-notice";
 
 // Every recall and background embed can fail the same way; the user must see the cause once,
 // not once per request, and a new failure mode must still surface.

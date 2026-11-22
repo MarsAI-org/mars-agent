@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { Usage } from "@oh-my-pi/pi-ai";
-import { isSyntheticToolResultMessage } from "@oh-my-pi/pi-agent-core";
+import type { Usage } from "@marsai-org/ai";
+import { isSyntheticToolResultMessage } from "@marsai-org/agent-core";
 import {
 	collectPendingToolCalls,
 	createInterruptedToolResults,
@@ -10,19 +10,19 @@ import {
 	describePendingToolCalls,
 	SESSION_EXIT_CUSTOM_TYPE,
 	TOOL_EXECUTION_START_CUSTOM_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
+} from "@marsai-org/coding-agent/session/exit-diagnostics";
 import {
 	CURRENT_SESSION_VERSION,
 	type SessionEntry,
 	type SessionHeader,
 	type SessionMessageEntry,
-} from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage, MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { getTerminalId } from "@oh-my-pi/pi-tui";
-import { isTaskToolDetails, type TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { getAgentDir, getTerminalSessionsDir, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-entries";
+import { loadEntriesFromFile } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { FileSessionStorage, MemorySessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { getTerminalId } from "@marsai-org/tui";
+import { isTaskToolDetails, type TaskToolDetails } from "@marsai-org/tui/tools/task";
+import { getAgentDir, getTerminalSessionsDir, removeWithRetries, setAgentDir, TempDir } from "@marsai-org/utils";
 
 interface JsonlMessageEntry {
 	type: "message";

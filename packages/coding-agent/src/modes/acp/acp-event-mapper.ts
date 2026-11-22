@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { INTENT_FIELD, toolIntentLabel } from "@oh-my-pi/pi-wire";
+import { INTENT_FIELD, toolIntentLabel } from "@marsai-org/wire";
 import type {
 	SessionNotification,
 	SessionUpdate,
@@ -7,14 +7,14 @@ import type {
 	ToolCallContent,
 	ToolCallLocation,
 	ToolKind,
-} from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/utils/acp";
 import { InternalUrlRouter } from "../../internal-urls/router";
 import { extractUriScheme } from "../../internal-urls/parse";
 import type { SchemeSpec } from "../../internal-urls/types";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { resolveToCwd, splitPathAndSelPreferringLiteralSync } from "../../tools/path-utils";
-import type { TodoStatus } from "@oh-my-pi/pi-tui/tools/todo";
-import { canonicalizeMessage } from "@oh-my-pi/pi-tui/chat/thinking-display";
+import type { TodoStatus } from "@marsai-org/tui/tools/todo";
+import { canonicalizeMessage } from "@marsai-org/tui/chat/thinking-display";
 
 interface MessageProgress {
 	textEmitted: boolean;

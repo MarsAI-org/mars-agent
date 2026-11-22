@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { stripWindowsExtendedLengthPathPrefix } from "@oh-my-pi/pi-utils";
+import { stripWindowsExtendedLengthPathPrefix } from "@marsai-org/utils";
 
 /**
  * Bun cannot import or require a module from a path that contains `?`: it

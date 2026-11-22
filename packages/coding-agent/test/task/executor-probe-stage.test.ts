@@ -8,16 +8,16 @@
  * widget source).
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import * as probeModule from "@oh-my-pi/pi-coding-agent/task/completion-probe";
-import { runSubprocess, type SubagentToolResult } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import * as probeModule from "@marsai-org/coding-agent/task/completion-probe";
+import { runSubprocess, type SubagentToolResult } from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 const agent: AgentDefinition = { name: "task", description: "test", systemPrompt: "test", source: "bundled" };

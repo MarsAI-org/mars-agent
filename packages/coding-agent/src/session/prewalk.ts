@@ -1,8 +1,8 @@
-import type { Agent, AgentMessage, AgentToolResult, AgentTurnEndContext } from "@oh-my-pi/pi-agent-core";
-import { invalidateMessageCache } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model, ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import type { Agent, AgentMessage, AgentToolResult, AgentTurnEndContext } from "@marsai-org/agent-core";
+import { invalidateMessageCache } from "@marsai-org/agent-core/compaction";
+import type { Model, ToolResultMessage } from "@marsai-org/ai";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { logger, prompt } from "@marsai-org/utils";
 import type { AutoPrewalkDecision } from "../auto-prewalk/classifier";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { Settings } from "../config/settings";
@@ -15,7 +15,7 @@ import planYoloHandoffPrompt from "../prompts/system/plan-yolo-handoff.md" with 
 import prewalkChecklistPrompt from "../prompts/system/prewalk-checklist.md" with { type: "text" };
 import prewalkContinuePrompt from "../prompts/system/prewalk-continue.md" with { type: "text" };
 import prewalkPlanPrompt from "../prompts/system/prewalk-plan.md" with { type: "text" };
-import { type ConfiguredThinkingLevel, prewalkWouldBeNoop } from "@oh-my-pi/pi-tui/thinking";
+import { type ConfiguredThinkingLevel, prewalkWouldBeNoop } from "@marsai-org/tui/thinking";
 import { isMCPToolName } from "../tools/builtin-names";
 import {
 	replaceTabs,
@@ -23,10 +23,10 @@ import {
 	shortenPath,
 	TRUNCATE_LENGTHS,
 	truncateToWidth,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@marsai-org/tui/render/render-utils";
 import type { PlanProposalHandler } from "../tools/resolve";
 import { toolCommandDispatches } from "../tools/tool-commands";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { PlanYolo, Prewalk } from "./agent-session-types";
 import { PREWALK_PLAN_MESSAGE_TYPE } from "./messages";
 import { PREWALK_MODEL_CHANGE_ROLE } from "./session-entries";

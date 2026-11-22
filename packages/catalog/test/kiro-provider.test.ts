@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { fetchKiroModels, resolveKiroApiKeyRegion } from "@oh-my-pi/pi-catalog/discovery/kiro";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
-import { encodeKiroCredential, type KiroCredential } from "@oh-my-pi/pi-catalog/wire/kiro";
-import { logger } from "@oh-my-pi/pi-utils";
+import { fetchKiroModels, resolveKiroApiKeyRegion } from "@marsai-org/catalog/discovery/kiro";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import type { FetchImpl } from "@marsai-org/catalog/types";
+import { encodeKiroCredential, type KiroCredential } from "@marsai-org/catalog/wire/kiro";
+import { logger } from "@marsai-org/utils";
 
 const PROFILE_ARN = "arn:aws:codewhisperer:us-east-1:123456789012:profile/kiro-default";
 const OAUTH: KiroCredential = { kind: "oauth", token: "access", region: "us-east-1", loginId: "login-a" };

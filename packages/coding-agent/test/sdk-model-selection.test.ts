@@ -2,46 +2,46 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi 
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Effort, type FetchImpl } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry, type ProviderConfigInput } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getModelMatchPreferences, resolveModelScope } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Effort, type FetchImpl } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { getBundledModel, getBundledModels } from "@marsai-org/catalog/models";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models/descriptors";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry, type ProviderConfigInput } from "@marsai-org/coding-agent/config/model-registry";
+import { getModelMatchPreferences, resolveModelScope } from "@marsai-org/coding-agent/config/model-resolver";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	buildSessionOptions as buildCliSessionOptions,
 	rebuildScopedModels,
 	resolveScopedModels,
-} from "@oh-my-pi/pi-coding-agent/main";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import { getBundledAgent } from "@oh-my-pi/pi-coding-agent/task/agents";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/main";
+import { createAgentSession, type ExtensionFactory } from "@marsai-org/coding-agent/sdk";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import { getBundledAgent } from "@marsai-org/coding-agent/task/agents";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	getRetryFallbackRole,
 	installRetryFallbackRole,
 	type RetryFallbackRole,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { getRestorableSessionModels } from "@marsai-org/coding-agent/session/session-context";
+import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@marsai-org/coding-agent/session/session-entries";
+import { TurnRecovery, type TurnRecoveryHost } from "@marsai-org/coding-agent/session/turn-recovery";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 import {
 	cfgCompactionModelThresholds,
 	cfgCompactionModelThresholdsEnabled,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";
+} from "@marsai-org/coding-agent/session/context-settings";
+import { cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
 
 describe("createAgentSession deferred model pattern resolution", () => {
 	let tempDir: string;

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import * as natives from "@oh-my-pi/pi-natives";
-import { TUI } from "@oh-my-pi/pi-tui";
-import { Image } from "@oh-my-pi/pi-tui/components/image";
-import { Text } from "@oh-my-pi/pi-tui/components/text";
+import * as natives from "@marsai-org/natives";
+import { TUI } from "@marsai-org/tui";
+import { Image } from "@marsai-org/tui/components/image";
+import { Text } from "@marsai-org/tui/components/text";
 import {
 	type CellDimensions,
 	getCellDimensions,
@@ -10,7 +10,7 @@ import {
 	setCellDimensions,
 	setTerminalImageProtocol,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
+} from "@marsai-org/tui/terminal-capabilities";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 
 withoutTerminalMultiplexer();

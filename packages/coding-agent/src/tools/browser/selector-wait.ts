@@ -1,5 +1,5 @@
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { untilAborted } from "@marsai-org/utils";
 import type { ElementHandle } from "puppeteer-core";
 import { isNavigatedContextError } from "./navigation";
 import { untilAbortedOrReleased } from "./op-timeouts";

@@ -8,7 +8,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ptree } from "@oh-my-pi/pi-utils";
+import { ptree } from "@marsai-org/utils";
 import {
 	buildRemoteCommand,
 	closeConnection,

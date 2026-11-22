@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
-import { ShellFsFileType } from "@oh-my-pi/pi-natives";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { ShellFsFileType } from "@marsai-org/natives";
+import { TempDir } from "@marsai-org/utils";
 import * as capability from "../../src/capability";
 import type { CapabilityResult } from "../../src/capability/types";
 import { Settings } from "../../src/config/settings";

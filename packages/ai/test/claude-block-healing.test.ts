@@ -4,11 +4,11 @@ import {
 	type AuthCredentialStore,
 	AuthStorage,
 	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { claudeRankingStrategy, parseClaudeUsagePayload } from "@oh-my-pi/pi-ai/usage/claude";
-import { claudeResetClearedBlockScopes } from "@oh-my-pi/pi-ai/usage/claude-reset";
+} from "@marsai-org/ai/auth-storage";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import type { UsageLimit, UsageProvider, UsageReport } from "@marsai-org/ai/usage";
+import { claudeRankingStrategy, parseClaudeUsagePayload } from "@marsai-org/ai/usage/claude";
+import { claudeResetClearedBlockScopes } from "@marsai-org/ai/usage/claude-reset";
 
 /**
  * A reactive Fable 429 blocks the credential until the reset that error

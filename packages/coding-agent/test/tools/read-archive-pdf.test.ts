@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import * as piNatives from "@oh-my-pi/pi-natives";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as pdfRead from "@oh-my-pi/pi-coding-agent/tools/read-pdf";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import * as markit from "@oh-my-pi/pi-coding-agent/utils/markit";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import * as ar from "@oh-my-pi/pi-utils/ar";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import * as piNatives from "@marsai-org/natives";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import * as pdfRead from "@marsai-org/coding-agent/tools/read-pdf";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import * as markit from "@marsai-org/coding-agent/utils/markit";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { __resetDirsFromEnvForTests, setAgentDir, TempDir } from "@marsai-org/utils";
+import * as ar from "@marsai-org/utils/ar";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 
 const MEMBER = "folder/sample document.pdf";

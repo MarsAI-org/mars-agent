@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, type Mock, test, vi } from "bun:test";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import * as registry from "@oh-my-pi/pi-ai/registry";
-import type { OAuthCredentials, OAuthPrompt } from "@oh-my-pi/pi-ai/registry/oauth/types";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import * as AIError from "@marsai-org/ai/error";
+import * as registry from "@marsai-org/ai/registry";
+import type { OAuthCredentials, OAuthPrompt } from "@marsai-org/ai/registry/oauth/types";
 import { removeWithRetries } from "../../utils/src/temp";
 
 // The real auth rules give google-antigravity a `login-warning`; it is also paused, so the pause is lifted here.

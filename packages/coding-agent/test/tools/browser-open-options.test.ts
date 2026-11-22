@@ -3,23 +3,23 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { afterAll, describe, expect, it, spyOn } from "bun:test";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { resolveInitScriptSources } from "@oh-my-pi/pi-coding-agent/tools/browser/open-options";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { DownloadManager } from "@oh-my-pi/pi-coding-agent/tools/browser/downloads";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { resolveInitScriptSources } from "@marsai-org/coding-agent/tools/browser/open-options";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
+import { DownloadManager } from "@marsai-org/coding-agent/tools/browser/downloads";
 import {
 	buildHeadlessLaunchArgs,
 	closeLaunchedBrowser,
 	launchHeadlessBrowser,
 	removeUserDataDir,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { getTab, releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { CLAUDE_TRACE_DEBUG_CERT, CLAUDE_TRACE_DEBUG_KEY } from "@oh-my-pi/pi-coding-agent/cli/claude-trace-cli";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { getTab, releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { CLAUDE_TRACE_DEBUG_CERT, CLAUDE_TRACE_DEBUG_KEY } from "@marsai-org/coding-agent/cli/claude-trace-cli";
 import type { Browser, Page } from "puppeteer-core";
 import { rejectionOf } from "../helpers/rejection";
 import { chromiumAvailable } from "./chromium-probe";

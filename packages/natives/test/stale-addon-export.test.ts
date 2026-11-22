@@ -109,7 +109,7 @@ describe("stale workspace addon notice", () => {
 	it("names the addon, both releases, and the rebuild", () => {
 		const notice = staleWorkspaceAddonNotice(status());
 		expect(notice).toContain(addonPath);
-		expect(notice).toContain("@oh-my-pi/pi-natives@18.1.18");
+		expect(notice).toContain("@marsai-org/natives@18.1.18");
 		expect(notice).toContain("@18.2.6");
 		expect(notice).toContain("bun run build:native");
 		expect(notice.endsWith("\n")).toBe(true);

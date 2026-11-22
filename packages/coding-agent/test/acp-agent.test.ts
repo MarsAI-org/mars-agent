@@ -2,39 +2,39 @@ import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AgentBusyError } from "@oh-my-pi/pi-agent-core";
+import { AgentBusyError } from "@marsai-org/agent-core";
 import { Database } from "bun:sqlite";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { ExtensionUIContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { cfgExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { buildSkillPromptMessage } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import * as oauthFlowModule from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import type { ExtensionUIContext } from "@marsai-org/coding-agent/extensibility/extensions";
+import { cfgExtensions } from "@marsai-org/coding-agent/extensibility/settings";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { buildSkillPromptMessage } from "@marsai-org/coding-agent/extensibility/skills";
+import { resolveLocalUrlToPath } from "@marsai-org/coding-agent/internal-urls";
+import * as oauthFlowModule from "@marsai-org/coding-agent/mcp/oauth-flow";
 import {
 	ACP_BOOTSTRAP_RACE_GUARD_MS,
 	AcpAgent,
 	createAcpExtensionUiContext,
-} from "@oh-my-pi/pi-coding-agent/modes/acp/acp-agent";
-import type { PlanModeState } from "@oh-my-pi/pi-coding-agent/plan-mode/state";
-import { type AgentRef, AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+} from "@marsai-org/coding-agent/modes/acp/acp-agent";
+import type { PlanModeState } from "@marsai-org/coding-agent/plan-mode/state";
+import { type AgentRef, AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
 import type {
 	AgentSession,
 	AgentSessionEvent,
 	UsageFallbackConfirmation,
-} from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { ClientBridge } from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { getConfigRootDir, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/agent-session";
+import { SILENT_ABORT_MARKER, USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import type { ClientBridge } from "@marsai-org/coding-agent/session/client-bridge";
+import { closeSessionIndex } from "@marsai-org/coding-agent/session/session-index";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TaskTool } from "@marsai-org/coding-agent/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { getConfigRootDir, setAgentDir } from "@marsai-org/utils";
 import type {
 	AgentSideConnection,
 	ClientCapabilities,
@@ -44,7 +44,7 @@ import type {
 	RequestPermissionRequest,
 	SessionNotification,
 	Validator,
-} from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/utils/acp";
 import {
 	RequestError,
 	zForkSessionResponse,
@@ -52,11 +52,11 @@ import {
 	zNewSessionResponse,
 	zPromptResponse,
 	zSessionNotification,
-} from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/utils/acp";
 import { TOOL_NAME as DELAYED_MCP_TOOL_NAME } from "./fixtures/delayed-tool-mcp";
 
-import { cfgMcpStartupTimeoutMs } from "@oh-my-pi/pi-coding-agent/mcp/settings";
-import { cfgPlanAutosave, cfgPlanAutosaveDir, cfgPlanEnabled } from "@oh-my-pi/pi-coding-agent/plan-mode/settings";
+import { cfgMcpStartupTimeoutMs } from "@marsai-org/coding-agent/mcp/settings";
+import { cfgPlanAutosave, cfgPlanAutosaveDir, cfgPlanEnabled } from "@marsai-org/coding-agent/plan-mode/settings";
 
 /** Validates an ACP wire payload against the in-house protocol schemas. */
 function expectAcpStructure(schema: Validator<unknown>, value: unknown): void {

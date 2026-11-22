@@ -9,23 +9,23 @@
  * another memory store, a context reset, or a branch that edits the first prompt.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { Judge, Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import type { ChainJudge } from "@oh-my-pi/pi-coding-agent/judgment";
+import type { Judge, Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { HindsightApi } from "@marsai-org/coding-agent/hindsight/client";
+import type { HindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
+import { HindsightSessionState } from "@marsai-org/coding-agent/hindsight/state";
+import type { ChainJudge } from "@marsai-org/coding-agent/judgment";
 import {
 	MEMORY_RECALL_CHANGES_MESSAGE_TYPE,
 	persistRecall,
-} from "@oh-my-pi/pi-coding-agent/memory-backend/recall-entry";
-import type { MemoryPromptPreparation } from "@oh-my-pi/pi-coding-agent/memory-backend/types";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import { loadMnemopiConfig } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
-import { filterRelevantMemories } from "@oh-my-pi/pi-coding-agent/mnemopi/relevance";
-import { cfgMnemopiRecallRelevance } from "@oh-my-pi/pi-coding-agent/mnemopi/settings";
+} from "@marsai-org/coding-agent/memory-backend/recall-entry";
+import type { MemoryPromptPreparation } from "@marsai-org/coding-agent/memory-backend/types";
+import { mnemopiBackend } from "@marsai-org/coding-agent/mnemopi/backend";
+import { loadMnemopiConfig } from "@marsai-org/coding-agent/mnemopi/config";
+import { filterRelevantMemories } from "@marsai-org/coding-agent/mnemopi/relevance";
+import { cfgMnemopiRecallRelevance } from "@marsai-org/coding-agent/mnemopi/settings";
 import {
 	getMnemopiScopedDbPaths,
 	getMnemopiSessionState,
@@ -33,10 +33,10 @@ import {
 	loadMnemopiCore,
 	MnemopiSessionState,
 	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { clipRecallContent } from "@oh-my-pi/pi-mnemopi";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mnemopi/state";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { clipRecallContent } from "@marsai-org/mnemopi";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { judgeChain, memoryRelevanceJudge } from "./helpers/memory-relevance-judge";
 

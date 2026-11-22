@@ -7,10 +7,10 @@
  * the worker once `done` arrives.
  */
 import { parentPort } from "node:worker_threads";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { getDailyActivity, readDailyActivity } from "@oh-my-pi/omp-stats/db";
-import type { DailyActivityPoint } from "@oh-my-pi/omp-stats/shared-types";
-import { consumeWorkerInbox } from "@oh-my-pi/pi-utils/worker-host";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
+import { getDailyActivity, readDailyActivity } from "@marsai-org/stats/db";
+import type { DailyActivityPoint } from "@marsai-org/stats/shared-types";
+import { consumeWorkerInbox } from "@marsai-org/utils/worker-host";
 import type { StatsActivityWorkerInbound, StatsActivityWorkerOutbound } from "./activity-protocol";
 
 if (!parentPort) throw new Error("stats activity worker: missing parentPort");

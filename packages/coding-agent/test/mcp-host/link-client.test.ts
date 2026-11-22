@@ -8,8 +8,8 @@ import {
 	type MCPConnectOptions,
 	subscribeToResources,
 	unsubscribeFromResources,
-} from "@oh-my-pi/pi-coding-agent/mcp/client";
-import { MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+} from "@marsai-org/coding-agent/mcp/client";
+import { MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, type FakeTunnel, type Message, metaOf, paramsOf, settled } from "./link-fake-host";
 

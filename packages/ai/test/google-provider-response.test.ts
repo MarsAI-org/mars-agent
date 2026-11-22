@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { streamGoogleVertex } from "@oh-my-pi/pi-ai/providers/google-vertex";
+import { streamGoogle } from "@marsai-org/ai/providers/google";
+import { streamGoogleGeminiCli } from "@marsai-org/ai/providers/google-gemini-cli";
+import { streamGoogleVertex } from "@marsai-org/ai/providers/google-vertex";
 import type {
 	AssistantMessage,
 	Context,
@@ -9,8 +9,8 @@ import type {
 	Model,
 	ProviderResponseMetadata,
 	StreamOptions,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const context: Context = { messages: [{ role: "user", content: "hi", timestamp: 1 }] };
 

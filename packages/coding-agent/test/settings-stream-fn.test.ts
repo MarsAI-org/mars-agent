@@ -8,19 +8,19 @@
  * (can1357/oh-my-pi#3639).
  */
 import { describe, expect, it } from "bun:test";
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import { type Context, type Model, type SimpleStreamOptions, streamSimple } from "@oh-my-pi/pi-ai";
-import { configureProviderStoreResponses } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { bindEffects } from "@oh-my-pi/pi-coding-agent/config/registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgProvidersMuseCodeStoreResponses } from "@oh-my-pi/pi-coding-agent/session/settings";
+import type { StreamFn } from "@marsai-org/agent-core";
+import { type Context, type Model, type SimpleStreamOptions, streamSimple } from "@marsai-org/ai";
+import { configureProviderStoreResponses } from "@marsai-org/ai/providers/openai-responses-state";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { bindEffects } from "@marsai-org/coding-agent/config/registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgProvidersMuseCodeStoreResponses } from "@marsai-org/coding-agent/session/settings";
 import {
 	createSettingsAwareStreamFn,
 	resolveWebsocketPreference,
-} from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
+} from "@marsai-org/coding-agent/session/settings-stream-fn";
 
 /** Settings whose global (persisted) layer holds `storeResponses`; a runtime override would outrank the env var. */
 function persistedStore(value: boolean | undefined): Settings {

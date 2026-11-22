@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, setSystemTime } from "bun:test";
-import type { Api, AssistantMessage, Context, Message, Model, ModelSpec } from "@oh-my-pi/pi-ai";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { MessageCreateParams } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { isPerCallContextMessage, markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession, type ExtensionFactory } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import type { Api, AssistantMessage, Context, Message, Model, ModelSpec } from "@marsai-org/ai";
+import { clearCustomApis, registerCustomApi } from "@marsai-org/ai";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { MessageCreateParams } from "@marsai-org/ai/providers/anthropic-wire";
+import { isPerCallContextMessage, markPerCallContextMessage } from "@marsai-org/ai/utils/block-symbols";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { requestBodyText } from "@marsai-org/ai/utils/request-body";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession, type ExtensionFactory } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	createSessionDateCwdReminderJournal,
 	DateCwdReminderInjector,
@@ -18,11 +18,11 @@ import {
 	type DateCwdReminderPlacement,
 	isDateCwdReminderControl,
 	renderDateCwdReminder,
-} from "@oh-my-pi/pi-coding-agent/session/date-cwd-reminder";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { formatLocalCalendarDate } from "@oh-my-pi/pi-tui/chrome/local-date";
-import { normalizePromptPath } from "@oh-my-pi/pi-coding-agent/utils/prompt-path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/date-cwd-reminder";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { formatLocalCalendarDate } from "@marsai-org/tui/chrome/local-date";
+import { normalizePromptPath } from "@marsai-org/coding-agent/utils/prompt-path";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("date-cwd-reminder", () => {

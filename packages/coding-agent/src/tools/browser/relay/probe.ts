@@ -6,7 +6,7 @@
  * restart, while Chrome starts the next host. A 503 means a relay is up and its browser has not said hello yet,
  * which takes moments.
  */
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+import { VERSION } from "@marsai-org/utils/dirs";
 import { throwIfAborted } from "../../tool-errors";
 import { probeCdpResponse } from "../attach";
 import { DISCARDED_TABS_PROTOCOL_VERSION, isOlderOmpVersion, RELAY_RESTART_PATH } from "./protocol";

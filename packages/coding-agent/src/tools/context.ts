@@ -1,10 +1,10 @@
-import type { AgentToolContext, ToolCallContext } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolContext, ToolCallContext } from "@marsai-org/agent-core";
 import type { CustomToolContext } from "../extensibility/custom-tools/types";
 import type { ExtensionUIContext } from "../extensibility/extensions/types";
 import { trackUserWaits, type UserWaitTracker } from "../extensibility/extensions/user-wait";
 import type { CalledToolShaper } from "../spotlight";
 
-declare module "@oh-my-pi/pi-agent-core" {
+declare module "@marsai-org/agent-core" {
 	interface AgentToolContext extends CustomToolContext {
 		ui?: ExtensionUIContext;
 		hasUI?: boolean;

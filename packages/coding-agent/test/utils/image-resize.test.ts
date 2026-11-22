@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as zlib from "node:zlib";
-import { decodePng } from "@oh-my-pi/pi-coding-agent/tools/browser/screenshot";
-import { fitImage, formatDimensionNote, resizeImage } from "@oh-my-pi/pi-coding-agent/utils/image-resize";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
+import { decodePng } from "@marsai-org/coding-agent/tools/browser/screenshot";
+import { fitImage, formatDimensionNote, resizeImage } from "@marsai-org/coding-agent/utils/image-resize";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
 
 // 1x1 red PNG (69 bytes) — used as a Bun.Image seed to synthesize larger fixtures
 // without checking binary blobs into the repo.

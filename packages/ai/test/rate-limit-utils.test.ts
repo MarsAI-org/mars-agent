@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { classify, Flag, is, isUsageLimit, retriable } from "@oh-my-pi/pi-ai/error/flags";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import { classify, Flag, is, isUsageLimit, retriable } from "@marsai-org/ai/error/flags";
 import {
 	calculateRateLimitBackoffMs,
 	is402BillingCapBody,
@@ -11,11 +11,11 @@ import {
 	isUsageLimitStatus,
 	matchesUsageLimitText,
 	parseRateLimitReason,
-} from "@oh-my-pi/pi-ai/error/rate-limit";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/error/rate-limit";
+import { streamGoogle } from "@marsai-org/ai/providers/google";
+import { streamGoogleGeminiCli } from "@marsai-org/ai/providers/google-gemini-cli";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // MiniMax CN (minimax-code-cn) Token Plan exhaustion (2067): phrased 用量上限,
 // not 使用上限 like Zhipu.

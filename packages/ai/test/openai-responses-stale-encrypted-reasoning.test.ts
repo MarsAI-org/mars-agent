@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { AssistantMessage, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { seedModels } from "@oh-my-pi/pi-catalog/compat/providers";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import type { AssistantMessage, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { createOpenAIResponsesHistoryPayload } from "@marsai-org/ai/utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { seedModels } from "@marsai-org/catalog/compat/providers";
 import { type ResponsesWireEvent, sse } from "./fixtures/openai-responses-server";
 
 // Meta answers this 400 for a replayed blob it no longer honors (key rotation,

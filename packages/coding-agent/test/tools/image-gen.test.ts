@@ -1,23 +1,23 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import { type Api, type FetchImpl, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { factoryDroidRegistry } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { buildFactoryDroidModel } from "@oh-my-pi/pi-catalog/discovery";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { CustomToolContext, CustomToolResult } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import { type Api, type FetchImpl, type Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { factoryDroidRegistry } from "@marsai-org/catalog/compat/factory-droid";
+import { buildFactoryDroidModel } from "@marsai-org/catalog/discovery";
+import { modelKind } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { CustomToolContext, CustomToolResult } from "@marsai-org/coding-agent/extensibility/custom-tools";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	getImageGenTools,
 	getImageGenToolsWithRegistry,
 	imageGenTool,
-} from "@oh-my-pi/pi-coding-agent/tools/image-gen";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { hasFsCode, removeWithRetries, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/image-gen";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
+import { hasFsCode, removeWithRetries, TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const generatedImagePaths: string[] = [];

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { TempDir } from "@marsai-org/utils";
 
 afterEach(() => {
 	vi.restoreAllMocks();

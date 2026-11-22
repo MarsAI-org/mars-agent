@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 
 import { stripVTControlCharacters } from "node:util";
-import { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import { HookInputComponent } from "@marsai-org/tui/overlays/hook-input";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { TUI } from "@marsai-org/tui";
+import type { TspSpan } from "@marsai-org/wire";
 
 const CX: DescribeContext = { cols: 100, reduceMotion: false, dark: true, supports: () => true, feature: () => true };
 

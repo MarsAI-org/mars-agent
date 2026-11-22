@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { FileChangeType, type FileEvent } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import { WatchedFilesForwarder } from "@oh-my-pi/pi-coding-agent/lsp/watched-files";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { FileChangeType, type FileEvent } from "@marsai-org/coding-agent/lsp/types";
+import { fileToUri } from "@marsai-org/coding-agent/lsp/utils";
+import { WatchedFilesForwarder } from "@marsai-org/coding-agent/lsp/watched-files";
+import { TempDir } from "@marsai-org/utils";
 
 /**
  * Real filesystem events need a wall-clock bound; every wait ends as soon as the event arrives. Generous

@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import type { MessageRenderer } from "@oh-my-pi/pi-tui/chat/extension-types";
-import { Text } from "@oh-my-pi/pi-tui/components/text";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { ChatTranscriptBuilder } from "@marsai-org/tui/chat/chat-transcript-builder";
+import type { MessageRenderer } from "@marsai-org/tui/chat/extension-types";
+import { Text } from "@marsai-org/tui/components/text";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TUI } from "@marsai-org/tui";
 
 const BUILT_IN = "Background job completed";
 

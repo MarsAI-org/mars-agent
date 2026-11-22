@@ -11,9 +11,9 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { acquireFileLock, type FileLockHandle, logger, tryAcquireFileLock } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ipcEndpoint } from "@marsai-org/natives";
+import { acquireFileLock, type FileLockHandle, logger, tryAcquireFileLock } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { DISASM_BACKENDS, type DisasmBackend } from "../../disasm/backend";
 import {
 	DISASM_UNIT_KIND,

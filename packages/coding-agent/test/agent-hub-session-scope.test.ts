@@ -7,15 +7,15 @@ import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { createAgentHubRuntime } from "@oh-my-pi/pi-coding-agent/modes/agent-hub-runtime";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { copySessionArtifacts } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { type AgentHubRemote, AgentHubOverlayComponent } from "@oh-my-pi/pi-tui/overlays/agent-hub";
-import { SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import { createAgentHubRuntime } from "@marsai-org/coding-agent/modes/agent-hub-runtime";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { copySessionArtifacts } from "@marsai-org/coding-agent/session/session-manager";
+import { type AgentHubRemote, AgentHubOverlayComponent } from "@marsai-org/tui/overlays/agent-hub";
+import { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
+import { initTheme } from "@marsai-org/tui/theme";
 
 describe("Agent Hub session scope", () => {
 	let dir: string;

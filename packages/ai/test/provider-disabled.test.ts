@@ -2,18 +2,18 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { complete } from "@oh-my-pi/pi-ai";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { complete } from "@marsai-org/ai";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import * as AIError from "@marsai-org/ai/error";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	getOAuthProviders,
 	refreshOAuthToken,
 	registerOAuthProvider,
 	setUnpausedProviders,
 	unregisterOAuthProviders,
-} from "@oh-my-pi/pi-ai/registry/oauth";
+} from "@marsai-org/ai/registry/oauth";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const PROVIDER = "anthropic";

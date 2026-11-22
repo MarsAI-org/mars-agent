@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ModelBrowserItem } from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { setInternalUrlCompletionHost } from "@oh-my-pi/pi-tui/prompt/internal-url-autocomplete";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { createPromptActionAutocompleteProvider } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { getSelectListTheme, initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { KeybindingsManager as AppKeybindingsManager, setKeyHintPlatform } from "@marsai-org/tui/app-keybindings";
+import type { ModelBrowserItem } from "@marsai-org/tui/overlays/model-browser";
+import { setInternalUrlCompletionHost } from "@marsai-org/tui/prompt/internal-url-autocomplete";
+import { Editor } from "@marsai-org/tui/components/editor";
+import { createPromptActionAutocompleteProvider } from "@marsai-org/tui/prompt/prompt-action-autocomplete";
+import { getSelectListTheme, initTheme, theme } from "@marsai-org/tui/theme";
 import { defaultEditorTheme } from "./test-themes";
-import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager, SelectList, setKeybindings, TUI_KEYBINDINGS } from "@marsai-org/tui";
 
 function modelMentionItem(provider: string, id: string, name: string, efforts?: readonly Effort[]): ModelBrowserItem {
 	return {

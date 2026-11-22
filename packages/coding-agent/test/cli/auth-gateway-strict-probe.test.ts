@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { CompletionProbeInput, Provider } from "@oh-my-pi/pi-ai";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import * as catalogModels from "@oh-my-pi/pi-catalog/models";
-import { decodeKiroCredential } from "@oh-my-pi/pi-catalog/wire/kiro";
+import * as ai from "@marsai-org/ai";
+import type { CompletionProbeInput, Provider } from "@marsai-org/ai";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { buildModel } from "@marsai-org/catalog/build";
+import * as catalogModels from "@marsai-org/catalog/models";
+import { decodeKiroCredential } from "@marsai-org/catalog/wire/kiro";
 import { createStrictCompletionProbe } from "../../src/cli/auth-gateway-cli";
 
 afterEach(() => {

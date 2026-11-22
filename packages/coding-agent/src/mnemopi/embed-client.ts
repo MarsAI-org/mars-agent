@@ -7,8 +7,8 @@
  * bound), and stops it once idle.
  */
 import * as path from "node:path";
-import { isFastembedModelCached } from "@oh-my-pi/pi-mnemopi/core/fastembed-model-cache";
-import { $env, getFastembedCacheDir, logger } from "@oh-my-pi/pi-utils";
+import { isFastembedModelCached } from "@marsai-org/mnemopi/core/fastembed-model-cache";
+import { $env, getFastembedCacheDir, logger } from "@marsai-org/utils";
 import {
 	INFER_CONNECTION_CLOSED,
 	InferConnection,

@@ -331,7 +331,7 @@ jobs:
            shell: bash
            run: |
               set -euo pipefail
-              tarball="$(npm view @oh-my-pi/pi-natives-linux-x64@latest dist.tarball)"
+              tarball="$(npm view @marsai-org/natives-linux-x64@latest dist.tarball)"
               echo "Fetching $tarball"
               curl -fsSL --retry 3 "$tarball" | tar -xz -C "$RUNNER_TEMP"
               mkdir -p ci-natives/natives-linux-x64-baseline ci-natives/natives-linux-x64-modern
@@ -750,43 +750,43 @@ jobs:
                - {
                     platform: darwin,
                     target_id: darwin-x64,
-                    binary_path: packages/coding-agent/binaries/omp-darwin-x64,
+                    binary_path: packages/coding-agent/binaries/mars-darwin-x64,
                     native_targets: darwin-x64-baseline,
                  }
                - {
                     platform: darwin,
                     target_id: darwin-arm64,
-                    binary_path: packages/coding-agent/binaries/omp-darwin-arm64,
+                    binary_path: packages/coding-agent/binaries/mars-darwin-arm64,
                     native_targets: darwin-arm64,
                  }
                - {
                     platform: linux,
                     target_id: linux-x64,
-                    binary_path: packages/coding-agent/binaries/omp-linux-x64,
+                    binary_path: packages/coding-agent/binaries/mars-linux-x64,
                     native_targets: linux-x64-baseline linux-x64-modern,
                  }
                - {
                     platform: linux,
                     target_id: linux-musl-x64,
-                    binary_path: packages/coding-agent/binaries/omp-linux-musl-x64,
+                    binary_path: packages/coding-agent/binaries/mars-linux-musl-x64,
                     native_targets: linux-musl-x64-baseline,
                  }
                - {
                     platform: linux,
                     target_id: linux-arm64,
-                    binary_path: packages/coding-agent/binaries/omp-linux-arm64,
+                    binary_path: packages/coding-agent/binaries/mars-linux-arm64,
                     native_targets: linux-arm64,
                  }
                - {
                     platform: linux,
                     target_id: linux-musl-arm64,
-                    binary_path: packages/coding-agent/binaries/omp-linux-musl-arm64,
+                    binary_path: packages/coding-agent/binaries/mars-linux-musl-arm64,
                     native_targets: linux-musl-arm64,
                  }
                - {
                     platform: win32,
                     target_id: win32-x64,
-                    binary_path: packages/coding-agent/binaries/omp-windows-x64.exe,
+                    binary_path: packages/coding-agent/binaries/mars-windows-x64.exe,
                     native_targets: win32-x64-baseline,
                  }
                # Addon cross-built by Bazel (clang-cl + xwin arm64 splat) in
@@ -794,7 +794,7 @@ jobs:
                - {
                     platform: win32,
                     target_id: win32-arm64,
-                    binary_path: packages/coding-agent/binaries/omp-windows-arm64.exe,
+                    binary_path: packages/coding-agent/binaries/mars-windows-arm64.exe,
                     native_targets: win32-arm64,
                  }
       runs-on: ubuntu-22.04
@@ -876,16 +876,16 @@ jobs:
          fail-fast: false
          matrix:
             include:
-               - { os: ubuntu-22.04, target_id: linux-x64, binary: omp-linux-x64 }
-               - { os: ubuntu-24.04-arm, target_id: linux-arm64, binary: omp-linux-arm64 }
+               - { os: ubuntu-22.04, target_id: linux-x64, binary: mars-linux-x64 }
+               - { os: ubuntu-24.04-arm, target_id: linux-arm64, binary: mars-linux-arm64 }
                # musl binaries need the musl loader, which glibc runners lack:
                # they run in an Alpine container of the runner's arch.
-               - { os: ubuntu-22.04, target_id: linux-musl-x64, binary: omp-linux-musl-x64, alpine: true }
-               - { os: ubuntu-24.04-arm, target_id: linux-musl-arm64, binary: omp-linux-musl-arm64, alpine: true }
-               - { os: macos-15-intel, target_id: darwin-x64, binary: omp-darwin-x64 }
-               - { os: macos-15, target_id: darwin-arm64, binary: omp-darwin-arm64 }
-               - { os: windows-2025, target_id: win32-x64, binary: omp-windows-x64.exe }
-               - { os: windows-11-arm, target_id: win32-arm64, binary: omp-windows-arm64.exe }
+               - { os: ubuntu-22.04, target_id: linux-musl-x64, binary: mars-linux-musl-x64, alpine: true }
+               - { os: ubuntu-24.04-arm, target_id: linux-musl-arm64, binary: mars-linux-musl-arm64, alpine: true }
+               - { os: macos-15-intel, target_id: darwin-x64, binary: mars-darwin-x64 }
+               - { os: macos-15, target_id: darwin-arm64, binary: mars-darwin-arm64 }
+               - { os: windows-2025, target_id: win32-x64, binary: mars-windows-x64.exe }
+               - { os: windows-11-arm, target_id: win32-arm64, binary: mars-windows-arm64.exe }
       runs-on: ${{ matrix.os }}
       permissions:
          contents: read
@@ -956,7 +956,7 @@ jobs:
               & $env:BINARY --smoke-test
               if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-   # Publishes the six @oh-my-pi/pi-natives-<tag> leaf packages once
+   # Publishes the six @marsai-org/natives-<tag> leaf packages once
    # validation passes and every binary built. Runs on one linux runner: leaf
    # publishing is platform-agnostic file packaging (gen-npm-packages reads
    # packages/natives/native), so no per-platform runners are needed.

@@ -5,7 +5,7 @@
  * pi-ai both consume these; URL matching is the one detection surface that
  * stays in code.
  */
-import { $env, logger } from "@oh-my-pi/pi-utils";
+import { $env, logger } from "@marsai-org/utils";
 import { hostMatchesUrl, isBedrockRouteUrl } from "../hosts";
 
 const OFFICIAL_ANTHROPIC_URL = "https://api.anthropic.com";

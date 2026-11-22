@@ -8,7 +8,7 @@ import type {
 	ServiceTierByFamily,
 	TextContent,
 	Usage,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	$env,
 	directoryIsEnterable,
@@ -27,10 +27,10 @@ import {
 	stringifyJson,
 	toError,
 	withLoopPhase,
-} from "@oh-my-pi/pi-utils";
-import { isTaskToolDetails, type StructuredSubagentSchemaMode } from "@oh-my-pi/pi-tui/tools/task";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/utils";
+import { isTaskToolDetails, type StructuredSubagentSchemaMode } from "@marsai-org/tui/tools/task";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { moveFileAcrossDevices } from "../utils/atomic-file";
 import { hasAnnotationDraftsSync } from "../extensibility/custom-commands/bundled/annotate/draft-store";
 import { resolveLocalRoot } from "../internal-urls/local-root";

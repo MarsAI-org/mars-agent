@@ -1,4 +1,4 @@
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 
 export const BUILTIN_TOOL_NAMES = [
 	"read",

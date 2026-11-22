@@ -3,10 +3,10 @@
  *
  * Handles /mcp subcommands for managing MCP servers.
  */
-import { type Component, replaceTabs, Spacer, Text } from "@oh-my-pi/pi-tui";
-import { getMCPConfigPath, getProjectDir } from "@oh-my-pi/pi-utils";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
+import { type Component, replaceTabs, Spacer, Text } from "@marsai-org/tui";
+import { getMCPConfigPath, getProjectDir } from "@marsai-org/utils";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import { appKey } from "@marsai-org/tui/chrome/keybinding-hints";
 import type { SourceMeta } from "../../capability/types";
 import {
 	analyzeAuthError,
@@ -49,18 +49,18 @@ import {
 	removeManagedMcpOAuthCredentials,
 } from "../../mcp/oauth-credentials";
 import type { MCPAuthChallenge, MCPConfigFile, MCPServerConfig, MCPServerConnection } from "../../mcp/types";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { urlHyperlinkAlways } from "@oh-my-pi/pi-tui/render";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { urlHyperlinkAlways } from "@marsai-org/tui/render";
 import { copyToClipboard } from "../../utils/clipboard";
 import { openPath } from "../../utils/open";
-import { ChatBlock } from "@oh-my-pi/pi-tui/chrome/chat-block";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { MCPAddWizard } from "@oh-my-pi/pi-tui/overlays/mcp-add-wizard";
-import { TranscriptBlock } from "@oh-my-pi/pi-tui/chrome/transcript-container";
+import { ChatBlock } from "@marsai-org/tui/chrome/chat-block";
+import { DynamicBorder } from "@marsai-org/tui/chrome/dynamic-border";
+import { MCPAddWizard } from "@marsai-org/tui/overlays/mcp-add-wizard";
+import { TranscriptBlock } from "@marsai-org/tui/chrome/transcript-container";
 import { parseCommandArgs } from "../../utils/command-args";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { col, span, text } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
+import { theme } from "@marsai-org/tui/theme";
+import { col, span, text } from "@marsai-org/tui/native/describe";
+import type { NativeNode } from "@marsai-org/tui/native/node";
 import type { InteractiveModeContext } from "../types";
 import { groupBySource, parseRemoveArgs, readScopeFlag, showCommandMessage } from "./command-controller-shared";
 

@@ -53,10 +53,10 @@
  * re-attached to the compaction summary message on every context rebuild.
  */
 
-import { type } from "@oh-my-pi/omptype";
-import type { Api, ImageContent, Message, Model, TextContent } from "@oh-my-pi/pi-ai";
-import { reachesBudgetedHost } from "@oh-my-pi/pi-ai/providers/anthropic-state";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
+import { type } from "@marsai-org/omptype";
+import type { Api, ImageContent, Message, Model, TextContent } from "@marsai-org/ai";
+import { reachesBudgetedHost } from "@marsai-org/ai/providers/anthropic-state";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
 import {
 	type ImageSize,
 	type ImageTokenization,
@@ -64,12 +64,12 @@ import {
 	imageTokens,
 	resolveImageMaxEdge,
 	resolveImageTokenization,
-} from "@oh-my-pi/pi-catalog/compat/image-tokenization";
-import { resolveImageCountBudget, resolveInlineImageByteBudget } from "@oh-my-pi/pi-catalog/compat/request-size";
-import { classifyModel, compareRevision, parseRevision } from "@oh-my-pi/pi-catalog/identity";
-import { renderSnapcompactPng, snapcompactSupportedChars } from "@oh-my-pi/pi-natives";
-import { formatGroupedPaths, isRecord, prompt, withLoopPhase } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/catalog/compat/image-tokenization";
+import { resolveImageCountBudget, resolveInlineImageByteBudget } from "@marsai-org/catalog/compat/request-size";
+import { classifyModel, compareRevision, parseRevision } from "@marsai-org/catalog/identity";
+import { renderSnapcompactPng, snapcompactSupportedChars } from "@marsai-org/natives";
+import { formatGroupedPaths, isRecord, prompt, withLoopPhase } from "@marsai-org/utils";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import fileOperationsTemplate from "./prompts/file-operations.md" with { type: "text" };
 import snapcompactSummaryPrompt from "./prompts/snapcompact-summary.md" with { type: "text" };
 

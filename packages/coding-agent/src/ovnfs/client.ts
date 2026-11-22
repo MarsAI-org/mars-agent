@@ -15,7 +15,7 @@
  * const reply = await callSocket<{ total: number }>(socket, "glob", { dir, pattern: "*.ts" }, signal);
  */
 import * as net from "node:net";
-import { isRecord, untilAborted } from "@oh-my-pi/pi-utils";
+import { isRecord, untilAborted } from "@marsai-org/utils";
 
 /** The ovnfs admin protocol generation this client speaks. */
 export const PROTOCOL_VERSION = 5;

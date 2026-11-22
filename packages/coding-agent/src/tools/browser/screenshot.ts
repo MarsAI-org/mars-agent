@@ -2,10 +2,10 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { inflateSync } from "node:zlib";
 
-import { deliveredImageSize, fitLongEdge, type ImageSize } from "@oh-my-pi/pi-catalog/compat/image-tokenization";
-import { logger, Snowflake, untilAborted } from "@oh-my-pi/pi-utils";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { deliveredImageSize, fitLongEdge, type ImageSize } from "@marsai-org/catalog/compat/image-tokenization";
+import { logger, Snowflake, untilAborted } from "@marsai-org/utils";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { CDPSession, ElementHandle, ElementScreenshotOptions, Page } from "puppeteer-core";
 import {
 	DEFAULT_MIN_DIMENSION,

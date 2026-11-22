@@ -28,10 +28,10 @@ import {
 	readSalvageableRows,
 	sqliteFileIdentity,
 	type SqliteFileIdentity,
-} from "@oh-my-pi/pi-utils";
-import { getHistoryDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { getDbBusyTimeoutMs, isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+} from "@marsai-org/utils";
+import { getHistoryDbPath } from "@marsai-org/utils/dirs";
+import { getDbBusyTimeoutMs, isBunTestRuntime } from "@marsai-org/utils/env";
+import * as logger from "@marsai-org/utils/logger";
 
 const SESSION_INDEX_DDL = `
 CREATE TABLE IF NOT EXISTS session_titles (

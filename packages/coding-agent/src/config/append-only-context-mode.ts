@@ -1,5 +1,5 @@
-import { prefersAppendOnlyContext } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { hostMatchesUrl } from "@oh-my-pi/pi-catalog/hosts";
+import { prefersAppendOnlyContext } from "@marsai-org/catalog/compat/behavior";
+import { hostMatchesUrl } from "@marsai-org/catalog/hosts";
 
 /** Provider metadata needed to resolve append-only context mode. */
 export interface AppendOnlyContextModel {

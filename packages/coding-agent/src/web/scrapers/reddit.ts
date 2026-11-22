@@ -7,8 +7,8 @@
  * 2. A Redlib mirror: live HTML of the same path, scraped.
  * 3. The Arctic Shift archive: Reddit-shaped JSON; scores and the newest comments may lag.
  */
-import { logger, tryParseJson } from "@oh-my-pi/pi-utils";
-import { type Element, parseHTML } from "@oh-my-pi/pi-utils/dom";
+import { logger, tryParseJson } from "@marsai-org/utils";
+import { type Element, parseHTML } from "@marsai-org/utils/dom";
 import { ToolAbortError } from "../../tools/tool-errors";
 import { buildResult, formatIsoDate, htmlToBasicMarkdown, loadPage, type SpecialHandler } from "./types";
 

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { readThinkingCapability } from "@oh-my-pi/pi-catalog/thinking-capability";
-import { isRecord, TempDir, untilAborted } from "@oh-my-pi/pi-utils";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Api, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort, THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { readThinkingCapability } from "@marsai-org/catalog/thinking-capability";
+import { isRecord, TempDir, untilAborted } from "@marsai-org/utils";
 
 const context: Context = { messages: [{ role: "user", content: "the real task", timestamp: 1 }] };
 

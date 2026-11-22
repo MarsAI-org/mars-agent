@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { CONTINUATION_MAX_ATTEMPTS } from "@oh-my-pi/pi-ai/providers/google-shared";
-import type { AssistantMessage, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamGoogle } from "@marsai-org/ai/providers/google";
+import { streamGoogleGeminiCli } from "@marsai-org/ai/providers/google-gemini-cli";
+import { CONTINUATION_MAX_ATTEMPTS } from "@marsai-org/ai/providers/google-shared";
+import type { AssistantMessage, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // Gemini 4 Hydrogen ends each 65,536-token segment of a longer generation with
 // `finishReason: CONTINUATION` and a `continuationToken`; resending the request with the

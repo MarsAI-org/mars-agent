@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { Terminal as VirtualTerminal } from "@oh-my-pi/pi-utils/vterm";
+import { TempDir } from "@marsai-org/utils";
+import { Terminal as VirtualTerminal } from "@marsai-org/utils/vterm";
 
 type Scenario =
 	| "auto"

@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent"><img src="https://img.shields.io/npm/v/@oh-my-pi/pi-coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@marsai-org/coding-agent"><img src="https://img.shields.io/npm/v/@marsai-org/coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
   <a href="https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
   <a href="https://github.com/can1357/oh-my-pi/actions"><img src="https://img.shields.io/github/actions/workflow/status/can1357/oh-my-pi/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
   <a href="https://github.com/can1357/oh-my-pi/blob/main/LICENSE"><img src="https://img.shields.io/github/license/can1357/oh-my-pi?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
@@ -54,7 +54,7 @@ brew install can1357/tap/omp
 **Bun（推荐）**
 
 ```sh
-bun install -g @oh-my-pi/pi-coding-agent
+bun install -g @marsai-org/coding-agent
 ```
 
 **Nix**
@@ -513,12 +513,12 @@ TUI 是默认界面。工具调用渲染为卡片，编辑在写入磁盘前可�
 
 ### SDK——嵌入 Node
 
-`@oh-my-pi/pi-coding-agent`
+`@marsai-org/coding-agent`
 
 Node 和 TypeScript 宿主可以直接引入引擎。该包导出 `ModelRegistry`、`SessionManager`、`createAgentSession` 和 `discoverAuthStorage`；会话会发出带类型的事件供你订阅。
 
 ```ts
-import { ModelRegistry, SessionManager, createAgentSession, discoverAuthStorage } from "@oh-my-pi/pi-coding-agent";
+import { ModelRegistry, SessionManager, createAgentSession, discoverAuthStorage } from "@marsai-org/coding-agent";
 
 const auth = await discoverAuthStorage();
 const models = new ModelRegistry(auth);
@@ -613,7 +613,7 @@ bun setup
 bun dev
 ```
 
-`bun setup` 会安装 Bun 工作区依赖并构建 `@oh-my-pi/pi-natives`。修改 Rust crate 或 `packages/natives` 后，请重新运行 `bun run build:native`。
+`bun setup` 会安装 Bun 工作区依赖并构建 `@marsai-org/natives`。修改 Rust crate 或 `packages/natives` 后，请重新运行 `bun run build:native`。
 
 Nix 用户可以获得固定版本的 Bun 和 Rust 工具链以及所有原生构建依赖：
 
@@ -653,28 +653,28 @@ bun dev -- --version
 
 | 包                                                                            | 说明                                                       |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **[@oh-my-pi/collab-web](packages/collab-web)**                               | 协作实时会话的浏览器访客客户端、模拟宿主和本地中继         |
-| **[@oh-my-pi/pi-ai](packages/ai)**                                            | 支持流式输出和模型/提供商集成的多提供商 LLM 客户端         |
-| **[@oh-my-pi/pi-catalog](packages/catalog)**                                  | 模型目录：内置模型数据库、提供商描述符和模型身份识别       |
-| **[@oh-my-pi/pi-agent-core](packages/agent)**                                 | 支持工具调用和状态管理的智能体运行时                       |
-| **[@oh-my-pi/pi-coding-agent](packages/coding-agent)**                        | 交互式编程智能体 CLI 和 SDK                                |
-| **[@oh-my-pi/pi-tui](packages/tui)**                                          | 支持差分渲染的终端 UI 库                                   |
-| **[@oh-my-pi/pi-natives](packages/natives)**                                  | 用于 grep、shell、图像、文本、语法高亮等功能的 N-API 绑定  |
-| **[@oh-my-pi/omp-stats](packages/stats)**                                     | AI 使用统计的本地可观测性面板                              |
-| **[@oh-my-pi/omptype](packages/omptype)**                                     | 兼容 ArkType、带惰性 JIT 编译的 schema 校验库              |
-| **[@oh-my-pi/pi-utils](packages/utils)**                                      | 共享工具库（日志、流、目录/环境/进程辅助函数）             |
-| **[@oh-my-pi/pi-wire](packages/wire)**                                        | 协作实时会话共享的协议类型和中继常量                       |
-| **[@oh-my-pi/pi-mnemopi](packages/mnemopi)**                                  | 面向 omp 智能体的本地 SQLite 记忆引擎                      |
-| **[@oh-my-pi/snapcompact](packages/snapcompact)**                             | 位图帧上下文压缩包及 SQuAD 评测套件                        |
-| **[@oh-my-pi/browser-relay](packages/browser-relay)**                         | 让 Eval 浏览器 API 驱动你现有标签页的 Chrome 扩展          |
-| **[@oh-my-pi/pi-metaharness](packages/metaharness)**                          | 统一的基准测试运行器、Harbor 运行存储、REST/SSE API、实时面板 |
-| **[@oh-my-pi/typescript-edit-benchmark](packages/typescript-edit-benchmark)** | 基于 TypeScript 源码变异构建的编辑基准测试套件             |
+| **[@marsai-org/collab-web](packages/collab-web)**                               | 协作实时会话的浏览器访客客户端、模拟宿主和本地中继         |
+| **[@marsai-org/ai](packages/ai)**                                            | 支持流式输出和模型/提供商集成的多提供商 LLM 客户端         |
+| **[@marsai-org/catalog](packages/catalog)**                                  | 模型目录：内置模型数据库、提供商描述符和模型身份识别       |
+| **[@marsai-org/agent-core](packages/agent)**                                 | 支持工具调用和状态管理的智能体运行时                       |
+| **[@marsai-org/coding-agent](packages/coding-agent)**                        | 交互式编程智能体 CLI 和 SDK                                |
+| **[@marsai-org/tui](packages/tui)**                                          | 支持差分渲染的终端 UI 库                                   |
+| **[@marsai-org/natives](packages/natives)**                                  | 用于 grep、shell、图像、文本、语法高亮等功能的 N-API 绑定  |
+| **[@marsai-org/stats](packages/stats)**                                     | AI 使用统计的本地可观测性面板                              |
+| **[@marsai-org/omptype](packages/omptype)**                                     | 兼容 ArkType、带惰性 JIT 编译的 schema 校验库              |
+| **[@marsai-org/utils](packages/utils)**                                      | 共享工具库（日志、流、目录/环境/进程辅助函数）             |
+| **[@marsai-org/wire](packages/wire)**                                        | 协作实时会话共享的协议类型和中继常量                       |
+| **[@marsai-org/mnemopi](packages/mnemopi)**                                  | 面向 omp 智能体的本地 SQLite 记忆引擎                      |
+| **[@marsai-org/snapcompact](packages/snapcompact)**                             | 位图帧上下文压缩包及 SQuAD 评测套件                        |
+| **[@marsai-org/browser-relay](packages/browser-relay)**                         | 让 Eval 浏览器 API 驱动你现有标签页的 Chrome 扩展          |
+| **[@marsai-org/metaharness](packages/metaharness)**                          | 统一的基准测试运行器、Harbor 运行存储、REST/SSE API、实时面板 |
+| **[@marsai-org/typescript-edit-benchmark](packages/typescript-edit-benchmark)** | 基于 TypeScript 源码变异构建的编辑基准测试套件             |
 
 ### Rust Crate
 
 | Crate                                      | 说明                                                                                     |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| **[omp-natives](crates/natives)**        | `@oh-my-pi/pi-natives` 使用的核心 Rust 原生插件（N-API `cdylib`）；聚合下列各 crate      |
+| **[omp-natives](crates/natives)**        | `@marsai-org/natives` 使用的核心 Rust 原生插件（N-API `cdylib`）；聚合下列各 crate      |
 | **[omp-shell](crates/shell)**            | 内嵌的 bash 5.3 引擎（解析器、虚拟机、进程创建、会话）、PTY 和进程管理                   |
 | **[omp-ast](crates/ast)**                | 基于 tree-sitter 的代码摘要器和 AST 工具（50+ 种语言语法）                               |
 | **[omp-iso](crates/iso)**                | 任务隔离后端解析器：APFS 克隆、btrfs/zfs reflink、overlayfs、projfs、rcopy               |
@@ -705,6 +705,6 @@ _为常开的终端而生_
 - [Stencil Labs](https://stencil.so)
 - [GitHub](https://github.com/can1357/oh-my-pi)
 - [变更日志](https://github.com/can1357/oh-my-pi/blob/main/packages/coding-agent/CHANGELOG.md)
-- [npm](https://www.npmjs.com/package/@oh-my-pi/pi-coding-agent)
+- [npm](https://www.npmjs.com/package/@marsai-org/coding-agent)
 - [Discord](https://discord.gg/4NMW9cdXZa)
 - [MIT](https://github.com/can1357/oh-my-pi/blob/main/LICENSE)

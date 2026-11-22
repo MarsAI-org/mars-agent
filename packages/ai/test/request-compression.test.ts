@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
+import type { FetchImpl, Model } from "@marsai-org/ai/types";
 import {
 	resetRequestCompressionForTesting,
 	wrapFetchForRequestCompression,
-} from "@oh-my-pi/pi-ai/utils/request-compression";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Api } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/ai/utils/request-compression";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { Api } from "@marsai-org/catalog/types";
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages?beta=true";
 const COPILOT_URL = "https://api.individual.githubcopilot.com/chat/completions";

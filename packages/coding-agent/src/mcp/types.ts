@@ -5,7 +5,7 @@ import type {
 	MCPProgress,
 	MCPResourceContent,
 	MCPTextContent,
-} from "@oh-my-pi/pi-tui/tools/mcp";
+} from "@marsai-org/tui/tools/mcp";
 /**
  * MCP (Model Context Protocol) type definitions.
  *

@@ -1,5 +1,5 @@
 import * as fs from "node:fs";
-import { isEnoent, isRecord, logger, untilAborted } from "@oh-my-pi/pi-utils";
+import { isEnoent, isRecord, logger, untilAborted } from "@marsai-org/utils";
 import type { BunFile } from "bun";
 import { isPermissionDeniedError, writeFileWithFallback } from "../tools/file-write-fallback";
 import {
@@ -24,7 +24,7 @@ import {
 	type ServerVersionMap,
 	unreportedSummary,
 } from "./diagnostics";
-import { type FileDiagnosticsResult, FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
+import { type FileDiagnosticsResult, FileFormatResult } from "@marsai-org/tui/tools/lsp";
 import { notifyFileSaved, splitServers, syncFileContent } from "./servers";
 import { FileChangeType, type LspClient, type ServerConfig } from "./types";
 import { summarizeDiagnosticMessages } from "./utils";

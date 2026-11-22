@@ -24,7 +24,7 @@
  * await auth.credentials.reload();
  * const apiKey = await auth.keys.get("anthropic", sessionId, { modelId });
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { AuthAccountPolicyConfig } from "./auth-broker/discover";
 import { SessionAffinity, type SessionRestrictions } from "./auth/affinity";
 import { BlockStoreHealth, CredentialBlocks } from "./auth/blocks";

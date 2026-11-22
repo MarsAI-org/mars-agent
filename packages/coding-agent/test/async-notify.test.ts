@@ -6,8 +6,8 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockHandler, type MockModel } from "@oh-my-pi/pi-ai/providers/mock";
+import { Agent, type AgentMessage, type AgentTool } from "@marsai-org/agent-core";
+import { createMockModel, type MockHandler, type MockModel } from "@marsai-org/ai/providers/mock";
 import {
 	AsyncJobManager,
 	compileNotifyPattern,
@@ -15,23 +15,23 @@ import {
 	NOTIFY_MAX_LINES,
 	type NotifyBatch,
 	OutputNotifier,
-} from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { TextTap } from "@oh-my-pi/pi-coding-agent/job-widgets/text-tap";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type AsyncNotifyEntry, buildAsyncNotifyBatchMessage } from "@oh-my-pi/pi-coding-agent/session/async-notify";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, type CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import type { AsyncNotifyDetails } from "@oh-my-pi/pi-tui/chat/messages";
-import { buildAsyncNotifyBlock } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/async";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { TextTap } from "@marsai-org/coding-agent/job-widgets/text-tap";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { type AsyncNotifyEntry, buildAsyncNotifyBatchMessage } from "@marsai-org/coding-agent/session/async-notify";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, type CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { WaitTool } from "@marsai-org/coding-agent/tools/wait";
+import type { AsyncNotifyDetails } from "@marsai-org/tui/chat/messages";
+import { buildAsyncNotifyBlock } from "@marsai-org/tui/chat/transcript-render-helpers";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 import { until } from "./helpers/fake-clock";
 
 /** The `async-notify` notices among `messages`, oldest first. */

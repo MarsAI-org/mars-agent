@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { getProjectDir, setProjectDir } from "@marsai-org/utils";
 import { StatusLineComponent } from "../src/status-line/component";
 import type { StatusLineHost, StatusLineSession } from "../src/status-line/host";
 import type { StatusLineSettings } from "../src/status-line/types";

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 
-import { type } from "@oh-my-pi/omptype";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import { type } from "@marsai-org/omptype";
+import type { FetchImpl } from "@marsai-org/ai/types";
 import {
 	type UsageFetchContext,
 	type UsageFetchParams,
@@ -9,8 +9,8 @@ import {
 	type UsageReport,
 	type UsageStatus,
 	usageReportSchema,
-} from "@oh-my-pi/pi-ai/usage";
-import { commandCodeRankingStrategy, commandCodeUsageProvider } from "@oh-my-pi/pi-ai/usage/commandcode";
+} from "@marsai-org/ai/usage";
+import { commandCodeRankingStrategy, commandCodeUsageProvider } from "@marsai-org/ai/usage/commandcode";
 
 function makeCredential(): UsageFetchParams["credential"] {
 	return { type: "api_key", apiKey: "user_test" };

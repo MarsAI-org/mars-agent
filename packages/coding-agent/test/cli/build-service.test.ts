@@ -8,10 +8,10 @@ import {
 	OMP_BUILD,
 	parseBuildAnswer,
 	resolveBuildHost,
-} from "@oh-my-pi/pi-coding-agent/cli/build-service";
-import { TempDir, VERSION } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/cli/build-service";
+import { TempDir, VERSION } from "@marsai-org/utils";
 
-const fileName = "omp-darwin-arm64";
+const fileName = "mars-darwin-arm64";
 const host: BuildHost = { target: "macos-arm64", asset: "darwin-arm64", windows: false };
 const sha = (text: string) => Bun.SHA256.hash(text, "hex");
 
@@ -20,7 +20,7 @@ function answer(overrides: Record<string, unknown> = {}): Record<string, unknown
 	return {
 		build: { id: "20261011-120000-abcdef0", version: "18.8.9", channel: "stable" },
 		file: { name: fileName, platform: "macos", arch: "arm64", kind: "binary", size: 205_765_664, sha256: sha("new") },
-		download: "https://r2.test/omp/18.8.9/omp-darwin-arm64?X-Amz-Signature=x",
+		download: "https://r2.test/omp/18.8.9/mars-darwin-arm64?X-Amz-Signature=x",
 		patch: {
 			format: "file",
 			from: "20261001-120000-1234567",
@@ -40,7 +40,7 @@ describe("build service answers", () => {
 		expect(parsed).toEqual({
 			version: "18.8.9",
 			file: { name: fileName, size: 205_765_664, sha256: sha("new") },
-			download: "https://r2.test/omp/18.8.9/omp-darwin-arm64?X-Amz-Signature=x",
+			download: "https://r2.test/omp/18.8.9/mars-darwin-arm64?X-Amz-Signature=x",
 			patch: {
 				fromSha256: sha("old"),
 				fromVersion: "18.8.8",
@@ -57,7 +57,7 @@ describe("build service answers", () => {
 		expect(() => parse(answer(file({ sha256: sha("new").toUpperCase() })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ sha256: "abc" })))).toThrow("invalid sha256");
 		expect(() => parse(answer(file({ size: 0 })))).toThrow("invalid size");
-		expect(() => parse(answer(file({ name: "omp-darwin-x64" })))).toThrow("omp-darwin-x64 is not omp-darwin-arm64");
+		expect(() => parse(answer(file({ name: "mars-darwin-x64" })))).toThrow("mars-darwin-x64 is not mars-darwin-arm64");
 		expect(() => parse(answer({ download: "http://r2.test/omp" }))).toThrow("no HTTPS download");
 		expect(() => parse(answer({ build: { version: "latest" } }))).toThrow("no valid version");
 	});
@@ -79,10 +79,10 @@ describe("build service targets", () => {
 			const resolved = resolveBuildHost(platform, arch, musl);
 			return { target: resolved.target, fileName: OMP_BUILD.fileName(resolved, "18.8.9") };
 		};
-		expect(resolve("darwin", "arm64", false)).toEqual({ target: "macos-arm64", fileName: "omp-darwin-arm64" });
-		expect(resolve("linux", "x64", true)).toEqual({ target: "linux-musl-x86_64", fileName: "omp-linux-musl-x64" });
-		expect(resolve("linux", "arm64", false)).toEqual({ target: "linux-arm64", fileName: "omp-linux-arm64" });
-		expect(resolve("win32", "x64", false)).toEqual({ target: "windows-x86_64", fileName: "omp-windows-x64.exe" });
+		expect(resolve("darwin", "arm64", false)).toEqual({ target: "macos-arm64", fileName: "mars-darwin-arm64" });
+		expect(resolve("linux", "x64", true)).toEqual({ target: "linux-musl-x86_64", fileName: "mars-linux-musl-x64" });
+		expect(resolve("linux", "arm64", false)).toEqual({ target: "linux-arm64", fileName: "mars-linux-arm64" });
+		expect(resolve("win32", "x64", false)).toEqual({ target: "windows-x86_64", fileName: "mars-windows-x64.exe" });
 	});
 
 	it("does not mistake an installed musl loader for a glibc host", () => {
@@ -172,7 +172,7 @@ describe("fetchBuild", () => {
 });
 
 describe("downloadBuildFile", () => {
-	const url = "https://r2.test/omp-linux-x64";
+	const url = "https://r2.test/mars-linux-x64";
 	const content = "verified binary";
 	const sha256 = Bun.SHA256.hash(content, "hex");
 	let temp: TempDir | undefined;
@@ -184,7 +184,7 @@ describe("downloadBuildFile", () => {
 
 	async function target(): Promise<string> {
 		temp = await TempDir.create("@omp-build-download-");
-		return path.join(temp.path(), "omp-linux-x64");
+		return path.join(temp.path(), "mars-linux-x64");
 	}
 
 	it("writes a download only after its size and digest match", async () => {

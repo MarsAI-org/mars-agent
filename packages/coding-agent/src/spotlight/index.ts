@@ -10,8 +10,8 @@
  * (`spotlight.experiment.scoreFree`) is shaped without Spotlight by the no-score rules (`scoreFree: true`). Every
  * trace sizes the plain result (`plainChars`, `plainTokens`); savings count against it.
  */
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
 import {
 	encodeHeat,
 	keptRanges,
@@ -19,9 +19,9 @@ import {
 	type SpotlightDetails,
 	type SpotlightOriginal,
 	type SpotlightWindow,
-} from "@oh-my-pi/pi-tui/chat/spotlight";
-import { formatOutputNotice, type OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/chat/spotlight";
+import { formatOutputNotice, type OutputMeta } from "@marsai-org/tui/tools/output-meta";
+import { isRecord, logger } from "@marsai-org/utils";
 import type { ToolSession } from "../tools";
 import { buildCallContext, callSummary } from "./context";
 import { RecordingScorer, SCORE_FREE_SCORER } from "./scorer";

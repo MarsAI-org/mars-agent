@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import { findUnpackedInstalls } from "../../src/tools/browser/relay/chromium-profiles";
 
 const ID = "abcdefghijklmnopabcdefghijklmnop";

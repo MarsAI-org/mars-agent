@@ -1,5 +1,5 @@
 import "../../src/thread/subagent-worker-entry";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 
 // A non-local target: only a PI_PROXY-wrapped global fetch sends this to the test's proxy.
 fetch("http://proxied.invalid/probe").then(

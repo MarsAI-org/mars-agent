@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { getActiveClients, shutdownAll } from "@oh-my-pi/pi-coding-agent/lsp/client";
-import { configCache } from "@oh-my-pi/pi-coding-agent/lsp/config";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { getActiveClients, shutdownAll } from "@marsai-org/coding-agent/lsp/client";
+import { configCache } from "@marsai-org/coding-agent/lsp/config";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // Issue #18205: `write`/`edit` started language servers even with `lsp.enabled: false`.
 // The observable contract is that no LSP client is ever created for the project, so the

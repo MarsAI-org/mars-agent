@@ -1,12 +1,12 @@
 # OMP Coding Agent Installer for Windows
-# Usage: irm https://omp.sh/install.ps1 | iex
+# Usage: irm https://mars.sh/install.ps1 | iex
 #
 # Or with options:
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Binary
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source -Ref v18.8.9
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Source -Ref main
-#   & ([scriptblock]::Create((irm https://omp.sh/install.ps1))) -Binary -Ref v18.8.9
+#   & ([scriptblock]::Create((irm https://mars.sh/install.ps1))) -Source
+#   & ([scriptblock]::Create((irm https://mars.sh/install.ps1))) -Binary
+#   & ([scriptblock]::Create((irm https://mars.sh/install.ps1))) -Source -Ref v18.8.9
+#   & ([scriptblock]::Create((irm https://mars.sh/install.ps1))) -Source -Ref main
+#   & ([scriptblock]::Create((irm https://mars.sh/install.ps1))) -Binary -Ref v18.8.9
 #
 # The prebuilt binary is the default, since it updates itself with delta
 # patches; -Source installs the package via bun and is implied by a bare -Ref.
@@ -31,9 +31,9 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
     throw "Windows PowerShell 5.1 or newer is required (found $($PSVersionTable.PSVersion)). Install PowerShell 7 from https://aka.ms/powershell and re-run the installer."
 }
 
-$Repo = "can1357/oh-my-pi"
-$Package = "@oh-my-pi/pi-coding-agent"
-$InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\omp" }
+$Repo = "MarsAI-org/mars-agent"
+$Package = "@marsai-org/coding-agent"
+$InstallDir = if ($env:PI_INSTALL_DIR) { $env:PI_INSTALL_DIR } else { "$env:LOCALAPPDATA\mars" }
 $BuildUrl = if ($env:PI_BUILD_URL) { $env:PI_BUILD_URL.TrimEnd("/") } else { "https://build.stencil.so" }
 # Windows PowerShell 5.1 (.NET Framework) does not reliably resolve
 # [System.Runtime.InteropServices.RuntimeInformation] without an
@@ -281,11 +281,11 @@ function Install-ViaBun {
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp via bun" -ForegroundColor Green
+    Write-Host "[OK] Installed mars via bun" -ForegroundColor Green
 
     Configure-BashShell
 
-    Write-Host "Run 'omp' to get started!"
+    Write-Host "Run 'mars' to get started!"
 }
 
 function Install-Binary {
@@ -294,16 +294,16 @@ function Install-Binary {
             throw "Binary installs take a release tag (v<version>) for -Ref, got: $Ref`nFor branch/commit installs, use -Source with -Ref."
         }
         $RequestedVersion = $Matches[1]
-        Write-Host "Fetching omp $RequestedVersion..."
-        $ApiUrl = "$BuildUrl/api/products/omp/versions/$RequestedVersion/$BuildTarget"
+        Write-Host "Fetching mars $RequestedVersion..."
+        $ApiUrl = "$BuildUrl/api/products/mars/versions/$RequestedVersion/$BuildTarget"
     } else {
         Write-Host "Fetching latest release..."
-        $ApiUrl = "$BuildUrl/api/products/omp/latest/${BuildTarget}?channel=stable"
+        $ApiUrl = "$BuildUrl/api/products/mars/latest/${BuildTarget}?channel=stable"
     }
     try {
         $Answer = Invoke-RestMethod -Uri $ApiUrl -TimeoutSec 60
     } catch {
-        throw "Failed to resolve an omp build for $BuildTarget from ${ApiUrl}: $_"
+        throw "Failed to resolve an mars build for $BuildTarget from ${ApiUrl}: $_"
     }
 
     $Version = $Answer.build.version
@@ -334,7 +334,7 @@ function Install-Binary {
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed omp to $OutPath" -ForegroundColor Green
+    Write-Host "[OK] Installed mars to $OutPath" -ForegroundColor Green
 
     # Add to PATH if not already there
     $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
@@ -346,17 +346,17 @@ function Install-Binary {
 
     Configure-BashShell
 
-    # An omp earlier on PATH (a previous `bun install -g`, Scoop, ...) keeps
+    # An mars earlier on PATH (a previous `bun install -g`, Scoop, ...) keeps
     # winning over this install: $InstallDir is appended to PATH, not prepended.
-    $Active = Get-Command omp -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    $Active = Get-Command mars -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
     if ($Active -and $Active.Source -ne [System.IO.Path]::GetFullPath($OutPath)) {
-        Write-Host "[WARN] 'omp' still resolves to $($Active.Source); remove that install or move $InstallDir ahead of it on PATH." -ForegroundColor Yellow
+        Write-Host "[WARN] 'mars' still resolves to $($Active.Source); remove that install or move $InstallDir ahead of it on PATH." -ForegroundColor Yellow
     }
 
     if ($needsRestart) {
-        Write-Host "Restart your terminal, then run 'omp' to get started!"
+        Write-Host "Restart your terminal, then run 'mars' to get started!"
     } else {
-        Write-Host "Run 'omp' to get started!"
+        Write-Host "Run 'mars' to get started!"
     }
 }
 

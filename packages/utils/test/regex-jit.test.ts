@@ -8,8 +8,8 @@ import {
 	runKernel,
 	type ScanMode,
 	stoppedState,
-} from "@oh-my-pi/pi-utils/regex/jit";
-import { LinearRegExp } from "@oh-my-pi/pi-utils/regex";
+} from "@marsai-org/utils/regex/jit";
+import { LinearRegExp } from "@marsai-org/utils/regex";
 
 test("paired-state skips recover the state before an exceptional ASCII unit", () => {
 	const ranges = [

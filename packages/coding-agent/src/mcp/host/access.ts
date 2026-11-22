@@ -3,7 +3,7 @@
  * is on and a daemon with that module answers, else the host inside this
  * process.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { canonicalProjectDir, daemonClient } from "../../daemon/client";
 import { type DaemonClient, GLOBAL_SCOPE, projectScope } from "../../daemon/protocol";
 import { createMCPJsonRpcError } from "../errors";

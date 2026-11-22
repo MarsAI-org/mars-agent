@@ -7,10 +7,10 @@ const repoRoot = path.resolve(import.meta.dir, "../../../..");
 function probe(code: string): string {
 	return `
 import { spyOn } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { acquireTab, releaseTab, runInTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { CmuxSocketClient } from "@marsai-org/coding-agent/tools/browser/cmux/socket-client";
+import { acquireBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
+import { acquireTab, releaseTab, runInTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 
 const cwd = process.cwd();
 spyOn(CmuxSocketClient.prototype, "connect").mockResolvedValue(undefined);

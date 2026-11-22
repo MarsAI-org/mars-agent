@@ -18,10 +18,10 @@
  * on main. Main pushes the resulting changes before it answers the call, so the
  * mirror has applied them when the call resolves.
  */
-import type { Api, AssistantMessageEvent, Context, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import type { ModelRefreshStrategy } from "@oh-my-pi/pi-catalog/model-manager";
-import { type FetchImpl, logger } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessageEvent, Context, Model, SimpleStreamOptions } from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import type { ModelRefreshStrategy } from "@marsai-org/catalog/model-manager";
+import { type FetchImpl, logger } from "@marsai-org/utils";
 import type {
 	ModelRegistry,
 	ModelRegistryMirrorBatch,

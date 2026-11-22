@@ -5,7 +5,7 @@
  * conversation ({@link ToolSession.state}); every {@link EditSession} the edit
  * tool opens shares it.
  */
-import { EditStore } from "@oh-my-pi/pi-natives";
+import { EditStore } from "@marsai-org/natives";
 import type { ToolSession } from "../tools";
 import { getToolConversationState } from "../tools/tool-state";
 

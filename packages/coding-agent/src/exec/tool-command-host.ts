@@ -1,6 +1,6 @@
-import type { AgentToolContext, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { toolWireSchema } from "@oh-my-pi/pi-ai";
-import type { ShellCommandRequest, ShellCommandResult } from "@oh-my-pi/pi-natives";
+import type { AgentToolContext, AgentToolResult } from "@marsai-org/agent-core";
+import { toolWireSchema } from "@marsai-org/ai";
+import type { ShellCommandRequest, ShellCommandResult } from "@marsai-org/natives";
 import type { Tool, ToolSession } from "../tools";
 import { specialToolCommands } from "../tools/resolve";
 import {

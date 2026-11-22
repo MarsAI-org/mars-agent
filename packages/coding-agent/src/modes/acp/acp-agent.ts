@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { AgentBusyError, type AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import { getAgentDir, getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@oh-my-pi/pi-utils";
+import { AgentBusyError, type AgentToolResult } from "@marsai-org/agent-core";
+import type { AssistantMessage, Model } from "@marsai-org/ai";
+import { getAgentDir, getBlobsDir, isEnoent, logger, type postmortem, VERSION } from "@marsai-org/utils";
 import {
 	type Agent,
 	type AgentSideConnection,
@@ -43,7 +43,7 @@ import {
 	type SetSessionModeRequest,
 	type SetSessionModeResponse,
 	type Usage,
-} from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/utils/acp";
 import { disableProvider, enableProvider } from "../../capability";
 import { Settings } from "../../config/settings";
 import { clearPluginRootsAndCaches, resolveActiveProjectRegistryPath } from "../../discovery/helpers";
@@ -63,9 +63,9 @@ import type { MCPServerConfig } from "../../mcp/types";
 import { loadAllExtensions } from "../../modes/components/extensions/state-manager";
 import { AgentRegistry } from "../../registry/agent-registry";
 import { registerPersistedSubagents } from "../../registry/persisted-agents";
-import type { AgentCostSnapshot } from "@oh-my-pi/pi-tui/overlays/agent-hub-projection";
-import { SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentCostSnapshot } from "@marsai-org/tui/overlays/agent-hub-projection";
+import { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
+import { theme } from "@marsai-org/tui/theme";
 import { normalizePlanTitle, type PlanApprovalDetails, resolveApprovedPlan } from "../../plan-mode/approved-plan";
 import { autosaveApprovedPlan } from "../../plan-mode/plan-autosave";
 import type { AgentSession, AgentSessionEvent } from "../../session/agent-session";
@@ -79,7 +79,7 @@ import { buildAvailableSlashCommands, toAcpAvailableCommands } from "../../slash
 import { DEFAULT_STT_MODEL_KEY, STT_MODELS } from "../../stt/models";
 import { refreshAgentDiscovery } from "../../task";
 import { sumSubagentTreeCost } from "../agent-hub-runtime";
-import { AUTO_THINKING, parseConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+import { AUTO_THINKING, parseConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import {
 	choiceValue,
 	defaultFormData,
@@ -90,10 +90,10 @@ import {
 	isArrayChoice,
 	OTHER_LABEL,
 	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
-import { type ChoiceField, type HtmlForm, parseHtmlForm, spansText } from "@oh-my-pi/pi-tui/html-form/parse";
+} from "@marsai-org/tui/html-form/data";
+import { type ChoiceField, type HtmlForm, parseHtmlForm, spansText } from "@marsai-org/tui/html-form/parse";
 import { resolvePlanFilePath } from "../../plan-mode/plan-files";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import {
 	DEFAULT_TTS_SPEED,
 	DEFAULT_TTS_VOICE,
@@ -103,7 +103,7 @@ import {
 	TTS_SPEED_MIN,
 	TTS_SPEED_OPTIONS,
 } from "../../tts/models";
-import { canonicalizeMessage } from "@oh-my-pi/pi-tui/chat/thinking-display";
+import { canonicalizeMessage } from "@marsai-org/tui/chat/thinking-display";
 import { createAcpClientBridge } from "./acp-client-bridge";
 import {
 	extractAssistantMessageText,

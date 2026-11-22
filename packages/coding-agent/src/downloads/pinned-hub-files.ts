@@ -8,7 +8,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent, logger, withFileLock } from "@oh-my-pi/pi-utils";
+import { isEnoent, logger, withFileLock } from "@marsai-org/utils";
 import { sha256File } from "../utils/file-hash";
 import { downloadFile } from "../utils/tools-manager";
 

@@ -1,11 +1,11 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { factRecall, formatContext, recall, recallEnhanced } from "@oh-my-pi/pi-mnemopi/core/beam/recall";
-import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { initBeam } from "@oh-my-pi/pi-mnemopi/core/beam/schema";
-import { invalidate } from "@oh-my-pi/pi-mnemopi/core/beam/store";
-import type { BeamMemoryState } from "@oh-my-pi/pi-mnemopi/core/beam/types";
-import { currentLoopPhase } from "@oh-my-pi/pi-utils";
+import { factRecall, formatContext, recall, recallEnhanced } from "@marsai-org/mnemopi/core/beam/recall";
+import { currentEmbeddingModel } from "@marsai-org/mnemopi/core/embeddings";
+import { initBeam } from "@marsai-org/mnemopi/core/beam/schema";
+import { invalidate } from "@marsai-org/mnemopi/core/beam/store";
+import type { BeamMemoryState } from "@marsai-org/mnemopi/core/beam/types";
+import { currentLoopPhase } from "@marsai-org/utils";
 
 type TestBeam = BeamMemoryState & { close(): void };
 

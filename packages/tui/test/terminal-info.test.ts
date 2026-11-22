@@ -3,9 +3,9 @@ import {
 	collectTerminalState,
 	formatTerminalState,
 	type TerminalStateInfo,
-} from "@oh-my-pi/pi-tui/apps/debug/terminal-info";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
+} from "@marsai-org/tui/apps/debug/terminal-info";
+import { TERMINAL } from "@marsai-org/tui";
+import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@marsai-org/tui/terminal-multiplexer";
 
 const sample: TerminalStateInfo = {
 	detectedId: "kitty",

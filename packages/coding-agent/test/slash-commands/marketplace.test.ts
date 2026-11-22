@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const CATALOG_ERROR = "Marketplace catalog not found at /gone/marketplace.json. Try: /marketplace update mymkt";
 

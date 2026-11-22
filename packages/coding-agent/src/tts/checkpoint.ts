@@ -6,7 +6,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getTinyModelsCacheDir, logger } from "@oh-my-pi/pi-utils";
+import { getTinyModelsCacheDir, logger } from "@marsai-org/utils";
 import { installPinnedHubFiles, type PinnedHubFileProgress } from "../downloads/pinned-hub-files";
 import type { TtsLocalModelSpec } from "./models";
 

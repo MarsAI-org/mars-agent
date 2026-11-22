@@ -6,7 +6,7 @@ import { chatTranscriptDisplayPreferences } from "./display-preferences";
 import { formatBadge, replaceTabs, type ToolUIColor, wrapTextWithAnsi } from "../render/render-utils";
 import { Ellipsis, truncateToWidth } from "../render";
 import type { Theme } from "../theme";
-import type { TspSpan, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspTone } from "@marsai-org/wire";
 import { card, node, span, text } from "../native/describe";
 import { type NativeNode, type NativeUiEvent, rootToggleExpanded } from "../native/node";
 import { plainText } from "../native/spans";

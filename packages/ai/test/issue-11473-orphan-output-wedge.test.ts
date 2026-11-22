@@ -1,12 +1,12 @@
 import { expect, it } from "bun:test";
-import type { ResponseInput } from "@oh-my-pi/pi-ai/providers/openai-responses-wire";
+import type { ResponseInput } from "@marsai-org/ai/providers/openai-responses-wire";
 import {
 	buildResponsesInput,
 	hoistInterleavedResponsesToolBatchMessages,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/providers/openai-shared";
+import type { AssistantMessage, Context, ToolResultMessage } from "@marsai-org/ai/types";
+import { createOpenAIResponsesHistoryPayload } from "@marsai-org/ai/utils";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // DeepSeek via openai-responses (#11473): its validator pairs tool calls by
 // turn, so an assistant `message` wedged between a `function_call` and its

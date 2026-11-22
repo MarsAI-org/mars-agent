@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import type { InteractiveModeContext, ShowStatusOptions } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { SelectorController } from "@marsai-org/coding-agent/modes/controllers/selector-controller";
+import type { InteractiveModeContext, ShowStatusOptions } from "@marsai-org/coding-agent/modes/types";
+import type { SessionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { initTheme } from "@marsai-org/tui/theme";
 
 beforeAll(() => {
 	initTheme();

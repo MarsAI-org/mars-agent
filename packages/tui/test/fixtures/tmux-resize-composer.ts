@@ -1,9 +1,9 @@
 // Real ProcessTerminal + Composer retirement for the tmux height regression.
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { COMPOSER_DEFAULTS, Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { CURSOR_MARKER } from "@oh-my-pi/pi-tui/tui";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { COMPOSER_DEFAULTS, Composer } from "@marsai-org/tui/prompt/composer";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { CURSOR_MARKER } from "@marsai-org/tui/tui";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 class RecordingTerminal extends ProcessTerminal {
 	resets = 0;

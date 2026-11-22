@@ -1,21 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	buildTransformedCodexRequestBody,
 	convertCodexResponsesMessages,
-} from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { type OpenAIResponsesOptions, streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { openAIResponsesReplaysNativeHistory } from "@oh-my-pi/pi-ai/providers/openai-responses-state";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { AssistantMessage, Context, Model, ModelSpec, ProviderSessionState, Tool } from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/providers/openai-codex-responses";
+import { type OpenAIResponsesOptions, streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import { openAIResponsesReplaysNativeHistory } from "@marsai-org/ai/providers/openai-responses-state";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import type { AssistantMessage, Context, Model, ModelSpec, ProviderSessionState, Tool } from "@marsai-org/ai/types";
 import {
 	createOpenAIResponsesHistoryPayload,
 	sanitizeOpenAIResponsesHistoryItemsForReplay,
-} from "@oh-my-pi/pi-ai/utils";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { type GeneratedProvider, getBundledModel } from "@marsai-org/catalog/models";
+import { Effort } from "@marsai-org/catalog/effort";
+import * as piUtils from "@marsai-org/utils";
 import { createCodexModel } from "./helpers";
 
 const TEST_INSTALLATION_ID = "00000000-0000-4000-8000-000000000001";

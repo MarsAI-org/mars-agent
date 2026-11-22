@@ -5,13 +5,13 @@
  * breaks or the user aborts after the handoff.
  */
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { agentLoop } from "@oh-my-pi/pi-agent-core/agent-loop";
-import type { AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import type { FetchImpl, Message, Model } from "@oh-my-pi/pi-ai";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { type } from "@marsai-org/omptype";
+import { agentLoop } from "@marsai-org/agent-core/agent-loop";
+import type { AgentMessage, AgentTool } from "@marsai-org/agent-core/types";
+import type { FetchImpl, Message, Model } from "@marsai-org/ai";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
 import { createUserMessage } from "./helpers";
 
 const fable: Model<"anthropic-messages"> = buildModel({

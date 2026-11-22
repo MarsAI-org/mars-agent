@@ -1,5 +1,5 @@
 /** The 44px header: mark, session switcher, New chat and the More menu. */
-import { OmpMark } from "@oh-my-pi/collab-web/src/components/shell/OmpMark";
+import { OmpMark } from "@marsai-org/collab-web/src/components/shell/OmpMark";
 import { Check, ChevronDown, Ellipsis, FolderPlus, Plus } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import type { PanelCollabHost, RpcSessionInfo } from "../messages";

@@ -2,17 +2,17 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Api, AssistantMessage, completeSimple, Model } from "@oh-my-pi/pi-ai";
-import type { ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import type { Api, AssistantMessage, completeSimple, Model } from "@marsai-org/ai";
+import type { ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	type DescribeAttachedImagesDeps,
 	describeAttachedImagesForTextModel,
-} from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
-import { CostGate } from "@oh-my-pi/pi-coding-agent/session/cost-gate";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/utils/image-vision-fallback";
+import { CostGate } from "@marsai-org/coding-agent/session/cost-gate";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // 1x1 transparent PNG.
 const TINY_PNG_BASE64 =

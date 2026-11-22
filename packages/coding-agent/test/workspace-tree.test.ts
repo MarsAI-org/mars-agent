@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { buildDirectoryTree, buildWorkspaceTree } from "@oh-my-pi/pi-coding-agent/workspace-tree";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import * as natives from "@marsai-org/natives";
+import { buildDirectoryTree, buildWorkspaceTree } from "@marsai-org/coding-agent/workspace-tree";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempDirs: string[] = [];
 

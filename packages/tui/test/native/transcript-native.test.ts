@@ -1,42 +1,42 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createCompactionSummaryMessage, createCustomMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { createAdvisorMessageCard } from "@oh-my-pi/pi-tui/chat/advisor-message";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import { CompactionSummaryMessageComponent } from "@oh-my-pi/pi-tui/chat/compaction-summary-message";
-import { CustomMessageComponent } from "@oh-my-pi/pi-tui/chat/custom-message";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import { LateDiagnosticsMessageComponent } from "@oh-my-pi/pi-tui/chat/late-diagnostics-message";
-import { SkillMessageComponent } from "@oh-my-pi/pi-tui/chat/skill-message";
-import { StrippedToolCallsPlaceholder } from "@oh-my-pi/pi-tui/chat/stripped-tool-calls-placeholder";
-import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { setInternalUrlSchemeHost } from "@oh-my-pi/pi-tui/tools/url-scheme-host";
-import type { TranscriptEntryLike } from "@oh-my-pi/pi-tui/chat/transcript-entry";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { createCompactionSummaryMessage, createCustomMessage } from "@marsai-org/agent-core/compaction/messages";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { createAdvisorMessageCard } from "@marsai-org/tui/chat/advisor-message";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { BashExecutionComponent } from "@marsai-org/tui/chat/bash-execution";
+import { ChatTranscriptBuilder } from "@marsai-org/tui/chat/chat-transcript-builder";
+import { CompactionSummaryMessageComponent } from "@marsai-org/tui/chat/compaction-summary-message";
+import { CustomMessageComponent } from "@marsai-org/tui/chat/custom-message";
+import { EvalExecutionComponent } from "@marsai-org/tui/chat/eval-execution";
+import { LateDiagnosticsMessageComponent } from "@marsai-org/tui/chat/late-diagnostics-message";
+import { SkillMessageComponent } from "@marsai-org/tui/chat/skill-message";
+import { StrippedToolCallsPlaceholder } from "@marsai-org/tui/chat/stripped-tool-calls-placeholder";
+import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { setInternalUrlSchemeHost } from "@marsai-org/tui/tools/url-scheme-host";
+import type { TranscriptEntryLike } from "@marsai-org/tui/chat/transcript-entry";
 import {
 	buildAsyncNotifyBlock,
 	buildAsyncResultBlock,
 	buildFileMentionBlock,
-} from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { TodoReminderComponent } from "@oh-my-pi/pi-tui/chat/todo-reminder";
-import { TtsrNotificationComponent } from "@oh-my-pi/pi-tui/chat/ttsr-notification";
-import { CollapsedSyntheticMessageComponent, UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { card, node, text } from "@oh-my-pi/pi-tui/native/describe";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
+} from "@marsai-org/tui/chat/transcript-render-helpers";
+import { TodoReminderComponent } from "@marsai-org/tui/chat/todo-reminder";
+import { TtsrNotificationComponent } from "@marsai-org/tui/chat/ttsr-notification";
+import { CollapsedSyntheticMessageComponent, UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { card, node, text } from "@marsai-org/tui/native/describe";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
 import {
 	messageBlock,
 	onTranscriptPresentationRedrawn,
 	PresentedBlock,
 	presentNative,
 	setTranscriptPresenters,
-} from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { TspNode, TspOp } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/chat/transcript-presentation";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import type { TspNode, TspOp } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Container } from "@oh-my-pi/pi-tui/tui";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { Container } from "@marsai-org/tui/tui";
 
 beforeAll(async () => {
 	await initTheme(false);

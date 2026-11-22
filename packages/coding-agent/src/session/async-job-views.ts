@@ -7,8 +7,8 @@
 import type { AsyncJob, AsyncJobManagerApi } from "../async";
 import type { JobWidgetRegistry } from "../job-widgets/types";
 import { AgentRegistry } from "../registry/agent-registry";
-import { nativeShellStreams } from "@oh-my-pi/pi-tui/tools/shell-steps";
-import type { JobWidgetEntry } from "@oh-my-pi/pi-tui/tools/job-widget";
+import { nativeShellStreams } from "@marsai-org/tui/tools/shell-steps";
+import type { JobWidgetEntry } from "@marsai-org/tui/tools/job-widget";
 import type { AsyncJobInspection, AsyncJobSnapshot, AsyncJobSnapshotItem, AsyncJobTree } from "./agent-session-types";
 
 /** The public summary of `job` (see {@link AsyncJobSnapshotItem}); its caption shows only while widgets are on. */

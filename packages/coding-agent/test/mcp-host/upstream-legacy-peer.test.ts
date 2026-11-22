@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { McpPeer } from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
-import { mcpUpstreams } from "@oh-my-pi/pi-coding-agent/mcp/host/peers";
-import { MCP_LEGACY_TTL_MS } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { MCP_PROTOCOL_VERSION, MCPMeta, requestMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { McpPeer } from "@marsai-org/coding-agent/mcp/host/peer";
+import { mcpUpstreams } from "@marsai-org/coding-agent/mcp/host/peers";
+import { MCP_LEGACY_TTL_MS } from "@marsai-org/coding-agent/mcp/host/store";
+import { MCP_PROTOCOL_VERSION, MCPMeta, requestMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { SERVER_INSTRUCTIONS, TOOL_NAME, TOOL_RESULT } from "../fixtures/instructions-mcp";
 import { CUSTOM_NOTIFICATION_METHOD, CUSTOM_NOTIFICATION_PAYLOAD } from "../fixtures/notifications-mcp";
 import { FIXTURES, ROOTS, realDeps, stdioSpec, toolJson } from "./upstream-support";

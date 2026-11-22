@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentRegistry, MAIN_AGENT_ID } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { getAgentTombstonePath } from "@oh-my-pi/pi-coding-agent/registry/agent-tombstone";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import { restoreSession } from "@oh-my-pi/pi-coding-agent/task/restore";
-import type { SingleResult } from "@oh-my-pi/pi-tui/tools/task";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage, Message } from "@marsai-org/ai";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentRegistry, MAIN_AGENT_ID } from "@marsai-org/coding-agent/registry/agent-registry";
+import { getAgentTombstonePath } from "@marsai-org/coding-agent/registry/agent-tombstone";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import { restoreSession } from "@marsai-org/coding-agent/task/restore";
+import type { SingleResult } from "@marsai-org/tui/tools/task";
+import { TempDir } from "@marsai-org/utils";
 
 const zeroUsage = {
 	input: 0,

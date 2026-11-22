@@ -1,21 +1,21 @@
-import { type Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model, ProviderSessionState, ServiceTier, ServiceTierByFamily, ServiceTierFamily } from "@oh-my-pi/pi-ai";
+import { type Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model, ProviderSessionState, ServiceTier, ServiceTierByFamily, ServiceTierFamily } from "@marsai-org/ai";
 import {
 	Effort,
 	realizesPriorityServiceTier,
 	resolveModelServiceTier,
 	serviceTierFamily,
 	shouldSendServiceTier,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	clearAnthropicFastModeFallback,
 	isAnthropicFastModeFallbackDisabled,
-} from "@oh-my-pi/pi-ai/providers/anthropic-state";
-import { isFireworksFastModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/providers/anthropic-state";
+import { isFireworksFastModelId } from "@marsai-org/catalog/fireworks-model-id";
+import { THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { logger } from "@marsai-org/utils";
 import { classifyDifficulty } from "../auto-thinking/classifier";
 import type { ModelRegistry } from "../config/model-registry";
 import {
@@ -27,7 +27,7 @@ import {
 } from "../config/model-resolver";
 import { buildServiceTierByFamily } from "../config/service-tier";
 import type { Settings } from "../config/settings";
-import { containsMagicKeyword } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
+import { containsMagicKeyword } from "@marsai-org/tui/prompt/magic-keywords";
 import type { MagicKeywordId } from "../modes/magic-keywords";
 import {
 	AUTO_THINKING,
@@ -39,7 +39,7 @@ import {
 	resolveThinkingLevelForModel,
 	shouldDisableReasoning,
 	toReasoningEffort,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import type { EditModeSetting } from "../edit/settings";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ModelCycleResult, ResolvedRoleModel, RoleModelCycle, RoleModelCycleResult } from "./agent-session-types";

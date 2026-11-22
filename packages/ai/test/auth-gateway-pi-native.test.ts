@@ -2,21 +2,21 @@ import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { noStoreErrorResponse } from "@oh-my-pi/pi-ai/auth-gateway/http";
-import { encodeStream, parseRequest } from "@oh-my-pi/pi-ai/providers/pi-native-server";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { noStoreErrorResponse } from "@marsai-org/ai/auth-gateway/http";
+import { encodeStream, parseRequest } from "@marsai-org/ai/providers/pi-native-server";
 import type {
 	AssistantMessage,
 	AssistantMessageEvent,
 	AssistantMessageEventStream,
 	Context,
 	Usage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 function makeEventStream(events: AssistantMessageEvent[], final: AssistantMessage): AssistantMessageEventStream {
 	async function* iter() {

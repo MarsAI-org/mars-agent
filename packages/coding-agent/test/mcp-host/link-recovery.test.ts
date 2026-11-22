@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { encodeHostError, type McpRemoteSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { HostLink, type HostLinkReattach } from "@oh-my-pi/pi-coding-agent/mcp/link";
+import { encodeHostError, type McpRemoteSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import { HostLink, type HostLinkReattach } from "@marsai-org/coding-agent/mcp/link";
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, REMOTE_SPEC, settled, unauthorized } from "./link-fake-host";
 

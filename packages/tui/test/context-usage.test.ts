@@ -6,17 +6,17 @@
  * internals, which massively overcounts.
  */
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import { normalizeTools } from "@oh-my-pi/pi-agent-core/agent-loop";
+import { type } from "@marsai-org/omptype";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { Model, ModelSpec } from "@marsai-org/catalog/types";
+import { Tokenizer } from "@marsai-org/agent-core";
+import { normalizeTools } from "@marsai-org/agent-core/agent-loop";
 import {
 	compactionContextTokens,
 	DEFAULT_COMPACTION_SETTINGS,
 	shouldCompact,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { arkToWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
+} from "@marsai-org/agent-core/compaction";
+import { arkToWireSchema } from "@marsai-org/ai/utils/schema";
 import {
 	type NonMessageTokenSource,
 	computeNonMessageBreakdown,

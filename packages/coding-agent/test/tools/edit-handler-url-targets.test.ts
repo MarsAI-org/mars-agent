@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
 import {
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AstEditTool } from "@oh-my-pi/pi-coding-agent/tools/ast-edit";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { AstEditTool } from "@marsai-org/coding-agent/tools/ast-edit";
+import { removeWithRetries } from "@marsai-org/utils";
 
 let tmpDir: string;
 let artifactsDir: string;

@@ -4,8 +4,8 @@ import {
 	describeAutoUpdate,
 	RETRY_AFTER_MS,
 	shouldStartWorker,
-} from "@oh-my-pi/pi-coding-agent/cli/auto-update";
-import { VERSION } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/cli/auto-update";
+import { VERSION } from "@marsai-org/utils";
 
 /** A version newer than the running build. */
 const NEWER = "999.0.0";

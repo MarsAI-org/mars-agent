@@ -1,13 +1,13 @@
-import type { Terminal } from "@oh-my-pi/pi-tui";
-import type { Composer, ComposerPreferences, ComposerWelcomeUpdate } from "@oh-my-pi/pi-tui/prompt/composer";
-import type * as ComposerRuntime from "@oh-my-pi/pi-tui/prompt/composer";
+import type { Terminal } from "@marsai-org/tui";
+import type { Composer, ComposerPreferences, ComposerWelcomeUpdate } from "@marsai-org/tui/prompt/composer";
+import type * as ComposerRuntime from "@marsai-org/tui/prompt/composer";
 import {
 	type ComposerCache,
 	type ComposerThemePreferences,
 	sharedComposerCache,
-} from "@oh-my-pi/pi-tui/prompt/composer-cache";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
-import { initThemeSync } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/prompt/composer-cache";
+import { setMagicKeywords } from "@marsai-org/tui/prompt/magic-keywords";
+import { initThemeSync } from "@marsai-org/tui/theme";
 import { MAGIC_KEYWORDS } from "./magic-keywords";
 
 /** Inputs available at the CLI prepaint boundary before command modules load. */
@@ -65,7 +65,7 @@ export class ComposerLease {
 export function beginStartupComposer(options: PrepaintComposerOptions = {}): void {
 	if (pendingComposer) throw new Error("A prepaint composer is already active");
 	// Headless launches share the lease helpers, but never need the editor graph.
-	const { Composer, COMPOSER_DEFAULTS }: typeof ComposerRuntime = require("@oh-my-pi/pi-tui/prompt/composer.js");
+	const { Composer, COMPOSER_DEFAULTS }: typeof ComposerRuntime = require("@marsai-org/tui/prompt/composer.js");
 	const cwd = options.cwd ?? process.cwd();
 	const cache = options.cache === false ? undefined : sharedComposerCache();
 	const cached = cache ? cache.read(cwd) : { preferences: undefined, theme: undefined, status: undefined };

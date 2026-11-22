@@ -7,14 +7,14 @@ import {
 	resolveTelemetry,
 	type StreamFn,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import {
 	CompactionCancelledError,
 	generateHandoffFromContext,
 	renderHandoffPrompt,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Message, Model, ServiceTier, SimpleStreamOptions } from "@oh-my-pi/pi-ai";
-import { logger, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Message, Model, ServiceTier, SimpleStreamOptions } from "@marsai-org/ai";
+import { logger, Snowflake } from "@marsai-org/utils";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { obfuscateProviderContext } from "../secrets/message-transform";

@@ -17,10 +17,10 @@ import {
 	REMOTE_REFRESH_SENTINEL,
 	resolveCredentialIdentityKey,
 	SqliteAuthCredentialStore,
-} from "@oh-my-pi/pi-ai";
-import { getAgentDbPath, isEnoent, isRecord } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, CliUsageError, Command } from "@oh-my-pi/pi-utils/cli";
+} from "@marsai-org/ai";
+import { getAgentDbPath, isEnoent, isRecord } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { Args, CliUsageError, Command } from "@marsai-org/utils/cli";
 import { authHelp as commandHelp } from "../cli/command-help";
 import { resolveAuthBrokerConfig } from "../session/auth-broker-config";
 

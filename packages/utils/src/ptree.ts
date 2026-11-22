@@ -8,7 +8,7 @@
  */
 
 import * as os from "node:os";
-import { Process, type ProcessTerminateOptions } from "@oh-my-pi/pi-natives";
+import { Process, type ProcessTerminateOptions } from "@marsai-org/natives";
 import type { Spawn, Subprocess } from "bun";
 
 type InMask = "pipe" | "ignore" | Buffer | Uint8Array | null;

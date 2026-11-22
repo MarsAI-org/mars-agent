@@ -1,5 +1,5 @@
 import { parentPort } from "node:worker_threads";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 
 // Logged while the worker's entry module graph evaluates, before main's init arrives.
 logger.info("early-log: during evaluation", { phase: "evaluation" });

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	type BranchSummaryEntry,
 	type CustomMessageEntry,
@@ -8,8 +8,8 @@ import {
 	findCutPoint,
 	prepareCompaction,
 	type SessionMessageEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core/tokenizer";
+} from "@marsai-org/agent-core/compaction";
+import { Tokenizer } from "@marsai-org/agent-core/tokenizer";
 import { createAssistantMessage, createUserMessage } from "./helpers";
 
 const tokenizer = new Tokenizer();

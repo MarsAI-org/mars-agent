@@ -5,8 +5,8 @@ import {
 	parseTspMessage,
 	splitTspMessage,
 	TspReader,
-} from "@oh-my-pi/pi-tui/native/encode";
-import type { TspEvent } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/native/encode";
+import type { TspEvent } from "@marsai-org/wire";
 
 const encoder = new TextEncoder();
 

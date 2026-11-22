@@ -13,12 +13,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { antigravityUsageProvider } from "@oh-my-pi/pi-ai/usage/google-antigravity";
+import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import * as oauthUtils from "@marsai-org/ai/registry/oauth";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import type { OAuthCredentials } from "@marsai-org/ai/registry/oauth/types";
+import type { UsageLimit, UsageProvider, UsageReport } from "@marsai-org/ai/usage";
+import { antigravityUsageProvider } from "@marsai-org/ai/usage/google-antigravity";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const HOUR_MS = 60 * 60 * 1000;

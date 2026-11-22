@@ -2,17 +2,17 @@
  * Shared types and utilities for web-fetch handlers
  */
 import { scheduler } from "node:timers/promises";
-import { ptree } from "@oh-my-pi/pi-utils";
-import { readBoundedBody } from "@oh-my-pi/pi-utils/bounded-json";
-import { decodeEntities } from "@oh-my-pi/pi-utils/dom/parser";
-import type TurndownService from "@oh-my-pi/pi-utils/turndown";
+import { ptree } from "@marsai-org/utils";
+import { readBoundedBody } from "@marsai-org/utils/bounded-json";
+import { decodeEntities } from "@marsai-org/utils/dom/parser";
+import type TurndownService from "@marsai-org/utils/turndown";
 
 import type { ModelRegistry } from "../../config/model-registry";
 import type { AgentStorageApi } from "../../session/agent-storage";
 import { ToolAbortError } from "../../tools/tool-errors";
 import { decodeBody } from "../response-body";
 
-export { formatNumber } from "@oh-my-pi/pi-utils";
+export { formatNumber } from "@marsai-org/utils";
 
 export interface RenderResult {
 	url: string;

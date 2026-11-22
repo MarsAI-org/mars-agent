@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AgentEvent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { ptree, TempDir } from "@oh-my-pi/pi-utils";
+import type { AgentEvent, AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { ptree, TempDir } from "@marsai-org/utils";
 import {
 	endpoint,
 	send,

@@ -1,13 +1,13 @@
 import * as path from "node:path";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runRpcMode } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgAsyncEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { runRpcMode } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { cfgAsyncEnabled } from "@marsai-org/coding-agent/tools/settings";
 
 // Real SDK session and RPC dispatch for the progress-event tests; the model always answers "pong".
 // A `session_before_compact` hook supplies the summary, so a manual compaction commits without a

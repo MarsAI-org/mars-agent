@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as os from "node:os";
-import { DEFAULT_SPINNER_INTERVAL_MS } from "@oh-my-pi/pi-tui/spinner-clock";
+import { DEFAULT_SPINNER_INTERVAL_MS } from "@marsai-org/tui/spinner-clock";
 import {
 	buildTerminalTitleWithState,
 	disposeTerminalTitleState,
@@ -12,8 +12,8 @@ import {
 	setTerminalTitleSpinnerInterval,
 	setTerminalTitleSpinnerStyle,
 	setTerminalTitleState,
-} from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/utils/title-generator";
+import { setTerminalHeadless } from "@marsai-org/utils";
 import { mockWindowsConsoleTitle, type WindowsConsoleTitleMock } from "./terminal-title-test-utils";
 
 const LABEL = "my-project";

@@ -5,7 +5,7 @@
  */
 import * as os from "node:os";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import { isRecord } from "../../utils";
 

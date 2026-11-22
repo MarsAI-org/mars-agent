@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	cursorExecReadPath,
 	cursorRawReadPath,

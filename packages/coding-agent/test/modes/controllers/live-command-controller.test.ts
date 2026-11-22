@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { ExtensionLiveStartOptions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { LiveSessionController, type LiveSessionControllerOptions } from "@oh-my-pi/pi-coding-agent/live/controller";
-import type { LiveServerEvent } from "@oh-my-pi/pi-coding-agent/live/protocol";
-import * as liveTransport from "@oh-my-pi/pi-coding-agent/live/transport";
-import type { LiveTransportOptions } from "@oh-my-pi/pi-coding-agent/live/transport";
-import { LiveVisualizer } from "@oh-my-pi/pi-tui/apps/live-visualizer";
-import { LiveCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/live-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import type { ExtensionLiveStartOptions } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { LiveSessionController, type LiveSessionControllerOptions } from "@marsai-org/coding-agent/live/controller";
+import type { LiveServerEvent } from "@marsai-org/coding-agent/live/protocol";
+import * as liveTransport from "@marsai-org/coding-agent/live/transport";
+import type { LiveTransportOptions } from "@marsai-org/coding-agent/live/transport";
+import { LiveVisualizer } from "@marsai-org/tui/apps/live-visualizer";
+import { LiveCommandController } from "@marsai-org/coding-agent/modes/controllers/live-command-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 
 /** Fake InteractiveModeContext plus typed capture channels for focus/mount traffic. */
 interface ContextHarness {

@@ -1,7 +1,7 @@
 import { expect, it } from "bun:test";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { AssistantMessage, Context, Model, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import type { AssistantMessage, Context, Model, ToolResultMessage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const model: Model<"bedrock-converse-stream"> = buildModel({
 	id: "us.anthropic.claude-haiku-4-5-20251001-v1:0",

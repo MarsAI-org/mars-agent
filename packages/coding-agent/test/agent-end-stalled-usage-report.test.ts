@@ -8,18 +8,18 @@
 import { Database } from "bun:sqlite";
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { opencodeGoUsageProvider } from "@oh-my-pi/pi-ai/usage/opencode-go";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import * as envApiKey from "@marsai-org/ai/env-api-key";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { opencodeGoUsageProvider } from "@marsai-org/ai/usage/opencode-go";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
 /** Mirrors USAGE_LIMIT_BOOKKEEPING_TIMEOUT_MS in turn-recovery.ts. */
 const BOOKKEEPING_TIMEOUT_MS = 3_000;

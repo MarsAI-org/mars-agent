@@ -12,18 +12,18 @@
  */
 import { describe, expect, it } from "bun:test";
 import { gunzipSync } from "node:zlib";
-import { streamDevin } from "@oh-my-pi/pi-ai/providers/devin";
-import { convertMessages } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Api, AssistantMessage, Message, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamDevin } from "@marsai-org/ai/providers/devin";
+import { convertMessages } from "@marsai-org/ai/providers/openai-completions";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import { stream } from "@marsai-org/ai/stream";
+import type { Api, AssistantMessage, Message, Model, ModelSpec } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	GetChatMessageRequestSchema,
 	GetChatMessageResponseSchema,
 	GetUserJwtResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 const TRACE = "Earlier reasoning: read foo.ts, then patch bar().";
 const THINK = `<think>\n${TRACE}\n</think>`;

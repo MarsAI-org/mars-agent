@@ -1,17 +1,17 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Shell } from "@oh-my-pi/pi-natives";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Shell } from "@marsai-org/natives";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
 import {
 	DEFAULT_MAX_BYTES,
 	DEFAULT_MAX_LINES,
 	truncateHead,
 	truncateMiddle,
 	truncateTail,
-} from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+} from "@marsai-org/tui/tools/streaming-output";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import {
 	IMAGE_METADATA_HEADER_BYTES,
 	isEnoent,
@@ -19,8 +19,8 @@ import {
 	parseImageMetadata,
 	sanitizeText,
 	TempDir,
-} from "@oh-my-pi/pi-utils";
-import { peekFile } from "@oh-my-pi/pi-utils/peek-file";
+} from "@marsai-org/utils";
+import { peekFile } from "@marsai-org/utils/peek-file";
 import type { ToolSession } from "../sdk";
 import { quotePosixArgument } from "../utils/shell-quote";
 import { resolveReadPath } from "./path-utils";

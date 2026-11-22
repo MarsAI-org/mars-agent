@@ -1,9 +1,9 @@
 import { afterAll, afterEach, describe, expect, it, setSystemTime } from "bun:test";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { SearchParams } from "@oh-my-pi/pi-coding-agent/web/search/providers/base";
-import { searchHackerNews } from "@oh-my-pi/pi-coding-agent/web/search/providers/hackernews";
-import { SearchProviderError } from "@oh-my-pi/pi-coding-agent/web/search/types";
+import type { FetchImpl } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import type { SearchParams } from "@marsai-org/coding-agent/web/search/providers/base";
+import { searchHackerNews } from "@marsai-org/coding-agent/web/search/providers/hackernews";
+import { SearchProviderError } from "@marsai-org/coding-agent/web/search/types";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 const authStorage = createInMemoryAuthStorage();

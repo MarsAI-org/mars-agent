@@ -14,13 +14,13 @@ import { afterAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadCustomCommands } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/loader";
-import { loadCustomTools } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/loader";
-import { importExtensionModule } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { loadHooks } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/loader";
-import { assertBunCanImport } from "@oh-my-pi/pi-coding-agent/extensibility/module-path";
-import { loadLegacyPiModule } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { loadCustomCommands } from "@marsai-org/coding-agent/extensibility/custom-commands/loader";
+import { loadCustomTools } from "@marsai-org/coding-agent/extensibility/custom-tools/loader";
+import { importExtensionModule } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { loadHooks } from "@marsai-org/coding-agent/extensibility/hooks/loader";
+import { assertBunCanImport } from "@marsai-org/coding-agent/extensibility/module-path";
+import { loadLegacyPiModule } from "@marsai-org/coding-agent/extensibility/plugins/legacy-pi-compat";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const roots: string[] = [];
 
@@ -156,8 +156,8 @@ describe.skipIf(process.platform === "win32")("a module under a path that contai
 		await fs.symlink(questionDir, link);
 		const probe = [
 			'import * as fs from "node:fs/promises";',
-			'import { loadCustomCommands } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/loader";',
-			'import { loadHooks } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/loader";',
+			'import { loadCustomCommands } from "@marsai-org/coding-agent/extensibility/custom-commands/loader";',
+			'import { loadHooks } from "@marsai-org/coding-agent/extensibility/hooks/loader";',
 			"const { PROBE_LINK: link } = process.env;",
 			'await fs.writeFile(link + "/hook.ts", "export default function () {}\\n");',
 			'await loadHooks([link + "/hook.ts"], link);',
@@ -193,7 +193,7 @@ describe.skipIf(process.platform === "win32")("a module under a path that contai
 		const agentDir = path.join(questionDir, "agent");
 		const script = await writeModule(path.join(agentDir, "share.ts"));
 		const probe = [
-			'import { loadCustomShare } from "@oh-my-pi/pi-coding-agent/export/custom-share";',
+			'import { loadCustomShare } from "@marsai-org/coding-agent/export/custom-share";',
 			"try { await loadCustomShare(); console.log('loaded'); }",
 			"catch (error) { console.log(error instanceof Error ? error.message : String(error)); }",
 		].join("\n");

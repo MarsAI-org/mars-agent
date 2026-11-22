@@ -1,12 +1,12 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import type { SearchParams } from "@oh-my-pi/pi-coding-agent/web/search/providers/base";
-import { hasCodexSearch, searchCodex } from "@oh-my-pi/pi-coding-agent/web/search/providers/codex";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { AuthStorage, type FetchImpl, type Model, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import type { SearchParams } from "@marsai-org/coding-agent/web/search/providers/base";
+import { hasCodexSearch, searchCodex } from "@marsai-org/coding-agent/web/search/providers/codex";
+import { TempDir } from "@marsai-org/utils";
 
 type CapturedRequest = {
 	url: string;

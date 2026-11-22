@@ -15,8 +15,8 @@
 import type { Database, Statement } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { textContent } from "@oh-my-pi/pi-tui/chat/transcript-entry";
+import { type } from "@marsai-org/omptype";
+import { textContent } from "@marsai-org/tui/chat/transcript-entry";
 import {
 	getSessionsDir,
 	getTranscriptIndexDbPath,
@@ -25,8 +25,8 @@ import {
 	type SqliteFileIdentity,
 	sqliteFileIdentity,
 	tryAcquireFileLock,
-} from "@oh-my-pi/pi-utils";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+} from "@marsai-org/utils";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
 import type { WordQuery } from "./search-query";
 import { listSessionFiles } from "./session-listing";
 

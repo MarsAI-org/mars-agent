@@ -4,8 +4,8 @@ import {
 	parseGeminiCliCredentials,
 	shouldRefreshGeminiCliCredentials,
 	streamGoogleGeminiCli,
-} from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { getOAuthApiKey } from "@oh-my-pi/pi-ai/registry/oauth";
+} from "@marsai-org/ai/providers/google-gemini-cli";
+import { getOAuthApiKey } from "@marsai-org/ai/registry/oauth";
 import type {
 	AssistantMessageEvent,
 	Context,
@@ -14,8 +14,8 @@ import type {
 	ProviderSessionState,
 	TJsonSchema,
 	Usage,
-} from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 function createModel(
 	provider: "custom-cca" | "google-antigravity",

@@ -2,16 +2,16 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "bun:
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSessionOptions } from "@oh-my-pi/pi-coding-agent/main";
-import { type CreateAgentSessionOptions, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TurnRecovery, type TurnRecoveryHost } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { buildSessionOptions } from "@marsai-org/coding-agent/main";
+import { type CreateAgentSessionOptions, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TurnRecovery, type TurnRecoveryHost } from "@marsai-org/coding-agent/session/turn-recovery";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 // Regression: `--model` used to record the `default` role without its effort,
 // so cycling back into that role with ctrl+p ran at the previous role's effort.

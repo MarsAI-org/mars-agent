@@ -3,15 +3,15 @@ import {
 	isAnthropicSigningProxyUrl,
 	isOfficialAnthropicApiUrl,
 	resolveAnthropicApiVersion,
-} from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { hostMatchesUrl, isVertexRawPredictUrl, modelMatchesHost } from "@oh-my-pi/pi-catalog/hosts";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { mapEffortToAnthropicAdaptiveEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { calculateCost, getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { isAnthropicOAuthToken } from "@oh-my-pi/pi-catalog/utils";
-import { parseGitHubCopilotApiKey } from "@oh-my-pi/pi-catalog/wire/github-copilot";
+} from "@marsai-org/catalog/compat/anthropic";
+import { hostMatchesUrl, isVertexRawPredictUrl, modelMatchesHost } from "@marsai-org/catalog/hosts";
+import type { Effort } from "@marsai-org/catalog/effort";
+import { mapEffortToAnthropicAdaptiveEffort } from "@marsai-org/catalog/model-thinking";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import { calculateCost, getBundledModel } from "@marsai-org/catalog/models";
+import { isAnthropicOAuthToken } from "@marsai-org/catalog/utils";
+import { parseGitHubCopilotApiKey } from "@marsai-org/catalog/wire/github-copilot";
 import {
 	$env,
 	$flag,
@@ -19,7 +19,7 @@ import {
 	parseJsonWithRepair,
 	parseStreamingJsonThrottled,
 	readSseEvents,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { NO_AUTH_SENTINEL } from "../auth-retry";
 import { renderDemotedThinking } from "../dialect/demotion";
 import * as AIError from "../error";

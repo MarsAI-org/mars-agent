@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import { encodeHostError } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { HostLink } from "@oh-my-pi/pi-coding-agent/mcp/link";
-import type { MCPProgress } from "@oh-my-pi/pi-tui/tools/mcp";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import { encodeHostError } from "@marsai-org/coding-agent/mcp/host/contract";
+import { HostLink } from "@marsai-org/coding-agent/mcp/link";
+import type { MCPProgress } from "@marsai-org/tui/tools/mcp";
 import { rejectionOf, trackUnhandled } from "../helpers/rejection";
 import { FakeHost, type Message, metaOf, paramsOf, REMOTE_SPEC, settled, unauthorized } from "./link-fake-host";
 

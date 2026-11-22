@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
-import { clearRenderCache, Markdown, type MarkdownTheme, type TableLocks } from "@oh-my-pi/pi-tui/components/markdown";
-import { getMarkdownTheme, getMarkdownThemeWithLinkTargets, theme } from "@oh-my-pi/pi-tui/theme";
-import { TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import * as latexBlock from "@oh-my-pi/pi-tui/latex-block";
-import { Lexer } from "@oh-my-pi/pi-utils/marked";
+import { clearRenderCache, Markdown, type MarkdownTheme, type TableLocks } from "@marsai-org/tui/components/markdown";
+import { getMarkdownTheme, getMarkdownThemeWithLinkTargets, theme } from "@marsai-org/tui/theme";
+import { TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import * as latexBlock from "@marsai-org/tui/latex-block";
+import { Lexer } from "@marsai-org/utils/marked";
 import { defaultMarkdownTheme } from "./test-themes.js";
 
 // E2 contract: the streaming incremental lexer (lex(prefix) ++ lex(tail), reusing

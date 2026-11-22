@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { stableStringifyJson } from "@oh-my-pi/pi-utils";
-import { type Goal } from "@oh-my-pi/pi-tui/tools/goal";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { stableStringifyJson } from "@marsai-org/utils";
+import { type Goal } from "@marsai-org/tui/tools/goal";
 import type { UsageStatistics } from "../session/session-entries";
 
 export interface GoalModeState {

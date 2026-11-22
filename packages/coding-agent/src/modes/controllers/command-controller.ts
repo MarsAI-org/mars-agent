@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CompactionCancelledError, type CompactionOutcome } from "@oh-my-pi/pi-agent-core/compaction";
+import { CompactionCancelledError, type CompactionOutcome } from "@marsai-org/agent-core/compaction";
 import {
 	getEnvApiKey,
 	getProviderDetails,
@@ -11,7 +11,7 @@ import {
 	type UsageLimit,
 	type UsageReport,
 	usageSubscriptionPlan,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	type Component,
 	Loader,
@@ -22,10 +22,10 @@ import {
 	Text,
 	visibleWidth,
 	wrapTextWithAnsi,
-} from "@oh-my-pi/pi-tui";
-import { formatDuration, logger, Snowflake, sanitizeText } from "@oh-my-pi/pi-utils";
-import { getActiveProfile, getConfigDirName } from "@oh-my-pi/pi-utils/dirs";
-import { classifyTerminalMultiplexer } from "@oh-my-pi/pi-tui/terminal-multiplexer";
+} from "@marsai-org/tui";
+import { formatDuration, logger, Snowflake, sanitizeText } from "@marsai-org/utils";
+import { getActiveProfile, getConfigDirName } from "@marsai-org/utils/dirs";
+import { classifyTerminalMultiplexer } from "@marsai-org/tui/terminal-multiplexer";
 import { shouldEnableAppendOnlyContext } from "../../config/append-only-context-mode";
 import { type BashResult, isPersistentShellCdCommand } from "../../exec/bash-executor";
 import { type LoadedCustomShare, loadCustomShare } from "../../export/custom-share";
@@ -43,29 +43,29 @@ import {
 	summarizeMentalModel,
 } from "../../hindsight";
 import { memoryStatsUnavailableMessage, resolveMemoryBackend } from "../../memory-backend";
-import { BashExecutionComponent, bashPtyViewport } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { appKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { jobDisplayLabel } from "@oh-my-pi/pi-tui/tools/job-label";
-import { BorderedLoader } from "@oh-my-pi/pi-tui/overlays/bordered-loader";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import { promptCacheDetails } from "@oh-my-pi/pi-tui/status-line/prompt-cache";
-import { messageBlock, PresentedBlock } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { MoveOverlay, type MoveOverlayResult } from "@oh-my-pi/pi-tui/overlays/move-overlay";
+import { BashExecutionComponent, bashPtyViewport } from "@marsai-org/tui/chat/bash-execution";
+import { appKey } from "@marsai-org/tui/chrome/keybinding-hints";
+import { jobDisplayLabel } from "@marsai-org/tui/tools/job-label";
+import { BorderedLoader } from "@marsai-org/tui/overlays/bordered-loader";
+import { EvalExecutionComponent } from "@marsai-org/tui/chat/eval-execution";
+import { promptCacheDetails } from "@marsai-org/tui/status-line/prompt-cache";
+import { messageBlock, PresentedBlock } from "@marsai-org/tui/chat/transcript-presentation";
+import { MoveOverlay, type MoveOverlayResult } from "@marsai-org/tui/overlays/move-overlay";
 import { moveDirectorySource } from "../move-directory-source";
-import { getMarkdownTheme, getSymbolTheme, theme, type Theme } from "@oh-my-pi/pi-tui/theme";
+import { getMarkdownTheme, getSymbolTheme, theme, type Theme } from "@marsai-org/tui/theme";
 import type { InteractiveModeContext } from "../../modes/types";
 import { continuesConversation } from "../utils/conversation-position";
-import { ContextViewer } from "@oh-my-pi/pi-tui/overlays/context-viewer";
-import type { OverlayHandle } from "@oh-my-pi/pi-tui";
-import { ReportPanel } from "@oh-my-pi/pi-tui/overlays/report-panel";
-import type { TspText } from "@oh-my-pi/pi-wire";
+import { ContextViewer } from "@marsai-org/tui/overlays/context-viewer";
+import type { OverlayHandle } from "@marsai-org/tui";
+import { ReportPanel } from "@marsai-org/tui/overlays/report-panel";
+import type { TspText } from "@marsai-org/wire";
 import { computeSessionContextBreakdown } from "../../session/context-usage-runtime";
 import { buildSessionContextView } from "../../session/context-view";
-import { buildHotkeysMarkdown, HotkeysSheetComponent } from "@oh-my-pi/pi-tui/hotkeys-markdown";
-import { isNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { buildToolsMarkdown } from "@oh-my-pi/pi-tui/prompt/tools-markdown";
+import { buildHotkeysMarkdown, HotkeysSheetComponent } from "@marsai-org/tui/hotkeys-markdown";
+import { isNativeRendering } from "@marsai-org/tui/native/state";
+import { buildToolsMarkdown } from "@marsai-org/tui/prompt/tools-markdown";
 import type { AsyncJobSnapshotItem } from "../../session/agent-session";
-import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@oh-my-pi/pi-tui/overlays/job-tree";
+import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@marsai-org/tui/overlays/job-tree";
 import type { AuthStorage, OAuthAccountIdentity } from "../../session/auth-storage";
 import { type CompactMode, findCompactMode } from "../../session/compact-modes";
 import {
@@ -90,13 +90,13 @@ import {
 	formatCodexUsageReportLabel,
 	limitMatchesActiveAccount,
 } from "../../slash-commands/helpers/active-oauth-account";
-import { formatProviderName } from "@oh-my-pi/pi-tui/chrome/format";
-import { formatCompactQuota } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+import { formatProviderName } from "@marsai-org/tui/chrome/format";
+import { formatCompactQuota } from "@marsai-org/tui/overlays/advisor-config";
 import { resolveTernPane } from "../../tools/browser/tern/kind";
 import { TernError, type TernErrorKind, TernSocketClient } from "../../tools/browser/tern/wire";
 import { outputMeta } from "../../tools/output-meta";
 import { resolveToCwd, stripOuterDoubleQuotes } from "../../tools/path-utils";
-import { replaceTabs, shortenEmbeddedPaths, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
+import { replaceTabs, shortenEmbeddedPaths, truncateToWidth } from "@marsai-org/tui/render/render-utils";
 import {
 	getChangelogPath,
 	parseChangelog,
@@ -113,9 +113,9 @@ import {
 	collapseSharedUsageReports,
 	formatLimitTitle,
 	summarizeUsageResetCredits,
-} from "@oh-my-pi/pi-tui/overlays/usage-display";
-import { formatRemainingOnlyTotal, isUsedOnlyAbsoluteAmount } from "@oh-my-pi/pi-tui/prompt/usage-amounts";
-import type { UnavailableUsageAccount } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
+} from "@marsai-org/tui/overlays/usage-display";
+import { formatRemainingOnlyTotal, isUsedOnlyAbsoluteAmount } from "@marsai-org/tui/prompt/usage-amounts";
+import type { UnavailableUsageAccount } from "@marsai-org/tui/overlays/usage-dashboard";
 
 import { cfgTerminalShowImages } from "../settings";
 import { cfgProviderAppendOnlyContext } from "../../session/settings";
@@ -389,7 +389,7 @@ export class CommandController {
 		try {
 			// Lazy: the stats dashboard (server + sqlite) loads on demand only,
 			// matching src/cli/stats-cli.ts, to keep CLI startup fast.
-			const { formatStatsDashboardUrl, startServer } = await import("@oh-my-pi/omp-stats");
+			const { formatStatsDashboardUrl, startServer } = await import("@marsai-org/stats");
 			const { hostname, port } = await startServer();
 			const url = `${formatStatsDashboardUrl(hostname, port)}/#/traces?s=${encodeURIComponent(sessionFile)}`;
 			this.openInBrowser(url);

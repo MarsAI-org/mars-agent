@@ -4,10 +4,10 @@
  * and overage. Timestamps arrive as epoch seconds; the `…WithPrecision`
  * counters carry the fractional credits the dashboard shows.
  */
-import { KiroManagementHttpError, kiroManagementRequest } from "@oh-my-pi/pi-catalog/discovery/kiro";
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { decodeKiroCredential } from "@oh-my-pi/pi-catalog/wire/kiro";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { KiroManagementHttpError, kiroManagementRequest } from "@marsai-org/catalog/discovery/kiro";
+import { toNumber } from "@marsai-org/catalog/utils";
+import { decodeKiroCredential } from "@marsai-org/catalog/wire/kiro";
+import { isRecord } from "@marsai-org/utils";
 import { ProviderHttpError } from "../error";
 import type {
 	CredentialRankingStrategy,

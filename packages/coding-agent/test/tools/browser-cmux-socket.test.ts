@@ -3,10 +3,10 @@ import * as fs from "node:fs/promises";
 import * as net from "node:net";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CmuxTab } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/cmux-tab";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { RunOutput } from "@oh-my-pi/pi-coding-agent/tools/browser/run-output";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { CmuxTab } from "@marsai-org/coding-agent/tools/browser/cmux/cmux-tab";
+import { CmuxSocketClient } from "@marsai-org/coding-agent/tools/browser/cmux/socket-client";
+import { RunOutput } from "@marsai-org/coding-agent/tools/browser/run-output";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 type RequestLine = {
 	id?: unknown;

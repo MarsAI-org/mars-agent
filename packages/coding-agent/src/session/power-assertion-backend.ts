@@ -1,5 +1,5 @@
-import { logger } from "@oh-my-pi/pi-utils";
-import { PowerAssertion, type PowerAssertionOptions } from "@oh-my-pi/pi-natives";
+import { logger } from "@marsai-org/utils";
+import { PowerAssertion, type PowerAssertionOptions } from "@marsai-org/natives";
 
 /** A held sleep-prevention assertion; the session only needs to release it. */
 export interface PowerAssertionHandle {

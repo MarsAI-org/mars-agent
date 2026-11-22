@@ -2,8 +2,8 @@
 // serves files under that marker instead of reporting "no language server".
 import { afterEach, describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import { describeMissingServers, getServersForFile, loadConfig } from "@oh-my-pi/pi-coding-agent/lsp/config";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { describeMissingServers, getServersForFile, loadConfig } from "@marsai-org/coding-agent/lsp/config";
+import { TempDir } from "@marsai-org/utils";
 
 const SERVER = {
 	command: process.execPath,

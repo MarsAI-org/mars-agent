@@ -1,14 +1,14 @@
 import { describe, expect, test } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
+import { Tokenizer } from "@marsai-org/agent-core";
 import {
 	type GenerateBranchSummaryOptions,
 	generateBranchSummary,
 	prepareBranchEntries,
 	type SessionEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model, Usage } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Model, Usage } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 const MODEL: Model = buildModel({
 	id: "mock-model",

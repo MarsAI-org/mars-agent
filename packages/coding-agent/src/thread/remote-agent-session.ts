@@ -32,13 +32,13 @@
  * publisher reports. A closed mirror keeps its last state, rejects commands
  * with an error naming the worker, and treats `dispose` as already done.
  */
-import { type AgentMessage, type AgentTool, ThinkingLevel, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { Effort, ImageContent, Model, ServiceTier, ToolResultMessage, UsageReport } from "@oh-my-pi/pi-ai";
-import { AUTO_THINKING, type ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import type { JobWidgetEntry } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { getBlobsDir, logger } from "@oh-my-pi/pi-utils";
+import { type AgentMessage, type AgentTool, ThinkingLevel, Tokenizer } from "@marsai-org/agent-core";
+import type { Effort, ImageContent, Model, ServiceTier, ToolResultMessage, UsageReport } from "@marsai-org/ai";
+import { AUTO_THINKING, type ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import type { IrcMessage } from "@marsai-org/tui/tools/irc";
+import type { JobWidgetEntry } from "@marsai-org/tui/tools/job-widget";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
+import { getBlobsDir, logger } from "@marsai-org/utils";
 import type { AsyncJobManagerApi } from "../async";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { ModelRegistry } from "../config/model-registry";

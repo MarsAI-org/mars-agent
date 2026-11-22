@@ -1,5 +1,5 @@
 import type { NativeToolHead, NativeToolView, ToolRenderer, ToolRenderResult } from "./renderer";
-import { formatCount, isRecord, sanitizeText } from "@oh-my-pi/pi-utils";
+import { formatCount, isRecord, sanitizeText } from "@marsai-org/utils";
 import { compact, node, row, span, text } from "../native/describe";
 import type { NativeChild, NativeNode } from "../native/node";
 import { OwnerMemo } from "../native/memo";

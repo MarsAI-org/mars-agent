@@ -2,8 +2,8 @@
  * The panel's reading of a session snapshot: user cards, replies, and Claude-style step groups. Tool calls between
  * two pieces of prose form one group (“4 steps”) instead of a stack of cards.
  */
-import type { ActiveTool } from "@oh-my-pi/collab-web/src/lib/client";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import type { ActiveTool } from "@marsai-org/collab-web/src/lib/client";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import {
 	type AssistantMessage,
 	COLLAB_PROMPT_MESSAGE_TYPE,
@@ -11,7 +11,7 @@ import {
 	type SessionEntry,
 	type TextContent,
 	type ToolResultMessage,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import { describeStep, type StepDescription } from "./describe";
 import type { PanelSnapshot } from "./session";
 import { parsePrompt, type TabRef } from "./tab-context";

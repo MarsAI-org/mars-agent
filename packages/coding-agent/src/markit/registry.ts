@@ -1,6 +1,6 @@
 // Adapted from markit-ai (MIT). See ./NOTICE.
 import * as path from "node:path";
-import { toError } from "@oh-my-pi/pi-utils";
+import { toError } from "@marsai-org/utils";
 import { DocxConverter } from "./converters/docx";
 import { EpubConverter } from "./converters/epub";
 import { PdfConverter } from "./converters/pdf";

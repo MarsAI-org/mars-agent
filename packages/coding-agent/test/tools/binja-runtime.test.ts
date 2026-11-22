@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildBinjaEnv, probeBinjaRuntime, resolveBinjaRuntime } from "@oh-my-pi/pi-coding-agent/binja/runtime";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
+import { buildBinjaEnv, probeBinjaRuntime, resolveBinjaRuntime } from "@marsai-org/coding-agent/binja/runtime";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
 
 const LICENSE = "sentinel-license-text";
 const PYTHON_DIR = path.join("opt", "binaryninja", "python");

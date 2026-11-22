@@ -1,5 +1,5 @@
-import { type } from "@oh-my-pi/omptype";
-import { resolveAnthropicApiVersion } from "@oh-my-pi/pi-catalog/compat/anthropic";
+import { type } from "@marsai-org/omptype";
+import { resolveAnthropicApiVersion } from "@marsai-org/catalog/compat/anthropic";
 import { AnthropicHttpClient, type AnthropicClientOptions, type AnthropicRequestOptions } from "./anthropic-client";
 
 const USER_PROFILES_BETA = "user-profiles-2026-09-04";

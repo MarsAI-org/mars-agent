@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as url from "node:url";
-import { __buildLegacyPiPackageRootOverrides } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/legacy-pi-compat";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { __buildLegacyPiPackageRootOverrides } from "@marsai-org/coding-agent/extensibility/plugins/legacy-pi-compat";
+import { TempDir } from "@marsai-org/utils";
 import { __renderLegacyPiVirtualModule, collectBundledPiEntries } from "../../scripts/legacy-pi-virtual-module";
 import type { BundledPiEntry } from "../../scripts/legacy-pi-virtual-module";
 
@@ -77,20 +77,20 @@ export const finalBeta = Reflect.get(globalThis, "__betaLoads") ?? 0;
 		}
 	});
 
-	it("serves @oh-my-pi/pi-ai/oauth through the bundled virtual namespace in compiled mode", () => {
+	it("serves @marsai-org/ai/oauth through the bundled virtual namespace in compiled mode", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@oh-my-pi/pi-ai/oauth"]).toBe("omp-legacy-pi-bundled:@oh-my-pi/pi-ai/oauth");
+		expect(overrides["@marsai-org/ai/oauth"]).toBe("omp-legacy-pi-bundled:@marsai-org/ai/oauth");
 	});
 
 	it("loads utility root-wildcard subpaths used by external image-link extensions", async () => {
-		const keys = ["@oh-my-pi/pi-utils/lru", "@oh-my-pi/pi-utils/marked"] as const;
+		const keys = ["@marsai-org/utils/lru", "@marsai-org/utils/marked"] as const;
 		const entries = bundledEntries.filter(entry => (keys as readonly string[]).includes(entry.key));
 		expect(entries.map(entry => entry.key).sort()).toEqual([...keys]);
 
 		const observed = await runRegistryProbe(
 			entries,
-			`const { Lexer } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/marked"]();
-const { LRUCache } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/lru"]();
+			`const { Lexer } = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/marked"]();
+const { LRUCache } = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/lru"]();
 const cache = new LRUCache({ max: 1 });
 cache.set("image", "photo.png");
 const paragraph = Lexer.lex("[photo.png](file:///tmp/photo.png)")[0];
@@ -109,20 +109,20 @@ export const observed = {
 
 	it("loads exported .js utility aliases from the same host modules", async () => {
 		const keys = [
-			"@oh-my-pi/pi-utils/lru",
-			"@oh-my-pi/pi-utils/lru.js",
-			"@oh-my-pi/pi-utils/marked",
-			"@oh-my-pi/pi-utils/marked.js",
+			"@marsai-org/utils/lru",
+			"@marsai-org/utils/lru.js",
+			"@marsai-org/utils/marked",
+			"@marsai-org/utils/marked.js",
 		];
 		const entries = bundledEntries.filter(entry => keys.includes(entry.key));
 		expect(entries.map(entry => entry.key).sort()).toEqual(keys);
 
 		const observed = await runRegistryProbe(
 			entries,
-			`const marked = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/marked"]();
-const markedJs = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/marked.js"]();
-const lru = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/lru"]();
-const lruJs = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-utils/lru.js"]();
+			`const marked = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/marked"]();
+const markedJs = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/marked.js"]();
+const lru = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/lru"]();
+const lruJs = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/utils/lru.js"]();
 const cache = new lruJs.LRUCache({ max: 1 });
 cache.set("image", "photo.png");
 export const observed = {
@@ -144,13 +144,13 @@ export const observed = {
 		// fall-through. The generator now globs each wildcard's source pattern
 		// and registers every concrete `.ts` match against the virtual namespace.
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
-		expect(overrides["@oh-my-pi/pi-ai/oauth/anthropic"]).toBe(
-			"omp-legacy-pi-bundled:@oh-my-pi/pi-ai/oauth/anthropic",
+		expect(overrides["@marsai-org/ai/oauth/anthropic"]).toBe(
+			"omp-legacy-pi-bundled:@marsai-org/ai/oauth/anthropic",
 		);
 		// Sanity: the wildcard expansion also reaches deeper subroots so plugins
-		// pinned to e.g. `@oh-my-pi/pi-ai/providers/openai` keep resolving.
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-ai/oauth/anthropic")).toBe(true);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-ai/oauth/openai-codex")).toBe(true);
+		// pinned to e.g. `@marsai-org/ai/providers/openai` keep resolving.
+		expect(bundledModuleKeys.has("@marsai-org/ai/oauth/anthropic")).toBe(true);
+		expect(bundledModuleKeys.has("@marsai-org/ai/oauth/openai-codex")).toBe(true);
 	});
 
 	it("actually loads the shim's shared Pi translation through the bundled registry", async () => {
@@ -161,7 +161,7 @@ export const observed = {
 		//
 		// Executing the generated registry is the contract — a key present in the
 		// override map still proves nothing if the module cannot be imported.
-		const key = "@oh-my-pi/pi-ai/providers/cursor-pi-args";
+		const key = "@marsai-org/ai/providers/cursor-pi-args";
 		const entry = bundledEntries.find(candidate => candidate.key === key);
 		expect(entry).toBeDefined();
 
@@ -178,14 +178,14 @@ export const observed = [mod.piEscapeRegexLiteral("a.b*c"), mod.piJoinPath("src"
 	});
 
 	it("loads catalog root and provider-model exports from the bundled graph", async () => {
-		const root = bundledEntries.find(entry => entry.key === "@oh-my-pi/pi-catalog");
-		const provider = bundledEntries.find(entry => entry.key === "@oh-my-pi/pi-catalog/provider-models");
+		const root = bundledEntries.find(entry => entry.key === "@marsai-org/catalog");
+		const provider = bundledEntries.find(entry => entry.key === "@marsai-org/catalog/provider-models");
 		if (!root || !provider) throw new Error("Catalog imports are missing from the bundled registry");
 
 		const observed = await runRegistryProbe(
 			[root, provider],
-			`const catalog = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-catalog"]();
-const providers = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-catalog/provider-models"]();
+			`const catalog = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/catalog"]();
+const providers = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/catalog/provider-models"]();
 const result = await catalog.createModelManager(providers.anthropicModelManagerOptions()).refresh("offline");
 export const observed = result.models.some(model => model.id === "claude-fable-5");`,
 		);
@@ -193,7 +193,7 @@ export const observed = result.models.some(model => model.id === "claude-fable-5
 	});
 
 	it("loads catalog build exports through the bundled registry in compiled mode", async () => {
-		const key = "@oh-my-pi/pi-catalog/build";
+		const key = "@marsai-org/catalog/build";
 		const entry = bundledEntries.find(candidate => candidate.key === key);
 		if (!entry) throw new Error("Catalog build import is missing from the bundled registry");
 
@@ -221,10 +221,10 @@ export const observed = buildModel({
 	it("expands web search provider wildcard exports for compiled plugin imports", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		const providerKeys = [
-			"@oh-my-pi/pi-coding-agent/web/search/providers/xai",
-			"@oh-my-pi/pi-coding-agent/web/search/providers/tinyfish",
-			"@oh-my-pi/pi-coding-agent/web/search/providers/firecrawl",
-			"@oh-my-pi/pi-coding-agent/web/search/providers/duckduckgo",
+			"@marsai-org/coding-agent/web/search/providers/xai",
+			"@marsai-org/coding-agent/web/search/providers/tinyfish",
+			"@marsai-org/coding-agent/web/search/providers/firecrawl",
+			"@marsai-org/coding-agent/web/search/providers/duckduckgo",
 		] as const;
 
 		for (const key of providerKeys) {
@@ -234,7 +234,7 @@ export const observed = buildModel({
 	});
 
 	it("serves coding-agent registry wildcard exports in compiled mode", () => {
-		const key = "@oh-my-pi/pi-coding-agent/registry/agent-registry";
+		const key = "@marsai-org/coding-agent/registry/agent-registry";
 		const overrides = __buildLegacyPiPackageRootOverrides(true, bundledModuleKeys);
 		expect(bundledModuleKeys.has(key)).toBe(true);
 		expect(overrides[key]).toBe(`omp-legacy-pi-bundled:${key}`);
@@ -243,10 +243,10 @@ export const observed = buildModel({
 	it("keeps coding-agent's root catch-all wildcards (./* / ./*.js) out of the bundle", () => {
 		// coding-agent exposes CLI entrypoints at the root; importing one from
 		// the virtual registry would expand the binary entry's transitive graph.
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/cli")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/main")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/cli.js")).toBe(false);
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/main.js")).toBe(false);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/cli")).toBe(false);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/main")).toBe(false);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/cli.js")).toBe(false);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/main.js")).toBe(false);
 	});
 
 	it("does not bundle main-thread-unsafe worker entrypoints", () => {
@@ -254,7 +254,7 @@ export const observed = buildModel({
 		// The compiled legacy registry is imported on the main thread while
 		// validating plugin extensions, so enumerating these files recreates the
 		// `js worker-entry: missing parentPort` failure from #3508.
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/eval/js/worker-entry")).toBe(false);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/eval/js/worker-entry")).toBe(false);
 	});
 
 	it("maps every bundled key (minus shimmed roots + typebox) to its virtual specifier in compiled mode", () => {
@@ -266,9 +266,9 @@ export const observed = buildModel({
 			// dropped from the canonical package surfaces); typebox is served via
 			// TYPEBOX_SHIM_PATH.
 			if (
-				key === "@oh-my-pi/pi-ai" ||
-				key === "@oh-my-pi/pi-coding-agent" ||
-				key === "@oh-my-pi/pi-tui" ||
+				key === "@marsai-org/ai" ||
+				key === "@marsai-org/coding-agent" ||
+				key === "@marsai-org/tui" ||
 				key === "typebox"
 			)
 				continue;
@@ -281,8 +281,8 @@ export const observed = buildModel({
 
 	it("does not register subpath overrides in dev/install mode", () => {
 		const overrides = __buildLegacyPiPackageRootOverrides(false);
-		expect(overrides).not.toHaveProperty("@oh-my-pi/pi-ai/oauth");
-		expect(overrides).not.toHaveProperty("@oh-my-pi/pi-coding-agent/tools");
+		expect(overrides).not.toHaveProperty("@marsai-org/ai/oauth");
+		expect(overrides).not.toHaveProperty("@marsai-org/coding-agent/tools");
 		// Dev keeps only the historical shim entries so canonical subpath
 		// imports continue to flow through `Bun.resolveSync` against the live
 		// monorepo / installed `node_modules` tree.
@@ -303,20 +303,20 @@ export const observed = buildModel({
 		// top level left every nested key out of the compiled registry, so the
 		// import resolved from source and failed inside a binary — which is how
 		// a real extension (`quota-hud.ts`) broke on this exact specifier.
-		expect(bundledModuleKeys.has("@oh-my-pi/pi-coding-agent/slash-commands/helpers/active-oauth-account")).toBe(true);
+		expect(bundledModuleKeys.has("@marsai-org/coding-agent/slash-commands/helpers/active-oauth-account")).toBe(true);
 	});
 
 	it("loads pi-tui native/* modules through the bundled registry in compiled mode (issue #14834)", async () => {
 		// `native/*` was only reachable through pi-tui's root `./*` catch-all, which
 		// the generator skips, so extensions importing it failed inside the binary.
-		const keys = ["@oh-my-pi/pi-tui/native/overlay", "@oh-my-pi/pi-tui/native/spans"] as const;
+		const keys = ["@marsai-org/tui/native/overlay", "@marsai-org/tui/native/spans"] as const;
 		const entries = bundledEntries.filter(entry => (keys as readonly string[]).includes(entry.key));
 		expect(entries.map(entry => entry.key).sort()).toEqual([...keys]);
 
 		const observed = await runRegistryProbe(
 			entries,
-			`const { actionBar, actionButton } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/native/overlay"]();
-const { plainLine } = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/native/spans"]();
+			`const { actionBar, actionButton } = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/native/overlay"]();
+const { plainLine } = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/native/spans"]();
 export const observed = { role: actionBar([actionButton("Go", "go")]).p.role, line: plainLine("\\x1b[1ma\\n b\\x1b[0m") };`,
 		);
 		expect(observed).toEqual({ role: "omp.actions", line: "a b" });
@@ -329,20 +329,20 @@ export const observed = { role: actionBar([actionButton("Go", "go")]).p.role, li
 		// the registry, so a compiled extension loaded those specifiers from its
 		// own node_modules and saw a second `TERMINAL` / theme record.
 		const keys = [
-			"@oh-my-pi/pi-tui/terminal-capabilities",
-			"@oh-my-pi/pi-tui/chat/svg-figure",
-			"@oh-my-pi/pi-tui/theme",
-			"@oh-my-pi/pi-tui/theme/index",
+			"@marsai-org/tui/terminal-capabilities",
+			"@marsai-org/tui/chat/svg-figure",
+			"@marsai-org/tui/theme",
+			"@marsai-org/tui/theme/index",
 		] as const;
 		const entries = bundledEntries.filter(entry => (keys as readonly string[]).includes(entry.key));
 		expect(entries.map(entry => entry.key).sort()).toEqual([...keys].sort());
 
 		const observed = await runRegistryProbe(
 			entries,
-			`const theme = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/theme"]();
-const themeIndex = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/theme/index"]();
-const svg = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/chat/svg-figure"]();
-const caps = await BUNDLED_PI_MODULE_LOADERS["@oh-my-pi/pi-tui/terminal-capabilities"]();
+			`const theme = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/theme"]();
+const themeIndex = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/theme/index"]();
+const svg = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/chat/svg-figure"]();
+const caps = await BUNDLED_PI_MODULE_LOADERS["@marsai-org/tui/terminal-capabilities"]();
 export const observed = {
 	theme: theme.setThemeInstance === themeIndex.setThemeInstance,
 	svg: typeof svg.svgFigurePalette,

@@ -1,12 +1,12 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { afterEach, beforeAll, describe, expect, it, type Mock, vi } from "bun:test";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import type { DescribeContext } from "@oh-my-pi/pi-tui/native/node";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { CURSOR_MARKER, isFocusable, setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import type { DescribeContext } from "@marsai-org/tui/native/node";
+import { ExtensionUiController } from "@marsai-org/coding-agent/modes/controllers/extension-ui-controller";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { CURSOR_MARKER, isFocusable, setKeybindings, type TUI } from "@marsai-org/tui";
 
 beforeAll(async () => {
 	const theme = await getThemeByName("dark");

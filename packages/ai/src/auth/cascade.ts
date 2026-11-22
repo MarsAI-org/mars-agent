@@ -1,5 +1,5 @@
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { $env, $envExact, logger } from "@oh-my-pi/pi-utils";
+import { authPolicyFor } from "@marsai-org/catalog/compat/auth";
+import { $env, $envExact, logger } from "@marsai-org/utils";
 import { type ApiKeyResolver, createOAuthProvenance, type ResolvedApiKey, resolveAfterRotation } from "../auth-retry";
 import { getEnvApiKey, getEnvApiKeyName } from "../env-api-key";
 import * as AIError from "../error";

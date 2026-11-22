@@ -1,4 +1,4 @@
-import { toError } from "@oh-my-pi/pi-utils";
+import { toError } from "@marsai-org/utils";
 import type { AgentSession } from "../../session/agent-session";
 import { STTController, type SttCallbacks, type SttTarget } from "../../stt";
 import type { RpcDictationFrame } from "./rpc-types";

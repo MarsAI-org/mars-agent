@@ -1,6 +1,6 @@
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { isAnthropicOAuthToken, toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { slugify } from "@oh-my-pi/pi-utils";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { isAnthropicOAuthToken, toNumber } from "@marsai-org/catalog/utils";
+import { slugify } from "@marsai-org/utils";
 import * as AIError from "../error";
 import {
 	type CredentialRankingContext,

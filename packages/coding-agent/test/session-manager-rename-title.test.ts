@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
+import { TempDir } from "@marsai-org/utils";
 
 function userTurn(content: string) {
 	return { role: "user" as const, content, timestamp: Date.now() };

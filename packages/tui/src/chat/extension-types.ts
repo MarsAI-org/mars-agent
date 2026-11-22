@@ -1,5 +1,5 @@
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import type { TspText } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage } from "@marsai-org/ai";
+import type { TspText } from "@marsai-org/wire";
 import type { Component, TUI } from "../tui";
 import type { Theme } from "../theme/theme";
 import type { TodoItem } from "../tools/todo";

@@ -15,8 +15,8 @@
  *   mechanical {@link SpeakableStream} cleanup — speech never blocks on the
  *   model.
  */
-import { type AssistantMessage, completeSimple, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import { type AssistantMessage, completeSimple, retryTransientCompletion } from "@marsai-org/ai";
+import { logger, prompt } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import { roleCandidatePool } from "../config/model-roles";

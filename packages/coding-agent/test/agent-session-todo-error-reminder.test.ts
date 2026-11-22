@@ -5,19 +5,19 @@
 
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { isSessionSettled } from "@oh-my-pi/pi-coding-agent/session/session-settle";
-import { TodoTool } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { TextContent, ToolCall } from "@marsai-org/ai";
+import { createMockModel, type MockResponse } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { isSessionSettled } from "@marsai-org/coding-agent/session/session-settle";
+import { TodoTool } from "@marsai-org/coding-agent/tools";
+import { TempDir } from "@marsai-org/utils";
 
 const REMINDER_MARKER = "todo failed, so todo progress is not visible to the user.";
 

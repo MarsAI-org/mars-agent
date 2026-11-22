@@ -5,7 +5,7 @@ import { matchesKey } from "../keys";
 import { centerLine, padding } from "../utils";
 import { padToWidth } from "../render/utils";
 import { routeSgrMouseInput, type SgrMouseEvent } from "../mouse";
-import { APP_NAME } from "@oh-my-pi/pi-utils";
+import { APP_NAME } from "@marsai-org/utils";
 import { gradientLogo, PI_LOGO } from "../prompt/welcome";
 import { theme } from "../theme/theme";
 import { col, keyed, node, row, span, text } from "../native/describe";

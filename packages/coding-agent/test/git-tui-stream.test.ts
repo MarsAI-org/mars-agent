@@ -2,20 +2,20 @@ import { beforeAll, describe, expect, spyOn, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as natives from "@oh-my-pi/pi-natives";
-import { DiffSide, DiffStream } from "@oh-my-pi/pi-natives";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import * as natives from "@marsai-org/natives";
+import { DiffSide, DiffStream } from "@marsai-org/natives";
+import { sanitizeText } from "@marsai-org/utils";
 import { $ } from "bun";
 import {
 	buildDiffDocument,
 	buildLineSelectionPatch,
 	type DiffBuildOptions,
 	DiffPane,
-} from "@oh-my-pi/pi-tui/apps/git/diff-pane";
-import type { ChangedFile } from "@oh-my-pi/pi-tui/apps/git/state";
+} from "@marsai-org/tui/apps/git/diff-pane";
+import type { ChangedFile } from "@marsai-org/tui/apps/git/state";
 import { GitModel } from "../src/cli/git-tui/state";
-import { ImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { ImageProtocol, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { initTheme } from "@marsai-org/tui/theme";
 
 const RED_PNG = Buffer.from(
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",

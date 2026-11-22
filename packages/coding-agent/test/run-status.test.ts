@@ -8,10 +8,10 @@ import {
 	setProgramStatusSupported,
 	setRunStatus,
 	settleStartupRun,
-} from "@oh-my-pi/pi-coding-agent/utils/run-status";
-import * as titleGenerator from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
+} from "@marsai-org/coding-agent/utils/run-status";
+import * as titleGenerator from "@marsai-org/coding-agent/utils/title-generator";
+import { setTerminalHeadless } from "@marsai-org/utils";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
 
 // OSC 7501 Program Status Protocol reports, as the terminal parses them:
 // https://mitchellh.com/writing/program-status-osc7501

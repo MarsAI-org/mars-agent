@@ -1,28 +1,28 @@
 import { combine, effect, register, type Setting } from "../config/registry";
 import type { Settings } from "../config/settings";
 import { MOTION_MODES, MOTION_PRESETS } from "../config/motion-presets";
-import { formatKeyHint, formatKeyHints } from "@oh-my-pi/pi-tui/app-keybindings";
+import { formatKeyHint, formatKeyHints } from "@marsai-org/tui/app-keybindings";
 import { cfgReadToolResultPreview } from "../tools/settings";
 import { MAGIC_KEYWORDS, type MagicKeywordId } from "./magic-keywords";
-import { TREE_FILTER_MODES } from "@oh-my-pi/pi-tui/overlays/tree-selector";
+import { TREE_FILTER_MODES } from "@marsai-org/tui/overlays/tree-selector";
 import {
 	CONTEXT_LINE_MODE_VALUES,
 	CUSTOM_STATUS_LINE_DEFAULTS,
 	STATUS_LINE_PRESET_VALUES,
 	STATUS_LINE_SEGMENT_IDS,
 	STATUS_LINE_SEPARATOR_VALUES,
-} from "@oh-my-pi/pi-tui/status-line/schema";
-import { setChatTranscriptDisplayPreferences } from "@oh-my-pi/pi-tui/chat/display-preferences";
-import { setEditorGapComposerShape } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import { setEmojiAutocompleteEnabled } from "@oh-my-pi/pi-tui/prompt/prompt-action-autocomplete";
-import { WORD_COMPLETION_METHODS } from "@oh-my-pi/pi-tui/prompt/word-completion";
-import { applyHyperlinkSetting } from "@oh-my-pi/pi-tui/render/hyperlink";
-import { setInlineImageMaxColumns, setInlineImageMaxRows } from "@oh-my-pi/pi-tui/render/render-utils";
-import { setShimmerMode } from "@oh-my-pi/pi-tui/theme/shimmer";
-import { setAutoThemeMapping, setColorBlindMode, setSymbolPreset } from "@oh-my-pi/pi-tui/theme/theme";
-import { DEFAULT_MAX_FPS, parseMaxFps, setMaxFps } from "@oh-my-pi/pi-tui/frame-rate";
-import { setMotionEffects } from "@oh-my-pi/pi-tui/motion-effects";
-import { parseSpinnerInterval, setSpinnerInterval } from "@oh-my-pi/pi-tui/spinner-clock";
+} from "@marsai-org/tui/status-line/schema";
+import { setChatTranscriptDisplayPreferences } from "@marsai-org/tui/chat/display-preferences";
+import { setEditorGapComposerShape } from "@marsai-org/tui/prompt/editor-top-gap";
+import { setEmojiAutocompleteEnabled } from "@marsai-org/tui/prompt/prompt-action-autocomplete";
+import { WORD_COMPLETION_METHODS } from "@marsai-org/tui/prompt/word-completion";
+import { applyHyperlinkSetting } from "@marsai-org/tui/render/hyperlink";
+import { setInlineImageMaxColumns, setInlineImageMaxRows } from "@marsai-org/tui/render/render-utils";
+import { setShimmerMode } from "@marsai-org/tui/theme/shimmer";
+import { setAutoThemeMapping, setColorBlindMode, setSymbolPreset } from "@marsai-org/tui/theme/theme";
+import { DEFAULT_MAX_FPS, parseMaxFps, setMaxFps } from "@marsai-org/tui/frame-rate";
+import { setMotionEffects } from "@marsai-org/tui/motion-effects";
+import { parseSpinnerInterval, setSpinnerInterval } from "@marsai-org/tui/spinner-clock";
 
 const EMPTY_UNKNOWN_RECORD: Record<string, unknown> = {};
 

@@ -12,7 +12,7 @@ import {
 	type KiroProfile,
 	listKiroProfiles,
 	resolveKiroApiKeyRegion,
-} from "@oh-my-pi/pi-catalog/discovery/kiro";
+} from "@marsai-org/catalog/discovery/kiro";
 import {
 	decodeKiroCredential,
 	encodeKiroCredential,
@@ -21,16 +21,16 @@ import {
 	isKiroRegion,
 	kiroProfileRegion,
 	kiroProfileRegions,
-} from "@oh-my-pi/pi-catalog/wire/kiro";
+} from "@marsai-org/catalog/wire/kiro";
 import {
 	type KiroCliAttempt,
 	KIRO_CLI_SOCIAL_CLIENT_ID,
 	KIRO_CLI_SOCIAL_HEADERS,
 	kiroCliOidcHeaders,
-} from "@oh-my-pi/pi-catalog/wire/kiro-cli";
-import { fetchWithRetry, isRecord, prompt } from "@oh-my-pi/pi-utils";
-import { readBoundedJson } from "@oh-my-pi/pi-utils/bounded-json";
-import { sanitizeText } from "@oh-my-pi/pi-utils/sanitize-text";
+} from "@marsai-org/catalog/wire/kiro-cli";
+import { fetchWithRetry, isRecord, prompt } from "@marsai-org/utils";
+import { readBoundedJson } from "@marsai-org/utils/bounded-json";
+import { sanitizeText } from "@marsai-org/utils/sanitize-text";
 import * as AIError from "../../error";
 import { throwIfCancelled } from "../engine/common";
 import { pollOAuthDeviceCodeFlow } from "./device-code";

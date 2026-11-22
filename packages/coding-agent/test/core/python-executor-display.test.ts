@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { executePythonWithKernel } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { EvalDisplayOutput } from "@oh-my-pi/pi-coding-agent/eval/types";
+import { executePythonWithKernel } from "@marsai-org/coding-agent/eval/py/executor";
+import type { EvalDisplayOutput } from "@marsai-org/coding-agent/eval/types";
 import { FakeKernel } from "./helpers";
 
 describe("executePythonWithKernel display outputs", () => {

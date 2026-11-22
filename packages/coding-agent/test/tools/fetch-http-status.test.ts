@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import * as toolsManager from "@oh-my-pi/pi-coding-agent/utils/tools-manager";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import * as toolsManager from "@marsai-org/coding-agent/utils/tools-manager";
 import { mockFetch } from "../helpers/fetch-mock";
 
 function makeSession(fetch?: FetchImpl): ToolSession {

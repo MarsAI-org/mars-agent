@@ -2,17 +2,17 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { findFreeCdpPort, gracefulKillTreeOnce, waitForCdp } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { ensureChromiumExecutable, RENDERER_PRIORITY_ARGS } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { findFreeCdpPort, gracefulKillTreeOnce, waitForCdp } from "@marsai-org/coding-agent/tools/browser/attach";
+import { ensureChromiumExecutable, RENDERER_PRIORITY_ARGS } from "@marsai-org/coding-agent/tools/browser/launch";
 import {
 	acquireBrowser,
 	type PuppeteerBrowserHandle,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { decodePng } from "@oh-my-pi/pi-coding-agent/tools/browser/screenshot";
-import { acquireTab, releaseTab, runInTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/registry";
+import { decodePng } from "@marsai-org/coding-agent/tools/browser/screenshot";
+import { acquireTab, releaseTab, runInTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import type { Page } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

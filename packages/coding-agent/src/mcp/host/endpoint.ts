@@ -17,7 +17,7 @@
  * request or a forwarded resource subscription reached it, it carries session
  * state and stays up until the unit stops. A restarted upstream starts clean.
  */
-import { isRecord, logger, stableStringifyJson } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, stableStringifyJson } from "@marsai-org/utils";
 import type { ChildSpawn, ManagedChild, ManagedChildState, ModuleTunnel, ModuleUnit } from "../../daemon/module";
 import { type MCPTransportKind, MCPTransportError, normalizeMCPTransportError } from "../errors";
 import {

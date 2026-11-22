@@ -1,6 +1,6 @@
-import { type Api, type AuthStorage, type Model, withAuth } from "@oh-my-pi/pi-ai";
-import { applySessionHeader } from "@oh-my-pi/pi-ai/providers/inference-headers";
-import { asRecord } from "@oh-my-pi/pi-utils";
+import { type Api, type AuthStorage, type Model, withAuth } from "@marsai-org/ai";
+import { applySessionHeader } from "@marsai-org/ai/providers/inference-headers";
+import { asRecord } from "@marsai-org/utils";
 import {
 	type SearchCitation,
 	SearchProviderError,

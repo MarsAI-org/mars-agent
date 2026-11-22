@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { $which, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import { $which, setAgentDir, TempDir } from "@marsai-org/utils";
 import { Settings } from "../../src/config/settings";
 import { disposeAllVmContexts } from "../../src/eval/js/context-manager";
 import { disposeAllKernelSessions } from "../../src/eval/py/executor";

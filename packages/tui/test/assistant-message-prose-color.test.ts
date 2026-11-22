@@ -2,11 +2,11 @@ import { afterEach, afterAll, beforeAll, beforeEach, describe, expect, it } from
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { getThemeByName, initTheme, setMarkdownColorful, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { getThemeByName, initTheme, setMarkdownColorful, setThemeInstance } from "@marsai-org/tui/theme";
+import { setTerminalImageProtocol, TERMINAL } from "@marsai-org/tui";
+import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const RENDER_WIDTH = 80;
 const PROSE = "Assistant prose must be themeable.";

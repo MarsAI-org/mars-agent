@@ -4,17 +4,17 @@ import {
 	encodeResponse,
 	encodeStream,
 	parseRequest,
-} from "@oh-my-pi/pi-ai/providers/openai-chat-server";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { convertOpenAICodexResponsesTools } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+} from "@marsai-org/ai/providers/openai-chat-server";
+import { transformMessages } from "@marsai-org/ai/providers/transform-messages";
+import { convertOpenAICodexResponsesTools } from "@marsai-org/ai/providers/openai-codex-responses";
 import { createCodexModel } from "./helpers";
 import type {
 	AssistantMessage,
 	AssistantMessageEvent,
 	AssistantMessageEventStream,
 	ToolCall,
-} from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function makeEventStream(events: AssistantMessageEvent[], final: AssistantMessage): AssistantMessageEventStream {
 	async function* iter() {

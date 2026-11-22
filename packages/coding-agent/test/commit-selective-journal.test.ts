@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ChangeJournal, type ChangeRecord } from "@oh-my-pi/pi-coding-agent/commit/selective/journal";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { ChangeJournal, type ChangeRecord } from "@marsai-org/coding-agent/commit/selective/journal";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const FILE = "/repo/src/a.ts";
 const tempDirs: string[] = [];

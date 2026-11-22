@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { sanitizeHookStatusText, sanitizeInlineStatusText, sanitizeStatusText } from "@oh-my-pi/pi-tui/chrome/shared";
+import { sanitizeHookStatusText, sanitizeInlineStatusText, sanitizeStatusText } from "@marsai-org/tui/chrome/shared";
 
 const ESCAPE_FIXTURE =
 	"prefix " +

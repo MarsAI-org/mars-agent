@@ -6,7 +6,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getAgentDir } from "@oh-my-pi/pi-utils";
+import { getAgentDir } from "@marsai-org/utils";
 import { assertBunCanImport } from "../extensibility/module-path";
 
 export interface CustomShareResult {

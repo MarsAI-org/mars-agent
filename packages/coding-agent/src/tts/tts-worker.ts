@@ -1,4 +1,4 @@
-import { PhononTts } from "@oh-my-pi/pi-natives";
+import { PhononTts } from "@marsai-org/natives";
 import { errorText, replayCachedReady, sendLog } from "../subprocess/worker-runtime";
 import { ensureTtsCheckpoint } from "./checkpoint";
 import {

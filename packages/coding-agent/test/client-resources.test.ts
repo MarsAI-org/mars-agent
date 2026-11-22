@@ -5,14 +5,14 @@ import {
 	readResource,
 	serverSupportsResourceSubscriptions,
 	serverSupportsResources,
-} from "@oh-my-pi/pi-coding-agent/mcp/client";
+} from "@marsai-org/coding-agent/mcp/client";
 import type {
 	MCPResource,
 	MCPResourceReadResult,
 	MCPResourcesListResult,
 	MCPResourceTemplate,
 	MCPResourceTemplatesListResult,
-} from "@oh-my-pi/pi-coding-agent/mcp/types";
+} from "@marsai-org/coding-agent/mcp/types";
 import { createMockConnection, createMockTransport } from "./mcp-test-utils";
 
 describe("listResources", () => {

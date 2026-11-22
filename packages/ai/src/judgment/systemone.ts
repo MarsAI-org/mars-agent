@@ -23,8 +23,8 @@
  *   holding a base64 media data URL, so each one in `state`, `instructions` or
  *   `criteria` is replaced by a description (see {@link describeMediaDataUrls}).
  */
-import { parseCloudflareCredential } from "@oh-my-pi/pi-catalog/wire/cloudflare";
-import { $env, isRecord } from "@oh-my-pi/pi-utils";
+import { parseCloudflareCredential } from "@marsai-org/catalog/wire/cloudflare";
+import { $env, isRecord } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { embeddedImageDataUrl } from "../images/shared";
 import type { ImageContent } from "../types";

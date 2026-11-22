@@ -2,7 +2,7 @@
  * The eval tool's description options and its on-demand doc topics (`help://eval/<topic>`). A leaf of the eval tool:
  * `read` serves these topics in sessions without the eval tool, and must not pull in the tool's module graph.
  */
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import type { EvalPreludeDefinition } from "../eval/preludes";
 import evalAgentsTopic from "../prompts/tools/eval-agents.md" with { type: "text" };
 import evalHelpersTopic from "../prompts/tools/eval-helpers.md" with { type: "text" };

@@ -8,15 +8,15 @@
  * transcript window, so compaction does not roll the totals back.
  */
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { FooterComponent } from "@oh-my-pi/pi-tui/status-line/footer";
+import { Agent } from "@marsai-org/agent-core";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { FooterComponent } from "@marsai-org/tui/status-line/footer";
 
 beforeAll(async () => {
 	resetSettingsForTest();

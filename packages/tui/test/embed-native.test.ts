@@ -1,15 +1,15 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { setEmbedHost } from "@oh-my-pi/pi-tui/chat/embed-host";
-import { ImageBudget } from "@oh-my-pi/pi-tui/components/image";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { setEmbedHost } from "@marsai-org/tui/chat/embed-host";
+import { ImageBudget } from "@marsai-org/tui/components/image";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
 import {
 	type AssistantMessageHost,
 	createAssistantMessageComponent,
-} from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TspKind } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/prompt/interactive-context-helpers";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TspKind } from "@marsai-org/wire";
 
 const REPLY = [
 	"The chart and the running app:",

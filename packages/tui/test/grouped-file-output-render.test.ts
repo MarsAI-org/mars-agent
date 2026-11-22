@@ -4,7 +4,7 @@ import {
 	classifyGroupedLines,
 	formatGroupedFiles,
 	groupLineIndicesByBlank,
-} from "@oh-my-pi/pi-tui/tools/grouped-file-output";
+} from "@marsai-org/tui/tools/grouped-file-output";
 
 const REPO_ROOT = path.resolve("repo");
 const OUTSIDE_DIR = path.resolve(path.parse(REPO_ROOT).root, "outside", "dir");

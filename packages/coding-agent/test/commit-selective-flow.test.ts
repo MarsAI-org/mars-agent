@@ -4,15 +4,15 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { commitSelection, type CommitOutcome } from "@oh-my-pi/pi-coding-agent/commit/selective/apply";
-import { createDraft } from "@oh-my-pi/pi-coding-agent/commit/selective/draft";
-import { ChangeJournal, type JournalRecord } from "@oh-my-pi/pi-coding-agent/commit/selective/journal";
-import { createCommitPrelude } from "@oh-my-pi/pi-coding-agent/commit/selective/prelude-definition";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { commitSelection, type CommitOutcome } from "@marsai-org/coding-agent/commit/selective/apply";
+import { createDraft } from "@marsai-org/coding-agent/commit/selective/draft";
+import { ChangeJournal, type JournalRecord } from "@marsai-org/coding-agent/commit/selective/journal";
+import { createCommitPrelude } from "@marsai-org/coding-agent/commit/selective/prelude-definition";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
+import * as vcs from "@marsai-org/natives/vcs";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempDirs: string[] = [];
 

@@ -2,15 +2,15 @@ import { test, expect, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
 import {
 	AuthBrokerClient,
 	type AuthBrokerServerHandle,
 	RemoteAuthCredentialStore,
 	startAuthBroker,
-} from "@oh-my-pi/pi-ai/auth-broker";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
+} from "@marsai-org/ai/auth-broker";
+import * as AIError from "@marsai-org/ai/error";
+import * as oauthUtils from "@marsai-org/ai/registry/oauth";
 import { removeWithRetries } from "../../utils/src/temp";
 import { withEnv } from "./helpers";
 

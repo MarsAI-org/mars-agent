@@ -5,8 +5,8 @@ import {
 	type LoopSampleFrame,
 	type LoopSampler,
 	summarizeBlock,
-} from "@oh-my-pi/pi-tui/loop-sampler";
-import { LoopWatchdog } from "@oh-my-pi/pi-tui/loop-watchdog";
+} from "@marsai-org/tui/loop-sampler";
+import { LoopWatchdog } from "@marsai-org/tui/loop-watchdog";
 import {
 	currentLoopPhase,
 	logger,
@@ -14,7 +14,7 @@ import {
 	pushLoopPhase,
 	resetLoopPhaseWindow,
 	takeLoopPhaseAttribution,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 /**
  * Contract: LoopWatchdog turns event-loop lag into exactly one
@@ -723,7 +723,7 @@ describe("LoopWatchdog with the JSC sampler", () => {
 		async () => {
 			// The profiler and the count of running samplers are process-wide, and a watchdog
 			// another test file left running would keep it sampling: run in a fresh process.
-			const watchdogModule = Bun.resolveSync("@oh-my-pi/pi-tui/loop-watchdog", import.meta.dir);
+			const watchdogModule = Bun.resolveSync("@marsai-org/tui/loop-watchdog", import.meta.dir);
 			const script = [
 				'import { samplingProfilerStackTraces } from "bun:jsc";',
 				`import { LoopWatchdog } from ${JSON.stringify(watchdogModule)};`,

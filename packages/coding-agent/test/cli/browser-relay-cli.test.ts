@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from "bun:test";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
-import { relayExtensionFiles } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/extension-files";
-import { installRelayExtension } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/installs";
-import { serveRelayLink } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/native-relay";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { relayExtensionNotice } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
+import { TempDir } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
+import { relayExtensionFiles } from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
+import { installRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/installs";
+import { serveRelayLink } from "@marsai-org/coding-agent/tools/browser/relay/native-relay";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
+import { relayExtensionNotice } from "@marsai-org/coding-agent/tools/browser/relay/probe";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 import type { FromNativeHost, ToNativeHost } from "../../../browser-relay/extension/messages";
 
 /**

@@ -1,11 +1,11 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ExtensionAskDialogQuestion } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { setKeybindings, type TerminalFrameProvider } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import type { ExtensionAskDialogQuestion } from "@marsai-org/tui/overlays/ask-dialog";
+import { AskDialogComponent } from "@marsai-org/tui/overlays/ask-dialog";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import { setKeybindings, type TerminalFrameProvider } from "@marsai-org/tui";
 import type { NativeSurfaceProvider, NativeUiEvent } from "../src/native/node";
 import { TspHarness } from "./native/tsp-harness";
 

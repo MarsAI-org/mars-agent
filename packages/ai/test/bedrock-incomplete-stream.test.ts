@@ -3,9 +3,9 @@
 // successful `stop`, so the agent ended the turn on a cut-off reply instead of
 // retrying it.
 import { describe, expect, it } from "bun:test";
-import { retriable } from "@oh-my-pi/pi-ai/error";
-import { streamBedrock } from "@oh-my-pi/pi-ai/providers/amazon-bedrock";
-import type { AssistantMessage, AssistantMessageEvent } from "@oh-my-pi/pi-ai/types";
+import { retriable } from "@marsai-org/ai/error";
+import { streamBedrock } from "@marsai-org/ai/providers/amazon-bedrock";
+import type { AssistantMessage, AssistantMessageEvent } from "@marsai-org/ai/types";
 import { BEDROCK_TEST_CONTEXT, bedrockEvent, bedrockTestModel } from "./helpers/bedrock-stream";
 
 async function run(frames: Uint8Array[]): Promise<{ events: AssistantMessageEvent[]; result: AssistantMessage }> {

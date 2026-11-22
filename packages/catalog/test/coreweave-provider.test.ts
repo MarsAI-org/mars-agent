@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 import {
 	coreWeaveModelManagerOptions,
 	MODELS_DEV_PROVIDER_DESCRIPTORS,
 	mapModelsDevToModels,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 const COREWEAVE_ENV_KEYS = ["COREWEAVE_PROJECT", "WANDB_INFERENCE_PROJECT", "WANDB_ENTITY", "WANDB_PROJECT"] as const;
 const ORIGINAL_ENV = new Map(COREWEAVE_ENV_KEYS.map(key => [key, Bun.env[key]]));

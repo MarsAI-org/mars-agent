@@ -7,7 +7,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent, isRecord } from "@oh-my-pi/pi-utils";
+import { isEnoent, isRecord } from "@marsai-org/utils";
 import { writeFileAtomically } from "../../../../utils/atomic-file";
 import { authenticator, authenticatorSamples, deviceId, discoverSeed, plainHash } from "./authenticators";
 import type { JsonValue } from "./canonical-json";

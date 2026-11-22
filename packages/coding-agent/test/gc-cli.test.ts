@@ -4,20 +4,20 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { gunzipSync, gzipSync } from "node:zlib";
-import { withStatsSyncLock } from "@oh-my-pi/omp-stats/aggregator";
+import { withStatsSyncLock } from "@marsai-org/stats/aggregator";
 import {
 	GC_AUTO_COMPRESS_INTERVAL_MS,
 	GC_AUTO_COMPRESS_LOG,
 	scheduleGcAutoCompress,
-} from "@oh-my-pi/pi-coding-agent/cli/gc-auto-compress";
-import { type GcResult, runGcCommand } from "@oh-my-pi/pi-coding-agent/cli/gc-cli";
-import * as gcCompress from "@oh-my-pi/pi-coding-agent/cli/gc-compress";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { BlobStore, blobStagingPath } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as sessionContext from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { FileSessionStorage, sessionStagingPath } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+} from "@marsai-org/coding-agent/cli/gc-auto-compress";
+import { type GcResult, runGcCommand } from "@marsai-org/coding-agent/cli/gc-cli";
+import * as gcCompress from "@marsai-org/coding-agent/cli/gc-compress";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { BlobStore, blobStagingPath } from "@marsai-org/coding-agent/session/blob-store";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as sessionContext from "@marsai-org/coding-agent/session/session-context";
+import { FileSessionStorage, sessionStagingPath } from "@marsai-org/coding-agent/session/session-storage";
 import {
 	getAgentDir,
 	getBlobsDir,
@@ -28,7 +28,7 @@ import {
 	hashPath,
 	setAgentDir,
 	setProjectDir,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { runCli } from "../src/cli";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "./helpers/settings-test-state";
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveBuiltinToolPlan, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BUILTIN_TOOL_HELP, BUILTIN_TOOL_NAMES } from "@oh-my-pi/pi-coding-agent/tools/builtin-names";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { resolveBuiltinToolPlan, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { BUILTIN_TOOL_HELP, BUILTIN_TOOL_NAMES } from "@marsai-org/coding-agent/tools/builtin-names";
 
 describe("BUILTIN_TOOL_HELP", () => {
 	// `omp --help` groups tools by this map; it must match what a default session actually gets.

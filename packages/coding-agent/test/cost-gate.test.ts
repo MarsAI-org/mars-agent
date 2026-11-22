@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { StreamFn } from "@oh-my-pi/pi-agent-core";
-import * as ai from "@oh-my-pi/pi-ai";
-import { createModelJobWidgetAuthor } from "@oh-my-pi/pi-coding-agent/job-widgets/author";
+import type { StreamFn } from "@marsai-org/agent-core";
+import * as ai from "@marsai-org/ai";
+import { createModelJobWidgetAuthor } from "@marsai-org/coding-agent/job-widgets/author";
 import {
 	type Api,
 	type AssistantMessage,
@@ -10,29 +10,29 @@ import {
 	type Model,
 	type ModelSpec,
 	registerCustomApi,
-} from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { runCli } from "@oh-my-pi/pi-coding-agent/cli";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { PRINT_MODE_COST_CAP_EXIT_CODE, runPrintMode } from "@oh-my-pi/pi-coding-agent/modes/print-mode";
-import { type CreateAgentSessionOptions, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+} from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
+import { runCli } from "@marsai-org/coding-agent/cli";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { clearOmpExtensionCliRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import { PRINT_MODE_COST_CAP_EXIT_CODE, runPrintMode } from "@marsai-org/coding-agent/modes/print-mode";
+import { type CreateAgentSessionOptions, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	COST_GATE_NOTICE_SOURCE,
 	CostCapError,
 	CostGate,
 	guardStreamFn,
-} from "@oh-my-pi/pi-coding-agent/session/cost-gate";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { wrapStreamFnWithProviderConcurrency } from "@oh-my-pi/pi-coding-agent/task/provider-concurrency";
-import { cfgSessionMaxCost, cfgSessionWarnCost } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/cost-gate";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { wrapStreamFnWithProviderConcurrency } from "@marsai-org/coding-agent/task/provider-concurrency";
+import { cfgSessionMaxCost, cfgSessionWarnCost } from "@marsai-org/coding-agent/session/settings";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 import { rejectionOf } from "./helpers/rejection";
 

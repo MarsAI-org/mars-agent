@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { type AuthBrokerServerHandle, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import { runAuthBrokerCommand } from "@oh-my-pi/pi-coding-agent/cli/auth-broker-cli";
-import { getAgentDbPath, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import { runAuthBrokerCommand } from "@marsai-org/coding-agent/cli/auth-broker-cli";
+import { getAgentDbPath, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const TEAM_ORG = "org-team-1111";
 

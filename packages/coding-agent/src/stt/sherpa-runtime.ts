@@ -5,7 +5,7 @@ import {
 	getTinyModelsCacheDir,
 	resolveRuntimeModule,
 	type RuntimeInstallPhase,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 /** Native speech package installed by the shared STT runtime loader. */
 export const SHERPA_PACKAGE = "sherpa-onnx-node";

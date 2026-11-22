@@ -7,16 +7,16 @@
  * state, while the advisor config overlay embeds it as a plain "pick one
  * model" list.
  */
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	getEffectiveTokenCost,
 	getFactoryDroidCreditRate,
 	getModelPricingStatus,
 	modelsAreEqual,
-} from "@oh-my-pi/pi-catalog/models";
-import { modelKind, type ModelKind, type ModelPricingStatus } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/models";
+import { modelKind, type ModelKind, type ModelPricingStatus } from "@marsai-org/catalog/types";
 import type { Component } from "../tui";
 import { FuzzyCorpus, FuzzyQuery, FuzzyText, fuzzyRank } from "../fuzzy";
 import { Input } from "../components/input";
@@ -24,7 +24,7 @@ import { ScrollView } from "../components/scroll-view";
 import { matchesKey } from "../keys";
 import type { SgrMouseEvent } from "../mouse";
 import { replaceTabs, truncateToWidth, visibleWidth } from "../utils";
-import { formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
+import { formatNumber, sanitizeText } from "@marsai-org/utils";
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
@@ -50,7 +50,7 @@ import type {
 	TspPickerProps,
 	TspSpan,
 	TspText,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import { col, md, node, row, span, text } from "../native/describe";
 import { pickerFuzzyHits } from "../native/picker";
 import type { NativeChild, NativeNode, NativeUiEvent } from "../native/node";

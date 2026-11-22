@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { runConfigCommand } from "@oh-my-pi/pi-coding-agent/cli/config-cli";
-import { resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { getConfigRootDir, getProjectDir, setAgentDir, setProjectDir, TempDir } from "@oh-my-pi/pi-utils";
+import { runConfigCommand } from "@marsai-org/coding-agent/cli/config-cli";
+import { resetSettingsForTest } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { getConfigRootDir, getProjectDir, setAgentDir, setProjectDir, TempDir } from "@marsai-org/utils";
 
 let testAgentDir: TempDir | undefined;
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;

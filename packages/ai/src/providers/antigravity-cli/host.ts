@@ -5,7 +5,7 @@
  * only in a subsequent prompt. Failed drains kill the process and reseed.
  */
 import * as path from "node:path";
-import { $which, isRecord, logger, stableStringifyJson } from "@oh-my-pi/pi-utils";
+import { $which, isRecord, logger, stableStringifyJson } from "@marsai-org/utils";
 import {
 	type ContentBlock,
 	ClientSideConnection,
@@ -14,7 +14,7 @@ import {
 	RequestError,
 	type SessionConfigOption,
 	type SessionNotification,
-} from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/utils/acp";
 import { ProviderHttpError } from "../../error/classes";
 import type {
 	AntigravityCliCheckpoint,

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { handleReadTheDocs } from "@oh-my-pi/pi-coding-agent/web/scrapers/readthedocs";
-import * as scrapers from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
+import { handleReadTheDocs } from "@marsai-org/coding-agent/web/scrapers/readthedocs";
+import * as scrapers from "@marsai-org/coding-agent/web/scrapers/types";
 
 const PAGE_URL = "https://niquests.readthedocs.io/en/v3.18.5/user/quickstart.html";
 

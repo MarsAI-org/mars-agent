@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { LoginCancelledError } from "@oh-my-pi/pi-ai/error";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { LoginCancelledError } from "@marsai-org/ai/error";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import type { FetchImpl } from "@marsai-org/ai/types";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const SIGN_IN_URL = "https://console.mistral.ai/api/vibe/sign-in";

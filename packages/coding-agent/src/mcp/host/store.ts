@@ -12,7 +12,7 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRecord, logger, stableStringifyJson } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, stableStringifyJson } from "@marsai-org/utils";
 import type { McpEra } from "./contract";
 
 const SCHEMA_VERSION = 1;

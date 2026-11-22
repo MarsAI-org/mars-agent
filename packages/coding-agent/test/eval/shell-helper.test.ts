@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import { disposePyToolBridge } from "@oh-my-pi/pi-coding-agent/eval/py/tool-bridge";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { $which, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions } from "@marsai-org/coding-agent/eval/py/executor";
+import { disposePyToolBridge } from "@marsai-org/coding-agent/eval/py/tool-bridge";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { $which, setAgentDir, TempDir } from "@marsai-org/utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "../helpers/settings-test-state";
 
 let temp: TempDir;

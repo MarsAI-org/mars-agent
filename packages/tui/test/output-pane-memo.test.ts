@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { OutputPane, type OutputPaneOptions } from "@oh-my-pi/pi-tui/render/output-pane";
-import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { ensureThemeSync, getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
-import { resetHangulCompatibilityJamoWidthForTests, setHangulCompatibilityJamoWidth } from "@oh-my-pi/pi-tui/utils";
+import { OutputPane, type OutputPaneOptions } from "@marsai-org/tui/render/output-pane";
+import { ImageProtocol, setTerminalImageProtocol, TERMINAL } from "@marsai-org/tui/terminal-capabilities";
+import { ensureThemeSync, getThemeByName, setThemeInstance, theme } from "@marsai-org/tui/theme";
+import { resetHangulCompatibilityJamoWidthForTests, setHangulCompatibilityJamoWidth } from "@marsai-org/tui/utils";
 
 ensureThemeSync();
 

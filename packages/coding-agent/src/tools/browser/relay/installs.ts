@@ -7,7 +7,7 @@ import {
 	logger,
 	VERSION,
 	withFileLock,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { writeFileAtomically } from "../../../utils/atomic-file";
 import {
 	defaultRelayExtensionDir,

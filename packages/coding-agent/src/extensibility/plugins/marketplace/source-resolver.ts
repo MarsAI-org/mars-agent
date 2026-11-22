@@ -13,8 +13,8 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { directoryExists, directoryIsMissing, pathIsWithin } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { directoryExists, directoryIsMissing, pathIsWithin } from "@marsai-org/utils";
 
 import {
 	isBarePluginSourceName,

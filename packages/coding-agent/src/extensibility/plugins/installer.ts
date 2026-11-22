@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, getProjectDir } from "@oh-my-pi/pi-utils";
+import { getAgentDir, getProjectDir } from "@marsai-org/utils";
 import { runBunCli } from "./bun-cli";
 import { linkPluginDirectory } from "./directory-link";
 import { extractPackageName } from "./parser";

@@ -13,10 +13,10 @@
  * fires (so `process.exit` can't discard it), and the full record is delivered.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runPrintMode } from "@oh-my-pi/pi-coding-agent/modes/print-mode";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { postmortem } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { runPrintMode } from "@marsai-org/coding-agent/modes/print-mode";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { postmortem } from "@marsai-org/utils";
 
 interface FlushHarness {
 	session: AgentSession;

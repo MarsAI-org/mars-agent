@@ -3,8 +3,8 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import * as zod from "@oh-my-pi/omptype/zod";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import * as zod from "@marsai-org/omptype/zod";
+import { TempDir } from "@marsai-org/utils";
 import createTool, { type TuiParams } from "../tools/tui";
 
 const tool = createTool({ cwd: path.resolve(import.meta.dir, "../.."), zod });

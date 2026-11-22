@@ -11,10 +11,10 @@
  *  - `x-amz-security-token` (only when credentials carry a sessionToken)
  *  - `authorization`
  */
-import { asStrictBytes } from "@oh-my-pi/pi-utils/bytes";
+import { asStrictBytes } from "@marsai-org/utils/bytes";
 
-/** @deprecated Use `asStrictBytes` from `@oh-my-pi/pi-utils`. */
-export { asStrictBytes as asStrict } from "@oh-my-pi/pi-utils/bytes";
+/** @deprecated Use `asStrictBytes` from `@marsai-org/utils`. */
+export { asStrictBytes as asStrict } from "@marsai-org/utils/bytes";
 
 export interface AwsCredentials {
 	accessKeyId: string;

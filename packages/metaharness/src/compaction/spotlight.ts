@@ -7,7 +7,7 @@
  * comparable only within one request, so the rebuild keeps turns by rank within its budget
  * rather than by an absolute threshold. Credential: `STENCIL_API_KEY` or the stencil.so login.
  */
-import { SpotlightClient } from "@oh-my-pi/pi-coding-agent/spotlight/client";
+import { SpotlightClient } from "@marsai-org/coding-agent/spotlight/client";
 import { BRIEF_CHARS, type KeepScorer } from "./fresh";
 import probes from "./prompts/spotlight-keep.json" with { type: "json" };
 

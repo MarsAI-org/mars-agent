@@ -1,7 +1,7 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { BtwHistoryPanel } from "@oh-my-pi/pi-tui/overlays/btw-history-panel";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
+import type { NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { BtwHistoryPanel } from "@marsai-org/tui/overlays/btw-history-panel";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
 
 let darkTheme: Theme | undefined;
 

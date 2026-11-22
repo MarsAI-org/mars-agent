@@ -1,13 +1,13 @@
-import { type Type, type } from "@oh-my-pi/omptype";
-import type { AgentToolResult, ToolApprovalDecision } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { classifyModel } from "@oh-my-pi/pi-catalog/identity";
-import type { DesktopCapabilities } from "@oh-my-pi/pi-natives";
-import { once } from "@oh-my-pi/pi-utils";
+import { type Type, type } from "@marsai-org/omptype";
+import type { AgentToolResult, ToolApprovalDecision } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { classifyModel } from "@marsai-org/catalog/identity";
+import type { DesktopCapabilities } from "@marsai-org/natives";
+import { once } from "@marsai-org/utils";
 import { callSessionTool } from "../eval/js/tool-bridge";
 import type { EvalPreludeContext, HostEvalPreludeDefinition } from "../eval/preludes";
 import computerUsePrompt from "../prompts/system/computer-use.md" with { type: "text" };
-import { enforceInlineByteCap } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { enforceInlineByteCap } from "@marsai-org/tui/tools/streaming-output";
 import { type ComputerCallStep, isReadOnlyComputerCall, renderComputerCall } from "./computer/call";
 import {
 	type ComputerScreenshot,
@@ -25,7 +25,7 @@ import {
 import type { ToolSession } from "./index";
 import { renderFunctionRun, renderStatusCallChain } from "./run-code";
 import { throwIfAborted } from "./tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { clampTimeout } from "./tool-timeouts";
 
 import {

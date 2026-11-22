@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 import * as path from "node:path";
 import * as vm from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	registerArtifactsDir,
 	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { TempDir } from "@oh-my-pi/pi-utils/temp";
+} from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { TempDir } from "@marsai-org/utils/temp";
 import { AgentRegistry } from "../../src/registry/agent-registry";
 import type { AgentSession } from "../../src/session/agent-session";
 import { createHelpers } from "../../src/eval/js/shared/helpers";

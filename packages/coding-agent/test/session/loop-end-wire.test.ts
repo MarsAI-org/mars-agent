@@ -4,8 +4,8 @@
  * External clients parse these exact fields.
  */
 import { describe, expect, it } from "bun:test";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { fromWireEvent, toWireEvent } from "@oh-my-pi/pi-coding-agent/session/loop-end-wire";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { fromWireEvent, toWireEvent } from "@marsai-org/coding-agent/session/loop-end-wire";
 
 describe("loop-end wire codec", () => {
 	it("encodes a pause as a non-terminal agent_end and the run's end as a terminal one", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { providerEntry } from "@oh-my-pi/pi-catalog/compat/providers";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { buildXaiOAuthStaticSeed } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import { providerEntry } from "@marsai-org/catalog/compat/providers";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models/descriptors";
+import { buildXaiOAuthStaticSeed } from "@marsai-org/catalog/provider-models/openai-compat";
 
 // Pins the invariant: the bundled catalog carries every entry the runtime
 // xai-oauth KDL seed (surfaced via buildXaiOAuthStaticSeed) emits. Without

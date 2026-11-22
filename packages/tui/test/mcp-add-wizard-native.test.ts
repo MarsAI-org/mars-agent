@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { KeybindingsManager, setKeyHintPlatform } from "@oh-my-pi/pi-tui/app-keybindings";
-import { setKeybindings } from "@oh-my-pi/pi-tui";
+import { KeybindingsManager, setKeyHintPlatform } from "@marsai-org/tui/app-keybindings";
+import { setKeybindings } from "@marsai-org/tui";
 import { stripVTControlCharacters } from "node:util";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { MCPAddWizard, type MCPAddWizardConfig, type MCPAddWizardDeps } from "@oh-my-pi/pi-tui/overlays/mcp-add-wizard";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { MCPAddWizard, type MCPAddWizardConfig, type MCPAddWizardDeps } from "@marsai-org/tui/overlays/mcp-add-wizard";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 
 const CX: DescribeContext = { cols: 100, reduceMotion: false, dark: true, supports: () => true, feature: () => true };
 const ENTER = "\r";

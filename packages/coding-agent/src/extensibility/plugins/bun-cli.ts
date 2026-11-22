@@ -14,7 +14,7 @@ export interface BunCliResult {
  * `bun` from `$PATH`: source and bundle installs already run under Bun, and the
  * standalone `omp` binary embeds Bun, so plugin installs never require a
  * separately installed Bun (#15480). Same mechanism as
- * `eval/js/package-installer.ts` and `@oh-my-pi/pi-utils` runtime installs.
+ * `eval/js/package-installer.ts` and `@marsai-org/utils` runtime installs.
  */
 export async function runBunCli(args: readonly string[], cwd: string): Promise<BunCliResult> {
 	const proc = Bun.spawn([resolveExecutablePath(), ...args], {

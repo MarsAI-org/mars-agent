@@ -3,8 +3,8 @@
  * RPC AgentSession (so delegated work runs with the host's tools) and forwards its
  * callbacks as unsolicited `live_*` frames.
  */
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { toError } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { toError } from "@marsai-org/utils";
 import { LiveSessionController, type LiveSessionControllerOptions } from "../../live/controller";
 import { resolveLiveVoice } from "../../live/settings";
 import type { AgentSession } from "../../session/agent-session";

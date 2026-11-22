@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { complete } from "@oh-my-pi/pi-ai/stream";
-import type { Api, AssistantMessage, Context, Message, Model, Tool, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { type } from "@marsai-org/omptype";
+import { complete } from "@marsai-org/ai/stream";
+import type { Api, AssistantMessage, Context, Message, Model, Tool, ToolResultMessage } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import { e2eApiKey } from "./oauth";
 
 // Tool for testing

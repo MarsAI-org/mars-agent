@@ -3,7 +3,7 @@ import { describe, expect, it, onTestFinished } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { findFreeCdpPort, gracefulKillTreeOnce } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
+import { findFreeCdpPort, gracefulKillTreeOnce } from "@marsai-org/coding-agent/tools/browser/attach";
 import {
 	chromiumExecutableProbeForTest,
 	closeLaunchedBrowser,
@@ -13,10 +13,10 @@ import {
 	resolveSharedBrowserLaunchSpec,
 	stealthIgnoreDefaultArgs,
 	systemChromiumCandidatesForTest,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { readJsonl, TempDir } from "@oh-my-pi/pi-utils";
-import { BrowserPlatform, computeExecutablePath, detectBrowserPlatform } from "@oh-my-pi/pi-utils/browsers";
-import { APP_NAME } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { readJsonl, TempDir } from "@marsai-org/utils";
+import { BrowserPlatform, computeExecutablePath, detectBrowserPlatform } from "@marsai-org/utils/browsers";
+import { APP_NAME } from "@marsai-org/utils/dirs";
 import type { Browser } from "puppeteer-core";
 import { PUPPETEER_REVISIONS } from "puppeteer-core/internal/revisions.js";
 import { chromiumAvailable } from "./chromium-probe";

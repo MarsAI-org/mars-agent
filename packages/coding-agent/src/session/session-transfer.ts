@@ -25,14 +25,14 @@ import {
 	Snowflake,
 	TempDir,
 	VERSION,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import {
 	type ArchiveMemberContent,
 	ArchiveError,
 	formatArchivePathForError,
 	readArchiveEntries,
 	writeArchive,
-} from "@oh-my-pi/pi-utils/ar";
+} from "@marsai-org/utils/ar";
 import transferArrivedTemplate from "../prompts/session/transfer-arrived.md" with { type: "text" };
 import transferDepartedTemplate from "../prompts/session/transfer-departed.md" with { type: "text" };
 import transferStaleForkTemplate from "../prompts/session/transfer-stale-fork.md" with { type: "text" };

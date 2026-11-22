@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { closeSessionIndex } from "@marsai-org/coding-agent/session/session-index";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { makeAssistantMessage } from "../session-manager/helpers";
 
 /**

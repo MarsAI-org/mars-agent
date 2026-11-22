@@ -26,7 +26,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { VersionUpdate } from "@oh-my-pi/pi-tui/prompt/welcome";
+import type { VersionUpdate } from "@marsai-org/tui/prompt/welcome";
 import {
 	APP_NAME,
 	compareVersions,
@@ -37,7 +37,7 @@ import {
 	logger,
 	tryAcquireFileLock,
 	VERSION,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import { spawnDetached } from "../subprocess/detached";
 import { resolveWorkerSpawnCmd, workerEnvFromParent } from "../subprocess/worker-client";

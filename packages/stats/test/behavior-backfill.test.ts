@@ -2,10 +2,10 @@ import { Database } from "bun:sqlite";
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getFileOffset, getFrustrationOverall, initDb } from "@oh-my-pi/omp-stats/db";
-import { getFrustrationDashboardStats } from "@oh-my-pi/omp-stats/frustration";
-import { getAgentDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
+import { closeDb, getFileOffset, getFrustrationOverall, initDb } from "@marsai-org/stats/db";
+import { getFrustrationDashboardStats } from "@marsai-org/stats/frustration";
+import { getAgentDir, getStatsDbPath } from "@marsai-org/utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-behavior-backfill-");

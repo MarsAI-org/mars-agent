@@ -6,9 +6,9 @@
  * checkout also records its commit and branch, because its version string stays the same
  * across unreleased commits.
  */
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { $env, isCompiledBinary, isRecord, logger, VERSION } from "@oh-my-pi/pi-utils";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { $env, isCompiledBinary, isRecord, logger, VERSION } from "@marsai-org/utils";
 import type { SessionEntry } from "./session-entries";
 
 export interface RuntimeIdentity {

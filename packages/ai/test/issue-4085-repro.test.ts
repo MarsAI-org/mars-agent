@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { oauthFetch } from "@oh-my-pi/pi-ai/registry/oauth/google-oauth-shared";
+import * as AIError from "@marsai-org/ai/error";
+import { oauthFetch } from "@marsai-org/ai/registry/oauth/google-oauth-shared";
 
 /**
  * A loopback server whose handler never resolves — models a stalled Cloud Code

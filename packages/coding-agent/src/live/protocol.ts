@@ -1,4 +1,4 @@
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 
 /** Frameless Bidi model used by Codex Desktop live calls. */
 export const LIVE_MODEL = "gpt-live-1-codex" as const;

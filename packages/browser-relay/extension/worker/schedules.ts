@@ -1,4 +1,4 @@
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import type { PromptParams, SetModelParams } from "../../../coding-agent/src/modes/rpc/wire/rpc-wire.generated";
 import {
 	type PanelSettings,

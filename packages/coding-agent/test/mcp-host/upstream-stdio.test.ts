@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { spawnManagedChild } from "@oh-my-pi/pi-coding-agent/daemon/children";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { McpStdioSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { resolveStdioSpawnCommand, StdioUpstream } from "@oh-my-pi/pi-coding-agent/mcp/host/stdio-upstream";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { spawnManagedChild } from "@marsai-org/coding-agent/daemon/children";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { McpStdioSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import { resolveStdioSpawnCommand, StdioUpstream } from "@marsai-org/coding-agent/mcp/host/stdio-upstream";
+import { removeWithRetries } from "@marsai-org/utils";
 import { rejectionOf, trackUnhandled } from "../helpers/rejection";
 import { FIXTURES, isAlive, realDeps, stdioSpec } from "./upstream-support";
 

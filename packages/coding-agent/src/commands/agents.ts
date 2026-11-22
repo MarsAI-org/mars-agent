@@ -2,10 +2,10 @@
  * Manage bundled task agents.
  */
 
-import { Args, Command, Flags, renderCommandHelp } from "@oh-my-pi/pi-utils/cli";
+import { Args, Command, Flags, renderCommandHelp } from "@marsai-org/utils/cli";
 import { type AgentsAction, type AgentsCommandArgs, runAgentsCommand } from "../cli/agents-cli";
 import { agentsHelp as commandHelp } from "../cli/command-help";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { initTheme } from "@marsai-org/tui/theme";
 
 const ACTIONS: AgentsAction[] = ["unpack"];
 

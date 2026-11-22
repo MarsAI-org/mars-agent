@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { ImageProtocol, resolveImageProtocol, setTerminalImageProtocol, TERMINAL, TUI } from "@oh-my-pi/pi-tui";
+import { ImageProtocol, resolveImageProtocol, setTerminalImageProtocol, TERMINAL, TUI } from "@marsai-org/tui";
 import { VirtualTerminal } from "./virtual-terminal";
 import {
 	createProcessTerminalRenderHarness,

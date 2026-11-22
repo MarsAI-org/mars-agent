@@ -1,6 +1,6 @@
-import type { Model } from "@oh-my-pi/pi-ai";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import type { TspPickerProps } from "@oh-my-pi/pi-wire";
+import type { Model } from "@marsai-org/ai";
+import { modelKind } from "@marsai-org/catalog/types";
+import type { TspPickerProps } from "@marsai-org/wire";
 import type { SgrMouseEvent } from "../../mouse";
 import { Text } from "../../components/text";
 import { WizardStep } from "../../components/wizard-step";

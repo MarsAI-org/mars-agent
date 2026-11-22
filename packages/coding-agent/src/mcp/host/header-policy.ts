@@ -12,7 +12,7 @@
  *    configured headers are attached only when the hop targets the configured
  *    origin. Method-changing redirects of non-GET requests are refused.
  */
-import { resolveExtraCa, withExtraCaInit } from "@oh-my-pi/pi-utils";
+import { resolveExtraCa, withExtraCaInit } from "@marsai-org/utils";
 
 /** Header buckets for one MCP HTTP request. */
 interface MCPHeaderSources {

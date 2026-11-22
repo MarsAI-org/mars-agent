@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import "./setup";
-import { configureRecallFeatures } from "@oh-my-pi/pi-mnemopi/config";
-import { BeamMemory } from "@oh-my-pi/pi-mnemopi/core/beam";
-import type { EpisodicGraph, RelatedMemory } from "@oh-my-pi/pi-mnemopi/core/episodic-graph";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
+import { configureRecallFeatures } from "@marsai-org/mnemopi/config";
+import { BeamMemory } from "@marsai-org/mnemopi/core/beam";
+import type { EpisodicGraph, RelatedMemory } from "@marsai-org/mnemopi/core/episodic-graph";
+import { Mnemopi } from "@marsai-org/mnemopi/core/memory";
 import { transaction } from "../src/db";
 
 const previousProactive = process.env.MNEMOPI_PROACTIVE_LINKING;

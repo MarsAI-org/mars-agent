@@ -2,7 +2,7 @@
  * Emits one omp assistant message (a "step") from agy's ACP events: thinking
  * and text deltas, at most one tool call, then a terminal `done` or `error`.
  */
-import type { PromptResponse } from "@oh-my-pi/pi-utils/acp";
+import type { PromptResponse } from "@marsai-org/utils/acp";
 import type { FinalizeResult } from "../../error/finalize";
 import type { Api, AntigravityCliPayload, AssistantMessage, Model, ToolCall } from "../../types";
 import type { AssistantMessageEventStream } from "../../utils/event-stream";

@@ -9,17 +9,17 @@ import type {
 	ProviderSessionState,
 	ToolResultMessage,
 	Usage,
-} from "@oh-my-pi/pi-ai/types";
-import { createOpenAIResponsesHistoryPayload } from "@oh-my-pi/pi-ai/utils";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import type { SessionEntry, SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/types";
+import { createOpenAIResponsesHistoryPayload } from "@marsai-org/ai/utils";
+import type { Model } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import type { SessionEntry, SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 import { getTestModel } from "./helpers/model-fixtures";
 
 const openaiModel = getTestModel("openai", model => model.api === "openai-responses" && model.reasoning);

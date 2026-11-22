@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": true,
-  "name": "@oh-my-pi/typescript-edit-benchmark",
+  "name": "@marsai-org/typescript-edit-benchmark",
   "version": "0.0.1",
   "description": "Edit benchmark suite using TypeScript source code mutations",
   "homepage": "https://omp.sh",
@@ -9,7 +9,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/can1357/oh-my-pi.git",
+    "url": "git+https://github.com/MarsAI-org/mars-agent.git",
     "directory": "packages/typescript-edit-benchmark"
   },
   "exports": {
@@ -34,14 +34,14 @@
     "@babel/parser": "catalog:",
     "@babel/traverse": "catalog:",
     "@babel/types": "catalog:",
-    "@oh-my-pi/pi-agent-core": "catalog:",
-    "@oh-my-pi/pi-coding-agent": "catalog:",
-    "@oh-my-pi/pi-utils": "catalog:",
-    "@oh-my-pi/pi-natives": "catalog:",
+    "@marsai-org/agent-core": "catalog:",
+    "@marsai-org/coding-agent": "catalog:",
+    "@marsai-org/utils": "catalog:",
+    "@marsai-org/natives": "catalog:",
     "prettier": "catalog:",
     "regexp-tree": "catalog:",
-    "@oh-my-pi/pi-ai": "catalog:",
-    "@oh-my-pi/pi-tui": "catalog:"
+    "@marsai-org/ai": "catalog:",
+    "@marsai-org/tui": "catalog:"
   },
   "devDependencies": {
     "@types/babel__generator": "catalog:",

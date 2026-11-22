@@ -12,7 +12,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { expandTilde, getWebKitHostPath, parseFlag } from "@oh-my-pi/pi-utils";
+import { expandTilde, getWebKitHostPath, parseFlag } from "@marsai-org/utils";
 
 /** The host executable's file name inside an engine directory: `ABHost`, on Windows `ABHost.exe`. */
 export function hostExecutableName(platform: NodeJS.Platform): string {

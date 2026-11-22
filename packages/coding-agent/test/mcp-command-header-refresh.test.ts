@@ -13,10 +13,10 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPHttpServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPTool } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import type { MCPHttpServerConfig } from "@marsai-org/coding-agent/mcp/types";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import { type FlakyHttpMcpServer, startFlakyHttpMcpServer } from "./fixtures/flaky-http-mcp";
 
 const GUARD_MS = 5_000;

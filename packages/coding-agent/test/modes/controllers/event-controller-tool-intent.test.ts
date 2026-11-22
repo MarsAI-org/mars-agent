@@ -1,11 +1,11 @@
 // A live tool card renders the model's intent, as a card rebuilt from the transcript does.
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings, resetSettingsForTest } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { Settings, resetSettingsForTest } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import type { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import type { DescribeContext, NativeNode } from "@marsai-org/tui/native/node";
+import { initTheme } from "@marsai-org/tui/theme";
 import { createAssistantMessage } from "../../helpers/agent-session-setup";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

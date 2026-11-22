@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, setSystemTime, spyOn, vi } from "bun:test";
-import { Container, TUI } from "@oh-my-pi/pi-tui";
-import { Loader, type LoaderMessageColorFn } from "@oh-my-pi/pi-tui/components/loader";
+import { Container, TUI } from "@marsai-org/tui";
+import { Loader, type LoaderMessageColorFn } from "@marsai-org/tui/components/loader";
 import {
 	DEFAULT_SPINNER_INTERVAL_MS,
 	setSpinnerInterval,
 	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+} from "@marsai-org/tui/spinner-clock";
+import { visibleWidth } from "@marsai-org/tui/utils";
 import { VirtualTerminal } from "./virtual-terminal";
 
 describe("Loader component", () => {

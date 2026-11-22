@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Process } from "@oh-my-pi/pi-natives";
-import { AbortError, type ExecResult, exec, spawn } from "@oh-my-pi/pi-utils/ptree";
+import { Process } from "@marsai-org/natives";
+import { AbortError, type ExecResult, exec, spawn } from "@marsai-org/utils/ptree";
 
 const BLOCK_FOREVER = `${JSON.stringify(process.execPath)} -e 'Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0)'`;
 

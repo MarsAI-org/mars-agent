@@ -4,11 +4,11 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type Agent, AgentBusyError, type AgentMessage, agentPauseGate, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionOutcome } from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@oh-my-pi/pi-ai";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { execReplace } from "@oh-my-pi/pi-natives";
+import { type Agent, AgentBusyError, type AgentMessage, agentPauseGate, ThinkingLevel } from "@marsai-org/agent-core";
+import type { CompactionOutcome } from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, ImageContent, Model, Usage, UsageReport } from "@marsai-org/ai";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { execReplace } from "@marsai-org/natives";
 import type {
 	AutocompleteProvider,
 	Component,
@@ -18,7 +18,7 @@ import type {
 	OverlayHandle,
 	RenderTimer,
 	SlashCommand,
-} from "@oh-my-pi/pi-tui";
+} from "@marsai-org/tui";
 import {
 	Container,
 	clearRenderCache,
@@ -37,10 +37,10 @@ import {
 	type TUI,
 	visibleWidth,
 	wrapTextWithAnsi,
-} from "@oh-my-pi/pi-tui";
-import type { TerminalAppearanceRequestToken } from "@oh-my-pi/pi-tui/terminal";
-import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { col, compact, kbd, keyed, node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
+} from "@marsai-org/tui";
+import type { TerminalAppearanceRequestToken } from "@marsai-org/tui/terminal";
+import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { col, compact, kbd, keyed, node, row, span, text } from "@marsai-org/tui/native/describe";
 import {
 	describeJobWidgetMiniSpark,
 	describeJobWidgetsHovercard,
@@ -50,18 +50,18 @@ import {
 	jobWidgetGlanceSpans,
 	jobWidgetSummary,
 	latestJobWidget,
-} from "@oh-my-pi/pi-tui/tools/job-widget";
+} from "@marsai-org/tui/tools/job-widget";
 import type { AsyncJobManagerApi } from "../async/job-manager";
 import { stopAgentRun } from "../async/job-control";
 import { IrcBus } from "../irc/bus";
 import { AgentLifecycleManager } from "../registry/agent-lifecycle";
 import { collectTrayInput, runsInlineAgent, Tray, TrayMainActivity } from "./tray";
 import type { JobWidgetRegistry } from "../job-widgets/types";
-import { sameItems } from "@oh-my-pi/pi-tui/native/memo";
-import { describeSegmentTrack, renderSegmentTrack, type TrackSegment } from "@oh-my-pi/pi-tui/chrome/segment-track";
-import type { WorkingRowSpec } from "@oh-my-pi/pi-tui/components/loader";
-import { formatDoubleTap } from "@oh-my-pi/pi-tui/key-hint-format";
-import { thinkingLevelWord } from "@oh-my-pi/pi-tui/status-line/segments";
+import { sameItems } from "@marsai-org/tui/native/memo";
+import { describeSegmentTrack, renderSegmentTrack, type TrackSegment } from "@marsai-org/tui/chrome/segment-track";
+import type { WorkingRowSpec } from "@marsai-org/tui/components/loader";
+import { formatDoubleTap } from "@marsai-org/tui/key-hint-format";
+import { thinkingLevelWord } from "@marsai-org/tui/status-line/segments";
 import {
 	type TspChecklistItem,
 	type TspChecklistPhase,
@@ -69,8 +69,8 @@ import {
 	type TspText,
 	type TspTreeNode,
 	toolIntentLabel,
-} from "@oh-my-pi/pi-wire";
-import { isInsideTerminalMultiplexer } from "@oh-my-pi/pi-tui/terminal-capabilities";
+} from "@marsai-org/wire";
+import { isInsideTerminalMultiplexer } from "@marsai-org/tui/terminal-capabilities";
 import {
 	$env,
 	adjustHsv,
@@ -84,15 +84,15 @@ import {
 	prompt,
 	sanitizeText,
 	setProjectDir,
-} from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+} from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { pickTableChart } from "../auto-graph/planner";
 import { restartArgv } from "../cli/flag-tables";
 import type { CollabGuestLink } from "../collab/guest";
 import { CollabController } from "../collab/controller";
 import type { CollabHost } from "../collab/host";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey, rawKeyHint } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { appKey, editorKey, rawKeyHint } from "@marsai-org/tui/chrome/keybinding-hints";
 import {
 	formatModelStringWithRouting,
 	type ResolvedModelRoleValue,
@@ -153,10 +153,10 @@ import guidedGoalInterviewPrompt from "../prompts/goals/guided-goal-interview.md
 import planFilenamePrompt from "../prompts/system/plan-filename.md" with { type: "text" };
 import planModeApprovedPrompt from "../prompts/system/plan-mode-approved.md" with { type: "text" };
 import planModeCompactInstructionsPrompt from "../prompts/system/plan-mode-compact-instructions.md" with { type: "text" };
-import type { AgentHubRegistry } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
+import type { AgentHubRegistry } from "@marsai-org/tui/overlays/agent-hub-types";
 import { AgentRegistry, MAIN_AGENT_ID } from "../registry/agent-registry";
 import { registerPersistedSubagents } from "../registry/persisted-agents";
-import type { AgentCostSnapshot } from "@oh-my-pi/pi-tui/overlays/agent-hub-projection";
+import type { AgentCostSnapshot } from "@marsai-org/tui/overlays/agent-hub-projection";
 import { sumSubagentTreeCost } from "./agent-hub-runtime";
 import {
 	type AgentSession,
@@ -170,12 +170,12 @@ import type { CompactMode } from "../session/compact-modes";
 import type { ForeignSessionSource } from "../session/foreign-session-store";
 import { HistoryStorage } from "../session/history-storage";
 import { syncTextPrediction, textPredictionBackend } from "../predict/client";
-import { setWordPredictionHost } from "@oh-my-pi/pi-tui/prompt/word-completion";
+import { setWordPredictionHost } from "@marsai-org/tui/prompt/word-completion";
 import { USER_INTERRUPT_LABEL } from "../session/messages";
 import { resolveMarkdownLinkHrefs } from "../internal-urls/hyperlink-targets";
 import type { ResolveContext } from "../internal-urls/index";
-import { modelMentionChipLabel, shiftImageMarkers } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { formatQueueShorthand } from "@oh-my-pi/pi-tui/prompt/queue-input";
+import { modelMentionChipLabel, shiftImageMarkers } from "@marsai-org/tui/prompt/composer-attachments";
+import { formatQueueShorthand } from "@marsai-org/tui/prompt/queue-input";
 import { isTranscriptEntry, type SessionContext } from "../session/session-context";
 import type { SessionManager } from "../session/session-manager";
 import { loadPinnedSessionIds } from "../session/session-pins";
@@ -189,20 +189,20 @@ import type { SessionWorktree } from "../worktree/backend";
 import type { ShakeMode } from "../session/shake-types";
 import { BUILTIN_SLASH_COMMAND_RESERVED_NAMES, buildTuiBuiltinSlashCommands } from "../slash-commands/builtin-registry";
 import { buildStaticInlineHint } from "../slash-commands/builtin-completions";
-import { formatCoarseDuration } from "@oh-my-pi/pi-tui/chrome/format";
+import { formatCoarseDuration } from "@marsai-org/tui/chrome/format";
 import { type DictationTarget, MicCursor, type SttCallbacks, STTController, type SttState } from "../stt";
-import type { SpaceHoldHandler } from "@oh-my-pi/pi-tui/space-hold";
+import type { SpaceHoldHandler } from "@marsai-org/tui/space-hold";
 import { resolveRestartCmd } from "../subprocess/worker-client";
 import { labelEchoesHandle } from "../task/label";
-import { agentTypeBadge, formatTaskId } from "@oh-my-pi/pi-tui/tools/task";
-import type { ModelRoleLookup } from "@oh-my-pi/pi-tui/overlays/model-browser";
+import { agentTypeBadge, formatTaskId } from "@marsai-org/tui/tools/task";
+import type { ModelRoleLookup } from "@marsai-org/tui/overlays/model-browser";
 import {
 	AUTO_THINKING,
 	type ConfiguredThinkingLevel,
 	newSessionThinkingLevel,
 	parseConfiguredThinkingLevel,
 	resolveConfiguredThinkingLevel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import { capturePage } from "../tools/browser/page-shot";
 import { isMCPToolName } from "../tools/builtin-names";
 import type { LspStartupServerInfo } from "../tools";
@@ -224,7 +224,7 @@ import {
 	shortenPath,
 	TRUNCATE_LENGTHS,
 	truncateToWidth,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@marsai-org/tui/render/render-utils";
 import { setAutoQaConsentHandler } from "../tools/report-tool-issue";
 import { type CfgApproval, type CfgChangeRequest, setCfgApprovalHost } from "../internal-urls/cfg-protocol";
 import {
@@ -240,17 +240,17 @@ import {
 	selectCollapsedTodos,
 	setActiveTodoDescriptionsProvider,
 	todoMatchesAnyDescription,
-} from "@oh-my-pi/pi-tui/tools/todo";
+} from "@marsai-org/tui/tools/todo";
 import { vocalizer } from "../tts/vocalizer";
-import { applyFileLinkSetting, applyHyperlinkSetting, fileHyperlink } from "@oh-my-pi/pi-tui/render/hyperlink";
+import { applyFileLinkSetting, applyHyperlinkSetting, fileHyperlink } from "@marsai-org/tui/render/hyperlink";
 import {
 	extensionLinkClicksAvailable,
 	extensionLinksRouted,
 	extensionLinksVersion,
 	setExtensionLinkPicking,
 	setExtensionLinks,
-} from "@oh-my-pi/pi-tui/render/extension-links";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
+} from "@marsai-org/tui/render/extension-links";
+import { isNativeRendering, onNativeRenderingChange } from "@marsai-org/tui/native/state";
 import {
 	isTranscriptPresentable,
 	messageBlock,
@@ -258,18 +258,18 @@ import {
 	onTranscriptPresentersChanged,
 	PresentedBlock,
 	setTranscriptPresenters,
-} from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { renderTreeList } from "@oh-my-pi/pi-tui/render/tree-list";
-import { wrapTreeLine } from "@oh-my-pi/pi-tui/render/hanging-wrap";
-import { WidthAwareText } from "@oh-my-pi/pi-tui/render/width-aware-text";
+} from "@marsai-org/tui/chat/transcript-presentation";
+import { renderTreeList } from "@marsai-org/tui/render/tree-list";
+import { wrapTreeLine } from "@marsai-org/tui/render/hanging-wrap";
+import { WidthAwareText } from "@marsai-org/tui/render/width-aware-text";
 import { formatStartupChangelogSummary, type StartupChangelogSelection } from "../utils/changelog";
 import { copyToClipboard } from "../utils/clipboard";
 import type { EventBus } from "../utils/event-bus";
 import { getEditorCommand, openInEditor } from "../utils/external-editor";
 import { openPath } from "../utils/open";
 import { resumeCommand } from "../utils/resume-command";
-import { getSessionAccentAnsi, getSessionAccentHex } from "@oh-my-pi/pi-tui/theme/session-color";
-import { messageHasDisplayableThinking } from "@oh-my-pi/pi-tui/chat/thinking-display";
+import { getSessionAccentAnsi, getSessionAccentHex } from "@marsai-org/tui/theme/session-color";
+import { messageHasDisplayableThinking } from "@marsai-org/tui/chat/thinking-display";
 import type { TokenRateMeter } from "../utils/token-rate";
 import {
 	type BlockedKind,
@@ -300,52 +300,52 @@ import {
 	type VibeParentSession,
 	VibeSessionRegistry,
 } from "../vibe/runtime";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { setEmbedHost } from "@oh-my-pi/pi-tui/chat/embed-host";
-import { setSvgFigureRendering } from "@oh-my-pi/pi-tui/chat/svg-figure";
-import { setTableCharts } from "@oh-my-pi/pi-tui/chat/table-chart";
-import { setTranscriptActionHandler } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { StatusNotice } from "@oh-my-pi/pi-tui/chrome/status-notice";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { AttachmentChipsBand } from "@oh-my-pi/pi-tui/prompt/attachment-chips";
-import type { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { ChatBlock, type ChatBlockHost } from "@oh-my-pi/pi-tui/chrome/chat-block";
-import { CodexResetFireworksController } from "@oh-my-pi/pi-tui/overlays/codex-reset-fireworks";
-import { type ComposerNativeState, CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { DynamicBorder } from "@oh-my-pi/pi-tui/chrome/dynamic-border";
-import { EditorTopGap } from "@oh-my-pi/pi-tui/prompt/editor-top-gap";
-import type { VersionUpdate } from "@oh-my-pi/pi-tui/prompt/welcome";
-import { ErrorBannerComponent } from "@oh-my-pi/pi-tui/overlays/error-banner";
-import type { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import type { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import type { HookInputComponent } from "@oh-my-pi/pi-tui/overlays/hook-input";
-import type { HookSelectorComponent, HookSelectorSlider } from "@oh-my-pi/pi-tui/overlays/hook-selector";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { setEmbedHost } from "@marsai-org/tui/chat/embed-host";
+import { setSvgFigureRendering } from "@marsai-org/tui/chat/svg-figure";
+import { setTableCharts } from "@marsai-org/tui/chat/table-chart";
+import { setTranscriptActionHandler } from "@marsai-org/tui/chat/transcript-actions";
+import { StatusNotice } from "@marsai-org/tui/chrome/status-notice";
+import { ReadToolGroupComponent } from "@marsai-org/tui/chat/read-tool-group";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { AttachmentChipsBand } from "@marsai-org/tui/prompt/attachment-chips";
+import type { BashExecutionComponent } from "@marsai-org/tui/chat/bash-execution";
+import { ChatBlock, type ChatBlockHost } from "@marsai-org/tui/chrome/chat-block";
+import { CodexResetFireworksController } from "@marsai-org/tui/overlays/codex-reset-fireworks";
+import { type ComposerNativeState, CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { DynamicBorder } from "@marsai-org/tui/chrome/dynamic-border";
+import { EditorTopGap } from "@marsai-org/tui/prompt/editor-top-gap";
+import type { VersionUpdate } from "@marsai-org/tui/prompt/welcome";
+import { ErrorBannerComponent } from "@marsai-org/tui/overlays/error-banner";
+import type { EvalExecutionComponent } from "@marsai-org/tui/chat/eval-execution";
+import type { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import type { HookInputComponent } from "@marsai-org/tui/overlays/hook-input";
+import type { HookSelectorComponent, HookSelectorSlider } from "@marsai-org/tui/overlays/hook-selector";
 import {
 	type PlanReviewAnnotationState,
 	PlanReviewOverlay,
 	type PlanReviewOverlayChoice,
-} from "@oh-my-pi/pi-tui/overlays/plan-review-overlay";
-import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@oh-my-pi/pi-tui/overlays/plan-save-overlay";
-import { ServedModelTracker } from "@oh-my-pi/pi-tui/chat/served-model-marker";
-import { SessionInfoOverlay } from "@oh-my-pi/pi-tui/overlays/session-info-overlay";
-import { JobsSheet } from "@oh-my-pi/pi-tui/overlays/jobs-panel";
-import { hasSpotlightOriginal, SpotlightSheet } from "@oh-my-pi/pi-tui/overlays/spotlight-sheet";
-import type { SpotlightDetails } from "@oh-my-pi/pi-tui/chat/spotlight";
+} from "@marsai-org/tui/overlays/plan-review-overlay";
+import { PlanSaveOverlay, type PlanSaveOverlayResult } from "@marsai-org/tui/overlays/plan-save-overlay";
+import { ServedModelTracker } from "@marsai-org/tui/chat/served-model-marker";
+import { SessionInfoOverlay } from "@marsai-org/tui/overlays/session-info-overlay";
+import { JobsSheet } from "@marsai-org/tui/overlays/jobs-panel";
+import { hasSpotlightOriginal, SpotlightSheet } from "@marsai-org/tui/overlays/spotlight-sheet";
+import type { SpotlightDetails } from "@marsai-org/tui/chat/spotlight";
 import { readArtifactText } from "../spotlight/sink";
-import { SkillMessageComponent } from "@oh-my-pi/pi-tui/chat/skill-message";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
+import { SkillMessageComponent } from "@marsai-org/tui/chat/skill-message";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
 import { statusLineHost } from "./status-line-host";
-import { stopSharedSpinnerTicker, type ToolExecutionHandle } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { Composer, type ComposerPreferences, type ComposerStatusCache } from "@oh-my-pi/pi-tui/prompt/composer";
+import { stopSharedSpinnerTicker, type ToolExecutionHandle } from "@marsai-org/tui/chat/tool-execution";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { Composer, type ComposerPreferences, type ComposerStatusCache } from "@marsai-org/tui/prompt/composer";
 import { PINNED_HUD_TOGGLE_ID } from "../task/output-manager";
-import { isUserRequestEntry, type TranscriptEntryLike } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { LinkBrowserComponent, type LinkBrowserDeps } from "@oh-my-pi/pi-tui/overlays/link-browser";
-import { getAssistantMessageLinkTargets } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { setMagicKeywords } from "@oh-my-pi/pi-tui/prompt/magic-keywords";
+import { isUserRequestEntry, type TranscriptEntryLike } from "@marsai-org/tui/chat/transcript-entry";
+import { LinkBrowserComponent, type LinkBrowserDeps } from "@marsai-org/tui/overlays/link-browser";
+import { getAssistantMessageLinkTargets } from "@marsai-org/tui/prompt/interactive-context-helpers";
+import { setMagicKeywords } from "@marsai-org/tui/prompt/magic-keywords";
 import { MAGIC_KEYWORDS } from "./magic-keywords";
-import { sharedComposerCache } from "@oh-my-pi/pi-tui/prompt/composer-cache";
+import { sharedComposerCache } from "@marsai-org/tui/prompt/composer-cache";
 import { BtwController } from "./controllers/btw-controller";
 import { CleanseCommandController } from "./controllers/cleanse-command-controller";
 import { CommandController } from "./controllers/command-controller";
@@ -360,7 +360,7 @@ import { SessionFocusController } from "./controllers/session-focus-controller";
 import { SSHCommandController } from "./controllers/ssh-command-controller";
 import { TanCommandController } from "./controllers/tan-command-controller";
 import { TodoCommandController } from "./controllers/todo-command-controller";
-import { imageReferenceHyperlink, setImageBlobWriter } from "@oh-my-pi/pi-tui/prompt/image-references";
+import { imageReferenceHyperlink, setImageBlobWriter } from "@marsai-org/tui/prompt/image-references";
 import { describeLoopCondition, evaluateLoopCondition, type LoopConditionVerdict } from "./loop-condition";
 import {
 	consumeLoopLimitIteration,
@@ -372,23 +372,23 @@ import {
 	parseLoopArgs,
 	type LoopLimitConfig,
 } from "./loop-limit";
-import type { LoopConditionConfig, LoopLimitRuntime } from "@oh-my-pi/pi-tui/status-line/loop";
+import type { LoopConditionConfig, LoopLimitRuntime } from "@marsai-org/tui/status-line/loop";
 import { OAuthManualInputManager } from "./oauth-manual-input";
 import { formatPersistenceNotice } from "./persistence-failure";
-import { resolveComposerHint } from "@oh-my-pi/pi-tui/prompt/composer-hints";
+import { resolveComposerHint } from "@marsai-org/tui/prompt/composer-hints";
 import { hintUsage } from "../utils/usage-counter";
 import {
 	getInspectableSubagentCount,
 	getRunningSubagentBadgeAgentIds,
 	getRunningSubagentBadgeRegistry,
-} from "@oh-my-pi/pi-tui/overlays/running-subagent-badge";
-import { type ObservableSession, SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
+} from "@marsai-org/tui/overlays/running-subagent-badge";
+import { type ObservableSession, SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
 import { createSessionTeardown, type SessionTeardown } from "./session-teardown";
-import { sanitizeStatusText } from "@oh-my-pi/pi-tui/chrome/shared";
+import { sanitizeStatusText } from "@marsai-org/tui/chrome/shared";
 import { invokeSkillCommandFromText, isKnownSkillCommand } from "./skill-command";
-import { clearMermaidCache } from "@oh-my-pi/pi-tui/theme/mermaid-cache";
-import { type ShimmerPalette, shimmerEnabled, shimmerText } from "@oh-my-pi/pi-tui/theme/shimmer";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import { clearMermaidCache } from "@marsai-org/tui/theme/mermaid-cache";
+import { type ShimmerPalette, shimmerEnabled, shimmerText } from "@marsai-org/tui/theme/shimmer";
+import type { Theme } from "@marsai-org/tui/theme";
 import {
 	getEditorTheme,
 	getMarkdownTheme,
@@ -400,8 +400,8 @@ import {
 	startMacOSAppearanceReprobeFallback,
 	theme,
 	warmHighlighter,
-} from "@oh-my-pi/pi-tui/theme";
-import { getSlashCommandTypeIcon } from "@oh-my-pi/pi-tui/theme/tui-adapters";
+} from "@marsai-org/tui/theme";
+import { getSlashCommandTypeIcon } from "@marsai-org/tui/theme/tui-adapters";
 import type {
 	AgentHubOpenOptions,
 	CompactionQueuedMessage,
@@ -416,7 +416,7 @@ import type {
 	SubmittedUserInput,
 	YieldCompaction,
 } from "./types";
-import type { TodoItem, TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import type { TodoItem, TodoPhase } from "@marsai-org/tui/tools/todo";
 import type { ConversationPosition } from "./utils/conversation-position";
 import { materializeImageChipLinks, UiHelpers } from "./utils/ui-helpers";
 

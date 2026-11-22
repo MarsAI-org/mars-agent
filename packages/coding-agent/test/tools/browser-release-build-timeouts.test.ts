@@ -1,11 +1,11 @@
 import { afterAll, describe, expect, test } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { isPuppeteerTimeout, loadPuppeteer } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { navigateMainFrame } from "@oh-my-pi/pi-coding-agent/tools/browser/navigation";
-import { getTab, releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { isPuppeteerTimeout, loadPuppeteer } from "@marsai-org/coding-agent/tools/browser/launch";
+import { navigateMainFrame } from "@marsai-org/coding-agent/tools/browser/navigation";
+import { getTab, releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { type Page, TimeoutError } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

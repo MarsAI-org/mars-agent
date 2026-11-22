@@ -9,7 +9,7 @@ import {
 	openSqliteDatabaseSync,
 	postmortem,
 	readSalvageableRows,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { type WordQuery, wordQuery } from "./search-query";
 import { closeSessionIndex, salvageSessionIndex } from "./session-index";
 

@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI } from "@marsai-org/coding-agent";
 
 /** Registers a command named after the thread that ran the factory. */
 export default function threadProbeExtension(pi: ExtensionAPI): void {

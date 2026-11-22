@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { appendFileSync, readFileSync, rmSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import type { AntigravityCliCheckpoint } from "../../types";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

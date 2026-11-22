@@ -15,7 +15,7 @@ import {
 	isRecord,
 	logger,
 	stripWindowsExtendedLengthPathPrefix,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { registerPluginCacheInvalidator } from "../../discovery/helpers";
 import { assertBunCanImport } from "../module-path";
 
@@ -909,7 +909,7 @@ const TYPEBOX_SPECIFIER_FILTER = /^(?:@sinclair\/typebox|typebox)$/;
  *
  * `bundle-dist.ts` defines `process.env.PI_BUNDLED="true"`; after bundling,
  * `import.meta.dir` points at `<package>/dist`. Do not resolve the package via
- * bare `@oh-my-pi/pi-coding-agent` here: from a global install Bun can pick an
+ * bare `@marsai-org/coding-agent` here: from a global install Bun can pick an
  * older cache entry, recreating mixed-runtime plugin loading.
  */
 export function __computeBundledSelfPackageRoot(metaDir: string, pathImpl: typeof path = path): string {
@@ -969,7 +969,7 @@ const TYPEBOX_SHIM_PATH = __resolveTypeBoxShimPath(USE_BUNDLED_PI_MODULES, sourc
 // longer satisfies those imports. The override below redirects only the bare
 // pi-ai package root onto a sibling shim that re-exports the canonical surface
 // plus the borrowed `Type` runtime from the omptype TypeBox facade. Subpath
-// imports such as `@oh-my-pi/pi-ai/oauth` continue to resolve directly
+// imports such as `@marsai-org/ai/oauth` continue to resolve directly
 // against the bundled pi-ai package.
 const LEGACY_PI_AI_SHIM_PATH = USE_BUNDLED_PI_MODULES
 	? bundledModuleVirtualSpecifier(`${CANONICAL_PI_SCOPE}/pi-ai`)
@@ -2819,7 +2819,7 @@ function resolveLegacyPiSpecifier(args: { path: string; importer: string }): Leg
 		const resolved = resolveRemappedLegacyPiSpecifier(remappedSpecifier, args);
 		// A canonical specifier that remaps to itself and already resolves to the
 		// same host file from its importer (host code, e.g. `/login` requiring
-		// `@oh-my-pi/pi-ai/index.js`) has nothing to rewrite: decline and let Bun
+		// `@marsai-org/ai/index.js`) has nothing to rewrite: decline and let Bun
 		// resolve it natively. Answering it anyway breaks `require()` on Bun
 		// 1.3.x, which reads the returned path back as `file:<path>` and, on
 		// source-link/dev installs, recurses into `NameTooLong reading

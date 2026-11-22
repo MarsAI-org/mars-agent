@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { decodeGitDiffPath } from "@oh-my-pi/pi-coding-agent/utils/git-diff-paths";
+import { decodeGitDiffPath } from "@marsai-org/coding-agent/utils/git-diff-paths";
 
 describe("decodeGitDiffPath", () => {
 	test("preserves whole Unicode characters in C-quoted paths", () => {

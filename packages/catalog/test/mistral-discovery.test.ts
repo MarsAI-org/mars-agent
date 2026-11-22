@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { mistralModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { mistralModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 function capabilities(overrides: Record<string, boolean>) {
 	return {

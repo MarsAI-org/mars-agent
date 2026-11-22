@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage } from "@marsai-org/ai";
 import type { AssistantTextRenderer } from "../src/chat/extension-types";
 import type { SessionMessageEntryLike } from "../src/chat/transcript-entry";
 import type { TUI } from "../src/index";

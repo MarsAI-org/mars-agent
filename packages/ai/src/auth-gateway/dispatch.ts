@@ -7,7 +7,7 @@
  * Everything credential-shaped lives here so each route drives the same
  * broker-backed rotation policy and the same usage ledger.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import {
 	type ApiKeyResolver,
 	createOAuthProvenance,

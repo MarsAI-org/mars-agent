@@ -3,7 +3,7 @@
  * "Load unpacked", write it with authenticators, and restart the browser it was taken from.
  */
 import * as path from "node:path";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { unpackedExtensionId } from "../extension-files";
 import type { JsonValue } from "./canonical-json";
 import {

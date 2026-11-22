@@ -9,15 +9,15 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CURRENT_SESSION_VERSION } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+import { CURRENT_SESSION_VERSION } from "@marsai-org/coding-agent/session/session-entries";
 import {
 	findSessionFiles,
 	listAllSessions,
 	listRecentSessions,
 	listSessions,
 	resolveResumableSession,
-} from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { FileSessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+} from "@marsai-org/coding-agent/session/session-listing";
+import { FileSessionStorage } from "@marsai-org/coding-agent/session/session-storage";
 
 const SESSION_ID = "0198aaaa-0000-7000-8000-000000000001";
 const SESSION_NAME = `2026-10-15T00-00-00-000Z_${SESSION_ID}.jsonl`;

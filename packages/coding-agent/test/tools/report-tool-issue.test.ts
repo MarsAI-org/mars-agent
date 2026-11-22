@@ -1,11 +1,11 @@
 import { Database } from "bun:sqlite";
 import * as os from "node:os";
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { cfgDevAutoqa } from "@oh-my-pi/pi-coding-agent/tools/settings";
-import * as reportIssue from "@oh-my-pi/pi-coding-agent/tools/report-tool-issue";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
+import { cfgDevAutoqa } from "@marsai-org/coding-agent/tools/settings";
+import * as reportIssue from "@marsai-org/coding-agent/tools/report-tool-issue";
 import {
 	__awaitAutoQaRecordPipelineForTests,
 	__resetAutoQaConsentForTests,
@@ -13,10 +13,10 @@ import {
 	isReportIssueToolCall,
 	flushGrievances,
 	isAutoQaEnabled,
-} from "@oh-my-pi/pi-coding-agent/tools/report-tool-issue";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { specialToolCommands } from "@oh-my-pi/pi-coding-agent/tools/resolve";
-import { REPORT_ISSUE_COMMAND_NAME } from "@oh-my-pi/pi-tui/tools/report-tool-issue";
+} from "@marsai-org/coding-agent/tools/report-tool-issue";
+import * as piUtils from "@marsai-org/utils";
+import { specialToolCommands } from "@marsai-org/coding-agent/tools/resolve";
+import { REPORT_ISSUE_COMMAND_NAME } from "@marsai-org/tui/tools/report-tool-issue";
 import { mockFetch } from "../helpers/fetch-mock";
 
 function openTempDb(): Database {

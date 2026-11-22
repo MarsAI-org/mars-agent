@@ -1,30 +1,30 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { type Api, Effort, type Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { CustomToolAdapter } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/wrapper";
-import { MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPServerConnection } from "@oh-my-pi/pi-coding-agent/mcp/types";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool, ThinkingLevel } from "@marsai-org/agent-core";
+import { type Api, Effort, type Model } from "@marsai-org/ai";
+import { createMockModel, type MockResponse } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { CustomToolAdapter } from "@marsai-org/coding-agent/extensibility/custom-tools/wrapper";
+import { MCPTool } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import type { MCPServerConnection } from "@marsai-org/coding-agent/mcp/types";
 import {
 	dispatchToolCommand,
 	type ToolCommandDispatch,
 	type ToolCommandState,
-} from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/tools/tool-commands";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { getRestorableSessionModels } from "@marsai-org/coding-agent/session/session-context";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	cfgPrewalkEnabled,
 	cfgPrewalkFrom,
@@ -32,11 +32,11 @@ import {
 	cfgRetryBaseDelayMs,
 	cfgRetryFallbackChains,
 	cfgRetryFallbackRevertPolicy,
-} from "@oh-my-pi/pi-coding-agent/session/settings";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { AUTO_THINKING } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/settings";
+import { executeBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import type { TuiSlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
+import { AUTO_THINKING } from "@marsai-org/tui/thinking";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 import { mockSchedulerWaitWithClock } from "./helpers/mock-scheduler-clock";
 

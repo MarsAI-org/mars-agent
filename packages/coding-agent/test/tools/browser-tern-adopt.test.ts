@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { acquireBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { acquireBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { pickTernBlock, type TernBlockEntry } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/blocks";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { pickTernBlock, type TernBlockEntry } from "@marsai-org/coding-agent/tools/browser/tern/blocks";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { type FakeAnswer, type FakeDaemon, startFakeDaemon } from "./tern-fake-daemon";
 
 const PANE = 3;

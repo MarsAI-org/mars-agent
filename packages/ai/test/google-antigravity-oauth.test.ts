@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import type { OAuthController } from "@marsai-org/ai/registry/oauth/types";
 import {
 	ANTIGRAVITY_LOAD_CODE_ASSIST_METADATA,
 	googleAntigravityProjectHook,

@@ -1,4 +1,4 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
+import type { ImageContent } from "@marsai-org/ai";
 
 /** Converts an image to PNG, rejecting when the runtime cannot decode or encode it. */
 export async function convertImageToPng(image: ImageContent): Promise<ImageContent> {

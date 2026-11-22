@@ -1,14 +1,14 @@
-import { transcriptEntryMessage } from "@oh-my-pi/pi-tui/chat/transcript-entry";
+import { transcriptEntryMessage } from "@marsai-org/tui/chat/transcript-entry";
 import {
 	COPY_SELECTOR_OVERLAY_OPTIONS,
 	type CopyPickSource,
 	CopySelectorComponent,
-} from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { assistantText } from "@oh-my-pi/pi-tui/overlays/copy-targets";
+} from "@marsai-org/tui/overlays/copy-selector";
+import { assistantText } from "@marsai-org/tui/overlays/copy-targets";
 import type { CustomCommandContext } from "../../../../extensibility/custom-commands/types";
 import { isTranscriptEntry } from "../../../../session/session-context";
 import type { SessionEntry } from "../../../../session/session-entries";
-import type { TextReviewSource } from "@oh-my-pi/pi-tui/overlays/annotation-types";
+import type { TextReviewSource } from "@marsai-org/tui/overlays/annotation-types";
 
 export type AnnotationSourceKind = "code-review" | "last" | "session" | "file" | "prompt" | "draft";
 

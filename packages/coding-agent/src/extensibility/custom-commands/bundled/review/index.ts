@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { replaceTabs, shortenPath, TRUNCATE_LENGTHS, truncateToWidth } from "@marsai-org/tui/render/render-utils";
+import { isRecord, prompt } from "@marsai-org/utils";
 import { findScopedSettings } from "../../../../config/settings";
 import type { CustomCommand, CustomCommandAPI } from "../../../../extensibility/custom-commands/types";
 import type { HookCommandContext } from "../../../../extensibility/hooks/types";

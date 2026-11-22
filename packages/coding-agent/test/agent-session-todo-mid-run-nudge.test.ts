@@ -1,15 +1,15 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent, type AgentTool, type AsideBoundary, type AsideMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, TextContent, ToolCall } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TodoTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { cfgTodoMidRunNudges } from "@oh-my-pi/pi-coding-agent/tools/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentTool, type AsideBoundary, type AsideMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, TextContent, ToolCall } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TodoTool, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { cfgTodoMidRunNudges } from "@marsai-org/coding-agent/tools/settings";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 /**

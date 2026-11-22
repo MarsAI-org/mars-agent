@@ -7,9 +7,9 @@ import {
 	endPendingDiskWrite,
 	reconcileOpenFilesFromDisk,
 	refreshFile,
-} from "@oh-my-pi/pi-coding-agent/lsp/client";
-import type { LspClient } from "@oh-my-pi/pi-coding-agent/lsp/types";
-import { fileToUri } from "@oh-my-pi/pi-coding-agent/lsp/utils";
+} from "@marsai-org/coding-agent/lsp/client";
+import type { LspClient } from "@marsai-org/coding-agent/lsp/types";
+import { fileToUri } from "@marsai-org/coding-agent/lsp/utils";
 import { rejectionOf } from "../helpers/rejection";
 
 /** Minimal client double: open files, a diagnostics map, and a frame sink. */

@@ -1,4 +1,4 @@
-import type { Message } from "@oh-my-pi/pi-ai";
+import type { Message } from "@marsai-org/ai";
 import { messageTexts } from "../context";
 import type { CallContext, ShapedTool } from "../types";
 import { identifiers, norm, pairKey, WITNESS_CHARS, words } from "./lines";

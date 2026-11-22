@@ -5,20 +5,20 @@
  */
 import { describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createToolCommandHandler, toolCommandNames } from "@oh-my-pi/pi-coding-agent/exec/tool-command-host";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import type { ImageContent } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createToolCommandHandler, toolCommandNames } from "@marsai-org/coding-agent/exec/tool-command-host";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
 import {
 	resolveToolCommand,
 	type ToolCommandDispatch,
 	type ToolCommandState,
-} from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
-import { TerminalGraphicsDecoder } from "@oh-my-pi/pi-coding-agent/utils/terminal-graphics";
-import type { ShellCommandRequest } from "@oh-my-pi/pi-natives";
-import { convertImageToPng } from "@oh-my-pi/pi-tui/png-conversion";
+} from "@marsai-org/coding-agent/tools/tool-commands";
+import { TerminalGraphicsDecoder } from "@marsai-org/coding-agent/utils/terminal-graphics";
+import type { ShellCommandRequest } from "@marsai-org/natives";
+import { convertImageToPng } from "@marsai-org/tui/png-conversion";
 
 const PNG_1X1 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC";
 

@@ -3,8 +3,8 @@
  * “Ran `bun test`”. Browser steps are read out of the eval/browser code the agent wrote, since omp drives tabs
  * through `tab.click(…)`-style helpers rather than one tool per action.
  */
-import { INTENT_FIELD, toolIntentLabel } from "@oh-my-pi/pi-wire";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { INTENT_FIELD, toolIntentLabel } from "@marsai-org/wire";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { hostOf } from "./tab-context";
 
 /** Which glyph a step row shows. */

@@ -6,37 +6,37 @@
  * behavior they have in the TUI.
  */
 import { afterAll, afterEach, beforeAll, expect, it, spyOn } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, type AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { createMockModel, type MockModelOptions } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { callSessionTool } from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { createMCPToolName } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool, type AgentToolContext } from "@marsai-org/agent-core";
+import { createMockModel, type MockModelOptions } from "@marsai-org/ai/providers/mock";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { callSessionTool } from "@marsai-org/coding-agent/eval/js/tool-bridge";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import { createMCPToolName } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import type {
 	ClientBridge,
 	ClientBridgePermissionOutcome,
 	ClientBridgePermissionToolCall,
-} from "@oh-my-pi/pi-coding-agent/session/client-bridge";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { computerTurnInFlight, registerComputerController } from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
+} from "@marsai-org/coding-agent/session/client-bridge";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { computerTurnInFlight, registerComputerController } from "@marsai-org/coding-agent/tools/computer/supervisor";
 import {
 	dispatchToolCommand,
 	resolveMountedToolCommandExecutable,
 	type ToolCommandState,
-} from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/tool-commands";
+import { TempDir, withTimeout } from "@marsai-org/utils";
 
 // ---------------------------------------------------------------------------
 // Shared setup

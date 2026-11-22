@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { kimiCodeModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { kimiCodeModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
+import { TempDir } from "@marsai-org/utils";
 import { applyGeneratedModelPolicies } from "../scripts/generated-policies";
 
 const LIVE_K3 = {

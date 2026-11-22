@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { buildTransformedCodexRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
+import { buildTransformedCodexRequestBody } from "@marsai-org/ai/providers/openai-codex-responses";
 import {
 	createOpenAIEffortControlState,
 	planStableOpenAIEffort,
-} from "@oh-my-pi/pi-ai/providers/openai-configuration-update";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { Context, FetchImpl, Model, ProviderSessionState } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/providers/openai-configuration-update";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import type { Context, FetchImpl, Model, ProviderSessionState } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import * as piUtils from "@marsai-org/utils";
 import { createCodexModel } from "./helpers";
 
 /** Loose wire item for planner tests: replayed items carry output-only `status`/`id`. */

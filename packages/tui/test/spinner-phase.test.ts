@@ -1,16 +1,16 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type RenderScheduler, TUI } from "@oh-my-pi/pi-tui";
-import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { Loader } from "@oh-my-pi/pi-tui/components/loader";
+import { type RenderScheduler, TUI } from "@marsai-org/tui";
+import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { Loader } from "@marsai-org/tui/components/loader";
 import {
 	DEFAULT_SPINNER_INTERVAL_MS,
 	setSpinnerInterval,
 	sharedSpinnerFrame,
 	spinnerTickDelay,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line/component";
-import type { StatusLineHost, StatusLineSession } from "@oh-my-pi/pi-tui/status-line/host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/spinner-clock";
+import { StatusLineComponent } from "@marsai-org/tui/status-line/component";
+import type { StatusLineHost, StatusLineSession } from "@marsai-org/tui/status-line/host";
+import { initTheme } from "@marsai-org/tui/theme";
 import { VirtualTerminal } from "./virtual-terminal";
 
 /** A status line with an open turn window and nothing else to draw. */

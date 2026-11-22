@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
+import { toolWireSchema } from "@marsai-org/ai/utils/schema";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
 import { loadCustomTools, type ToolPathWithSource } from "../../src/extensibility/custom-tools/loader";
 
 let tempRoot: string | undefined;
@@ -322,7 +322,7 @@ describe("custom tool host package imports", () => {
 	// Tools live outside any workspace (here a temp dir; in the shipped binary,
 	// anywhere), so `@oh-my-pi/*` and the legacy pi scopes have no node_modules
 	// to resolve from. They must resolve to the host's own copy, as extensions do.
-	it.each(["@oh-my-pi/pi-utils", "@mariozechner/pi-utils"])("resolves %s to the host copy", async specifier => {
+	it.each(["@marsai-org/utils", "@mariozechner/pi-utils"])("resolves %s to the host copy", async specifier => {
 		const toolPath = await writeTool(
 			"host_import.ts",
 			esmTool("host_import_tool", '"logger is " + typeof logger.warn', [`import { logger } from "${specifier}";`]),

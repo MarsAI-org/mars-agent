@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { shortenEmbeddedPaths } from "@oh-my-pi/pi-tui/render/render-utils";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { shortenEmbeddedPaths } from "@marsai-org/tui/render/render-utils";
+import { sanitizeText } from "@marsai-org/utils";
 
 /** How many trailing messages {@link resolveToolCallIntent} looks through. */
 const INTENT_LOOKBACK = 16;

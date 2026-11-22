@@ -2,10 +2,10 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ToolCall } from "@oh-my-pi/pi-ai";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import type { ToolCall } from "@marsai-org/ai";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 import {
 	buildSearchDateQualifier,
 	GithubTool,
@@ -13,19 +13,19 @@ import {
 	parsePrUnifiedDiff,
 	parseSearchDateBound,
 	resolveDefaultRepoMemoized,
-} from "@oh-my-pi/pi-coding-agent/tools/gh";
+} from "@marsai-org/coding-agent/tools/gh";
 import {
 	parseIssueUrl,
 	parsePullRequestUrl,
 	tryResolveCurrentRepoFresh,
-} from "@oh-my-pi/pi-coding-agent/tools/gh-common";
-import { sanitizeRemoteName } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-checkout";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import type { GhToolDetails } from "@oh-my-pi/pi-tui/tools/github";
-import { withRepoLock } from "@oh-my-pi/pi-coding-agent/utils/repo-lock";
-import type { VcsGitRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+} from "@marsai-org/coding-agent/tools/gh-common";
+import { sanitizeRemoteName } from "@marsai-org/coding-agent/tools/gh-pr-checkout";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import type { GhToolDetails } from "@marsai-org/tui/tools/github";
+import { withRepoLock } from "@marsai-org/coding-agent/utils/repo-lock";
+import type { VcsGitRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
 import {
 	getAgentDir,
 	hashPath,
@@ -33,7 +33,7 @@ import {
 	removeWithRetries,
 	setAgentDir,
 	spillFileName,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { mockSchedulerWaitWithClock } from "../helpers/mock-scheduler-clock";
 
 const TINY_PNG_BASE64 =

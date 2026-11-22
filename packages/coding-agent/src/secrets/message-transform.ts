@@ -1,4 +1,4 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import type {
 	AnthropicCompactionPayload,
 	AssistantMessage,
@@ -7,9 +7,9 @@ import type {
 	Message,
 	ProviderPayload,
 	TextContent,
-} from "@oh-my-pi/pi-ai";
-import { dropReasoningDetailsEnvelopes } from "@oh-my-pi/pi-ai/utils/reasoning-source";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { dropReasoningDetailsEnvelopes } from "@marsai-org/ai/utils/reasoning-source";
+import { isRecord } from "@marsai-org/utils";
 import type { SessionContext } from "../session/session-context";
 import type { JsonValue, SecretObfuscator } from "./obfuscator";
 import { collectJsonRegexSecretValues, mapJsonStrings } from "./placeholder-scan";

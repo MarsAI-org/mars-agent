@@ -1,5 +1,5 @@
-import { AudioPlayback } from "@oh-my-pi/pi-natives";
-import { toError } from "@oh-my-pi/pi-utils";
+import { AudioPlayback } from "@marsai-org/natives";
+import { toError } from "@marsai-org/utils";
 
 /** Local TTS emits 24 kHz mono PCM when a chunk does not declare a rate. */
 const DEFAULT_SAMPLE_RATE = 24_000;

@@ -1,11 +1,11 @@
 import { afterEach, expect, it, setSystemTime, vi } from "bun:test";
 import * as fs from "node:fs/promises";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { RACY_STAMP_WINDOW_MS } from "@oh-my-pi/pi-coding-agent/tools/racy-stamp";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as ar from "@oh-my-pi/pi-utils/ar";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { RACY_STAMP_WINDOW_MS } from "@marsai-org/coding-agent/tools/racy-stamp";
+import { TempDir } from "@marsai-org/utils";
+import * as ar from "@marsai-org/utils/ar";
 
 afterEach(() => {
 	vi.restoreAllMocks();

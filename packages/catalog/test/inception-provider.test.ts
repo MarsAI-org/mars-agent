@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { inceptionModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { inceptionModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import { TempDir } from "@marsai-org/utils";
 
 // /models publishes per-token decimal strings, but omits reasoning support.
 const chatMetadata = {

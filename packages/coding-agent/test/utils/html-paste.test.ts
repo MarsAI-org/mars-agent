@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { htmlToPaste } from "@oh-my-pi/pi-coding-agent/utils/html-paste";
+import { htmlToPaste } from "@marsai-org/coding-agent/utils/html-paste";
 
 const PNG = "iVBORw0KGgo=";
 

@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { TspDocument } from "@oh-my-pi/pi-tui/native/apply";
-import { node, row, span, text } from "@oh-my-pi/pi-tui/native/describe";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { quietMotion, resetQuietMotion } from "@oh-my-pi/pi-tui/native/quiet";
-import { nativeComponentId, Reconciler } from "@oh-my-pi/pi-tui/native/reconcile";
-import { setMotionEffects } from "@oh-my-pi/pi-tui/motion-effects";
+import { TspDocument } from "@marsai-org/tui/native/apply";
+import { node, row, span, text } from "@marsai-org/tui/native/describe";
+import type { DescribeContext, NativeNode } from "@marsai-org/tui/native/node";
+import { quietMotion, resetQuietMotion } from "@marsai-org/tui/native/quiet";
+import { nativeComponentId, Reconciler } from "@marsai-org/tui/native/reconcile";
+import { setMotionEffects } from "@marsai-org/tui/motion-effects";
 import {
 	DEFAULT_SPINNER_INTERVAL_MS,
 	setSpinnerInterval,
 	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
+} from "@marsai-org/tui/spinner-clock";
+import type { Component } from "@marsai-org/tui/tui";
 
 const cx: DescribeContext = { cols: 60, reduceMotion: false, dark: true, supports: () => true, feature: () => true };
 

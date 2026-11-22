@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { type Component, type RenderTimer, TUI } from "@oh-my-pi/pi-tui";
-import { DEFAULT_MAX_FPS, setMaxFps } from "@oh-my-pi/pi-tui/frame-rate";
+import { type Component, type RenderTimer, TUI } from "@marsai-org/tui";
+import { DEFAULT_MAX_FPS, setMaxFps } from "@marsai-org/tui/frame-rate";
 import { BackloggedTerminal } from "./backlogged-terminal";
 import { VirtualTerminal } from "./virtual-terminal";
 

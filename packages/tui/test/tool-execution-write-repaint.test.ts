@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TUI } from "@marsai-org/tui";
 
 function writeArgs(lineCount: number) {
 	return {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 
-import { BeamMemory } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { PolyphonicRecallEngine } from "@oh-my-pi/pi-mnemopi/core/polyphonic-recall";
+import { BeamMemory } from "@marsai-org/mnemopi/core/beam";
+import { currentEmbeddingModel } from "@marsai-org/mnemopi/core/embeddings";
+import { PolyphonicRecallEngine } from "@marsai-org/mnemopi/core/polyphonic-recall";
 
 function seedEmbedding(beam: BeamMemory, memoryId: string, vector: readonly number[]): void {
 	beam.db.run("INSERT OR REPLACE INTO memory_embeddings (memory_id, embedding_json, model) VALUES (?, ?, ?)", [

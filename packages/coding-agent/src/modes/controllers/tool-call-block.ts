@@ -1,7 +1,7 @@
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import { isReplyWrite } from "@oh-my-pi/pi-tui/chat/reply-write";
-import { ToolExecutionComponent, type ToolExecutionHandle } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { createReplyWriteComponent } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
+import type { AgentTool } from "@marsai-org/agent-core";
+import { isReplyWrite } from "@marsai-org/tui/chat/reply-write";
+import { ToolExecutionComponent, type ToolExecutionHandle } from "@marsai-org/tui/chat/tool-execution";
+import { createReplyWriteComponent } from "@marsai-org/tui/prompt/interactive-context-helpers";
 import { settings } from "../../config/settings";
 import type { InteractiveModeContext } from "../types";
 import { cfgTerminalShowImages } from "../settings";

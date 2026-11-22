@@ -1,29 +1,29 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { setKeybindings, type TerminalFrameProvider, TUI } from "@oh-my-pi/pi-tui";
-import { defaultFormData, fieldError, formAnswers } from "@oh-my-pi/pi-tui/html-form/data";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { setKeybindings, type TerminalFrameProvider, TUI } from "@marsai-org/tui";
+import { defaultFormData, fieldError, formAnswers } from "@marsai-org/tui/html-form/data";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Input } from "@oh-my-pi/pi-tui/components/input";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
-import { loadMedia } from "@oh-my-pi/pi-tui/media";
-import { getNativeBlob } from "@oh-my-pi/pi-tui/native/blobs";
-import { ASK_RESERVED_ROWS } from "@oh-my-pi/pi-tui/chrome/ask-fold";
-import { HtmlFormDialog } from "@oh-my-pi/pi-tui/html-form/dialog";
-import { parseHtmlForm, spansText } from "@oh-my-pi/pi-tui/html-form/parse";
-import type { DescribeContext, NativeChild, NativeNode, NativeSurfaceProvider } from "@oh-my-pi/pi-tui/native/node";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import { Input } from "@marsai-org/tui/components/input";
+import { Editor } from "@marsai-org/tui/components/editor";
+import { loadMedia } from "@marsai-org/tui/media";
+import { getNativeBlob } from "@marsai-org/tui/native/blobs";
+import { ASK_RESERVED_ROWS } from "@marsai-org/tui/chrome/ask-fold";
+import { HtmlFormDialog } from "@marsai-org/tui/html-form/dialog";
+import { parseHtmlForm, spansText } from "@marsai-org/tui/html-form/parse";
+import type { DescribeContext, NativeChild, NativeNode, NativeSurfaceProvider } from "@marsai-org/tui/native/node";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 import { TspHarness } from "./native/tsp-harness";
-import { getKittyGraphics, setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
+import { getKittyGraphics, setKittyGraphics } from "@marsai-org/tui/kitty-graphics";
 import {
 	getCellDimensions,
 	ImageProtocol,
 	setCellDimensions,
 	setTerminalImageProtocol,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
+} from "@marsai-org/tui/terminal-capabilities";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";
 

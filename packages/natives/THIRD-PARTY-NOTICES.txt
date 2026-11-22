@@ -2,7 +2,7 @@ PI-NATIVES THIRD-PARTY NOTICES
 ==============================
 
 Third-party code, data, and fonts compiled into the pi_natives Node-API addon:
-the @oh-my-pi/pi-natives package, its per-platform @oh-my-pi/pi-natives-*
+the @marsai-org/natives package, its per-platform @marsai-org/natives-*
 packages, and the copy embedded in the omp executable. Each license below
 governs only the material it names.
 

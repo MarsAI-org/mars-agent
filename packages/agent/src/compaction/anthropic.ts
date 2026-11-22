@@ -16,15 +16,15 @@ import type {
 	Model,
 	SimpleStreamOptions,
 	Usage,
-} from "@oh-my-pi/pi-ai";
-import { isBuiltinApi } from "@oh-my-pi/pi-ai/api-registry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
+} from "@marsai-org/ai";
+import { isBuiltinApi } from "@marsai-org/ai/api-registry";
+import * as AIError from "@marsai-org/ai/error";
 import {
 	declaresAnthropicCompactionEndpoint,
 	supportsAnthropicCompaction,
 	supportsBedrockConverseCompaction,
-} from "@oh-my-pi/pi-ai/providers/anthropic-compaction";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/providers/anthropic-compaction";
+import { isRecord, prompt } from "@marsai-org/utils";
 import { type InstrumentedChatSpanOptions, instrumentedCompleteSimple } from "../telemetry";
 import type { AgentMessage } from "../types";
 import anthropicCompactionInstructionsPrompt from "./prompts/anthropic-compaction-instructions.md" with { type: "text" };
@@ -268,7 +268,7 @@ export async function requestAnthropicNativeCompaction(
 ): Promise<AnthropicNativeCompactionResponse> {
 	// Pure compaction policy checks must not load the provider; only an actual request needs it.
 	const reasoning = isAnthropicMessagesModel(model)
-		? (await import("@oh-my-pi/pi-ai/providers/anthropic")).resolveAnthropicCompactionEffort(
+		? (await import("@marsai-org/ai/providers/anthropic")).resolveAnthropicCompactionEffort(
 				model,
 				request.context.messages,
 				request.reasoning,

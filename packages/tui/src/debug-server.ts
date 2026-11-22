@@ -1,4 +1,4 @@
-import { type IpcConnection, IpcServer } from "@oh-my-pi/pi-natives";
+import { type IpcConnection, IpcServer } from "@marsai-org/natives";
 import { type Component, isFocusable, type OverlayOptions, type TUI } from "./tui";
 import { plainText } from "./native/spans";
 

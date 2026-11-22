@@ -14,9 +14,9 @@
  * grant nothing. `task.perCallModelAllow`, when set, narrows the result to the
  * exact models it lists.
  */
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import type { AgentSource } from "@oh-my-pi/pi-tui/tools/task";
-import { MAX_THINKING_SUFFIX_OPTIONS, splitThinkingSuffix } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import type { Api, Model } from "@marsai-org/ai";
+import type { AgentSource } from "@marsai-org/tui/tools/task";
+import { MAX_THINKING_SUFFIX_OPTIONS, splitThinkingSuffix } from "@marsai-org/tui/overlays/model-selector";
 import type { ModelRegistry } from "../config/model-registry";
 import {
 	findOpenRouterRouteVariant,

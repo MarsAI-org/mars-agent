@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import * as path from "node:path";
-import type { DocumentSymbol } from "@oh-my-pi/pi-coding-agent/lsp/types";
+import type { DocumentSymbol } from "@marsai-org/coding-agent/lsp/types";
 import {
 	findSymbolInFile,
 	formatMatchingDocumentSymbols,
 	resolveDiagnosticTargets,
-} from "@oh-my-pi/pi-coding-agent/lsp/utils";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/lsp/utils";
+import { TempDir } from "@marsai-org/utils";
 
 function symbol(name: string, line: number, children?: DocumentSymbol[]): DocumentSymbol {
 	const range = { start: { line, character: 0 }, end: { line, character: 1 } };

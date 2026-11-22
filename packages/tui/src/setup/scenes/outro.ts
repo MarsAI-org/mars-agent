@@ -1,6 +1,6 @@
 import { centerLine } from "../../utils";
 import { padToWidth } from "../../render/utils";
-import { APP_NAME } from "@oh-my-pi/pi-utils";
+import { APP_NAME } from "@marsai-org/utils";
 import { gradientLogo, PI_LOGO } from "../../prompt/welcome";
 import { theme } from "../../theme/theme";
 import { col, compact, keyed, node, span, text } from "../../native/describe";

@@ -1,6 +1,6 @@
 import { expect, test } from "bun:test";
-import { filterModelsDevCatalogRows } from "@oh-my-pi/pi-catalog/provider-models/models-dev-policies";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { filterModelsDevCatalogRows } from "@marsai-org/catalog/provider-models/models-dev-policies";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 function anthropicModel(id: string, provider = "anthropic"): ModelSpec<"anthropic-messages"> {
 	return {

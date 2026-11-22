@@ -13,7 +13,7 @@ import {
 	setInteractiveHost,
 	stripGitRepoLocationEnv,
 	withOmpOtelEnv,
-} from "@oh-my-pi/pi-utils/env";
+} from "@marsai-org/utils/env";
 
 const tempDirs: string[] = [];
 

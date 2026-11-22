@@ -8,21 +8,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/agent-protocol";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { resetRegisteredArtifactDirsForTests } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult, TaskParams } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentProtocolHandler } from "@marsai-org/coding-agent/internal-urls/agent-protocol";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { resetRegisteredArtifactDirsForTests } from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { TaskTool } from "@marsai-org/coding-agent/task";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import * as isolationRunner from "@marsai-org/coding-agent/task/isolation-runner";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { SingleResult, TaskParams } from "@marsai-org/tui/tools/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { TempDir } from "@marsai-org/utils";
 
 const AGENT: AgentDefinition = {
 	name: "worker",

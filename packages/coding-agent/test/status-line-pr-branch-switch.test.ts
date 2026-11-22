@@ -7,15 +7,15 @@
  * Contract: a cached PR is only rendered for the branch it was resolved on.
  */
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { StatusLineSettings } from "@oh-my-pi/pi-tui/status-line";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { getProjectDir, setProjectDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import type { VcsGitRepo, VcsGitRepoInfo, VcsHeadState, VcsRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import type { StatusLineSettings } from "@marsai-org/tui/status-line";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
+import { initTheme } from "@marsai-org/tui/theme";
+import { getProjectDir, setProjectDir } from "@marsai-org/utils";
 
 const originalProjectDir = getProjectDir();
 const root = "/repo/pr-branch-switch";

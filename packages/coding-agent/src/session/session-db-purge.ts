@@ -1,8 +1,8 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getHistoryDbPath, getStatsDbPath } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+import { getHistoryDbPath, getStatsDbPath } from "@marsai-org/utils/dirs";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
 import { readSessionHeaderIdSync, sessionIdFromContent } from "./session-header-id";
 /**
  * Purge the SQLite rows a deleted session leaves behind (`history.db` prompts,

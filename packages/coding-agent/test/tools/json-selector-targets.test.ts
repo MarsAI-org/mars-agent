@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { writeArchive } from "@oh-my-pi/pi-utils/ar";
+import { writeArchive } from "@marsai-org/utils/ar";
 import { Settings } from "../../src/config/settings";
 import { resolveLocalUrlToPath } from "../../src/internal-urls";
 import type { ToolSession } from "../../src/sdk";

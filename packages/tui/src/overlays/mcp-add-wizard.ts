@@ -6,10 +6,10 @@
 import { Container, matchesKey, replaceTabs, Spacer, Text, truncateToWidth, wrapTextWithAnsi } from "../index";
 import type { Component } from "../tui";
 import * as path from "node:path";
-import { getMCPConfigPath, getProjectDir } from "@oh-my-pi/pi-utils";
+import { getMCPConfigPath, getProjectDir } from "@marsai-org/utils";
 import { shortenPath } from "../render/render-utils";
 import { getSelectListTheme, theme } from "../theme/theme";
-import type { TspText } from "@oh-my-pi/pi-wire";
+import type { TspText } from "@marsai-org/wire";
 import { matchesAppInterrupt, matchesSelectDown, matchesSelectUp } from "../keybinding-matchers";
 import { formatKeyHint } from "../app-keybindings";
 import { boundKeys, editorKey, editorKeys, interruptKey } from "../chrome/keybinding-hints";

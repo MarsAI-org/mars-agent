@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeWithRetries } from "@marsai-org/utils";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 

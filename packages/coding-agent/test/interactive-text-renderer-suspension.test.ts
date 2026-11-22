@@ -1,20 +1,20 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { Extension } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { cfgExtensionAssistantTextRenderers } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { Extension } from "@marsai-org/coding-agent/extensibility/extensions";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { cfgExtensionAssistantTextRenderers } from "@marsai-org/coding-agent/extensibility/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { Composer } from "@marsai-org/tui/prompt/composer";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 
 describe("assistant text renderers of a suspended extension", () => {

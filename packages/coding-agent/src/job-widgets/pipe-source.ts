@@ -1,8 +1,8 @@
-import type { PipeStreamInfo, PipeStreams } from "@oh-my-pi/pi-natives";
-import { collapseCommand } from "@oh-my-pi/pi-tui/apps/ps-data";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { shellStreamId } from "@oh-my-pi/pi-tui/tools/shell-steps";
-import { truncate } from "@oh-my-pi/pi-utils";
+import type { PipeStreamInfo, PipeStreams } from "@marsai-org/natives";
+import { collapseCommand } from "@marsai-org/tui/apps/ps-data";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { shellStreamId } from "@marsai-org/tui/tools/shell-steps";
+import { truncate } from "@marsai-org/utils";
 import type { JobTextChunk, JobTextSource } from "./types";
 
 /** Longest stream label: `producer → consumer` on one line. */

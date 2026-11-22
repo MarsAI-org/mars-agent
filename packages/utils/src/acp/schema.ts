@@ -1,4 +1,4 @@
-import { type Type, type } from "@oh-my-pi/omptype";
+import { type Type, type } from "@marsai-org/omptype";
 import type {
 	ForkSessionResponse,
 	LoadSessionResponse,

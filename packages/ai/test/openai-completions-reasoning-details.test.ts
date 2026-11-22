@@ -3,11 +3,11 @@ import {
 	completionsDropsOwnThinking,
 	convertMessages,
 	streamOpenAICompletions,
-} from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { withCredentialRedaction } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import type { AssistantMessage, FetchImpl, Message, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { removeDsmlToolMarkupLeak } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/providers/openai-completions";
+import { withCredentialRedaction } from "@marsai-org/ai/providers/transform-messages";
+import type { AssistantMessage, FetchImpl, Message, Model, ModelSpec } from "@marsai-org/ai/types";
+import { removeDsmlToolMarkupLeak } from "@marsai-org/ai/utils/dsml-leak";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // Streams recorded from a Bifrost gateway (`POST /v1/chat/completions`, Gemini
 // upstream), thought signatures redacted. Bifrost sends Gemini reasoning only as

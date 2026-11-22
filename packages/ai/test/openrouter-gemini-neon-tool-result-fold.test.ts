@@ -1,7 +1,7 @@
 import { expect, it } from "bun:test";
-import { stream } from "@oh-my-pi/pi-ai";
-import type { AssistantMessage, Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { stream } from "@marsai-org/ai";
+import type { AssistantMessage, Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // Gemini 4 Neon ends ~half of the requests that close on a user message right
 // after a function response with an empty MALFORMED_RESPONSE. Such a message

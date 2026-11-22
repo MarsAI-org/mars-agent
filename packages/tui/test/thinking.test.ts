@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core/thinking";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort, THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
+import { ThinkingLevel } from "@marsai-org/agent-core/thinking";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort, THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
+import type { Model } from "@marsai-org/catalog/types";
 import {
 	assertModelSupportsEffortCeiling,
 	automaticThinkingLevel,

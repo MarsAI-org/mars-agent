@@ -5,8 +5,8 @@
  * follow-up or wake turn never reports a previous run's acceptance.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { AgentRegistry, type AgentRegistryApi } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { AgentRegistry, type AgentRegistryApi } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
 
 /** Minimal session: the registry only reads `runStartedAt` (an open run) for liveness corroboration. */
 function sessionStub(runOpen: boolean): AgentSession {

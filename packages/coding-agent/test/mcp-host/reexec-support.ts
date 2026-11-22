@@ -8,10 +8,10 @@
  * a newer install's client sends.
  */
 import * as fs from "node:fs/promises";
-import { daemonEndpoint, daemonTokenPath } from "@oh-my-pi/pi-coding-agent/daemon/paths";
-import { DAEMON_PROTOCOL_VERSION, type DaemonHello } from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import { resolveCliEntryCmd } from "@oh-my-pi/pi-coding-agent/subprocess/worker-client";
-import { IpcConnection } from "@oh-my-pi/pi-natives";
+import { daemonEndpoint, daemonTokenPath } from "@marsai-org/coding-agent/daemon/paths";
+import { DAEMON_PROTOCOL_VERSION, type DaemonHello } from "@marsai-org/coding-agent/daemon/protocol";
+import { resolveCliEntryCmd } from "@marsai-org/coding-agent/subprocess/worker-client";
+import { IpcConnection } from "@marsai-org/natives";
 
 /** Newer than any build this checkout can report. */
 const NEWER_BUILD = "999.0.0+1";

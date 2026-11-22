@@ -8,17 +8,17 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, type AgentMessage } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as imageLoading from "@marsai-org/coding-agent/utils/image-loading";
+import { TempDir } from "@marsai-org/utils";
 
 const BODY = "which files do you own?";
 /** A 1x1 PNG, so a message carries an image whose normalization a test can hold. */

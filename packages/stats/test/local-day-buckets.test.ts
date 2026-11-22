@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import { bucketAxis } from "../src/client/data/range";
 import { densify } from "../src/client/data/series";
 

@@ -1,36 +1,36 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { AssistantMessage } from "@marsai-org/ai";
 import type {
 	Extension,
 	ExtensionError,
 	ExtensionFactory,
 	TranscriptBlock,
 	TranscriptPresentation,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { generateRoomKey, importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { cfgExtensionTranscriptPresenters } from "@oh-my-pi/pi-coding-agent/extensibility/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { minFrameIntervalMs, setMaxFps } from "@oh-my-pi/pi-tui/frame-rate";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import { generateRoomKey, importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { COLLAB_PROTO, type CollabFrame, formatCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import * as bashExecutor from "@marsai-org/coding-agent/exec/bash-executor";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { cfgExtensionTranscriptPresenters } from "@marsai-org/coding-agent/extensibility/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { minFrameIntervalMs, setMaxFps } from "@marsai-org/tui/frame-rate";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { Composer } from "@marsai-org/tui/prompt/composer";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
+import * as piUtils from "@marsai-org/utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./collab/helpers/in-memory-relay";
 

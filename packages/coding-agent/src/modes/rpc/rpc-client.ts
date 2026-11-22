@@ -5,13 +5,13 @@
  */
 
 import { isPromise } from "node:util/types";
-import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { isRecord, ptree, readJsonl, toError } from "@oh-my-pi/pi-utils";
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import type { AgentEvent, AgentMessage, AgentToolResult, ThinkingLevel } from "@marsai-org/agent-core";
+import type { CompactionResult } from "@marsai-org/agent-core/compaction";
+import type { ImageContent, Model } from "@marsai-org/ai";
+import { isRecord, ptree, readJsonl, toError } from "@marsai-org/utils";
+import type { LogoutAccount } from "@marsai-org/tui/overlays/logout-account-selector";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
 import type { FileSink } from "bun";
 import type { BashResult } from "../../exec/bash-executor";
 import type { AgentSessionEvent, SessionStats } from "../../session/agent-session";

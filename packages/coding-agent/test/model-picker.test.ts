@@ -1,15 +1,15 @@
 import { createModelBrowserSource } from "../src/modes/model-browser-source";
 import { beforeAll, describe, expect, type Mock, test, vi } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ModelPickerComponent, type ModelPickerOptions } from "@oh-my-pi/pi-tui/overlays/model-picker";
-import { resolveSegmentPalette } from "@oh-my-pi/pi-tui/chrome/segment-track";
-import { getThemeByName, setThemeInstance, theme } from "@oh-my-pi/pi-tui/theme";
-import type { ResolvedRoleModel } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import type { Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ModelPickerComponent, type ModelPickerOptions } from "@marsai-org/tui/overlays/model-picker";
+import { resolveSegmentPalette } from "@marsai-org/tui/chrome/segment-track";
+import { getThemeByName, setThemeInstance, theme } from "@marsai-org/tui/theme";
+import type { ResolvedRoleModel } from "@marsai-org/coding-agent/session/agent-session";
+import type { TUI } from "@marsai-org/tui";
 
 function normalize(lines: readonly string[]): string {
 	return stripVTControlCharacters(lines.join("\n")).replace(/\s+/g, " ").trim();

@@ -1,4 +1,4 @@
-import { ptree } from "@oh-my-pi/pi-utils";
+import { ptree } from "@marsai-org/utils";
 import {
 	TerminalLaunchError,
 	type TerminalLaunchCliResult,

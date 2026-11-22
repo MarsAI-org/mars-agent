@@ -1,5 +1,5 @@
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isRecord } from "@marsai-org/utils";
 import { JsRuntime, type RuntimeCallIdentity, type RuntimeHooks, shadowSnapshotDigest } from "./shared/runtime";
 import type {
 	RunErrorPayload,

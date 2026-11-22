@@ -8,8 +8,8 @@
  * sends it: its own stdout, a pipe a later stage holds back, a file it
  * redirects into. The command's steps pick the output (see {@link ShellSteps}).
  */
-import type { ShellTrace, ShellVizPreferences, ShellVizPresentation, TspSpan, TspTone } from "@oh-my-pi/pi-wire";
-import { formatDuration, sanitizeText, spillUrl } from "@oh-my-pi/pi-utils";
+import type { ShellTrace, ShellVizPreferences, ShellVizPresentation, TspSpan, TspTone } from "@marsai-org/wire";
+import { formatDuration, sanitizeText, spillUrl } from "@marsai-org/utils";
 import { jobDisplayLabel } from "../tools/job-label";
 import type { Component } from "../tui";
 import { matchesSelectCancel, matchesSelectDown, matchesSelectUp } from "../keybinding-matchers";

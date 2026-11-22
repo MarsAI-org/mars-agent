@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import type { SingleResult, TaskToolDetails } from "@oh-my-pi/pi-tui/tools/task";
-import { taskToolRenderer } from "@oh-my-pi/pi-tui/tools/task";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import type { SingleResult, TaskToolDetails } from "@marsai-org/tui/tools/task";
+import { taskToolRenderer } from "@marsai-org/tui/tools/task";
 
 // Regression for PR #11343 review: sanitizing the isolation artifact rows
 // (shortenPath + width bound) dropped the `Patch:` / `Branch:` /

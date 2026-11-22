@@ -1,16 +1,16 @@
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs/promises";
-import type { ServiceTier, Usage } from "@oh-my-pi/pi-ai";
-import { pricingPeerFor } from "@oh-my-pi/pi-catalog/compat/behavior";
+import type { ServiceTier, Usage } from "@marsai-org/ai";
+import { pricingPeerFor } from "@marsai-org/catalog/compat/behavior";
 import {
 	calculateUncachedInputCost,
 	calculateUsageCost,
 	type GeneratedProvider,
 	getBundledModel,
 	hasRecurringTariff,
-} from "@oh-my-pi/pi-catalog/models";
-import type { ModelCost } from "@oh-my-pi/pi-catalog/types";
-import { $envpos, getConfigRootDir, getStatsDbPath, VERSION } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/models";
+import type { ModelCost } from "@marsai-org/catalog/types";
+import { $envpos, getConfigRootDir, getStatsDbPath, VERSION } from "@marsai-org/utils";
 import { ChunkedInsert } from "./chunked-insert";
 import { classifyAgentType, type ParseSessionResult, type SessionParserState } from "./parser";
 import { ensureRollupSchema, getDailyActivityFromRollup } from "./rollup";
@@ -1204,7 +1204,7 @@ export function completeSessionSync(reconcile: boolean): void {
  * Insert message stats into the database.
  *
  * Forked / branched sessions (see `SessionManager.fork()` and
- * `createBranchedSession()` in `@oh-my-pi/pi-coding-agent`) deep-copy a parent
+ * `createBranchedSession()` in `@marsai-org/coding-agent`) deep-copy a parent
  * session's entries into a new JSONL — same `entry_id`, `timestamp`, `model`,
  * `provider`, token counts, and `responseId`. The `UNIQUE(session_file,
  * entry_id)` constraint alone keys each row by file, so without the guard

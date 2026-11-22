@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
+import { VERSION } from "@marsai-org/utils/dirs";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
 import {
 	relayExtensionNotice,
 	UPDATE_RELAY_EXTENSION,
 	waitForRelayExtension,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
+} from "@marsai-org/coding-agent/tools/browser/relay/probe";
 import {
 	DISCARDED_TABS_PROTOCOL_VERSION,
 	isOlderOmpVersion,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
+} from "@marsai-org/coding-agent/tools/browser/relay/protocol";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 
 const EXTENSION_HELLO = {
 	t: "hello",

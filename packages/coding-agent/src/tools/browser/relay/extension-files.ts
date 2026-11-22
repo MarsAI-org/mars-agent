@@ -4,7 +4,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getBrowserRelayDir, isEnoent } from "@oh-my-pi/pi-utils";
+import { getBrowserRelayDir, isEnoent } from "@marsai-org/utils";
 import { replaceFileAtomically } from "../../../utils/atomic-file";
 import { embeddedRelayExtension } from "./embedded-extension";
 import {

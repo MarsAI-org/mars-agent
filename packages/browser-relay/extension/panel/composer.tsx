@@ -2,7 +2,7 @@
  * The composer card: error strip, attachment tray, tab chips, editor (or the agent's pending question), footer
  * with Actions, queued pill, model chip and Send/Stop, plus the slash menu that opens above it.
  */
-import type { CollabUiRequest, ImageContent } from "@oh-my-pi/pi-wire";
+import type { CollabUiRequest, ImageContent } from "@marsai-org/wire";
 import {
 	Brain,
 	AppWindow,

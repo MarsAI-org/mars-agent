@@ -1,16 +1,16 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type Mock, spyOn, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
+import { Agent } from "@marsai-org/agent-core";
 import { stripVTControlCharacters } from "node:util";
-import { type Component, Container, isFocusable, type OverlayOptions, setKeybindings } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+import { type Component, Container, isFocusable, type OverlayOptions, setKeybindings } from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 import type { ExtensionAskDialogQuestion, ExtensionUIContext } from "../../../src/extensibility/extensions";
-import { AskDialogComponent } from "@oh-my-pi/pi-tui/overlays/ask-dialog";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { HtmlFormDialog } from "@oh-my-pi/pi-tui/html-form/dialog";
+import { AskDialogComponent } from "@marsai-org/tui/overlays/ask-dialog";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import { HtmlFormDialog } from "@marsai-org/tui/html-form/dialog";
 import { ExtensionUiController } from "../../../src/modes/controllers/extension-ui-controller";
 import { InputController } from "../../../src/modes/controllers/input-controller";
-import { getEditorTheme, getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+import { getEditorTheme, getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 import type { InteractiveModeContext } from "../../../src/modes/types";
 import {
 	disposeProgramStatus,
@@ -19,7 +19,7 @@ import {
 	setRunStatus,
 } from "../../../src/utils/run-status";
 import * as titleGenerator from "../../../src/utils/title-generator";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 afterEach(() => {
 	setKeybindings(KeybindingsManager.inMemory());

@@ -14,19 +14,19 @@
  * estimate (`estimateInlineSavings`) so the two can never disagree.
  */
 
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { Context, ImageContent, Message, Model, TextContent, UserMessage } from "@oh-my-pi/pi-ai";
-import { sendsImageInputOnWire } from "@oh-my-pi/pi-ai/providers/vision-guard";
+import { Tokenizer } from "@marsai-org/agent-core";
+import type { Context, ImageContent, Message, Model, TextContent, UserMessage } from "@marsai-org/ai";
+import { sendsImageInputOnWire } from "@marsai-org/ai/providers/vision-guard";
 import {
 	HL_FILE_HASH_LENGTH,
 	HL_FILE_HASH_SEP,
 	HL_FILE_PREFIX,
 	HL_FILE_SUFFIX,
 	HL_LINE_BODY_SEP,
-} from "@oh-my-pi/pi-tui/tools/hashline-format";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { prompt } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/tui/tools/hashline-format";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { prompt } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import type { SnapcompactFrameSink } from "../blob-broker/service";
 import contextFramesNote from "../prompts/system/snapcompact-context-frames-note.md" with { type: "text" };
 import contextStub from "../prompts/system/snapcompact-context-stub.md" with { type: "text" };
@@ -56,7 +56,7 @@ export type SnapcompactSavingsSink = (
 	model: Model,
 ) => void;
 
-// Per-deployment image-count budgets come from the catalog via @oh-my-pi/snapcompact
+// Per-deployment image-count budgets come from the catalog via @marsai-org/snapcompact
 // (`providerImageBudget`): snapcompact frames are 1568px (<2000px) so
 // dimension/size limits never bind; only COUNT does. Once the budget is
 // spent by already-attached archive/system-prompt images, tool results ship

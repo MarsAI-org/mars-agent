@@ -6,7 +6,7 @@ import {
 	phasesToMarkdown,
 	resolveTodoMarkdownPath,
 } from "../../tools/todo";
-import { type TodoItem, type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import { type TodoItem, type TodoPhase } from "@marsai-org/tui/tools/todo";
 import { copyToClipboard } from "../../utils/clipboard";
 import { getEditorCommand, openInEditor } from "../../utils/external-editor";
 import type { InteractiveModeContext } from "../types";

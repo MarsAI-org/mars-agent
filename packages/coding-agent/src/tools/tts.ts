@@ -1,13 +1,13 @@
 // Ported from NousResearch/hermes-agent (MIT) — tools/tts_tool.py L167-171, L896-959.
 // Speech backends are catalog models selected through the speech role chain.
 
-import { type } from "@oh-my-pi/omptype";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { MissingApiKeyError, ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { DEFAULT_XAI_VOICE_ID, synthesizeSpeech, XAI_MAX_TEXT_LENGTH } from "@oh-my-pi/pi-ai/speech";
-import { prompt } from "@oh-my-pi/pi-utils";
-import { assertNotHeldOpen } from "@oh-my-pi/pi-utils/held-file";
+import { type } from "@marsai-org/omptype";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { MissingApiKeyError, ProviderHttpError } from "@marsai-org/ai/error";
+import { DEFAULT_XAI_VOICE_ID, synthesizeSpeech, XAI_MAX_TEXT_LENGTH } from "@marsai-org/ai/speech";
+import { prompt } from "@marsai-org/utils";
+import { assertNotHeldOpen } from "@marsai-org/utils/held-file";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import { resolveRoleChain, type RoleChainCandidate } from "../config/model-resolver";

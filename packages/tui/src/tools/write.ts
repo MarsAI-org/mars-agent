@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import type { HighlightStream } from "@oh-my-pi/pi-natives";
+import { sanitizeText } from "@marsai-org/utils";
+import type { HighlightStream } from "@marsai-org/natives";
 import type { Component } from "../tui";
 import { fencedCode } from "../components/markdown";
 import { getLanguageFromPath } from "../lang-from-path";
@@ -32,7 +32,7 @@ import {
 	type ProcWriteAction,
 	type ProcWriteDetails,
 } from "./proc-render";
-import type { TspTone } from "@oh-my-pi/pi-wire";
+import type { TspTone } from "@marsai-org/wire";
 import { code, compact, md, node, span } from "../native/describe";
 import type { NativeChild, NativeNode } from "../native/node";
 import { diagnosticsBadge, diagnosticsSection, displayPath, errorText, fileHref, resultText } from "./native-view";

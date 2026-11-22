@@ -1,4 +1,4 @@
-import { jsonContainerEnd, peekFileSync, tryParseJson } from "@oh-my-pi/pi-utils";
+import { jsonContainerEnd, peekFileSync, tryParseJson } from "@marsai-org/utils";
 import type { FileEntry, SessionHeader } from "./session-entries";
 import { parseTitleSlotLine } from "./session-title-slot";
 

@@ -1,4 +1,4 @@
-import type { Tool } from "@oh-my-pi/pi-ai";
+import type { Tool } from "@marsai-org/ai";
 
 /**
  * Every {@link Tool} field and nothing else: `satisfies` stops compiling when `Tool` gains or drops a field, so a

@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import { streamSimple } from "../src/stream";
 
 // Bedrock hosts the GPT-5.x SKUs behind OpenAI's own request schema. It rejects

@@ -17,19 +17,19 @@
  */
 
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { CmuxKind } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/rpc";
-import { CmuxSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/socket-client";
-import { acquireBrowser, getBrowsersMapForTest } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
+import type { CmuxKind } from "@marsai-org/coding-agent/tools/browser/cmux/rpc";
+import { CmuxSocketClient } from "@marsai-org/coding-agent/tools/browser/cmux/socket-client";
+import { acquireBrowser, getBrowsersMapForTest } from "@marsai-org/coding-agent/tools/browser/registry";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	releaseTabsForOwner,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+} from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
 function makeSession(ownerId?: string): ToolSession {
 	return {

@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { APP_NAME, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { APP_NAME, removeWithRetries } from "@marsai-org/utils";
 import { $ } from "bun";
 import { exportFromFile, exportSessionToHtml, type SessionData } from "../src/export/html";
 import type { SessionHeader } from "../src/session/session-entries";

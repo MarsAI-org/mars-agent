@@ -2,9 +2,9 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { createContext, runInContext, runInNewContext } from "node:vm";
-import { HTMLElement, parseHTML } from "@oh-my-pi/pi-utils/dom";
-import { Marked, type MarkedExtension } from "@oh-my-pi/pi-utils/marked";
-import { TempDir } from "@oh-my-pi/pi-utils/temp";
+import { HTMLElement, parseHTML } from "@marsai-org/utils/dom";
+import { Marked, type MarkedExtension } from "@marsai-org/utils/marked";
+import { TempDir } from "@marsai-org/utils/temp";
 import { buildExportViewer, type ExportViewerMetadata, isExportViewerCheck } from "../scripts/build-export-viewer";
 
 const temp = TempDir.createSync("@omp-export-viewer-build-");

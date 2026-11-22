@@ -1,7 +1,7 @@
-import { collapseCommand } from "@oh-my-pi/pi-tui/apps/ps-data";
-import { formatDuration } from "@oh-my-pi/pi-tui/render/render-utils";
-import type { UnitSnapshot } from "@oh-my-pi/pi-tui/tools/daemon";
-import { formatBytes, logger, sanitizeText, spillUrl, truncate } from "@oh-my-pi/pi-utils";
+import { collapseCommand } from "@marsai-org/tui/apps/ps-data";
+import { formatDuration } from "@marsai-org/tui/render/render-utils";
+import type { UnitSnapshot } from "@marsai-org/tui/tools/daemon";
+import { formatBytes, logger, sanitizeText, spillUrl, truncate } from "@marsai-org/utils";
 import type { AsyncJob } from "../async";
 import {
 	agentStaleNote,
@@ -25,7 +25,7 @@ import {
 	stopService,
 } from "../launch/services";
 import { AGENT_KILL_LABEL } from "../session/messages";
-import type { ProcReadDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
+import type { ProcReadDetails } from "@marsai-org/tui/tools/proc-render";
 import procPromptDoc from "../prompts/internal-urls/proc.md" with { type: "text" };
 import procReferenceDoc from "../prompts/internal-urls/proc-reference.md" with { type: "text" };
 import type { ToolSession } from "../tools";

@@ -3,7 +3,7 @@
  * terminal cannot embed a live page, so the transcript shows this still over
  * a link to the page.
  */
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import { untilAborted } from "@marsai-org/utils";
 import { applyStealthPatches, applyViewport, chromiumNeedsDownload, isPuppeteerTimeout } from "./launch";
 import { withScratchPage } from "./scratch-page";
 

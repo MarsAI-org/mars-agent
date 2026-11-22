@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { JsRuntime } from "@oh-my-pi/pi-coding-agent/eval/js/shared/runtime";
-import { type InProcessRunTab, runInProcessTab } from "@oh-my-pi/pi-coding-agent/tools/browser/in-process-run";
-import type { SessionSnapshot } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { JsRuntime } from "@marsai-org/coding-agent/eval/js/shared/runtime";
+import { type InProcessRunTab, runInProcessTab } from "@marsai-org/coding-agent/tools/browser/in-process-run";
+import type { SessionSnapshot } from "@marsai-org/coding-agent/tools/browser/tab-protocol";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 
 /** A backend tab (Tern, WebKit, cmux) whose `tab.run` code executes in this process. */
 class FakeTab implements InProcessRunTab {

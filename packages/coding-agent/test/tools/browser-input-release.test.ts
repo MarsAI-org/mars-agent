@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { clickAt, pressKey } from "@oh-my-pi/pi-coding-agent/tools/browser/interactions";
+import { clickAt, pressKey } from "@marsai-org/coding-agent/tools/browser/interactions";
 import type { Page } from "puppeteer-core";
 
 describe("pressKey releases every key it pressed", () => {

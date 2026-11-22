@@ -1,22 +1,22 @@
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
-import { FileLock as NativeFileLock } from "@oh-my-pi/pi-natives";
-import { getSessionOwnersDir, getTestTempDir } from "@oh-my-pi/pi-utils/dirs";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+import { FileLock as NativeFileLock } from "@marsai-org/natives";
+import { getSessionOwnersDir, getTestTempDir } from "@marsai-org/utils/dirs";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
 import {
 	type FileLockHandle,
 	isFileLockHeld,
 	tryAcquireFileLock,
 	withFileLockSync,
-} from "@oh-my-pi/pi-utils/file-lock";
-import { type FsError, hasFsCode, isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { popLoopPhase, pushLoopPhase, withLoopPhase } from "@oh-my-pi/pi-utils/loop-phase";
-import { peekFileEnds } from "@oh-my-pi/pi-utils/peek-file";
-import { isPidAlive } from "@oh-my-pi/pi-utils/pid";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
+} from "@marsai-org/utils/file-lock";
+import { type FsError, hasFsCode, isEnoent } from "@marsai-org/utils/fs-error";
+import * as logger from "@marsai-org/utils/logger";
+import { popLoopPhase, pushLoopPhase, withLoopPhase } from "@marsai-org/utils/loop-phase";
+import { peekFileEnds } from "@marsai-org/utils/peek-file";
+import { isPidAlive } from "@marsai-org/utils/pid";
+import { Snowflake } from "@marsai-org/utils/snowflake";
+import { toError } from "@marsai-org/utils/type-guards";
 import { readSessionHeaderIdSync } from "./session-header-id";
 import { overlayTitleSlotContent, type SessionTitleUpdate, serializeTitleSlot } from "./session-title-slot";
 import { purgeDeletedSessionRows } from "./session-db-purge";

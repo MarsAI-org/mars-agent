@@ -5,7 +5,7 @@
  * leading launch flag routed the argv through the framework.
  */
 
-import { Command, type CommandCtor } from "@oh-my-pi/pi-utils/cli";
+import { Command, type CommandCtor } from "@marsai-org/utils/cli";
 import { nativeShellHelp } from "../cli/command-help";
 import { runNativeShell } from "../cli/native-shell";
 

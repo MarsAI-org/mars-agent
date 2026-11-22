@@ -2,15 +2,15 @@ import { afterEach, beforeEach, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { wordQuery } from "@oh-my-pi/pi-coding-agent/session/search-query";
+import { wordQuery } from "@marsai-org/coding-agent/session/search-query";
 import {
 	closeTranscriptIndex,
 	indexedMessageCounts,
 	isTranscriptIndexFresh,
 	syncTranscriptIndex,
 	transcriptSessionIds,
-} from "@oh-my-pi/pi-coding-agent/session/transcript-index";
-import { getConfigRootDir, getSessionsDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/transcript-index";
+import { getConfigRootDir, getSessionsDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;
 let root: string;

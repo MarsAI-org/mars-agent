@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent, PromptOptions } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { LoadExtensionsResult } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { CreateAgentSessionOptions, CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent, PromptOptions } from "@marsai-org/coding-agent/session/agent-session";
+import { runSubprocess } from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 /**

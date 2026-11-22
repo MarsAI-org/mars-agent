@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from "bun:test";
 import {
 	BROWSER_PAGE_PROTOCOL_TIMEOUT_MS,
 	BROWSER_PROTOCOL_TIMEOUT_MS,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { resolveOpTimeouts, resolveWaitTimeout } from "@oh-my-pi/pi-coding-agent/tools/browser/op-timeouts";
-import { parseRoleSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/query-handlers";
-import { dispatchScroll, normalizeSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
-import { resolvePredicateTimeout } from "@oh-my-pi/pi-coding-agent/tools/run-scope";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { resolveOpTimeouts, resolveWaitTimeout } from "@marsai-org/coding-agent/tools/browser/op-timeouts";
+import { parseRoleSelector } from "@marsai-org/coding-agent/tools/browser/query-handlers";
+import { dispatchScroll, normalizeSelector } from "@marsai-org/coding-agent/tools/browser/tab-worker";
+import { resolvePredicateTimeout } from "@marsai-org/coding-agent/tools/run-scope";
 import { Connection, type ConnectionTransport } from "puppeteer-core";
 
 // Regression coverage for the "weird timeouts" failure mode: interactive `tab.*` helpers

@@ -18,11 +18,11 @@
  * of the presented tools, the SDK appends {@link MCPEvalNamespaceCatalog.preludes}
  * to the session's eval preludes, and the eval tool bridge serves the calls.
  */
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { jsonSchemaToTypeScript, toolWireSchema } from "@oh-my-pi/pi-ai";
-import { blobExtensionForImageMimeType, normalizeBlobExtension } from "@oh-my-pi/pi-tui/prompt/image-format";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isRecord, logger, prompt, Snowflake } from "@oh-my-pi/pi-utils";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import { jsonSchemaToTypeScript, toolWireSchema } from "@marsai-org/ai";
+import { blobExtensionForImageMimeType, normalizeBlobExtension } from "@marsai-org/tui/prompt/image-format";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isRecord, logger, prompt, Snowflake } from "@marsai-org/utils";
 import type { EvalPreludeDefinition } from "../eval/preludes";
 import { resolveLocalUrlToPath } from "../internal-urls/local-protocol";
 import type { LocalProtocolOptions } from "../internal-urls/local-root";

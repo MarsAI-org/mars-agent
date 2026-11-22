@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { streamGoogle } from "@oh-my-pi/pi-ai/providers/google";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamGoogle } from "@marsai-org/ai/providers/google";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 /**
  * Issue #16991: the native Google transport (`google-generative-ai`, shared with

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 
-import type { FetchImpl } from "@oh-my-pi/pi-ai/types";
-import { resolveUsedFraction, type UsageFetchContext, type UsageFetchParams } from "@oh-my-pi/pi-ai/usage";
-import { charmHyperUsageProvider } from "@oh-my-pi/pi-ai/usage/charm-hyper";
+import type { FetchImpl } from "@marsai-org/ai/types";
+import { resolveUsedFraction, type UsageFetchContext, type UsageFetchParams } from "@marsai-org/ai/usage";
+import { charmHyperUsageProvider } from "@marsai-org/ai/usage/charm-hyper";
 
 function makeCredential(): UsageFetchParams["credential"] {
 	return {

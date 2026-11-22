@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import { COMPLETION_TEXT_MAX_CHARS, journalCompletion } from "@oh-my-pi/pi-coding-agent/session/model-usage-journal";
-import type { ModelUsageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
+import { COMPLETION_TEXT_MAX_CHARS, journalCompletion } from "@marsai-org/coding-agent/session/model-usage-journal";
+import type { ModelUsageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 const USAGE: Usage = {
 	input: 300,

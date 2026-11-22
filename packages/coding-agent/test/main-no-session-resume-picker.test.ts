@@ -7,12 +7,12 @@
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { clearOmpExtensionCliRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 class ProcessExitSignal extends Error {
 	constructor(readonly code: number) {

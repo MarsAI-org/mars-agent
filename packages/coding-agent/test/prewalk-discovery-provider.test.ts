@@ -16,18 +16,18 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSessionOptions } from "@oh-my-pi/pi-coding-agent/main";
-import type { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { buildSessionOptions } from "@marsai-org/coding-agent/main";
+import type { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
-import { cfgPrewalkEnabled } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgPrewalkEnabled } from "@marsai-org/coding-agent/session/settings";
 
 describe("issue #11820 prewalk into a models.yml discovery provider target", () => {
 	let tempDir: string;

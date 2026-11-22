@@ -2,10 +2,10 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { CustomTool, CustomToolContext } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { createMCPProxyTools } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import type { CustomTool, CustomToolContext } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import { createMCPProxyTools } from "@marsai-org/coding-agent/task/executor";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import { LATE_LOADER_TOOL, LIST_DELAY_ENV, LOADED_TOOL, LOADER_TOOL } from "./fixtures/lazy-loader-mcp";
 
 const FIXTURE_PATH = path.join(import.meta.dir, "fixtures", "lazy-loader-mcp.ts");

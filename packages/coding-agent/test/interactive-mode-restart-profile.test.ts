@@ -1,6 +1,6 @@
 import { expect, it } from "bun:test";
 import * as path from "node:path";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 
 it("native restart preserves the active profile and reopens its persisted session", async () => {
 	using tempDir = TempDir.createSync("@omp-restart-profile-");

@@ -19,7 +19,7 @@
  *   const build = await fresh.rebuild(await Bun.file(sessionPath).text());
  *   // write build.sessionJsonl + build.files, then `omp --resume <new file>`
  */
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import pointerPrompt from "./prompts/fresh-pointer.md" with { type: "text" };
 
 /** Where the archive lives inside the task container (outside `/workspace`, so it is never packed). */

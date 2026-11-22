@@ -4,7 +4,7 @@ import {
 	resolveBudgetReserveTokens,
 	resolveThresholdTokens,
 	shouldCompact,
-} from "@oh-my-pi/pi-agent-core/compaction/compaction";
+} from "@marsai-org/agent-core/compaction/compaction";
 
 const fixed = (thresholdTokens: number, extra: Partial<CompactionSettings> = {}): CompactionSettings => ({
 	enabled: true,

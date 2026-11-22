@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { handleReddit } from "@oh-my-pi/pi-coding-agent/web/scrapers/reddit";
+import { handleReddit } from "@marsai-org/coding-agent/web/scrapers/reddit";
 import { asGlobalFetch } from "../../helpers/fetch-mock.js";
 
 const THREAD_URL = "https://www.reddit.com/r/rust/comments/abc123/borrow_checker_tips/";

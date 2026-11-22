@@ -6,15 +6,15 @@
  * their blocks.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import "@oh-my-pi/pi-coding-agent/internal-urls/router";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CopySelectorComponent, type CopyPickSource, turnPreview } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import type { OutlineTarget } from "@oh-my-pi/pi-tui/chat/transcript-outline";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import "@marsai-org/coding-agent/internal-urls/router";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { CopySelectorComponent, type CopyPickSource, turnPreview } from "@marsai-org/tui/overlays/copy-selector";
+import type { OutlineTarget } from "@marsai-org/tui/chat/transcript-outline";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import type { SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import { setKeybindings, type TUI } from "@marsai-org/tui";
 
 const UP = "\x1b[A";
 const LEFT = "\x1b[D";

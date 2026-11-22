@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import type { Agent, AgentEvent } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { StreamingEditGuard } from "@oh-my-pi/pi-coding-agent/session/stream-guards";
-import type { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import type { Agent, AgentEvent } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { StreamingEditGuard } from "@marsai-org/coding-agent/session/stream-guards";
+import type { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 interface RecoveryHarnessOptions {
 	settings?: Settings;

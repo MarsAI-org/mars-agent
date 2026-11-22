@@ -5,7 +5,7 @@
  * it to the caller and closes it whatever happens; meanwhile the page is
  * claimed for the orphan reaper, so a process that dies leaves none behind.
  */
-import { getProjectDir, logger, untilAborted } from "@oh-my-pi/pi-utils";
+import { getProjectDir, logger, untilAborted } from "@marsai-org/utils";
 import type { Page } from "puppeteer-core";
 import { browserConnection, privateTargetId } from "./launch";
 import {

@@ -3,13 +3,13 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+import type { Effort } from "@marsai-org/catalog/effort";
 import {
 	isVertexAnthropicRawPredictUrl,
 	isVertexExpressOpenAIUrl,
 	isVertexRawPredictUrl,
 	resolveVertexEndpointHost,
-} from "@oh-my-pi/pi-catalog/hosts";
+} from "@marsai-org/catalog/hosts";
 import {
 	defaultSupportedEffort,
 	GOOGLE_THINKING_BUDGETS,
@@ -18,8 +18,8 @@ import {
 	requireSupportedEffort,
 	resolveWireModelId,
 	withoutUnverifiedThinking,
-} from "@oh-my-pi/pi-catalog/model-thinking";
-import { $env, getProviderInFlightRoot, isEnoent, isPidAlive, logger, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/model-thinking";
+import { $env, getProviderInFlightRoot, isEnoent, isPidAlive, logger, untilAborted } from "@marsai-org/utils";
 import { getCustomApi } from "./api-registry";
 import {
 	createAuthRetryKeyState,

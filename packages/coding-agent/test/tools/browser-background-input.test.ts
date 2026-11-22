@@ -2,29 +2,29 @@ import { afterAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
+import { ensureChromiumExecutable } from "@marsai-org/coding-agent/tools/browser/launch";
 import {
 	acquireBrowser,
 	type BrowserHandle,
 	type BrowserKind,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
+} from "@marsai-org/coding-agent/tools/browser/registry";
 import {
 	unpackedExtensionId,
 	writeRelayExtension,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/extension-files";
-import { waitForRelayExtension } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import { startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
+} from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
+import { waitForRelayExtension } from "@marsai-org/coding-agent/tools/browser/relay/probe";
+import { startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 import {
 	acquireTab,
 	getTabsMapForTest,
 	releaseTab,
 	runInTab,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { VERSION } from "@marsai-org/utils/dirs";
 import puppeteer, { type Browser, type Page, type WebWorker } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

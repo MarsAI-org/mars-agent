@@ -1,9 +1,9 @@
-import type { AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { CompactionSettings } from "@oh-my-pi/pi-agent-core/compaction";
-import { effectiveReserveTokens, resolveThresholdTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Tool as AiTool, Model } from "@oh-my-pi/pi-ai";
-import { renderToolExamples } from "@oh-my-pi/pi-ai/dialect";
-import { stripSchemaDescriptions, toolWireSchema } from "@oh-my-pi/pi-ai/utils/schema";
+import type { AgentMessage, Tokenizer } from "@marsai-org/agent-core";
+import type { CompactionSettings } from "@marsai-org/agent-core/compaction";
+import { effectiveReserveTokens, resolveThresholdTokens } from "@marsai-org/agent-core/compaction";
+import type { Tool as AiTool, Model } from "@marsai-org/ai";
+import { renderToolExamples } from "@marsai-org/ai/dialect";
+import { stripSchemaDescriptions, toolWireSchema } from "@marsai-org/ai/utils/schema";
 
 type ContextTool = Pick<AiTool, "name" | "description" | "parameters" | "examples">;
 

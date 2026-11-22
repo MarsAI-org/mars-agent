@@ -18,7 +18,7 @@
  * form.sections[0].title; // [{ text: "Database" }]
  * form.fields[0];         // { kind: "choice", name: "db", multi: false, options: [sqlite ✓, pg] }
  */
-import { Comment, type Document, Element, type Node, parseHTML, Text } from "@oh-my-pi/pi-utils/dom";
+import { Comment, type Document, Element, type Node, parseHTML, Text } from "@marsai-org/utils/dom";
 
 /** Inline emphasis a span keeps from `<code>`, `<strong>`/`<b>` and `<em>`/`<i>`. */
 export type FormSpanStyle = "code" | "strong" | "em";

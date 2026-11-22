@@ -4,7 +4,7 @@
  * the interactive host registers the one handler that runs omp's existing
  * commands for them, so a click and the key binding take the same path.
  */
-import type { TspMenuEntry } from "@oh-my-pi/pi-wire";
+import type { TspMenuEntry } from "@marsai-org/wire";
 import type { SpotlightDetails } from "./spotlight";
 
 /**

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { ensureChromiumExecutable } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { registerSemanticQueryHandlers } from "@oh-my-pi/pi-coding-agent/tools/browser/query-handlers";
-import { TERN_KIT_SOURCE } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/page-kit";
+import { ensureChromiumExecutable } from "@marsai-org/coding-agent/tools/browser/launch";
+import { registerSemanticQueryHandlers } from "@marsai-org/coding-agent/tools/browser/query-handlers";
+import { TERN_KIT_SOURCE } from "@marsai-org/coding-agent/tools/browser/tern/page-kit";
 import puppeteer from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

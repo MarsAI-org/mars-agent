@@ -3,9 +3,9 @@ import { afterEach, describe, expect, it } from "bun:test";
 import { mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { conversationStorePath } from "@oh-my-pi/pi-ai/providers/antigravity-cli/conversation-store";
+import { type } from "@marsai-org/omptype";
+import * as AIError from "@marsai-org/ai/error";
+import { conversationStorePath } from "@marsai-org/ai/providers/antigravity-cli/conversation-store";
 import {
 	AgyHost,
 	describeToolArguments,
@@ -15,14 +15,14 @@ import {
 	type AgyStepOptions,
 	type AgyTransport,
 	type AgyTransportOptions,
-} from "@oh-my-pi/pi-ai/providers/antigravity-cli/host";
-import type { McpToolOutput } from "@oh-my-pi/pi-ai/providers/antigravity-cli/mcp-bridge";
-import { StepWriter } from "@oh-my-pi/pi-ai/providers/antigravity-cli/step-writer";
-import type { AssistantMessage, Context, Message, Tool, ToolResultMessage } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ContentBlock, PromptRequest, PromptResponse, SessionConfigOption } from "@oh-my-pi/pi-utils/acp";
+} from "@marsai-org/ai/providers/antigravity-cli/host";
+import type { McpToolOutput } from "@marsai-org/ai/providers/antigravity-cli/mcp-bridge";
+import { StepWriter } from "@marsai-org/ai/providers/antigravity-cli/step-writer";
+import type { AssistantMessage, Context, Message, Tool, ToolResultMessage } from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { extractProviderRetryHint } from "@marsai-org/ai/utils/retry-after";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ContentBlock, PromptRequest, PromptResponse, SessionConfigOption } from "@marsai-org/utils/acp";
 
 const model = buildModel({
 	api: "antigravity-acp",

@@ -1,6 +1,6 @@
-import "@oh-my-pi/pi-utils/env";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { CONFIG_DIR_NAME } from "@oh-my-pi/pi-utils/dirs";
+import "@marsai-org/utils/env";
+import chalk from "@marsai-org/utils/chalk";
+import { CONFIG_DIR_NAME } from "@marsai-org/utils/dirs";
 import { BUILTIN_TOOL_HELP, type BuiltinToolHelp } from "../tools/builtin-names";
 
 function renderBuiltinToolSummary(help: BuiltinToolHelp): string {

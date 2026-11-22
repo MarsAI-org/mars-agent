@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseCodeStatus } from "@oh-my-pi/pi-natives";
+import { parseCodeStatus } from "@marsai-org/natives";
 import { computeRepairRegion, repairParseRegression } from "./auto-repair";
 
 const PATH = "/repo/src/sample.ts";

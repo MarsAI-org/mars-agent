@@ -3,7 +3,7 @@ import {
 	closeLaunchedBrowser,
 	launchHeadlessBrowser,
 	removeUserDataDir,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+} from "@marsai-org/coding-agent/tools/browser/launch";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

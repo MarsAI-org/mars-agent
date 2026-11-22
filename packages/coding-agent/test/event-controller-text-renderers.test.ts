@@ -1,11 +1,11 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AssistantTextRenderer } from "@oh-my-pi/pi-tui/chat/extension-types";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import type { AssistantTextRenderer } from "@marsai-org/tui/chat/extension-types";
+import { initTheme } from "@marsai-org/tui/theme";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
 function assistant(text: string): AssistantMessage {

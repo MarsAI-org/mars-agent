@@ -7,8 +7,8 @@
  * `share.redactSecrets`.
  */
 
-import { getAgentDir, isEnoent } from "@oh-my-pi/pi-utils";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { getAgentDir, isEnoent } from "@marsai-org/utils";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { shareHelp as commandHelp } from "../cli/command-help";
 import { Settings } from "../config/settings";
 import { shareSession } from "../export/share";

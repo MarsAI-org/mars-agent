@@ -9,8 +9,8 @@
  * Inverse direction (source-of-truth for item shapes): ../../providers/openai-responses.ts
  */
 
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, logger, structuredCloneJSON } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isRecord, logger, structuredCloneJSON } from "@marsai-org/utils";
 import {
 	isOpenAIReasoningEffort,
 	isOpenAIServiceTier,

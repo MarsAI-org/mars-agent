@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { Agent } from "@marsai-org/agent-core";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 // Contract: a turn that an idle `sendCustomMessage(..., { triggerTurn: true })` starts is prepared
 // like a prompt, so the system prompt `before_agent_start` returns reaches the provider for that turn.

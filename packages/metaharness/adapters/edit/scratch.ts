@@ -12,7 +12,7 @@
  * machine by file content.
  */
 import * as fs from "node:fs/promises";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 
 let root: Promise<TempDir> | undefined;
 

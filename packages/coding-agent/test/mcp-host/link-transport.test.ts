@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import type { MCPProgress } from "@oh-my-pi/pi-tui/tools/mcp";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
+import type { MCPProgress } from "@marsai-org/tui/tools/mcp";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
 import {
 	encodeHostError,
 	MCP_ROOTS_METHOD,
 	MCP_STATUS_METHOD,
 	type McpUpstreamStatus,
-} from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { HostLink, type HostLinkOptions } from "@oh-my-pi/pi-coding-agent/mcp/link";
-import { MCP_CLIENT_INFO, MCP_PROTOCOL_VERSION, MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+} from "@marsai-org/coding-agent/mcp/host/contract";
+import { HostLink, type HostLinkOptions } from "@marsai-org/coding-agent/mcp/link";
+import { MCP_CLIENT_INFO, MCP_PROTOCOL_VERSION, MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { rejectionOf } from "../helpers/rejection";
 import { FakeHost, metaOf, paramsOf, REMOTE_SPEC, settled } from "./link-fake-host";
 

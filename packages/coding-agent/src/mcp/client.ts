@@ -9,7 +9,7 @@
  */
 import * as path from "node:path";
 import * as url from "node:url";
-import { getProjectDir, isRecord, logger, untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
+import { getProjectDir, isRecord, logger, untilAborted, withTimeout } from "@marsai-org/utils";
 import { workerEnvFromParent } from "../subprocess/worker-client";
 import { MCPTransportError } from "./errors";
 import {

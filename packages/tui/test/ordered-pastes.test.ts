@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { OrderedPastes } from "@oh-my-pi/pi-tui/prompt/ordered-pastes";
+import { OrderedPastes } from "@marsai-org/tui/prompt/ordered-pastes";
 
 function queue() {
 	const delivered: string[] = [];

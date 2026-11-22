@@ -5,9 +5,9 @@
  * every regex compiles, every field a block reads is fed by a rule, and the
  * rules match the samples the author saw.
  */
-import { LineMatcher } from "@oh-my-pi/pi-natives";
-import type { TspTone } from "@oh-my-pi/pi-wire";
-import { isRecord, truncate } from "@oh-my-pi/pi-utils";
+import { LineMatcher } from "@marsai-org/natives";
+import type { TspTone } from "@marsai-org/wire";
+import { isRecord, truncate } from "@marsai-org/utils";
 import { TOOL_CALL_MARK, TOOLS_SOURCE_ID } from "./types";
 
 /** How a field's values reduce to one number. */

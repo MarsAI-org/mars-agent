@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { Model } from "@oh-my-pi/pi-ai/types";
-import { requestBodyText } from "@oh-my-pi/pi-ai/utils/request-body";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { Model } from "@marsai-org/ai/types";
+import { requestBodyText } from "@marsai-org/ai/utils/request-body";
+import { buildModel } from "@marsai-org/catalog/build";
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 // API version 2026-10-21 returns a 400 for `temperature`, `top_p`, or `top_k`

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { formatTextPatch } from "@oh-my-pi/pi-coding-agent/commit/selective/patch";
-import { formatPatchPreview } from "@oh-my-pi/pi-coding-agent/commit/selective/preview";
+import { formatTextPatch } from "@marsai-org/coding-agent/commit/selective/patch";
+import { formatPatchPreview } from "@marsai-org/coding-agent/commit/selective/preview";
 
 const HEADER = "diff --git a/f b/f\n--- a/f\n+++ b/f\n";
 const file = (text: string) => ({ mode: "100644", text });

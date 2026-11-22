@@ -1,14 +1,14 @@
 import * as path from "node:path";
-import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@oh-my-pi/pi-ai";
-import { type AuthApiKeyOptions, type AuthPeekOptions, oauthAccountKey } from "@oh-my-pi/pi-ai/auth-storage";
-import { registerCustomApi, unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { getProviderHooks, type ProviderHooks, setProviderHooks } from "@oh-my-pi/pi-ai/provider-hooks";
-import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
-import { setCodexAttestationProvider } from "@oh-my-pi/pi-ai/providers/openai-codex-attestation";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { OAuthRefreshUnavailableError } from "@oh-my-pi/pi-ai/error";
+import type { ApiKeyResolver, FetchImpl, ResolvedApiKey, UsageProvider } from "@marsai-org/ai";
+import { type AuthApiKeyOptions, type AuthPeekOptions, oauthAccountKey } from "@marsai-org/ai/auth-storage";
+import { registerCustomApi, unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import { getProviderHooks, type ProviderHooks, setProviderHooks } from "@marsai-org/ai/provider-hooks";
+import { registerOAuthProvider, unregisterOAuthProvider, unregisterOAuthProviders } from "@marsai-org/ai/oauth";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@marsai-org/ai/oauth/types";
+import { setCodexAttestationProvider } from "@marsai-org/ai/providers/openai-codex-attestation";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { getEnvApiKey } from "@marsai-org/ai/env-api-key";
+import { OAuthRefreshUnavailableError } from "@marsai-org/ai/error";
 import type {
 	Api,
 	Context,
@@ -18,31 +18,31 @@ import type {
 	SimpleStreamOptions,
 	StreamOptions,
 	ThinkingConfig,
-} from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/types";
 import type {
 	ImageGenerationOptions,
 	ImageGenerationRequest,
 	ImageGenerationResult,
-} from "@oh-my-pi/pi-ai/images/types";
-import type { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { litellmUsageProvider } from "@oh-my-pi/pi-ai/usage/litellm";
-import { buildDiscoveredModel, buildModel, nextBuildPriceChange } from "@oh-my-pi/pi-catalog/build";
-import { setRuntimeProviderRule } from "@oh-my-pi/pi-catalog/compat/cascade";
-import { collapseBuiltVariants } from "@oh-my-pi/pi-catalog/compat/collapse";
+} from "@marsai-org/ai/images/types";
+import type { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { litellmUsageProvider } from "@marsai-org/ai/usage/litellm";
+import { buildDiscoveredModel, buildModel, nextBuildPriceChange } from "@marsai-org/catalog/build";
+import { setRuntimeProviderRule } from "@marsai-org/catalog/compat/cascade";
+import { collapseBuiltVariants } from "@marsai-org/catalog/compat/collapse";
 import {
 	clampCodexContextWindow,
 	clampsContextOverride,
 	resolveMaxContextWindow,
-} from "@oh-my-pi/pi-catalog/compat/context-window";
-import { applyCatalogMetrics, CatalogMetricsIndex, catalogMetricsOf } from "@oh-my-pi/pi-catalog/identity/metrics";
-import { getModelCacheWriteStats, readModelCache, retainModelCacheConnection } from "@oh-my-pi/pi-catalog/model-cache";
+} from "@marsai-org/catalog/compat/context-window";
+import { applyCatalogMetrics, CatalogMetricsIndex, catalogMetricsOf } from "@marsai-org/catalog/identity/metrics";
+import { getModelCacheWriteStats, readModelCache, retainModelCacheConnection } from "@marsai-org/catalog/model-cache";
 import {
 	createModelManager,
 	fingerprintStaticModels,
 	type ModelManagerOptions,
 	type ModelRefreshStrategy,
-} from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels, getBundledProviders } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/catalog/model-manager";
+import { getBundledModels, getBundledProviders } from "@marsai-org/catalog/models";
 import {
 	googleAntigravityModelManagerOptions,
 	isCredentialScopedModelCacheProvider,
@@ -53,12 +53,12 @@ import {
 	PROVIDER_DESCRIPTORS,
 	resolveModelCacheProviderId,
 	resolveOllamaModelCacheProviderId,
-} from "@oh-my-pi/pi-catalog/provider-models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
-import { withThinkingCapability } from "@oh-my-pi/pi-catalog/thinking-capability";
-import { apiServesKind, modelKind, type ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { isOfficialCodexApiUrl } from "@oh-my-pi/pi-catalog/wire/codex";
-import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/provider-models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
+import { withThinkingCapability } from "@marsai-org/catalog/thinking-capability";
+import { apiServesKind, modelKind, type ModelKind } from "@marsai-org/catalog/types";
+import { isOfficialCodexApiUrl } from "@marsai-org/catalog/wire/codex";
+import { getAgentDir, isBunTestRuntime, logger, wrapFetchForExtraCa } from "@marsai-org/utils";
 import { resolveProviderModelReference } from "../config/model-resolver";
 import { generateCodexAttestation } from "../live/attestation";
 import type { AuthStorage } from "../session/auth-storage";

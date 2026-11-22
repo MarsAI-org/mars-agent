@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as catalogPolicy from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import * as catalogPolicy from "@marsai-org/catalog/compat/catalog-policy";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import poolText from "../src/prompts/perturbation-pool.json.txt" with { type: "text" };
 import { perturbContext, perturbPromptText, resetPromptPerturbation } from "../src/prompts/perturbation";
 import type { Context } from "../src/types";

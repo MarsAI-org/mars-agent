@@ -1,12 +1,12 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { AssistantMessage, TextContent } from "@oh-my-pi/pi-ai";
-import { ImageBudget } from "@oh-my-pi/pi-tui/components/image";
+import type { AssistantMessage, TextContent } from "@marsai-org/ai";
+import { ImageBudget } from "@marsai-org/tui/components/image";
 import {
 	type AssistantMessageHost,
 	assistantMessageLinkTargets,
 	createAssistantMessageComponent,
-} from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/prompt/interactive-context-helpers";
+import { initTheme } from "@marsai-org/tui/theme";
 
 function assistant(block: TextContent): AssistantMessage {
 	return {

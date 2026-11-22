@@ -13,9 +13,9 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { ConfigFile } from "@oh-my-pi/pi-coding-agent/config/config-file";
-import { getModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema-bundle";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { ConfigFile } from "@marsai-org/coding-agent/config/config-file";
+import { getModelsConfigSchema } from "@marsai-org/coding-agent/config/models-config-schema-bundle";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 const API_KEY = "sk-live-secret";
 const LEGACY_MODELS_JSON = JSON.stringify({

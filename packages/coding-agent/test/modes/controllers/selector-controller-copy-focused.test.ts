@@ -6,16 +6,16 @@
  * from the main conversation the user is not looking at.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { setKeybindings } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { SelectorController } from "@marsai-org/coding-agent/modes/controllers/selector-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
+import * as clipboard from "@marsai-org/coding-agent/utils/clipboard";
+import { setKeybindings } from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import type { CopySelectorComponent } from "@marsai-org/tui/overlays/copy-selector";
+import { initTheme } from "@marsai-org/tui/theme";
 
 const ENTER = "\r";
 

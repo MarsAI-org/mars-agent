@@ -2,9 +2,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { RpcClient, RpcCommandError } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import type { BtwHistoryRecord } from "@oh-my-pi/pi-coding-agent/session/btw-history";
-import { isRecord, readJsonl, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { RpcClient, RpcCommandError } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import type { BtwHistoryRecord } from "@marsai-org/coding-agent/session/btw-history";
+import { isRecord, readJsonl, removeWithRetries } from "@marsai-org/utils";
 
 /** Settle a request before `expect` sees it (see rpc-goal.test.ts). */
 async function rejectionOf(request: Promise<unknown>): Promise<Error> {

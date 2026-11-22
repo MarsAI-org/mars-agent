@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { PowerAssertion } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { PowerAssertion } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import { powerAssertionOptions } from "../src/session/agent-session";
 import { resetPowerBackendUnavailableForTests, startPowerAssertion } from "../src/session/power-assertion-backend";
 

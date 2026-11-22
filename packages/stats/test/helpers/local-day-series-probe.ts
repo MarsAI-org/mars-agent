@@ -8,10 +8,10 @@
  *
  * argv: <isolated root> <timestamps as JSON array>
  */
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { getCostTimeSeries, getTimeSeries, refreshRollups } from "@oh-my-pi/omp-stats/rollup";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getStatsDbPath } from "@oh-my-pi/pi-utils";
+import { initDb, insertMessageStats } from "@marsai-org/stats/db";
+import { getCostTimeSeries, getTimeSeries, refreshRollups } from "@marsai-org/stats/rollup";
+import type { MessageStats } from "@marsai-org/stats/types";
+import { getStatsDbPath } from "@marsai-org/utils";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const [isolatedRoot, timestampsJson] = process.argv.slice(2);

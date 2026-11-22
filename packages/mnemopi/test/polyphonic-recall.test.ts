@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { type BeamMemoryState, initBeam } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { currentEmbeddingModel } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { PolyphonicRecallEngine, polyphonicRecall } from "@oh-my-pi/pi-mnemopi/core/polyphonic-recall";
-import { closeQuietly, openDatabase } from "@oh-my-pi/pi-mnemopi/db";
-import { currentLoopPhase } from "@oh-my-pi/pi-utils";
+import { type BeamMemoryState, initBeam } from "@marsai-org/mnemopi/core/beam";
+import { currentEmbeddingModel } from "@marsai-org/mnemopi/core/embeddings";
+import { PolyphonicRecallEngine, polyphonicRecall } from "@marsai-org/mnemopi/core/polyphonic-recall";
+import { closeQuietly, openDatabase } from "@marsai-org/mnemopi/db";
+import { currentLoopPhase } from "@marsai-org/utils";
 
 function makeBeam(): BeamMemoryState {
 	const db = openDatabase(":memory:", { create: true, readwrite: true });

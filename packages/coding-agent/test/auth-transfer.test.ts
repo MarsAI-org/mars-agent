@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type AuthCredential, type OAuthCredential, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
+import { type AuthCredential, type OAuthCredential, SqliteAuthCredentialStore } from "@marsai-org/ai";
 import {
 	AuthTransferError,
 	exportAuthCredentials,
 	importAuthCredentials,
 	parseAuthExport,
-} from "@oh-my-pi/pi-coding-agent/commands/auth";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/commands/auth";
+import { TempDir } from "@marsai-org/utils";
 
 const API_KEY: AuthCredential = { type: "api_key", key: "sk-laptop" };
 const OAUTH: OAuthCredential = {

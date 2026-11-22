@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { type Extension, extensionCapability } from "@oh-my-pi/pi-coding-agent/capability/extension";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initializeWithSettings, loadCapability } from "@oh-my-pi/pi-coding-agent/discovery";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { type Extension, extensionCapability } from "@marsai-org/coding-agent/capability/extension";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { initializeWithSettings, loadCapability } from "@marsai-org/coding-agent/discovery";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 import { SYMLINKS_USABLE } from "../helpers/symlink-support";
 

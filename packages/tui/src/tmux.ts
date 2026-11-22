@@ -1,5 +1,5 @@
-import { $which } from "@oh-my-pi/pi-utils";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+import { $which } from "@marsai-org/utils";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
 import { tmuxMultiplexer, wrapTmuxPassthrough } from "./multiplexers/tmux";
 
 export { wrapTmuxPassthrough } from "./multiplexers/tmux";

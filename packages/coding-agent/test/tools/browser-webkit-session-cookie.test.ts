@@ -6,11 +6,11 @@
  * page. Runs on the installed engine (or `PI_BROWSER_WEBKIT_PATH`'s).
  */
 import { afterAll, describe, expect, test } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { resolveWebKitKind } from "@oh-my-pi/pi-coding-agent/tools/browser/webkit/kind";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { resolveWebKitKind } from "@marsai-org/coding-agent/tools/browser/webkit/kind";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 
 const ENGINE_INSTALLED = resolveWebKitKind() !== null;
 const SESSION = "c0ffee";

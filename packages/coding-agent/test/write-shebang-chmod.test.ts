@@ -2,11 +2,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as lspConfig from "@oh-my-pi/pi-coding-agent/lsp/config";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WriteTool } from "@oh-my-pi/pi-coding-agent/tools/write";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as lspConfig from "@marsai-org/coding-agent/lsp/config";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { WriteTool } from "@marsai-org/coding-agent/tools/write";
+import { removeWithRetries } from "@marsai-org/utils";
 
 /** `lsp` settings turn LSP on for the session; without them its writes bypass LSP. */
 function createSession(cwd: string, lsp?: Record<string, unknown>): ToolSession {

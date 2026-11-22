@@ -9,19 +9,19 @@ import type {
 	ArchiveSearchHit,
 	ArchiveSession,
 	ArchiveSessionDetail,
-} from "@oh-my-pi/pi-coding-agent/archive/archive";
-import { createArchivePrelude } from "@oh-my-pi/pi-coding-agent/archive/prelude-definition";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
+} from "@marsai-org/coding-agent/archive/archive";
+import { createArchivePrelude } from "@marsai-org/coding-agent/archive/prelude-definition";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
 import {
 	closeSessionIndex,
 	recordSessionRecap,
 	recordSessionTitle,
-} from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { sessionDirForCwd } from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { syncTranscripts } from "@oh-my-pi/pi-coding-agent/daemon/modules/transcripts";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-index";
+import { sessionDirForCwd } from "@marsai-org/coding-agent/session/session-paths";
+import { syncTranscripts } from "@marsai-org/coding-agent/daemon/modules/transcripts";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 const originalAgentDir = process.env.PI_CODING_AGENT_DIR;

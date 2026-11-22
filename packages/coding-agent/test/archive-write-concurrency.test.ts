@@ -5,8 +5,8 @@ import * as path from "node:path";
 import { Settings } from "../src/config/settings";
 import type { ToolSession } from "../src/tools";
 import { WriteTool } from "../src/tools/write";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { readArchiveEntries, writeArchive } from "@oh-my-pi/pi-utils/ar";
+import * as piUtils from "@marsai-org/utils";
+import { readArchiveEntries, writeArchive } from "@marsai-org/utils/ar";
 
 const workerScript = path.join(import.meta.dir, "fixtures", "archive-write-worker.ts");
 const padding = "x".repeat(8 * 1024 * 1024);

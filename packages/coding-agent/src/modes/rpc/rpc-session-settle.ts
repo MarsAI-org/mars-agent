@@ -3,7 +3,7 @@
  * `agent_pause` or `agent_end`, reported by `prompt_result`) from "the session is
  * done" (the run ended and nothing is live, queued or scheduled).
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { AgentSessionEvent } from "../../session/agent-session";
 import { isSessionSettled, type SessionSettleState } from "../../session/session-settle";
 import type { RpcSessionSettledFrame } from "./rpc-types";

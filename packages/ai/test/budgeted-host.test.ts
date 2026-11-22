@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { toModelSpec } from "@oh-my-pi/pi-catalog/provider-models/bundled-references";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { toModelSpec } from "@marsai-org/catalog/provider-models/bundled-references";
 import { reachesBudgetedHost, reachesOfficialEndpoint } from "../src/providers/anthropic-state";
 import type { Model, ModelSpec } from "../src/types";
 

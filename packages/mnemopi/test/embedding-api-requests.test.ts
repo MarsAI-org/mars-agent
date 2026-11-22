@@ -7,10 +7,10 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 
-import { initBeam } from "@oh-my-pi/pi-mnemopi/core/beam";
-import { embed, resetEmbeddingProviderForTests } from "@oh-my-pi/pi-mnemopi/core/embeddings";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
-import { withMnemopiRuntimeOptions } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+import { initBeam } from "@marsai-org/mnemopi/core/beam";
+import { embed, resetEmbeddingProviderForTests } from "@marsai-org/mnemopi/core/embeddings";
+import { Mnemopi } from "@marsai-org/mnemopi/core/memory";
+import { withMnemopiRuntimeOptions } from "@marsai-org/mnemopi/core/runtime-options";
 
 const LIMIT = 10;
 

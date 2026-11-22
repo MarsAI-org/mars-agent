@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Shell } from "@oh-my-pi/pi-natives";
+import { Shell } from "@marsai-org/natives";
 import { Settings } from "../../src/config/settings";
 import type { ToolSession } from "../../src/sdk";
 import { ReadTool } from "../../src/tools/read";

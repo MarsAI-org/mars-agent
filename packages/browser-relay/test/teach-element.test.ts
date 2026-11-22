@@ -1,5 +1,5 @@
 import { expect, it } from "bun:test";
-import { parseHTML } from "@oh-my-pi/pi-utils/dom";
+import { parseHTML } from "@marsai-org/utils/dom";
 import { nameFor, roleFor, selectorFor } from "../extension/teach/element";
 
 it("uses a stable ancestor and distinguishes repeated controls without confusing duplicate ids", () => {

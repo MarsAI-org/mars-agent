@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import { mcpUpstreams } from "@oh-my-pi/pi-coding-agent/mcp/host/peers";
-import { MCP_LEGACY_TTL_MS } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { MCP_PROTOCOL_VERSION, MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import { mcpUpstreams } from "@marsai-org/coding-agent/mcp/host/peers";
+import { MCP_LEGACY_TTL_MS } from "@marsai-org/coding-agent/mcp/host/store";
+import { MCP_PROTOCOL_VERSION, MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 import { INSTRUCTIONS, PROTOCOL_VERSION } from "../fixtures/modern-mcp";
 import { SERVER_INSTRUCTIONS } from "../fixtures/instructions-mcp";
 import { FIXTURES, isAlive, realDeps, stdioSpec } from "./upstream-support";

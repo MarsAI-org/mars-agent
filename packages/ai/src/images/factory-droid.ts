@@ -1,5 +1,5 @@
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { prompt, readSseJson } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/catalog/types";
+import { prompt, readSseJson } from "@marsai-org/utils";
 import { type ApiKey, isApiKeyResolver, resolvedApiKeyBearer, withAuth } from "../auth-retry";
 import type { OAuthRequestIdentity } from "../auth/types";
 import * as AIError from "../error";

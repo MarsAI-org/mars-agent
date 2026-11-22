@@ -2,25 +2,25 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-import { resolveThresholdTokens } from "@oh-my-pi/pi-agent-core/compaction";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getProjectAgentDir } from "@oh-my-pi/pi-utils";
+import { resolveThresholdTokens } from "@marsai-org/agent-core/compaction";
+import type { Model } from "@marsai-org/ai";
+import { getProjectAgentDir } from "@marsai-org/utils";
 import {
 	matchModelCompactionThreshold,
 	parseCompactionPointInput,
 	validateAgentCompactionThresholdOverrides,
-} from "@oh-my-pi/pi-coding-agent/config/compaction-threshold";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgCompactionModelThresholds } from "@oh-my-pi/pi-coding-agent/session/context-settings";
+} from "@marsai-org/coding-agent/config/compaction-threshold";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgCompactionModelThresholds } from "@marsai-org/coding-agent/session/context-settings";
 import {
 	describeModelCompactionPoint,
 	planModelCompactionPoint,
 	previewModelCompactionPoint,
 	resolveModelCompactionSettings,
 	setModelCompactionPoint,
-} from "@oh-my-pi/pi-coding-agent/session/model-compaction-threshold";
-import { compactionThresholdSettings, createSubagentSettings } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { cfgTaskAgentCompactionThresholdOverrides } from "@oh-my-pi/pi-coding-agent/task/settings";
+} from "@marsai-org/coding-agent/session/model-compaction-threshold";
+import { compactionThresholdSettings, createSubagentSettings } from "@marsai-org/coding-agent/task/executor";
+import { cfgTaskAgentCompactionThresholdOverrides } from "@marsai-org/coding-agent/task/settings";
 
 async function withConfigDirs(run: (dirs: { root: string; agentDir: string; cwd: string }) => Promise<void>) {
 	const root = await fs.mkdtemp(path.join(os.tmpdir(), "omp-compaction-threshold-"));

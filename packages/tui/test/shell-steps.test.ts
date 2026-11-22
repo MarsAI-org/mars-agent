@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { type ShellStepInput, ShellSteps, type ShellStream } from "@oh-my-pi/pi-tui/tools/shell-steps";
-import { defaultShellVizPreferences } from "@oh-my-pi/pi-tui/tools/shell-viz";
-import type { ShellTrace, ShellTraceNode, ShellVizPresentation, ShellVizSegment } from "@oh-my-pi/pi-wire";
+import { type ShellStepInput, ShellSteps, type ShellStream } from "@marsai-org/tui/tools/shell-steps";
+import { defaultShellVizPreferences } from "@marsai-org/tui/tools/shell-viz";
+import type { ShellTrace, ShellTraceNode, ShellVizPresentation, ShellVizSegment } from "@marsai-org/wire";
 
 const NOW = 1_000_000;
 

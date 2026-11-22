@@ -16,7 +16,7 @@ import { wrapLiteralLine } from "../utils";
 import { editorKey } from "../chrome/keybinding-hints";
 import { formatKeyHint, formatKeyHints, type KeybindingsManager } from "../app-keybindings";
 import type { Keybinding } from "../keybindings";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { type Theme } from "../theme/theme";
 import type {
 	AnnotationOverlayDraft,
@@ -41,7 +41,7 @@ import {
 } from "../chrome/overlay-box";
 import { appExternalEditorKey, matchesAppExternalEditor } from "../keybinding-matchers";
 import type { KeyName } from "../key-hint-format";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { col, item, keyed, node, row as rowNode, span, text } from "../native/describe";
 import { leafKey, type NativeChild, type NativeNode, type NativeUiEvent } from "../native/node";
 import { actionButton, hintsRow, itemIndex, type NativeHint, selectList } from "../native/overlay";

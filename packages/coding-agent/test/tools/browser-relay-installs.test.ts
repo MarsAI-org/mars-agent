@@ -8,7 +8,7 @@ import {
 	setProfile,
 	TempDir,
 	VERSION,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { syncRelayAfterVerifiedUpdate } from "../../src/cli/update-cli";
 import { findFreeCdpPort } from "../../src/tools/browser/attach";
 import {

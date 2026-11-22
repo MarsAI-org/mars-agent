@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import * as envApiKey from "@oh-my-pi/pi-ai/env-api-key";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getSearchProvider } from "@oh-my-pi/pi-coding-agent/web/search/provider";
-import { searchSofya } from "@oh-my-pi/pi-coding-agent/web/search/providers/sofya";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import * as envApiKey from "@marsai-org/ai/env-api-key";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getSearchProvider } from "@marsai-org/coding-agent/web/search/provider";
+import { searchSofya } from "@marsai-org/coding-agent/web/search/providers/sofya";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const TEST_KEY = "sofya_live_test_key";

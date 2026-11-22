@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { stringProperty } from "@oh-my-pi/pi-utils";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import { stringProperty } from "@marsai-org/utils";
 import type { CompletedRewindState } from "../tools/checkpoint";
 import { toolCommandDispatches } from "../tools/tool-commands";
 import { REWIND_REPORT_MESSAGE_TYPE } from "./messages";

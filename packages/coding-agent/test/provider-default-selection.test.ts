@@ -1,15 +1,15 @@
 import { describe, expect, test } from "bun:test";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fetchCursorUsableModels } from "@oh-my-pi/pi-catalog/discovery/cursor";
+import type { Api, Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { fetchCursorUsableModels } from "@marsai-org/catalog/discovery/cursor";
 import {
 	AvailableModelsResponse_ModelDetailsSchema,
 	AvailableModelsResponseSchema,
 	GetDefaultModelForCliResponseSchema,
 	GetUsableModelsResponseSchema,
 	ModelDetailsSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { fetchDevinModels } from "@oh-my-pi/pi-catalog/discovery/devin";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { fetchDevinModels } from "@marsai-org/catalog/discovery/devin";
 import {
 	type ClientModelConfig,
 	ClientModelConfigSchema,
@@ -18,11 +18,11 @@ import {
 	ModelFamilyMetadataEntrySchema,
 	ModelFamilyMetadataSchema,
 	ModelFamilyMetadataValueSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { getBundledModel, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { DEFAULT_MODEL_PER_PROVIDER } from "@oh-my-pi/pi-catalog/provider-models";
-import { pickDefaultAvailableModel } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { getBundledModel, getBundledModels } from "@marsai-org/catalog/models";
+import { DEFAULT_MODEL_PER_PROVIDER } from "@marsai-org/catalog/provider-models";
+import { pickDefaultAvailableModel } from "@marsai-org/coding-agent/config/model-resolver";
 
 /** One `GetCliModelConfigs` row; `effort` files it as a lane of a server-declared family. */
 function devinConfig(

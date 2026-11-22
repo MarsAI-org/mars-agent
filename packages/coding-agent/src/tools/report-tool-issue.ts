@@ -30,22 +30,22 @@
  * non-interactive environments where the consent dialog never fires. Tool
  * execution is never blocked on the network and never throws.
  */
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import { Database } from "bun:sqlite";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentTool, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { $env, $flag, getAutoQaDbPath, getInstallId, logger, VERSION } from "@oh-my-pi/pi-utils";
+import type { AgentTool, AgentToolResult } from "@marsai-org/agent-core";
+import type { FetchImpl } from "@marsai-org/ai";
+import { $env, $flag, getAutoQaDbPath, getInstallId, logger, VERSION } from "@marsai-org/utils";
 import type { Settings } from "..";
 import type { Tool, ToolSession } from "./index";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { BUILTIN_TOOL_NAMES, isMCPToolName } from "./builtin-names";
 import { toolCommandCallName } from "./tool-commands";
 
-import { REPORT_ISSUE_COMMAND_NAME } from "@oh-my-pi/pi-tui/tools/report-tool-issue";
-import { truncateHeadBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
+import { REPORT_ISSUE_COMMAND_NAME } from "@marsai-org/tui/tools/report-tool-issue";
+import { truncateHeadBytes } from "@marsai-org/tui/tools/streaming-output";
 
 import { cfgDevAutoqa, cfgDevAutoqaConsent, cfgDevAutoqaPushEndpoint, cfgDevAutoqaPushToken } from "./settings";
 

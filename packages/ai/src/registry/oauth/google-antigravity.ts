@@ -1,8 +1,8 @@
 /**
  * Google Antigravity OAuth flow (Gemini, Claude, GPT-OSS via Google Cloud)
  */
-import { type } from "@oh-my-pi/omptype";
-import { getAntigravityHeaders } from "@oh-my-pi/pi-catalog/wire/gemini-headers";
+import { type } from "@marsai-org/omptype";
+import { getAntigravityHeaders } from "@marsai-org/catalog/wire/gemini-headers";
 import * as AIError from "../../error";
 import { raceWithSignal } from "../../utils/abort";
 import { extractGoogleValidationUrl, formatGoogleValidationRequiredMessage } from "../../utils/google-validation";

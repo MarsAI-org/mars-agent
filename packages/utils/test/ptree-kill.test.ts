@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs/promises";
-import { Process } from "@oh-my-pi/pi-natives";
-import { type ChildProcess, spawn } from "@oh-my-pi/pi-utils/ptree";
+import { Process } from "@marsai-org/natives";
+import { type ChildProcess, spawn } from "@marsai-org/utils/ptree";
 
 // Ignores SIGTERM, so only an escalation to SIGKILL ends it.
 const STUBBORN_CHILD = 'process.on("SIGTERM", () => {}); console.log("ready"); setInterval(() => {}, 1000);';

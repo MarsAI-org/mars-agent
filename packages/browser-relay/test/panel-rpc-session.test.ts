@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { AssistantMessage, SessionEntry } from "@oh-my-pi/pi-wire";
+import type { AssistantMessage, SessionEntry } from "@marsai-org/wire";
 import type { PanelEvent, RpcSessionInfo } from "../extension/messages";
 import type { PanelSnapshot, PanelWorker } from "../extension/panel/session";
 import { RpcPanelSession } from "../extension/panel/sessions/rpc";

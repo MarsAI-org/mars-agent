@@ -2,7 +2,7 @@
  * A scripted MCP host for `HostLink` tests: every attach hands out an
  * in-memory tunnel whose far end the test plays, message by message.
  */
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
 import {
 	encodeJsonLine,
 	type McpAttachment,
@@ -13,8 +13,8 @@ import {
 	type McpResolveResult,
 	type McpServerSpec,
 	type McpTunnel,
-} from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { MCP_SUBSCRIPTION_ACKNOWLEDGED, MCPMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
+} from "@marsai-org/coding-agent/mcp/host/contract";
+import { MCP_SUBSCRIPTION_ACKNOWLEDGED, MCPMeta } from "@marsai-org/coding-agent/mcp/protocol";
 
 export type Message = Record<string, unknown>;
 

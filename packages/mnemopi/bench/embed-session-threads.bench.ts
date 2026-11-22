@@ -13,7 +13,7 @@
  */
 import { createRequire } from "node:module";
 import * as os from "node:os";
-import { getFastembedCacheDir } from "@oh-my-pi/pi-utils";
+import { getFastembedCacheDir } from "@marsai-org/utils";
 import type * as Fastembed from "fastembed";
 import type * as Ort from "onnxruntime-node";
 import { currentEmbeddingModel, fastembedModelName } from "../src/core/embeddings";

@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { createModelManager } from "@oh-my-pi/pi-catalog/model-manager";
-import * as modelsModule from "@oh-my-pi/pi-catalog/models";
-import { yoloAutoModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { createModelManager } from "@marsai-org/catalog/model-manager";
+import * as modelsModule from "@marsai-org/catalog/models";
+import { yoloAutoModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 /**
  * Fixture mirrors the live `https://yolo-auto.com/v1/models` surface: an

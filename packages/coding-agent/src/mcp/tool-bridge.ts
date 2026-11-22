@@ -3,17 +3,17 @@ import {
 	MCP_TOOL_NAME_PREFIX,
 	type MCPProgress,
 	type MCPToolDetails,
-} from "@oh-my-pi/pi-tui/tools/mcp";
+} from "@marsai-org/tui/tools/mcp";
 /**
  * MCP to CustomTool bridge.
  *
  * Converts MCP tool definitions to CustomTool format for the agent.
  */
-import type { AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent, TSchema } from "@oh-my-pi/pi-ai";
-import { normalizeSchemaForMCP } from "@oh-my-pi/pi-ai/utils/schema";
-import { isRecord, logger, untilAborted } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+import type { AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent, TSchema } from "@marsai-org/ai";
+import { normalizeSchemaForMCP } from "@marsai-org/ai/utils/schema";
+import { isRecord, logger, untilAborted } from "@marsai-org/utils";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import type {
 	CustomTool,
 	CustomToolContext,
@@ -22,13 +22,13 @@ import type {
 } from "../extensibility/custom-tools/types";
 import { extractUriScheme } from "../internal-urls/parse";
 import { InternalUrlRouter } from "../internal-urls/router";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
+import type { Theme } from "@marsai-org/tui/theme";
 import { formatApprovalArguments } from "../tools/approval";
 import { ToolAbortError, throwIfAborted } from "../tools/tool-errors";
 import { schemaDeclaresIntentField } from "../utils/tool-schema";
 import { callTool } from "./client";
 import { formatMCPToolFailure, MCPTransportError } from "./errors";
-import { describeMCPCall, describeMCPResult, renderMCPCall, renderMCPResult } from "@oh-my-pi/pi-tui/tools/mcp";
+import { describeMCPCall, describeMCPResult, renderMCPCall, renderMCPResult } from "@marsai-org/tui/tools/mcp";
 import type {
 	MCPAuthChallenge,
 	MCPRequestOptions,
@@ -37,7 +37,7 @@ import type {
 	MCPToolCallResult,
 	MCPToolDefinition,
 } from "./types";
-import type { MCPContent } from "@oh-my-pi/pi-tui/tools/mcp";
+import type { MCPContent } from "@marsai-org/tui/tools/mcp";
 
 /** Options of an {@link MCPReconnect}. */
 export interface MCPReconnectOptions {

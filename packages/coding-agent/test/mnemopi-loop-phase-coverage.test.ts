@@ -2,18 +2,18 @@ import { Database, type Statement } from "bun:sqlite";
 import { afterEach, beforeEach, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import { extendRecallWithLegacyBanks, type MnemopiBackendConfig } from "@oh-my-pi/pi-coding-agent/mnemopi/config";
-import * as content from "@oh-my-pi/pi-coding-agent/hindsight/content";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { mnemopiBackend } from "@marsai-org/coding-agent/mnemopi/backend";
+import { extendRecallWithLegacyBanks, type MnemopiBackendConfig } from "@marsai-org/coding-agent/mnemopi/config";
+import * as content from "@marsai-org/coding-agent/hindsight/content";
 import {
 	loadMnemopi,
 	loadMnemopiCore,
 	MnemopiSessionState,
 	setMnemopiSessionState,
-} from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { resetMemoryForTests } from "@oh-my-pi/pi-mnemopi";
-import { currentLoopPhase, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mnemopi/state";
+import { resetMemoryForTests } from "@marsai-org/mnemopi";
+import { currentLoopPhase, TempDir } from "@marsai-org/utils";
 import { memoryRelevanceJudge } from "./helpers/memory-relevance-judge";
 
 // State construction uses the same preloaded, synchronous facade as memory-tools.test.ts.

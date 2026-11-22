@@ -1,6 +1,6 @@
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { clampThinkingLevelForModel, mapEffortToAnthropicAdaptiveEffort } from "@oh-my-pi/pi-catalog/model-thinking";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { Effort } from "@marsai-org/catalog/effort";
+import { clampThinkingLevelForModel, mapEffortToAnthropicAdaptiveEffort } from "@marsai-org/catalog/model-thinking";
+import { prompt } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { Context, DeveloperMessage, ImageContent, Model, ToolResultMessage, UserMessage } from "../../types";
 import { toolWireSchema } from "../../utils/schema/wire";

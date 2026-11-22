@@ -1,9 +1,9 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import type { PipeStreams } from "@oh-my-pi/pi-natives";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import type { StructuredSubagentOutput } from "@oh-my-pi/pi-tui/tools/task";
-import type { OutputMeta } from "@oh-my-pi/pi-tui/tools/output-meta";
-import type { ShellTrace } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/ai";
+import type { PipeStreams } from "@marsai-org/natives";
+import { isRecord, logger } from "@marsai-org/utils";
+import type { StructuredSubagentOutput } from "@marsai-org/tui/tools/task";
+import type { OutputMeta } from "@marsai-org/tui/tools/output-meta";
+import type { ShellTrace } from "@marsai-org/wire";
 import { IrcBus } from "../irc/bus";
 import type { JobWidgetInputs, JobWidgetRegistry } from "../job-widgets/types";
 

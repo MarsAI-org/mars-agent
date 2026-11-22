@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { logger, TempDir } from "@oh-my-pi/pi-utils";
+import { logger, TempDir } from "@marsai-org/utils";
 import { loggerThreadService } from "../../src/thread/services/logging";
 import type { LoggerProbe } from "../fixtures/logger-bridge-worker";
 import { type ServiceWorker, startServiceWorker } from "../helpers/service-worker";

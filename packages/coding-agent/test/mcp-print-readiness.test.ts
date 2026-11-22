@@ -1,14 +1,14 @@
 import * as path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { callTool } from "@oh-my-pi/pi-coding-agent/mcp/client";
-import { disposeLocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { resolveMCPStartupTimeoutMs } from "@oh-my-pi/pi-coding-agent/mcp/timeout";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { runPrintMode } from "@oh-my-pi/pi-coding-agent/modes/print-mode";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { callTool } from "@marsai-org/coding-agent/mcp/client";
+import { disposeLocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import { resolveMCPStartupTimeoutMs } from "@marsai-org/coding-agent/mcp/timeout";
+import type { MCPStdioServerConfig } from "@marsai-org/coding-agent/mcp/types";
+import { runPrintMode } from "@marsai-org/coding-agent/modes/print-mode";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { TempDir } from "@marsai-org/utils";
 
 const FIXTURE = path.join(import.meta.dir, "fixtures", "readiness-mcp.ts");
 // Every launch of slowstart lags this long, and an unknown server is launched

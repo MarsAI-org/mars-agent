@@ -11,7 +11,7 @@
  */
 import * as fs from "node:fs/promises";
 import { brotliDecompressSync, gunzipSync, zstdDecompressSync } from "node:zlib";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { chromiumJson, type JsonValue } from "./canonical-json";
 
 const GZIP_MAGIC = 0x1f8b;

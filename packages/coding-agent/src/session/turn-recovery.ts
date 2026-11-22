@@ -6,7 +6,7 @@ import {
 	isSyntheticToolResultMessage,
 	lastContextIndex,
 	type ThinkingLevel,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	AssistantMessage,
 	AssistantRetryRecovery,
@@ -18,17 +18,17 @@ import type {
 	TextContent,
 	ToolChoice,
 	AnthropicFallbackCreditHandle,
-} from "@oh-my-pi/pi-ai";
-import { calculateRateLimitBackoffMs, isBillingCapUsageLimit, parseRateLimitReason } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { shouldDropTruncatedThinkingOnlyAssistant } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { extractProviderRetryHint } from "@oh-my-pi/pi-ai/utils/retry-after";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { fallbackCreditTargets } from "@oh-my-pi/pi-catalog/compat/fallback-credit";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { isFireworksFastModelId, toFireworksBaseModelId } from "@oh-my-pi/pi-catalog/fireworks-model-id";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { isUnexpectedSocketCloseMessage, logger, prompt, sleepLong, sleepUntil } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { calculateRateLimitBackoffMs, isBillingCapUsageLimit, parseRateLimitReason } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { shouldDropTruncatedThinkingOnlyAssistant } from "@marsai-org/ai/providers/transform-messages";
+import { extractProviderRetryHint } from "@marsai-org/ai/utils/retry-after";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { fallbackCreditTargets } from "@marsai-org/catalog/compat/fallback-credit";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { isFireworksFastModelId, toFireworksBaseModelId } from "@marsai-org/catalog/fireworks-model-id";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { isUnexpectedSocketCloseMessage, logger, prompt, sleepLong, sleepUntil } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import { formatModelStringWithRouting, resolveModelOverride } from "../config/model-resolver";
@@ -47,7 +47,7 @@ import {
 	clampThinkingLevelToCeiling,
 	modelSupportsEffortCeiling,
 	resolveThinkingLevelForModel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import type { EditModeSetting } from "../edit/settings";
 import type { AgentSessionEvent } from "./agent-session-events";
 import type { ResetRecoveryResult } from "./codex-auto-reset";

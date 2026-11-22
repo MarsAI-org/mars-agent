@@ -1,6 +1,6 @@
 // Gallery fixtures for agentic orchestration (task, wait, goal, yield).
-import type { Usage } from "@oh-my-pi/pi-ai";
-import type { TaskToolDetails, YieldItem } from "@oh-my-pi/pi-tui/tools/task";
+import type { Usage } from "@marsai-org/ai";
+import type { TaskToolDetails, YieldItem } from "@marsai-org/tui/tools/task";
 import type { GalleryFixture } from "./types";
 
 /** Plausible cumulative usage for a fixture subagent run. */

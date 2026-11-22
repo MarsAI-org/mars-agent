@@ -23,7 +23,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { ToolTier } from "@oh-my-pi/pi-agent-core";
+import type { ToolTier } from "@marsai-org/agent-core";
 import {
 	type ShellFileChange,
 	type ShellFilesystem,
@@ -34,8 +34,8 @@ import {
 	type ShellFsRequest,
 	ShellFsResolve,
 	type ShellFsResponse,
-} from "@oh-my-pi/pi-natives";
-import { isFsError } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/natives";
+import { isFsError } from "@marsai-org/utils";
 import { TIER_RANK } from "../tools/approval";
 import { type ParsedSelector, parseSel, resolveTailSelector } from "../tools/read-selector";
 import { UrlContainmentError } from "./filesystem-resource";

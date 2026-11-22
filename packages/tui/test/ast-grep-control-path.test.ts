@@ -3,9 +3,9 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { pathToFileURL } from "node:url";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { applyHyperlinkSetting } from "@oh-my-pi/pi-tui/render/hyperlink";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { applyHyperlinkSetting } from "@marsai-org/tui/render/hyperlink";
+import { initTheme } from "@marsai-org/tui/theme";
 
 const PRIVATE_MODE = "\x1b[?1049h\x1b[?1003h";
 

@@ -1,5 +1,5 @@
-import { type } from "@oh-my-pi/omptype";
-import { logger, VERSION } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { logger, VERSION } from "@marsai-org/utils";
 import { buildModel } from "./build";
 import { collapseBuiltVariants } from "./compat/collapse";
 import { applyCatalogMetrics, CatalogMetricsIndex } from "./identity/metrics";

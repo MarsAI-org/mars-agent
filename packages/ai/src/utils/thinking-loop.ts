@@ -53,8 +53,8 @@
  * three guarded attempts and then fail closed. Disable detection with
  * `PI_NO_THINKING_LOOP_GUARD=1`.
  */
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { logger } from "@oh-my-pi/pi-utils";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { logger } from "@marsai-org/utils";
 import * as AIError from "../error";
 import type { Api, AssistantMessage, Model, StreamOptions } from "../types";
 import { AssistantMessageEventStream } from "./event-stream";

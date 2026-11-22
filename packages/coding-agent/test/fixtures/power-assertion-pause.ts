@@ -1,16 +1,16 @@
 import { spyOn } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, agentPauseGate, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { cfgPowerSleepPrevention } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as power from "@oh-my-pi/pi-coding-agent/session/power-assertion-backend";
+import { type } from "@marsai-org/omptype";
+import { Agent, agentPauseGate, type AgentTool } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { cfgPowerSleepPrevention } from "@marsai-org/coding-agent/session/settings";
+import { TempDir } from "@marsai-org/utils";
+import * as power from "@marsai-org/coding-agent/session/power-assertion-backend";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 
 const events: Array<[string, string | null]> = [];

@@ -2,9 +2,9 @@
  * The side panel: owns which session is showing, turns composer output into prompts with the tab context block,
  * keeps each conversation's tabs grouped and their page overlays in step with the session, and hosts the sheets.
  */
-import { OmpMark } from "@oh-my-pi/collab-web/src/components/shell/OmpMark";
-import type { Notice } from "@oh-my-pi/collab-web/src/lib/client";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { OmpMark } from "@marsai-org/collab-web/src/components/shell/OmpMark";
+import type { Notice } from "@marsai-org/collab-web/src/lib/client";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { ImagePlus, X } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type {

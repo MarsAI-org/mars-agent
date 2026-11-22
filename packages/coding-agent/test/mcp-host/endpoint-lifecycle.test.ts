@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
+import { isRecord } from "@marsai-org/utils";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
 import {
 	decodeHostError,
 	MCP_HOST_ERROR_CODE,
 	MCP_RESTART_METHOD,
 	MCP_ROOTS_METHOD,
 	mcpIdentity,
-} from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import type { McpEndpoint } from "@oh-my-pi/pi-coding-agent/mcp/host/endpoint";
-import { McpStore } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import type { JsonRpcError } from "@oh-my-pi/pi-coding-agent/mcp/types";
+} from "@marsai-org/coding-agent/mcp/host/contract";
+import type { McpEndpoint } from "@marsai-org/coding-agent/mcp/host/endpoint";
+import { McpStore } from "@marsai-org/coding-agent/mcp/host/store";
+import type { JsonRpcError } from "@marsai-org/coding-agent/mcp/types";
 import {
 	attachLink,
 	type Message,

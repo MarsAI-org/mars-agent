@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { JsRuntime, type RuntimeHooks } from "@oh-my-pi/pi-coding-agent/eval/js/shared/runtime";
-import type { EvalDisplayOutput } from "@oh-my-pi/pi-coding-agent/eval/types";
+import { JsRuntime, type RuntimeHooks } from "@marsai-org/coding-agent/eval/js/shared/runtime";
+import type { EvalDisplayOutput } from "@marsai-org/coding-agent/eval/types";
 
 let runtime: JsRuntime;
 

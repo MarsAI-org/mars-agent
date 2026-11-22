@@ -1,5 +1,5 @@
-import { createSyntheticToolResultMessage, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolResultMessage } from "@oh-my-pi/pi-ai";
+import { createSyntheticToolResultMessage, type AgentMessage } from "@marsai-org/agent-core";
+import type { AssistantMessage, ToolResultMessage } from "@marsai-org/ai";
 import type { SessionEntry } from "./session-entries";
 
 export const TOOL_EXECUTION_START_CUSTOM_TYPE = "tool_execution_start";

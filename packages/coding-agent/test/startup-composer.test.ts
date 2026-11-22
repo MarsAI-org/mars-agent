@@ -1,34 +1,34 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import * as registry from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as pluginHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { runRootCommand } from "@oh-my-pi/pi-coding-agent/main";
-import { Composer, type ComposerPreferences } from "@oh-my-pi/pi-tui/prompt/composer";
-import * as composerCache from "@oh-my-pi/pi-tui/prompt/composer-cache";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import * as registry from "@marsai-org/coding-agent/collab/registry";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import * as pluginHelpers from "@marsai-org/coding-agent/discovery/helpers";
+import { clearOmpExtensionCliRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { runRootCommand } from "@marsai-org/coding-agent/main";
+import { Composer, type ComposerPreferences } from "@marsai-org/tui/prompt/composer";
+import * as composerCache from "@marsai-org/tui/prompt/composer-cache";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
 import {
 	applyStartupComposerPreferences,
 	beginStartupComposer,
 	ComposerLease,
 	stopPendingStartupComposer,
 	takeStartupComposerLease,
-} from "@oh-my-pi/pi-coding-agent/modes/startup-composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getProjectDir, isInteractiveHost, setInteractiveHost, setProjectDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/startup-composer";
+import { initTheme } from "@marsai-org/tui/theme";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { getProjectDir, isInteractiveHost, setInteractiveHost, setProjectDir } from "@marsai-org/utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./collab/helpers/in-memory-relay";
-import { cfgTierOpenai } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgTierOpenai } from "@marsai-org/coding-agent/session/settings";
 import { createTestSession } from "./utilities";
 
 import {
@@ -47,7 +47,7 @@ import {
 	cfgTuiImeSafeCursor,
 	cfgTuiMaxInlineImages,
 	cfgTuiResizeScrollback,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
+} from "@marsai-org/coding-agent/modes/settings";
 
 class CountingTerminal extends VirtualTerminal {
 	starts = 0;

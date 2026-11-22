@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const SSE_EVENTS = [
 	{

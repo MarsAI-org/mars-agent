@@ -8,7 +8,7 @@
  * {@link toWireEvent} encodes at each boundary; {@link fromWireEvent} turns a
  * collab host's stream back into session events on the guest.
  */
-import type { AgentEvent } from "@oh-my-pi/pi-agent-core";
+import type { AgentEvent } from "@marsai-org/agent-core";
 import type { AgentSessionEvent } from "./agent-session-events";
 
 type AgentEndEvent = Extract<AgentEvent, { type: "agent_end" }>;

@@ -1,4 +1,4 @@
-import type { TspProps } from "@oh-my-pi/pi-wire";
+import type { TspProps } from "@marsai-org/wire";
 import { formatTooltipKey } from "../key-hint-format";
 import type { KeyId } from "../keys";
 import { elapsed, kbd, keyed, node, row, span, text } from "../native/describe";

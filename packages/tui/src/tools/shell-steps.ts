@@ -7,9 +7,9 @@
  * clicked, else whatever the run writes right now. The jobs sheet and the
  * transcript's bash card share it.
  */
-import type { PipeStreamInfo, PipeStreams } from "@oh-my-pi/pi-natives";
-import { formatBytes, sanitizeText, truncate } from "@oh-my-pi/pi-utils";
-import type { ShellTrace, ShellVizPresentation } from "@oh-my-pi/pi-wire";
+import type { PipeStreamInfo, PipeStreams } from "@marsai-org/natives";
+import { formatBytes, sanitizeText, truncate } from "@marsai-org/utils";
+import type { ShellTrace, ShellVizPresentation } from "@marsai-org/wire";
 import { collapseCommand } from "../apps/ps-data";
 import { shortenEmbeddedPaths, shortenPath } from "../render/render-utils";
 

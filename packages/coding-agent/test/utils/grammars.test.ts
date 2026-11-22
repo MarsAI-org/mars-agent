@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { WasmGrammarInfo } from "@oh-my-pi/pi-natives";
-import { installGrammar } from "@oh-my-pi/pi-coding-agent/utils/grammars";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { WasmGrammarInfo } from "@marsai-org/natives";
+import { installGrammar } from "@marsai-org/coding-agent/utils/grammars";
+import { TempDir } from "@marsai-org/utils";
 
 const RELEASE = "grammars-test";
 const WASM = new Uint8Array([

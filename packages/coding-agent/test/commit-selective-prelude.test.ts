@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
 import { createContext, runInContext } from "node:vm";
-import { createCommitPrelude } from "@oh-my-pi/pi-coding-agent/commit/selective/prelude-definition";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
+import { createCommitPrelude } from "@marsai-org/coding-agent/commit/selective/prelude-definition";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
 
 /** The shipped JS facade, wired to a host that records every call it receives and answers `diff` with `diff`. */
 function facade(diff: unknown = "patch") {

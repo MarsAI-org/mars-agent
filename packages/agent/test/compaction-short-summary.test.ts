@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { type CompactionPreparation, compact, DEFAULT_COMPACTION_SETTINGS } from "@oh-my-pi/pi-agent-core/compaction";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import { type AssistantMessage, Effort, type Model, type StopReason } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { type CompactionPreparation, compact, DEFAULT_COMPACTION_SETTINGS } from "@marsai-org/agent-core/compaction";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import * as snapcompact from "@marsai-org/snapcompact";
+import { type AssistantMessage, Effort, type Model, type StopReason } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 // The short summary is a display-only field. These tests pin that its failure
 // modes no longer discard a completed full summary, while cancellation still

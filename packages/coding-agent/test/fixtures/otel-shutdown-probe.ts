@@ -1,5 +1,5 @@
-import { initTelemetryExport } from "@oh-my-pi/pi-coding-agent/telemetry-export";
-import { logger, postmortem } from "@oh-my-pi/pi-utils";
+import { initTelemetryExport } from "@marsai-org/coding-agent/telemetry-export";
+import { logger, postmortem } from "@marsai-org/utils";
 
 const requested = Promise.withResolvers<void>();
 const server = Bun.serve({

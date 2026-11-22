@@ -14,8 +14,8 @@
  */
 import { type Mock, spyOn } from "bun:test";
 import * as os from "node:os";
-import { rewriteEnvelopePeer, unpackEnvelope } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { refreshDirsFromEnv, TempDir } from "@oh-my-pi/pi-utils";
+import { rewriteEnvelopePeer, unpackEnvelope } from "@marsai-org/coding-agent/collab/protocol";
+import { refreshDirsFromEnv, TempDir } from "@marsai-org/utils";
 
 /** Active relay the fake transport routes through; set between install/uninstall. */
 let activeRelay: InMemoryRelay | null = null;

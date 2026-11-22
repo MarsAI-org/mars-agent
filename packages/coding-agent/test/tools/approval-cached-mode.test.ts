@@ -5,29 +5,29 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AgentTool, AgentToolContext, ToolTier } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+import type { AgentTool, AgentToolContext, ToolTier } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
 import type {
 	ExtensionApprovalPrompt,
 	ExtensionUIContext,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { requestApproval, resolveApproval } from "@oh-my-pi/pi-coding-agent/tools/approval";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { requestApproval, resolveApproval } from "@marsai-org/coding-agent/tools/approval";
 import {
 	APPROVAL_CACHE_FILENAME,
 	approvalDirectoryKey,
 	approvalGrantKey,
 	clearApprovalGrants,
 	getApprovalGrants,
-} from "@oh-my-pi/pi-coding-agent/tools/approval-cache";
-import { approvalTargetKey, approvalTreeSearchKey } from "@oh-my-pi/pi-coding-agent/tools/approval-targets";
-import { getAgentDir, isRecord, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@marsai-org/coding-agent/tools/approval-cache";
+import { approvalTargetKey, approvalTreeSearchKey } from "@marsai-org/coding-agent/tools/approval-targets";
+import { getAgentDir, isRecord, setAgentDir, TempDir } from "@marsai-org/utils";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
 
 /** Tool that keys `args.path` like read/write/edit do. */
 function pathTool(name: string, tier: ToolTier, cwd: string): AgentTool {

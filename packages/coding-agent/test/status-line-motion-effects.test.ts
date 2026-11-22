@@ -1,13 +1,13 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { statusLineHost } from "@oh-my-pi/pi-coding-agent/modes/status-line-host";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { setMotionEffects } from "@oh-my-pi/pi-tui/motion-effects";
-import { DEFAULT_SPINNER_INTERVAL_MS, setSpinnerInterval } from "@oh-my-pi/pi-tui/spinner-clock";
-import { StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { Model } from "@marsai-org/catalog/types";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { statusLineHost } from "@marsai-org/coding-agent/modes/status-line-host";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { setMotionEffects } from "@marsai-org/tui/motion-effects";
+import { DEFAULT_SPINNER_INTERVAL_MS, setSpinnerInterval } from "@marsai-org/tui/spinner-clock";
+import { StatusLineComponent } from "@marsai-org/tui/status-line";
+import { initTheme } from "@marsai-org/tui/theme";
 
 beforeAll(async () => {
 	resetSettingsForTest();

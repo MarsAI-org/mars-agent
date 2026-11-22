@@ -12,15 +12,15 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as mcpClient from "@oh-my-pi/pi-coding-agent/mcp/client";
-import * as oauthDiscovery from "@oh-my-pi/pi-coding-agent/mcp/oauth-discovery";
-import * as oauthFlow from "@oh-my-pi/pi-coding-agent/mcp/oauth-flow";
-import * as openUtil from "@oh-my-pi/pi-coding-agent/utils/open";
-import { handleMcpAcp } from "@oh-my-pi/pi-coding-agent/slash-commands/helpers/mcp";
-import type { ParsedSlashCommand, SlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
-import { cfgMcpEnableProjectConfig } from "@oh-my-pi/pi-coding-agent/mcp/settings";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as mcpClient from "@marsai-org/coding-agent/mcp/client";
+import * as oauthDiscovery from "@marsai-org/coding-agent/mcp/oauth-discovery";
+import * as oauthFlow from "@marsai-org/coding-agent/mcp/oauth-flow";
+import * as openUtil from "@marsai-org/coding-agent/utils/open";
+import { handleMcpAcp } from "@marsai-org/coding-agent/slash-commands/helpers/mcp";
+import type { ParsedSlashCommand, SlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
+import { cfgMcpEnableProjectConfig } from "@marsai-org/coding-agent/mcp/settings";
 import {
 	getConfigRootDir,
 	getMCPConfigPath,
@@ -28,7 +28,7 @@ import {
 	removeWithRetries,
 	setAgentDir,
 	setProjectDir,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 const RAW_SERVER_URL = `https://\${MCP_HOST}/mcp`;
 const EXPANDED_SERVER_URL = "https://mcp.example.com/mcp";

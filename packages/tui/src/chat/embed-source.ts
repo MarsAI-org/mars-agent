@@ -8,7 +8,7 @@
  * splitEmbeds('Before\n<img src="shot.png" alt="Shot" width="50%">\nAfter');
  * // [markdown "Before\n", embed { kind: "img", src: "shot.png", label: "Shot", … }, markdown "After"]
  */
-import { decodeEntities } from "@oh-my-pi/pi-utils/dom/parser";
+import { decodeEntities } from "@marsai-org/utils/dom/parser";
 import { type FigureSize, formatFigureLength, parseFigureLength } from "./figure-size";
 import { closesFence, fenceMarker } from "./svg-source";
 

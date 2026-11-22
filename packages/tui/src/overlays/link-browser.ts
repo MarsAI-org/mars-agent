@@ -12,7 +12,7 @@
  * as it had come. Like `/copy`, it replays the recent part of a long branch first, and the rest
  * once the view scrolls to its top.
  */
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import type { AgentTool } from "@marsai-org/agent-core";
 import { AssistantMessageComponent } from "../chat/assistant-message";
 import { ChatTranscriptBuilder } from "../chat/chat-transcript-builder";
 import type { AssistantTextRenderer, MessageRenderer } from "../chat/extension-types";

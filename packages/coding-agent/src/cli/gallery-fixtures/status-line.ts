@@ -11,10 +11,10 @@
  * `prompt_cache`: the bar's `cache` marker (the cache glyph, struck through when not cached) beside the cost, followed by
  * the details rows as `/session` lists them, for each cache lifecycle.
  */
-import type { PromptCacheStatus } from "@oh-my-pi/pi-tui/status-line/host";
-import { promptCacheDetails, StatusLineComponent } from "@oh-my-pi/pi-tui/status-line";
+import type { PromptCacheStatus } from "@marsai-org/tui/status-line/host";
+import { promptCacheDetails, StatusLineComponent } from "@marsai-org/tui/status-line";
 import { statusLineHost } from "../../modes/status-line-host";
-import { theme } from "@oh-my-pi/pi-tui/theme";
+import { theme } from "@marsai-org/tui/theme";
 import type { AgentSession } from "../../session/agent-session";
 import { createGallerySession, GALLERY_PROMPT_CACHE } from "./preview-session";
 import type { GalleryFixture, GalleryFixtureState } from "./types";

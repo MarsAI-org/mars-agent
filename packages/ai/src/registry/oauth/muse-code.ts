@@ -1,5 +1,5 @@
-import { type } from "@oh-my-pi/omptype";
-import { ptree } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { ptree } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { AfterExchangeHook, ExchangeContext } from "../hooks/types";
 import type { FetchImpl } from "../../types";

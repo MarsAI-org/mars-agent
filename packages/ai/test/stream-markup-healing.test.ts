@@ -4,17 +4,17 @@ import {
 	getDialectDefinition,
 	type InbandScanEvent,
 	ThinkingInbandScanner,
-} from "@oh-my-pi/pi-ai/dialect";
-import { streamGoogleGeminiCli } from "@oh-my-pi/pi-ai/providers/google-gemini-cli";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { stream } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model, TextContent, ThinkingContent, Tool, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { stripDsmlToolMarkup } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { validateToolArguments } from "@oh-my-pi/pi-ai/utils/validation";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/ai/dialect";
+import { streamGoogleGeminiCli } from "@marsai-org/ai/providers/google-gemini-cli";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import { stream } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl, Model, TextContent, ThinkingContent, Tool, ToolCall } from "@marsai-org/ai/types";
+import { getStreamMarkupHealingPattern, StreamMarkupHealing } from "@marsai-org/ai/utils/stream-markup-healing";
+import { stripDsmlToolMarkup } from "@marsai-org/ai/utils/dsml-leak";
+import { validateToolArguments } from "@marsai-org/ai/utils/validation";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { INTENT_FIELD } from "@marsai-org/wire";
 
 interface SseToolCallDelta {
 	index: number;

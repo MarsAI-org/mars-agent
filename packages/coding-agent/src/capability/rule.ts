@@ -4,8 +4,8 @@
  * Project-specific rules from Cursor (.mdc), Windsurf (.md), and Cline formats.
  * Translated to a canonical shape regardless of source format.
  */
-import { logger } from "@oh-my-pi/pi-utils";
-import { LinearRegExp } from "@oh-my-pi/pi-utils/regex";
+import { logger } from "@marsai-org/utils";
+import { LinearRegExp } from "@marsai-org/utils/regex";
 import { defineCapability } from ".";
 import type { SourceMeta } from "./types";
 

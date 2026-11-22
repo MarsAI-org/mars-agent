@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { McpRemoteSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import { setGeneratedHeader } from "@oh-my-pi/pi-coding-agent/mcp/host/header-policy";
-import { HttpUpstream } from "@oh-my-pi/pi-coding-agent/mcp/host/http-upstream";
+import type { McpRemoteSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import { setGeneratedHeader } from "@marsai-org/coding-agent/mcp/host/header-policy";
+import { HttpUpstream } from "@marsai-org/coding-agent/mcp/host/http-upstream";
 import { rejectionOf } from "../helpers/rejection";
 import { httpSpec } from "./upstream-support";
 

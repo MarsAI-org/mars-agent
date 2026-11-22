@@ -5,7 +5,7 @@
  * `sofya` credential).
  * Docs: https://sofya.co/docs#search
  */
-import { type AuthStorage, withAuth } from "@oh-my-pi/pi-ai";
+import { type AuthStorage, withAuth } from "@marsai-org/ai";
 import type { StructuredQuery } from "../query";
 import { parseSearchQuery } from "../query";
 import type { SearchResponse, SearchSource } from "../types";

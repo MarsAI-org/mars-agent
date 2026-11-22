@@ -1,18 +1,18 @@
 import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai";
-import { AXES } from "@oh-my-pi/pi-catalog/compat/axes";
-import { OmpErrors } from "@oh-my-pi/omptype";
-import { ModelsConfigFile } from "@oh-my-pi/pi-coding-agent/config/models-config";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { getModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema-bundle";
+import { AuthStorage } from "@marsai-org/ai";
+import { AXES } from "@marsai-org/catalog/compat/axes";
+import { OmpErrors } from "@marsai-org/omptype";
+import { ModelsConfigFile } from "@marsai-org/coding-agent/config/models-config";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { getModelsConfigSchema } from "@marsai-org/coding-agent/config/models-config-schema-bundle";
 import {
 	type ProviderValidationConfig,
 	validateProviderConfiguration,
-} from "@oh-my-pi/pi-coding-agent/config/models-config";
-import { type ModelsConfig, ModelsConfigSchema } from "@oh-my-pi/pi-coding-agent/config/models-config-schema";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/config/models-config";
+import { type ModelsConfig, ModelsConfigSchema } from "@marsai-org/coding-agent/config/models-config-schema";
+import { TempDir } from "@marsai-org/utils";
 
 const models = [{ id: "grok-4", api: "openai-completions" as const }];
 const baseUrl = "https://api.example.invalid/v1";

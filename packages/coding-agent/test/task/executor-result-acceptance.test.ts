@@ -6,33 +6,33 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { AssistantMessage, ToolCall } from "@oh-my-pi/pi-ai";
-import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { resetRegisteredArtifactDirsForTests } from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import { IrcBus } from "@oh-my-pi/pi-coding-agent/irc/bus";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
+import type { AssistantMessage, ToolCall } from "@marsai-org/ai";
+import { type CursorExecResolvedCarrier, kCursorExecResolved } from "@marsai-org/ai/utils/block-symbols";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { resetRegisteredArtifactDirsForTests } from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import { IrcBus } from "@marsai-org/coding-agent/irc/bus";
+import type { LoadExtensionsResult } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import type { IrcMessage } from "@marsai-org/tui/tools/irc";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { IrcBridge, type IrcBridgeHost } from "@marsai-org/coding-agent/session/irc-bridge";
 import {
 	attachIrcWakeTurnMonitor,
 	runSubagentFollowUpTurn,
 	runSubprocess,
-} from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { WaitTool } from "@oh-my-pi/pi-coding-agent/tools/wait";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { WaitTool } from "@marsai-org/coding-agent/tools/wait";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir } from "@marsai-org/utils";
 
 const AGENT_ID = "accepted-result";
 

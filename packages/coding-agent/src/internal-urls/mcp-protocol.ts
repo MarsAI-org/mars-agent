@@ -1,4 +1,4 @@
-import { untilAborted, withTimeout } from "@oh-my-pi/pi-utils";
+import { untilAborted, withTimeout } from "@marsai-org/utils";
 import { MCPManager, type MCPManagerApi } from "../mcp/manager";
 import type { MCPResourceReadResult } from "../mcp/types";
 import mcpDoc from "../prompts/internal-urls/mcp.md" with { type: "text" };

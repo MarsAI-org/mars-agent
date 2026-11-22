@@ -1,20 +1,20 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as nodeFs from "node:fs";
 import * as fs from "node:fs/promises";
-import { RelayBridge, type RelaySocket } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/bridge";
+import { RelayBridge, type RelaySocket } from "@marsai-org/coding-agent/tools/browser/relay/bridge";
 import {
 	extensionIdForPath,
 	installedRelayExtensionVersion,
 	relayExtensionFiles,
 	writeRelayExtension,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/extension-files";
+} from "@marsai-org/coding-agent/tools/browser/relay/extension-files";
 import type {
 	RelayExtensionStamp,
 	RelayToExtMessage,
 	TabSnapshot,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/coding-agent/tools/browser/relay/protocol";
+import { TempDir } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
 
 const OLD = "18.6.1";
 const EXTENSION_ID = "abcdefghijklmnopabcdefghijklmnop";

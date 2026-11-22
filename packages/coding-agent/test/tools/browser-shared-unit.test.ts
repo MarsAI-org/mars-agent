@@ -11,7 +11,7 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as daemonClientModule from "@oh-my-pi/pi-coding-agent/daemon/client";
+import * as daemonClientModule from "@marsai-org/coding-agent/daemon/client";
 import type {
 	DaemonClient,
 	DaemonOp,
@@ -20,16 +20,16 @@ import type {
 	OpenResult,
 	UnitScope,
 	UnitSnapshot,
-} from "@oh-my-pi/pi-coding-agent/daemon/protocol";
-import * as attach from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import * as launch from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
+} from "@marsai-org/coding-agent/daemon/protocol";
+import * as attach from "@marsai-org/coding-agent/tools/browser/attach";
+import * as launch from "@marsai-org/coding-agent/tools/browser/launch";
 import {
 	ensureSharedBrowser,
 	type SharedBrowserEndpoint,
 	sharedBrowserDaemonName,
 	stopSharedBrowserIfUnreachable,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/shared-daemon";
-import * as piUtils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/browser/shared-daemon";
+import * as piUtils from "@marsai-org/utils";
 
 const NAME = sharedBrowserDaemonName(true);
 

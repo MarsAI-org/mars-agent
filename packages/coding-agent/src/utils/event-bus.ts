@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 
 /**
  * Methods are bound arrow fields: upstream Pi's `createEventBus()` returns

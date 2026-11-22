@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import type { AssistantMessage, AssistantMessageEvent } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, AssistantMessageEvent } from "@marsai-org/ai";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { SubagentSpawnSignal } from "../../src/thread/subagent-spawn-signal";

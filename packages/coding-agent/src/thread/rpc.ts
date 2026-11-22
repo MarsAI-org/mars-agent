@@ -55,7 +55,7 @@
  * ```
  */
 import { receiveMessageOnPort } from "node:worker_threads";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 
 /** One RPC method: argument tuple and result. */
 export interface RpcMethod<A extends unknown[], R> {

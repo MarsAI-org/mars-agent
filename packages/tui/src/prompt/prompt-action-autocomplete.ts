@@ -1,4 +1,4 @@
-import { untilAborted } from "@oh-my-pi/pi-utils/abortable";
+import { untilAborted } from "@marsai-org/utils/abortable";
 import {
 	type AutocompleteItem,
 	type AutocompleteProvider,

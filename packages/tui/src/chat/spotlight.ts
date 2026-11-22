@@ -4,8 +4,8 @@
  * it, where the original is and how Spotlight scored and kept its lines. A native transcript draws a notice under
  * the tool card for a cut, applied or held back, but not for a passthrough ({@link SpotlightNotice}).
  */
-import { formatNumber, isRecord } from "@oh-my-pi/pi-utils";
-import type { TspPropNode, TspSpan, TspTone } from "@oh-my-pi/pi-wire";
+import { formatNumber, isRecord } from "@marsai-org/utils";
+import type { TspPropNode, TspSpan, TspTone } from "@marsai-org/wire";
 import { col, node, propNode, span, text } from "../native/describe";
 import type { NativeNode, NativeUiEvent } from "../native/node";
 import type { Component } from "../tui";

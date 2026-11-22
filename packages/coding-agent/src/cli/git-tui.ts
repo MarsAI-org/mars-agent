@@ -1,10 +1,10 @@
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import * as vcs from "@marsai-org/natives/vcs";
+import type { TUI } from "@marsai-org/tui";
 import {
 	type GitTuiHost,
 	runGitTui as runView,
 	showGitOverlay as showOverlay,
-} from "@oh-my-pi/pi-tui/apps/git/git-tui";
+} from "@marsai-org/tui/apps/git/git-tui";
 import { generateGitCommit } from "../commit/conventional/service";
 import type { ModelUsageLedger } from "../session/model-usage-journal";
 import { aiStage } from "./git-tui/ai-stage";

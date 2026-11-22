@@ -1,17 +1,17 @@
 import { describe, expect, test, vi } from "bun:test";
-import type { DesktopRosterWindow } from "@oh-my-pi/pi-natives";
-import { FrontTab, NativeWindowWatch, readTabFrame } from "@oh-my-pi/pi-coding-agent/tools/browser/native-windows";
-import * as nativeWindows from "@oh-my-pi/pi-coding-agent/tools/browser/native-windows";
-import { WorkerCore } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-worker";
-import type { WorkerInbound, WorkerOutbound } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
-import { getPuppeteerDir } from "@oh-my-pi/pi-utils";
+import type { DesktopRosterWindow } from "@marsai-org/natives";
+import { FrontTab, NativeWindowWatch, readTabFrame } from "@marsai-org/coding-agent/tools/browser/native-windows";
+import * as nativeWindows from "@marsai-org/coding-agent/tools/browser/native-windows";
+import { WorkerCore } from "@marsai-org/coding-agent/tools/browser/tab-worker";
+import type { WorkerInbound, WorkerOutbound } from "@marsai-org/coding-agent/tools/browser/tab-protocol";
+import { getPuppeteerDir } from "@marsai-org/utils";
 import {
 	closeLaunchedBrowser,
 	launchHeadlessBrowser,
 	removeUserDataDir,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { acquireBrowser, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { frontTabSource } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { acquireBrowser, releaseBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
+import { frontTabSource } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

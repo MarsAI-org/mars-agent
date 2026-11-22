@@ -10,12 +10,12 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CollabGuestLink } from "@oh-my-pi/pi-coding-agent/collab/guest";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { collabHostsRuntimeDir, listCollabHosts } from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import * as utils from "@oh-my-pi/pi-utils";
+import { CollabGuestLink } from "@marsai-org/coding-agent/collab/guest";
+import { CollabHost } from "@marsai-org/coding-agent/collab/host";
+import { collabHostsRuntimeDir, listCollabHosts } from "@marsai-org/coding-agent/collab/registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import * as utils from "@marsai-org/utils";
 import {
 	directoryExists,
 	getAgentDir,
@@ -25,7 +25,7 @@ import {
 	refreshDirsFromEnv,
 	removeWithRetries,
 	setAgentDir,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 

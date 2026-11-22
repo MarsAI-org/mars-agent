@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { setPromptZonesEnabled, UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { TUI } from "@oh-my-pi/pi-tui";
+import { setPromptZonesEnabled, UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { TUI } from "@marsai-org/tui";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";
 

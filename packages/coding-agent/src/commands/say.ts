@@ -8,9 +8,9 @@
  * one WAV. The first run downloads the configured local model into the cache.
  */
 
-import { getProjectDir } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import { getProjectDir } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
+import { Args, Command, Flags } from "@marsai-org/utils/cli";
 import { sayHelp as commandHelp } from "../cli/command-help";
 import { ModelRegistry } from "../config/model-registry";
 import { Settings } from "../config/settings";

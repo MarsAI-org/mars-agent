@@ -24,9 +24,9 @@
 
 import * as path from "node:path";
 import { parseArgs } from "node:util";
-import { type Api, type ApiKey, type AuthStorage, completeSimple, type Model } from "@oh-my-pi/pi-ai";
-import { discoverAuthStorage } from "@oh-my-pi/pi-ai/auth-broker";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { type Api, type ApiKey, type AuthStorage, completeSimple, type Model } from "@marsai-org/ai";
+import { discoverAuthStorage } from "@marsai-org/ai/auth-broker";
+import { type GeneratedProvider, getBundledModel } from "@marsai-org/catalog/models";
 
 const REPO_ROOT = path.join(import.meta.dir, "..");
 const POOL_PATH = path.join(REPO_ROOT, "packages/ai/src/prompts/perturbation-pool.json.txt");

@@ -2,27 +2,27 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, setSy
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCache as clearFsCache } from "@oh-my-pi/pi-coding-agent/capability/fs";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as discoveryHelpers from "@oh-my-pi/pi-coding-agent/discovery/helpers";
-import { getActiveSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { SkillProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/skill-protocol";
-import { dispatchRpcSkillPrompt } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
+import { clearCache as clearFsCache } from "@marsai-org/coding-agent/capability/fs";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as discoveryHelpers from "@marsai-org/coding-agent/discovery/helpers";
+import { getActiveSkills } from "@marsai-org/coding-agent/extensibility/skills";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { SkillProtocolHandler } from "@marsai-org/coding-agent/internal-urls/skill-protocol";
+import { dispatchRpcSkillPrompt } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
 import {
 	RpcExtensionUserMessageTracker,
 	RpcPromptResults,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-prompt-results";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { runSubprocess } from "@marsai-org/coding-agent/task/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { cleanupTempHome } from "./helpers/temp-home-cleanup";
 
 const SKILL = "upgrade-skill";

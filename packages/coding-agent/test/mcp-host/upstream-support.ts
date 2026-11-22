@@ -1,9 +1,9 @@
 /** Shared setup of the upstream tests: specs for fixture processes and a `spawn` that records pids. */
 import * as path from "node:path";
-import { spawnManagedChild } from "@oh-my-pi/pi-coding-agent/daemon/children";
-import type { ChildSpawn, ManagedChild } from "@oh-my-pi/pi-coding-agent/daemon/module";
-import type { McpRemoteSpec, McpStdioSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import type { McpPeerDeps, McpRoot } from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
+import { spawnManagedChild } from "@marsai-org/coding-agent/daemon/children";
+import type { ChildSpawn, ManagedChild } from "@marsai-org/coding-agent/daemon/module";
+import type { McpRemoteSpec, McpStdioSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import type { McpPeerDeps, McpRoot } from "@marsai-org/coding-agent/mcp/host/peer";
 
 export const FIXTURES = path.resolve(import.meta.dir, "../fixtures");
 export const ROOTS: McpRoot[] = [{ uri: "file:///work/project", name: "project" }];

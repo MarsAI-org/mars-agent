@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { dedupeProjects, getGainDashboardStats, normalizeProjectPath } from "@oh-my-pi/omp-stats/gain-aggregator";
-import type { MessageStats } from "@oh-my-pi/omp-stats/types";
-import { getSessionsDir, getStatsDbPath } from "@oh-my-pi/pi-utils";
-import { format } from "@oh-my-pi/pi-utils/dates";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
+import { initDb, insertMessageStats } from "@marsai-org/stats/db";
+import { dedupeProjects, getGainDashboardStats, normalizeProjectPath } from "@marsai-org/stats/gain-aggregator";
+import type { MessageStats } from "@marsai-org/stats/types";
+import { getSessionsDir, getStatsDbPath } from "@marsai-org/utils";
+import { format } from "@marsai-org/utils/dates";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-gain-");

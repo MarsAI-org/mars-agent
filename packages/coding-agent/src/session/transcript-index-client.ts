@@ -4,7 +4,7 @@
  * `transcripts` module holds one {@link TranscriptIndexer} for every omp
  * process; a process the daemon cannot serve holds its own.
  */
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
+import { workerHostEntry } from "@marsai-org/utils/worker-host";
 import { TRANSCRIPT_INDEX_WORKER_ARG } from "../cli/worker-selectors";
 import type { TranscriptSyncResult } from "./transcript-index";
 import type {

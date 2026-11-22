@@ -1,8 +1,8 @@
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { decodeKiroCredential, kiroRuntimeBaseUrl } from "@oh-my-pi/pi-catalog/wire/kiro";
-import { kiroCliServiceHeaders } from "@oh-my-pi/pi-catalog/wire/kiro-cli";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { readBoundedBody } from "@oh-my-pi/pi-utils/bounded-json";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { decodeKiroCredential, kiroRuntimeBaseUrl } from "@marsai-org/catalog/wire/kiro";
+import { kiroCliServiceHeaders } from "@marsai-org/catalog/wire/kiro-cli";
+import { isRecord } from "@marsai-org/utils";
+import { readBoundedBody } from "@marsai-org/utils/bounded-json";
 import * as AIError from "../../error";
 import type {
 	AssistantMessage,

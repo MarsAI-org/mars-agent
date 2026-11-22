@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { cfgComposerTokenRate } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { TspKind } from "@oh-my-pi/pi-wire";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { cfgComposerTokenRate } from "@marsai-org/coding-agent/modes/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { TspKind } from "@marsai-org/wire";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
+import { TempDir } from "@marsai-org/utils";
 
 const context = (supports: (kind: TspKind) => boolean): DescribeContext => ({
 	cols: 100,

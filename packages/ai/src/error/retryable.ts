@@ -1,4 +1,4 @@
-import { isRetryableError, isUnexpectedSocketCloseMessage } from "@oh-my-pi/pi-utils";
+import { isRetryableError, isUnexpectedSocketCloseMessage } from "@marsai-org/utils";
 import { getHeadersFromError, getShouldRetryFromHeaders } from "../utils/retry-after";
 import {
 	ALIYUN_MM_GATEWAY_PATTERN,

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { syncAllSessions } from "@oh-my-pi/omp-stats/aggregator";
-import { closeDb, getRecentRequests, initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { parseSessionFile } from "@oh-my-pi/omp-stats/parser";
-import { handleApi } from "@oh-my-pi/omp-stats/server";
-import { getSessionsDir } from "@oh-my-pi/pi-utils";
+import { syncAllSessions } from "@marsai-org/stats/aggregator";
+import { closeDb, getRecentRequests, initDb, insertMessageStats } from "@marsai-org/stats/db";
+import { parseSessionFile } from "@marsai-org/stats/parser";
+import { handleApi } from "@marsai-org/stats/server";
+import { getSessionsDir } from "@marsai-org/utils";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-model-usage-");

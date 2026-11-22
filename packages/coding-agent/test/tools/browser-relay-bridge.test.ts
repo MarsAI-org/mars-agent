@@ -1,13 +1,13 @@
 import { describe, expect, it, jest } from "bun:test";
 import { createHash } from "node:crypto";
-import { BROWSER_PAGE_PROTOCOL_TIMEOUT_MS } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { closeRelayTarget } from "@oh-my-pi/pi-coding-agent/tools/browser/orphan-registry";
-import { type FrontApp, RelayBridge, type RelaySocket } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/bridge";
+import { BROWSER_PAGE_PROTOCOL_TIMEOUT_MS } from "@marsai-org/coding-agent/tools/browser/launch";
+import { closeRelayTarget } from "@marsai-org/coding-agent/tools/browser/orphan-registry";
+import { type FrontApp, RelayBridge, type RelaySocket } from "@marsai-org/coding-agent/tools/browser/relay/bridge";
 import type {
 	RelayRpcRequest,
 	RelayToExtMessage,
 	TabSnapshot,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
+} from "@marsai-org/coding-agent/tools/browser/relay/protocol";
 import type { CDPSession } from "puppeteer-core";
 
 /** Same derivation as the bridge: target ids embed this per-instance code. */

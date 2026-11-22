@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { vocalizer } from "@oh-my-pi/pi-coding-agent/tts/vocalizer";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { vocalizer } from "@marsai-org/coding-agent/tts/vocalizer";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
-import { cfgSpeechEnabled, cfgSpeechMode } from "@oh-my-pi/pi-coding-agent/tts/settings";
+import { cfgSpeechEnabled, cfgSpeechMode } from "@marsai-org/coding-agent/tts/settings";
 
 function zeroUsage(): Usage {
 	return {

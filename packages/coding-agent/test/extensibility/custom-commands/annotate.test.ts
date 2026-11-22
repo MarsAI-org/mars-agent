@@ -2,57 +2,57 @@ import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test"
 import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type { VcsRepo } from "@oh-my-pi/pi-natives";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { Container, getKeybindings, setKeybindings, TUI } from "@oh-my-pi/pi-tui";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type { VcsRepo } from "@marsai-org/natives";
+import * as vcs from "@marsai-org/natives/vcs";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { Container, getKeybindings, setKeybindings, TUI } from "@marsai-org/tui";
 import type {
 	ExtensionCustomOptions,
 	ExtensionUIContext,
 	ExtensionUiComponent,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import type { Theme } from "@marsai-org/tui/theme";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { CopySelectorComponent } from "@marsai-org/tui/overlays/copy-selector";
 import {
 	selectSessionTextReviewSource,
 	type SessionPick,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/text-source";
+} from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/annotate/text-source";
 import {
 	AnnotateCommand,
 	runAnnotateCommand,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate";
+} from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/annotate";
 import {
 	type AnnotationOverlayContext,
 	showCodeReviewOverlay,
 	showTextReviewOverlay,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/fullscreen";
-import { loadAnnotationDrafts } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/draft-store";
-import * as externalEditor from "@oh-my-pi/pi-coding-agent/utils/external-editor";
+} from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/annotate/fullscreen";
+import { loadAnnotationDrafts } from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/annotate/draft-store";
+import * as externalEditor from "@marsai-org/coding-agent/utils/external-editor";
 import type {
 	CustomCommandAPI,
 	CustomCommandContext,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/types";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import type { ReviewPrRef } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review";
+} from "@marsai-org/coding-agent/extensibility/custom-commands/types";
+import { ExtensionUiController } from "@marsai-org/coding-agent/modes/controllers/extension-ui-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import type { ReviewPrRef } from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/review";
 import {
 	createResolvedReviewTarget,
 	type ResolvedReviewTarget,
 	type ReviewTargetUI,
-} from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/review/target";
-import { buildTextReviewPrompt } from "@oh-my-pi/pi-coding-agent/extensibility/custom-commands/bundled/annotate/text-review";
-import type { SessionMessageEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
+} from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/review/target";
+import { buildTextReviewPrompt } from "@marsai-org/coding-agent/extensibility/custom-commands/bundled/annotate/text-review";
+import type { SessionMessageEntry } from "@marsai-org/coding-agent/session/session-entries";
 import type {
 	CodeReviewAnnotation,
 	TextReviewAnnotation,
 	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
-import * as gh from "@oh-my-pi/pi-coding-agent/tools/gh";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
+} from "@marsai-org/tui/overlays/annotation-types";
+import * as gh from "@marsai-org/coding-agent/tools/gh";
+import { github } from "@marsai-org/coding-agent/utils/github";
 import { VirtualTerminal } from "../../../../tui/test/virtual-terminal";
-import { Editor } from "@oh-my-pi/pi-tui/components/editor";
+import { Editor } from "@marsai-org/tui/components/editor";
 import { defaultEditorTheme } from "../../../../tui/test/test-themes";
 import { TspHarness } from "../../../../tui/test/native/tsp-harness";
 

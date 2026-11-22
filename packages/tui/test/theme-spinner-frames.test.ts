@@ -7,9 +7,9 @@ import {
 	setSpinnerInterval,
 	sharedSpinnerFrame,
 	SPINNER_INTERVAL_STATIC,
-} from "@oh-my-pi/pi-tui/spinner-clock";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/spinner-clock";
+import { getThemeByName } from "@marsai-org/tui/theme";
+import { getConfigRootDir, getCustomThemesDir, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
 // Path of the built-in dark theme JSON, used as a known-valid base we can
 // extend with custom `symbols.spinnerFrames` shapes.

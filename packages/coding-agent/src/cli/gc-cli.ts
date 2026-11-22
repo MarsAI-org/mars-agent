@@ -4,8 +4,8 @@ import * as path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { createGunzip, createGzip } from "node:zlib";
-import { withStatsSyncLock } from "@oh-my-pi/omp-stats/aggregator";
-import { isCompressScratchPath } from "@oh-my-pi/omp-stats/parser";
+import { withStatsSyncLock } from "@marsai-org/stats/aggregator";
+import { isCompressScratchPath } from "@marsai-org/stats/parser";
 import {
 	formatBytes,
 	getAgentDir,
@@ -23,7 +23,7 @@ import {
 	normalizePathForComparison,
 	readLines,
 	type FileLockHandle,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { Settings } from "../config/settings";
 import type { Setting } from "../config/registry";
 

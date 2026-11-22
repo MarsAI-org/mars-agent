@@ -5,7 +5,7 @@
  * a CLI host.
  */
 import { parentPort } from "node:worker_threads";
-import { consumeWorkerInbox } from "@oh-my-pi/pi-utils/worker-host";
+import { consumeWorkerInbox } from "@marsai-org/utils/worker-host";
 import { syncTranscriptIndex, type TranscriptSyncResult } from "./transcript-index";
 
 /** The store a sync updates and the sessions it reads; explicit, since a daemon-hosted worker serves every profile. */

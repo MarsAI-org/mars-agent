@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { removeWithRetries } from "@marsai-org/utils";
 
 let tempDir = "";
 const REPO_ROOT = path.resolve(import.meta.dir, "../../..");
@@ -147,7 +147,7 @@ describe("storage process-exit cleanup", () => {
 		const historyModule = HISTORY_STORAGE_MODULE;
 		const agentModule = AGENT_STORAGE_MODULE;
 		const script = [
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
+			'import { postmortem } from "@marsai-org/utils";',
 			"postmortem.installProcessHandlers();",
 			`import { HistoryStorage } from ${JSON.stringify(historyModule)};`,
 			`import { AgentStorage } from ${JSON.stringify(agentModule)};`,
@@ -201,7 +201,7 @@ describe("storage process-exit cleanup", () => {
 		const historyDbPath = path.join(tempDir, "history.db");
 		const agentDbPath = path.join(tempDir, "agent.db");
 		const script = [
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
+			'import { postmortem } from "@marsai-org/utils";',
 			"postmortem.installProcessHandlers();",
 			`import { HistoryStorage } from ${JSON.stringify(HISTORY_STORAGE_MODULE)};`,
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
@@ -240,7 +240,7 @@ describe("storage process-exit cleanup", () => {
 		const agentDbPath = path.join(tempDir, "agent.db");
 		const checkpointed = path.join(tempDir, "agent-checkpoint.db");
 		const script = [
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
+			'import { postmortem } from "@marsai-org/utils";',
 			"postmortem.installProcessHandlers();",
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			"const gate = Promise.withResolvers();",
@@ -289,7 +289,7 @@ describe("storage process-exit cleanup", () => {
 		// then only a real exit flushes its deferred perf batch. If postmortem did
 		// not re-arm, the exit callback would never fire and the sample would be lost.
 		const script = [
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
+			'import { postmortem } from "@marsai-org/utils";',
 			"postmortem.installProcessHandlers();",
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			"await postmortem.cleanup();",
@@ -327,7 +327,7 @@ describe("storage process-exit cleanup", () => {
 		// cleanup that keeps the process running: its statements must not be
 		// finalized, so writes through the same handle keep working afterward.
 		const script = [
-			'import { postmortem } from "@oh-my-pi/pi-utils";',
+			'import { postmortem } from "@marsai-org/utils";',
 			"postmortem.installProcessHandlers();",
 			`import { AgentStorage } from ${JSON.stringify(AGENT_STORAGE_MODULE)};`,
 			`const agent = await AgentStorage.open(${JSON.stringify(agentDbPath)});`,

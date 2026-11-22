@@ -2,62 +2,62 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import path from "node:path";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
+import { unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
 import {
 	disableProvider,
 	enableProvider,
 	getDisabledProviders,
 	isProviderEnabled,
 	setDisabledProviders,
-} from "@oh-my-pi/pi-coding-agent/capability";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { parseModelPattern } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { AgentCompactionThresholdOverride } from "@oh-my-pi/pi-coding-agent/config/compaction-threshold";
+} from "@marsai-org/coding-agent/capability";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { parseModelPattern } from "@marsai-org/coding-agent/config/model-resolver";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { AgentCompactionThresholdOverride } from "@marsai-org/coding-agent/config/compaction-threshold";
 import type {
 	BeforeSubagentSpawnEvent,
 	LoadExtensionsResult,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
 import {
 	artifactsDirsFromRegistry,
 	resetRegisteredArtifactDirsForTests,
-} from "@oh-my-pi/pi-coding-agent/internal-urls/registry-helpers";
-import * as planHandoff from "@oh-my-pi/pi-coding-agent/plan-mode/plan-handoff";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+} from "@marsai-org/coding-agent/internal-urls/registry-helpers";
+import * as planHandoff from "@marsai-org/coding-agent/plan-mode/plan-handoff";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 
-import { TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { createEvalCustomTools } from "@oh-my-pi/pi-coding-agent/task/eval-tools";
-import * as executorModule from "@oh-my-pi/pi-coding-agent/task/executor";
-import * as isolationRunner from "@oh-my-pi/pi-coding-agent/task/isolation-runner";
+import { TaskTool } from "@marsai-org/coding-agent/task";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import { createEvalCustomTools } from "@marsai-org/coding-agent/task/eval-tools";
+import * as executorModule from "@marsai-org/coding-agent/task/executor";
+import * as isolationRunner from "@marsai-org/coding-agent/task/isolation-runner";
 import {
 	buildStructuredSubagentRecoveryHint,
 	resolveEffectiveSubagentPolicy,
 	runStructuredSubagent,
 	StructuredSubagentError,
 	type StructuredSubagentRequest,
-} from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import type { SingleResult, TaskParams } from "@oh-my-pi/pi-tui/tools/task";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task/structured-subagent";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import type { SingleResult, TaskParams } from "@marsai-org/tui/tools/task";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { __resetDirsFromEnvForTests, removeWithRetries, setAgentDir, TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
-import { cfgRetryModelFallback } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { cfgTaskAgentModelOverrides, cfgTaskEnableEffort } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { cfgRetryModelFallback } from "@marsai-org/coding-agent/session/settings";
+import { cfgTaskAgentModelOverrides, cfgTaskEnableEffort } from "@marsai-org/coding-agent/task/settings";
 
 const AGENT: AgentDefinition = {
 	name: "worker",

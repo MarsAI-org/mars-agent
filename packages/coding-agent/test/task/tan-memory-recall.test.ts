@@ -5,21 +5,21 @@
  * breaking the prompt-cache prefix the clone shares with its parent.
  */
 import { afterEach, expect, it, vi } from "bun:test";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { mnemopiBackend } from "@oh-my-pi/pi-coding-agent/mnemopi/backend";
-import { getMnemopiSessionState } from "@oh-my-pi/pi-coding-agent/mnemopi/state";
-import { TanCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/tan-command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import * as sdk from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as settingsStream from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { mnemopiBackend } from "@marsai-org/coding-agent/mnemopi/backend";
+import { getMnemopiSessionState } from "@marsai-org/coding-agent/mnemopi/state";
+import { TanCommandController } from "@marsai-org/coding-agent/modes/controllers/tan-command-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import * as sdk from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as settingsStream from "@marsai-org/coding-agent/session/settings-stream-fn";
+import { TempDir } from "@marsai-org/utils";
 
 const model = getBundledModel("muse-code", "muse-spark-1.3-contributor");
 const MEMORY = "The deploy host is alpha-7.";

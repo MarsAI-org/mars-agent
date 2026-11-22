@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { Model, ModelKind } from "@oh-my-pi/pi-catalog/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { Model, ModelKind } from "@marsai-org/catalog/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	expandDefaultRetryFallbackChains,
 	findRetryFallbackCandidates,
@@ -11,9 +11,9 @@ import {
 	parseRetryFallbackSelector,
 	resolveRetryFallbackChainKey,
 	validateRetryFallbackChains,
-} from "@oh-my-pi/pi-coding-agent/session/retry-fallback-chains";
-import { resolveProviderModelReference } from "@oh-my-pi/pi-coding-agent/config/model-resolver";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+} from "@marsai-org/coding-agent/session/retry-fallback-chains";
+import { resolveProviderModelReference } from "@marsai-org/coding-agent/config/model-resolver";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 
 function createContext(
 	chains: RetryFallbackResolutionContext["chains"],

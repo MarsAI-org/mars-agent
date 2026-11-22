@@ -2,13 +2,13 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CODEX_CLIENT_VERSION } from "@oh-my-pi/pi-catalog/wire/codex";
+import { CODEX_CLIENT_VERSION } from "@marsai-org/catalog/wire/codex";
 import {
 	__awaitCodexClientVersionRefreshForTests,
 	__resetCodexClientVersionCacheForTests,
 	getCodexClientVersion,
-} from "@oh-my-pi/pi-catalog/wire/codex-version";
-import { getAgentDir, setAgentDir } from "@oh-my-pi/pi-utils/dirs";
+} from "@marsai-org/catalog/wire/codex-version";
+import { getAgentDir, setAgentDir } from "@marsai-org/utils/dirs";
 
 const ENV_KEYS = [
 	"NODE_ENV",

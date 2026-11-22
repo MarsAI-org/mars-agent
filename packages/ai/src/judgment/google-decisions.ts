@@ -19,7 +19,7 @@
  * `x-goog-api-key`. Billing is input tokens only, so cost is priced from the
  * catalog model.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { type Answer, type Question, tokenUsage } from "./types";
 import { finiteNumber, type JudgmentWire } from "./wire";

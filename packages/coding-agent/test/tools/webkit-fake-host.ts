@@ -11,7 +11,7 @@
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@marsai-org/utils";
 
 /**
  * How the fake behaves:

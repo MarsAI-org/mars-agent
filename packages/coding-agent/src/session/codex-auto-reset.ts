@@ -66,7 +66,7 @@ import type {
 	UsageLimit,
 	UsageReport,
 	UsageResetCreditDetail,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import type { ResetAutoRedeemMode, ResetWindow, ResetWindowModes } from "./settings";
 import { reportMatchesActiveAccount } from "../slash-commands/helpers/active-oauth-account";
 

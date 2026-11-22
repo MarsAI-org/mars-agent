@@ -1,6 +1,6 @@
-import type { DailyActivityPoint } from "@oh-my-pi/omp-stats/shared-types";
-import { logger } from "@oh-my-pi/pi-utils";
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
+import type { DailyActivityPoint } from "@marsai-org/stats/shared-types";
+import { logger } from "@marsai-org/utils";
+import { workerHostEntry } from "@marsai-org/utils/worker-host";
 import {
 	STATS_ACTIVITY_WORKER_ARG,
 	type StatsActivityWorkerInbound,

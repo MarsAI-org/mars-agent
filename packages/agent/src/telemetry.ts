@@ -38,8 +38,8 @@ import {
 	shouldSendServiceTier,
 	type ToolChoice,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { $otelEnv } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { $otelEnv } from "@marsai-org/utils";
 import {
 	type Attributes,
 	type AttributeValue,
@@ -54,7 +54,7 @@ import { AgentRunCollector, type AgentRunCoverage, type AgentRunSummary, type To
 import type { AgentTool } from "./types";
 
 /** Default tracer name. Override via {@link AgentTelemetryConfig.tracerName}. */
-export const DEFAULT_TRACER_NAME = "@oh-my-pi/pi-agent-core";
+export const DEFAULT_TRACER_NAME = "@marsai-org/agent-core";
 
 /** Env var matching the OTEL semconv content-capture toggle. */
 const CONTENT_CAPTURE_ENV = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT";
@@ -1799,7 +1799,7 @@ export interface InstrumentedChatSpanOptions {
 	readonly attributes?: Attributes;
 	/**
 	 * Override for the underlying {@link completeSimple} call. Defaults to
-	 * `completeSimple` from `@oh-my-pi/pi-ai`. Use to retain a test injection
+	 * `completeSimple` from `@marsai-org/ai`. Use to retain a test injection
 	 * seam while still going through the chat-span lifecycle.
 	 */
 	readonly completeImpl?: <TApi extends Api>(

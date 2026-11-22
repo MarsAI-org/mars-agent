@@ -32,7 +32,7 @@ import {
 	matchesSelectPageUp,
 	matchesSelectUp,
 } from "../keybinding-matchers";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { col, item, node, span } from "../native/describe";
 import { leafKey, type NativeNode, type NativeScroll, type NativeUiEvent } from "../native/node";
 import { actionBar, actionButton } from "../native/overlay";

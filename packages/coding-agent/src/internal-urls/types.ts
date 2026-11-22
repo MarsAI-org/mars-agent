@@ -12,9 +12,9 @@ import type {
 	AgentToolUpdateCallback,
 	ToolApprovalDecision,
 	ToolTier,
-} from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import type { ShellFsDirEntry } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import type { ShellFsDirEntry } from "@marsai-org/natives";
 import type { Settings } from "../config/settings";
 import type { Rule } from "../capability/rule";
 import type { Skill } from "../extensibility/skills";
@@ -22,10 +22,10 @@ import type { AgentRegistryApi } from "../registry/agent-registry";
 import type { LocalProtocolOptions } from "./local-protocol";
 import type { SessionEntry } from "../session/session-entries";
 import type { ToolSession } from "../tools";
-import type { CoordinationDetails } from "@oh-my-pi/pi-tui/tools/wait";
-import type { ProcReadDetails, ProcWriteDetails } from "@oh-my-pi/pi-tui/tools/proc-render";
-import type { CfgReadDetails, CfgWriteDetails } from "@oh-my-pi/pi-tui/tools/cfg-render";
-import type { SchemeWriteScope } from "@oh-my-pi/pi-tui/tools/url-scheme-host";
+import type { CoordinationDetails } from "@marsai-org/tui/tools/wait";
+import type { ProcReadDetails, ProcWriteDetails } from "@marsai-org/tui/tools/proc-render";
+import type { CfgReadDetails, CfgWriteDetails } from "@marsai-org/tui/tools/cfg-render";
+import type { SchemeWriteScope } from "@marsai-org/tui/tools/url-scheme-host";
 
 /** Render state and prewalk facts a handler write attaches to the `write` tool result. */
 export interface InternalWriteDetails {

@@ -1,15 +1,15 @@
 import { beforeAll, beforeEach, describe, expect, afterEach, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import { formatKeyHint, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { getKeybindings, setKeybindings, type TUI } from "@oh-my-pi/pi-tui";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { AnnotationOverlay, type AnnotationOverlayCallbacks } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
+import { formatKeyHint, KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { getKeybindings, setKeybindings, type TUI } from "@marsai-org/tui";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
+import { AnnotationOverlay, type AnnotationOverlayCallbacks } from "@marsai-org/tui/overlays/annotation-overlay";
 import type {
 	CodeReviewOverlayResult,
 	ReviewDiffFile,
 	TextReviewOverlayResult,
 	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
+} from "@marsai-org/tui/overlays/annotation-types";
 import type { NativeUiEvent } from "../src/native/node";
 import { sliceByColumn, visibleWidth } from "../src/utils";
 

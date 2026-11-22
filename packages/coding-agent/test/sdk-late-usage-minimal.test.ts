@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { kUsageLimitRequestProvider } from "@oh-my-pi/pi-coding-agent/session/turn-recovery";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { kUsageLimitRequestProvider } from "@marsai-org/coding-agent/session/turn-recovery";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const SOURCE = "sdk-late-usage-minimal-test";

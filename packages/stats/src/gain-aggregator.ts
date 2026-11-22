@@ -10,8 +10,8 @@
 import type { Stats } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getStatsDbPath, isEnoent, logger } from "@oh-my-pi/pi-utils";
-import { format } from "@oh-my-pi/pi-utils/dates";
+import { getStatsDbPath, isEnoent, logger } from "@marsai-org/utils";
+import { format } from "@marsai-org/utils/dates";
 import { getTimeRangeConfig } from "./aggregator";
 import { initDb } from "./db";
 import type { GainDashboardStats, GainSourceTotals, GainTimeSeriesPoint } from "./shared-types";

@@ -11,8 +11,8 @@
  * `paint-encoder.ts`); the streamer is a pure multiplexer. The same screen
  * frames are persisted by session recordings (`recording.ts`).
  */
-import { type } from "@oh-my-pi/omptype";
-import { STREAM_HISTORY_LIMIT, type StreamChatMessage, type StreamRow } from "@oh-my-pi/pi-wire";
+import { type } from "@marsai-org/omptype";
+import { STREAM_HISTORY_LIMIT, type StreamChatMessage, type StreamRow } from "@marsai-org/wire";
 
 export const STREAM_LOCAL_PROTO = 1;
 

@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-catalog";
-import { resolveDelegationBias } from "@oh-my-pi/pi-catalog/compat/delegation";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgSystemPromptTemplates } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { getAgentDir, setAgentDir, TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/catalog";
+import { resolveDelegationBias } from "@marsai-org/catalog/compat/delegation";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { cfgSystemPromptTemplates } from "@marsai-org/coding-agent/session/settings";
+import { getAgentDir, setAgentDir, TempDir } from "@marsai-org/utils";
 
 function bundledOpenAi(id: string): Model {
 	const model = getBundledModel("openai", id);

@@ -1,4 +1,4 @@
-import { encodeSixelAsync } from "@oh-my-pi/pi-natives";
+import { encodeSixelAsync } from "@marsai-org/natives";
 import { cachedPngConversion, convertImageToPngShared } from "../png-conversion";
 import { getKittyGraphics } from "../kitty-graphics";
 import { ensureSixelRasterWidth } from "../sixel";

@@ -3,8 +3,8 @@
  * passages. Each passage carries its enclosing signature to the final window. The remaining folds name exact file
  * coordinates both for the agent's readback markers and for the session's fold recovery state.
  */
-import type { SpotlightReason } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { countNewlines } from "@oh-my-pi/pi-utils";
+import type { SpotlightReason } from "@marsai-org/tui/chat/spotlight";
+import { countNewlines } from "@marsai-org/utils";
 import { fileLines, readTargets, resolveTarget, SOURCE_PATH } from "./command";
 import { bump, noteRank, noteWhy, type Origin, type Run, scoreLines, shifted, spanShares } from "./run";
 import { type LineRun, renderFolds, type SourcePeak, type View } from "./view";

@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { ApprovalMode } from "../tools/approval";
 import type { SessionManager } from "./session-manager";
 

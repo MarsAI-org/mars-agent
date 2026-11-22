@@ -15,9 +15,9 @@
  * Binds loopback only: anything that can reach this port can drive the
  * user's logged-in browser.
  */
-import { macOSFrontApp } from "@oh-my-pi/pi-natives";
-import { logger, parseFlag } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+import { macOSFrontApp } from "@marsai-org/natives";
+import { logger, parseFlag } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
 import { RelayBridge } from "./bridge";
 import { extensionIdForPath, installedRelayExtensionStamp } from "./extension-files";
 import { readRelayInstalls, registeredRelayExtensionIds, syncRelayInstalls } from "./installs";

@@ -6,8 +6,8 @@
  * `ssh://` reads/writes round-trip exactly — leading/trailing whitespace, tabs,
  * and final newlines are preserved.
  */
-import { type ShellFsDirEntry, ShellFsFileType } from "@oh-my-pi/pi-natives";
-import { ConcatSink, ptree } from "@oh-my-pi/pi-utils";
+import { type ShellFsDirEntry, ShellFsFileType } from "@marsai-org/natives";
+import { ConcatSink, ptree } from "@marsai-org/utils";
 import { buildRemoteCommand, ensureConnection, ensureHostInfo, type SSHConnectionTarget } from "./connection-manager";
 import { quotePosixArgument } from "../utils/shell-quote";
 import { wrapInPosixShell } from "./utils";

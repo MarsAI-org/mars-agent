@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { convertCodexResponsesMessages } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { createOpenAIResponsesHistoryPayload, syncOpenAIResponsesHistoryTexts } from "@oh-my-pi/pi-ai/utils";
-import type { AssistantMessage, Context, TextContent } from "@oh-my-pi/pi-ai/types";
+import { convertCodexResponsesMessages } from "@marsai-org/ai/providers/openai-codex-responses";
+import { createOpenAIResponsesHistoryPayload, syncOpenAIResponsesHistoryTexts } from "@marsai-org/ai/utils";
+import type { AssistantMessage, Context, TextContent } from "@marsai-org/ai/types";
 import { createCodexModel } from "./helpers";
 
 const model = createCodexModel("gpt-5.6-codex");

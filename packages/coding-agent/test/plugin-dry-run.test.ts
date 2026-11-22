@@ -14,12 +14,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, spyOn, test, vi } f
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type PluginCommandArgs, runPluginCommand } from "@oh-my-pi/pi-coding-agent/cli/plugin-cli";
-import Update from "@oh-my-pi/pi-coding-agent/commands/update";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
-import type { CliConfig } from "@oh-my-pi/pi-utils/cli";
+import { type PluginCommandArgs, runPluginCommand } from "@marsai-org/coding-agent/cli/plugin-cli";
+import Update from "@marsai-org/coding-agent/commands/update";
+import { initTheme } from "@marsai-org/tui/theme";
+import * as piUtils from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
+import type { CliConfig } from "@marsai-org/utils/cli";
 
 const PLUGIN_ID = "hello@fixmkt";
 const LINKED = "lp";

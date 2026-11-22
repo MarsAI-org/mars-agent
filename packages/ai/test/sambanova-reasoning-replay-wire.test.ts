@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { convertMessages } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { AssistantMessage, Model, ThinkingContent } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { convertMessages } from "@marsai-org/ai/providers/openai-completions";
+import type { AssistantMessage, Model, ThinkingContent } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 interface AssistantWireMessage {
 	role: "assistant";

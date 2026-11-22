@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import type { EffectiveTokenCost, ModelCost, TimeBasedCost, TokenCost } from "./types";
 import { isRecord } from "./utils";
 

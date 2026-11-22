@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { fallbackCreditTargets } from "@oh-my-pi/pi-catalog/compat/fallback-credit";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { fallbackCreditTargets } from "@marsai-org/catalog/compat/fallback-credit";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 // A refusal's fallback-credit token can only be redeemed on the refused
 // model's permitted fallback targets. Turn recovery redeems it only when the

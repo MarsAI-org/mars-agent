@@ -7,7 +7,7 @@
  * `coding-agent/src/tools/browser/relay/protocol.ts`;
  * this file only re-exports the shapes the panel and overlay share with it.
  */
-import type { ImageContent } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/wire";
 import type { OverlayInput, PanelCollabHost, PanelInstall } from "../../coding-agent/src/tools/browser/relay/protocol";
 
 export { OVERLAY_HOST_TAG } from "../../coding-agent/src/tools/browser/relay/protocol";

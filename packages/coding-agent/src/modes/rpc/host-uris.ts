@@ -1,4 +1,4 @@
-import { Snowflake } from "@oh-my-pi/pi-utils";
+import { Snowflake } from "@marsai-org/utils";
 import { InternalUrlRouter } from "../../internal-urls";
 import type {
 	InternalResource,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { hasFileAsPathComponent, loadSessionFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { hasFileAsPathComponent, loadSessionFile } from "@marsai-org/coding-agent/session/session-loader";
+import { TempDir } from "@marsai-org/utils";
 
 // Windows reports ENOENT (not ENOTDIR) when a path component is a regular
 // file; loadSessionFile must keep the ENOTDIR rejection POSIX produces so a

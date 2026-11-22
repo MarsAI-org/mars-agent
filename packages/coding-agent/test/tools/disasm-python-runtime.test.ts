@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { DisasmUnavailableError, type WorkerRuntime } from "@oh-my-pi/pi-coding-agent/disasm/backend";
-import { memoizeWorkerRuntime } from "@oh-my-pi/pi-coding-agent/disasm/python-runtime";
+import { DisasmUnavailableError, type WorkerRuntime } from "@marsai-org/coding-agent/disasm/backend";
+import { memoizeWorkerRuntime } from "@marsai-org/coding-agent/disasm/python-runtime";
 
 /** A resolver that counts its runs and settles when the test says so. */
 function controlled() {

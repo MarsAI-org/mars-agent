@@ -3,11 +3,11 @@
  * collab prompts; the host must hand them to the session alongside the text, not just the text.
  */
 import { afterEach, expect, it } from "bun:test";
-import { importRoomKey } from "@oh-my-pi/pi-coding-agent/collab/crypto";
-import { CollabHost } from "@oh-my-pi/pi-coding-agent/collab/host";
-import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@oh-my-pi/pi-coding-agent/collab/protocol";
-import { CollabSocket } from "@oh-my-pi/pi-coding-agent/collab/relay-client";
-import type { ImageContent } from "@oh-my-pi/pi-wire";
+import { importRoomKey } from "@marsai-org/coding-agent/collab/crypto";
+import { CollabHost } from "@marsai-org/coding-agent/collab/host";
+import { COLLAB_PROTO, type CollabFrame, parseCollabLink } from "@marsai-org/coding-agent/collab/protocol";
+import { CollabSocket } from "@marsai-org/coding-agent/collab/relay-client";
+import type { ImageContent } from "@marsai-org/wire";
 import { installInMemoryRelay, uninstallInMemoryRelay } from "./helpers/in-memory-relay";
 import {
 	type HostObservations,

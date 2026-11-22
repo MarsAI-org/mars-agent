@@ -1,12 +1,12 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils";
+import { isEnoent } from "@marsai-org/utils";
 import { InternalUrlRouter } from "../internal-urls";
 import { sessionResolveContext } from "../internal-urls/context";
 import type { ToolSession } from ".";
 import { unwrapHashlineHeaderPath } from "./hashline-header-path";
 import { resolveToCwd } from "./path-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 /** Where a write to `absolutePath` lands: its deepest existing ancestor realpathed, with
  *  the missing tail re-appended. `undefined` when the path goes through a dangling

@@ -8,19 +8,19 @@ import {
 	untilAborted,
 	withTimeout,
 	workerHostEntry,
-} from "@oh-my-pi/pi-utils";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { resolveImageMaxEdge, resolveImageTokenization } from "@oh-my-pi/pi-catalog/compat/image-tokenization";
+} from "@marsai-org/utils";
+import type { Model } from "@marsai-org/ai";
+import { resolveImageMaxEdge, resolveImageTokenization } from "@marsai-org/catalog/compat/image-tokenization";
 import type { CDPSession, Page, Target, Viewport } from "puppeteer-core";
 import { callSessionTool } from "../../eval/js/tool-bridge";
 import { TOOL_TIMEOUTS } from "../tool-timeouts";
-import { webpExclusionForModel } from "@oh-my-pi/pi-tui/chat/image-loading";
+import { webpExclusionForModel } from "@marsai-org/tui/chat/image-loading";
 import hiddenFramesNotice from "../../prompts/tools/browser-hidden-frames.md" with { type: "text" };
 import type { ToolSession } from "../index";
 import { expandPath } from "../path-utils";
 import { CELL_BUDGET_SLACK_MS } from "../run-scope";
 import { ToolAbortError, toWorkerErrorPayload } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { gracefulKillTreeOnce, isChromiumBrowserExecutable, pickElectronTarget } from "./attach";
 import type * as Cmux from "./cmux/cmux-tab";
 import { CmuxUnavailableError, mapWaitUntil } from "./cmux/rpc";

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { getMenuWindow } from "@oh-my-pi/pi-tui/components/menu-selection";
+import { getMenuWindow } from "@marsai-org/tui/components/menu-selection";
 
 describe("getMenuWindow", () => {
 	it("defaults to centered windowing when alignment is unspecified or center", () => {

@@ -6,8 +6,8 @@
  * exposes one option-driven core plus thin dispatchers that pin the option set
  * for each target.
  */
-import { parseLocalRefPointer } from "@oh-my-pi/omptype";
-import { logger } from "@oh-my-pi/pi-utils";
+import { parseLocalRefPointer } from "@marsai-org/omptype";
+import { logger } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import { dereferenceJsonSchema } from "./dereference";
 import { upgradeJsonSchemaTo202012 } from "./draft";

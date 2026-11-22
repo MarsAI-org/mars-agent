@@ -6,7 +6,7 @@
  *
  * Bank targets cross as `{ bank }`; main resolves the name to its live store.
  */
-import type { RecallResult } from "@oh-my-pi/pi-mnemopi";
+import type { RecallResult } from "@marsai-org/mnemopi";
 import type {
 	BankProfileResponse,
 	CreateBankOptions,

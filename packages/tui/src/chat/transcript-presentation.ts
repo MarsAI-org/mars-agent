@@ -3,7 +3,7 @@
  * {@link setTranscriptPresenters}; each presentable block draws from its
  * {@link TranscriptPresentationState}.
  */
-import type { TspProps, TspSpan, TspText } from "@oh-my-pi/pi-wire";
+import type { TspProps, TspSpan, TspText } from "@marsai-org/wire";
 import { type Component, Container, ownDescription } from "../tui";
 import { theme } from "../theme";
 import { truncateToWidth } from "../render";

@@ -14,7 +14,7 @@
 
 import type { Database, Statement } from "bun:sqlite";
 import * as path from "node:path";
-import { getStatsDbPath, workerHostEntry } from "@oh-my-pi/pi-utils";
+import { getStatsDbPath, workerHostEntry } from "@marsai-org/utils";
 import { getTimeRangeConfig } from "./aggregator";
 import { initDb } from "./db";
 import { classifyAgentType } from "./parser";

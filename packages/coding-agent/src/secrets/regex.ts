@@ -1,4 +1,4 @@
-import { LinearRegExp } from "@oh-my-pi/pi-utils/regex";
+import { LinearRegExp } from "@marsai-org/utils/regex";
 
 /** Add global flag while preserving user-provided flags. */
 function enforceGlobalFlag(flags: string): string {

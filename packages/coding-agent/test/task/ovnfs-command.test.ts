@@ -2,9 +2,9 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSystemPrompt } from "@oh-my-pi/pi-coding-agent/system-prompt";
-import { ovnfsCommand } from "@oh-my-pi/pi-coding-agent/task/settings";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { buildSystemPrompt } from "@marsai-org/coding-agent/system-prompt";
+import { ovnfsCommand } from "@marsai-org/coding-agent/task/settings";
 import { $ } from "bun";
 
 describe("ovnfsCommand", () => {

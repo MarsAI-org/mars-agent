@@ -3,18 +3,18 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createSessionManager } from "@oh-my-pi/pi-coding-agent/main";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { loadEntriesFromFile } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createSessionManager } from "@marsai-org/coding-agent/main";
+import { closeSessionIndex } from "@marsai-org/coding-agent/session/session-index";
+import { loadEntriesFromFile } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	lastSessionTransfer,
 	markSessionMoved,
 	SESSION_TRANSFER_MESSAGE_TYPE,
-} from "@oh-my-pi/pi-coding-agent/session/session-transfer";
-import { getConfigRootDir, setAgentDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/session-transfer";
+import { getConfigRootDir, setAgentDir } from "@marsai-org/utils";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 describe("resuming a session that moved away", () => {

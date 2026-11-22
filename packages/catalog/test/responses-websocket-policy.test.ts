@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveResponsesWebSocketPreference } from "@oh-my-pi/pi-catalog/compat/responses-websocket";
-import type { Api, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveResponsesWebSocketPreference } from "@marsai-org/catalog/compat/responses-websocket";
+import type { Api, ModelSpec } from "@marsai-org/catalog/types";
 
 function responsesModel(overrides: Partial<ModelSpec<Api>> = {}) {
 	return buildModel({

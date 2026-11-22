@@ -1,6 +1,6 @@
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { resolveResponsesWebSocketPreference } from "@oh-my-pi/pi-catalog/compat/responses-websocket";
-import type { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { resolveResponsesWebSocketPreference } from "@marsai-org/catalog/compat/responses-websocket";
+import type { Effort } from "@marsai-org/catalog/effort";
 import {
 	$flag,
 	cloneJsonTree,
@@ -8,7 +8,7 @@ import {
 	logger,
 	type ServerSentEvent,
 	structuredCloneJSON,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import * as AIError from "../error";
 import { getEnvApiKey } from "../env-api-key";
 import type {

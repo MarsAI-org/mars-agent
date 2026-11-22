@@ -1,10 +1,10 @@
 import { Database } from "bun:sqlite";
 import { afterEach, beforeEach, expect, test, vi } from "bun:test";
-import { AuthStorage, SqliteAuthCredentialStore, type UsageHistoryEntry } from "@oh-my-pi/pi-ai";
-import { type AuthBrokerServerHandle, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import { runUsageCommand } from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
+import { AuthStorage, SqliteAuthCredentialStore, type UsageHistoryEntry } from "@marsai-org/ai";
+import { type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { runUsageCommand } from "@marsai-org/coding-agent/cli/usage-cli";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
 
 const BROKER_ENV = ["OMP_AUTH_BROKER_URL", "OMP_AUTH_BROKER_TOKEN"] as const;
 const HOUR_MS = 60 * 60 * 1000;

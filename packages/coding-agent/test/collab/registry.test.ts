@@ -12,8 +12,8 @@ import {
 	listCollabHosts,
 	publishCollabHost,
 	resolveCollabHostLink,
-} from "@oh-my-pi/pi-coding-agent/collab/registry";
-import { IpcConnection, IpcServer, ipcEndpoint } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/coding-agent/collab/registry";
+import { IpcConnection, IpcServer, ipcEndpoint } from "@marsai-org/natives";
 
 const cleanupDirs: string[] = [];
 const openPublications: CollabHostPublication[] = [];

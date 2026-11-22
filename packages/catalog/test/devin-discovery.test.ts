@@ -2,7 +2,7 @@ import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test"
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/utils";
 // Import from source, not the package specifier: the workspace `node_modules`
 // copy resolves to the primary checkout, not this worktree.
 import { buildModel } from "../src/build";

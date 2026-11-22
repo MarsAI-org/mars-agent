@@ -3,11 +3,11 @@ import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CostEstimatorContext } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { initTelemetryExport, isTelemetryExportEnabled } from "@oh-my-pi/pi-coding-agent/telemetry-export";
-import { estimateProviderCost } from "@oh-my-pi/pi-coding-agent/telemetry-export-otlp";
-import { cfgTelemetryOtlpExportEnabled } from "@oh-my-pi/pi-coding-agent/telemetry-settings";
+import type { CostEstimatorContext } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { initTelemetryExport, isTelemetryExportEnabled } from "@marsai-org/coding-agent/telemetry-export";
+import { estimateProviderCost } from "@marsai-org/coding-agent/telemetry-export-otlp";
+import { cfgTelemetryOtlpExportEnabled } from "@marsai-org/coding-agent/telemetry-settings";
 
 /**
  * Gating contract for the OTLP export bootstrap. These cases all short-circuit

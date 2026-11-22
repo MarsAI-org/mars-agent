@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { type Api, AuthStorage, type Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type Api, AuthStorage, type Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { TempDir } from "@marsai-org/utils";
 import {
 	createSerializedRebuilder,
 	gatewayRoutableModels,

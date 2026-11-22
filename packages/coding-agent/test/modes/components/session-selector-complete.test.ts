@@ -1,9 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { getKeybindings, setKeybindings } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { SessionSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
+import { getKeybindings, setKeybindings } from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { SessionSelectorComponent } from "@marsai-org/tui/overlays/session-selector";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
 
 const previousKeybindings = getKeybindings();
 

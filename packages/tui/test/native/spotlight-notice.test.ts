@@ -7,15 +7,15 @@ import {
 	type SpotlightDetails,
 	SpotlightNotice,
 	type SpotlightReason,
-} from "@oh-my-pi/pi-tui/chat/spotlight";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { setTranscriptActionHandler, type TranscriptAction } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { setTranscriptPresenters } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { hasSpotlightOriginal, SpotlightSheet } from "@oh-my-pi/pi-tui/overlays/spotlight-sheet";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { TspChartProps, TspCodeFold, TspCodeMark, TspNode, TspPropNode, TspSpan } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/chat/spotlight";
+import { ReadToolGroupComponent } from "@marsai-org/tui/chat/read-tool-group";
+import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { setTranscriptActionHandler, type TranscriptAction } from "@marsai-org/tui/chat/transcript-actions";
+import { setTranscriptPresenters } from "@marsai-org/tui/chat/transcript-presentation";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { hasSpotlightOriginal, SpotlightSheet } from "@marsai-org/tui/overlays/spotlight-sheet";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { TspChartProps, TspCodeFold, TspCodeMark, TspNode, TspPropNode, TspSpan } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
 
 beforeAll(async () => {

@@ -1,24 +1,24 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
 import type {
 	Extension,
 	ExtensionContext,
 	ExtensionHandler,
 	SessionBeforeShutdownEvent,
 	SessionBeforeShutdownResult,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { postmortem, TempDir } from "@marsai-org/utils";
 
 describe("InteractiveMode pre-quit extension gate", () => {
 	let tempDir: TempDir;

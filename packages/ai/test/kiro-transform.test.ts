@@ -1,10 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { transformKiroRequest } from "@oh-my-pi/pi-ai/providers/kiro/transform";
-import type { AssistantMessage, Context, Message, Model, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { type } from "@marsai-org/omptype";
+import * as AIError from "@marsai-org/ai/error";
+import { transformKiroRequest } from "@marsai-org/ai/providers/kiro/transform";
+import type { AssistantMessage, Context, Message, Model, ToolResultMessage, Usage } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 const lookupTool = { name: "lookup", description: "Look up a path.", parameters: type({ path: "string" }) };
 const zero = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 };

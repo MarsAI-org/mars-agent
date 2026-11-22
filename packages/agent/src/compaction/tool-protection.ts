@@ -1,5 +1,5 @@
-import type { ToolResultMessage } from "@oh-my-pi/pi-ai";
-import { parseSpillUrl } from "@oh-my-pi/pi-utils";
+import type { ToolResultMessage } from "@marsai-org/ai";
+import { parseSpillUrl } from "@marsai-org/utils";
 import type { AgentMessage, AgentToolCall } from "../types";
 import type { SessionEntry } from "./entries";
 

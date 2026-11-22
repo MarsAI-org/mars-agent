@@ -1,18 +1,18 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { CompactionPreparation } from "@oh-my-pi/pi-agent-core/compaction";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { Agent } from "@marsai-org/agent-core";
+import type { CompactionPreparation } from "@marsai-org/agent-core/compaction";
+import * as compactionModule from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage } from "@marsai-org/ai";
+import * as AIError from "@marsai-org/ai/error";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionMaintenance } from "@marsai-org/coding-agent/session/session-maintenance";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 /** Byte-limit 413s may be recoverable when older live history can be compacted. */
 

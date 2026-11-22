@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { renderDemotedThinking } from "@oh-my-pi/pi-ai/dialect";
-import { convertMessages, streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import type { AssistantMessage, FetchImpl, Model, ModelSpec, ThinkingContent, ToolCall } from "@oh-my-pi/pi-ai/types";
-import { removeDsmlToolMarkupLeak } from "@oh-my-pi/pi-ai/utils/dsml-leak";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { renderDemotedThinking } from "@marsai-org/ai/dialect";
+import { convertMessages, streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import type { AssistantMessage, FetchImpl, Model, ModelSpec, ThinkingContent, ToolCall } from "@marsai-org/ai/types";
+import { removeDsmlToolMarkupLeak } from "@marsai-org/ai/utils/dsml-leak";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 interface OpenAICompletionAssistantWireMessage {
 	role: "assistant";

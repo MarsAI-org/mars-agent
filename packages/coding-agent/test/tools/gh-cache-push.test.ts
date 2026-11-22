@@ -2,21 +2,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as bashExecutor from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import type { BashResult } from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
-import { getOrFetchPrDiff } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-diff";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as bashExecutor from "@marsai-org/coding-agent/exec/bash-executor";
+import type { BashResult } from "@marsai-org/coding-agent/exec/bash-executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
+import { getOrFetchPrDiff } from "@marsai-org/coding-agent/tools/gh-pr-diff";
 import {
 	getCached,
 	putCached,
 	resetForTests,
 	resolveGithubCacheAuthKey,
-} from "@oh-my-pi/pi-coding-agent/tools/github-cache";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
+} from "@marsai-org/coding-agent/tools/github-cache";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import * as vcs from "@marsai-org/natives/vcs";
 import { $ } from "bun";
 
 const REPO = "owner/example";

@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import { convertToLlm } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import { convertToLlm } from "@marsai-org/coding-agent/session/messages";
+import { removeWithRetries } from "@marsai-org/utils";
 
 describe("RPC bash context exclusion", () => {
 	let client: RpcClient;

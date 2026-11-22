@@ -15,9 +15,9 @@
  * directory, and `undefined` spans every project.
  */
 import * as path from "node:path";
-import { previewLine, shortenPath, TRUNCATE_LENGTHS } from "@oh-my-pi/pi-tui/render/render-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { formatAge, formatCount, logger } from "@oh-my-pi/pi-utils";
+import { previewLine, shortenPath, TRUNCATE_LENGTHS } from "@marsai-org/tui/render/render-utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { formatAge, formatCount, logger } from "@marsai-org/utils";
 import { type HistoryEntry, HistoryStorage } from "../session/history-storage";
 import { type WordQuery, wordQuery } from "../session/search-query";
 import { listSessionRecaps, listSessionTitles, type SessionRecap } from "../session/session-index";

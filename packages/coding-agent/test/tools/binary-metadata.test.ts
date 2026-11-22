@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as client from "@oh-my-pi/pi-coding-agent/disasm/client";
-import { readBinaryMetadata } from "@oh-my-pi/pi-coding-agent/disasm/metadata";
-import { selectSlice } from "@oh-my-pi/pi-coding-agent/disasm/store";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { readBinary } from "@oh-my-pi/pi-coding-agent/tools/read-binary";
-import { parseSel } from "@oh-my-pi/pi-coding-agent/tools/read-selector";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as client from "@marsai-org/coding-agent/disasm/client";
+import { readBinaryMetadata } from "@marsai-org/coding-agent/disasm/metadata";
+import { selectSlice } from "@marsai-org/coding-agent/disasm/store";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { readBinary } from "@marsai-org/coding-agent/tools/read-binary";
+import { parseSel } from "@marsai-org/coding-agent/tools/read-selector";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
 
 /** One __TEXT segment, one section and LC_MAIN; arm64 and x86_64 share the same layout. */
 function macho(cpu = 0x0100000c): Buffer {

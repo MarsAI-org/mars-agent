@@ -1,22 +1,22 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Message, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockHandler, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage, Message, Model } from "@marsai-org/ai";
+import { createMockModel, type MockHandler, type MockResponse } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
 import {
 	createInterruptedToolResults,
 	createInterruptedTurnAbortMessage,
 	INTERRUPTED_TURN_ERROR,
-} from "@oh-my-pi/pi-coding-agent/session/exit-diagnostics";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/session/exit-diagnostics";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { postmortem, TempDir } from "@marsai-org/utils";
 
 const zeroUsage = {
 	input: 0,

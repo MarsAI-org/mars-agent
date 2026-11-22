@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { convertAnthropicMessages } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { convertAnthropicMessages } from "@marsai-org/ai/providers/anthropic";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { TempDir } from "@marsai-org/utils";
 import { runAnonymizeCommand } from "../src/cli/anonymize-cli";
 import { CliUsageError } from "../src/cli/usage-error";
 import { collectPendingToolCalls } from "../src/session/exit-diagnostics";

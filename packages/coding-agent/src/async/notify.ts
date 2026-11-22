@@ -19,9 +19,9 @@
  * notifier.poll();
  * ```
  */
-import { LineMatcher } from "@oh-my-pi/pi-natives";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { truncate } from "@oh-my-pi/pi-utils";
+import { LineMatcher } from "@marsai-org/natives";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { truncate } from "@marsai-org/utils";
 import { SourceLineReader } from "../job-widgets/runtime";
 import type { JobTextSource } from "../job-widgets/types";
 

@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "bun:test";
-import { streamOpenAICompletions } from "@oh-my-pi/pi-ai/providers/openai-completions";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import type { AssistantMessage, Context, FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import type { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamOpenAICompletions } from "@marsai-org/ai/providers/openai-completions";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import type { AssistantMessage, Context, FetchImpl, Model, ModelSpec } from "@marsai-org/ai/types";
+import type { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { buildModel } from "@marsai-org/catalog/build";
 
 const context: Context = {
 	systemPrompt: ["Stay concise."],

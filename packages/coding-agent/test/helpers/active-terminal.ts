@@ -1,6 +1,6 @@
 import { vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 // Pristine descriptors, captured once at module load, so repeated harnesses
 // always restore the real process state.

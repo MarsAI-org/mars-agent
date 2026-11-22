@@ -1,16 +1,16 @@
 import { expect, test, vi } from "bun:test";
-import type { CustomToolContext } from "@oh-my-pi/pi-coding-agent/extensibility/custom-tools/types";
-import { HostLink } from "@oh-my-pi/pi-coding-agent/mcp/link";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { MCPTool } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
+import type { CustomToolContext } from "@marsai-org/coding-agent/extensibility/custom-tools/types";
+import { HostLink } from "@marsai-org/coding-agent/mcp/link";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import { MCPTool } from "@marsai-org/coding-agent/mcp/tool-bridge";
 import type {
 	MCPRequestOptions,
 	MCPServerConnection,
 	MCPToolDefinition,
 	MCPTransport,
-} from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { createMCPProxyTools } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
+} from "@marsai-org/coding-agent/mcp/types";
+import { createMCPProxyTools } from "@marsai-org/coding-agent/task/executor";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
 import { FakeHost, REMOTE_SPEC } from "./mcp-host/link-fake-host";
 
 function createFakeConnection() {

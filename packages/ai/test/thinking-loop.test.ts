@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, mock, spyOn, test } from "bun:test";
 import { scheduler } from "node:timers/promises";
-import { clearCustomApis, registerCustomApi } from "@oh-my-pi/pi-ai/api-registry";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { createMockModel, type MockContent, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { complete, completeSimple, stream, streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, AssistantMessage, AssistantMessageEvent, Context, Model, ModelSpec } from "@oh-my-pi/pi-ai/types";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { wrapLeakedThinkingStream } from "@oh-my-pi/pi-ai/utils/leaked-thinking-stream";
+import { clearCustomApis, registerCustomApi } from "@marsai-org/ai/api-registry";
+import * as AIError from "@marsai-org/ai/error";
+import { createMockModel, type MockContent, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { complete, completeSimple, stream, streamSimple } from "@marsai-org/ai/stream";
+import type { Api, AssistantMessage, AssistantMessageEvent, Context, Model, ModelSpec } from "@marsai-org/ai/types";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { wrapLeakedThinkingStream } from "@marsai-org/ai/utils/leaked-thinking-stream";
 import {
 	GEMINI_HEADER_RUNAWAY_THRESHOLD,
 	GeminiHeaderRunDetector,
@@ -15,10 +15,10 @@ import {
 	THINKING_LOOP_ERROR_MARKER,
 	ThinkingLoopDetector,
 	withThinkingLoopGuard,
-} from "@oh-my-pi/pi-ai/utils/thinking-loop";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import { isRetryableError } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/utils/thinking-loop";
+import { buildModel } from "@marsai-org/catalog/build";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import { isRetryableError } from "@marsai-org/utils";
 
 function context(): Context {
 	return { systemPrompt: [], messages: [{ role: "user", content: "go", timestamp: 0 }] };

@@ -4,8 +4,8 @@
  * missing its id or token limits is skipped, an unrecognised request schema
  * leaves the model without thinking controls.
  */
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
-import { readBoundedJson } from "@oh-my-pi/pi-utils/bounded-json";
+import { isRecord, logger } from "@marsai-org/utils";
+import { readBoundedJson } from "@marsai-org/utils/bounded-json";
 import { Effort } from "../effort";
 import type { FetchImpl, ModelSpec, ThinkingConfig } from "../types";
 import { discoveryFetch } from "../utils";

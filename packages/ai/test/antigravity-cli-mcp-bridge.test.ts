@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { connect, type Socket } from "node:net";
-import { McpBridge, type McpToolOutput } from "@oh-my-pi/pi-ai/providers/antigravity-cli/mcp-bridge";
+import { McpBridge, type McpToolOutput } from "@marsai-org/ai/providers/antigravity-cli/mcp-bridge";
 
 interface Reply {
 	id: number;

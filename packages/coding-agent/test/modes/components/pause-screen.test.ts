@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { agentPauseGate } from "@oh-my-pi/pi-agent-core";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { TspDocument } from "@oh-my-pi/pi-tui/native/apply";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { Reconciler } from "@oh-my-pi/pi-tui/native/reconcile";
-import type { TspNode } from "@oh-my-pi/pi-wire";
-import { BUILTIN_CONTROL_SLASH_COMMANDS } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-control";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { TuiSlashCommandRuntime } from "@oh-my-pi/pi-coding-agent/slash-commands/types";
+import { agentPauseGate } from "@marsai-org/agent-core";
+import type { Component } from "@marsai-org/tui";
+import { TspDocument } from "@marsai-org/tui/native/apply";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { Reconciler } from "@marsai-org/tui/native/reconcile";
+import type { TspNode } from "@marsai-org/wire";
+import { BUILTIN_CONTROL_SLASH_COMMANDS } from "@marsai-org/coding-agent/slash-commands/builtin-control";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { TuiSlashCommandRuntime } from "@marsai-org/coding-agent/slash-commands/types";
 import { Settings } from "../../../src/config/settings";
 import {
 	PauseScreenComponent,
@@ -16,9 +16,9 @@ import {
 	type PauseWorkStatus,
 	renderPauseScreen,
 	runPauseScreen,
-} from "@oh-my-pi/pi-tui/overlays/pause-screen";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/overlays/pause-screen";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
 
 // Strip SGR colors so assertions see visible text only.
 const stripAnsi = (text: string): string => text.replace(/\x1b\[[0-9;]*m/g, "");

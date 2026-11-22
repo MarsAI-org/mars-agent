@@ -1,10 +1,10 @@
 import { afterAll, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { formatCellError } from "@oh-my-pi/pi-coding-agent/eval/js/error-text";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { formatCellError } from "@marsai-org/coding-agent/eval/js/error-text";
+import { executeJs } from "@marsai-org/coding-agent/eval/js/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
 /** The checkout this test runs from; every frame under it is omp's own code or one of its dependencies. */
 const REPO_ROOT = path.resolve(import.meta.dir, "../../../..");
@@ -164,7 +164,7 @@ describe("formatCellError", () => {
 			"    at eval (unknown)",
 			"    at processTicksAndRejections (node:internal/process/task_queues:105:5)",
 			"    at open ([eval-prelude:browser]:262:24)",
-			`    at run (${at("opt/omp (copy)/node_modules/@oh-my-pi/pi-coding-agent/src/eval/js/shared/runtime.ts")}:556:14)`,
+			`    at run (${at("opt/omp (copy)/node_modules/@marsai-org/coding-agent/src/eval/js/shared/runtime.ts")}:556:14)`,
 			helper,
 			"    at <anonymous> (:0:43)",
 			"    at browser.call (js-cell-1d89.js)",
@@ -202,7 +202,7 @@ describe("formatCellError", () => {
 			`    ${parse}`,
 			"    at run (js-cell-1d89.js:1:2)",
 			"    at map (native:1:11)",
-			`    at execute (${at("proj/node_modules/@oh-my-pi/pi-coding-agent/src/eval/js/executor.ts")}:1:2)`,
+			`    at execute (${at("proj/node_modules/@marsai-org/coding-agent/src/eval/js/executor.ts")}:1:2)`,
 		].join("\n");
 		const output = formatCellError(stack, { ...source, cwd: at("proj"), ompRoot: at("proj/node_modules") });
 		expect(output).toContain(parse);

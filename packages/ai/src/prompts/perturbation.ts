@@ -14,9 +14,9 @@
  * forces it on for every model and `OMP_PROMPT_PERTURBATION=0` forces it off.
  */
 import { createHash } from "node:crypto";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import type { Model } from "@oh-my-pi/pi-catalog/types";
-import { getInstallId } from "@oh-my-pi/pi-utils";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import type { Model } from "@marsai-org/catalog/types";
+import { getInstallId } from "@marsai-org/utils";
 import type { Context, Tool } from "../types";
 // A `.txt` asset (like `template.html.txt`) so the pool is parsed only when a request is first perturbed.
 import poolText from "./perturbation-pool.json.txt" with { type: "text" };

@@ -1,10 +1,10 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import type { Api, AssistantMessage, Model, RawSseEvent } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { RawSseDebugBuffer } from "@oh-my-pi/pi-tui/apps/debug/raw-sse-buffer";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, AssistantMessage, Model, RawSseEvent } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { Effort } from "@marsai-org/ai";
+import { RawSseDebugBuffer } from "@marsai-org/tui/apps/debug/raw-sse-buffer";
+import { TempDir } from "@marsai-org/utils";
 import { $ } from "bun";
 import type { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
@@ -25,12 +25,12 @@ import { executeJs } from "../../src/eval/js/executor";
 import { disposeAllKernelSessions, type PythonResult } from "../../src/eval/py/executor";
 import type { ToolSession } from "../../src/tools";
 import type { AgentDefinition } from "../../src/task/types";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { CostGate } from "../../src/session/cost-gate";
 import { SessionManager } from "../../src/session/session-manager";
 import { rejectionOf } from "../helpers/rejection";
 
-import { cfgRetryFallbackChains, cfgRetryMaxRetries } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgRetryFallbackChains, cfgRetryMaxRetries } from "@marsai-org/coding-agent/session/settings";
 
 async function runEvalCompletionAndWait(
 	args: unknown,

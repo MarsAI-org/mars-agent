@@ -1,9 +1,9 @@
 import { expect, test } from "bun:test";
-import { type Api, type FetchImpl, type Model, type OAuthAccess, streamSimple } from "@oh-my-pi/pi-ai";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { type DryBalanceModelRegistry, runDryBalanceCommand } from "@oh-my-pi/pi-coding-agent/cli/dry-balance-cli";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { type Api, type FetchImpl, type Model, type OAuthAccess, streamSimple } from "@marsai-org/ai";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { buildModel } from "@marsai-org/catalog/build";
+import { type DryBalanceModelRegistry, runDryBalanceCommand } from "@marsai-org/coding-agent/cli/dry-balance-cli";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 
 function fakeModel(provider: string, id: string): Model<Api> {
 	return {

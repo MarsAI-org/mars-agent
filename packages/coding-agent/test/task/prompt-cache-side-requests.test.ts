@@ -1,17 +1,17 @@
 import { afterEach, expect, it, vi } from "bun:test";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildTransformedCodexRequestBody } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import { buildParams } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentLifecycleManager } from "@oh-my-pi/pi-coding-agent/registry/agent-lifecycle";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as settingsStream from "@oh-my-pi/pi-coding-agent/session/settings-stream-fn";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Model } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildTransformedCodexRequestBody } from "@marsai-org/ai/providers/openai-codex-responses";
+import { buildParams } from "@marsai-org/ai/providers/openai-responses";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentLifecycleManager } from "@marsai-org/coding-agent/registry/agent-lifecycle";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as settingsStream from "@marsai-org/coding-agent/session/settings-stream-fn";
+import { TempDir } from "@marsai-org/utils";
 
 interface Request {
 	stage: string;

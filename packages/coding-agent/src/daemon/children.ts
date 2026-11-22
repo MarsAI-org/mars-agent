@@ -3,8 +3,8 @@
  * plain file descriptors, so a child keeps running and stays reachable across
  * an in-place `execReplace` of the daemon.
  */
-import { FdStream, Process, reapChild, spawnRaw } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { FdStream, Process, reapChild, spawnRaw } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import type { ChildExit, ChildSpawn, ManagedChild, ManagedChildState } from "./module";
 
 /** How long a reaped child's pipes get to deliver output written right before its exit. */

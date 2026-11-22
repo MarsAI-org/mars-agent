@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
+import { getThemeByName } from "@marsai-org/tui/theme";
 import {
 	describeJsonTree,
 	formatArgsInline,
 	JSON_TREE_INLINE_LEN,
 	renderJsonTreeLines,
-} from "@oh-my-pi/pi-tui/tools/json-tree";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/tools/json-tree";
+import { INTENT_FIELD } from "@marsai-org/wire";
 
 /** The top-level rows of `value`'s described tree: label text, and whether it expands. */
 function treeRows(value: unknown): { text: string; expands: boolean }[] {

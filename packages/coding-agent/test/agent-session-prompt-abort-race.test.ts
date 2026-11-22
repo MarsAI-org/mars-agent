@@ -6,19 +6,19 @@
  * and abort() must cancel an in-flight vision description rather than wait on it.
  */
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { createMockModel, type MockResponse } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as imageVisionFallback from "@oh-my-pi/pi-coding-agent/utils/image-vision-fallback";
-import * as imageLoading from "@oh-my-pi/pi-coding-agent/utils/image-loading";
-import { withTimeout } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { ImageContent, Model } from "@marsai-org/ai";
+import { createMockModel, type MockResponse } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as imageVisionFallback from "@marsai-org/coding-agent/utils/image-vision-fallback";
+import * as imageLoading from "@marsai-org/coding-agent/utils/image-loading";
+import { withTimeout } from "@marsai-org/utils";
 
 const IMAGE: ImageContent = {
 	type: "image",

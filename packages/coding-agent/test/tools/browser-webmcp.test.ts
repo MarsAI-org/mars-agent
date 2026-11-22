@@ -1,21 +1,21 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
 import {
 	acquireBrowser,
 	holdBrowser,
 	type PuppeteerBrowserHandle,
 	releaseBrowser,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
+} from "@marsai-org/coding-agent/tools/browser/registry";
+import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
 import {
 	WebMcpController,
 	type WebMcpEventsResult,
 	type WebMcpInvokeResult,
 	type WebMcpListResult,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/webmcp";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/webmcp";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { rejectionOf } from "../helpers/rejection";
 import { chromiumAvailable } from "./chromium-probe";
 

@@ -1,7 +1,7 @@
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { isCatalogEndpointUrl } from "@oh-my-pi/pi-catalog/compat/catalog-endpoint";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { $env } from "@oh-my-pi/pi-utils";
+import { isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import { isCatalogEndpointUrl } from "@marsai-org/catalog/compat/catalog-endpoint";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { $env } from "@marsai-org/utils";
 import type { Api, Model, ProviderSessionState } from "../types";
 import { isFoundryEnabled } from "../utils/foundry";
 

@@ -1,13 +1,13 @@
-import { type AgentMessage, type AgentToolResult, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { CompactionOutcome } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ImageContent, Model, UsageReport } from "@oh-my-pi/pi-ai";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import type { Component, OverlayHandle } from "@oh-my-pi/pi-tui";
-import { Loader, Spacer, Text } from "@oh-my-pi/pi-tui";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { appKey, editorKey } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
-import { getAgentDir, getProjectDir, logger, normalizePathForComparison, sanitizeText } from "@oh-my-pi/pi-utils";
+import { type AgentMessage, type AgentToolResult, ThinkingLevel } from "@marsai-org/agent-core";
+import type { CompactionOutcome } from "@marsai-org/agent-core/compaction";
+import type { ImageContent, Model, UsageReport } from "@marsai-org/ai";
+import type { OAuthProvider } from "@marsai-org/ai/oauth/types";
+import * as vcs from "@marsai-org/natives/vcs";
+import type { Component, OverlayHandle } from "@marsai-org/tui";
+import { Loader, Spacer, Text } from "@marsai-org/tui";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import { appKey, editorKey } from "@marsai-org/tui/chrome/keybinding-hints";
+import { getAgentDir, getProjectDir, logger, normalizePathForComparison, sanitizeText } from "@marsai-org/utils";
 import {
 	ADVISOR_DEFAULT_TOOL_NAMES,
 	discoverAdvisorConfigs,
@@ -16,7 +16,7 @@ import {
 	saveWatchdogConfigFile,
 } from "../../advisor";
 import { reset as resetCapabilities } from "../../capability";
-import type { AdvisorConfigScope } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+import type { AdvisorConfigScope } from "@marsai-org/tui/overlays/advisor-config";
 import { showGitOverlay } from "../../cli/git-tui";
 import { formatLoginIdentity } from "../../cli/oauth-terminal";
 import {
@@ -28,7 +28,7 @@ import {
 	saveModelPreset,
 } from "../../config/model-presets";
 import { resolveAdvisorRoleSelection, resolveModelRoleValue } from "../../config/model-resolver";
-import { formatModelSelectorValue } from "@oh-my-pi/pi-tui/overlays/model-selector";
+import { formatModelSelectorValue } from "@marsai-org/tui/overlays/model-selector";
 import { getRoleInfo } from "../../config/model-roles";
 import { settings } from "../../config/settings";
 import { createSettingsHost } from "../../config/settings-ui";
@@ -41,7 +41,7 @@ import {
 	getPluginsCacheDir,
 	MarketplaceManager,
 } from "../../extensibility/plugins/marketplace";
-import { getAvailableThemes, getSymbolTheme, previewTheme, theme } from "@oh-my-pi/pi-tui/theme";
+import { getAvailableThemes, getSymbolTheme, previewTheme, theme } from "@marsai-org/tui/theme";
 import type { AgentHubOpenOptions, InteractiveModeContext, ResumeSessionOptions } from "../../modes/types";
 import type { SessionOAuthAccountList } from "../../session/agent-session-types";
 import type { ResetCreditAccountStatus, ResetCreditRedeemOutcome } from "../../session/auth-storage";
@@ -55,15 +55,15 @@ import {
 import type { ForeignSessionInfo, ForeignSessionSource } from "../../session/foreign-session-store";
 import { previewModelCompactionPoint, setModelCompactionPoint } from "../../session/model-compaction-threshold";
 import { isTranscriptEntry, type TranscriptEntry } from "../../session/session-context";
-import { isUserRequestEntry } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import type { TurnAct, TurnMessage } from "@oh-my-pi/pi-tui/chat/transcript-actions";
+import { isUserRequestEntry } from "@marsai-org/tui/chat/transcript-entry";
+import type { TurnAct, TurnMessage } from "@marsai-org/tui/chat/transcript-actions";
 import type { SessionEntry, SessionTreeNode } from "../../session/session-entries";
 import { findSessionContinuation, readSessionInfo, type SessionInfo } from "../../session/session-listing";
 import { SessionManager } from "../../session/session-manager";
 import { loadPinnedSessionIds, setSessionPinned } from "../../session/session-pins";
 import { FileSessionStorage } from "../../session/session-storage";
 import { listLogoutAccounts, logoutCredential } from "../../slash-commands/helpers/logout";
-import type { LogoutAccount } from "@oh-my-pi/pi-tui/overlays/logout-account-selector";
+import type { LogoutAccount } from "@marsai-org/tui/overlays/logout-account-selector";
 import { describeRedeemOutcome, toResetUsageAccounts } from "../../slash-commands/helpers/reset-usage";
 import { toSessionPinAccounts } from "../../slash-commands/helpers/session-pin";
 import {
@@ -78,47 +78,47 @@ import {
 	type ConfiguredThinkingLevel,
 	concreteThinkingLevel,
 	parseConfiguredThinkingLevel,
-} from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/thinking";
 import type { ToolSession } from "../../tools";
 import { AskTool } from "../../tools/ask";
-import { type AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
-import { sanitizeDisplayWarnings, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
+import { type AskToolDetails } from "@marsai-org/tui/tools/ask";
+import { sanitizeDisplayWarnings, shortenPath } from "@marsai-org/tui/render/render-utils";
 import { ToolAbortError } from "../../tools/tool-errors";
 import { captureBrowserSession } from "../../utils/browser-session";
 import { copyToClipboard } from "../../utils/clipboard";
 import { openPath } from "../../utils/open";
 import { setSessionTerminalTitle } from "../../utils/title-generator";
-import { getAssistantMessageLinkTargets } from "@oh-my-pi/pi-tui/prompt/interactive-context-helpers";
-import { type AdvisorConfigDeps, AdvisorConfigOverlayComponent } from "@oh-my-pi/pi-tui/overlays/advisor-config";
+import { getAssistantMessageLinkTargets } from "@marsai-org/tui/prompt/interactive-context-helpers";
+import { type AdvisorConfigDeps, AdvisorConfigOverlayComponent } from "@marsai-org/tui/overlays/advisor-config";
 import { createAgentsHubDeps } from "../agents-hub-deps";
 import { getEditorCommand, openInEditor } from "../../utils/external-editor";
-import { collapseSharedUsageReports } from "@oh-my-pi/pi-tui/overlays/usage-display";
+import { collapseSharedUsageReports } from "@marsai-org/tui/overlays/usage-display";
 import { limitMatchesActiveAccount } from "../../slash-commands/helpers/active-oauth-account";
-import { AgentHubOverlayComponent } from "@oh-my-pi/pi-tui/overlays/agent-hub";
+import { AgentHubOverlayComponent } from "@marsai-org/tui/overlays/agent-hub";
 import { createAgentHubRuntime } from "../agent-hub-runtime";
-import { AgentsHubComponent } from "@oh-my-pi/pi-tui/overlays/agents-hub";
-import { COPY_SELECTOR_OVERLAY_OPTIONS, CopySelectorComponent } from "@oh-my-pi/pi-tui/overlays/copy-selector";
-import { ExtensionDashboard } from "@oh-my-pi/pi-tui/overlays/extensions/extension-dashboard";
-import { listLiveToolRecords, liveToolRecordFromSession } from "@oh-my-pi/pi-tui/overlays/extensions/live-tool-session";
+import { AgentsHubComponent } from "@marsai-org/tui/overlays/agents-hub";
+import { COPY_SELECTOR_OVERLAY_OPTIONS, CopySelectorComponent } from "@marsai-org/tui/overlays/copy-selector";
+import { ExtensionDashboard } from "@marsai-org/tui/overlays/extensions/extension-dashboard";
+import { listLiveToolRecords, liveToolRecordFromSession } from "@marsai-org/tui/overlays/extensions/live-tool-session";
 import { createExtensionDashboardRuntime } from "../components/extensions/dashboard-runtime";
-import { HistorySearchComponent } from "@oh-my-pi/pi-tui/overlays/history-search";
-import { HookEditorComponent } from "@oh-my-pi/pi-tui/overlays/hook-editor";
-import { ModelHubComponent, type ModelRoleSelectionScope } from "@oh-my-pi/pi-tui/overlays/model-hub";
+import { HistorySearchComponent } from "@marsai-org/tui/overlays/history-search";
+import { HookEditorComponent } from "@marsai-org/tui/overlays/hook-editor";
+import { ModelHubComponent, type ModelRoleSelectionScope } from "@marsai-org/tui/overlays/model-hub";
 import { createModelBrowserSource } from "../model-browser-source";
 import { formatSessionContinuationNotice } from "../persistence-failure";
-import { ModelPickerComponent } from "@oh-my-pi/pi-tui/overlays/model-picker";
-import { PluginSelectorComponent } from "@oh-my-pi/pi-tui/overlays/plugin-selector";
-import { type ResetUsageAccount, ResetUsageSelectorComponent } from "@oh-my-pi/pi-tui/overlays/reset-usage-selector";
-import { type BranchVariantPath, RewindSelectorComponent } from "@oh-my-pi/pi-tui/overlays/rewind-selector";
-import { SessionAccountSelectorComponent } from "@oh-my-pi/pi-tui/overlays/session-account-selector";
-import { SessionSelectorComponent, type SessionSelectorOptions } from "@oh-my-pi/pi-tui/overlays/session-selector";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { TranscriptBlock } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { TreeSelectorComponent } from "@oh-my-pi/pi-tui/overlays/tree-selector";
-import { ThinkingSelectorComponent } from "@oh-my-pi/pi-tui/overlays/thinking-selector";
-import { UsageDashboardComponent } from "@oh-my-pi/pi-tui/overlays/usage-dashboard";
+import { ModelPickerComponent } from "@marsai-org/tui/overlays/model-picker";
+import { PluginSelectorComponent } from "@marsai-org/tui/overlays/plugin-selector";
+import { type ResetUsageAccount, ResetUsageSelectorComponent } from "@marsai-org/tui/overlays/reset-usage-selector";
+import { type BranchVariantPath, RewindSelectorComponent } from "@marsai-org/tui/overlays/rewind-selector";
+import { SessionAccountSelectorComponent } from "@marsai-org/tui/overlays/session-account-selector";
+import { SessionSelectorComponent, type SessionSelectorOptions } from "@marsai-org/tui/overlays/session-selector";
+import { SettingsSelectorComponent } from "@marsai-org/tui/overlays/settings-selector";
+import { TranscriptBlock } from "@marsai-org/tui/chrome/transcript-container";
+import { TreeSelectorComponent } from "@marsai-org/tui/overlays/tree-selector";
+import { ThinkingSelectorComponent } from "@marsai-org/tui/overlays/thinking-selector";
+import { UsageDashboardComponent } from "@marsai-org/tui/overlays/usage-dashboard";
 import { renderUsageReports } from "./command-controller";
-import type { SessionObserverRegistry } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
+import type { SessionObserverRegistry } from "@marsai-org/tui/overlays/session-observer-registry";
 
 import { cfgAdvisorSyncBacklog } from "../../advisor/settings";
 import { cfgBranchSummaryEnabled } from "../../session/context-settings";
@@ -142,11 +142,11 @@ import { cfgTaskAgentModelOverrides } from "../../task/settings";
 /** First-use boundary for provider auth catalog and dialog components. */
 async function loadProviderAuthUi() {
 	const [{ PASTE_CODE_LOGIN_PROVIDERS }, oauth, loginDialog, logoutSelector, oauthSelector] = await Promise.all([
-		import("@oh-my-pi/pi-ai"),
-		import("@oh-my-pi/pi-ai/oauth"),
-		import("@oh-my-pi/pi-tui/overlays/login-dialog"),
-		import("@oh-my-pi/pi-tui/overlays/logout-account-selector"),
-		import("@oh-my-pi/pi-tui/overlays/oauth-selector"),
+		import("@marsai-org/ai"),
+		import("@marsai-org/ai/oauth"),
+		import("@marsai-org/tui/overlays/login-dialog"),
+		import("@marsai-org/tui/overlays/logout-account-selector"),
+		import("@marsai-org/tui/overlays/oauth-selector"),
 	]);
 	return {
 		PASTE_CODE_LOGIN_PROVIDERS,

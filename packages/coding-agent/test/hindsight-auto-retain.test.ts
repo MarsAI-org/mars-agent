@@ -9,12 +9,12 @@ import type {
 	CreateBankOptions,
 	RetainOptions,
 	RetainResponse,
-} from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import { HindsightApi } from "@oh-my-pi/pi-coding-agent/hindsight/client";
-import type { HindsightConfig } from "@oh-my-pi/pi-coding-agent/hindsight/config";
-import { HindsightSessionState } from "@oh-my-pi/pi-coding-agent/hindsight/state";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session-events";
+} from "@marsai-org/coding-agent/hindsight/client";
+import { HindsightApi } from "@marsai-org/coding-agent/hindsight/client";
+import type { HindsightConfig } from "@marsai-org/coding-agent/hindsight/config";
+import { HindsightSessionState } from "@marsai-org/coding-agent/hindsight/state";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session-events";
 
 const makeConfig = (overrides: Partial<HindsightConfig> = {}): HindsightConfig => ({
 	hindsightApiUrl: "http://localhost:8888",

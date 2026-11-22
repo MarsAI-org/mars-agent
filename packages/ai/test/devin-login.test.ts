@@ -1,18 +1,18 @@
 import { Database } from "bun:sqlite";
 import { describe, expect, test } from "bun:test";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import type { OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import { devinUsageProvider } from "@oh-my-pi/pi-ai/usage/devin";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import type { OAuthController } from "@marsai-org/ai/registry/oauth/types";
+import { devinUsageProvider } from "@marsai-org/ai/usage/devin";
 import {
 	DevinPlanInfoSchema,
 	GetUserStatusRequestSchema,
 	GetUserStatusResponseSchema,
 	PlanInfoSchema,
 	UserStatusSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 describe("Devin CLI login", () => {
 	test("exchanges callback code with CLI token JSON endpoint", async () => {

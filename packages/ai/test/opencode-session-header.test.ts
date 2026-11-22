@@ -1,16 +1,16 @@
 import { describe, expect, it } from "bun:test";
-import { completeSimple, stream } from "@oh-my-pi/pi-ai";
-import { buildAnthropicClientOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { applyInferenceHeaders, resolveOpenCodeGoCacheAffinity } from "@oh-my-pi/pi-ai/providers/inference-headers";
+import { completeSimple, stream } from "@marsai-org/ai";
+import { buildAnthropicClientOptions } from "@marsai-org/ai/providers/anthropic";
+import { applyInferenceHeaders, resolveOpenCodeGoCacheAffinity } from "@marsai-org/ai/providers/inference-headers";
 import {
 	normalizeOpenAIPromptCacheKey,
 	resolveOpenAIRequestSetup,
 	type OpenAIRequestSetupModel,
-} from "@oh-my-pi/pi-ai/providers/openai-shared";
-import type { Api, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { USER_AGENT } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/providers/openai-shared";
+import type { Api, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { USER_AGENT } from "@marsai-org/utils";
 
 import { withEnv } from "./helpers";
 

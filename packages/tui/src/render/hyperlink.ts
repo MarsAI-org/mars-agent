@@ -7,8 +7,8 @@
  */
 import * as os from "node:os";
 import * as url from "node:url";
-import { logger } from "@oh-my-pi/pi-utils";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import { logger } from "@marsai-org/utils";
+import type { TspSpan } from "@marsai-org/wire";
 import { span } from "../native/describe";
 import { setTerminalHyperlinks, TERMINAL, type TerminalId } from "../terminal-capabilities";
 

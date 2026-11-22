@@ -1,8 +1,8 @@
 import { describe, expect, it, jest, spyOn } from "bun:test";
-import { ensureChromiumExecutable, loadPuppeteer } from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { isNavigatedContextError } from "@oh-my-pi/pi-coding-agent/tools/browser/navigation";
-import { registerSemanticQueryHandlers } from "@oh-my-pi/pi-coding-agent/tools/browser/query-handlers";
-import { TERN_KIT_SOURCE } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/page-kit";
+import { ensureChromiumExecutable, loadPuppeteer } from "@marsai-org/coding-agent/tools/browser/launch";
+import { isNavigatedContextError } from "@marsai-org/coding-agent/tools/browser/navigation";
+import { registerSemanticQueryHandlers } from "@marsai-org/coding-agent/tools/browser/query-handlers";
+import { TERN_KIT_SOURCE } from "@marsai-org/coding-agent/tools/browser/tern/page-kit";
 import type { Page } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 import { rejectionOf } from "../helpers/rejection";

@@ -11,32 +11,32 @@
  * counter) and memoises each card's node by its face, so an unchanged card is
  * the same node reference and the reconciler skips it.
  */
-import { type TspProps, type TspTrayMain, type TspTrayStatus, toolIntentLabel } from "@oh-my-pi/pi-wire";
-import type { Component } from "@oh-my-pi/pi-tui";
-import { compact, keyed, keyNames, node, span, stableKey } from "@oh-my-pi/pi-tui/native/describe";
-import { sameItems, sameProps } from "@oh-my-pi/pi-tui/native/memo";
-import type { NativeChild, NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { formatCost, liveModelChip, modelChip } from "@oh-my-pi/pi-tui/overlays/agent-hub-renderer";
-import { type AgentRecordLike, MAIN_AGENT_ID } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
-import { stripInlineMarkdown } from "@oh-my-pi/pi-tui/overlays/plan-toc";
-import type { ObservableSession } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
+import { type TspProps, type TspTrayMain, type TspTrayStatus, toolIntentLabel } from "@marsai-org/wire";
+import type { Component } from "@marsai-org/tui";
+import { compact, keyed, keyNames, node, span, stableKey } from "@marsai-org/tui/native/describe";
+import { sameItems, sameProps } from "@marsai-org/tui/native/memo";
+import type { NativeChild, NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { formatCost, liveModelChip, modelChip } from "@marsai-org/tui/overlays/agent-hub-renderer";
+import { type AgentRecordLike, MAIN_AGENT_ID } from "@marsai-org/tui/overlays/agent-hub-types";
+import { stripInlineMarkdown } from "@marsai-org/tui/overlays/plan-toc";
+import type { ObservableSession } from "@marsai-org/tui/overlays/session-observer-registry";
 import {
 	previewLine,
 	replaceTabs,
 	shortenEmbeddedPaths,
 	shortenToolArgumentPaths,
 	TRUNCATE_LENGTHS,
-} from "@oh-my-pi/pi-tui/render/render-utils";
+} from "@marsai-org/tui/render/render-utils";
 import {
 	describeJobWidget,
 	describeJobWidgetMiniSpark,
 	type JobWidgetView,
 	jobWidgetGlance,
 	jobWidgetGlanceSpans,
-} from "@oh-my-pi/pi-tui/tools/job-widget";
-import { jobDisplayLabel } from "@oh-my-pi/pi-tui/tools/job-label";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { formatCount, formatDuration, formatNumber, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/tools/job-widget";
+import { jobDisplayLabel } from "@marsai-org/tui/tools/job-label";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
+import { formatCount, formatDuration, formatNumber, sanitizeText } from "@marsai-org/utils";
 import type { AsyncJob, AsyncJobManagerApi } from "../async";
 import { agentRunOf } from "../async/job-control";
 import type { IrcBusApi } from "../irc/bus";

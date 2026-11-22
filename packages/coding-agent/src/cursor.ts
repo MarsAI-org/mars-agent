@@ -12,7 +12,7 @@ import {
 	TOOL_RESULT_ADDITIONAL_CONTEXT,
 	type ToolResultWithAdditionalContext,
 	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
+} from "@marsai-org/agent-core";
 import type {
 	CursorExecFrameContext,
 	CursorMcpCall,
@@ -22,7 +22,7 @@ import type {
 	CursorTodoSnapshot,
 	CursorExecHandlers as ICursorExecHandlers,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	cursorRawReadPath,
 	omitUndefinedArgs,
@@ -34,9 +34,9 @@ import {
 	piReadPath,
 	piTimeout,
 	shellDeadlineSeconds,
-} from "@oh-my-pi/pi-ai/providers/cursor-pi-args";
-import { editDiffString } from "@oh-my-pi/pi-natives";
-import { isEnoent, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/providers/cursor-pi-args";
+import { editDiffString } from "@marsai-org/natives";
+import { isEnoent, sanitizeText } from "@marsai-org/utils";
 import { cursorMcpPrefersReplaceEdit, normalizeCursorReplaceArgs } from "./cursor-bridge-tools";
 import { normalizeToLF, stripBom } from "./edit/normalize";
 import type { MCPResourceReadResult } from "./mcp/types";
@@ -54,8 +54,8 @@ import {
 	resolveToCwd,
 	splitPathAndSelPreferringLiteral,
 } from "./tools/path-utils";
-import type { EditToolDetails } from "@oh-my-pi/pi-tui/tools/edit";
-import type { TodoPhase, TodoStatus } from "@oh-my-pi/pi-tui/tools/todo";
+import type { EditToolDetails } from "@marsai-org/tui/tools/edit";
+import type { TodoPhase, TodoStatus } from "@marsai-org/tui/tools/todo";
 
 /** Phase used for Cursor-owned tasks with no local phase grouping. */
 const CURSOR_TODO_PHASE = "Tasks";

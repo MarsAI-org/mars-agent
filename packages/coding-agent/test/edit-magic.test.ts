@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { EditTool, magicEditSchema } from "@oh-my-pi/pi-coding-agent/edit";
-import { applyDescribedChange, parseMagicInput } from "@oh-my-pi/pi-coding-agent/edit/magic";
-import { compileLineEdits } from "@oh-my-pi/pi-coding-agent/edit/magic-lines";
-import { fileViews } from "@oh-my-pi/pi-coding-agent/edit/magic-view";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { EditTool, magicEditSchema } from "@marsai-org/coding-agent/edit";
+import { applyDescribedChange, parseMagicInput } from "@marsai-org/coding-agent/edit/magic";
+import { compileLineEdits } from "@marsai-org/coding-agent/edit/magic-lines";
+import { fileViews } from "@marsai-org/coding-agent/edit/magic-view";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 import { rejectionOf } from "./helpers/rejection";
 

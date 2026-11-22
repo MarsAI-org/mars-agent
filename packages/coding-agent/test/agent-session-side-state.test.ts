@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type StreamFn, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Context, FetchImpl, Message, Model, ProviderSessionState } from "@oh-my-pi/pi-ai";
-import { streamOpenAIResponses } from "@oh-my-pi/pi-ai/providers/openai-responses";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { type } from "@marsai-org/omptype";
+import { Agent, type StreamFn, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Context, FetchImpl, Message, Model, ProviderSessionState } from "@marsai-org/ai";
+import { streamOpenAIResponses } from "@marsai-org/ai/providers/openai-responses";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 
 const model = getBundledModel("openai", "gpt-5-mini") as Model<"openai-responses">;
 

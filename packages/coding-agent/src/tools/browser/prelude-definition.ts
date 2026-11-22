@@ -1,4 +1,4 @@
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import type { Settings } from "../../config/settings";
 import type { HostEvalPreludeDefinition } from "../../eval/preludes";
 import relayGuidance from "../../prompts/system/browser-relay.md" with { type: "text" };

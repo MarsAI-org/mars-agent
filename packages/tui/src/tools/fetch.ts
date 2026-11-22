@@ -2,13 +2,13 @@ import { isReadableUrlPath, readSelectorRangeStart } from "./read";
 import type { Component } from "../tui";
 import { Text } from "../components/text";
 import type { NativeToolHead, NativeToolView, RenderResultOptions } from "./renderer";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspSpan } from "@marsai-org/wire";
 import { compact, span, text } from "../native/describe";
 import { plainText } from "../native/spans";
 import { errorText, noteText, resultText, statsText } from "./native-view";
 import { type Theme, theme } from "../theme/theme";
 import type { OutputMeta } from "./output-meta";
-import { truncate } from "@oh-my-pi/pi-utils";
+import { truncate } from "@marsai-org/utils";
 import { renderStatusLine, urlHyperlink } from "../render";
 import { framedToolCard } from "../render/tool-card";
 import {

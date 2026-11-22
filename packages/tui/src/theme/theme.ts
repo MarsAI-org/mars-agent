@@ -1,9 +1,9 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { detectMacOSAppearance, MacAppearanceObserver } from "@oh-my-pi/pi-natives";
+import { detectMacOSAppearance, MacAppearanceObserver } from "@marsai-org/natives";
 import type { Terminal, TerminalAppearance } from "../terminal";
-import { getCustomThemesDir } from "@oh-my-pi/pi-utils/dirs";
-import * as logger from "@oh-my-pi/pi-utils/logger";
+import { getCustomThemesDir } from "@marsai-org/utils/dirs";
+import * as logger from "@marsai-org/utils/logger";
 import { isTerminalBackgroundQueryTrusted } from "../terminal-multiplexer";
 import { setActiveSymbolTheme } from "./active-symbols";
 import { ansi256ToHex, isLightSurface, resolveThemeColors, resolveVarRefs } from "./color";

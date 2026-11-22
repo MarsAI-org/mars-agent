@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import { stripVTControlCharacters } from "node:util";
-import type { Rule } from "@oh-my-pi/pi-coding-agent/capability/rule";
-import { TodoReminderComponent } from "@oh-my-pi/pi-tui/chat/todo-reminder";
-import { ToolActivityContainer } from "@oh-my-pi/pi-tui/chrome/tool-activity";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { TtsrNotificationComponent } from "@oh-my-pi/pi-tui/chat/ttsr-notification";
-import { getThemeByName, setThemeInstance } from "@oh-my-pi/pi-tui/theme";
-import { Text } from "@oh-my-pi/pi-tui";
+import type { Rule } from "@marsai-org/coding-agent/capability/rule";
+import { TodoReminderComponent } from "@marsai-org/tui/chat/todo-reminder";
+import { ToolActivityContainer } from "@marsai-org/tui/chrome/tool-activity";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { TtsrNotificationComponent } from "@marsai-org/tui/chat/ttsr-notification";
+import { getThemeByName, setThemeInstance } from "@marsai-org/tui/theme";
+import { Text } from "@marsai-org/tui";
 
 const darkTheme = await getThemeByName("dark");
 

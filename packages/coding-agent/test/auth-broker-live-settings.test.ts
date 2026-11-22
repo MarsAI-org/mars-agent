@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai";
-import { setUnpausedProviders } from "@oh-my-pi/pi-ai/oauth";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import { type AuthBrokerServerHandle, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { discoverAuthStorage } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { createAuthStorageSettingsSync } from "@oh-my-pi/pi-coding-agent/session/auth-broker-config";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { cfgAuthBrokerUrl, cfgAuthUnpausedProviders } from "@oh-my-pi/pi-coding-agent/config/model-settings";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { setUnpausedProviders } from "@marsai-org/ai/oauth";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import { type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { discoverAuthStorage } from "@marsai-org/coding-agent/sdk";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { createAuthStorageSettingsSync } from "@marsai-org/coding-agent/session/auth-broker-config";
+import { TempDir } from "@marsai-org/utils";
+import { cfgAuthBrokerUrl, cfgAuthUnpausedProviders } from "@marsai-org/coding-agent/config/model-settings";
 
 const PROVIDER = "live-broker-test";
 const TOKEN = "live-broker-bearer";

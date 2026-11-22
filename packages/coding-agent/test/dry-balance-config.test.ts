@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import * as path from "node:path";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 const cliEntry = path.join(import.meta.dir, "..", "src", "cli.ts");
 

@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { MCPTransportError } from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import type { McpRemoteSpec } from "@oh-my-pi/pi-coding-agent/mcp/host/contract";
-import type { McpPeer } from "@oh-my-pi/pi-coding-agent/mcp/host/peer";
-import { mcpUpstreams } from "@oh-my-pi/pi-coding-agent/mcp/host/peers";
-import { SseUpstream } from "@oh-my-pi/pi-coding-agent/mcp/host/sse-upstream";
-import { MCP_LEGACY_TTL_MS } from "@oh-my-pi/pi-coding-agent/mcp/host/store";
-import { requestMeta } from "@oh-my-pi/pi-coding-agent/mcp/protocol";
-import { isRetriableConnectionError } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import { withTimeout } from "@oh-my-pi/pi-utils";
+import { MCPTransportError } from "@marsai-org/coding-agent/mcp/errors";
+import type { McpRemoteSpec } from "@marsai-org/coding-agent/mcp/host/contract";
+import type { McpPeer } from "@marsai-org/coding-agent/mcp/host/peer";
+import { mcpUpstreams } from "@marsai-org/coding-agent/mcp/host/peers";
+import { SseUpstream } from "@marsai-org/coding-agent/mcp/host/sse-upstream";
+import { MCP_LEGACY_TTL_MS } from "@marsai-org/coding-agent/mcp/host/store";
+import { requestMeta } from "@marsai-org/coding-agent/mcp/protocol";
+import { isRetriableConnectionError } from "@marsai-org/coding-agent/mcp/tool-bridge";
+import { withTimeout } from "@marsai-org/utils";
 import { rejectionOf } from "../helpers/rejection";
 import { httpSpec, realDeps } from "./upstream-support";
 

@@ -1,4 +1,4 @@
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
+import { toNumber } from "@marsai-org/catalog/utils";
 import type { UsageAmount, UsageStatus } from "../usage";
 
 /** Milliseconds in one hour. */

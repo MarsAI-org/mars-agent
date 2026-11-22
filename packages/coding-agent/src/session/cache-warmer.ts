@@ -36,10 +36,10 @@ import {
 	resolveCacheRetention,
 	type SimpleStreamOptions,
 	type Usage,
-} from "@oh-my-pi/pi-ai";
-import { isPromptCachePrewarmSupported } from "@oh-my-pi/pi-catalog/compat/prompt-cache-prewarm";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { isAnthropicOAuthToken } from "@oh-my-pi/pi-catalog/utils";
+} from "@marsai-org/ai";
+import { isPromptCachePrewarmSupported } from "@marsai-org/catalog/compat/prompt-cache-prewarm";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { isAnthropicOAuthToken } from "@marsai-org/catalog/utils";
 import type { CacheWarmingDecisionEvent, CacheWarmingDecisionEventResult } from "../extensibility/shared-events";
 
 export type { CacheWarmingDecisionEvent, CacheWarmingDecisionEventResult };

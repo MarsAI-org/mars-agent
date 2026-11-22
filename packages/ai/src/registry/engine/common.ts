@@ -9,8 +9,8 @@ import type {
 	CompiledCredentialMap,
 	CompiledOAuthRequest,
 	CompiledUserinfo,
-} from "@oh-my-pi/pi-catalog/compat/types";
-import { $env } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/compat/types";
+import { $env } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { FetchImpl } from "../../types";
 import { HOOKS } from "../hooks";

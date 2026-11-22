@@ -1,24 +1,24 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { agentLoop, type AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import type { AgentLoopConfig } from "@oh-my-pi/pi-agent-core/types";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, Message, Model } from "@oh-my-pi/pi-ai";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { agentLoop, type AgentToolContext } from "@marsai-org/agent-core";
+import type { AgentLoopConfig } from "@marsai-org/agent-core/types";
+import * as ai from "@marsai-org/ai";
+import type { Api, AssistantMessage, Message, Model } from "@marsai-org/ai";
+import { buildModel } from "@marsai-org/catalog/build";
+import { TempDir } from "@marsai-org/utils";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import type {
 	ExtensionFormDialogResult,
 	ExtensionUIDialogOptions,
 	ExtensionUISelectItem,
-} from "@oh-my-pi/pi-coding-agent/extensibility/extensions";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AskTool, recoverAskHtml } from "@oh-my-pi/pi-coding-agent/tools/ask";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { tagImageAttachmentSource } from "@oh-my-pi/pi-tui/prompt/image-source";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+} from "@marsai-org/coding-agent/extensibility/extensions";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { AskTool, recoverAskHtml } from "@marsai-org/coding-agent/tools/ask";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { TERMINAL } from "@marsai-org/tui";
+import { tagImageAttachmentSource } from "@marsai-org/tui/prompt/image-source";
+import { initTheme } from "@marsai-org/tui/theme";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 
 // 1x1 transparent PNG.
 const TINY_PNG_BASE64 =

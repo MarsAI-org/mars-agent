@@ -2,19 +2,19 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { SettingsSelectorComponent } from "@oh-my-pi/pi-tui/overlays/settings-selector";
-import { createSettingsHost } from "@oh-my-pi/pi-coding-agent/config/settings-ui";
-import { createPluginSettingsHost } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/settings-host";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TspDocument } from "@oh-my-pi/pi-tui/native/apply";
-import { Reconciler } from "@oh-my-pi/pi-tui/native/reconcile";
-import type { TspNode } from "@oh-my-pi/pi-wire";
-import { getProjectAgentDir, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { SettingsSelectorComponent } from "@marsai-org/tui/overlays/settings-selector";
+import { createSettingsHost } from "@marsai-org/coding-agent/config/settings-ui";
+import { createPluginSettingsHost } from "@marsai-org/coding-agent/extensibility/plugins/settings-host";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TspDocument } from "@marsai-org/tui/native/apply";
+import { Reconciler } from "@marsai-org/tui/native/reconcile";
+import type { TspNode } from "@marsai-org/wire";
+import { getProjectAgentDir, removeWithRetries } from "@marsai-org/utils";
 
-import { cfgDevAutoqa } from "@oh-my-pi/pi-coding-agent/tools/settings";
-import { cfgContextFilesExtra } from "@oh-my-pi/pi-coding-agent/session/context-settings";
+import { cfgDevAutoqa } from "@marsai-org/coding-agent/tools/settings";
+import { cfgContextFilesExtra } from "@marsai-org/coding-agent/session/context-settings";
 
 beforeAll(async () => {
 	await initTheme();

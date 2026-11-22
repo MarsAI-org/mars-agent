@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import * as piUtils from "@oh-my-pi/pi-utils";
+import * as piUtils from "@marsai-org/utils";
 import type { SegmentContext } from "../src/status-line/segments";
 import { describeSegment, renderSegment } from "../src/status-line/segments";
 import { initTheme, theme } from "../src/theme";

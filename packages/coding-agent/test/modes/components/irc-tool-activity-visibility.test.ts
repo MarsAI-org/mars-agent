@@ -1,13 +1,13 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { UserMessage } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { Text, TUI } from "@oh-my-pi/pi-tui";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import type { CustomMessage } from "@oh-my-pi/pi-tui/chat/messages";
-import type { TranscriptEntryLike } from "@oh-my-pi/pi-tui/chat/transcript-entry";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { UserMessage } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { Text, TUI } from "@marsai-org/tui";
+import { ChatTranscriptBuilder } from "@marsai-org/tui/chat/chat-transcript-builder";
+import type { CustomMessage } from "@marsai-org/tui/chat/messages";
+import type { TranscriptEntryLike } from "@marsai-org/tui/chat/transcript-entry";
+import { initTheme } from "@marsai-org/tui/theme";
 import { VirtualTerminal } from "../../../../tui/test/virtual-terminal";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 

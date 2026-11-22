@@ -1,13 +1,13 @@
 import { expect, test } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
-import { crc32 } from "@oh-my-pi/pi-ai/providers/aws-eventstream";
-import { type KiroOptions, streamKiro } from "@oh-my-pi/pi-ai/providers/kiro/stream";
-import type { KiroRequest } from "@oh-my-pi/pi-ai/providers/kiro/transform";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Context, FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { encodeKiroCredential } from "@oh-my-pi/pi-catalog/wire/kiro";
+import * as AIError from "@marsai-org/ai/error";
+import { crc32 } from "@marsai-org/ai/providers/aws-eventstream";
+import { type KiroOptions, streamKiro } from "@marsai-org/ai/providers/kiro/stream";
+import type { KiroRequest } from "@marsai-org/ai/providers/kiro/transform";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Context, FetchImpl, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { encodeKiroCredential } from "@marsai-org/catalog/wire/kiro";
 
 const MODEL_ENDPOINT = "https://runtime.us-east-1.kiro.dev/";
 const API_KEY = encodeKiroCredential({ kind: "api_key", token: "ksk_kiro-token" });

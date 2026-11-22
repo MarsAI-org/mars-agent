@@ -28,8 +28,8 @@ import {
 	type PtyArgvStartOptions,
 	type PtyDimensions,
 	PtySession,
-} from "@oh-my-pi/pi-natives";
-import { $which, isCompiledBinary } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/natives";
+import { $which, isCompiledBinary } from "@marsai-org/utils";
 import type * as KittyVt from "kitty-vt-wasm";
 import type { Color, KittyEvent, KittyTerminal } from "kitty-vt-wasm";
 import { tmpdir } from "node:os";

@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
+import { Tokenizer } from "@marsai-org/agent-core";
 import {
 	countResponsesHistoryTokens,
 	trimRemoteCompactionInputToContextWindow,
-} from "@oh-my-pi/pi-agent-core/compaction/openai";
-import { estimateImageTokens } from "@oh-my-pi/pi-agent-core/image-tokens";
-import type { Model, UserMessage } from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/agent-core/compaction/openai";
+import { estimateImageTokens } from "@marsai-org/agent-core/image-tokens";
+import type { Model, UserMessage } from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 /** Base64 PNG whose IHDR declares `width`x`height`; the pixel data is irrelevant to sizing. */
 function pngWithSize(width: number, height: number): string {

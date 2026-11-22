@@ -1,7 +1,7 @@
-import { logger, toError } from "@oh-my-pi/pi-utils";
+import { logger, toError } from "@marsai-org/utils";
 import { Settings } from "../config/settings";
-import { type ArtifactAllocator, type OutputArtifactError, OutputSink } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { statusEventKey } from "@oh-my-pi/pi-tui/tools/eval";
+import { type ArtifactAllocator, type OutputArtifactError, OutputSink } from "@marsai-org/tui/tools/streaming-output";
+import { statusEventKey } from "@marsai-org/tui/tools/eval";
 import type { ToolSession } from "../tools";
 import { ToolAbortError } from "../tools/tool-errors";
 import {

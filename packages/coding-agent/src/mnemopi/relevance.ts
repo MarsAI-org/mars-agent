@@ -1,4 +1,4 @@
-import { type AnswerFor, type ChoiceQuestion, judgeQuestions, renderQuestion } from "@oh-my-pi/pi-ai";
+import { type AnswerFor, type ChoiceQuestion, judgeQuestions, renderQuestion } from "@marsai-org/ai";
 import { stripRetentionProtocolMarkers } from "../hindsight/content";
 import type { ChainJudge } from "../judgment";
 import questionFile from "../prompts/judge/memory-relevance.json" with { type: "json" };

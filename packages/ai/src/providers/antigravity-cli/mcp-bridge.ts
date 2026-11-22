@@ -3,7 +3,7 @@
  * Tools are listed once per process as mcp_ide-tools_<name>. MCP progress does
  * not extend agy's 180s timeout; the host cancels and drains parked turns first.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import type { Socket, TCPSocketListener } from "bun";
 
 /** One fixed tool advertised over MCP tools/list. */

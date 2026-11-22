@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { Api, AuthStorage, Model } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { runSearchQuery } from "@oh-my-pi/pi-coding-agent/web/search";
-import * as provider from "@oh-my-pi/pi-coding-agent/web/search/provider";
-import { SearchProvider } from "@oh-my-pi/pi-coding-agent/web/search/provider";
-import type { SearchParams } from "@oh-my-pi/pi-coding-agent/web/search/providers/base";
-import type { SearchResponse } from "@oh-my-pi/pi-coding-agent/web/search/types";
-import { cfgProvidersWebKeyless, cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";
+import type { Api, AuthStorage, Model } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { runSearchQuery } from "@marsai-org/coding-agent/web/search";
+import * as provider from "@marsai-org/coding-agent/web/search/provider";
+import { SearchProvider } from "@marsai-org/coding-agent/web/search/provider";
+import type { SearchParams } from "@marsai-org/coding-agent/web/search/providers/base";
+import type { SearchResponse } from "@marsai-org/coding-agent/web/search/types";
+import { cfgProvidersWebKeyless, cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
 import { createInMemoryAuthStorage } from "../../helpers/agent-session-setup";
 
 /** The real engine loader, captured before any test replaces it. */

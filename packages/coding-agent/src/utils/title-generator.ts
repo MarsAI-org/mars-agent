@@ -13,13 +13,13 @@ import {
 	type Message,
 	type Model,
 	retryTransientCompletion,
-} from "@oh-my-pi/pi-ai";
-import { StreamMarkupHealing } from "@oh-my-pi/pi-ai/utils/stream-markup-healing";
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui";
-import { isNativeRendering, onNativeRenderingChange } from "@oh-my-pi/pi-tui/native/state";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { SPINNER_FRAMES } from "@oh-my-pi/pi-tui/theme/symbols";
-import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { StreamMarkupHealing } from "@marsai-org/ai/utils/stream-markup-healing";
+import { writeTerminalSequence } from "@marsai-org/tui";
+import { isNativeRendering, onNativeRenderingChange } from "@marsai-org/tui/native/state";
+import { theme } from "@marsai-org/tui/theme";
+import { SPINNER_FRAMES } from "@marsai-org/tui/theme/symbols";
+import { $env, isTerminalHeadless, isWsl, logger, prompt } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 
@@ -34,7 +34,7 @@ import { isLowSignalTitleInput, normalizeGeneratedTitle } from "../tiny/text";
 import { tinyTitleClient } from "../tiny/title-client";
 
 import { cfgRetryModelFallback } from "../session/settings";
-import { DEFAULT_SPINNER_INTERVAL_MS, SPINNER_INTERVAL_STATIC } from "@oh-my-pi/pi-tui/spinner-clock";
+import { DEFAULT_SPINNER_INTERVAL_MS, SPINNER_INTERVAL_STATIC } from "@marsai-org/tui/spinner-clock";
 
 const TITLE_SYSTEM_PROMPT = prompt.render(titleSystemPrompt);
 const TITLE_MARKER_INSTRUCTION = prompt.render(titleMarkerInstruction);

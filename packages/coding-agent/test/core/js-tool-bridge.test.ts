@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext, AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	EVAL_TIMEOUT_PAUSE_OP,
 	EVAL_TIMEOUT_RESUME_OP,
 	isEvalTimeoutControlEvent,
-} from "@oh-my-pi/pi-coding-agent/eval/bridge-timeout";
-import { callSessionTool } from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import type { EvalShadowCellSession } from "@oh-my-pi/pi-coding-agent/eval/speculation/cell-session";
-import { type TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
-import { TodoTool, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/coding-agent/eval/bridge-timeout";
+import { callSessionTool } from "@marsai-org/coding-agent/eval/js/tool-bridge";
+import type { EvalShadowCellSession } from "@marsai-org/coding-agent/eval/speculation/cell-session";
+import { type TodoPhase } from "@marsai-org/tui/tools/todo";
+import { TodoTool, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { wrapToolWithMetaNotice } from "@marsai-org/coding-agent/tools/output-meta";
+import { INTENT_FIELD } from "@marsai-org/wire";
 
 function createTool(name: string, execute: AgentTool["execute"]): AgentTool {
 	return {

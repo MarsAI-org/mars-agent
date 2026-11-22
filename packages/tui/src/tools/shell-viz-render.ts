@@ -1,5 +1,5 @@
-import type { ShellVizPresentation, ShellVizRow, ShellVizSegment } from "@oh-my-pi/pi-wire";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import type { ShellVizPresentation, ShellVizRow, ShellVizSegment } from "@marsai-org/wire";
+import { sanitizeText } from "@marsai-org/utils";
 import { replaceTabs } from "../render/render-utils";
 import type { Theme, ThemeColor } from "../theme/theme";
 import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "../utils";

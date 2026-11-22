@@ -1,16 +1,16 @@
 import { afterAll, afterEach, describe, expect, it, vi } from "bun:test";
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
+import type { AgentToolContext } from "@marsai-org/agent-core";
 import * as os from "node:os";
 import * as path from "node:path";
 import { inspect } from "node:util";
 import { createContext, runInContext } from "node:vm";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition, HostEvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { computerApproval, createComputerPrelude } from "@oh-my-pi/pi-coding-agent/tools/computer";
-import { isReadOnlyComputerCall, renderComputerCall } from "@oh-my-pi/pi-coding-agent/tools/computer/call";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { EvalPreludeDefinition, HostEvalPreludeDefinition } from "@marsai-org/coding-agent/eval/preludes";
+import { executeJs } from "@marsai-org/coding-agent/eval/js/executor";
+import { disposeAllKernelSessions, executePython } from "@marsai-org/coding-agent/eval/py/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { computerApproval, createComputerPrelude } from "@marsai-org/coding-agent/tools/computer";
+import { isReadOnlyComputerCall, renderComputerCall } from "@marsai-org/coding-agent/tools/computer/call";
 import {
 	type ComputerSessionSnapshot,
 	type ComputerWorkerInbound,
@@ -23,7 +23,7 @@ import {
 	ESCAPE_STOPPED_MESSAGE,
 	screenLockedCaptureNotice,
 	screenStateNotice,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/protocol";
+} from "@marsai-org/coding-agent/tools/computer/protocol";
 import {
 	beginComputerTurnForOwner,
 	type ComputerController,
@@ -33,10 +33,10 @@ import {
 	endComputerTurnForOwner,
 	registerComputerController,
 	resumeComputerUseForOwner,
-} from "@oh-my-pi/pi-coding-agent/tools/computer/supervisor";
-import { ComputerWorkerCore, type NativeDesktopSession } from "@oh-my-pi/pi-coding-agent/tools/computer/worker";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import { DesktopKeyboardReturn } from "@oh-my-pi/pi-natives";
+} from "@marsai-org/coding-agent/tools/computer/supervisor";
+import { ComputerWorkerCore, type NativeDesktopSession } from "@marsai-org/coding-agent/tools/computer/worker";
+import * as clipboard from "@marsai-org/coding-agent/utils/clipboard";
+import { DesktopKeyboardReturn } from "@marsai-org/natives";
 import type {
 	ApplicationOpenOptions,
 	AxNode,
@@ -56,9 +56,9 @@ import type {
 	DesktopWindow,
 	HoldOptions as NativeHoldOptions,
 	PointerOptions,
-} from "@oh-my-pi/pi-natives";
+} from "@marsai-org/natives";
 
-import { cfgComputerEnabled } from "@oh-my-pi/pi-coding-agent/tools/settings";
+import { cfgComputerEnabled } from "@marsai-org/coding-agent/tools/settings";
 
 /** Method name of the last step in a facade call chain, or "" when the chain is malformed. */
 function terminalMethod(chain: unknown): string {
@@ -3619,7 +3619,7 @@ describe("expanded computer APIs", () => {
 			{
 				read: () => {
 					// The stale-addon stub `desktopEscapeStops` falls back to.
-					if (unreadable) throw new Error("@oh-my-pi/pi-natives export `desktopEscapeStops` is missing");
+					if (unreadable) throw new Error("@marsai-org/natives export `desktopEscapeStops` is missing");
 					return stops;
 				},
 				forget: () => {},
@@ -3661,7 +3661,7 @@ describe("expanded computer APIs", () => {
 			{
 				read: () => 0,
 				forget: () => {
-					throw new Error("@oh-my-pi/pi-natives export `forgetDesktopEscapeStops` is missing");
+					throw new Error("@marsai-org/natives export `forgetDesktopEscapeStops` is missing");
 				},
 			},
 		);

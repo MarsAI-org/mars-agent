@@ -2,11 +2,11 @@ import { describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { resolveLocalUrlToPath } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { AstGrepTool } from "@oh-my-pi/pi-coding-agent/tools/ast-grep";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { resolveLocalUrlToPath } from "@marsai-org/coding-agent/internal-urls";
+import { createTools, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { AstGrepTool } from "@marsai-org/coding-agent/tools/ast-grep";
+import { removeWithRetries } from "@marsai-org/utils";
 
 function createTestSession(cwd = "/tmp/test", overrides: Partial<ToolSession> = {}): ToolSession {
 	return {

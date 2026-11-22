@@ -1,16 +1,16 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { ShellVizPreferences, ShellVizPresentation, ShellVizRow } from "@oh-my-pi/pi-wire";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
-import { ShellVisualizer } from "@oh-my-pi/pi-tui/apps/shell-visualizer";
+import type { ShellVizPreferences, ShellVizPresentation, ShellVizRow } from "@marsai-org/wire";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
+import { ShellVisualizer } from "@marsai-org/tui/apps/shell-visualizer";
 import {
 	changeShellVizPreferences,
 	SHELL_VIZ_LAYERS,
 	SHELL_VIZ_VIEWS,
 	shellVizEventAction,
-} from "@oh-my-pi/pi-tui/tools/shell-trace";
-import { defaultShellVizPreferences } from "@oh-my-pi/pi-tui/tools/shell-viz";
-import { renderShellVisualization } from "@oh-my-pi/pi-tui/tools/shell-viz-render";
-import { visibleWidth } from "@oh-my-pi/pi-tui/utils";
+} from "@marsai-org/tui/tools/shell-trace";
+import { defaultShellVizPreferences } from "@marsai-org/tui/tools/shell-viz";
+import { renderShellVisualization } from "@marsai-org/tui/tools/shell-viz-render";
+import { visibleWidth } from "@marsai-org/tui/utils";
 
 function row(node: string, text: string): ShellVizRow {
 	return {

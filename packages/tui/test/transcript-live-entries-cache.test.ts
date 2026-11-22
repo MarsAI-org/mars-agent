@@ -11,8 +11,8 @@
  * would produce, across the mutation that must invalidate the cache.
  */
 import { describe, expect, it } from "bun:test";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import type { Component } from "@oh-my-pi/pi-tui";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import type { Component } from "@marsai-org/tui";
 
 class Block implements Component {
 	#rows: string[];

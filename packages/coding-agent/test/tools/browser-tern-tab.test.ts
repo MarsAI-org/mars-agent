@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
-import { RunOutput } from "@oh-my-pi/pi-coding-agent/tools/browser/run-output";
-import type { ScreenshotResult } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-protocol";
-import { TernElementHandle, TernTab, userSourceFunction } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/tern-tab";
-import { parseTernSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/selectors";
-import { TernError, TernSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/wire";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { RunOutput } from "@marsai-org/coding-agent/tools/browser/run-output";
+import type { ScreenshotResult } from "@marsai-org/coding-agent/tools/browser/tab-protocol";
+import { TernElementHandle, TernTab, userSourceFunction } from "@marsai-org/coding-agent/tools/browser/tern/tern-tab";
+import { parseTernSelector } from "@marsai-org/coding-agent/tools/browser/tern/selectors";
+import { TernError, TernSocketClient } from "@marsai-org/coding-agent/tools/browser/tern/wire";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { type FakeAnswer, type FakeDaemon, startFakeDaemon } from "./tern-fake-daemon";
 
 interface FakePage {

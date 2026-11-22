@@ -1,12 +1,12 @@
 import * as path from "node:path";
-import { registerCustomApi } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
+import { registerCustomApi } from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
 import {
 	__providerInFlightForTesting,
 	configureProviderMaxInFlightRequests,
 	streamSimple,
-} from "@oh-my-pi/pi-ai/stream";
-import { isBunTestRuntime, TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/stream";
+import { isBunTestRuntime, TempDir } from "@marsai-org/utils";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { createAgentSession } from "../../src/sdk";

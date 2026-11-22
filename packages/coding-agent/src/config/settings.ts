@@ -14,9 +14,9 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { roleDefaultModels } from "@oh-my-pi/pi-catalog/compat/behavior";
-import { type GeneratedProvider, getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { type Api, type Model, modelKind } from "@oh-my-pi/pi-catalog/types";
+import { roleDefaultModels } from "@marsai-org/catalog/compat/behavior";
+import { type GeneratedProvider, getBundledModels } from "@marsai-org/catalog/models";
+import { type Api, type Model, modelKind } from "@marsai-org/catalog/types";
 import {
 	expandTilde,
 	getAgentDbPath,
@@ -29,9 +29,9 @@ import {
 	logger,
 	MAIN_CONFIG_FILENAMES,
 	procmgr,
-} from "@oh-my-pi/pi-utils";
-import { withFileLock } from "@oh-my-pi/pi-utils/file-lock";
-import { isLightTheme } from "@oh-my-pi/pi-tui/theme/theme";
+} from "@marsai-org/utils";
+import { withFileLock } from "@marsai-org/utils/file-lock";
+import { isLightTheme } from "@marsai-org/tui/theme/theme";
 import { JSONC, YAML } from "bun";
 import { invalidate as invalidateCapabilityFsCache } from "../capability/fs";
 import { type Settings as SettingsCapabilityItem, settingsCapability } from "../capability/settings";
@@ -41,7 +41,7 @@ import { AgentStorage, type AgentStorageApi } from "../session/agent-storage";
 import { type CompactionMethod, DEFAULT_COMPACTION_METHOD_ORDER } from "../session/compaction-methods";
 import { writeFileAtomically } from "../utils/atomic-file";
 import { isRegisteredSearchEngine } from "../web/search/provider";
-import { stringifyYamlConfig } from "@oh-my-pi/pi-utils/yaml-config";
+import { stringifyYamlConfig } from "@marsai-org/utils/yaml-config";
 import {
 	type AnySetting,
 	all as allSettings,

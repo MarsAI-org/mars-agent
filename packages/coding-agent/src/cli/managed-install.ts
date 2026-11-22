@@ -7,7 +7,7 @@
  */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 
 /**
  * Name of the app that manages the executable or engine directory at

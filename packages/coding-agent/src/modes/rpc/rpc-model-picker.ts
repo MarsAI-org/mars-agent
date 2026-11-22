@@ -5,9 +5,9 @@
  * to a provider); a query starting with `@` lists the ctrl+p quick roles. Rows carry the roles a model holds and its
  * thinking slider. Every ordering, ranking and slider rule comes from the TUI picker's own helpers.
  */
-import type { Model } from "@oh-my-pi/pi-ai";
-import { modelsAreEqual } from "@oh-my-pi/pi-catalog/models";
-import { fuzzyRank } from "@oh-my-pi/pi-tui/fuzzy";
+import type { Model } from "@marsai-org/ai";
+import { modelsAreEqual } from "@marsai-org/catalog/models";
+import { fuzzyRank } from "@marsai-org/tui/fuzzy";
 import {
 	buildSearchAffinity,
 	heldRoles,
@@ -19,9 +19,9 @@ import {
 	roleChipLabel,
 	type SessionModelScope,
 	SessionModelScopeCache,
-} from "@oh-my-pi/pi-tui/overlays/model-browser";
-import { thinkingSlider } from "@oh-my-pi/pi-tui/overlays/model-picker";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/tui/overlays/model-browser";
+import { thinkingSlider } from "@marsai-org/tui/overlays/model-picker";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import { cfgCycleOrder } from "../../config/model-settings";
 import type { AgentSession } from "../../session/agent-session";
 import { createModelBrowserSource } from "../model-browser-source";

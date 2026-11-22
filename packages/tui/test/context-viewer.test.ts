@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import type { TspText } from "@oh-my-pi/pi-wire";
+import type { TspText } from "@marsai-org/wire";
 import { CONTEXT_PRESENTATION } from "../src/chrome/context-presentation";
 import type {
 	ContextThinkingGroup,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { splitEmbeds } from "@oh-my-pi/pi-tui/chat/embed-source";
-import { figureBox, parseFigureLength } from "@oh-my-pi/pi-tui/chat/figure-size";
+import { splitEmbeds } from "@marsai-org/tui/chat/embed-source";
+import { figureBox, parseFigureLength } from "@marsai-org/tui/chat/figure-size";
 
 describe("splitEmbeds", () => {
 	it("lifts lines of img and iframe tags out of the prose around them", () => {

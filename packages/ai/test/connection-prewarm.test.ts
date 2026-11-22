@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { buildAnthropicClientOptions } from "@oh-my-pi/pi-ai/providers/anthropic";
-import { resolveAnthropicPrewarmTarget } from "@oh-my-pi/pi-ai/providers/anthropic-http-options";
-import { prewarmModelConnection, resetConnectionPrewarmForTesting } from "@oh-my-pi/pi-ai/providers/connection-prewarm";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-ai/types";
-import { resetDispatchOriginsForTesting, transportFetch } from "@oh-my-pi/pi-ai/utils/transport-fetch";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { Api } from "@oh-my-pi/pi-catalog/types";
+import { buildAnthropicClientOptions } from "@marsai-org/ai/providers/anthropic";
+import { resolveAnthropicPrewarmTarget } from "@marsai-org/ai/providers/anthropic-http-options";
+import { prewarmModelConnection, resetConnectionPrewarmForTesting } from "@marsai-org/ai/providers/connection-prewarm";
+import type { FetchImpl, Model } from "@marsai-org/ai/types";
+import { resetDispatchOriginsForTesting, transportFetch } from "@marsai-org/ai/utils/transport-fetch";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { Api } from "@marsai-org/catalog/types";
 import { withEnv, withOfficialAnthropicEndpoint } from "./helpers";
 
 function model<TApi extends Api>(provider: string, api: TApi, baseUrl: string): Model<TApi> {

@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgCompaction } from "@oh-my-pi/pi-coding-agent/session/context-settings";
-import { resolveSpeculationMethod } from "@oh-my-pi/pi-coding-agent/session/compaction-methods";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgCompaction } from "@marsai-org/coding-agent/session/context-settings";
+import { resolveSpeculationMethod } from "@marsai-org/coding-agent/session/compaction-methods";
 
 /** Resolve Bedrock support from the authored identity and compat rules, not generated model data. */
 function getBedrockCompactionModel() {

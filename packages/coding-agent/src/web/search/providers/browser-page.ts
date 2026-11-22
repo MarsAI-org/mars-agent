@@ -1,5 +1,5 @@
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import { untilAborted } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/ai";
+import { untilAborted } from "@marsai-org/utils";
 import type { Page } from "puppeteer-core";
 import { applyStealthPatches, applyViewport } from "../../../tools/browser/launch";
 import { withScratchPage } from "../../../tools/browser/scratch-page";

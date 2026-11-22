@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { type AgentMessage, filterProviderReplayMessages } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
+import { type AgentMessage, filterProviderReplayMessages } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
 import {
 	buildReplanTitleContext,
 	buildTitleDriftTurns,

@@ -5,12 +5,12 @@
  * providers with provider-specific parameters exposed conditionally.
  */
 
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import { type Api, type AssistantMessage, type AuthStorage, type Model, tokenUsage } from "@oh-my-pi/pi-ai";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { formatAge, formatCount, prompt, truncate } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import { type Api, type AssistantMessage, type AuthStorage, type Model, tokenUsage } from "@marsai-org/ai";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { formatAge, formatCount, prompt, truncate } from "@marsai-org/utils";
 import { cfgOffline } from "../../config/auxiliary-model-policy";
 import { ModelRegistry } from "../../config/model-registry";
 import { type RoleChainCandidate, resolveModelRoleValue, resolveRoleChain } from "../../config/model-resolver";

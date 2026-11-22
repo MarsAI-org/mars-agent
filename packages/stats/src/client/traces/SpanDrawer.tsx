@@ -4,7 +4,7 @@
  * + text blocks, tool args/result, user text, subagent task text.
  */
 
-import { toError } from "@oh-my-pi/pi-utils/type-guards";
+import { toError } from "@marsai-org/utils/type-guards";
 import { Check, Copy, X } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { getSessionEntryDetail } from "../api";

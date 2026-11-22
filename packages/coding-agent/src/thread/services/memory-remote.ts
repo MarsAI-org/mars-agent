@@ -3,7 +3,7 @@
  * worker reads its parent through these, so retains, recalls, bank confirmations, and
  * Mnemopi writes land in main's live client, bank set, and SQLite banks.
  */
-import type { RecallResult } from "@oh-my-pi/pi-mnemopi";
+import type { RecallResult } from "@marsai-org/mnemopi";
 import type { HindsightBankSet } from "../../hindsight/bank";
 import type {
 	BankProfileResponse,

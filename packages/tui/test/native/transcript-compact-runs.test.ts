@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { type CompactTranscriptBlock, TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { col, text, withHidden } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import { nativeComponentId } from "@oh-my-pi/pi-tui/native/reconcile";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { Component } from "@oh-my-pi/pi-tui";
-import type { TspNode, TspOp } from "@oh-my-pi/pi-wire";
+import { type CompactTranscriptBlock, TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { col, text, withHidden } from "@marsai-org/tui/native/describe";
+import type { NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import { nativeComponentId } from "@marsai-org/tui/native/reconcile";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { Component } from "@marsai-org/tui";
+import type { TspNode, TspOp } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
 
 beforeAll(async () => {

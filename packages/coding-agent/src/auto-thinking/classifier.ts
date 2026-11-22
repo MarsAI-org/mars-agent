@@ -14,14 +14,14 @@
  * Throws on any failure (no judge, no key, unparseable output, abort/timeout);
  * the caller falls back to a concrete level and continues the turn.
  */
-import type { AgentTelemetryConfig } from "@oh-my-pi/pi-agent-core";
-import { type ChoiceQuestion, Effort, judgeQuestions, type Model, renderQuestion } from "@oh-my-pi/pi-ai";
-import { getSupportedEfforts } from "@oh-my-pi/pi-catalog/model-thinking";
+import type { AgentTelemetryConfig } from "@marsai-org/agent-core";
+import { type ChoiceQuestion, Effort, judgeQuestions, type Model, renderQuestion } from "@marsai-org/ai";
+import { getSupportedEfforts } from "@marsai-org/catalog/model-thinking";
 import type { ModelRegistry } from "../config/model-registry";
 import type { Settings } from "../config/settings";
 import { type JudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";
 import questionFile from "../prompts/judge/auto-thinking.json" with { type: "json" };
-import { clampAutoThinkingEffort } from "@oh-my-pi/pi-tui/thinking";
+import { clampAutoThinkingEffort } from "@marsai-org/tui/thinking";
 import { preprocessTinyMessage } from "../tiny/message-preproc";
 
 import { cfgProvidersAutoThinkingMaxEffort } from "../session/settings";

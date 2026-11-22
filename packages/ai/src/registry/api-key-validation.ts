@@ -1,4 +1,4 @@
-import { resolveAnthropicApiVersion } from "@oh-my-pi/pi-catalog/compat/anthropic";
+import { resolveAnthropicApiVersion } from "@marsai-org/catalog/compat/anthropic";
 import { OpenAIHttpError, ProviderHttpError } from "../error/classes";
 import type { FetchImpl } from "../types";
 

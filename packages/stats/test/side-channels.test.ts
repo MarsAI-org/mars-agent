@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { getOverviewStats } from "@oh-my-pi/omp-stats/aggregator";
-import { initDb, insertMessageStats } from "@oh-my-pi/omp-stats/db";
-import { refreshRollups } from "@oh-my-pi/omp-stats/rollup";
-import type { AgentType, DashboardStats, MessageStats, UsageAttributionTotals } from "@oh-my-pi/omp-stats/types";
+import { getOverviewStats } from "@marsai-org/stats/aggregator";
+import { initDb, insertMessageStats } from "@marsai-org/stats/db";
+import { refreshRollups } from "@marsai-org/stats/rollup";
+import type { AgentType, DashboardStats, MessageStats, UsageAttributionTotals } from "@marsai-org/stats/types";
 import { installStatsTestIsolation } from "./helpers/temp-agent";
 
 installStatsTestIsolation("@pi-stats-side-channels-");

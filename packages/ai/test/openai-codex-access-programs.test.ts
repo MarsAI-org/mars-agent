@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { configureCodexAccessPrograms } from "@oh-my-pi/pi-ai/providers/openai-codex/access-programs";
-import { streamOpenAICodexResponses } from "@oh-my-pi/pi-ai/providers/openai-codex-responses";
-import type { Context, FetchImpl } from "@oh-my-pi/pi-ai/types";
-import * as piUtils from "@oh-my-pi/pi-utils";
+import { configureCodexAccessPrograms } from "@marsai-org/ai/providers/openai-codex/access-programs";
+import { streamOpenAICodexResponses } from "@marsai-org/ai/providers/openai-codex-responses";
+import type { Context, FetchImpl } from "@marsai-org/ai/types";
+import * as piUtils from "@marsai-org/utils";
 import { createCodexModel } from "./helpers";
 
 beforeEach(() => {

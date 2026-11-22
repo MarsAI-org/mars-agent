@@ -23,9 +23,9 @@
  * - The Anthropic slow-mode lane registry: the worker's process singleton takes
  *   its lanes from main's, so every thread shares one state per account.
  */
-import { AuthStorage, type SessionRestrictionLease, type UsageProvider } from "@oh-my-pi/pi-ai";
-import { AuthBrokerError, AuthBrokerStreamUnsupportedError } from "@oh-my-pi/pi-ai/auth-broker";
-import { getBundledProviders } from "@oh-my-pi/pi-catalog/models";
+import { AuthStorage, type SessionRestrictionLease, type UsageProvider } from "@marsai-org/ai";
+import { AuthBrokerError, AuthBrokerStreamUnsupportedError } from "@marsai-org/ai/auth-broker";
+import { getBundledProviders } from "@marsai-org/catalog/models";
 import {
 	ApiKeyRequiredError,
 	ConfigurationError,
@@ -34,8 +34,8 @@ import {
 	OAuthError,
 	OAuthRefreshUnavailableError,
 	OnPromptRequiredError,
-} from "@oh-my-pi/pi-ai/error";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai/error";
+import { logger } from "@marsai-org/utils";
 import { ModelRegistry } from "../../config/model-registry";
 import {
 	AnthropicSlowModeController,

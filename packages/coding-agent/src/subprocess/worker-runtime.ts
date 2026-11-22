@@ -6,7 +6,7 @@ import {
 	getTinyModelsCacheDir,
 	installRuntimeModuleResolver,
 	resolveRuntimeModule,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { ProgressInfo } from "./transformers-types";
 
 /**

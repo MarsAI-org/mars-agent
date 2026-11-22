@@ -3,8 +3,8 @@
  * Jev answers, per older turn, the probability that the agent still needs it
  * verbatim in context (question in `prompts/judge/compaction-keep.json`).
  */
-import { createNativeJudge, judgeQuestions } from "@oh-my-pi/pi-ai/judgment";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { createNativeJudge, judgeQuestions } from "@marsai-org/ai/judgment";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import type { KeepScorer } from "./fresh";
 import keepQuestions from "./prompts/judge/compaction-keep.json" with { type: "json" };
 

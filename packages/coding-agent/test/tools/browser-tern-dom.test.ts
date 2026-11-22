@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as os from "node:os";
-import { RunOutput } from "@oh-my-pi/pi-coding-agent/tools/browser/run-output";
-import { type DomQuery, domQueryFor } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/dom";
-import { parseTernSelector, type TernSelector } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/selectors";
-import { TernTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/tern-tab";
-import { TernSocketClient } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/wire";
+import { RunOutput } from "@marsai-org/coding-agent/tools/browser/run-output";
+import { type DomQuery, domQueryFor } from "@marsai-org/coding-agent/tools/browser/tern/dom";
+import { parseTernSelector, type TernSelector } from "@marsai-org/coding-agent/tools/browser/tern/selectors";
+import { TernTab } from "@marsai-org/coding-agent/tools/browser/tern/tern-tab";
+import { TernSocketClient } from "@marsai-org/coding-agent/tools/browser/tern/wire";
 import { type FakeAnswer, type FakeDaemon, startFakeDaemon } from "./tern-fake-daemon";
 
 type Fields = Record<string, unknown>;

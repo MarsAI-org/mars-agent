@@ -8,12 +8,12 @@
  * represented by a proxy with the same surface. The TUI's focused-subagent
  * view additionally reads {@link AgentViewSession}.
  */
-import type { AgentMessage, AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { Effort, ImageContent, Model, ServiceTier, ToolResultMessage, UsageReport } from "@oh-my-pi/pi-ai";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import type { IrcMessage } from "@oh-my-pi/pi-tui/tools/irc";
-import type { JobWidgetEntry } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { TodoPhase } from "@oh-my-pi/pi-tui/tools/todo";
+import type { AgentMessage, AgentTool, ThinkingLevel } from "@marsai-org/agent-core";
+import type { Effort, ImageContent, Model, ServiceTier, ToolResultMessage, UsageReport } from "@marsai-org/ai";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import type { IrcMessage } from "@marsai-org/tui/tools/irc";
+import type { JobWidgetEntry } from "@marsai-org/tui/tools/job-widget";
+import type { TodoPhase } from "@marsai-org/tui/tools/todo";
 import type { Rule } from "../capability/rule";
 import type { EffectiveExtensionRoots } from "../capability/types";
 import type { ModelRegistry } from "../config/model-registry";

@@ -1,4 +1,4 @@
-import type { ShellVizPresentation } from "@oh-my-pi/pi-wire";
+import type { ShellVizPresentation } from "@marsai-org/wire";
 import { matchesKey } from "../keys";
 import { node } from "../native/describe";
 import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";

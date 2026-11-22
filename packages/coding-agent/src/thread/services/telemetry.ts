@@ -37,8 +37,8 @@ import {
 	type ChatUsageEvent,
 	DEFAULT_TRACER_NAME,
 	type TelemetryContentSerializer,
-} from "@oh-my-pi/pi-agent-core";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { logger } from "@marsai-org/utils";
 import {
 	type Context,
 	context,

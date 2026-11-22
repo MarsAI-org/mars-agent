@@ -3,12 +3,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getModelCacheWriteStats, readModelCache, writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { type GeneratedProvider, getBundledModels, getBundledProviders } from "@oh-my-pi/pi-catalog/models";
-import { modelsDevCatalogFallback } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, Model, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getModelCacheWriteStats, readModelCache, writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { type GeneratedProvider, getBundledModels, getBundledProviders } from "@marsai-org/catalog/models";
+import { modelsDevCatalogFallback } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, Model, ModelSpec } from "@marsai-org/catalog/types";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const TTL_MS = 24 * 60 * 60 * 1000;

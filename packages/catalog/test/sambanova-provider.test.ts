@@ -2,12 +2,12 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getModelPricingStatus } from "@oh-my-pi/pi-catalog/models";
-import { sambanovaModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, Model } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getModelPricingStatus } from "@marsai-org/catalog/models";
+import { sambanovaModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, Model } from "@marsai-org/catalog/types";
 
 const BASE_URL = "https://api.sambanova.ai/v1";
 

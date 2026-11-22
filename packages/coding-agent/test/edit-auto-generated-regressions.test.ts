@@ -15,21 +15,21 @@ import { afterEach, beforeEach, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, StopReason, ToolCall } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage, StopReason, ToolCall } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 function createAssistantMessage(content: AssistantMessage["content"], stopReason: StopReason): AssistantMessage {
 	return {

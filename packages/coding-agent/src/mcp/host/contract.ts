@@ -20,9 +20,9 @@
  * Beyond standard MCP the tunnel carries the `omp/*` methods and `_meta` keys
  * declared here.
  */
-import { type } from "@oh-my-pi/omptype";
-import type { UnitPolicy } from "@oh-my-pi/pi-tui/tools/daemon";
-import { stableStringifyJson } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { UnitPolicy } from "@marsai-org/tui/tools/daemon";
+import { stableStringifyJson } from "@marsai-org/utils";
 import { MCPTransportError } from "../errors";
 import type { JsonRpcError, MCPRequestIdFormat } from "../types";
 

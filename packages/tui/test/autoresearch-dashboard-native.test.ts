@@ -2,12 +2,12 @@ import { describe, expect, it } from "bun:test";
 import {
 	type AutoresearchDashboardRuntime,
 	createDashboardController,
-} from "@oh-my-pi/pi-tui/apps/autoresearch-dashboard";
-import type { DescribeContext, NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { getThemeByName } from "@oh-my-pi/pi-tui/theme";
-import type { ExperimentResult, ExperimentState } from "@oh-my-pi/pi-tui/tools/autoresearch";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
-import type { TspText } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/apps/autoresearch-dashboard";
+import type { DescribeContext, NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { getThemeByName } from "@marsai-org/tui/theme";
+import type { ExperimentResult, ExperimentState } from "@marsai-org/tui/tools/autoresearch";
+import type { Component } from "@marsai-org/tui/tui";
+import type { TspText } from "@marsai-org/wire";
 
 const cx: DescribeContext = { cols: 120, reduceMotion: false, dark: true, supports: () => true, feature: () => true };
 

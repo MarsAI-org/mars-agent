@@ -1,11 +1,11 @@
-import type { AgentToolContext } from "@oh-my-pi/pi-agent-core";
-import { postmortem, untilAborted } from "@oh-my-pi/pi-utils";
-import type { DesktopCapabilities } from "@oh-my-pi/pi-natives";
-import { closeDesktopEventTaps, desktopEscapeStops, forgetDesktopEscapeStops } from "@oh-my-pi/pi-natives/desktop";
-import { withTimeout } from "@oh-my-pi/pi-utils/async";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import { Snowflake } from "@oh-my-pi/pi-utils/snowflake";
-import { workerHostEntry } from "@oh-my-pi/pi-utils/worker-host";
+import type { AgentToolContext } from "@marsai-org/agent-core";
+import { postmortem, untilAborted } from "@marsai-org/utils";
+import type { DesktopCapabilities } from "@marsai-org/natives";
+import { closeDesktopEventTaps, desktopEscapeStops, forgetDesktopEscapeStops } from "@marsai-org/natives/desktop";
+import { withTimeout } from "@marsai-org/utils/async";
+import * as logger from "@marsai-org/utils/logger";
+import { Snowflake } from "@marsai-org/utils/snowflake";
+import { workerHostEntry } from "@marsai-org/utils/worker-host";
 import {
 	type ApprovalContextSource,
 	type ApprovalPolicy,
@@ -14,7 +14,7 @@ import {
 } from "../approval";
 import type { ToolSession } from "../index";
 import { ToolAbortError, toWorkerErrorPayload } from "../tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import {
 	COMPUTER_WORKER_ARG,
 	type ComputerEscapeScope,

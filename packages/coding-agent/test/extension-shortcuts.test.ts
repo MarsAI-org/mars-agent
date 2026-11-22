@@ -1,18 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { Extension, ExtensionAPI } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import type { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import type { Extension, ExtensionAPI } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 import {
 	getKeybindings,
 	type KeyId,
 	setKeybindings,
 	type KeybindingsManager as TuiKeybindingsManager,
-} from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import { logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import { logger } from "@marsai-org/utils";
 
 const noop = (): void => {};
 

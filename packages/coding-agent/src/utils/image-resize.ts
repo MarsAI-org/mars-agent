@@ -1,6 +1,6 @@
 import { inflateSync } from "node:zlib";
-import type { BoxEdges, ImageContent } from "@oh-my-pi/pi-ai";
-import { JUDGMENT_IMAGE_PATCH_SIDE, judgmentImagePatches } from "@oh-my-pi/pi-catalog/compat/judgment-images";
+import type { BoxEdges, ImageContent } from "@marsai-org/ai";
+import { JUDGMENT_IMAGE_PATCH_SIDE, judgmentImagePatches } from "@marsai-org/catalog/compat/judgment-images";
 import { encodeRawPng } from "./png-encode";
 
 export interface ImageResizeOptions {

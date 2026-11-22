@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { currentBuildHost, type Fetch } from "@oh-my-pi/pi-coding-agent/cli/build-service";
+import { currentBuildHost, type Fetch } from "@marsai-org/coding-agent/cli/build-service";
 import {
 	ABKIT_BUILD,
 	ENGINE_VERSION_FILE,
 	installWebKitEngine,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/webkit/install";
-import { TempDir, tryAcquireFileLock } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/browser/webkit/install";
+import { TempDir, tryAcquireFileLock } from "@marsai-org/utils";
 import { $ } from "bun";
 
 const DOWNLOAD = "https://r2.test/abkit.tar.gz";

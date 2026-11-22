@@ -2,10 +2,10 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { CmuxTab } from "@oh-my-pi/pi-coding-agent/tools/browser/cmux/cmux-tab";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { CmuxTab } from "@marsai-org/coding-agent/tools/browser/cmux/cmux-tab";
 import {
 	ClickRefusedError,
 	clickElement,
@@ -16,12 +16,12 @@ import {
 	setElementChecked,
 	TypingInterruptedError,
 	withLiveElement,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/interactions";
-import { acquireBrowser, releaseBrowser } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import { normalizeSelectOptions } from "@oh-my-pi/pi-coding-agent/tools/browser/select-options";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { TERN_KIT_SOURCE } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/page-kit";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+} from "@marsai-org/coding-agent/tools/browser/interactions";
+import { acquireBrowser, releaseBrowser } from "@marsai-org/coding-agent/tools/browser/registry";
+import { normalizeSelectOptions } from "@marsai-org/coding-agent/tools/browser/select-options";
+import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { TERN_KIT_SOURCE } from "@marsai-org/coding-agent/tools/browser/tern/page-kit";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 import { rejectionOf } from "../helpers/rejection";
 import { chromiumAvailable } from "./chromium-probe";
 import type { ElementHandle } from "puppeteer-core";

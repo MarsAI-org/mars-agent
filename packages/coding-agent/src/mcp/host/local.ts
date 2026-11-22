@@ -7,7 +7,7 @@
  * lease is released: no other process could adopt it, and a lingering child
  * would be orphaned when the session exits.
  */
-import { isBunTestRuntime, logger, postmortem } from "@oh-my-pi/pi-utils";
+import { isBunTestRuntime, logger, postmortem } from "@marsai-org/utils";
 import { spawnManagedChild } from "../../daemon/children";
 import type { ModuleClient, ModuleTunnel } from "../../daemon/module";
 import { moduleStateDir } from "../../daemon/paths";

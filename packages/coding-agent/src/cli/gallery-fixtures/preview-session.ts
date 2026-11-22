@@ -1,4 +1,4 @@
-import type { PromptCacheStatus } from "@oh-my-pi/pi-tui/status-line/host";
+import type { PromptCacheStatus } from "@marsai-org/tui/status-line/host";
 import { Settings } from "../../config/settings";
 import type { AgentSession } from "../../session/agent-session";
 

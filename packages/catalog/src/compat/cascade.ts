@@ -13,8 +13,8 @@
  * second layer: the layer is the last rank component, so a runtime rule wins
  * a tie with a bundled rule and still loses to a more specific one.
  */
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { compileRuleDirectives } from "./axes";
 import { parseRevision, type Revision, type RevisionTerm, revisionSatisfies } from "./revision";
 import rules from "./rules.json";

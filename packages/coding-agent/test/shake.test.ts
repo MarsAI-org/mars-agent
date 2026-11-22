@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import { scheduler } from "node:timers/promises";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentMessage, RESCUE_SHAKE_CONFIG, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import * as compactionModule from "@oh-my-pi/pi-agent-core/compaction";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentMessage, RESCUE_SHAKE_CONFIG, Tokenizer } from "@marsai-org/agent-core";
+import * as compactionModule from "@marsai-org/agent-core/compaction";
 import type {
 	AssistantMessage,
 	ImageContent,
@@ -11,18 +11,18 @@ import type {
 	ProviderSessionState,
 	ToolResultMessage,
 	UserMessage,
-} from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildResponsesInput } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { SessionStatsTracker } from "@oh-my-pi/pi-coding-agent/session/session-stats";
-import { formatShakeSummary } from "@oh-my-pi/pi-coding-agent/session/shake-types";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildResponsesInput } from "@marsai-org/ai/providers/openai-shared";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { SessionStatsTracker } from "@marsai-org/coding-agent/session/session-stats";
+import { formatShakeSummary } from "@marsai-org/coding-agent/session/shake-types";
+import { TempDir } from "@marsai-org/utils";
 
 import {
 	cfgCompactionDropUseless,
@@ -31,7 +31,7 @@ import {
 	cfgCompactionThresholdPercent,
 	cfgCompactionThresholdTokens,
 	cfgContextPromotionEnabled,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
+} from "@marsai-org/coding-agent/session/context-settings";
 
 const usage = {
 	input: 16,

@@ -2,24 +2,24 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-import type { Message, ToolCall } from "@oh-my-pi/pi-ai";
-import { type Dialect, getDialectDefinition } from "@oh-my-pi/pi-ai/dialect";
-import { escapeHarmonyControlTokens } from "@oh-my-pi/pi-ai/utils/harmony-leak";
-import { prompt, stringifyJson } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import type { Message, ToolCall } from "@marsai-org/ai";
+import { type Dialect, getDialectDefinition } from "@marsai-org/ai/dialect";
+import { escapeHarmonyControlTokens } from "@marsai-org/ai/utils/harmony-leak";
+import { prompt, stringifyJson } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import type { AgentMessage } from "../types";
 import summarizationSystemPrompt from "./prompts/summarization-system.md" with { type: "text" };
 
-/** @deprecated Import these from `@oh-my-pi/snapcompact`. */
+/** @deprecated Import these from `@marsai-org/snapcompact`. */
 export {
 	computeFileLists,
 	createFileOps,
 	type FileOperations,
 	isUrlSchemePath,
 	upsertFileOperations,
-} from "@oh-my-pi/snapcompact";
+} from "@marsai-org/snapcompact";
 
-/** @deprecated Use `upsertFileOperations("", readFiles, modifiedFiles, readSet)` from `@oh-my-pi/snapcompact`. */
+/** @deprecated Use `upsertFileOperations("", readFiles, modifiedFiles, readSet)` from `@marsai-org/snapcompact`. */
 export function formatFileOperations(
 	readFiles: string[],
 	modifiedFiles: string[],

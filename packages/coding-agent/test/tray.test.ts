@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AsyncJob } from "@oh-my-pi/pi-coding-agent/async/job-manager";
+import { ThinkingLevel } from "@marsai-org/agent-core";
+import type { AsyncJob } from "@marsai-org/coding-agent/async/job-manager";
 import {
 	buildTrayItems,
 	describeTrayCard,
@@ -12,13 +12,13 @@ import {
 	TrayMainActivity,
 	TrayMemory,
 	trayAgentDetail,
-} from "@oh-my-pi/pi-coding-agent/modes/tray";
-import type { NativeNode, NativeUiEvent } from "@oh-my-pi/pi-tui/native/node";
-import type { AgentRecordLike } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
-import type { ObservableSession } from "@oh-my-pi/pi-tui/overlays/session-observer-registry";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { JobWidgetView } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
+} from "@marsai-org/coding-agent/modes/tray";
+import type { NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
+import type { AgentRecordLike } from "@marsai-org/tui/overlays/agent-hub-types";
+import type { ObservableSession } from "@marsai-org/tui/overlays/session-observer-registry";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { JobWidgetView } from "@marsai-org/tui/tools/job-widget";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
 
 function progress(id: string, overrides: Partial<AgentProgress> = {}): AgentProgress {
 	return {

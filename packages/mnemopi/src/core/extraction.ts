@@ -1,4 +1,4 @@
-import { isRecord, withLoopPhase } from "@oh-my-pi/pi-utils";
+import { isRecord, withLoopPhase } from "@marsai-org/utils";
 import { getDiagnostics, safeForLog } from "./extraction/diagnostics";
 import { callHostLlm, getHostLlmBackend } from "./llm-backends";
 import {

@@ -1,5 +1,5 @@
-import { isBedrockAnthropicRoute, isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { isBedrockRouteUrl } from "@oh-my-pi/pi-catalog/hosts";
+import { isBedrockAnthropicRoute, isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import { isBedrockRouteUrl } from "@marsai-org/catalog/hosts";
 import type { Model } from "../types";
 import type { AnthropicMessagesClientLike } from "./anthropic-client";
 import { normalizeAnthropicBaseUrl, resolveDirectAnthropicBaseUrl } from "./anthropic-state";

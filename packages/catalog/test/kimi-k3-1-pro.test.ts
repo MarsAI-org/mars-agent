@@ -1,12 +1,12 @@
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { carriesReasoning } from "@oh-my-pi/pi-catalog/compat/reasoning-carry";
+import { buildModel } from "@marsai-org/catalog/build";
+import { carriesReasoning } from "@marsai-org/catalog/compat/reasoning-carry";
 import {
 	kimiCodeModelManagerOptions,
 	modelsDevCatalogFallback,
 	moonshotModelManagerOptions,
-} from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl } from "@oh-my-pi/pi-catalog/types";
+} from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl } from "@marsai-org/catalog/types";
 
 // Live `/models` rows: neither roster carries pricing or an output cap.
 const KIMI_CODE_K31_PRO = {

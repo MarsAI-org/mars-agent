@@ -1,8 +1,8 @@
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { mapOpenAIReasoningEffort } from "@oh-my-pi/pi-ai/providers/openai-shared";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
-import { readBoundedBody } from "@oh-my-pi/pi-utils/bounded-json";
+import type { Api, Model } from "@marsai-org/ai";
+import { mapOpenAIReasoningEffort } from "@marsai-org/ai/providers/openai-shared";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import { type ConfiguredThinkingLevel, concreteThinkingLevel, toReasoningEffort } from "@marsai-org/tui/thinking";
+import { readBoundedBody } from "@marsai-org/utils/bounded-json";
 import type { AgentStorageApi } from "../../../session/agent-storage";
 import { DEFAULT_WEB_SEARCH_TIMEOUT_SECONDS, SearchProviderError } from "../../../web/search/types";
 import { SEARCH_PROVIDER_LABELS, type SearchProviderId, type SearchSource } from "../types";

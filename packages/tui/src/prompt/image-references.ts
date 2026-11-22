@@ -1,6 +1,6 @@
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
+import type { TspSpan } from "@marsai-org/wire";
 import { span } from "../native/describe";
 import { isNativeRendering } from "../native/state";
 import { fileHyperlink, fileLinkSpan, isHyperlinkEnabled, isNativeLinkEnabled } from "../render/hyperlink";

@@ -1,5 +1,5 @@
-import type { EvalStatusEvent, EvalView } from "@oh-my-pi/pi-tui/tools/eval";
-import { isRecord, logger, readLines, Snowflake } from "@oh-my-pi/pi-utils";
+import type { EvalStatusEvent, EvalView } from "@marsai-org/tui/tools/eval";
+import { isRecord, logger, readLines, Snowflake } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import type { ShadowBarrier, ShadowControlNode, ShadowOperation } from "./speculation/types";
 import { type EvalDisplayOutput, evalImageMetadata } from "./types";

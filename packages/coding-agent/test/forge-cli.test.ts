@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { type ForgeCliSpec, runForgeCli } from "@oh-my-pi/pi-coding-agent/utils/forge-cli";
+import { type ForgeCliSpec, runForgeCli } from "@marsai-org/coding-agent/utils/forge-cli";
 
 const spec: ForgeCliSpec = {
 	bin: process.execPath,

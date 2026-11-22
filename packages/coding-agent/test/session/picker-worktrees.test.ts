@@ -2,12 +2,12 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { SessionInfo } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { sessionDirForCwd } from "@oh-my-pi/pi-coding-agent/session/session-paths";
-import { createSessionWorktree } from "@oh-my-pi/pi-coding-agent/session/session-worktree";
-import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { SessionInfo } from "@marsai-org/coding-agent/session/session-listing";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { sessionDirForCwd } from "@marsai-org/coding-agent/session/session-paths";
+import { createSessionWorktree } from "@marsai-org/coding-agent/session/session-worktree";
+import { getConfigRootDir, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { $ } from "bun";
 import { makeAssistantMessage } from "../session-manager/helpers";
 

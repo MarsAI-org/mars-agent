@@ -1,17 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, Model, StopReason, Usage } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { SecretObfuscator } from "@oh-my-pi/pi-coding-agent/secrets";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { CacheWarmer } from "@oh-my-pi/pi-coding-agent/session/cache-warmer";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { cfgProvidersCacheRetention, cfgProvidersCacheWarming } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent, ThinkingLevel } from "@marsai-org/agent-core";
+import type { AssistantMessage, Model, StopReason, Usage } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { SecretObfuscator } from "@marsai-org/coding-agent/secrets";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { CacheWarmer } from "@marsai-org/coding-agent/session/cache-warmer";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { cfgProvidersCacheRetention, cfgProvidersCacheWarming } from "@marsai-org/coding-agent/session/settings";
+import { TempDir } from "@marsai-org/utils";
 
 const SHORT_TTL_MS = 300_000;
 /** 90% of the 5-minute lifetime: when the warmer refreshes. */

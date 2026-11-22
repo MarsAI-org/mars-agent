@@ -5,7 +5,7 @@
  * surface width; the terminal's own fonts and padding differ, so callers
  * compare against a fraction of the viewport, not an exact fit.
  */
-import type { TspExtent, TspText, TspTreeNode } from "@oh-my-pi/pi-wire";
+import type { TspExtent, TspText, TspTreeNode } from "@marsai-org/wire";
 import type { Component } from "../tui";
 import type { NativeChild, NativeNode } from "./node";
 

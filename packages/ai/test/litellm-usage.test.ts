@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import type { UsageFetchParams, UsageReport } from "@oh-my-pi/pi-ai/usage";
-import { litellmUsageProvider } from "@oh-my-pi/pi-ai/usage/litellm";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import type { UsageFetchParams, UsageReport } from "@marsai-org/ai/usage";
+import { litellmUsageProvider } from "@marsai-org/ai/usage/litellm";
 import { withEnv } from "./helpers";
 
 type Routes = Record<string, Response | undefined>;

@@ -6,21 +6,21 @@ import {
 	createMCPJsonRpcError,
 	MCPTransportError,
 	normalizeMCPTransportError,
-} from "@oh-my-pi/pi-coding-agent/mcp/errors";
-import { disposeLocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPReconnect } from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
+} from "@marsai-org/coding-agent/mcp/errors";
+import { disposeLocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPReconnect } from "@marsai-org/coding-agent/mcp/tool-bridge";
 import {
 	createLegacyMCPToolName,
 	createMCPToolName,
 	deduplicateMCPToolsByName,
 	isRetriableConnectionError,
 	MCPTool,
-} from "@oh-my-pi/pi-coding-agent/mcp/tool-bridge";
-import type { MCPImageContent } from "@oh-my-pi/pi-tui/tools/mcp";
-import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@oh-my-pi/pi-coding-agent/mcp/types";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { logger, removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/mcp/tool-bridge";
+import type { MCPImageContent } from "@marsai-org/tui/tools/mcp";
+import type { MCPServerConnection, MCPToolCallResult, MCPTransport } from "@marsai-org/coding-agent/mcp/types";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { logger, removeWithRetries } from "@marsai-org/utils";
 import { asGlobalFetch } from "./helpers/fetch-mock";
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { streamAnthropic } from "@oh-my-pi/pi-ai/providers/anthropic";
-import type { Context } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamAnthropic } from "@marsai-org/ai/providers/anthropic";
+import type { Context } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 
 // Captured v4 format; its header deliberately has no serving-model field.
 const SIGNATURE = "CAQStgYKEAgRGAI4AUIIdGhpbmtpbmcSDCgdRY6PL4pRWmAaPxoMkEErP6SIhmUZXydSIjDBUTSM41Hv";

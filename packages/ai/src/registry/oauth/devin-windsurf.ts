@@ -8,10 +8,10 @@
 import {
 	ExchangePKCEAuthorizationCodeRequestSchema,
 	ExchangePKCEAuthorizationCodeResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { DEVIN_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/wire/devin";
-import { decodeDevinUnaryMessage } from "@oh-my-pi/pi-catalog/wire/devin-proto";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { DEVIN_DEFAULT_BASE_URL } from "@marsai-org/catalog/wire/devin";
+import { decodeDevinUnaryMessage } from "@marsai-org/catalog/wire/devin-proto";
 import * as AIError from "../../error";
 import { OAuthCallbackFlow } from "./callback-server";
 import { generatePKCE } from "./pkce";

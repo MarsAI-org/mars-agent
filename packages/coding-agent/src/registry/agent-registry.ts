@@ -9,13 +9,13 @@
  * revival) and are only removed on explicit release/teardown.
  */
 
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { AgentSessionHandle } from "../session/agent-session-handle";
 import { AgentAwaits, type AgentAwaitsApi } from "./agent-awaits";
-import { oneLineLabel } from "@oh-my-pi/pi-tui/tools/task";
+import { oneLineLabel } from "@marsai-org/tui/tools/task";
 
-import { MAIN_AGENT_ID, type AgentStatus, type AgentMetricsSummary } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
-import { noteAgentArrival } from "@oh-my-pi/pi-tui/overlays/agent-identity";
+import { MAIN_AGENT_ID, type AgentStatus, type AgentMetricsSummary } from "@marsai-org/tui/overlays/agent-hub-types";
+import { noteAgentArrival } from "@marsai-org/tui/overlays/agent-identity";
 export { MAIN_AGENT_ID };
 export type { AgentStatus, AgentMetricsSummary };
 

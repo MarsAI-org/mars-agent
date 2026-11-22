@@ -2,21 +2,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { clearCustomApis } from "@oh-my-pi/pi-ai/api-registry";
+import { clearCustomApis } from "@marsai-org/ai/api-registry";
 import {
 	type AuthGatewayClient,
 	type AuthGatewayServerHandle,
 	hashAuthGatewayToken,
 	parseAuthGatewayClients,
 	startAuthGateway,
-} from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { THINKING_BINDING_CONTROLS_BETA } from "@oh-my-pi/pi-ai/providers/anthropic-wire";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { Api, Model, SimpleStreamOptions } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+} from "@marsai-org/ai/auth-gateway";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import { THINKING_BINDING_CONTROLS_BETA } from "@marsai-org/ai/providers/anthropic-wire";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import * as oauthUtils from "@marsai-org/ai/registry/oauth";
+import type { Api, Model, SimpleStreamOptions } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import { anthropicChunks, completionsChunks } from "./helpers/factory-droid";
 
 const GATEWAY_TOKEN = "gateway-token";

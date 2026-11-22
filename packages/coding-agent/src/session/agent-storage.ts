@@ -8,7 +8,7 @@ import {
 	SqliteAuthCredentialStore,
 	type ServiceTier,
 	type StoredAuthCredential,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	AsyncDrain,
 	checkpointWal,
@@ -19,7 +19,7 @@ import {
 	logger,
 	openSqliteDatabase,
 	postmortem,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import type { RawSettings as Settings } from "../config/settings";
 
 /** Row shape for settings table queries */
@@ -198,7 +198,7 @@ export interface AgentStorageApi {
 
 /**
  * Unified SQLite storage for agent settings, model usage, and auth credentials.
- * Delegates auth credential operations to AuthCredentialStore from @oh-my-pi/pi-ai.
+ * Delegates auth credential operations to AuthCredentialStore from @marsai-org/ai.
  * Uses singleton pattern per database path; access via AgentStorage.open().
  */
 export class AgentStorage implements AgentStorageApi {

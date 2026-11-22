@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import * as compatAuth from "@oh-my-pi/pi-catalog/compat/auth";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, FetchImpl, Model, ThinkingBudgets } from "@oh-my-pi/pi-ai/types";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { type GeneratedProvider, getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import * as compatAuth from "@marsai-org/catalog/compat/auth";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Api, Context, FetchImpl, Model, ThinkingBudgets } from "@marsai-org/ai/types";
+import { Effort } from "@marsai-org/catalog/effort";
+import { type GeneratedProvider, getBundledModel } from "@marsai-org/catalog/models";
 
 // Gemini counts thinking against `maxOutputTokens`, while a caller's
 // `maxTokens` is the answer budget. A small budget sent as the total cap is

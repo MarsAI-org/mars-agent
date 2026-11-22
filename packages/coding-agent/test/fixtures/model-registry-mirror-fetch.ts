@@ -1,4 +1,4 @@
-import type { FetchImpl } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/utils";
 
 /** What a scripted fetch saw of one request. */
 export interface FetchSeen {

@@ -2,11 +2,11 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ConflictHistory } from "@oh-my-pi/pi-coding-agent/tools/conflict-detect";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { createTools, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { ConflictHistory } from "@marsai-org/coding-agent/tools/conflict-detect";
+import { removeWithRetries } from "@marsai-org/utils";
 
 function createTestSession(cwd: string, overrides: Partial<ToolSession> = {}): ToolSession {
 	return {

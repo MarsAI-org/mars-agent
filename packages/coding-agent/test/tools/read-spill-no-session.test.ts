@@ -2,15 +2,15 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolContext, AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { postProcessToolResult } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { spillUrlIds, spillUrl } from "@oh-my-pi/pi-utils";
+import type { AgentToolContext, AgentToolResult } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { postProcessToolResult } from "@marsai-org/coding-agent/tools/output-meta";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { spillUrlIds, spillUrl } from "@marsai-org/utils";
 
 function getTextOutput(result: AgentToolResult): string {
 	const texts: string[] = [];

@@ -8,11 +8,11 @@
  * anything timestamp-shaped is a seek position.
  */
 import * as path from "node:path";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { isVideoPath } from "@oh-my-pi/pi-tui/prompt/video";
-import { untilAborted } from "@oh-my-pi/pi-utils/abortable";
-import { TempDir } from "@oh-my-pi/pi-utils/temp";
-import { $which } from "@oh-my-pi/pi-utils/which";
+import { rasterizeSvg } from "@marsai-org/natives";
+import { isVideoPath } from "@marsai-org/tui/prompt/video";
+import { untilAborted } from "@marsai-org/utils/abortable";
+import { TempDir } from "@marsai-org/utils/temp";
+import { $which } from "@marsai-org/utils/which";
 
 const VIDEO_MIME_BY_EXT: Record<string, string> = {
 	".mp4": "video/mp4",

@@ -2,7 +2,7 @@ import { describe, expect, it, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Process, ProcessStatus } from "@oh-my-pi/pi-natives";
+import { Process, ProcessStatus } from "@marsai-org/natives";
 import {
 	AbortError,
 	ChildProcess,
@@ -11,7 +11,7 @@ import {
 	NonZeroExitError,
 	spawn,
 	TimeoutError,
-} from "@oh-my-pi/pi-utils/ptree";
+} from "@marsai-org/utils/ptree";
 
 async function supportsLinuxMountNamespaces(): Promise<boolean> {
 	if (process.platform !== "linux") return false;

@@ -1,6 +1,6 @@
 import { expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
 
 it("antigravity-cli Gemini 4 Neon offers only agy's thought levels, defaulting to high", () => {
 	// agy rejects a `thought_level` its roster omits ("Thinking level 'minimal' is not offered"),

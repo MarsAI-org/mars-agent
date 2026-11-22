@@ -1,6 +1,6 @@
-import { getDefaultModelDiscoveryBaseUrl } from "@oh-my-pi/pi-catalog/provider-models/cache-provider-id";
-import { normalizeLiteLLMManagementBaseUrl } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { getDefaultModelDiscoveryBaseUrl } from "@marsai-org/catalog/provider-models/cache-provider-id";
+import { normalizeLiteLLMManagementBaseUrl } from "@marsai-org/catalog/provider-models/openai-compat";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { ProviderHttpError } from "../error";
 import type { Provider } from "../types";
 import type { UsageFetchContext, UsageFetchParams, UsageLimit, UsageProvider, UsageReport } from "../usage";

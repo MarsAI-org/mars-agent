@@ -9,10 +9,10 @@ import type {
 	UsageResetCredit,
 	UsageResetCreditDetail,
 	UsageResetCredits,
-} from "@oh-my-pi/pi-ai";
-import { truncateToWidth } from "@oh-my-pi/pi-tui";
-import { bankedResetCreditExpiryMs } from "@oh-my-pi/pi-tui/overlays/usage-display";
-import { formatDuration, sanitizeText } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { truncateToWidth } from "@marsai-org/tui";
+import { bankedResetCreditExpiryMs } from "@marsai-org/tui/overlays/usage-display";
+import { formatDuration, sanitizeText } from "@marsai-org/utils";
 import type { Settings } from "../config/settings";
 import { formatActiveAccountLabel, usageReportIdentity } from "../slash-commands/helpers/active-oauth-account";
 import { formatResetProviderName } from "../slash-commands/helpers/reset-usage";

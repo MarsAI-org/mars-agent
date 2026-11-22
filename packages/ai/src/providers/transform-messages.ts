@@ -1,8 +1,8 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { resolveCatalogPolicy } from "@oh-my-pi/pi-catalog/compat/catalog-policy";
-import { carriesReasoning } from "@oh-my-pi/pi-catalog/compat/reasoning-carry";
-import { classifyModel } from "@oh-my-pi/pi-catalog/compat/taxonomy";
-import type { ResolvedOpenAICompat } from "@oh-my-pi/pi-catalog/types";
+import { resolveCatalogPolicy } from "@marsai-org/catalog/compat/catalog-policy";
+import { carriesReasoning } from "@marsai-org/catalog/compat/reasoning-carry";
+import { classifyModel } from "@marsai-org/catalog/compat/taxonomy";
+import type { ResolvedOpenAICompat } from "@marsai-org/catalog/types";
 import { renderDemotedThinking } from "../dialect/demotion";
 import type {
 	Api,

@@ -1,15 +1,15 @@
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { Agent, AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { TUI } from "@oh-my-pi/pi-tui";
-import { ChatTranscriptBuilder } from "@oh-my-pi/pi-tui/chat/chat-transcript-builder";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { IrcBridge, type IrcBridgeHost } from "@oh-my-pi/pi-coding-agent/session/irc-bridge";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session-events";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
+import type { Agent, AgentMessage } from "@marsai-org/agent-core";
+import { TUI } from "@marsai-org/tui";
+import { ChatTranscriptBuilder } from "@marsai-org/tui/chat/chat-transcript-builder";
+import { initTheme } from "@marsai-org/tui/theme";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { IrcBridge, type IrcBridgeHost } from "@marsai-org/coding-agent/session/irc-bridge";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session-events";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
 import { VirtualTerminal } from "../../../tui/test/virtual-terminal";
 import { createInteractiveModeContext } from "../helpers/interactive-mode-context";
 

@@ -9,18 +9,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InternalUrlRouter } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { parsePrUnifiedDiff, retainPrDiffGeneration } from "@oh-my-pi/pi-coding-agent/tools/gh-pr-diff";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InternalUrlRouter } from "@marsai-org/coding-agent/internal-urls";
+import { parsePrUnifiedDiff, retainPrDiffGeneration } from "@marsai-org/coding-agent/tools/gh-pr-diff";
 import {
 	getCached,
 	getCachedGeneration,
 	putCached,
 	resetForTests as resetCacheForTests,
 	resolveGithubCacheAuthKey,
-} from "@oh-my-pi/pi-coding-agent/tools/github-cache";
-import { github } from "@oh-my-pi/pi-coding-agent/utils/github";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/github-cache";
+import { github } from "@marsai-org/coding-agent/utils/github";
+import { removeWithRetries } from "@marsai-org/utils";
 import { resourceText } from "../helpers/resource-text";
 
 let tempDir: string;

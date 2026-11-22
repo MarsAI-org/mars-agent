@@ -1,5 +1,5 @@
 import { vi } from "bun:test";
-import { ptree } from "@oh-my-pi/pi-utils";
+import { ptree } from "@marsai-org/utils";
 import * as connectionManager from "../../src/ssh/connection-manager";
 import type { SSHConnectionTarget } from "../../src/ssh/connection-manager";
 import { quotePosixArgument } from "../../src/utils/shell-quote";

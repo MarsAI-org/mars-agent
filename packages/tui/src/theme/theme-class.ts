@@ -1,6 +1,6 @@
-import { colorLuma, relativeLuminance } from "@oh-my-pi/pi-utils/color";
-import * as logger from "@oh-my-pi/pi-utils/logger";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+import { colorLuma, relativeLuminance } from "@marsai-org/utils/color";
+import * as logger from "@marsai-org/utils/logger";
+import chalk from "@marsai-org/utils/chalk";
 import { bgAnsi, colorToAnsi, fgAnsi, isLightLuma, resolveToHex } from "./color";
 import {
 	ANSI_COLOR_INDEX,

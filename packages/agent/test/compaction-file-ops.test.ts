@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { extractFileOpsFromMessage, stripReadSelector } from "../src/compaction/utils";
 import { createAssistantMessage } from "./helpers";
 

@@ -1,21 +1,21 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Agent, type AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { type Api, type AssistantMessage, type Context, Effort, type ImageContent, type Model } from "@oh-my-pi/pi-ai";
-import { AssistantMessageEventStream } from "@oh-my-pi/pi-ai/utils/event-stream";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { type CreateAgentSessionResult, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { getRestorableSessionModels } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { encodeRawPng } from "@oh-my-pi/pi-coding-agent/utils/png-encode";
-import { AUTO_THINKING, resolveProvisionalAutoLevel } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import { Agent, type AgentMessage } from "@marsai-org/agent-core";
+import { type Api, type AssistantMessage, type Context, Effort, type ImageContent, type Model } from "@marsai-org/ai";
+import { AssistantMessageEventStream } from "@marsai-org/ai/utils/event-stream";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { type CreateAgentSessionResult, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { getRestorableSessionModels } from "@marsai-org/coding-agent/session/session-context";
+import { EPHEMERAL_MODEL_CHANGE_ROLE } from "@marsai-org/coding-agent/session/session-entries";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { encodeRawPng } from "@marsai-org/coding-agent/utils/png-encode";
+import { AUTO_THINKING, resolveProvisionalAutoLevel } from "@marsai-org/tui/thinking";
+import { TempDir } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 describe("AgentSession model persistence", () => {

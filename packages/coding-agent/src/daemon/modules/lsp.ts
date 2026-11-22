@@ -13,8 +13,8 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isRecord, logger } from "@marsai-org/utils";
 import { encodeMessageFrame, MessageFramer } from "../../jsonrpc/message-framing";
 import {
 	LSP_ACQUIRE_METHOD,

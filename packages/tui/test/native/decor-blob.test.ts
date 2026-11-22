@@ -1,8 +1,8 @@
 import { expect, it } from "bun:test";
-import type { TspEditorDecoration } from "@oh-my-pi/pi-wire";
-import { chipLabel } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { getEditorTheme, initTheme } from "@oh-my-pi/pi-tui/theme/theme";
+import type { TspEditorDecoration } from "@marsai-org/wire";
+import { chipLabel } from "@marsai-org/tui/prompt/composer-attachments";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { getEditorTheme, initTheme } from "@marsai-org/tui/theme/theme";
 import { TspHarness } from "./tsp-harness";
 
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==";

@@ -2,12 +2,12 @@ import { afterEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { resolveProviderModels } from "@oh-my-pi/pi-catalog/model-manager";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { scalewayModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { resolveProviderModels } from "@marsai-org/catalog/model-manager";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { scalewayModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@marsai-org/catalog/types";
 
 /** One Scaleway card ladder: [id, on-tiers, default level]. */
 const SCALEWAY_LADDERS: Array<[string, Effort[], Effort | undefined]> = [

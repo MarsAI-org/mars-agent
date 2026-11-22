@@ -2,20 +2,20 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { unregisterCustomApis } from "@oh-my-pi/pi-ai/api-registry";
-import { createMockModel, registerMockApi } from "@oh-my-pi/pi-ai/providers/mock";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import type { ThinkingConfig } from "@oh-my-pi/pi-catalog/types";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import * as sdk from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as discovery from "@oh-my-pi/pi-coding-agent/task/discovery";
-import { runStructuredSubagent } from "@oh-my-pi/pi-coding-agent/task/structured-subagent";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import type { Model } from "@marsai-org/ai";
+import { unregisterCustomApis } from "@marsai-org/ai/api-registry";
+import { createMockModel, registerMockApi } from "@marsai-org/ai/providers/mock";
+import { Effort } from "@marsai-org/catalog/effort";
+import type { ThinkingConfig } from "@marsai-org/catalog/types";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import * as sdk from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as discovery from "@marsai-org/coding-agent/task/discovery";
+import { runStructuredSubagent } from "@marsai-org/coding-agent/task/structured-subagent";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
 const perCallSettings = (model: Model, extra: Record<string, unknown> = {}) =>
 	Settings.isolated({

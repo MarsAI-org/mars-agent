@@ -23,7 +23,7 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { executeShell } from "@oh-my-pi/pi-natives";
+import { executeShell } from "@marsai-org/natives";
 import {
 	compareVersions,
 	getWebKitHostPath,
@@ -32,9 +32,9 @@ import {
 	parseFlag,
 	tryAcquireFileLock,
 	withFileLock,
-} from "@oh-my-pi/pi-utils";
-import { extractArchive } from "@oh-my-pi/pi-utils/ar";
-import { BROWSER_ARCHIVE_LIMITS } from "@oh-my-pi/pi-utils/browsers";
+} from "@marsai-org/utils";
+import { extractArchive } from "@marsai-org/utils/ar";
+import { BROWSER_ARCHIVE_LIMITS } from "@marsai-org/utils/browsers";
 import {
 	BUILD_DOWNLOAD_TIMEOUT_MS,
 	type BuildAnswer,

@@ -9,12 +9,12 @@
  * timeout submits the form's preselected values.
  */
 
-import { type as arkType } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import type { ImageContent, TextContent } from "@oh-my-pi/pi-ai";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { formatKeyHint } from "@oh-my-pi/pi-tui/app-keybindings";
-import { editorKey, editorKeys } from "@oh-my-pi/pi-tui/chrome/keybinding-hints";
+import { type as arkType } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolContext, AgentToolResult, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import type { ImageContent, TextContent } from "@marsai-org/ai";
+import { TERMINAL } from "@marsai-org/tui";
+import { formatKeyHint } from "@marsai-org/tui/app-keybindings";
+import { editorKey, editorKeys } from "@marsai-org/tui/chrome/keybinding-hints";
 import {
 	choiceValue,
 	defaultFormData,
@@ -26,20 +26,20 @@ import {
 	type OptionNote,
 	OTHER_LABEL,
 	textValue,
-} from "@oh-my-pi/pi-tui/html-form/data";
+} from "@marsai-org/tui/html-form/data";
 import {
 	type ChoiceField,
 	type HtmlForm,
 	parseHtmlForm,
 	spansText,
 	type TextField,
-} from "@oh-my-pi/pi-tui/html-form/parse";
-import { shiftImageMarkers } from "@oh-my-pi/pi-tui/prompt/composer-attachments";
-import { disambiguateDisplayLabels } from "@oh-my-pi/pi-tui/render/render-utils";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import type { AskToolDetails } from "@oh-my-pi/pi-tui/tools/ask";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isRecord, logger, prompt, untilAborted } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/tui/html-form/parse";
+import { shiftImageMarkers } from "@marsai-org/tui/prompt/composer-attachments";
+import { disambiguateDisplayLabels } from "@marsai-org/tui/render/render-utils";
+import { theme } from "@marsai-org/tui/theme";
+import type { AskToolDetails } from "@marsai-org/tui/tools/ask";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isRecord, logger, prompt, untilAborted } from "@marsai-org/utils";
 import type {
 	ExtensionFormDialogResult,
 	ExtensionUIContext,

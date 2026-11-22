@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { getDaemonDir } from "@oh-my-pi/pi-utils";
+import { ipcEndpoint } from "@marsai-org/natives";
+import { getDaemonDir } from "@marsai-org/utils";
 import { canonicalProjectDir } from "../daemon/client";
 
 /**

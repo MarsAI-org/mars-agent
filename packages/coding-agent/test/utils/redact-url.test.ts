@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { redactUrlForLog } from "@oh-my-pi/pi-coding-agent/utils/redact-url";
+import { redactUrlForLog } from "@marsai-org/coding-agent/utils/redact-url";
 
 describe("redactUrlForLog", () => {
 	it("redacts credential-bearing query params but keeps the rest", () => {

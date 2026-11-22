@@ -13,14 +13,14 @@
  * teardown and a zero grace, so no wall-clock timers are needed.
  */
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import type { LoadExtensionsResult } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import type { CreateAgentSessionResult } from "@oh-my-pi/pi-coding-agent/sdk";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import type { AgentSession, AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { runSubprocess } from "@oh-my-pi/pi-coding-agent/task/executor";
-import type { AgentDefinition } from "@oh-my-pi/pi-coding-agent/task/types";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
+import type { AssistantMessage } from "@marsai-org/ai";
+import type { LoadExtensionsResult } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import type { CreateAgentSessionResult } from "@marsai-org/coding-agent/sdk";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import type { AgentSession, AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { runSubprocess } from "@marsai-org/coding-agent/task/executor";
+import type { AgentDefinition } from "@marsai-org/coding-agent/task/types";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
 import { createSessionDefaults } from "../helpers/session-defaults";
 
 const baseAgent: AgentDefinition = { name: "task", description: "test", systemPrompt: "test", source: "bundled" };

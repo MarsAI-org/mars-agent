@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { type AgentDefinition, TaskTool } from "@oh-my-pi/pi-coding-agent/task";
-import * as discoveryModule from "@oh-my-pi/pi-coding-agent/task/discovery";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { type AgentDefinition, TaskTool } from "@marsai-org/coding-agent/task";
+import * as discoveryModule from "@marsai-org/coding-agent/task/discovery";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
 
 const DISCOVERED: AgentDefinition[] = [
 	{

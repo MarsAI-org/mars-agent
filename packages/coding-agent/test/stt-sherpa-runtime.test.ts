@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it, mock, spyOn } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { loadSherpaRuntime, SHERPA_PACKAGE } from "@oh-my-pi/pi-coding-agent/stt/sherpa-runtime";
-import * as utils from "@oh-my-pi/pi-utils";
+import { loadSherpaRuntime, SHERPA_PACKAGE } from "@marsai-org/coding-agent/stt/sherpa-runtime";
+import * as utils from "@marsai-org/utils";
 
 async function writeRuntime(runtimeDir: string, source: string): Promise<void> {
 	const dir = path.join(runtimeDir, "node_modules", SHERPA_PACKAGE);

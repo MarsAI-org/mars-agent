@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { vercelAiGatewayModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
+import { vercelAiGatewayModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
 
 describe("Vercel AI Gateway provider", () => {
 	test("discovers public models after an expired stored bearer is rejected", async () => {

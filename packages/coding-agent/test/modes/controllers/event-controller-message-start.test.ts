@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage, ImageContent, UserMessage } from "@oh-my-pi/pi-ai";
-import { ToolExecutionComponent, type ToolExecutionHandle } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { CustomMessage } from "@oh-my-pi/pi-coding-agent/session/messages";
-import type { Component } from "@oh-my-pi/pi-tui";
+import type { AssistantMessage, ImageContent, UserMessage } from "@marsai-org/ai";
+import { ToolExecutionComponent, type ToolExecutionHandle } from "@marsai-org/tui/chat/tool-execution";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { CustomMessage } from "@marsai-org/coding-agent/session/messages";
+import type { Component } from "@marsai-org/tui";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 beforeAll(() => {

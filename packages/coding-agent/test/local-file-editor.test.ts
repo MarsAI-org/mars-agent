@@ -1,15 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { InternalUrlRouter, type LocalFileEntry, LocalProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls";
-import { buildLocalFileArgumentCompletions } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-completions";
+import { InternalUrlRouter, type LocalFileEntry, LocalProtocolHandler } from "@marsai-org/coding-agent/internal-urls";
+import { buildLocalFileArgumentCompletions } from "@marsai-org/coding-agent/slash-commands/builtin-completions";
 import {
 	openLocalFileInEditor,
 	resolveLocalEditorTarget,
 	revalidateLocalEditorEntry,
-} from "@oh-my-pi/pi-coding-agent/modes/local-file-editor";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/local-file-editor";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { TempDir } from "@marsai-org/utils";
 import { vi } from "bun:test";
 
 describe("resolveLocalEditorTarget", () => {

@@ -1,5 +1,5 @@
 import { type Component, Container } from "../tui";
-import { getProjectDir, jsonContainerEnd, sanitizeText, spillUrl } from "@oh-my-pi/pi-utils";
+import { getProjectDir, jsonContainerEnd, sanitizeText, spillUrl } from "@marsai-org/utils";
 import { highlightCode, type Theme } from "../theme/theme";
 import { renderStatusLine } from "../render/status-line";
 import { framedToolCard, type ToolCardSnapshot } from "../render/tool-card";
@@ -33,7 +33,7 @@ import {
 	type ShellVizPresentation,
 	toolIntentLabel,
 	type TspTone,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import type { SpotlightDetails } from "../chat/spotlight";
 import { plainText } from "../native/spans";
 import {

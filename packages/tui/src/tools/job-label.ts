@@ -1,4 +1,4 @@
-import { toolIntentLabel } from "@oh-my-pi/pi-wire";
+import { toolIntentLabel } from "@marsai-org/wire";
 
 /** A job's compact display name, never interpreting a command or a manually supplied label as intent. */
 export function jobDisplayLabel(job: { intent?: string; label: string }): string {

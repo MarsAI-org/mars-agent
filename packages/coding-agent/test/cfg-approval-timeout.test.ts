@@ -2,30 +2,30 @@ import { afterEach, beforeEach, describe, expect, it, spyOn, vi } from "bun:test
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { CfgProtocolHandler, setCfgApprovalHost } from "@oh-my-pi/pi-coding-agent/internal-urls/cfg-protocol";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { type MCPAuthHandler, MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import { ExtensionUiController } from "@oh-my-pi/pi-coding-agent/modes/controllers/extension-ui-controller";
-import { MCPCommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/mcp-command-controller";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { __resetAutoQaConsentForTests, resolveAutoQaConsent } from "@oh-my-pi/pi-coding-agent/tools/report-tool-issue";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { CfgProtocolHandler, setCfgApprovalHost } from "@marsai-org/coding-agent/internal-urls/cfg-protocol";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { type MCPAuthHandler, MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import { ExtensionUiController } from "@marsai-org/coding-agent/modes/controllers/extension-ui-controller";
+import { MCPCommandController } from "@marsai-org/coding-agent/modes/controllers/mcp-command-controller";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { __resetAutoQaConsentForTests, resolveAutoQaConsent } from "@marsai-org/coding-agent/tools/report-tool-issue";
 import {
 	cfgMarketplaceAutoUpdate,
 	cfgStartupChangelogMode,
 	cfgStartupCheckUpdate,
 	cfgStartupSetupWizard,
 	cfgStartupShowSplash,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { AgentStorage } from "@oh-my-pi/pi-coding-agent/session/agent-storage";
-import { HistoryStorage } from "@oh-my-pi/pi-coding-agent/session/history-storage";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { getProjectDir, setProjectDir, Snowflake } from "@oh-my-pi/pi-utils";
-import * as utils from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/settings";
+import { AgentStorage } from "@marsai-org/coding-agent/session/agent-storage";
+import { HistoryStorage } from "@marsai-org/coding-agent/session/history-storage";
+import { closeSessionIndex } from "@marsai-org/coding-agent/session/session-index";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { Composer } from "@marsai-org/tui/prompt/composer";
+import { initTheme } from "@marsai-org/tui/theme";
+import { getProjectDir, setProjectDir, Snowflake } from "@marsai-org/utils";
+import * as utils from "@marsai-org/utils";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal";
 import { createTestSession, type TestSessionContext } from "./utilities";
 

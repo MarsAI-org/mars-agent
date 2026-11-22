@@ -6,29 +6,29 @@
  */
 import { afterAll, beforeAll, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	type AgentTool,
 	type AgentToolContext,
 	type AgentToolResult,
 	type ToolApproval,
-} from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import type { ExtensionUIContext } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/types";
-import { ExtensionToolWrapper } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/wrapper";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { Tool, ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { BashTool } from "@oh-my-pi/pi-coding-agent/tools/bash";
+} from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import type { ExtensionUIContext } from "@marsai-org/coding-agent/extensibility/extensions/types";
+import { ExtensionToolWrapper } from "@marsai-org/coding-agent/extensibility/extensions/wrapper";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { Tool, ToolSession } from "@marsai-org/coding-agent/tools";
+import { BashTool } from "@marsai-org/coding-agent/tools/bash";
 import {
 	dispatchToolCommand,
 	resolveToolCommand,
 	type ToolCommandState,
-} from "@oh-my-pi/pi-coding-agent/tools/tool-commands";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/tool-commands";
+import { TempDir } from "@marsai-org/utils";
 
 const COMMENT_TOOL = "jira_addcomment";
 const ISSUE_TOOL = "linear_create_issue";

@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { col } from "@oh-my-pi/pi-tui/native/describe";
-import type { NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { actionBar, actionButton, iconButton, quietButton, segmentedTabs } from "@oh-my-pi/pi-tui/native/overlay";
-import type { Component } from "@oh-my-pi/pi-tui/tui";
-import { TSP_KINDS, type TspNode } from "@oh-my-pi/pi-wire";
+import { col } from "@marsai-org/tui/native/describe";
+import type { NativeNode } from "@marsai-org/tui/native/node";
+import { actionBar, actionButton, iconButton, quietButton, segmentedTabs } from "@marsai-org/tui/native/overlay";
+import type { Component } from "@marsai-org/tui/tui";
+import { TSP_KINDS, type TspNode } from "@marsai-org/wire";
 import { TspHarness } from "./tsp-harness";
 
 /** Every omp button shape and a segmented control, described afresh each frame. */

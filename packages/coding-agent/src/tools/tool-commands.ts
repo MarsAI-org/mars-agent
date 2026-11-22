@@ -26,12 +26,12 @@ import {
 	type AgentToolUpdateCallback,
 	type ToolLoadMode,
 	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
-import { toolWireSchema } from "@oh-my-pi/pi-ai";
-import { shellReservedCommandNames } from "@oh-my-pi/pi-natives";
-import { truncateHeadBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/agent-core";
+import { toolWireSchema } from "@marsai-org/ai";
+import { shellReservedCommandNames } from "@marsai-org/natives";
+import { truncateHeadBytes } from "@marsai-org/tui/tools/streaming-output";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isRecord, prompt } from "@marsai-org/utils";
 import { isEvalBridgeToolCall, isEvalBridgeToolCallable } from "../eval/tool-bridge-policy";
 import { renderToolHelp } from "../exec/tool-cli";
 import toolCommandCatalogPrompt from "../prompts/system/tool-command-catalog.md" with { type: "text" };
@@ -223,7 +223,7 @@ export function resolveMountedToolCommand(state: ToolCommandState, name: string)
  * Resolve a mounted tool with its execution-only permission decorator.
  *
  * Mounted-only, matching {@link resolveMountedToolCommand}, and a published export
- * under `@oh-my-pi/pi-coding-agent/tools/tool-commands`, so its semantics must not
+ * under `@marsai-org/coding-agent/tools/tool-commands`, so its semantics must not
  * drift. `sdk.ts` composes this with the calling agent's advertised tools to
  * recover a Claude Code-spelled MCP name: the union has to be resolved in one
  * pass for the ambiguity rule to hold, so that composition lives with the

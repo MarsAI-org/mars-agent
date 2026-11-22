@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as os from "node:os";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { RunOutput } from "@oh-my-pi/pi-coding-agent/tools/browser/run-output";
-import { TernTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tern/tern-tab";
+import { isRecord } from "@marsai-org/utils";
+import { RunOutput } from "@marsai-org/coding-agent/tools/browser/run-output";
+import { TernTab } from "@marsai-org/coding-agent/tools/browser/tern/tern-tab";
 import {
 	TernSocketClient,
 	type TernTransport,
 	type TernTransportEvents,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/tern/wire";
+} from "@marsai-org/coding-agent/tools/browser/tern/wire";
 import { type FakeAnswer, frame, jsonPayload } from "./tern-fake-daemon";
 
 const IMAGE = Buffer.from("captured pixels");

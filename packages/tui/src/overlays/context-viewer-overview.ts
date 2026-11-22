@@ -2,8 +2,8 @@
  * Overview model: usage attribution, legend rows, and the occupancy map. Legend and
  * map rows have an ANSI form (`render`) and a native form (`describe`); keep the twins visually identical.
  */
-import { formatNumber } from "@oh-my-pi/pi-utils";
-import type { TspSpan } from "@oh-my-pi/pi-wire";
+import { formatNumber } from "@marsai-org/utils";
+import type { TspSpan } from "@marsai-org/wire";
 import type { ContextBreakdown } from "../status-line/context-usage";
 import { type ContextMapCell, planContextMap } from "../chrome/context-map";
 import { CONTEXT_PRESENTATION, type ContextPresentationId } from "../chrome/context-presentation";

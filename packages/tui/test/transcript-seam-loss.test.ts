@@ -1,10 +1,10 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { type Component, Container, Text } from "@oh-my-pi/pi-tui";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { COMPOSER_DEFAULTS, Composer } from "@oh-my-pi/pi-tui/prompt/composer";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { type Component, Container, Text } from "@marsai-org/tui";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { COMPOSER_DEFAULTS, Composer } from "@marsai-org/tui/prompt/composer";
+import { initTheme } from "@marsai-org/tui/theme";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 import { VirtualRenderScheduler } from "./virtual-render-scheduler";
 import { VirtualTerminal } from "./virtual-terminal";

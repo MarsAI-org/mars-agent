@@ -8,7 +8,7 @@
  * and server-to-client asks arrive as `input_required` results instead of
  * JSON-RPC requests.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import type { MCPClientCapabilities, MCPImplementation, MCPServerCapabilities } from "./types";
 
 /** Protocol revision sent on every request. */

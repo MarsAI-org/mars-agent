@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { $env, logger } from "@oh-my-pi/pi-utils";
+import { $env, logger } from "@marsai-org/utils";
 import { DisasmUnavailableError, type WorkerRuntime } from "../disasm/backend";
 import { findWorkerRuntime, memoizeWorkerRuntime } from "../disasm/python-runtime";
 import type { ToolSession } from "../tools";

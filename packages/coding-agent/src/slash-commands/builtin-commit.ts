@@ -1,5 +1,5 @@
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { prompt } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { prompt } from "@marsai-org/utils";
 import { draftFor } from "../commit/selective/prelude-definition";
 import commitRequestTemplate from "../prompts/commit-request.md" with { type: "text" };
 import { MAIN_AGENT_ID } from "../registry/agent-registry";

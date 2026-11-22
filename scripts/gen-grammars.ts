@@ -14,7 +14,7 @@
  * compile (`grammar!(wasm …)` in `crates/ast/src/language/mod.rs`).
  */
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 
 const REPO = "stencil-hq/wasm-grammars";
 const REPO_ROOT = path.join(import.meta.dir, "..");

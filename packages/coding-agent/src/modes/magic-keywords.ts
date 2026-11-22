@@ -1,4 +1,4 @@
-import { prompt } from "@oh-my-pi/pi-utils";
+import { prompt } from "@marsai-org/utils";
 import chillaxNotice from "../prompts/system/chillax-notice.md" with { type: "text" };
 import jevifyNotice from "../prompts/system/jevify-notice.md" with { type: "text" };
 import orchestrateNotice from "../prompts/system/orchestrate-notice.md" with { type: "text" };

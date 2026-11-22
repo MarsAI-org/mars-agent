@@ -4,10 +4,10 @@ import {
 	compact,
 	DEFAULT_COMPACTION_SETTINGS,
 	generateSummary,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import * as snapcompact from "@oh-my-pi/snapcompact";
-import type { Model } from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/agent-core/compaction";
+import * as snapcompact from "@marsai-org/snapcompact";
+import type { Model } from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function getModel(): Model {
 	const model = getBundledModel("anthropic", "claude-sonnet-4-5");

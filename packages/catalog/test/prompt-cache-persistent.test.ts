@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isPromptCachePersistent } from "@oh-my-pi/pi-catalog/compat/prompt-cache-persistent";
+import { buildModel } from "@marsai-org/catalog/build";
+import { isPromptCachePersistent } from "@marsai-org/catalog/compat/prompt-cache-persistent";
 
 const base = {
 	reasoning: true,

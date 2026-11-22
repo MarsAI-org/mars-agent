@@ -10,8 +10,8 @@
  * every per-agent knob is picked instead of memorized.
  */
 
-import type { Model } from "@oh-my-pi/pi-ai";
-import type { TspPickerAction, TspPickerColumn, TspPickerItem, TspPickerScope, TspSpan } from "@oh-my-pi/pi-wire";
+import type { Model } from "@marsai-org/ai";
+import type { TspPickerAction, TspPickerColumn, TspPickerItem, TspPickerScope, TspSpan } from "@marsai-org/wire";
 import {
 	type Component,
 	Editor,

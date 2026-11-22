@@ -1,14 +1,14 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
-import type { TUI } from "@oh-my-pi/pi-tui";
+import type { TUI } from "@marsai-org/tui";
 import {
 	type BtwHistoryRecord,
 	getBtwInject,
 	getBtwRecordInject,
 	splitBtwInject,
-} from "@oh-my-pi/pi-tui/overlays/btw-history";
-import { BTW_INJECT_LABEL, BTW_INJECTED_LABEL } from "@oh-my-pi/pi-tui/overlays/btw-inject";
-import { BtwPanelComponent } from "@oh-my-pi/pi-tui/overlays/btw-panel";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
+} from "@marsai-org/tui/overlays/btw-history";
+import { BTW_INJECT_LABEL, BTW_INJECTED_LABEL } from "@marsai-org/tui/overlays/btw-inject";
+import { BtwPanelComponent } from "@marsai-org/tui/overlays/btw-panel";
+import { initTheme, theme } from "@marsai-org/tui/theme";
 
 beforeAll(async () => {
 	await initTheme();

@@ -1,17 +1,17 @@
 import { afterEach, describe, expect, test, vi } from "bun:test";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/registry/oauth";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import { getEnvApiKey } from "@oh-my-pi/pi-ai/env-api-key";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { isCatalogDescriptor, resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@oh-my-pi/pi-catalog/provider-models/descriptors";
-import { singularityApiTechModelManagerOptions } from "@oh-my-pi/pi-catalog/provider-models/openai-compat";
-import type { FetchImpl, ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { getOAuthProviders } from "@marsai-org/ai/registry/oauth";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import { getEnvApiKey } from "@marsai-org/ai/env-api-key";
+import { buildModel } from "@marsai-org/catalog/build";
+import { isCatalogDescriptor, resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { DEFAULT_MODEL_PER_PROVIDER, PROVIDER_DESCRIPTORS } from "@marsai-org/catalog/provider-models/descriptors";
+import { singularityApiTechModelManagerOptions } from "@marsai-org/catalog/provider-models/openai-compat";
+import type { FetchImpl, ModelSpec } from "@marsai-org/catalog/types";
 import {
 	SINGULARITYAPI_DEV_API_BASE_URL,
 	SINGULARITYAPI_TECH_API_BASE_URL,
 	normalizeSingularityApiBaseUrl,
-} from "@oh-my-pi/pi-catalog/wire/singularityapi";
+} from "@marsai-org/catalog/wire/singularityapi";
 
 const originalKey = Bun.env.SINGULARITYAPI_TECH_API_KEY;
 

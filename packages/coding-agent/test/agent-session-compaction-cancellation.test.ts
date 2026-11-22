@@ -1,21 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import { scheduler } from "node:timers/promises";
-import { Agent, CompactionCancelledError } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { ExtensionRuntime, loadExtensionFromFactory } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { ExtensionRunner } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/runner";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import { Agent, CompactionCancelledError } from "@marsai-org/agent-core";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { ExtensionRuntime, loadExtensionFromFactory } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { ExtensionRunner } from "@marsai-org/coding-agent/extensibility/extensions/runner";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
 import {
 	type AsyncResultEntry,
 	buildAsyncResultBatchMessage,
-} from "@oh-my-pi/pi-coding-agent/session/async-job-delivery";
-import { SessionMaintenance } from "@oh-my-pi/pi-coding-agent/session/session-maintenance";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { convertToLlm, USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/session/async-job-delivery";
+import { SessionMaintenance } from "@marsai-org/coding-agent/session/session-maintenance";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { convertToLlm, USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	ContextNotesTool,
 	GrepTool,
@@ -23,14 +23,14 @@ import {
 	ReadTool,
 	type Tool,
 	type ToolSession,
-} from "@oh-my-pi/pi-coding-agent/tools";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { TempDir, withTimeout } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { TempDir, withTimeout } from "@marsai-org/utils";
 
 import {
 	cfgCompactionAutoContinue,
 	cfgCompactionExperimentalContextManagement,
-} from "@oh-my-pi/pi-coding-agent/session/context-settings";
+} from "@marsai-org/coding-agent/session/context-settings";
 
 type HookMode = "extension-veto" | "park";
 

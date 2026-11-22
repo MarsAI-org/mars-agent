@@ -4,8 +4,8 @@ import {
 	type RequestBodyEncoding,
 	type RequestCompressionPolicy,
 	resolveRequestCompression,
-} from "@oh-my-pi/pi-catalog/compat/request-compression";
-import { $flag, logger } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/compat/request-compression";
+import { $flag, logger } from "@marsai-org/utils";
 import type { FetchImpl, Model } from "../types";
 
 const gzip = promisify(zlib.gzip);

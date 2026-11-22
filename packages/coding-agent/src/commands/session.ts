@@ -9,8 +9,8 @@
  * `omp session lease --json -- <id>...` reports which sessions a running omp owns
  * without taking their ownership leases.
  */
-import chalk from "@oh-my-pi/pi-utils/chalk";
-import { Args, CliUsageError, Command, Flags } from "@oh-my-pi/pi-utils/cli";
+import chalk from "@marsai-org/utils/chalk";
+import { Args, CliUsageError, Command, Flags } from "@marsai-org/utils/cli";
 import { sessionHelp as commandHelp } from "../cli/command-help";
 import { resolveSessionFileArg } from "../cli/session-arg";
 import { SessionMoveRefusedError } from "../session/session-manager";

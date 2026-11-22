@@ -1,7 +1,7 @@
-import { type FileDiagnosticsResult } from "@oh-my-pi/pi-tui/tools/lsp";
+import { type FileDiagnosticsResult } from "@marsai-org/tui/tools/lsp";
 import * as fs from "node:fs";
 import path from "node:path";
-import { isRecord, logger, untilAborted, toError } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, untilAborted, toError } from "@marsai-org/utils";
 import { formatPathRelativeToCwd } from "../tools/path-utils";
 import { throwIfAborted } from "../tools/tool-errors";
 import {

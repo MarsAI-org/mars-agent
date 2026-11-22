@@ -2,14 +2,14 @@ import { afterEach, beforeEach, describe, expect, test, spyOn, vi } from "bun:te
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { EffectiveExtensionRoots } from "@oh-my-pi/pi-coding-agent/capability/types";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { loadSkills } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { writeInstalledPluginsRegistry } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import type { EffectiveExtensionRoots } from "@marsai-org/coding-agent/capability/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { loadSkills } from "@marsai-org/coding-agent/extensibility/skills";
+import { writeInstalledPluginsRegistry } from "@marsai-org/coding-agent/extensibility/plugins/marketplace";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import * as piUtils from "@marsai-org/utils";
+import { removeWithRetries } from "@marsai-org/utils";
 
 // A session refreshes skills with its own effective roots, never the process-wide CLI injection
 // (`--no-extensions` in an earlier in-process `runRootCommand` leaves it at explicit-only).

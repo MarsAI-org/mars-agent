@@ -8,8 +8,8 @@
  *
  * The minted key is a regular Mistral API key billed against the plan's Vibe Code quota.
  */
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, ptree } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isRecord, ptree } from "@marsai-org/utils";
 import * as AIError from "../../error";
 import type { FetchImpl } from "../../types";
 import { getRetryAfterMsFromHeaders } from "../../utils/retry-after";

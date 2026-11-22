@@ -1,5 +1,5 @@
 /** `chrome.storage.local` as React state: the panel's settings, shortcuts and per-host suggestions. */
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { isRecord } from "@marsai-org/utils/type-guards";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type PanelSettings, SETTINGS_KEY, SHORTCUTS_KEY, type Shortcut, SUGGESTIONS_KEY } from "../messages";
 

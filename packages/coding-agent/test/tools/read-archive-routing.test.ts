@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import * as ar from "@oh-my-pi/pi-utils/ar";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import { TempDir } from "@marsai-org/utils";
+import * as ar from "@marsai-org/utils/ar";
 
 const ONE_PX_PNG = Buffer.from(
 	"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC",

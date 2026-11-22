@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { Answer } from "@oh-my-pi/pi-ai";
-import { COUPLED_AT, planFromAnswers, segmentRequest } from "@oh-my-pi/pi-coding-agent/auto-parallel/planner";
+import type { Answer } from "@marsai-org/ai";
+import { COUPLED_AT, planFromAnswers, segmentRequest } from "@marsai-org/coding-agent/auto-parallel/planner";
 
 type Role = "context" | "task" | "wrapup";
 

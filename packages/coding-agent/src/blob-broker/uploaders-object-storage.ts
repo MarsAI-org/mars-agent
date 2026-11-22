@@ -1,5 +1,5 @@
-import { type AwsCredentials, type SignedHeaders, signRequest } from "@oh-my-pi/pi-ai/providers/aws-sigv4";
-import { asStrictBytes } from "@oh-my-pi/pi-utils";
+import { type AwsCredentials, type SignedHeaders, signRequest } from "@marsai-org/ai/providers/aws-sigv4";
+import { asStrictBytes } from "@marsai-org/utils";
 import type { BlobDestinationId } from "./destinations";
 import type { BlobUploader, RemoteDeleteAction } from "./publication";
 import {

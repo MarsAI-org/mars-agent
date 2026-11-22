@@ -1,16 +1,16 @@
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
 import type { ServerWebSocket } from "bun";
-import { streamSimple } from "@oh-my-pi/pi-ai";
-import { type as schemaType } from "@oh-my-pi/omptype";
-import { streamOpenAIResponses, type OpenAIResponsesOptions } from "@oh-my-pi/pi-ai/providers/openai-responses";
+import { streamSimple } from "@marsai-org/ai";
+import { type as schemaType } from "@marsai-org/omptype";
+import { streamOpenAIResponses, type OpenAIResponsesOptions } from "@marsai-org/ai/providers/openai-responses";
 import type {
 	Context,
 	Model,
 	ProviderResponseMetadata,
 	ProviderSessionState,
 	SimpleStreamOptions,
-} from "@oh-my-pi/pi-ai/types";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai/types";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import { endpoint as createEndpoint, send, sse, textEvents } from "./fixtures/openai-responses-server";
 
 const EventedWebSocket = require("ws") as { prototype: WebSocket };

@@ -1,4 +1,4 @@
-import type { Tool } from "@oh-my-pi/pi-ai";
+import type { Tool } from "@marsai-org/ai";
 
 /**
  * Exact registry names shadow wire aliases; an alias must have exactly one claimant.

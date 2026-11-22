@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { MemorySessionStorage } from "@oh-my-pi/pi-coding-agent/session/session-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { MemorySessionStorage } from "@marsai-org/coding-agent/session/session-storage";
 import { makeAssistantMessage } from "./helpers";
 
 /**

@@ -4,7 +4,7 @@
  * semantic nodes/spans only, with ANSI-free, sanitized text.
  */
 import * as path from "node:path";
-import type { TspSpan, TspText, TspTone } from "@oh-my-pi/pi-wire";
+import type { TspSpan, TspText, TspTone } from "@marsai-org/wire";
 import { ansi, code, compact, keyed, node, row, span, text } from "../native/describe";
 import type { NativeChild, NativeNode } from "../native/node";
 import { tryFileUri } from "../render/hyperlink";

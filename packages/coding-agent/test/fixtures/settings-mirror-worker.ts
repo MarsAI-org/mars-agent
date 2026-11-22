@@ -1,5 +1,5 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { boundSettings, getDisabledProviders } from "../../src/capability";
 import { getActiveRules } from "../../src/capability/rule";
 import { lookup } from "../../src/config/registry";

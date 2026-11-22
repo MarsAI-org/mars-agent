@@ -26,9 +26,9 @@
 import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { IpcConnection, IpcServer, ipcEndpoint } from "@oh-my-pi/pi-natives";
-import { getBaseConfigRoot, isEnoent, isFsError } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { IpcConnection, IpcServer, ipcEndpoint } from "@marsai-org/natives";
+import { getBaseConfigRoot, isEnoent, isFsError } from "@marsai-org/utils";
 
 /** Discovery metadata / IPC protocol version. Mixed omp versions fail safely. */
 export const COLLAB_REGISTRY_VERSION = 1;

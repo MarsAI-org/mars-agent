@@ -32,8 +32,8 @@
  *
  * https://platform.claude.com/docs/en/build-with-claude/message-threads
  */
-import { isOfficialAnthropicApiUrl } from "@oh-my-pi/pi-catalog/compat/anthropic";
-import { $flag } from "@oh-my-pi/pi-utils";
+import { isOfficialAnthropicApiUrl } from "@marsai-org/catalog/compat/anthropic";
+import { $flag } from "@marsai-org/utils";
 import * as AIError from "../error";
 import type { Model } from "../types";
 import { normalizeExtraBetas } from "./anthropic-headers";

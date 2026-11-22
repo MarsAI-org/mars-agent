@@ -7,19 +7,19 @@
  */
 
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { agentLoop, agentLoopDetailed } from "@oh-my-pi/pi-agent-core/agent-loop";
+import { type } from "@marsai-org/omptype";
+import { agentLoop, agentLoopDetailed } from "@marsai-org/agent-core/agent-loop";
 import {
 	type AgentRunSummary,
 	aggregateAgentRunCoverage,
 	aggregateAgentRunSummaries,
 	emptyAgentRunCoverage,
 	emptyAgentRunSummary,
-} from "@oh-my-pi/pi-agent-core/run-collector";
-import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, OmpGenAIAggregateAttr } from "@oh-my-pi/pi-agent-core/telemetry";
-import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@oh-my-pi/pi-agent-core/types";
-import type { AssistantMessage, Message } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+} from "@marsai-org/agent-core/run-collector";
+import { EXECUTE_TOOL_STATUS_ATTR, GenAIAttr, OmpGenAIAggregateAttr } from "@marsai-org/agent-core/telemetry";
+import type { AgentEvent, AgentLoopConfig, AgentMessage, AgentTool } from "@marsai-org/agent-core/types";
+import type { AssistantMessage, Message } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
 import type {
 	AttributeValue,
 	Context as OtelContext,

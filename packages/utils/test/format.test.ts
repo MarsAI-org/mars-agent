@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { formatAge, formatDuration } from "@oh-my-pi/pi-utils/format";
+import { formatAge, formatDuration } from "@marsai-org/utils/format";
 
 describe("formatDuration", () => {
 	// Codex's wham/usage endpoint returns the prior window's reset_at until the

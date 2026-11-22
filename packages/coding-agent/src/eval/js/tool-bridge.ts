@@ -3,15 +3,15 @@ import {
 	type AgentToolResult,
 	type AgentToolUpdateCallback,
 	validateAgentToolArguments,
-} from "@oh-my-pi/pi-agent-core";
-import { type ImageContent, toolWireSchema } from "@oh-my-pi/pi-ai";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { INTENT_FIELD } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/agent-core";
+import { type ImageContent, toolWireSchema } from "@marsai-org/ai";
+import { isRecord } from "@marsai-org/utils";
+import { INTENT_FIELD } from "@marsai-org/wire";
 import type { ToolSession } from "../../tools";
 import { committedTodoPhases } from "../../tools/todo";
-import { isReplyWrite, toolResultReplies } from "@oh-my-pi/pi-tui/chat/reply-write";
-import { parseMCPProgress } from "@oh-my-pi/pi-tui/tools/mcp";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { isReplyWrite, toolResultReplies } from "@marsai-org/tui/chat/reply-write";
+import { parseMCPProgress } from "@marsai-org/tui/tools/mcp";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { schemaDeclaresIntentField } from "../../utils/tool-schema";
 import { findEnabledEvalPrelude, invokeEvalPrelude } from "../preludes";
 import { EVAL_AGENT_BRIDGE_NAME, type EvalAgentHandleResult, runEvalAgent } from "../agent-bridge";

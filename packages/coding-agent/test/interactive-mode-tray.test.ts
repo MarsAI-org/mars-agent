@@ -1,36 +1,36 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import { Agent, type AgentTool, ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { JobWidgetRegistry } from "@oh-my-pi/pi-coding-agent/job-widgets/types";
-import { SelectorController } from "@oh-my-pi/pi-coding-agent/modes/controllers/selector-controller";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { SessionFocusController } from "@oh-my-pi/pi-coding-agent/modes/controllers/session-focus-controller";
-import { cfgDisplayPinnedAgents } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { asyncJobSnapshot, asyncJobTree } from "@oh-my-pi/pi-coding-agent/session/async-job-views";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import { type } from "@marsai-org/omptype";
+import { Agent, type AgentTool, ThinkingLevel } from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { JobWidgetRegistry } from "@marsai-org/coding-agent/job-widgets/types";
+import { SelectorController } from "@marsai-org/coding-agent/modes/controllers/selector-controller";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { SessionFocusController } from "@marsai-org/coding-agent/modes/controllers/session-focus-controller";
+import { cfgDisplayPinnedAgents } from "@marsai-org/coding-agent/modes/settings";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { asyncJobSnapshot, asyncJobTree } from "@marsai-org/coding-agent/session/async-job-views";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	type SubagentLifecyclePayload,
 	type SubagentProgressPayload,
 	TASK_SUBAGENT_LIFECYCLE_CHANNEL,
 	TASK_SUBAGENT_PROGRESS_CHANNEL,
-} from "@oh-my-pi/pi-coding-agent/task";
-import { EventBus } from "@oh-my-pi/pi-coding-agent/utils/event-bus";
-import { type Component, Text } from "@oh-my-pi/pi-tui";
-import type { DescribeContext, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { JobsSheet } from "@oh-my-pi/pi-tui/overlays/jobs-panel";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { JobWidgetView } from "@oh-my-pi/pi-tui/tools/job-widget";
-import type { AgentProgress } from "@oh-my-pi/pi-tui/tools/task";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/task";
+import { EventBus } from "@marsai-org/coding-agent/utils/event-bus";
+import { type Component, Text } from "@marsai-org/tui";
+import type { DescribeContext, NativeNode } from "@marsai-org/tui/native/node";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { JobsSheet } from "@marsai-org/tui/overlays/jobs-panel";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { JobWidgetView } from "@marsai-org/tui/tools/job-widget";
+import type { AgentProgress } from "@marsai-org/tui/tools/task";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const context = (tray: boolean): DescribeContext => ({

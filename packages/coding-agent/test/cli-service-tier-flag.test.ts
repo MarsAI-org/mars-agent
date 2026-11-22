@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { buildSessionOptions } from "@oh-my-pi/pi-coding-agent/main";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { buildSessionOptions } from "@marsai-org/coding-agent/main";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { TempDir } from "@marsai-org/utils";
 
 describe("--service-tier", () => {
 	it("parses supported OpenAI tiers without leaking the value into the prompt", () => {

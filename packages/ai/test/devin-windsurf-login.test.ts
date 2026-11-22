@@ -2,10 +2,10 @@ import { describe, expect, it } from "bun:test";
 import {
 	ExchangePKCEAuthorizationCodeRequestSchema,
 	ExchangePKCEAuthorizationCodeResponseSchema,
-} from "@oh-my-pi/pi-catalog/discovery/devin-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
-import { exchangeWindsurfCode, loginDevinWindsurfHook } from "@oh-my-pi/pi-ai/registry/oauth/devin-windsurf";
-import type { OAuthController } from "@oh-my-pi/pi-ai/registry/oauth/types";
+} from "@marsai-org/catalog/discovery/devin-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
+import { exchangeWindsurfCode, loginDevinWindsurfHook } from "@marsai-org/ai/registry/oauth/devin-windsurf";
+import type { OAuthController } from "@marsai-org/ai/registry/oauth/types";
 
 const EXCHANGE_URL =
 	"https://server.codeium.com/exa.seat_management_pb.SeatManagementService/ExchangePKCEAuthorizationCode";

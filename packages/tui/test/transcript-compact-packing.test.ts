@@ -1,11 +1,11 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { createCustomMessage } from "@oh-my-pi/pi-agent-core/compaction/messages";
-import { CustomMessageComponent } from "@oh-my-pi/pi-tui/chat/custom-message";
-import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { messageBlock, PresentedBlock, setTranscriptPresenters } from "@oh-my-pi/pi-tui/chat/transcript-presentation";
-import { type CompactTranscriptBlock, TranscriptContainer } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { Component } from "@oh-my-pi/pi-tui";
+import { createCustomMessage } from "@marsai-org/agent-core/compaction/messages";
+import { CustomMessageComponent } from "@marsai-org/tui/chat/custom-message";
+import { stopSharedSpinnerTicker, ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { messageBlock, PresentedBlock, setTranscriptPresenters } from "@marsai-org/tui/chat/transcript-presentation";
+import { type CompactTranscriptBlock, TranscriptContainer } from "@marsai-org/tui/chrome/transcript-container";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { Component } from "@marsai-org/tui";
 
 beforeAll(async () => {
 	await initTheme(false);

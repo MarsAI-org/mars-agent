@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import {
 	canReplayRemoteCompactionFrom,
 	DEFAULT_COMPACTION_SETTINGS,
@@ -7,10 +7,10 @@ import {
 	generateSummary,
 	prepareCompaction,
 	type SessionEntry,
-} from "@oh-my-pi/pi-agent-core/compaction";
-import type { AssistantMessage, Model } from "@oh-my-pi/pi-ai";
-import * as ai from "@oh-my-pi/pi-ai";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/agent-core/compaction";
+import type { AssistantMessage, Model } from "@marsai-org/ai";
+import * as ai from "@marsai-org/ai";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 function createAssistantMessage(text: string): AssistantMessage {
 	return {

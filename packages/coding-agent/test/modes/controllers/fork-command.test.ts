@@ -2,13 +2,13 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { classifyTerminalMultiplexer, type TerminalMultiplexer } from "@oh-my-pi/pi-tui/terminal-multiplexer";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { extractProfileFlags } from "@oh-my-pi/pi-coding-agent/cli/profile-bootstrap";
-import { CommandController } from "@oh-my-pi/pi-coding-agent/modes/controllers/command-controller";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { classifyTerminalMultiplexer, type TerminalMultiplexer } from "@marsai-org/tui/terminal-multiplexer";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
+import { initTheme } from "@marsai-org/tui/theme";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { extractProfileFlags } from "@marsai-org/coding-agent/cli/profile-bootstrap";
+import { CommandController } from "@marsai-org/coding-agent/modes/controllers/command-controller";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 import { Settings } from "../../../src/config/settings";
 import {
 	createTerminalLauncher,

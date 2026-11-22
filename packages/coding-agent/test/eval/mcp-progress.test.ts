@@ -1,16 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool, AgentToolUpdateCallback } from "@oh-my-pi/pi-agent-core";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { callSessionTool } from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import type { EvalStatusEvent, EvalToolDetails } from "@oh-my-pi/pi-tui/tools/eval";
-import type { MCPProgress } from "@oh-my-pi/pi-tui/tools/mcp";
-import { setAgentDir, TempDir, untilAborted } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool, AgentToolUpdateCallback } from "@marsai-org/agent-core";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { callSessionTool } from "@marsai-org/coding-agent/eval/js/tool-bridge";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import type { EvalStatusEvent, EvalToolDetails } from "@marsai-org/tui/tools/eval";
+import type { MCPProgress } from "@marsai-org/tui/tools/mcp";
+import { setAgentDir, TempDir, untilAborted } from "@marsai-org/utils";
 import { beginSettingsTest, restoreSettingsTestState, type SettingsTestState } from "../helpers/settings-test-state";
 
 let temp: TempDir;

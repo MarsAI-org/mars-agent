@@ -1,9 +1,9 @@
 /** Session relocation and exit policy for worktrees created by `/wt`. */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { sanitizeDisplayLines, sanitizeDisplayWarnings, shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { $which, logger } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { sanitizeDisplayLines, sanitizeDisplayWarnings, shortenPath } from "@marsai-org/tui/render/render-utils";
+import { $which, logger } from "@marsai-org/utils";
 import type { SettingValueOf } from "../config/registry";
 import type { Settings } from "../config/settings";
 import { cfgWorktreeCleanSource, type cfgWorktreeOnExit } from "../task/settings";

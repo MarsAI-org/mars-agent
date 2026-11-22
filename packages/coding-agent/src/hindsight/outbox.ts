@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEnoent, logger, sanitizeText, tryAcquireFileLock, withFileLock } from "@oh-my-pi/pi-utils";
+import { isEnoent, logger, sanitizeText, tryAcquireFileLock, withFileLock } from "@marsai-org/utils";
 import type { MemoryWriteScope } from "../memory-backend/global-scope";
 import { redactMemorySecrets } from "../memory-backend/redact";
 import { writeFileAtomically } from "../utils/atomic-file";

@@ -3,7 +3,7 @@
  * shapes as they cross a link, quiet settling of fire-and-forget calls, and
  * per-worker cleanup of registrations workers made on main objects.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { ThreadId } from "../identity";
 import { rpcSync } from "../rpc";
 

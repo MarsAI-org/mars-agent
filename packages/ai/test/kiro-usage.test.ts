@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import { encodeKiroCredential } from "@oh-my-pi/pi-catalog/wire/kiro";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import * as oauthUtils from "@marsai-org/ai/registry/oauth";
+import type { OAuthCredentials } from "@marsai-org/ai/registry/oauth/types";
+import { encodeKiroCredential } from "@marsai-org/catalog/wire/kiro";
 import type { UsageFetchContext, UsageFetchParams, UsageReport } from "../src/usage";
 import { kiroRankingStrategy, kiroUsageProvider, parseKiroUsage } from "../src/usage/kiro";
 

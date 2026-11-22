@@ -2,11 +2,11 @@ import { afterEach, beforeEach, expect, test } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { FetchImpl } from "@oh-my-pi/pi-ai";
-import type { OAuthCredential } from "@oh-my-pi/pi-ai/auth-storage";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { removeSyncWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+import type { FetchImpl } from "@marsai-org/ai";
+import type { OAuthCredential } from "@marsai-org/ai/auth-storage";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { removeSyncWithRetries, Snowflake } from "@marsai-org/utils";
 
 const AUTO = { modelId: "auto", tokenLimits: { maxInputTokens: 1_000_000, maxOutputTokens: 64_000 } };
 const OPUS = { modelId: "claude-opus-5.5", tokenLimits: { maxInputTokens: 1_000_000, maxOutputTokens: 64_000 } };

@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getBrowserRelayInstallRegistryFile, isEnoent } from "@oh-my-pi/pi-utils";
+import { getBrowserRelayInstallRegistryFile, isEnoent } from "@marsai-org/utils";
 import { $ } from "bun";
 import { NATIVE_HOST } from "../../../../../browser-relay/extension/messages";
 import { resolveCliEntryCmd } from "../../../subprocess/worker-client";

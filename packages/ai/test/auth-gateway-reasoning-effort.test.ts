@@ -6,13 +6,13 @@
  * supported tier instead of failing the request before it reaches upstream.
  */
 import { describe, expect, it } from "bun:test";
-import { startAuthGateway } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import type { Api, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { Effort } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import type { ThinkingBudgets } from "@oh-my-pi/pi-catalog/types";
+import { startAuthGateway } from "@marsai-org/ai/auth-gateway";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import type { Api, Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import { Effort } from "@marsai-org/catalog/effort";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import type { ThinkingBudgets } from "@marsai-org/catalog/types";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 import { anthropicChunks, type CapturedRequest, captureFetch, completionsChunks } from "./helpers/factory-droid";
 

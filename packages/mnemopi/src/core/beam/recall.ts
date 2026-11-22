@@ -1,4 +1,4 @@
-import { popLoopPhase, pushLoopPhase, withLoopPhase } from "@oh-my-pi/pi-utils";
+import { popLoopPhase, pushLoopPhase, withLoopPhase } from "@marsai-org/utils";
 import {
 	importedWeight,
 	inferredWeight,

@@ -9,9 +9,9 @@
  */
 
 import * as path from "node:path";
-import type { Context, ImageContent, Model } from "@oh-my-pi/pi-ai";
-import { getBlobsDir, logger } from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+import type { Context, ImageContent, Model } from "@marsai-org/ai";
+import { getBlobsDir, logger } from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import type { Settings } from "../config/settings";
 import { daemonClient } from "../daemon/client";
 import { BLOB_APPEND_METHOD, BLOB_CALL_CHUNK_CHARS, BLOB_MODULE_VERSION } from "../daemon/modules/blob";

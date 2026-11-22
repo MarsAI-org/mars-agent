@@ -5,7 +5,7 @@ import {
 	sliceWithWidth,
 	truncateToWidth,
 	visibleWidth,
-} from "@oh-my-pi/pi-tui/utils";
+} from "@marsai-org/tui/utils";
 
 describe("text utils", () => {
 	it("ignores OSC hyperlinks in visible width", () => {

@@ -9,10 +9,10 @@
  * the full status. omp only writes the root record; teardown and opting out
  * send `state=clear` so no stale record outlives the session.
  */
-import { writeTerminalSequence } from "@oh-my-pi/pi-tui";
-import { setPromptZonesEnabled } from "@oh-my-pi/pi-tui/chat/user-message";
-import { truncateLineBytes } from "@oh-my-pi/pi-tui/tools/streaming-output";
-import { APP_NAME, isTerminalHeadless, sanitizeText } from "@oh-my-pi/pi-utils";
+import { writeTerminalSequence } from "@marsai-org/tui";
+import { setPromptZonesEnabled } from "@marsai-org/tui/chat/user-message";
+import { truncateLineBytes } from "@marsai-org/tui/tools/streaming-output";
+import { APP_NAME, isTerminalHeadless, sanitizeText } from "@marsai-org/utils";
 import { setTerminalTitleState, type TerminalTitleState } from "./title-generator";
 
 /** What a blocked run waits on: an approval (`permission`) or an answer (`question`). */

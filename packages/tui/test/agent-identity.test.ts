@@ -1,8 +1,8 @@
 import { describe, expect, it } from "bun:test";
-import { MAIN_AGENT_ID } from "@oh-my-pi/pi-tui/overlays/agent-hub-types";
-import { agentColorHex, agentPalette, noteAgentArrival } from "@oh-my-pi/pi-tui/overlays/agent-identity";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
-import { oklabDistance, relativeLuminance } from "@oh-my-pi/pi-utils/color";
+import { MAIN_AGENT_ID } from "@marsai-org/tui/overlays/agent-hub-types";
+import { agentColorHex, agentPalette, noteAgentArrival } from "@marsai-org/tui/overlays/agent-identity";
+import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
+import { oklabDistance, relativeLuminance } from "@marsai-org/utils/color";
 
 function contrast(a: string, b: string): number {
 	const [hi, lo] = [relativeLuminance(a) ?? 0, relativeLuminance(b) ?? 0].sort((x, y) => y - x);

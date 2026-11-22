@@ -1,24 +1,24 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { Effort } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { THINKING_EFFORTS } from "@oh-my-pi/pi-catalog/effort";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import * as autoThinkingClassifier from "@oh-my-pi/pi-coding-agent/auto-thinking/classifier";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { thinkingLevelWord } from "@oh-my-pi/pi-tui/status-line/segments";
-import { AUTO_THINKING, clampAutoThinkingEffort, resolveProvisionalAutoLevel } from "@oh-my-pi/pi-tui/thinking";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { Effort } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { buildModel } from "@marsai-org/catalog/build";
+import { THINKING_EFFORTS } from "@marsai-org/catalog/effort";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import * as autoThinkingClassifier from "@marsai-org/coding-agent/auto-thinking/classifier";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SKILL_PROMPT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { thinkingLevelWord } from "@marsai-org/tui/status-line/segments";
+import { AUTO_THINKING, clampAutoThinkingEffort, resolveProvisionalAutoLevel } from "@marsai-org/tui/thinking";
+import { TempDir } from "@marsai-org/utils";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
-import { cfgDefaultThinkingLevel } from "@oh-my-pi/pi-coding-agent/session/settings";
+import { cfgDefaultThinkingLevel } from "@marsai-org/coding-agent/session/settings";
 
 describe("AgentSession role model thinking behavior", () => {
 	let tempDir: TempDir;

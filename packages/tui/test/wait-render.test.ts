@@ -5,12 +5,12 @@
  * passes through unchanged.
  */
 import { beforeAll, describe, expect, it } from "bun:test";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { prompt } from "@oh-my-pi/pi-utils";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { prompt } from "@marsai-org/utils";
 import taskSummaryTemplate from "../../coding-agent/src/prompts/tools/task-summary.md" with { type: "text" };
-import type { NativeChild, NativeNode } from "@oh-my-pi/pi-tui/native/node";
-import { type CoordinationDetails, createIrcMessageCard, waitToolRenderer } from "@oh-my-pi/pi-tui/tools/wait";
-import { renderAgentWrite } from "@oh-my-pi/pi-tui/tools/proc-render";
+import type { NativeChild, NativeNode } from "@marsai-org/tui/native/node";
+import { type CoordinationDetails, createIrcMessageCard, waitToolRenderer } from "@marsai-org/tui/tools/wait";
+import { renderAgentWrite } from "@marsai-org/tui/tools/proc-render";
 import { decodeBench } from "./fixtures/job-widget-views";
 
 /** Every described node under `children`, depth first. */

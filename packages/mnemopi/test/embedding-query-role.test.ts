@@ -7,12 +7,12 @@
 
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 
-import { embed, embedQuery, resetEmbeddingProviderForTests } from "@oh-my-pi/pi-mnemopi/core/embeddings";
+import { embed, embedQuery, resetEmbeddingProviderForTests } from "@marsai-org/mnemopi/core/embeddings";
 import {
 	type EmbeddingRequestFailure,
 	type ResolvedMnemopiEmbeddingRuntimeOptions,
 	withMnemopiRuntimeOptions,
-} from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+} from "@marsai-org/mnemopi/core/runtime-options";
 
 interface RecordedRequest {
 	model: string;

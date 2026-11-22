@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import * as vm from "node:vm";
-import { type Document, Element, parseHTML } from "@oh-my-pi/pi-utils/dom";
-import { Marked } from "@oh-my-pi/pi-utils/marked";
+import { type Document, Element, parseHTML } from "@marsai-org/utils/dom";
+import { Marked } from "@marsai-org/utils/marked";
 import type { SessionEntry } from "../src/session/session-entries";
 import type { SubSession } from "../src/session/sub-sessions";
 

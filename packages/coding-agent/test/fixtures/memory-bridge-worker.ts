@@ -1,7 +1,7 @@
 import { type MessagePort, parentPort } from "node:worker_threads";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { TempDir } from "@marsai-org/utils";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { hindsightBackend } from "../../src/hindsight/backend";

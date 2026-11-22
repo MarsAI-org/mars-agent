@@ -6,7 +6,7 @@
  * per-IP rate-limited https://api.keenable.ai/v1/search/public endpoint.
  * Docs: https://docs.keenable.ai/api-reference/search
  */
-import { type AuthStorage, type FetchImpl, resolveApiKeyOnce, seedApiKeyResolver, withAuth } from "@oh-my-pi/pi-ai";
+import { type AuthStorage, type FetchImpl, resolveApiKeyOnce, seedApiKeyResolver, withAuth } from "@marsai-org/ai";
 import type { StructuredQuery } from "../query";
 import { parseSearchQuery } from "../query";
 import type { SearchResponse, SearchSource } from "../types";

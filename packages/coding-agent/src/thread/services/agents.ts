@@ -20,7 +20,7 @@
  * Worker side: proxies installed with `installGlobal`, the bridge handed to
  * peer handles, and a `SessionPublisher` for every session constructed here.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { IrcBus } from "../../irc/bus";
 import { type AdoptOptions, type AgentReviver, AgentLifecycleManager } from "../../registry/agent-lifecycle";
 import { AgentRegistry, type RegistryListener } from "../../registry/agent-registry";

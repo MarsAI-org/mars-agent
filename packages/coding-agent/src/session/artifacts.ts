@@ -2,11 +2,11 @@
  * Session-scoped spill storage for truncated tool outputs and shaped originals.
  *
  * Spill `N` is the file `<N>.log` at the session's `local://` root, read back as
- * `local://<N>.log` (see `spillUrl` in `@oh-my-pi/pi-utils`).
+ * `local://<N>.log` (see `spillUrl` in `@marsai-org/utils`).
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { isEexist, logger, spillFileName, spillIdOfFileName, toError } from "@oh-my-pi/pi-utils";
+import { isEexist, logger, spillFileName, spillIdOfFileName, toError } from "@marsai-org/utils";
 import { replaceFileAtomically } from "../utils/atomic-file";
 
 /**

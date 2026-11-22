@@ -26,11 +26,11 @@ import {
 	type JudgmentImageInput,
 	judgmentImagePatches,
 	resolveJudgmentImageInput,
-} from "@oh-my-pi/pi-catalog/compat/judgment-images";
-import { resolveJudgmentQuestionsMax } from "@oh-my-pi/pi-catalog/compat/judgment-questions";
-import { TYPESAFE_DEFAULT_BASE_URL } from "@oh-my-pi/pi-catalog/discovery";
-import type { Api, FetchImpl } from "@oh-my-pi/pi-catalog/types";
-import { $env, isRecord, parseImageMetadata, tryParseJson } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/compat/judgment-images";
+import { resolveJudgmentQuestionsMax } from "@marsai-org/catalog/compat/judgment-questions";
+import { TYPESAFE_DEFAULT_BASE_URL } from "@marsai-org/catalog/discovery";
+import type { Api, FetchImpl } from "@marsai-org/catalog/types";
+import { $env, isRecord, parseImageMetadata, tryParseJson } from "@marsai-org/utils";
 import { type ApiKey, withAuth } from "../auth-retry";
 import * as AIError from "../error";
 import { validateImageInput } from "../images/shared";

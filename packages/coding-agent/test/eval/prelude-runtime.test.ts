@@ -1,14 +1,14 @@
 import { afterAll, describe, expect, it } from "bun:test";
-import type { ImageContent, Message } from "@oh-my-pi/pi-ai";
-import { getBundledModels } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { EvalPreludeDefinition } from "@oh-my-pi/pi-coding-agent/eval/preludes";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { disposeAllKernelSessions, executePython } from "@oh-my-pi/pi-coding-agent/eval/py/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { normalizeModelContextMessages } from "@oh-my-pi/pi-coding-agent/utils/image-loading";
+import type { ImageContent, Message } from "@marsai-org/ai";
+import { getBundledModels } from "@marsai-org/catalog/models";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { EvalPreludeDefinition } from "@marsai-org/coding-agent/eval/preludes";
+import { executeJs } from "@marsai-org/coding-agent/eval/js/executor";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { disposeAllKernelSessions, executePython } from "@marsai-org/coding-agent/eval/py/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { normalizeModelContextMessages } from "@marsai-org/coding-agent/utils/image-loading";
 
 const IMAGE_DATA = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]).toString("base64");
 

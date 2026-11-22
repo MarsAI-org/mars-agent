@@ -17,14 +17,14 @@
  * whose change runs out of attempts is left as it was. The
  * files' completions run concurrently; their writes do not.
  */
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { type Api, completeSimple, type Model, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { parseCodeStatus } from "@oh-my-pi/pi-natives";
-import type { EditToolDetails, EditToolPerFileResult } from "@oh-my-pi/pi-tui/tools/edit";
-import { concreteThinkingLevel, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
-import { splitMagicSections } from "@oh-my-pi/pi-tui/tools/magic-sections";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
-import { isEnoent, prompt } from "@oh-my-pi/pi-utils";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { type Api, completeSimple, type Model, retryTransientCompletion } from "@marsai-org/ai";
+import { parseCodeStatus } from "@marsai-org/natives";
+import type { EditToolDetails, EditToolPerFileResult } from "@marsai-org/tui/tools/edit";
+import { concreteThinkingLevel, toReasoningEffort } from "@marsai-org/tui/thinking";
+import { splitMagicSections } from "@marsai-org/tui/tools/magic-sections";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
+import { isEnoent, prompt } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import { getModelMatchPreferences, resolveModelRoleValue, resolveRoleSelection } from "../config/model-resolver";
 import { journalCompletion } from "../session/model-usage-journal";

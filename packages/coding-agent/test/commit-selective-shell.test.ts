@@ -2,16 +2,16 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { createDraft } from "@oh-my-pi/pi-coding-agent/commit/selective/draft";
+import { createDraft } from "@marsai-org/coding-agent/commit/selective/draft";
 import {
 	ChangeJournal,
 	type ChangeRecord,
 	shellChangeSnapshots,
-} from "@oh-my-pi/pi-coding-agent/commit/selective/journal";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { executeBash } from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import { InternalUrlFilesystem } from "@oh-my-pi/pi-coding-agent/internal-urls/url-filesystem";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/commit/selective/journal";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { executeBash } from "@marsai-org/coding-agent/exec/bash-executor";
+import { InternalUrlFilesystem } from "@marsai-org/coding-agent/internal-urls/url-filesystem";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const tempDirs: string[] = [];
 

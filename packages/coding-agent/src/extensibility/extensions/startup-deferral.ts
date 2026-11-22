@@ -14,7 +14,7 @@
  * records one, so a changed module is never deferred on stale knowledge.
  */
 import * as fs from "node:fs/promises";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+import { isRecord, logger } from "@marsai-org/utils";
 import type { AgentStorageApi } from "../../session/agent-storage";
 import { resolvePath } from "../utils";
 import type { Extension } from "./types";

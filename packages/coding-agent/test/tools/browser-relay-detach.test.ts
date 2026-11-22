@@ -1,21 +1,21 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, spyOn } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as rewriteImports from "@oh-my-pi/pi-coding-agent/eval/js/shared/rewrite-imports";
-import * as toolBridge from "@oh-my-pi/pi-coding-agent/eval/js/tool-bridge";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as rewriteImports from "@marsai-org/coding-agent/eval/js/shared/rewrite-imports";
+import * as toolBridge from "@marsai-org/coding-agent/eval/js/tool-bridge";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
 import {
 	closeLaunchedBrowser,
 	ensureChromiumExecutable,
 	RENDERER_PRIORITY_ARGS,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import { DISCARDED_TABS_PROTOCOL_VERSION } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/protocol";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
-import * as tabSupervisor from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { getTab, releaseTab, runInTab } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { isRecord } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/browser/launch";
+import { DISCARDED_TABS_PROTOCOL_VERSION } from "@marsai-org/coding-agent/tools/browser/relay/protocol";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
+import * as tabSupervisor from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { getTab, releaseTab, runInTab } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { isRecord } from "@marsai-org/utils";
 import puppeteer, { type Browser, type Page } from "puppeteer-core";
 import { chromiumAvailable } from "./chromium-probe";
 

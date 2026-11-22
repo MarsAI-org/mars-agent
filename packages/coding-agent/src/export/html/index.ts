@@ -1,10 +1,10 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { buildSessionTraceFromSnapshots } from "@oh-my-pi/omp-stats/trace";
-import type { SessionTrace } from "@oh-my-pi/omp-stats/types";
-import type { AgentState } from "@oh-my-pi/pi-agent-core";
-import { APP_NAME, isCompiledBinary, isEnoent, VERSION } from "@oh-my-pi/pi-utils";
-import { getResolvedThemeColors, getThemeExportColors } from "@oh-my-pi/pi-tui/theme";
+import { buildSessionTraceFromSnapshots } from "@marsai-org/stats/trace";
+import type { SessionTrace } from "@marsai-org/stats/types";
+import type { AgentState } from "@marsai-org/agent-core";
+import { APP_NAME, isCompiledBinary, isEnoent, VERSION } from "@marsai-org/utils";
+import { getResolvedThemeColors, getThemeExportColors } from "@marsai-org/tui/theme";
 import type { SessionEntry, SessionHeader } from "../../session/session-entries";
 import { SessionManager } from "../../session/session-manager";
 import { collectSubSessions, type SubSession } from "../../session/sub-sessions";

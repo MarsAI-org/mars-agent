@@ -10,8 +10,8 @@
  *
  * The relay therefore runs exactly while some browser with the extension does; there is nothing else to start.
  */
-import { logger } from "@oh-my-pi/pi-utils";
-import { VERSION } from "@oh-my-pi/pi-utils/dirs";
+import { logger } from "@marsai-org/utils";
+import { VERSION } from "@marsai-org/utils/dirs";
 import type { FromNativeHost, ToNativeHost } from "../../../../../browser-relay/extension/messages";
 import type { RelaySocket } from "./bridge";
 import { publishRelayEndpoint } from "./discovery";

@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import { removeWithRetries } from "@marsai-org/utils";
 import { rejectionOf } from "./helpers/rejection";
 
 describe("RPC get_session_lease", () => {

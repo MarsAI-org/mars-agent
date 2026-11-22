@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { IpcConnection } from "@oh-my-pi/pi-natives";
-import { STREAM_HISTORY_LIMIT, STREAM_PROTO, type StreamHostFrame, type StreamServerToHost } from "@oh-my-pi/pi-wire";
+import { IpcConnection } from "@marsai-org/natives";
+import { STREAM_HISTORY_LIMIT, STREAM_PROTO, type StreamHostFrame, type StreamServerToHost } from "@marsai-org/wire";
 import { STREAM_LOCAL_PROTO, type StreamStreamerFrame } from "../../src/stream/protocol";
 import { resolveStreamUrls, StreamMuxHost, type StreamConsoleEvent } from "../../src/stream/streamer";
 

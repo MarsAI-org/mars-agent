@@ -1,7 +1,7 @@
-import type { AssistantMessage, Usage } from "@oh-my-pi/pi-ai";
+import type { AssistantMessage, Usage } from "@marsai-org/ai";
 import { Container } from "../tui";
 import { Spacer } from "../components/spacer";
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
 import { theme } from "../theme/theme";
 import { formatMetricRow, MetricRow, type MetricSpec } from "../components/metric";
 import { node, row, span, text } from "../native/describe";

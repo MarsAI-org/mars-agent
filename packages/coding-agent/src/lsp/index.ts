@@ -1,9 +1,9 @@
 export type { LspServerStatus } from "./client";
-export type { FileDiagnosticsResult } from "@oh-my-pi/pi-tui/tools/lsp";
+export type { FileDiagnosticsResult } from "@marsai-org/tui/tools/lsp";
 export type { FormatContentResult } from "./diagnostics";
-export { FileFormatResult } from "@oh-my-pi/pi-tui/tools/lsp";
+export { FileFormatResult } from "@marsai-org/tui/tools/lsp";
 export type { LspStartupServerInfo, LspWarmupOptions, LspWarmupResult } from "./servers";
 export { discoverStartupLspServers, getLspStatus, LSP_READONLY_ACTIONS, warmupLspServers } from "./servers";
 export { LspTool } from "./tool";
-export type { LspToolDetails } from "@oh-my-pi/pi-tui/tools/lsp";
+export type { LspToolDetails } from "@marsai-org/tui/tools/lsp";
 export * from "./writethrough";

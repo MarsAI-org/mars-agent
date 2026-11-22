@@ -2,7 +2,7 @@
  * Worker half of the telemetry bridge (see `./telemetry`): a `Tracer` whose
  * spans are started, mutated, and ended on the main thread's real tracer.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import {
 	type Context,
 	context,

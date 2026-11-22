@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 
 // Anthropic's /v1/models reports neither reasoning, vision, pricing nor limits
 // for Fable/Mythos. Until models.dev catalogs a new revision, discovery has no

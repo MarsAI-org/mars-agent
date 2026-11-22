@@ -9,15 +9,15 @@
  */
 
 import { afterAll, afterEach, describe, expect, it, spyOn, vi } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { releaseAllTabs } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import * as launch from "@oh-my-pi/pi-coding-agent/tools/browser/launch";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { ToolAbortError } from "@oh-my-pi/pi-coding-agent/tools/tool-errors";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { releaseAllTabs } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import * as launch from "@marsai-org/coding-agent/tools/browser/launch";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { ToolAbortError } from "@marsai-org/coding-agent/tools/tool-errors";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { chromiumAvailable } from "./chromium-probe";
 
 const CHROMIUM_AVAILABLE = await chromiumAvailable();

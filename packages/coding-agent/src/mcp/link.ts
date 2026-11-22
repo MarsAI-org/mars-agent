@@ -7,8 +7,8 @@
  * keeps itself attached: when the tunnel drops it takes a new one and tells
  * its owner, so nothing above it deals with processes, sockets or handshakes.
  */
-import { type } from "@oh-my-pi/omptype";
-import { isRecord, logger } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { isRecord, logger } from "@marsai-org/utils";
 import { createMCPJsonRpcError, MCPTransportError, type MCPTransportKind } from "./errors";
 import { mcpHostAccess } from "./host/access";
 import {

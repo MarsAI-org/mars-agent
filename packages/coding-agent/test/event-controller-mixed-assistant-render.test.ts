@@ -1,19 +1,19 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolCall, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { ReadToolGroupComponent } from "@oh-my-pi/pi-tui/chat/read-tool-group";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { type Component, TERMINAL } from "@oh-my-pi/pi-tui";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage, ToolCall, ToolResultMessage, Usage } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { ReadToolGroupComponent } from "@marsai-org/tui/chat/read-tool-group";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { initTheme } from "@marsai-org/tui/theme";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { type Component, TERMINAL } from "@marsai-org/tui";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
-import { cfgTerminalShowImages } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgTerminalShowImages } from "@marsai-org/coding-agent/modes/settings";
 
 const TOOL_CALL_A_ID = "toolu_mixed_text_order_a";
 const TOOL_CALL_B_ID = "toolu_mixed_text_order_b";

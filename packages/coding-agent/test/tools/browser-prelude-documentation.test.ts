@@ -1,11 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/sdk";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/sdk";
 import {
 	browserDocumentation,
 	createBrowserPreludeDefinition,
-} from "@oh-my-pi/pi-coding-agent/tools/browser/prelude-definition";
-import { cfgBrowserCdpUrl } from "@oh-my-pi/pi-coding-agent/tools/browser/settings";
+} from "@marsai-org/coding-agent/tools/browser/prelude-definition";
+import { cfgBrowserCdpUrl } from "@marsai-org/coding-agent/tools/browser/settings";
 
 const X11_NOTE = "On Linux under X11";
 

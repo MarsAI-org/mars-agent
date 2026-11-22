@@ -1,6 +1,6 @@
 import * as http2 from "node:http2";
-import { type } from "@oh-my-pi/omptype";
-import { slugify } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { slugify } from "@marsai-org/utils";
 import { collapseVariants, type EffortVariantFamily, reviewedVariantFamilyId } from "../compat/collapse";
 import { compareRevision, parseRevision } from "../compat/revision";
 import { resolveCatalogAxes, resolveModelPolicy } from "../compat/resolve";

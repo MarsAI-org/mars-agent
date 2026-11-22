@@ -6,7 +6,7 @@
  * The search pipeline routes queries scoped to `site:news.ycombinator.com`
  * here first.
  */
-import { tryParseJson } from "@oh-my-pi/pi-utils";
+import { tryParseJson } from "@marsai-org/utils";
 import { decodeHNText } from "../../scrapers/hackernews";
 import { formatQuery, parseSearchQuery, type QuerySyntax, type StructuredQuery } from "../query";
 import { SearchProviderError, type SearchResponse, type SearchSource } from "../types";

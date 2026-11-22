@@ -9,7 +9,7 @@ import {
 	deleteConversation,
 	forkConversation,
 	readConversationCheckpoint,
-} from "@oh-my-pi/pi-ai/providers/antigravity-cli/conversation-store";
+} from "@marsai-org/ai/providers/antigravity-cli/conversation-store";
 
 const digest = "a".repeat(64);
 const cleanup: (() => Promise<void>)[] = [];

@@ -1,4 +1,4 @@
-import { truncateToWidth } from "@oh-my-pi/pi-tui";
+import { truncateToWidth } from "@marsai-org/tui";
 import { mapWithConcurrencyLimit } from "../task/parallel";
 
 const BAR_WIDTH = 16;

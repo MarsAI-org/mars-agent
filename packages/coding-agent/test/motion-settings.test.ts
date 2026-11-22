@@ -1,14 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
 import {
 	cfgDisplayShimmer,
 	cfgMotionResolved,
 	cfgTuiMotion,
 	cfgTuiSpinnerInterval,
-} from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/settings";
+import { TempDir } from "@marsai-org/utils";
 import { YAML } from "bun";
 
 describe("tui.motion", () => {

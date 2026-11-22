@@ -1,4 +1,4 @@
-import { $env, logger } from "@oh-my-pi/pi-utils";
+import { $env, logger } from "@marsai-org/utils";
 import { DisasmUnavailableError, type WorkerRuntime } from "../disasm/backend";
 import { $ } from "bun";
 import { findWorkerRuntime, memoizeWorkerRuntime } from "../disasm/python-runtime";

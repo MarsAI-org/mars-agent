@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage, FetchImpl } from "@oh-my-pi/pi-ai";
-import { PerplexityProvider, searchPerplexity } from "@oh-my-pi/pi-coding-agent/web/search/providers/perplexity";
-import { getAvailableAuthMethods } from "@oh-my-pi/pi-coding-agent/web/search/providers/perplexity-auth";
+import type { AuthStorage, FetchImpl } from "@marsai-org/ai";
+import { PerplexityProvider, searchPerplexity } from "@marsai-org/coding-agent/web/search/providers/perplexity";
+import { getAvailableAuthMethods } from "@marsai-org/coding-agent/web/search/providers/perplexity-auth";
 
 const API_URL = "https://api.perplexity.ai/chat/completions";
 const RESPONSES_URL = "https://api.perplexity.ai/v1/responses";

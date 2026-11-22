@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, spyOn } from "bun:test";
-import { Mnemopi } from "@oh-my-pi/pi-mnemopi/core/memory";
-import { withMnemopiRuntimeOptions, type MnemopiLlmCompletion } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
+import { Mnemopi } from "@marsai-org/mnemopi/core/memory";
+import { withMnemopiRuntimeOptions, type MnemopiLlmCompletion } from "@marsai-org/mnemopi/core/runtime-options";
 import { embed } from "../src/core/embeddings";
 import { callRemoteLlm } from "../src/core/local-llm";
 

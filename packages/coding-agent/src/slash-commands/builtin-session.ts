@@ -1,5 +1,5 @@
 import { clearSubmittedText } from "./helpers/draft";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
+import { getOAuthProviders } from "@marsai-org/ai/oauth";
 import { journalJudgmentUsage, resolveJudge, sharedJudgmentCache } from "../judgment";
 import type { AgentSession } from "../session/agent-session";
 import type { SessionOAuthAccountList } from "../session/agent-session-types";
@@ -10,14 +10,14 @@ import {
 	renderChangelogEntries,
 	selectChangelogEntries,
 } from "../utils/changelog";
-import { jobDisplayLabel } from "@oh-my-pi/pi-tui/tools/job-label";
+import { jobDisplayLabel } from "@marsai-org/tui/tools/job-label";
 import { formatTokenCount, refreshStatusLine } from "./builtin-modes";
 import { buildContextReportText } from "./helpers/context-report";
-import { formatCoarseDuration } from "@oh-my-pi/pi-tui/chrome/format";
-import { shortenEmbeddedPaths, truncateToWidth } from "@oh-my-pi/pi-tui/render/render-utils";
-import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@oh-my-pi/pi-tui/overlays/job-tree";
-import { theme } from "@oh-my-pi/pi-tui/theme";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
+import { formatCoarseDuration } from "@marsai-org/tui/chrome/format";
+import { shortenEmbeddedPaths, truncateToWidth } from "@marsai-org/tui/render/render-utils";
+import { buildJobTree, jobTreeGuide, jobTreeIndent } from "@marsai-org/tui/overlays/job-tree";
+import { theme } from "@marsai-org/tui/theme";
+import { sanitizeText } from "@marsai-org/utils";
 import { handleMcpAcp } from "./helpers/mcp";
 import { markdownFenceFor } from "../utils/markdown-fence";
 import { openLocalFileInEditor } from "../modes/local-file-editor";
@@ -29,7 +29,7 @@ import {
 	resolveResetUsageTarget,
 	toResetUsageAccounts,
 } from "./helpers/reset-usage";
-import type { ResetUsageAccount } from "@oh-my-pi/pi-tui/overlays/reset-usage-selector";
+import type { ResetUsageAccount } from "@marsai-org/tui/overlays/reset-usage-selector";
 import { matchSessionPinAccounts, toSessionPinAccounts } from "./helpers/session-pin";
 import {
 	launchStatsDashboard,
@@ -37,7 +37,7 @@ import {
 	type StatsDashboardArgs,
 	type StatsDashboardLaunchResult,
 } from "./helpers/stats-dashboard";
-import { StatsNotice } from "@oh-my-pi/pi-tui/overlays/stats-notice";
+import { StatsNotice } from "@marsai-org/tui/overlays/stats-notice";
 import { handleTodoAcp } from "./helpers/todo";
 import { buildUsageReportText } from "./helpers/usage-report";
 import type { SlashCommandRuntime, SlashCommandSpec } from "./types";

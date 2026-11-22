@@ -5,12 +5,12 @@
  * prelude against a fake `ABHost` process.
  */
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import { buildHarEntry } from "@oh-my-pi/pi-coding-agent/tools/browser/network";
-import { getTab, releaseTab, type WebKitTabSession } from "@oh-my-pi/pi-coding-agent/tools/browser/tab-supervisor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude } from "@marsai-org/coding-agent/tools/browser";
+import { buildHarEntry } from "@marsai-org/coding-agent/tools/browser/network";
+import { getTab, releaseTab, type WebKitTabSession } from "@marsai-org/coding-agent/tools/browser/tab-supervisor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import { createFakeHost, type FakeHost } from "./webkit-fake-host";
 
 // Ambient browser env of the developer's shell (and of an omp running the suite) must not pick the backend.

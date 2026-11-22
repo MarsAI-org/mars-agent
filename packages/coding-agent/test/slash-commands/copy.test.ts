@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, spyOn, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
-import { executeBuiltinSlashCommand } from "@oh-my-pi/pi-coding-agent/slash-commands/builtin-registry";
-import * as clipboard from "@oh-my-pi/pi-coding-agent/utils/clipboard";
-import * as opener from "@oh-my-pi/pi-coding-agent/utils/open";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { TempDir } from "@marsai-org/utils";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
+import { executeBuiltinSlashCommand } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
+import * as clipboard from "@marsai-org/coding-agent/utils/clipboard";
+import * as opener from "@marsai-org/coding-agent/utils/open";
 
 function assistantText(text: string): AgentMessage {
 	return { role: "assistant", content: [{ type: "text", text }] } as unknown as AgentMessage;

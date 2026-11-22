@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import type { Writable } from "node:stream";
-import { logger, TempDir, toError } from "@oh-my-pi/pi-utils";
+import { logger, TempDir, toError } from "@marsai-org/utils";
 import type { BunFile } from "bun";
 
 const READ_BYTES = 64 * 1024;

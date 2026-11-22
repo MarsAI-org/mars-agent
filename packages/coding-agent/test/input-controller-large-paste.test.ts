@@ -1,4 +1,4 @@
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+import { removeWithRetries } from "@marsai-org/utils";
 /**
  * Large-paste menu: when a paste reaches the configured `paste.largeMenuThreshold` line count,
  * the editor's `onLargePaste` hook routes through `InputController.handleLargePaste`, which offers
@@ -10,11 +10,11 @@ import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { InputController } from "@oh-my-pi/pi-coding-agent/modes/controllers/input-controller";
-import { getEditorTheme } from "@oh-my-pi/pi-tui/theme";
-import type { InteractiveModeContext } from "@oh-my-pi/pi-coding-agent/modes/types";
+import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { InputController } from "@marsai-org/coding-agent/modes/controllers/input-controller";
+import { getEditorTheme } from "@marsai-org/tui/theme";
+import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 
 function createContext(options?: {
 	threshold?: number;

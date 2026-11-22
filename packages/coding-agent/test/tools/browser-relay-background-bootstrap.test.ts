@@ -1,5 +1,5 @@
 import { expect, it } from "bun:test";
-import { type RelaySocket, RelayBridge } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/bridge";
+import { type RelaySocket, RelayBridge } from "@marsai-org/coding-agent/tools/browser/relay/bridge";
 
 const PROBE = `${import.meta.dir}/browser-relay-background-probe.ts`;
 

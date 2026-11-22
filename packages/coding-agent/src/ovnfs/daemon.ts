@@ -10,7 +10,7 @@
  * const daemon = await startDaemon("ovnfs");
  * await callSocket(daemon.socket, "ls", {});
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { PROTOCOL_VERSION } from "./client";
 
 /** A running ovnfs daemon. */

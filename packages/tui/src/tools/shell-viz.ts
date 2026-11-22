@@ -1,5 +1,5 @@
-import { type PipeStreams, RunTrace, ShellVisualization, type ShellVizOptions } from "@oh-my-pi/pi-natives";
-import { logger } from "@oh-my-pi/pi-utils";
+import { type PipeStreams, RunTrace, ShellVisualization, type ShellVizOptions } from "@marsai-org/natives";
+import { logger } from "@marsai-org/utils";
 import type {
 	ShellTrace,
 	ShellVizPreferences,
@@ -7,7 +7,7 @@ import type {
 	ShellVizRow,
 	ShellVizSegment,
 	ShellVizWatch,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import { nativeShellStreams, type ShellStream } from "./shell-steps";
 
 /** Native live-run or restored-trace owner; the UI never holds shell syntax. */

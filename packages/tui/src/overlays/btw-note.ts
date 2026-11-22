@@ -1,4 +1,4 @@
-import type { TspMenuEntry, TspSpan } from "@oh-my-pi/pi-wire";
+import type { TspMenuEntry, TspSpan } from "@marsai-org/wire";
 import type { Component, TUI } from "../tui";
 import { sanitizeErrorLine } from "../chrome/error-block";
 import { col, keyed, md, node, row, span, text } from "../native/describe";

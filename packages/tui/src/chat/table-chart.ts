@@ -9,8 +9,8 @@
  * TSP terminal the SVG as an ```svg fence, which it draws in the palette it
  * shows. Either way a chart follows theme switches like the prose around it.
  */
-import { logger } from "@oh-my-pi/pi-utils";
-import type { Token, Tokens } from "@oh-my-pi/pi-utils/marked";
+import { logger } from "@marsai-org/utils";
+import type { Token, Tokens } from "@marsai-org/utils/marked";
 import { type ChartPlan, buildChart, planChart, shouldJudge, worthCharting } from "../charts/chart-plan";
 import { renderChartSvg } from "../charts/chart-svg";
 import { analyzeTable, type TableAnalysis } from "../charts/table-data";

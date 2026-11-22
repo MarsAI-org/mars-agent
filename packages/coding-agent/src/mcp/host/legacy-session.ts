@@ -5,7 +5,7 @@
  * opens lives in the server's process (or behind its `Mcp-Session-Id`) for as
  * long as the transport stays open.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import { MCPTransportError } from "../errors";
 import { MCP_CLIENT_INFO, MCP_LEGACY_PROTOCOL_VERSION } from "../protocol";
 import type { MCPInitializeParams, MCPInitializeResult, MCPTransport } from "../types";

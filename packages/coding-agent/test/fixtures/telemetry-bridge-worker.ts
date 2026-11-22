@@ -8,8 +8,8 @@ import {
 	runInActiveSpan,
 	startExecuteToolSpan,
 	startInvokeAgentSpan,
-} from "@oh-my-pi/pi-agent-core";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
+} from "@marsai-org/agent-core";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
 import { trace } from "@opentelemetry/api";
 import type { WorkerThreadLink } from "../../src/thread/protocol";
 import { type RpcFrame, RpcLink } from "../../src/thread/rpc";

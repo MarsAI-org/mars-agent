@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { type BinjaHost, binjaPythonDir, locateBinjaInstall } from "@oh-my-pi/pi-coding-agent/binja/install";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type BinjaHost, binjaPythonDir, locateBinjaInstall } from "@marsai-org/coding-agent/binja/install";
+import { TempDir } from "@marsai-org/utils";
 
 const CORE_LIBRARY: Partial<Record<NodeJS.Platform, string>> = {
 	linux: "libbinaryninjacore.so.1",

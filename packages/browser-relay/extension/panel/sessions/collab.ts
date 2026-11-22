@@ -3,9 +3,9 @@
  * the replica; this adapter only narrows it to {@link PanelSession}. Guests can prompt, continue, stop and answer, but not
  * switch models or compact, so those members are absent.
  */
-import { GuestClient } from "@oh-my-pi/collab-web/src/lib/client";
-import { parseCollabLink } from "@oh-my-pi/collab-web/src/lib/link";
-import type { CollabUiResponseValue, ImageContent } from "@oh-my-pi/pi-wire";
+import { GuestClient } from "@marsai-org/collab-web/src/lib/client";
+import { parseCollabLink } from "@marsai-org/collab-web/src/lib/link";
+import type { CollabUiResponseValue, ImageContent } from "@marsai-org/wire";
 import type { PanelSession, PanelSnapshot, QueuedDraft } from "../session";
 
 /** How long `abort()` waits for the host's turn to end before giving up. */

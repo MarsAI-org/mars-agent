@@ -8,7 +8,7 @@ import {
 	MARK_BACK,
 	runKernel,
 	stoppedState,
-} from "@oh-my-pi/pi-utils/regex/jit";
+} from "@marsai-org/utils/regex/jit";
 
 // Both the fragmented class and its complement exceed the four-range SIMD limit.
 const fragmented = "#7Qe|";

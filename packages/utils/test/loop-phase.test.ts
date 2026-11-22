@@ -6,7 +6,7 @@ import {
 	resetLoopPhaseWindow,
 	takeLoopPhaseAttribution,
 	withLoopPhase,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 // The stack and attribution window are process-global; isolate every case.
 function drain(): void {

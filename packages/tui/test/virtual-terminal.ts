@@ -1,4 +1,4 @@
-import type { Terminal, TerminalAppearance } from "@oh-my-pi/pi-tui/terminal";
+import type { Terminal, TerminalAppearance } from "@marsai-org/tui/terminal";
 import { CELL_U32, CellFlags, type GraphicsPlacement, KittyTerminal, loadModuleSync } from "kitty-vt-wasm";
 
 // ---------------------------------------------------------------------------

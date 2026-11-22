@@ -9,10 +9,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { loadExtensions } from "@oh-my-pi/pi-coding-agent/extensibility/extensions/loader";
-import { loadHooks } from "@oh-my-pi/pi-coding-agent/extensibility/hooks/loader";
-import { ExtensionExitError, withHostGuard } from "@oh-my-pi/pi-coding-agent/extensibility/utils";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { loadExtensions } from "@marsai-org/coding-agent/extensibility/extensions/loader";
+import { loadHooks } from "@marsai-org/coding-agent/extensibility/hooks/loader";
+import { ExtensionExitError, withHostGuard } from "@marsai-org/coding-agent/extensibility/utils";
+import { TempDir } from "@marsai-org/utils";
 
 describe("extension/hook loader process.exit guard (#3680)", () => {
 	let project: TempDir | undefined;
@@ -67,8 +67,8 @@ describe("extension/hook loader process.exit guard (#3680)", () => {
 				? 'process.kill(process.pid, "SIGINT");'
 				: 'void Promise.reject(new Error("probe fatal"));';
 		return runProbe(`
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { withHostGuard } from "@oh-my-pi/pi-coding-agent/extensibility/utils";
+import { postmortem } from "@marsai-org/utils";
+import { withHostGuard } from "@marsai-org/coding-agent/extensibility/utils";
 postmortem.installProcessHandlers();
 
 postmortem.register("probe-cleanup", reason => {
@@ -153,8 +153,8 @@ void withHostGuard(async () => {
 
 	it("keeps postmortem.quit behind the extension exit guard", async () => {
 		const { exitCode, stdout, stderr } = await runProbe(`
-import { postmortem } from "@oh-my-pi/pi-utils";
-import { withHostGuard } from "@oh-my-pi/pi-coding-agent/extensibility/utils";
+import { postmortem } from "@marsai-org/utils";
+import { withHostGuard } from "@marsai-org/coding-agent/extensibility/utils";
 
 try {
 	await withHostGuard(() => postmortem.quit(37));
@@ -171,16 +171,16 @@ try {
 	it("exits cleanly on Ctrl+D while deferred extension loading guards process.exit", async () => {
 		const { exitCode, stdout, stderr } = await runProbe(`
 import * as path from "node:path";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { withHostGuard } from "@oh-my-pi/pi-coding-agent/extensibility/utils";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { postmortem, TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { withHostGuard } from "@marsai-org/coding-agent/extensibility/utils";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { initTheme } from "@marsai-org/tui/theme";
+import { postmortem, TempDir } from "@marsai-org/utils";
 
 const dir = TempDir.createSync("@omp-deferred-quit-");
 await Settings.init({ inMemory: true, cwd: dir.path() });
@@ -253,7 +253,7 @@ void withHostGuard(async () => {
 			);
 			const { exitCode, stdout, stderr } = await runProbe(
 				`
-import { postmortem } from "@oh-my-pi/pi-utils";
+import { postmortem } from "@marsai-org/utils";
 postmortem.installProcessHandlers();
 postmortem.register("probe", reason => process.stdout.write(\`cleanup:\${reason}\\n\`));
 process.reallyExit = globalThis.__ompNativeReallyExit;

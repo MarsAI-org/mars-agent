@@ -1,4 +1,4 @@
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
+import type { AgentMessage } from "@marsai-org/agent-core";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import {
@@ -9,8 +9,8 @@ import {
 	isEnotdir,
 	parseJsonlLenient,
 	peekFile,
-} from "@oh-my-pi/pi-utils";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/utils";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { Semaphore } from "../task/parallel";
 import {
 	BlobStore,

@@ -1,9 +1,9 @@
 import { discoverRelayEndpoints } from "../../src/tools/browser/relay/discovery";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { createBrowserPrelude, resolveBrowserKind, resolveRelayKind } from "@oh-my-pi/pi-coding-agent/tools/browser";
-import type { BrowserKindTag } from "@oh-my-pi/pi-coding-agent/tools/browser/registry";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools/index";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { createBrowserPrelude, resolveBrowserKind, resolveRelayKind } from "@marsai-org/coding-agent/tools/browser";
+import type { BrowserKindTag } from "@marsai-org/coding-agent/tools/browser/registry";
+import type { ToolSession } from "@marsai-org/coding-agent/tools/index";
 
 describe("resolveRelayKind", () => {
 	it("is disabled by default", () => {

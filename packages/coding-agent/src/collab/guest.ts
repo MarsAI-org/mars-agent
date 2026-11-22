@@ -20,11 +20,11 @@
  */
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import type { ThinkingLevel } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, AssistantMessageEvent, ImageContent } from "@oh-my-pi/pi-ai";
-import { getConfigRootDir, logger, toError } from "@oh-my-pi/pi-utils";
-import { takeAutoRejoin } from "@oh-my-pi/pi-wire";
-import type { AgentHubRemote, AgentHubRemoteTranscript } from "@oh-my-pi/pi-tui/overlays/agent-hub";
+import type { ThinkingLevel } from "@marsai-org/agent-core";
+import type { AssistantMessage, AssistantMessageEvent, ImageContent } from "@marsai-org/ai";
+import { getConfigRootDir, logger, toError } from "@marsai-org/utils";
+import { takeAutoRejoin } from "@marsai-org/wire";
+import type { AgentHubRemote, AgentHubRemoteTranscript } from "@marsai-org/tui/overlays/agent-hub";
 import type { InteractiveModeContext } from "../modes/types";
 import { AgentRegistry } from "../registry/agent-registry";
 import type { AgentSessionEvent } from "../session/agent-session";
@@ -32,7 +32,7 @@ import { fromWireEvent } from "../session/loop-end-wire";
 import type { SessionEntry } from "../session/session-entries";
 import { mintSessionId, SessionManager } from "../session/session-manager";
 import { FileSessionStorage } from "../session/session-storage";
-import { shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { shouldDisableReasoning, toReasoningEffort } from "@marsai-org/tui/thinking";
 import { emitSubagentFrame } from "../utils/event-bus";
 import { GuestLifecycleEmitter } from "../extensibility/extensions/lifecycle-mirror";
 import { setSessionTerminalTitle } from "../utils/title-generator";

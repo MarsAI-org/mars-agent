@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { embedTargetUrl, resolveEmbedSource } from "@oh-my-pi/pi-tui/chat/embed-target";
+import { embedTargetUrl, resolveEmbedSource } from "@marsai-org/tui/chat/embed-target";
 
 describe("resolveEmbedSource", () => {
 	let cwd: string;

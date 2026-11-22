@@ -4,12 +4,12 @@
  * the answer's Copy lives.
  */
 import { afterEach, beforeAll, describe, expect, it } from "bun:test";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import type { SessionContext } from "@oh-my-pi/pi-coding-agent/session/session-context";
-import { setTranscriptActionHandler, type TranscriptAction } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import type { SessionContext } from "@marsai-org/coding-agent/session/session-context";
+import { setTranscriptActionHandler, type TranscriptAction } from "@marsai-org/tui/chat/transcript-actions";
+import { initTheme } from "@marsai-org/tui/theme";
 import { TspHarness } from "../../tui/test/native/tsp-harness";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 

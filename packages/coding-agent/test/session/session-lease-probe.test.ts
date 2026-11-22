@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { FileSessionStorage, isSessionLeaseHeld } from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { FileSessionStorage, isSessionLeaseHeld } from "@marsai-org/coding-agent/session/session-storage";
+import { TempDir } from "@marsai-org/utils";
 
 const SESSION_STORAGE_MODULE = path.join(import.meta.dir, "../../src/session/session-storage.ts");
 const CLI = path.join(import.meta.dir, "../../src/cli.ts");

@@ -1,13 +1,13 @@
 import { rm } from "node:fs/promises";
 import * as path from "node:path";
-import { type ApiKeyResolver, completeSimple, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { hostMatchesUrl } from "@oh-my-pi/pi-catalog/hosts";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import type { Mnemopi } from "@oh-my-pi/pi-mnemopi";
-import type { MnemopiLlmCompleteOptions } from "@oh-my-pi/pi-mnemopi/core/runtime-options";
-import type * as MnemopiDiagnoseNs from "@oh-my-pi/pi-mnemopi/diagnose";
-import type { DiagnosticSummary } from "@oh-my-pi/pi-mnemopi/diagnose";
-import { logger, prompt, withLoopPhase } from "@oh-my-pi/pi-utils";
+import { type ApiKeyResolver, completeSimple, retryTransientCompletion } from "@marsai-org/ai";
+import { hostMatchesUrl } from "@marsai-org/catalog/hosts";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import type { Mnemopi } from "@marsai-org/mnemopi";
+import type { MnemopiLlmCompleteOptions } from "@marsai-org/mnemopi/core/runtime-options";
+import type * as MnemopiDiagnoseNs from "@marsai-org/mnemopi/diagnose";
+import type { DiagnosticSummary } from "@marsai-org/mnemopi/diagnose";
+import { logger, prompt, withLoopPhase } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import { roleCandidatePool } from "../config/model-roles";
@@ -27,8 +27,8 @@ import mnemopiInstructions from "../prompts/system/mnemopi-instructions.md" with
 import type { AgentSession } from "../session/agent-session";
 import { tinyModelClient } from "../tiny/title-client";
 import { unmeteredMessage } from "../utils/title-generator";
-import { shortenPath } from "@oh-my-pi/pi-tui/render/render-utils";
-import { concreteThinkingLevel, shouldDisableReasoning, toReasoningEffort } from "@oh-my-pi/pi-tui/thinking";
+import { shortenPath } from "@marsai-org/tui/render/render-utils";
+import { concreteThinkingLevel, shouldDisableReasoning, toReasoningEffort } from "@marsai-org/tui/thinking";
 import {
 	loadMnemopiConfig,
 	type MnemopiBackendConfig,
@@ -59,7 +59,7 @@ let mnemopiDiagnoseMod: typeof MnemopiDiagnoseNs | undefined;
 
 async function loadMnemopiDiagnose(): Promise<typeof MnemopiDiagnoseNs> {
 	if (!mnemopiDiagnoseMod) {
-		mnemopiDiagnoseMod = await import("@oh-my-pi/pi-mnemopi/diagnose");
+		mnemopiDiagnoseMod = await import("@marsai-org/mnemopi/diagnose");
 	}
 	return mnemopiDiagnoseMod;
 }

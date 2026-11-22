@@ -2,12 +2,12 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgDisasmBackend } from "@oh-my-pi/pi-coding-agent/disasm/active";
-import { formatDatabaseHandle, parseDatabaseHandle } from "@oh-my-pi/pi-coding-agent/disasm/protocol";
-import { ghidraHostSupported } from "@oh-my-pi/pi-coding-agent/ghidra/platform";
-import { isExecutableHeader, parseFatSlices, selectSlice, splitSliceRef } from "@oh-my-pi/pi-coding-agent/disasm/store";
-import { type BinaryView, parseBinaryView } from "@oh-my-pi/pi-coding-agent/tools/read-binary";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgDisasmBackend } from "@marsai-org/coding-agent/disasm/active";
+import { formatDatabaseHandle, parseDatabaseHandle } from "@marsai-org/coding-agent/disasm/protocol";
+import { ghidraHostSupported } from "@marsai-org/coding-agent/ghidra/platform";
+import { isExecutableHeader, parseFatSlices, selectSlice, splitSliceRef } from "@marsai-org/coding-agent/disasm/store";
+import { type BinaryView, parseBinaryView } from "@marsai-org/coding-agent/tools/read-binary";
 
 describe("isExecutableHeader", () => {
 	const cases: Array<[string, number[], boolean]> = [

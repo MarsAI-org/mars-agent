@@ -9,8 +9,8 @@ import {
 	logger,
 	USER_AGENT,
 	withFileLock,
-} from "@oh-my-pi/pi-utils";
-import { extractArchive } from "@oh-my-pi/pi-utils/ar";
+} from "@marsai-org/utils";
+import { extractArchive } from "@marsai-org/utils/ar";
 import { $ } from "bun";
 import { DisasmUnavailableError } from "../disasm/backend";
 import { type DownloadTracker, trackDownload, withDownload } from "../downloads/activity";

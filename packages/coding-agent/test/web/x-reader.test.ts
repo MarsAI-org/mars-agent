@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgRetryFallbackChains } from "@oh-my-pi/pi-coding-agent/session/settings";
-import { handleTwitter } from "@oh-my-pi/pi-coding-agent/web/scrapers/twitter";
-import { parseXUrl, type XTarget } from "@oh-my-pi/pi-coding-agent/web/x";
+import type { AuthStorage } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgRetryFallbackChains } from "@marsai-org/coding-agent/session/settings";
+import { handleTwitter } from "@marsai-org/coding-agent/web/scrapers/twitter";
+import { parseXUrl, type XTarget } from "@marsai-org/coding-agent/web/x";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 import { asGlobalFetch } from "../helpers/fetch-mock";
 

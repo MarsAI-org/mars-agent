@@ -9,8 +9,8 @@
  * plain Content-Length-framed LSP JSON-RPC plus the private `omp/mux*`
  * methods below.
  */
-import type { UnitScope } from "@oh-my-pi/pi-tui/tools/daemon";
-import { stableStringifyJson } from "@oh-my-pi/pi-utils";
+import type { UnitScope } from "@marsai-org/tui/tools/daemon";
+import { stableStringifyJson } from "@marsai-org/utils";
 
 /** Daemon unit kind and `call` module name. */
 export const LSP_MODULE_KIND = "lsp";

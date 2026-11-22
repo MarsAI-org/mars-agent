@@ -27,7 +27,7 @@ import {
 	type ShapeGeometry,
 	type ShapeTarget,
 	type ShapeVariantName,
-} from "@oh-my-pi/snapcompact";
+} from "@marsai-org/snapcompact";
 import { theme } from "../theme/theme";
 import sampleDoc from "./snapcompact-shape-preview-doc.md" with { type: "text" };
 import type { DescribeContext, NativeNode } from "../native/node";

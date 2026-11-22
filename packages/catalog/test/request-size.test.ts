@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	resolveImageCountBudget,
 	resolveInlineImageByteBudget,
 	resolveRequestBodyByteLimit,
-} from "@oh-my-pi/pi-catalog/compat/request-size";
-import type { Api, Model } from "@oh-my-pi/pi-catalog/types";
-import { CODEX_BASE_URL } from "@oh-my-pi/pi-catalog/wire/codex";
+} from "@marsai-org/catalog/compat/request-size";
+import type { Api, Model } from "@marsai-org/catalog/types";
+import { CODEX_BASE_URL } from "@marsai-org/catalog/wire/codex";
 
 /** The configured endpoint's classification; request-time env reroutes are pi-ai's to apply. */
 function configuredOfficial(model: Model): boolean {

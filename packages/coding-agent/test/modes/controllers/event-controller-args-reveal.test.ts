@@ -6,19 +6,19 @@
  * how assistant text snaps at message_end.
  */
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { kStreamingPartialJson } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { ToolExecutionComponent } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { STREAMING_REVEAL_FRAME_MS } from "@oh-my-pi/pi-coding-agent/modes/controllers/streaming-reveal";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { kStreamingPartialJson } from "@marsai-org/ai/utils/block-symbols";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { ToolExecutionComponent } from "@marsai-org/tui/chat/tool-execution";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { STREAMING_REVEAL_FRAME_MS } from "@marsai-org/coding-agent/modes/controllers/streaming-reveal";
+import { initTheme } from "@marsai-org/tui/theme";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
-import { cfgDisplaySmoothStreaming } from "@oh-my-pi/pi-coding-agent/modes/settings";
+import { cfgDisplaySmoothStreaming } from "@marsai-org/coding-agent/modes/settings";
 
 beforeAll(async () => {
 	await initTheme();

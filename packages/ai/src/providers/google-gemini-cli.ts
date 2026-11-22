@@ -4,15 +4,15 @@
  */
 import { randomBytes, randomUUID } from "node:crypto";
 import { scheduler } from "node:timers/promises";
-import { type } from "@oh-my-pi/omptype";
-import { calculateCost } from "@oh-my-pi/pi-catalog/models";
-import { isReviewedTierVariantWireId } from "@oh-my-pi/pi-catalog/compat/collapse";
+import { type } from "@marsai-org/omptype";
+import { calculateCost } from "@marsai-org/catalog/models";
+import { isReviewedTierVariantWireId } from "@marsai-org/catalog/compat/collapse";
 import {
 	ensureAntigravityVersion,
 	getAntigravityHeaders,
 	getAntigravityModelWireProfile,
-} from "@oh-my-pi/pi-catalog/wire/gemini-headers";
-import { extractHttpStatusFromError, fetchWithRetry, readSseJson, type SseEventObserver } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/catalog/wire/gemini-headers";
+import { extractHttpStatusFromError, fetchWithRetry, readSseJson, type SseEventObserver } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { oauthAccountKey } from "../auth/types";
 import type {

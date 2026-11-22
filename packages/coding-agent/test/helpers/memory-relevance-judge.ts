@@ -6,8 +6,8 @@ import {
 	type JudgmentState,
 	type Questions,
 	tokenUsage,
-} from "@oh-my-pi/pi-ai";
-import type { ChainJudge, JudgeKind } from "@oh-my-pi/pi-coding-agent/judgment";
+} from "@marsai-org/ai";
+import type { ChainJudge, JudgeKind } from "@marsai-org/coding-agent/judgment";
 
 /** Present `judge` as the judge-role chain's only candidate, of `kind`. */
 export function judgeChain(judge: Judge, kind: JudgeKind = "native"): Pick<ChainJudge, "withCandidate"> {

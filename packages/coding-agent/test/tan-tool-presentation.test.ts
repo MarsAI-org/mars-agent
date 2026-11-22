@@ -1,13 +1,13 @@
 import { describe, expect, it } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { type CustomTool, createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { createSubagentSettings } from "@oh-my-pi/pi-coding-agent/task/executor";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { type CustomTool, createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { createSubagentSettings } from "@marsai-org/coding-agent/task/executor";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const mcpTool: CustomTool = {

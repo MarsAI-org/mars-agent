@@ -1,4 +1,4 @@
-import { isRecord } from "@oh-my-pi/pi-utils";
+import { isRecord } from "@marsai-org/utils";
 import type { Component } from "../tui";
 import { Text } from "../components/text";
 import type {

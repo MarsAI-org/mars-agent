@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as vm from "node:vm";
-import * as ai from "@oh-my-pi/pi-ai";
-import type { Api, AssistantMessage, ImageContent, Model } from "@oh-my-pi/pi-ai";
+import * as ai from "@marsai-org/ai";
+import type { Api, AssistantMessage, ImageContent, Model } from "@marsai-org/ai";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
 import { runEvalJudgment } from "../../src/eval/judgment-bridge";
@@ -12,7 +12,7 @@ import type { ToolSession } from "../../src/tools";
 import { createInMemoryAuthStorage } from "../helpers/agent-session-setup";
 import { asGlobalFetch } from "../helpers/fetch-mock";
 import { rejectionOf } from "../helpers/rejection";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { TempDir } from "@marsai-org/utils";
 import { CostCapError, CostGate } from "../../src/session/cost-gate";
 
 const SMOL: Model<Api> = {

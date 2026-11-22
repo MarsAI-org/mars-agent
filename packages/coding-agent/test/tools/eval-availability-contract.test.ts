@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
-import { toolWireSchema } from "@oh-my-pi/pi-ai";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { pythonBackend } from "@oh-my-pi/pi-coding-agent/eval";
-import * as probe from "@oh-my-pi/pi-coding-agent/eval/probe";
-import * as pyKernel from "@oh-my-pi/pi-coding-agent/eval/py/kernel";
-import * as pyRuntime from "@oh-my-pi/pi-coding-agent/eval/py/runtime";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { EvalTool } from "@oh-my-pi/pi-coding-agent/tools/eval";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { toolWireSchema } from "@marsai-org/ai";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { pythonBackend } from "@marsai-org/coding-agent/eval";
+import * as probe from "@marsai-org/coding-agent/eval/probe";
+import * as pyKernel from "@marsai-org/coding-agent/eval/py/kernel";
+import * as pyRuntime from "@marsai-org/coding-agent/eval/py/runtime";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { EvalTool } from "@marsai-org/coding-agent/tools/eval";
+import { TempDir } from "@marsai-org/utils";
 import { restoreEnvValue } from "../helpers/settings-test-state";
 
 function languages(tool: EvalTool): string[] {

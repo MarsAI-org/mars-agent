@@ -1,20 +1,20 @@
 import { describe, expect, it } from "bun:test";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async/job-manager";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { parseInternalUrl } from "@oh-my-pi/pi-coding-agent/internal-urls/parse";
-import { ProcProtocolHandler } from "@oh-my-pi/pi-coding-agent/internal-urls/proc-protocol";
-import { AgentRegistry } from "@oh-my-pi/pi-coding-agent/registry/agent-registry";
-import { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { isUserInterruptAbort } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { Agent } from "@marsai-org/agent-core";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async/job-manager";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { parseInternalUrl } from "@marsai-org/coding-agent/internal-urls/parse";
+import { ProcProtocolHandler } from "@marsai-org/coding-agent/internal-urls/proc-protocol";
+import { AgentRegistry } from "@marsai-org/coding-agent/registry/agent-registry";
+import { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { isUserInterruptAbort } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { TempDir } from "@marsai-org/utils";
 
 describe("proc://<id>/kill of a running subagent", () => {
 	it("records the parent agent's kill on the child's transcript instead of a user interrupt", async () => {

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { ProcessTerminal } from "@oh-my-pi/pi-tui/terminal";
-import { setTerminalHeadless } from "@oh-my-pi/pi-utils";
+import { ProcessTerminal } from "@marsai-org/tui/terminal";
+import { setTerminalHeadless } from "@marsai-org/utils";
 
 // DEC 2048 in-band resize reports (`CSI 48;rows;cols;yPx;xPx t`) are
 // terminal->host data. #15.10.3 taught ProcessTerminal to reassemble a report

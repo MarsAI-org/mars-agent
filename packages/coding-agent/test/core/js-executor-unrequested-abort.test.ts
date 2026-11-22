@@ -6,11 +6,11 @@
  */
 import { afterAll, beforeAll, describe, expect, it, setDefaultTimeout } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { disposeAllVmContexts } from "@oh-my-pi/pi-coding-agent/eval/js/context-manager";
-import { executeJs } from "@oh-my-pi/pi-coding-agent/eval/js/executor";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { disposeAllVmContexts } from "@marsai-org/coding-agent/eval/js/context-manager";
+import { executeJs } from "@marsai-org/coding-agent/eval/js/executor";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { TempDir } from "@marsai-org/utils";
 
 // A JS cell cold-starts a Bun worker; give it room above the worker-init floor.
 setDefaultTimeout(20_000);

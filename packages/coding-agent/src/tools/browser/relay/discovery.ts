@@ -1,7 +1,7 @@
 /** Per-user discovery for terminal clients; sidebar chats never publish an endpoint. */
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { getBrowserRelayInstallRegistryFile } from "@oh-my-pi/pi-utils/dirs";
+import { getBrowserRelayInstallRegistryFile } from "@marsai-org/utils/dirs";
 
 function discoveryDir(): string {
 	return path.join(path.dirname(getBrowserRelayInstallRegistryFile()), "endpoints");

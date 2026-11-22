@@ -1,7 +1,7 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as vcs from "@oh-my-pi/pi-natives/vcs";
-import { getWorktreeDir, hashPath } from "@oh-my-pi/pi-utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getWorktreeDir, hashPath } from "@marsai-org/utils";
 import { cfgIsolationBackend, cfgWorktreeClone } from "../task/settings";
 import { parseIsolationBackend } from "../task/worktree";
 import type { WorktreeBackend } from "./backend";

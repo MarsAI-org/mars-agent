@@ -2,14 +2,14 @@ import { describe, expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { buildSkillPromptMessage, renderSkillPromptMessage } from "@oh-my-pi/pi-coding-agent/extensibility/skills";
-import { dispatchRpcSkillPrompt, tryRunRpcSkillCommand } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-mode";
+import { buildSkillPromptMessage, renderSkillPromptMessage } from "@marsai-org/coding-agent/extensibility/skills";
+import { dispatchRpcSkillPrompt, tryRunRpcSkillCommand } from "@marsai-org/coding-agent/modes/rpc/rpc-mode";
 import {
 	RpcExtensionUserMessageTracker,
 	RpcPromptResults,
-} from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-prompt-results";
-import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { removeWithRetries, Snowflake } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/modes/rpc/rpc-prompt-results";
+import { type CustomMessage, SKILL_PROMPT_MESSAGE_TYPE } from "@marsai-org/coding-agent/session/messages";
+import { removeWithRetries, Snowflake } from "@marsai-org/utils";
 
 const skillPromptBuilder = {
 	buildUserSkillPrompt: buildSkillPromptMessage,

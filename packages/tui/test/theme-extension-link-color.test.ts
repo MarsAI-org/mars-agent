@@ -1,9 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { Markdown } from "@oh-my-pi/pi-tui/components/markdown";
-import { setExtensionLinks } from "@oh-my-pi/pi-tui/render/extension-links";
-import { getMarkdownTheme, setThemeInstance, type Theme, theme } from "@oh-my-pi/pi-tui/theme";
-import { createTheme, getBuiltinThemes } from "@oh-my-pi/pi-tui/theme/loader";
-import type { ThemeJson } from "@oh-my-pi/pi-tui/theme/schema";
+import { Markdown } from "@marsai-org/tui/components/markdown";
+import { setExtensionLinks } from "@marsai-org/tui/render/extension-links";
+import { getMarkdownTheme, setThemeInstance, type Theme, theme } from "@marsai-org/tui/theme";
+import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
+import type { ThemeJson } from "@marsai-org/tui/theme/schema";
 
 function darkWith(colors: Partial<ThemeJson["colors"]>, terminal?: ThemeJson["terminal"]): Theme {
 	const json = getBuiltinThemes().dark;

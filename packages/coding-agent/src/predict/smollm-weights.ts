@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getTinyModelsCacheDir, logger } from "@oh-my-pi/pi-utils";
+import { getTinyModelsCacheDir, logger } from "@marsai-org/utils";
 import { withDownload } from "../downloads/activity";
 import { installPinnedHubFiles, type PinnedHubFile, pinnedHubFilesReady } from "../downloads/pinned-hub-files";
 

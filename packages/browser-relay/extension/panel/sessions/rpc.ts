@@ -10,7 +10,7 @@
  * High-rate events (`message_update`, `tool_execution_update`) are published at most once per animation frame;
  * everything else publishes synchronously.
  */
-import type { ActiveTool, ConnectionPhase, Notice } from "@oh-my-pi/collab-web/src/lib/client";
+import type { ActiveTool, ConnectionPhase, Notice } from "@marsai-org/collab-web/src/lib/client";
 import type {
 	AgentSnapshot,
 	AssistantMessage,
@@ -24,7 +24,7 @@ import type {
 	SubagentLifecyclePayload,
 	SubagentProgressPayload,
 	WireMessage,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import type {
 	AbortAndRestoreQueueResult,
 	AgentEndEvent,

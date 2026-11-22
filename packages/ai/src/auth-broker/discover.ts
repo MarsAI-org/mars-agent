@@ -17,7 +17,7 @@ import {
 	isRetryableStatus,
 	logger,
 	MAIN_CONFIG_FILENAMES,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 import { YAML } from "bun";
 import {
 	type AuthAccountPolicies,

@@ -13,9 +13,9 @@
  * contract stay in one file. It falls back to a worker thread of the calling
  * process when the daemon cannot serve it.
  */
-import { type } from "@oh-my-pi/omptype";
-import { getSessionsDir, getTranscriptIndexDbPath, logger, untilAborted } from "@oh-my-pi/pi-utils";
-import { isBunTestRuntime } from "@oh-my-pi/pi-utils/env";
+import { type } from "@marsai-org/omptype";
+import { getSessionsDir, getTranscriptIndexDbPath, logger, untilAborted } from "@marsai-org/utils";
+import { isBunTestRuntime } from "@marsai-org/utils/env";
 import type { TranscriptSyncResult } from "../../session/transcript-index";
 import { TranscriptIndexer } from "../../session/transcript-index-client";
 import { daemonClient } from "../client";

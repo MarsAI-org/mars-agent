@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { loadPage } from "@oh-my-pi/pi-coding-agent/web/scrapers/types";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool } from "@marsai-org/coding-agent/tools/read";
+import { loadPage } from "@marsai-org/coding-agent/web/scrapers/types";
 
 function makeSession(): ToolSession {
 	const cwd = process.cwd();

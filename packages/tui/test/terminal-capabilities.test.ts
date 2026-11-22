@@ -16,8 +16,8 @@ import {
 	classifyTerminalMultiplexer,
 	hasTerminalMultiplexerSession,
 	isInsideTerminalMultiplexer,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
-import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@oh-my-pi/pi-tui/terminal-multiplexer";
+} from "@marsai-org/tui/terminal-capabilities";
+import { TERMINAL_MULTIPLEXER_ENV_KEYS } from "@marsai-org/tui/terminal-multiplexer";
 import { withFakeTmux } from "./helpers/fake-tmux";
 
 describe("hasTerminalMultiplexerSession", () => {
@@ -246,7 +246,7 @@ describe("iTerm2 over SSH", () => {
 			cmd: [
 				process.execPath,
 				"--eval",
-				`import { TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+				`import { TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProtocol }));`,
 			],
 			env,
@@ -279,7 +279,7 @@ describe("tmux client terminal resolution", () => {
 					cmd: [
 						process.execPath,
 						"--eval",
-						`import { TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+						`import { TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, notifyProtocol: TERMINAL.notifyProtocol, imageProtocol: TERMINAL.imageProtocol }));`,
 					],
 					env: subprocessEnv({
@@ -480,7 +480,7 @@ describe("Warp terminal capabilities", () => {
 			cmd: [
 				process.execPath,
 				"--eval",
-				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProtocol, expected: ImageProtocol.Kitty }));`,
 			],
 			env,
@@ -618,7 +618,7 @@ describe("otty terminal capabilities", () => {
 			cmd: [
 				process.execPath,
 				"--eval",
-				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProtocol, expected: ImageProtocol.Kitty }));`,
 			],
 			env,
@@ -729,7 +729,7 @@ describe("Paseo embedder carve-out", () => {
 			cmd: [
 				process.execPath,
 				"--eval",
-				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProtocol, expected: ImageProtocol.Kitty }));`,
 			],
 			env,
@@ -758,7 +758,7 @@ console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProto
 			cmd: [
 				process.execPath,
 				"--eval",
-				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@oh-my-pi/pi-tui/terminal-capabilities";
+				`import { ImageProtocol, TERMINAL, TERMINAL_ID } from "@marsai-org/tui/terminal-capabilities";
 console.log(JSON.stringify({ id: TERMINAL_ID, imageProtocol: TERMINAL.imageProtocol, expected: ImageProtocol.Kitty }));`,
 			],
 			env,

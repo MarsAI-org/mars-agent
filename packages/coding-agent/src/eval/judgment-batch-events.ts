@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 
 /** Session event channel for editor-anchored judgment progress. */
 export const JUDGMENT_BATCH_PROGRESS_EVENT_CHANNEL = "eval:judgment-batch-progress";

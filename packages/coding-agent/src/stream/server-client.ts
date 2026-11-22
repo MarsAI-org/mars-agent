@@ -1,4 +1,4 @@
-import { type } from "@oh-my-pi/omptype";
+import { type } from "@marsai-org/omptype";
 import {
 	STREAM_CLOSE_BAD_CHANNEL,
 	STREAM_CLOSE_FORBIDDEN,
@@ -9,7 +9,7 @@ import {
 	type StreamHostFrame,
 	type StreamPaneFrame,
 	type StreamServerToHost,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 
 const INITIAL_RECONNECT_MS = 1_000;
 const MAX_RECONNECT_MS = 30_000;

@@ -1,10 +1,10 @@
 import { expect, test } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { writeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { resolveModelCacheProviderId } from "@oh-my-pi/pi-catalog/provider-models";
-import { getModelDbPath, TempDir } from "@oh-my-pi/pi-utils";
+import { buildModel } from "@marsai-org/catalog/build";
+import { writeModelCache } from "@marsai-org/catalog/model-cache";
+import { resolveModelCacheProviderId } from "@marsai-org/catalog/provider-models";
+import { getModelDbPath, TempDir } from "@marsai-org/utils";
 
 const cliEntry = path.join(import.meta.dir, "..", "src", "cli.ts");
 

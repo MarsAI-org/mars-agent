@@ -1,9 +1,9 @@
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { presentNarrationAsAnswer } from "@oh-my-pi/pi-ai/utils/narration";
-import { type Component, getSegmenter } from "@oh-my-pi/pi-tui";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { formatThinkingForDisplay, hasDisplayableThinking } from "@oh-my-pi/pi-tui/chat/thinking-display";
-import type { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { presentNarrationAsAnswer } from "@marsai-org/ai/utils/narration";
+import { type Component, getSegmenter } from "@marsai-org/tui";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { formatThinkingForDisplay, hasDisplayableThinking } from "@marsai-org/tui/chat/thinking-display";
+import type { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
 
 export const STREAMING_REVEAL_FRAME_MS = 1000 / 30;
 export const MIN_STEP = 3;

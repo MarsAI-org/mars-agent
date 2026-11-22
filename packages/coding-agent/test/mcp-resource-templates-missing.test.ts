@@ -16,16 +16,16 @@ import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 import {
 	connectToServer,
 	disconnectServer,
 	type HostedMCPConnection,
 	listResourceTemplates,
-} from "@oh-my-pi/pi-coding-agent/mcp/client";
-import { disposeLocalMcpHost } from "@oh-my-pi/pi-coding-agent/mcp/host/local";
-import { MCPManager } from "@oh-my-pi/pi-coding-agent/mcp/manager";
-import type { MCPStdioServerConfig } from "@oh-my-pi/pi-coding-agent/mcp/types";
+} from "@marsai-org/coding-agent/mcp/client";
+import { disposeLocalMcpHost } from "@marsai-org/coding-agent/mcp/host/local";
+import { MCPManager } from "@marsai-org/coding-agent/mcp/manager";
+import type { MCPStdioServerConfig } from "@marsai-org/coding-agent/mcp/types";
 import { RESOURCE_URIS } from "./fixtures/resources-no-templates-mcp";
 import { rejectionOf } from "./helpers/rejection";
 import { FakeHost } from "./mcp-host/link-fake-host";

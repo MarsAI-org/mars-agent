@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { parseArgs } from "@oh-my-pi/pi-coding-agent/cli/args";
-import { clearOmpExtensionCliRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
+import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { clearOmpExtensionCliRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
 import { runCli } from "../src/cli";
 
 // `runRootCommand` registers the CLI's extension roots (`--no-extensions` → explicit-only) process-wide.

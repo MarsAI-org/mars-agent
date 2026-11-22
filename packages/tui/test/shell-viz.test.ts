@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { RunTrace, Shell } from "@oh-my-pi/pi-natives";
-import { isShellTrace, type ShellTrace, type ShellVizPresentation } from "@oh-my-pi/pi-wire";
+import { RunTrace, Shell } from "@marsai-org/natives";
+import { isShellTrace, type ShellTrace, type ShellVizPresentation } from "@marsai-org/wire";
 import {
 	attachShellTrace,
 	decodeShellPresentation,

@@ -6,11 +6,11 @@
  * exposes the equivalent, broader `decodePrintableKey` helper. Keep the legacy
  * name available without reintroducing it into the canonical package surface.
  */
-import { ImageProtocol, TERMINAL } from "@oh-my-pi/pi-tui";
-import { extractSegments, sliceByColumn, sliceWithWidth, visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { ImageProtocol, TERMINAL } from "@marsai-org/tui";
+import { extractSegments, sliceByColumn, sliceWithWidth, visibleWidth } from "@marsai-org/tui/utils";
 
-export * from "@oh-my-pi/pi-tui";
-export { decodePrintableKey as decodeKittyPrintable } from "@oh-my-pi/pi-tui";
+export * from "@marsai-org/tui";
+export { decodePrintableKey as decodeKittyPrintable } from "@marsai-org/tui";
 
 /**
  * Legacy pi-tui `compositeTuiLine`, ported verbatim from upstream pi-tui

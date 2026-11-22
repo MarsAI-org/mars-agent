@@ -1,10 +1,10 @@
 import { afterEach, expect, it, vi } from "bun:test";
 import http2 from "node:http2";
 import * as net from "node:net";
-import { streamCursor } from "@oh-my-pi/pi-ai/providers/cursor";
-import * as proxy from "@oh-my-pi/pi-ai/utils/proxy";
-import type { Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
+import { streamCursor } from "@marsai-org/ai/providers/cursor";
+import * as proxy from "@marsai-org/ai/utils/proxy";
+import type { Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
 import {
 	AgentServerMessageSchema,
 	BidiAppendRequestSchema,
@@ -13,8 +13,8 @@ import {
 	InteractionUpdateSchema,
 	TextDeltaUpdateSchema,
 	TurnEndedUpdateSchema,
-} from "@oh-my-pi/pi-catalog/discovery/cursor-proto";
-import { create, fromBinary, toBinary } from "@oh-my-pi/pi-catalog/discovery/protobuf";
+} from "@marsai-org/catalog/discovery/cursor-proto";
+import { create, fromBinary, toBinary } from "@marsai-org/catalog/discovery/protobuf";
 
 function update(message: InteractionUpdate["message"]): Buffer {
 	const data = toBinary(

@@ -1,5 +1,5 @@
 /** Prompt images: decode what the user pasted, dropped or captured, cap its size, and encode it for the wire. */
-import type { ImageContent } from "@oh-my-pi/pi-wire";
+import type { ImageContent } from "@marsai-org/wire";
 
 /** Longest edge sent to the model; larger images are scaled down (models downsample past this anyway). */
 const MAX_EDGE = 1568;

@@ -14,25 +14,25 @@
  *     ended lands in context and does not start a model turn.
  */
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { Agent } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { createMockModel } from "@oh-my-pi/pi-ai/providers/mock";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { AsyncJobManager } from "@oh-my-pi/pi-coding-agent/async";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import { AgentSession, type AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import type { WakeSources } from "@oh-my-pi/pi-coding-agent/session/agent-session-events";
-import type { AsyncJobSnapshot } from "@oh-my-pi/pi-coding-agent/session/agent-session-types";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { USER_INTERRUPT_LABEL } from "@oh-my-pi/pi-coding-agent/session/messages";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as runStatus from "@oh-my-pi/pi-coding-agent/utils/run-status";
-import * as titleGenerator from "@oh-my-pi/pi-coding-agent/utils/title-generator";
-import { TERMINAL } from "@oh-my-pi/pi-tui";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { Agent } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { createMockModel } from "@marsai-org/ai/providers/mock";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { AsyncJobManager } from "@marsai-org/coding-agent/async";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import { AgentSession, type AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import type { WakeSources } from "@marsai-org/coding-agent/session/agent-session-events";
+import type { AsyncJobSnapshot } from "@marsai-org/coding-agent/session/agent-session-types";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { USER_INTERRUPT_LABEL } from "@marsai-org/coding-agent/session/messages";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as runStatus from "@marsai-org/coding-agent/utils/run-status";
+import * as titleGenerator from "@marsai-org/coding-agent/utils/title-generator";
+import { TERMINAL } from "@marsai-org/tui";
+import { initTheme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 import { createInteractiveModeContext } from "../../helpers/interactive-mode-context";
 
 type AgentPause = Extract<AgentSessionEvent, { type: "agent_pause" }>;

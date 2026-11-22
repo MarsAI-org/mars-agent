@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import * as AIError from "@oh-my-pi/pi-ai/error";
+import * as AIError from "@marsai-org/ai/error";
 import {
 	crc32,
 	decodeEventStream,
 	decodeMessage,
 	MAX_HEADERS_LEN,
 	MAX_MESSAGE_LEN,
-} from "@oh-my-pi/pi-ai/providers/aws-eventstream";
+} from "@marsai-org/ai/providers/aws-eventstream";
 
 // ---- Frame builder (mirrors @smithy/eventstream-codec but in-process so the
 // test owns the bytes). The decoder is the production code; we encode here for

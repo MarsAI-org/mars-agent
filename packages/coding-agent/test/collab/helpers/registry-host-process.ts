@@ -10,7 +10,7 @@
  * Emits `READY\n` once published. SIGTERM runs postmortem cleanup, which closes
  * the publication, then exits 143 like every omp process.
  */
-import { postmortem } from "@oh-my-pi/pi-utils";
+import { postmortem } from "@marsai-org/utils";
 import { type CollabHostRegistrySource, publishCollabHost } from "../../../src/collab/registry";
 postmortem.installProcessHandlers();
 

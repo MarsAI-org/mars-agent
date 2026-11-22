@@ -4,8 +4,8 @@
  * {@link EventBus}es, {@link ArtifactManager}, and main's {@link AgentStorage}.
  * The main-side halves live in `./runtime`.
  */
-import type { AssistantMessageEventStream, ServiceTier, StoredAuthCredential } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AssistantMessageEventStream, ServiceTier, StoredAuthCredential } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import { type ArtifactManagerApi, writeArtifact } from "../../session/artifacts";
 import type { AgentStorageApi, ModelPerfSample, ModelPerfStats } from "../../session/agent-storage";
 import { type CostCapRefusal, CostCapError, type CostGateApi } from "../../session/cost-gate";

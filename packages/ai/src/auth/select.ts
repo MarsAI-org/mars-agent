@@ -1,4 +1,4 @@
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import * as AIError from "../error";
 import { getOAuthApiKey, getOAuthProvider } from "../registry/oauth";
 import type { OAuthProvider } from "../registry/oauth/types";

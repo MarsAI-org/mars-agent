@@ -1,4 +1,4 @@
-import { STDOUT_BACKLOG_CLEAR_BYTES } from "@oh-my-pi/pi-tui/terminal";
+import { STDOUT_BACKLOG_CLEAR_BYTES } from "@marsai-org/tui/terminal";
 import { VirtualTerminal } from "./virtual-terminal";
 
 /** A controllable queue that notifies when the renderer can resume. */

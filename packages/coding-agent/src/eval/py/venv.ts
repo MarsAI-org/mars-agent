@@ -1,6 +1,6 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { $which, isEnoent, type RuntimeInstallPhase, withFileLock } from "@oh-my-pi/pi-utils";
+import { $which, isEnoent, type RuntimeInstallPhase, withFileLock } from "@marsai-org/utils";
 import { $ } from "bun";
 
 /** Version-keyed Python environment provisioned by uv or a compatible system interpreter. */

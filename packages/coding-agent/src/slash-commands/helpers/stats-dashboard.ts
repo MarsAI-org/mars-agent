@@ -1,4 +1,4 @@
-import * as stats from "@oh-my-pi/omp-stats";
+import * as stats from "@marsai-org/stats";
 import { openTernPage } from "../../tools/browser/tern/user-page";
 import * as openUtils from "../../utils/open";
 

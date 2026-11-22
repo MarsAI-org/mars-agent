@@ -102,11 +102,11 @@
       packages = forAllSystems (
         system:
         let
-          omp = packageFor system;
+          mars = packageFor system;
         in
         {
-          inherit omp;
-          default = omp;
+          inherit mars;
+          default = mars;
         }
       );
 
@@ -116,7 +116,7 @@
           program = "${self.packages.${system}.default}/bin/omp";
           meta.description = "Run OMP";
         };
-        omp = self.apps.${system}.default;
+        mars = self.apps.${system}.default;
       });
 
       devShells = forAllSystems (
@@ -187,14 +187,14 @@
             touch "$out"
           '';
           modules = modulesEvaluate;
-          omp = self.packages.${system}.default;
+          mars = self.packages.${system}.default;
         }
       );
 
       formatter = forAllSystems (system: (pkgsFor system).nixfmt);
 
       overlays.default = _final: previous: {
-        omp = self.packages.${previous.stdenv.hostPlatform.system}.default;
+        mars = self.packages.${previous.stdenv.hostPlatform.system}.default;
       };
 
       homeManagerModules.default = import ./nix/home-manager.nix { inherit self; };

@@ -3,20 +3,20 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { BlobStore, isBlobRef } from "@oh-my-pi/pi-coding-agent/session/blob-store";
-import type { FileEntry, SessionHeader } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import { closeSessionIndex } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { findSessionFiles } from "@oh-my-pi/pi-coding-agent/session/session-listing";
-import { loadEntriesFromFile, resolveBlobRefsInEntries } from "@oh-my-pi/pi-coding-agent/session/session-loader";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
+import type { ImageContent } from "@marsai-org/ai";
+import { BlobStore, isBlobRef } from "@marsai-org/coding-agent/session/blob-store";
+import type { FileEntry, SessionHeader } from "@marsai-org/coding-agent/session/session-entries";
+import { closeSessionIndex } from "@marsai-org/coding-agent/session/session-index";
+import { findSessionFiles } from "@marsai-org/coding-agent/session/session-listing";
+import { loadEntriesFromFile, resolveBlobRefsInEntries } from "@marsai-org/coding-agent/session/session-loader";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
 import {
 	packSession,
 	SESSION_TRANSFER_MESSAGE_TYPE,
 	unpackSession,
-} from "@oh-my-pi/pi-coding-agent/session/session-transfer";
-import { getBlobsDir, getConfigRootDir, setAgentDir } from "@oh-my-pi/pi-utils";
-import { readArchiveEntries, writeArchive } from "@oh-my-pi/pi-utils/ar";
+} from "@marsai-org/coding-agent/session/session-transfer";
+import { getBlobsDir, getConfigRootDir, setAgentDir } from "@marsai-org/utils";
+import { readArchiveEntries, writeArchive } from "@marsai-org/utils/ar";
 import { makeAssistantMessage } from "./session-manager/helpers";
 
 const IMAGE_DATA = Buffer.alloc(4096, 7).toString("base64");

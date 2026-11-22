@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { getTinyModelsCacheDir, type RuntimeInstallPhase } from "@oh-my-pi/pi-utils";
+import { getTinyModelsCacheDir, type RuntimeInstallPhase } from "@marsai-org/utils";
 import { ensureManagedVenv } from "../eval/py/venv";
 
 /** Pinned mlx-lm release; its venv directory is versioned for clean upgrades. */

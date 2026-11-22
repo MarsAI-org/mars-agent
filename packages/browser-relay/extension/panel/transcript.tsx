@@ -2,11 +2,11 @@
  * The panel transcript: right-aligned user cards with tab chips, full-width replies, Claude-style step groups,
  * the working row, compaction progress and jump-to-latest. Laid out for a narrow column at every width.
  */
-import { Markdown, StreamingMarkdown } from "@oh-my-pi/collab-web/src/components/transcript/Markdown";
-import type { Notice } from "@oh-my-pi/collab-web/src/lib/client";
-import { messageText } from "@oh-my-pi/collab-web/src/lib/format";
-import { ToolView } from "@oh-my-pi/collab-web/src/tool-render";
-import type { ImageContent, SessionEntry } from "@oh-my-pi/pi-wire";
+import { Markdown, StreamingMarkdown } from "@marsai-org/collab-web/src/components/transcript/Markdown";
+import type { Notice } from "@marsai-org/collab-web/src/lib/client";
+import { messageText } from "@marsai-org/collab-web/src/lib/format";
+import { ToolView } from "@marsai-org/collab-web/src/tool-render";
+import type { ImageContent, SessionEntry } from "@marsai-org/wire";
 import {
 	ArrowDown,
 	ArrowUpDown,

@@ -9,19 +9,19 @@ import type {
 	ToolResultMessage,
 	ToolResultProviderMetadata,
 	UserMessage,
-} from "@oh-my-pi/pi-ai";
-import { reachesBudgetedHost } from "@oh-my-pi/pi-ai";
-import { adoptFactoryReplay, toGeminiTools } from "@oh-my-pi/pi-ai/providers/factory-droid/gemini";
-import { decodeDataUri } from "@oh-my-pi/pi-ai/providers/openai-data-uri";
-import { resolveFactoryDroidPolicy } from "@oh-my-pi/pi-catalog/compat/factory-droid";
-import { resolveModelPolicy } from "@oh-my-pi/pi-catalog/compat/resolve";
-import { resolveInlineImageByteBudget, resolveRequestBodyByteLimit } from "@oh-my-pi/pi-catalog/compat/request-size";
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
-import { capFrameDataBytes, frameDataBytesBudget, providerImageBudget } from "@oh-my-pi/snapcompact";
+} from "@marsai-org/ai";
+import { reachesBudgetedHost } from "@marsai-org/ai";
+import { adoptFactoryReplay, toGeminiTools } from "@marsai-org/ai/providers/factory-droid/gemini";
+import { decodeDataUri } from "@marsai-org/ai/providers/openai-data-uri";
+import { resolveFactoryDroidPolicy } from "@marsai-org/catalog/compat/factory-droid";
+import { resolveModelPolicy } from "@marsai-org/catalog/compat/resolve";
+import { resolveInlineImageByteBudget, resolveRequestBodyByteLimit } from "@marsai-org/catalog/compat/request-size";
+import { isRecord } from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
+import { capFrameDataBytes, frameDataBytesBudget, providerImageBudget } from "@marsai-org/snapcompact";
 import { supportsRemoteImageUrls } from "../blob-broker/context-images";
 import { declaredTools } from "../utils/tool-declarations";
-import { imageDecodeFailureReason } from "@oh-my-pi/pi-tui/chat/image-loading";
+import { imageDecodeFailureReason } from "@marsai-org/tui/chat/image-loading";
 
 const IMAGE_OMISSION: TextContent = {
 	type: "text",

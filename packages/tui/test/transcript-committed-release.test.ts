@@ -1,31 +1,31 @@
 import { afterEach, beforeAll, describe, expect, it, spyOn, vi } from "bun:test";
-import { type } from "@oh-my-pi/omptype";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { Lexer, type Token } from "@oh-my-pi/pi-utils/marked";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import { setChatTranscriptDisplayPreferences } from "@oh-my-pi/pi-tui/chat/display-preferences";
-import { ToolExecutionComponent, type ToolExecutionUi } from "@oh-my-pi/pi-tui/chat/tool-execution";
-import { FramedMessageComponent } from "@oh-my-pi/pi-tui/chrome/message-frame";
-import { UserMessageComponent } from "@oh-my-pi/pi-tui/chat/user-message";
-import { Box } from "@oh-my-pi/pi-tui/components/box";
-import { Disclosure } from "@oh-my-pi/pi-tui/components/disclosure";
-import { Row } from "@oh-my-pi/pi-tui/components/layout/row";
-import { Stack } from "@oh-my-pi/pi-tui/components/layout/stack";
-import { clearRenderCache, Markdown } from "@oh-my-pi/pi-tui/components/markdown";
-import { Section } from "@oh-my-pi/pi-tui/components/section";
-import { TranscriptContainer, trimBlankEdges } from "@oh-my-pi/pi-tui/chrome/transcript-container";
-import { getMarkdownTheme, getThemeByName, initTheme, type Theme } from "@oh-my-pi/pi-tui/theme";
-import * as themeModule from "@oh-my-pi/pi-tui/theme/theme";
-import * as renderUtils from "@oh-my-pi/pi-tui/render/render-utils";
-import * as sixel from "@oh-my-pi/pi-tui/render/sixel";
-import { OutputPane } from "@oh-my-pi/pi-tui/render/output-pane";
-import { bashToolRenderer } from "@oh-my-pi/pi-tui/tools/bash";
-import { editToolRenderer } from "@oh-my-pi/pi-tui/tools/edit";
-import { renderMCPResult, setMcpRenderMarkdownResults } from "@oh-my-pi/pi-tui/tools/mcp";
-import { writeToolRenderer } from "@oh-my-pi/pi-tui/tools/write";
+import { type } from "@marsai-org/omptype";
+import type { AgentTool } from "@marsai-org/agent-core";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { Lexer, type Token } from "@marsai-org/utils/marked";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import { setChatTranscriptDisplayPreferences } from "@marsai-org/tui/chat/display-preferences";
+import { ToolExecutionComponent, type ToolExecutionUi } from "@marsai-org/tui/chat/tool-execution";
+import { FramedMessageComponent } from "@marsai-org/tui/chrome/message-frame";
+import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { Box } from "@marsai-org/tui/components/box";
+import { Disclosure } from "@marsai-org/tui/components/disclosure";
+import { Row } from "@marsai-org/tui/components/layout/row";
+import { Stack } from "@marsai-org/tui/components/layout/stack";
+import { clearRenderCache, Markdown } from "@marsai-org/tui/components/markdown";
+import { Section } from "@marsai-org/tui/components/section";
+import { TranscriptContainer, trimBlankEdges } from "@marsai-org/tui/chrome/transcript-container";
+import { getMarkdownTheme, getThemeByName, initTheme, type Theme } from "@marsai-org/tui/theme";
+import * as themeModule from "@marsai-org/tui/theme/theme";
+import * as renderUtils from "@marsai-org/tui/render/render-utils";
+import * as sixel from "@marsai-org/tui/render/sixel";
+import { OutputPane } from "@marsai-org/tui/render/output-pane";
+import { bashToolRenderer } from "@marsai-org/tui/tools/bash";
+import { editToolRenderer } from "@marsai-org/tui/tools/edit";
+import { renderMCPResult, setMcpRenderMarkdownResults } from "@marsai-org/tui/tools/mcp";
+import { writeToolRenderer } from "@marsai-org/tui/tools/write";
 import { becomesCollectible } from "./gc";
-import { type Component, Container, Text } from "@oh-my-pi/pi-tui";
+import { type Component, Container, Text } from "@marsai-org/tui";
 
 const frame = { tick: 0, now: 0 };
 
@@ -377,7 +377,7 @@ describe("committed transcript blocks release render caches", () => {
 		function settledBash(): ToolExecutionComponent {
 			const component = new ToolExecutionComponent(
 				"bash",
-				{ command: "bun run build --filter=@oh-my-pi/pi-tui" },
+				{ command: "bun run build --filter=@marsai-org/tui" },
 				{},
 				undefined,
 				ui,

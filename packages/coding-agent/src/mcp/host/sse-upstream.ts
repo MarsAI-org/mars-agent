@@ -4,7 +4,7 @@
  * the endpoint that stream announces. Handshake-era only; nothing modern
  * speaks it.
  */
-import { isRecord, logger, postmortem, readSseEvents } from "@oh-my-pi/pi-utils";
+import { isRecord, logger, postmortem, readSseEvents } from "@marsai-org/utils";
 import {
 	createMCPJsonRpcError,
 	MCPTransportError,

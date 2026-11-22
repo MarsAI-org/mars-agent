@@ -1,6 +1,6 @@
-import { type } from "@oh-my-pi/omptype";
-import { untilAborted } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { type } from "@marsai-org/omptype";
+import { untilAborted } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { Device, Frame, NetworkConditions, Page, Permission } from "puppeteer-core";
 import { pressKey } from "./interactions";
 import { applyViewport } from "./launch";

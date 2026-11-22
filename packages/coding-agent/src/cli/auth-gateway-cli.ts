@@ -25,26 +25,26 @@ import {
 	completeSimple,
 	type Model,
 	type OAuthRequestIdentity,
-} from "@oh-my-pi/pi-ai";
+} from "@marsai-org/ai";
 import {
 	AuthBrokerClient,
 	loadAuthBrokerAccountPool,
 	RemoteAuthCredentialStore,
 	type SnapshotResponse,
-} from "@oh-my-pi/pi-ai/auth-broker";
+} from "@marsai-org/ai/auth-broker";
 import {
 	type AuthGatewayClient,
 	DEFAULT_AUTH_GATEWAY_BIND,
 	type ModelResolveOptions,
 	parseAuthGatewayClients,
 	startAuthGateway,
-} from "@oh-my-pi/pi-ai/auth-gateway";
-import { authPolicyFor } from "@oh-my-pi/pi-catalog/compat/auth";
-import { buildModelProviderPriorityRank } from "@oh-my-pi/pi-catalog/identity";
-import { type GeneratedProvider, getBundledModels, getEffectiveTokenCost } from "@oh-my-pi/pi-catalog/models";
-import { modelKind } from "@oh-my-pi/pi-catalog/types";
-import { getConfigRootDir, logger, VERSION } from "@oh-my-pi/pi-utils";
-import chalk from "@oh-my-pi/pi-utils/chalk";
+} from "@marsai-org/ai/auth-gateway";
+import { authPolicyFor } from "@marsai-org/catalog/compat/auth";
+import { buildModelProviderPriorityRank } from "@marsai-org/catalog/identity";
+import { type GeneratedProvider, getBundledModels, getEffectiveTokenCost } from "@marsai-org/catalog/models";
+import { modelKind } from "@marsai-org/catalog/types";
+import { getConfigRootDir, logger, VERSION } from "@marsai-org/utils";
+import chalk from "@marsai-org/utils/chalk";
 import { ModelRegistry } from "../config/model-registry";
 import { cfgDisabledProviders, cfgModelProviderOrder } from "../config/model-settings";
 import { resolveProviderModelReference } from "../config/model-resolver";

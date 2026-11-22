@@ -2,12 +2,12 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { LiveSessionCallbacks, LiveSessionControllerOptions } from "@oh-my-pi/pi-coding-agent/live/controller";
-import { RpcLiveBridge, type RpcLiveSession } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-live";
-import type { RpcLiveFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { readLines, removeWithRetries } from "@oh-my-pi/pi-utils";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import type { LiveSessionCallbacks, LiveSessionControllerOptions } from "@marsai-org/coding-agent/live/controller";
+import { RpcLiveBridge, type RpcLiveSession } from "@marsai-org/coding-agent/modes/rpc/rpc-live";
+import type { RpcLiveFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import { readLines, removeWithRetries } from "@marsai-org/utils";
 
 class FakeLiveSession implements RpcLiveSession {
 	muted = false;

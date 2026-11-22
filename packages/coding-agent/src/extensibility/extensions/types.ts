@@ -16,7 +16,7 @@ import {
 	type AssistantThinkingRenderer,
 	type AssistantTextRenderer,
 	type TranscriptPresenter,
-} from "@oh-my-pi/pi-tui/chat/extension-types";
+} from "@marsai-org/tui/chat/extension-types";
 export {
 	type ExtensionUiComponent,
 	type ExtensionUiComponentFactory,
@@ -30,10 +30,10 @@ export {
 	type TranscriptBlock,
 	type TranscriptPresentation,
 	type TranscriptPresenter,
-} from "@oh-my-pi/pi-tui/chat/extension-types";
-import type { type as ArkType } from "@oh-my-pi/omptype";
-import type * as TypeBox from "@oh-my-pi/omptype/typebox";
-import type * as zod from "@oh-my-pi/omptype/zod";
+} from "@marsai-org/tui/chat/extension-types";
+import type { type as ArkType } from "@marsai-org/omptype";
+import type * as TypeBox from "@marsai-org/omptype/typebox";
+import type * as zod from "@marsai-org/omptype/zod";
 import type {
 	AgentMessage,
 	AgentToolResult,
@@ -41,12 +41,12 @@ import type {
 	ThinkingLevel,
 	ToolApproval,
 	ToolLoadMode,
-} from "@oh-my-pi/pi-agent-core";
-import type { CompactionResult } from "@oh-my-pi/pi-agent-core/compaction";
-import type { ContextUsage } from "@oh-my-pi/pi-tui/status-line/types";
-import type { LoopConditionConfig } from "@oh-my-pi/pi-tui/status-line/loop";
-import type { LivePhase } from "@oh-my-pi/pi-tui/apps/live-visualizer";
-import type { ConfiguredThinkingLevel } from "@oh-my-pi/pi-tui/thinking";
+} from "@marsai-org/agent-core";
+import type { CompactionResult } from "@marsai-org/agent-core/compaction";
+import type { ContextUsage } from "@marsai-org/tui/status-line/types";
+import type { LoopConditionConfig } from "@marsai-org/tui/status-line/loop";
+import type { LivePhase } from "@marsai-org/tui/apps/live-visualizer";
+import type { ConfiguredThinkingLevel } from "@marsai-org/tui/thinking";
 import type {
 	Api,
 	AssistantMessage,
@@ -65,8 +65,8 @@ import type {
 	TextContent,
 	TSchema,
 	UsageProvider,
-} from "@oh-my-pi/pi-ai";
-import type { OAuthCredentials, OAuthLoginCallbacks } from "@oh-my-pi/pi-ai/oauth/types";
+} from "@marsai-org/ai";
+import type { OAuthCredentials, OAuthLoginCallbacks } from "@marsai-org/ai/oauth/types";
 import type {
 	AutocompleteItem,
 	AutocompleteProvider,
@@ -77,14 +77,14 @@ import type {
 	OverlayHandle,
 	OverlayOptions,
 	TUI,
-} from "@oh-my-pi/pi-tui";
-import type { logger as PiLogger } from "@oh-my-pi/pi-utils";
-import type { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
-import type { CodeReviewAnnotation, TextReviewAnnotation } from "@oh-my-pi/pi-tui/overlays/annotation-types";
-export type { ComposerShapeDefinition } from "@oh-my-pi/pi-tui/overlays/composer-shape-registry";
+} from "@marsai-org/tui";
+import type { logger as PiLogger } from "@marsai-org/utils";
+import type { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import type { ComposerShapeDefinition } from "@marsai-org/tui/overlays/composer-shape-registry";
+import type { CodeReviewAnnotation, TextReviewAnnotation } from "@marsai-org/tui/overlays/annotation-types";
+export type { ComposerShapeDefinition } from "@marsai-org/tui/overlays/composer-shape-registry";
 import type { ModelRegistry, ProviderConfigInput } from "../../config/model-registry";
-import type { EditToolDetails } from "@oh-my-pi/pi-tui/tools/edit";
+import type { EditToolDetails } from "@marsai-org/tui/tools/edit";
 import type { PythonResult } from "../../eval/py/executor";
 import type { BashResult } from "../../exec/bash-executor";
 import type { LiveTranscript } from "../../live/controller";
@@ -93,20 +93,20 @@ import type * as PiCodingAgent from "../../index";
 import type { LocalProtocolOptions } from "../../internal-urls/local-protocol";
 import type { LoopLimitConfig } from "../../modes/loop-limit";
 import type { MemoryRuntimeContext } from "../../memory-backend";
-import type { CustomEditor } from "@oh-my-pi/pi-tui/prompt/custom-editor";
-import type { Theme } from "@oh-my-pi/pi-tui/theme";
-import type { NativeToolView } from "@oh-my-pi/pi-tui/tools/renderer";
+import type { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
+import type { Theme } from "@marsai-org/tui/theme";
+import type { NativeToolView } from "@marsai-org/tui/tools/renderer";
 import type { AsyncJobSnapshot, SendUserMessageOptions } from "../../session/agent-session";
 import type { EphemeralTurnOptions, EphemeralTurnResult } from "../../session/agent-session-types";
 import type { CompactMode } from "../../session/compact-modes";
 import type { CustomMessagePayload } from "../../session/messages";
 import type { ReadonlySessionManager, SessionManager } from "../../session/session-manager";
 import type { BashToolInput, GlobToolInput, GrepToolInput, ReadToolInput, WriteToolInput } from "../../tools";
-import type { GlobToolDetails } from "@oh-my-pi/pi-tui/tools/glob";
-import type { GrepToolDetails } from "@oh-my-pi/pi-tui/tools/grep";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
+import type { GlobToolDetails } from "@marsai-org/tui/tools/glob";
+import type { GrepToolDetails } from "@marsai-org/tui/tools/grep";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
 import type { ApprovalMode } from "../../tools/approval";
-import type { BashToolDetails } from "@oh-my-pi/pi-tui/tools/bash";
+import type { BashToolDetails } from "@marsai-org/tui/tools/bash";
 import type { FileDeleteFallbackHandler, FileWriteFallbackHandler } from "../../tools/file-write-fallback";
 import type { EventBus } from "../../utils/event-bus";
 import type {
@@ -154,8 +154,8 @@ import type {
 import type { SlashCommandInfo } from "../slash-commands";
 import type { TerminalLaunchRequest, TerminalLaunchResult } from "../../subprocess/terminal-launch";
 
-export type { Keybinding, OverlayHandle, OverlayOptions } from "@oh-my-pi/pi-tui";
-export type { AppKeybinding, KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
+export type { Keybinding, OverlayHandle, OverlayOptions } from "@marsai-org/tui";
+export type { AppKeybinding, KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 export type { ExecOptions, ExecResult } from "../../exec/exec";
 export type { AgentToolResult, AgentToolUpdateCallback };
 
@@ -174,7 +174,7 @@ import type {
 	ExtensionAskDialogQuestion,
 	ExtensionAskDialogResult,
 	ExtensionAskDialogSubmitResult,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
+} from "@marsai-org/tui/overlays/ask-dialog";
 export type {
 	ExtensionAskDialogOption,
 	ExtensionAskDialogQuestion,
@@ -182,10 +182,10 @@ export type {
 	ExtensionAskDialogSubmitResult,
 	ExtensionAskDialogChatResult,
 	ExtensionAskDialogResult,
-} from "@oh-my-pi/pi-tui/overlays/ask-dialog";
+} from "@marsai-org/tui/overlays/ask-dialog";
 
-import type { HtmlFormData, OptionNote } from "@oh-my-pi/pi-tui/html-form/data";
-export type { HtmlFormData, HtmlFormValue, OptionNote } from "@oh-my-pi/pi-tui/html-form/data";
+import type { HtmlFormData, OptionNote } from "@marsai-org/tui/html-form/data";
+export type { HtmlFormData, HtmlFormValue, OptionNote } from "@marsai-org/tui/html-form/data";
 
 /** A submitted {@link ExtensionUIContext.formDialog}: form values and optional notes on selected options. */
 export interface ExtensionFormDialogResult {
@@ -367,7 +367,7 @@ export interface ExtensionUIContext {
 	): Promise<ExtensionAskDialogResult | undefined>;
 
 	/**
-	 * Show an HTML `<form>` (see `@oh-my-pi/pi-tui/html-form/parse`) as an interactive form and
+	 * Show an HTML `<form>` (see `@marsai-org/tui/html-form/parse`) as an interactive form and
 	 * resolve its data on submit, `undefined` on cancel. With `timeout`, the form's current values
 	 * submit when it elapses (`timedOut: true`); input resets the countdown. Absent on hosts that
 	 * cannot draw a form; callers then fall back to field-by-field `select`/`input`/`editor`.

@@ -8,7 +8,7 @@
  * holds main's current mode at the bottom of its own stack and follows every
  * change main pushes until it exits.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { holdSharedLsp, isSharedLspEnabled, onSharedLspChange } from "../../lsp/client";
 import type { MainThreadLink } from "../protocol";
 import type { ThreadService, WorkerPeer } from "../services";

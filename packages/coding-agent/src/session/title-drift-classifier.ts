@@ -4,8 +4,8 @@
  * `title.refreshAfterPrompts` check regenerates only a title the session has
  * moved away from.
  */
-import { type Judge, judgeQuestions } from "@oh-my-pi/pi-ai";
-import { logger } from "@oh-my-pi/pi-utils";
+import { type Judge, judgeQuestions } from "@marsai-org/ai";
+import { logger } from "@marsai-org/utils";
 import questionFile from "../prompts/judge/title-drift.json" with { type: "json" };
 import { splitCardTitle } from "../utils/title-card";
 import type { TitleDriftTurn } from "./messages";

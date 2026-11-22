@@ -12,8 +12,8 @@
  * confidence sweep over N reproduced 16–18 plans and split 23–25 coupled pairs; pairs reproduced all
  * 34 and split none.
  */
-import { type Answer, judgeQuestions, type Questions, renderQuestion } from "@oh-my-pi/pi-ai";
-import { truncate } from "@oh-my-pi/pi-utils";
+import { type Answer, judgeQuestions, type Questions, renderQuestion } from "@marsai-org/ai";
+import { truncate } from "@marsai-org/utils";
 import { hasNativeJudge, judgeNatively, type NativeJudgmentDeps } from "../judgment";
 import questionFile from "../prompts/judge/auto-parallel.json" with { type: "json" };
 import { cleanTinyMessage } from "../tiny/message-preproc";

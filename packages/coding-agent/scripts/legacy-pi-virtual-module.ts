@@ -1,6 +1,6 @@
 import * as path from "node:path";
-import { isEnoent } from "@oh-my-pi/pi-utils/fs-error";
-import { isRecord } from "@oh-my-pi/pi-utils/type-guards";
+import { isEnoent } from "@marsai-org/utils/fs-error";
+import { isRecord } from "@marsai-org/utils/type-guards";
 
 /** Build-time specifier resolved to bundled legacy Pi module namespaces. */
 export const LEGACY_PI_MODULES_SPECIFIER = "omp-legacy-pi-modules";
@@ -10,10 +10,10 @@ const VIRTUAL_NAMESPACE = "omp-legacy-pi-modules-build";
 /**
  * Where the bundled Pi packages live. The monorepo keeps them under
  * `packages/<dir>`; an npm install puts them next to the installed
- * `@oh-my-pi/pi-coding-agent` under the `@oh-my-pi` scope.
+ * `@marsai-org/coding-agent` under the `@oh-my-pi` scope.
  */
 export interface LegacyPiLayout {
-	/** Root of the `@oh-my-pi/pi-coding-agent` package holding this script. */
+	/** Root of the `@marsai-org/coding-agent` package holding this script. */
 	readonly packageDir: string;
 	/** Root the monorepo layout hangs off: the repository root, which holds `packages/<dir>`. */
 	readonly repoRoot: string;
@@ -280,8 +280,8 @@ export function __renderLegacyPiVirtualModule(entries: readonly BundledPiEntry[]
  * directory, so anchoring it there makes Node resolution look through that
  * package's own dependency graph (nested `node_modules`, hoisted siblings,
  * pnpm links) instead of the host project's — a host that installs
- * `@oh-my-pi/pi-coding-agent` without its dependencies hoisted to the top
- * level would otherwise fail to resolve `@oh-my-pi/pi-agent-core`.
+ * `@marsai-org/coding-agent` without its dependencies hoisted to the top
+ * level would otherwise fail to resolve `@marsai-org/agent-core`.
  */
 export async function createLegacyPiVirtualModulePlugin(
 	layout: LegacyPiLayout = DEFAULT_LAYOUT,

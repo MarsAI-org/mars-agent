@@ -2,19 +2,19 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult } from "@oh-my-pi/pi-agent-core";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EditTool } from "@oh-my-pi/pi-coding-agent/edit";
-import { createTools, type ToolSession } from "@oh-my-pi/pi-coding-agent/tools";
-import { ReadTool, SNAPSHOT_MAX_BYTES } from "@oh-my-pi/pi-coding-agent/tools/read";
-import { wrapToolWithMetaNotice } from "@oh-my-pi/pi-coding-agent/tools/output-meta";
+import type { AgentToolResult } from "@marsai-org/agent-core";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { EditTool } from "@marsai-org/coding-agent/edit";
+import { createTools, type ToolSession } from "@marsai-org/coding-agent/tools";
+import { ReadTool, SNAPSHOT_MAX_BYTES } from "@marsai-org/coding-agent/tools/read";
+import { wrapToolWithMetaNotice } from "@marsai-org/coding-agent/tools/output-meta";
 import {
 	cfgReadDefaultLimit,
 	cfgToolsArtifactSpillThreshold,
 	cfgToolsOutputMaxColumns,
-} from "@oh-my-pi/pi-coding-agent/tools/settings";
-import { hashlineFileHash } from "@oh-my-pi/pi-natives";
-import { removeWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/tools/settings";
+import { hashlineFileHash } from "@marsai-org/natives";
+import { removeWithRetries } from "@marsai-org/utils";
 
 const WIDE_LINE = "H".repeat(80_000);
 const SMALL_LINES = Array.from({ length: 300 }, (_, i) => (i === 150 ? WIDE_LINE : `r${i + 1}`));

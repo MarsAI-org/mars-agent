@@ -12,7 +12,7 @@
  * the automatic request off; unset falls back to the process-wide default
  * from {@link configureCodexAccessPrograms}.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { Model } from "../../types";
 import type { RequestBody } from "./request-transformer";
 

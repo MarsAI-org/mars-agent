@@ -2,17 +2,17 @@ import { afterEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import * as transcription from "@oh-my-pi/pi-ai/transcription";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { RpcClient } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-client";
-import { RpcDictationBridge, type RpcDictationController } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-dictation";
-import type { RpcDictationFrame } from "@oh-my-pi/pi-coding-agent/modes/rpc/rpc-types";
-import type { AgentSession } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import * as asr from "@oh-my-pi/pi-coding-agent/stt/asr-client";
-import * as downloader from "@oh-my-pi/pi-coding-agent/stt/downloader";
-import { STTController, type SttCallbacks, type SttState, type SttTarget } from "@oh-my-pi/pi-coding-agent/stt";
-import { readLines, removeWithRetries } from "@oh-my-pi/pi-utils";
+import * as transcription from "@marsai-org/ai/transcription";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { RpcClient } from "@marsai-org/coding-agent/modes/rpc/rpc-client";
+import { RpcDictationBridge, type RpcDictationController } from "@marsai-org/coding-agent/modes/rpc/rpc-dictation";
+import type { RpcDictationFrame } from "@marsai-org/coding-agent/modes/rpc/rpc-types";
+import type { AgentSession } from "@marsai-org/coding-agent/session/agent-session";
+import * as asr from "@marsai-org/coding-agent/stt/asr-client";
+import * as downloader from "@marsai-org/coding-agent/stt/downloader";
+import { STTController, type SttCallbacks, type SttState, type SttTarget } from "@marsai-org/coding-agent/stt";
+import { readLines, removeWithRetries } from "@marsai-org/utils";
 
 class FakeController implements RpcDictationController {
 	state: SttState = "idle";

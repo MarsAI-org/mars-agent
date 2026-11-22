@@ -2,8 +2,8 @@
  * The browser blocks of a Tern window (Tern's `blocks` op) and how
  * `target` picks the one an open adopts.
  */
-import { isRecord } from "@oh-my-pi/pi-utils";
-import { ToolError } from "@oh-my-pi/pi-tui/tools/tool-errors";
+import { isRecord } from "@marsai-org/utils";
+import { ToolError } from "@marsai-org/tui/tools/tool-errors";
 import type { TernSocketClient } from "./wire";
 
 /**

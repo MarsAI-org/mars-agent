@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import { ScrollView } from "@oh-my-pi/pi-tui/components/scroll-view";
+import { ScrollView } from "@marsai-org/tui/components/scroll-view";
 import { VirtualTerminal } from "./virtual-terminal";
-import { Ellipsis, visibleWidth } from "@oh-my-pi/pi-tui/utils";
+import { Ellipsis, visibleWidth } from "@marsai-org/tui/utils";
 
 const theme = {
 	track: () => "T",

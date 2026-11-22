@@ -8,13 +8,13 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, setSystemTime }
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { UiHelpers } from "@oh-my-pi/pi-coding-agent/modes/utils/ui-helpers";
-import { closeSessionIndex, recordSessionRecap } from "@oh-my-pi/pi-coding-agent/session/session-index";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import { RecapNotice } from "@oh-my-pi/pi-tui/chat/recap-notice";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@oh-my-pi/pi-utils";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { UiHelpers } from "@marsai-org/coding-agent/modes/utils/ui-helpers";
+import { closeSessionIndex, recordSessionRecap } from "@marsai-org/coding-agent/session/session-index";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import { RecapNotice } from "@marsai-org/tui/chat/recap-notice";
+import { initTheme } from "@marsai-org/tui/theme";
+import { __resetDirsFromEnvForTests, removeSyncWithRetries, setAgentDir } from "@marsai-org/utils";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 import { restoreEnvValue } from "./helpers/settings-test-state";
 

@@ -4,7 +4,7 @@ import {
 	MIN_SAVED_TOKENS,
 	newShapeState,
 	shapeResult,
-} from "@oh-my-pi/pi-coding-agent/spotlight/shape/index";
+} from "@marsai-org/coding-agent/spotlight/shape/index";
 import type {
 	CallContext,
 	Scorer,
@@ -13,9 +13,9 @@ import type {
 	ShapeInput,
 	ShapeOutcome,
 	ShapeSink,
-} from "@oh-my-pi/pi-coding-agent/spotlight/types";
-import { rankPartAt, reasonShows } from "@oh-my-pi/pi-tui/chat/spotlight";
-import { TempDir } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/spotlight/types";
+import { rankPartAt, reasonShows } from "@marsai-org/tui/chat/spotlight";
+import { TempDir } from "@marsai-org/utils";
 
 function context(over: Partial<CallContext> = {}): CallContext {
 	return { task: "Fix the service.", said: "", intent: "", commands: [], source: "", ...over };

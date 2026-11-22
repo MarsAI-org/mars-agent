@@ -1,9 +1,9 @@
-import { type } from "@oh-my-pi/omptype";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import { completeSimple, Effort, type Model, retryTransientCompletion } from "@oh-my-pi/pi-ai";
-import { clampThinkingLevelForModel } from "@oh-my-pi/pi-catalog/model-thinking";
-import { getSegmenter } from "@oh-my-pi/pi-tui";
-import { logger, prompt } from "@oh-my-pi/pi-utils";
+import { type } from "@marsai-org/omptype";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import { completeSimple, Effort, type Model, retryTransientCompletion } from "@marsai-org/ai";
+import { clampThinkingLevelForModel } from "@marsai-org/catalog/model-thinking";
+import { getSegmenter } from "@marsai-org/tui";
+import { logger, prompt } from "@marsai-org/utils";
 import { cfgOffline } from "../config/auxiliary-model-policy";
 import type { ModelRegistry } from "../config/model-registry";
 import { getModelMatchPreferences, resolveModelRoleValue, resolveRoleSelection } from "../config/model-resolver";

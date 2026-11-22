@@ -1,25 +1,25 @@
 import { describe, expect, it, vi } from "bun:test";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import {
 	IndexedSessionStorage,
 	type SessionStorageBackend,
-} from "@oh-my-pi/pi-coding-agent/session/indexed-session-storage";
+} from "@marsai-org/coding-agent/session/indexed-session-storage";
 import {
 	SessionManager,
 	SessionPersistenceIndeterminateError,
 	type SessionPersistenceNotice,
-} from "@oh-my-pi/pi-coding-agent/session/session-manager";
+} from "@marsai-org/coding-agent/session/session-manager";
 import {
 	FileSessionStorage,
 	MemorySessionStorage,
 	type SessionStorageWriter,
 	type WriteTextAtomicOptions,
-} from "@oh-my-pi/pi-coding-agent/session/session-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
-import type { SessionEntry } from "@oh-my-pi/pi-coding-agent/session/session-entries";
-import type { SessionTitleUpdate } from "@oh-my-pi/pi-coding-agent/session/session-title-slot";
+} from "@marsai-org/coding-agent/session/session-storage";
+import { TempDir } from "@marsai-org/utils";
+import type { SessionEntry } from "@marsai-org/coding-agent/session/session-entries";
+import type { SessionTitleUpdate } from "@marsai-org/coding-agent/session/session-title-slot";
 
 interface DetachableWriter extends SessionStorageWriter {
 	detach(): void;

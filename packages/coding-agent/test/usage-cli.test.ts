@@ -8,10 +8,10 @@ import {
 	SqliteAuthCredentialStore,
 	type UsageReport,
 	type UsageResetCredit,
-} from "@oh-my-pi/pi-ai";
-import { AuthBrokerClient, RemoteAuthCredentialStore, startAuthBroker } from "@oh-my-pi/pi-ai/auth-broker";
-import { closeModelCache } from "@oh-my-pi/pi-catalog/model-cache";
-import { __resetDirsFromEnvForTests, setAgentDir, TempDir, withFileLock } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/ai";
+import { AuthBrokerClient, RemoteAuthCredentialStore, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { closeModelCache } from "@marsai-org/catalog/model-cache";
+import { __resetDirsFromEnvForTests, setAgentDir, TempDir, withFileLock } from "@marsai-org/utils";
 import {
 	buildRedactionMap,
 	annotateUsagePolicy,
@@ -22,16 +22,16 @@ import {
 	runUsageCommand,
 	type UsagePolicyDiagnosticsOptions,
 	type UsageResetExpiryOptions,
-} from "@oh-my-pi/pi-coding-agent/cli/usage-cli";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import * as sdkModule from "@oh-my-pi/pi-coding-agent/sdk";
-import { resetAccountLockKey } from "@oh-my-pi/pi-coding-agent/session/codex-auto-reset";
-import { claimResetExpiryNotice } from "@oh-my-pi/pi-coding-agent/session/reset-expiry";
-import { resetLockPath } from "@oh-my-pi/pi-coding-agent/session/reset-fence";
+} from "@marsai-org/coding-agent/cli/usage-cli";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import * as sdkModule from "@marsai-org/coding-agent/sdk";
+import { resetAccountLockKey } from "@marsai-org/coding-agent/session/codex-auto-reset";
+import { claimResetExpiryNotice } from "@marsai-org/coding-agent/session/reset-expiry";
+import { resetLockPath } from "@marsai-org/coding-agent/session/reset-fence";
 import {
 	collectUnreportedAccounts,
 	type UsageAccountIdentity,
-} from "@oh-my-pi/pi-coding-agent/slash-commands/helpers/usage-accounts";
+} from "@marsai-org/coding-agent/slash-commands/helpers/usage-accounts";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 const HOUR = 3_600_000;

@@ -1,16 +1,16 @@
 import { dirname } from "node:path";
-import type { AgentMessage } from "@oh-my-pi/pi-agent-core";
-import type * as MnemopiNs from "@oh-my-pi/pi-mnemopi";
+import type { AgentMessage } from "@marsai-org/agent-core";
+import type * as MnemopiNs from "@marsai-org/mnemopi";
 import type {
 	MemoryFacadeStats,
 	Mnemopi,
 	RecallResult,
 	RememberFacadeOptions,
 	RememberInput,
-} from "@oh-my-pi/pi-mnemopi";
-import type * as MnemopiCoreNs from "@oh-my-pi/pi-mnemopi/core";
-import type { LocalModelInitializer } from "@oh-my-pi/pi-mnemopi/core";
-import { logger, prompt, toError, withLoopPhase } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/mnemopi";
+import type * as MnemopiCoreNs from "@marsai-org/mnemopi/core";
+import type { LocalModelInitializer } from "@marsai-org/mnemopi/core";
+import { logger, prompt, toError, withLoopPhase } from "@marsai-org/utils";
 import {
 	composeRecallQuery,
 	prepareEmbeddableRetentionTranscript,
@@ -74,7 +74,7 @@ function installLocalModelInitializer(setInitializer: (initializer: LocalModelIn
 }
 
 /**
- * Lazily load `@oh-my-pi/pi-mnemopi` (memoized) and route fastembed loads
+ * Lazily load `@marsai-org/mnemopi` (memoized) and route fastembed loads
  * through the machine-shared embedding server. The override is installed once
  * — before any consumer gets the chance to call `embed()` — so
  * `onnxruntime-node`'s NAPI constructor + finalizer never run inside the
@@ -84,16 +84,16 @@ function installLocalModelInitializer(setInitializer: (initializer: LocalModelIn
  */
 export async function loadMnemopi(): Promise<typeof MnemopiNs> {
 	if (!mnemopiMod) {
-		mnemopiMod = await import("@oh-my-pi/pi-mnemopi");
+		mnemopiMod = await import("@marsai-org/mnemopi");
 		installLocalModelInitializer(mnemopiMod.setLocalModelInitializer);
 	}
 	return mnemopiMod;
 }
 
-/** Lazily load `@oh-my-pi/pi-mnemopi/core` (memoized). */
+/** Lazily load `@marsai-org/mnemopi/core` (memoized). */
 export async function loadMnemopiCore(): Promise<typeof MnemopiCoreNs> {
 	if (!mnemopiCoreMod) {
-		mnemopiCoreMod = await import("@oh-my-pi/pi-mnemopi/core");
+		mnemopiCoreMod = await import("@marsai-org/mnemopi/core");
 		installLocalModelInitializer(mnemopiCoreMod.setLocalModelInitializer);
 	}
 	return mnemopiCoreMod;

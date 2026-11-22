@@ -14,7 +14,7 @@
  * job had, so a parent waiting on that job finds it again.
  */
 import * as path from "node:path";
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { AsyncJobError } from "../async";
 import { ensurePersistedRoster } from "../registry/persisted-agents";
 import { AgentRegistry } from "../registry/agent-registry";

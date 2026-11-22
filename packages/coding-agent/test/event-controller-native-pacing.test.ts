@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { EventController } from "@oh-my-pi/pi-coding-agent/modes/controllers/event-controller";
-import type { AgentSessionEvent } from "@oh-my-pi/pi-coding-agent/session/agent-session";
-import { setNativePacing, setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
+import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
+import { setNativePacing, setNativeRendering } from "@marsai-org/tui/native/state";
+import { initTheme } from "@marsai-org/tui/theme";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 

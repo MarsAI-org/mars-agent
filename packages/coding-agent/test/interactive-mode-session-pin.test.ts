@@ -1,14 +1,14 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "bun:test";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { resetSettingsForTest, Settings, settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { cfgComposerShape } from "@oh-my-pi/pi-coding-agent/modes/settings";
-import { InteractiveMode } from "@oh-my-pi/pi-coding-agent/modes/interactive-mode";
-import { createAgentSession } from "@oh-my-pi/pi-coding-agent/sdk";
-import { SessionManager } from "@oh-my-pi/pi-coding-agent/session/session-manager";
-import * as sessionPins from "@oh-my-pi/pi-coding-agent/session/session-pins";
-import { initTheme, theme } from "@oh-my-pi/pi-tui/theme";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { getBundledModel } from "@marsai-org/catalog/models";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { resetSettingsForTest, Settings, settings } from "@marsai-org/coding-agent/config/settings";
+import { cfgComposerShape } from "@marsai-org/coding-agent/modes/settings";
+import { InteractiveMode } from "@marsai-org/coding-agent/modes/interactive-mode";
+import { createAgentSession } from "@marsai-org/coding-agent/sdk";
+import { SessionManager } from "@marsai-org/coding-agent/session/session-manager";
+import * as sessionPins from "@marsai-org/coding-agent/session/session-pins";
+import { initTheme, theme } from "@marsai-org/tui/theme";
+import { TempDir } from "@marsai-org/utils";
 import { createInMemoryAuthStorage } from "./helpers/agent-session-setup";
 
 describe("InteractiveMode session pin indicator", () => {

@@ -13,7 +13,7 @@
  *
  * Deliberately light (types and the logger only) so `AgentSession` can import it.
  */
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import type { AgentSession } from "../session/agent-session";
 import type { AgentSessionHandle } from "../session/agent-session-handle";
 import type { ThreadId } from "./identity";

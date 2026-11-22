@@ -10,12 +10,12 @@ import type {
 	ExtensionContext,
 } from "../../../../extensibility/extensions/types";
 import type { SendUserMessageOptions } from "../../../../session/agent-session";
-import { splitTextLines } from "@oh-my-pi/pi-tui/overlays/annotation-overlay";
+import { splitTextLines } from "@marsai-org/tui/overlays/annotation-overlay";
 import type {
 	CodeReviewAnnotation,
 	TextReviewAnnotation,
 	TextReviewSource,
-} from "@oh-my-pi/pi-tui/overlays/annotation-types";
+} from "@marsai-org/tui/overlays/annotation-types";
 import { fetchPrReviewTarget, parseReviewPrRef } from "../review";
 import { assertReviewablePatchSize, buildCodeReviewFeedback } from "../review/prompt";
 import {

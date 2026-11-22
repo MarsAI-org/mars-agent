@@ -23,7 +23,7 @@ import {
 	spillFileName,
 	spillUrl,
 	spillUrlIds,
-} from "@oh-my-pi/pi-utils";
+} from "@marsai-org/utils";
 
 /**
  * Whether a custom entry marks its session as a Spotlight experiment session: pi's `spotlight:session` entry, which

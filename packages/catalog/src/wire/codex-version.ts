@@ -19,7 +19,7 @@
  * the disk record and the network refresh; so does running under `bun test`.
  */
 import * as fs from "node:fs";
-import { getCodexClientVersionPath, logger } from "@oh-my-pi/pi-utils";
+import { getCodexClientVersionPath, logger } from "@marsai-org/utils";
 import { CODEX_CLIENT_VERSION } from "./codex";
 
 const NPM_LATEST_URL = "https://registry.npmjs.org/@openai/codex/latest";

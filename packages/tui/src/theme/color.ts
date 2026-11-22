@@ -1,4 +1,4 @@
-import { colorLuma, mixHex, paletteToRgb, rgbToHex } from "@oh-my-pi/pi-utils/color";
+import { colorLuma, mixHex, paletteToRgb, rgbToHex } from "@marsai-org/utils/color";
 import { detectTerminalId, getTerminalInfo } from "../terminal-capabilities";
 import type { ColorMode, ColorValue } from "./schema";
 

@@ -9,8 +9,8 @@
  * product and must never be sent here.
  */
 
-import { toNumber } from "@oh-my-pi/pi-catalog/utils";
-import { slugify } from "@oh-my-pi/pi-utils";
+import { toNumber } from "@marsai-org/catalog/utils";
+import { slugify } from "@marsai-org/utils";
 import { isUsageLimitExhausted } from "../auth/usage-report";
 import {
 	buildXAICliBillingUrl,

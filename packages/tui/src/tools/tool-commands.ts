@@ -1,6 +1,6 @@
-import type { ToolTier } from "@oh-my-pi/pi-agent-core";
-import { sanitizeText } from "@oh-my-pi/pi-utils";
-import type { TspText } from "@oh-my-pi/pi-wire";
+import type { ToolTier } from "@marsai-org/agent-core";
+import { sanitizeText } from "@marsai-org/utils";
+import type { TspText } from "@marsai-org/wire";
 import { type Component, Container } from "../tui";
 import type { Theme } from "../theme/theme";
 import { compact, keyed, node, span, text } from "../native/describe";

@@ -1,12 +1,12 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { AssistantMessage } from "@oh-my-pi/pi-ai";
-import { AssistantMessageComponent } from "@oh-my-pi/pi-tui/chat/assistant-message";
-import type { AssistantTextRenderContext, AssistantTextRenderer } from "@oh-my-pi/pi-tui/chat/extension-types";
-import { setTranscriptActionHandler, type TranscriptAction } from "@oh-my-pi/pi-tui/chat/transcript-actions";
-import { splitAssistantMessageToolTimeline } from "@oh-my-pi/pi-tui/chat/transcript-render-helpers";
-import { setNativeRendering } from "@oh-my-pi/pi-tui/native/state";
-import { initTheme } from "@oh-my-pi/pi-tui/theme";
-import { logger } from "@oh-my-pi/pi-utils";
+import type { AssistantMessage } from "@marsai-org/ai";
+import { AssistantMessageComponent } from "@marsai-org/tui/chat/assistant-message";
+import type { AssistantTextRenderContext, AssistantTextRenderer } from "@marsai-org/tui/chat/extension-types";
+import { setTranscriptActionHandler, type TranscriptAction } from "@marsai-org/tui/chat/transcript-actions";
+import { splitAssistantMessageToolTimeline } from "@marsai-org/tui/chat/transcript-render-helpers";
+import { setNativeRendering } from "@marsai-org/tui/native/state";
+import { initTheme } from "@marsai-org/tui/theme";
+import { logger } from "@marsai-org/utils";
 import { TspHarness } from "./native/tsp-harness";
 
 beforeAll(async () => {

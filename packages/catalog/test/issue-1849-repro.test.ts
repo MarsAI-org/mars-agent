@@ -15,8 +15,8 @@
  *      `fireworks/kimi-k2.5` / `fireworks/kimi-k2.6` entries.
  */
 import { describe, expect, it } from "bun:test";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
 
 const FIREWORKS_KIMI_K2_MAX_TOKENS = 32_768;
 

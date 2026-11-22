@@ -9,7 +9,7 @@
  *   ]);
  * }
  */
-import type { TspKind, TspPropNode, TspProps, TspSpan, TspText } from "@oh-my-pi/pi-wire";
+import type { TspKind, TspPropNode, TspProps, TspSpan, TspText } from "@marsai-org/wire";
 import type { NativeChild, NativeNode } from "./node";
 
 /** A node of any kind. */

@@ -6,14 +6,14 @@ import {
 	planTurn,
 	replayPrompt,
 	transcriptDigest,
-} from "@oh-my-pi/pi-ai/providers/antigravity-cli/reconcile";
+} from "@marsai-org/ai/providers/antigravity-cli/reconcile";
 import type {
 	AntigravityCliPayload,
 	AssistantMessage,
 	Message,
 	ToolResultMessage,
 	UserMessage,
-} from "@oh-my-pi/pi-ai/types";
+} from "@marsai-org/ai/types";
 
 function user(text: string): UserMessage {
 	return { role: "user", content: text, timestamp: 0 };

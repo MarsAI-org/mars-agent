@@ -1,9 +1,9 @@
-import { type AuthStorage, type OAuthAccess, withOAuthAccess } from "@oh-my-pi/pi-ai";
-import { getProxyForUrl, wrapFetchForProxy } from "@oh-my-pi/pi-ai/utils/proxy";
-import { CODEX_BASE_URL, getCodexAccountId, OPENAI_HEADERS } from "@oh-my-pi/pi-catalog/wire/codex";
-import { getCodexClientVersion } from "@oh-my-pi/pi-catalog/wire/codex-version";
-import { LiveWebRtcPeer } from "@oh-my-pi/pi-natives";
-import { toError } from "@oh-my-pi/pi-utils";
+import { type AuthStorage, type OAuthAccess, withOAuthAccess } from "@marsai-org/ai";
+import { getProxyForUrl, wrapFetchForProxy } from "@marsai-org/ai/utils/proxy";
+import { CODEX_BASE_URL, getCodexAccountId, OPENAI_HEADERS } from "@marsai-org/catalog/wire/codex";
+import { getCodexClientVersion } from "@marsai-org/catalog/wire/codex-version";
+import { LiveWebRtcPeer } from "@marsai-org/natives";
+import { toError } from "@marsai-org/utils";
 import type { ScopeLike } from "../config/registry";
 import { resolveConfigValue } from "../config/resolve-config-value";
 import { generateCodexAttestation } from "./attestation";

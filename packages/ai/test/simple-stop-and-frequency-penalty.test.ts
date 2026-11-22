@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { createAuthGatewayRouter } from "@oh-my-pi/pi-ai/auth-gateway";
-import { AuthStorage } from "@oh-my-pi/pi-ai/auth-storage";
-import { clearGitLabDuoDirectAccessCache } from "@oh-my-pi/pi-ai/providers/gitlab-duo";
-import { getGitLabDuoModels } from "@oh-my-pi/pi-catalog/provider-models";
-import { streamSimple } from "@oh-my-pi/pi-ai/stream";
-import type { Api, Context, Model } from "@oh-my-pi/pi-ai/types";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import type { ModelSpec } from "@oh-my-pi/pi-catalog/types";
+import { createAuthGatewayRouter } from "@marsai-org/ai/auth-gateway";
+import { AuthStorage } from "@marsai-org/ai/auth-storage";
+import { clearGitLabDuoDirectAccessCache } from "@marsai-org/ai/providers/gitlab-duo";
+import { getGitLabDuoModels } from "@marsai-org/catalog/provider-models";
+import { streamSimple } from "@marsai-org/ai/stream";
+import type { Api, Context, Model } from "@marsai-org/ai/types";
+import { buildModel } from "@marsai-org/catalog/build";
+import type { ModelSpec } from "@marsai-org/catalog/types";
 import { withOfficialAnthropicEndpoint } from "./helpers";
 import {
 	anthropicChunks,

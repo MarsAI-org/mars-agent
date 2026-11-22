@@ -1,7 +1,7 @@
 import { expect, it } from "bun:test";
 import * as path from "node:path";
-import { PtySession } from "@oh-my-pi/pi-natives";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { PtySession } from "@marsai-org/natives";
+import { TempDir } from "@marsai-org/utils";
 
 it.skipIf(process.platform === "win32")(
 	"delivers Unicode writes in order and wakes the renderer when a real PTY drains",

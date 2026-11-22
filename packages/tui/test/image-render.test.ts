@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { rasterizeSvg } from "@oh-my-pi/pi-natives";
-import { Image, ImageBudget, renderForScrollback } from "@oh-my-pi/pi-tui/components/image";
-import { getKittyGraphics, setKittyGraphics } from "@oh-my-pi/pi-tui/kitty-graphics";
+import { rasterizeSvg } from "@marsai-org/natives";
+import { Image, ImageBudget, renderForScrollback } from "@marsai-org/tui/components/image";
+import { getKittyGraphics, setKittyGraphics } from "@marsai-org/tui/kitty-graphics";
 import {
 	type CellDimensions,
 	getCellDimensions,
@@ -11,7 +11,7 @@ import {
 	setCellDimensions,
 	setTerminalBackgroundColor,
 	TERMINAL,
-} from "@oh-my-pi/pi-tui/terminal-capabilities";
+} from "@marsai-org/tui/terminal-capabilities";
 import { parseSixelPalettePercent } from "./helpers/sixel-palette";
 import { withoutTerminalMultiplexer } from "./helpers/terminal-multiplexer";
 

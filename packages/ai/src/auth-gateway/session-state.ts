@@ -24,7 +24,7 @@
  * state an in-flight stream is still streaming through.
  */
 
-import { logger } from "@oh-my-pi/pi-utils";
+import { logger } from "@marsai-org/utils";
 import { resetAccountScopedProviderSessionState } from "../provider-session-state";
 import type { Api, Context, Message, Model, ProviderSessionState } from "../types";
 

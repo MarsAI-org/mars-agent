@@ -1,9 +1,9 @@
-import type { AuthStorage } from "@oh-my-pi/pi-ai";
-import { PASTE_CODE_LOGIN_PROVIDERS } from "@oh-my-pi/pi-ai";
-import { getOAuthProviders } from "@oh-my-pi/pi-ai/oauth";
-import type { OAuthProvider } from "@oh-my-pi/pi-ai/oauth/types";
-import type { TspText } from "@oh-my-pi/pi-wire";
-import { getAgentDbPath } from "@oh-my-pi/pi-utils";
+import type { AuthStorage } from "@marsai-org/ai";
+import { PASTE_CODE_LOGIN_PROVIDERS } from "@marsai-org/ai";
+import { getOAuthProviders } from "@marsai-org/ai/oauth";
+import type { OAuthProvider } from "@marsai-org/ai/oauth/types";
+import type { TspText } from "@marsai-org/wire";
+import { getAgentDbPath } from "@marsai-org/utils";
 import { Container } from "../../tui";
 import { Spacer } from "../../components/spacer";
 import { Text } from "../../components/text";

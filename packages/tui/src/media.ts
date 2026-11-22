@@ -10,7 +10,7 @@
  */
 import * as os from "node:os";
 import * as path from "node:path";
-import { parseImageMetadata } from "@oh-my-pi/pi-utils";
+import { parseImageMetadata } from "@marsai-org/utils";
 
 /** An image's bytes and MIME type. */
 export interface Media {

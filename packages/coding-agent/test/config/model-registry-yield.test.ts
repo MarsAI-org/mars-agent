@@ -1,10 +1,10 @@
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import * as path from "node:path";
-import type { Api, Model } from "@oh-my-pi/pi-ai";
-import { ModelRegistry } from "@oh-my-pi/pi-coding-agent/config/model-registry";
-import { Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import { AuthStorage } from "@oh-my-pi/pi-coding-agent/session/auth-storage";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import type { Api, Model } from "@marsai-org/ai";
+import { ModelRegistry } from "@marsai-org/coding-agent/config/model-registry";
+import { Settings } from "@marsai-org/coding-agent/config/settings";
+import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
+import { TempDir } from "@marsai-org/utils";
 
 const PROVIDER = "bulk";
 const BASE_URL = "http://bulk.test/v1";

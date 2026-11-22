@@ -24,8 +24,8 @@
  * Env: `LLM_ASSEMBLY_N` overrides the history length (default 5000). Estimates
  *      count with the native o200k_base tokenizer (no model, so no catalog family).
  */
-import { type AgentMessage, Tokenizer } from "@oh-my-pi/pi-agent-core";
-import type { AssistantMessage, ToolResultMessage, Usage } from "@oh-my-pi/pi-ai";
+import { type AgentMessage, Tokenizer } from "@marsai-org/agent-core";
+import type { AssistantMessage, ToolResultMessage, Usage } from "@marsai-org/ai";
 import { convertToLlm } from "../src/session/messages";
 
 const tokenizer = new Tokenizer();

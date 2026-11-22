@@ -74,8 +74,8 @@ import type {
 	UsageLimitMarkResult,
 	UsageProvider,
 	UsageReport,
-} from "@oh-my-pi/pi-ai";
-import { DEFAULT_USAGE_PROVIDERS } from "@oh-my-pi/pi-ai/usage/registry";
+} from "@marsai-org/ai";
+import { DEFAULT_USAGE_PROVIDERS } from "@marsai-org/ai/usage/registry";
 import type {
 	AnthropicSlowModeAvailability,
 	AnthropicSlowModeEndReason,

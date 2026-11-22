@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
-import { getKeybindings, setKeybindings } from "@oh-my-pi/pi-tui";
-import { KeybindingsManager } from "@oh-my-pi/pi-tui/app-keybindings";
-import type { TspPickerProps } from "@oh-my-pi/pi-wire";
+import { getKeybindings, setKeybindings } from "@marsai-org/tui";
+import { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
+import type { TspPickerProps } from "@marsai-org/wire";
 import { OverlayPanel } from "../src/chrome/overlay-box";
 import { TextFormField } from "../src/components/form";
 import { formatKeyHint } from "../src/key-hint-format";

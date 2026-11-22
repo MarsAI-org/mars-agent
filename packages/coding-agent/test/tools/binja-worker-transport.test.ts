@@ -12,9 +12,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { DISASM_BACKENDS } from "@oh-my-pi/pi-coding-agent/disasm/backend";
-import { IpcConnection } from "@oh-my-pi/pi-natives";
-import { TempDir } from "@oh-my-pi/pi-utils";
+import { DISASM_BACKENDS } from "@marsai-org/coding-agent/disasm/backend";
+import { IpcConnection } from "@marsai-org/natives";
+import { TempDir } from "@marsai-org/utils";
 import type { Subprocess } from "bun";
 import { waitFor } from "../fixtures/daemon-harness";
 

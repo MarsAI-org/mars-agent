@@ -13,8 +13,8 @@
  *
  * Replaces the old SessionObserverOverlayComponent (ctrl+s observer).
  */
-import { toolIntentLabel } from "@oh-my-pi/pi-wire";
-import type { AgentTool } from "@oh-my-pi/pi-agent-core";
+import { toolIntentLabel } from "@marsai-org/wire";
+import type { AgentTool } from "@marsai-org/agent-core";
 import type {
 	TspPickerAction,
 	TspPickerColumn,
@@ -23,12 +23,12 @@ import type {
 	TspPickerScope,
 	TspSpan,
 	TspTreeNode,
-} from "@oh-my-pi/pi-wire";
+} from "@marsai-org/wire";
 import { Container, type OverlayHandle, type TUI } from "../tui";
 import { matchesKey } from "../keys";
 import { routeSelectListMouse, routeSgrMouseInput, type SelectListMouseTarget } from "../mouse";
 import { padding, visibleWidth, wrapTextWithAnsi } from "../utils";
-import { formatAge, formatDuration, formatNumber, getProjectDir, logger } from "@oh-my-pi/pi-utils";
+import { formatAge, formatDuration, formatNumber, getProjectDir, logger } from "@marsai-org/utils";
 import {
 	type AgentActivitySource,
 	type AgentActivityKind,

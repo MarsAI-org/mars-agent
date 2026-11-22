@@ -7,8 +7,8 @@ import {
 	type UsageReport,
 	type UsageResetCredit,
 	type UsageResetCreditDetail,
-} from "@oh-my-pi/pi-ai";
-import { claudeRankingStrategy } from "@oh-my-pi/pi-ai/usage/claude";
+} from "@marsai-org/ai";
+import { claudeRankingStrategy } from "@marsai-org/ai/usage/claude";
 import {
 	ATTEMPT_COOLDOWN_MS,
 	DEBOUNCE_BUCKET_MS,

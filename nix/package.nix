@@ -87,7 +87,7 @@ let
     ++ cudaRuntimeLibraries;
 in
 stdenv.mkDerivation {
-  pname = "omp";
+  pname = "mars";
   inherit (packageJson) version;
   src = source;
 
@@ -213,7 +213,7 @@ stdenv.mkDerivation {
     remove-references-to -t ${bun} "$out/bin/omp"
   '';
 
-  # Prebuilt addons that omp bun-installs into its cache at first use
+  # Prebuilt addons that mars bun-installs into its cache at first use
   # (onnxruntime-node, sherpa-onnx-node, sharp, fastembed) are process.dlopen'd and
   # need libstdc++.so.6 / libgcc_s.so.1, which nix glibc's default loader path lacks;
   # their own DT_RUNPATH means this executable's RPATH is never consulted for their
@@ -254,9 +254,9 @@ stdenv.mkDerivation {
   doInstallCheck = true;
   installCheckPhase = ''
     runHook preInstallCheck
-    # Capture rather than pipe into grep: piping masks a signal death of omp
+    # Capture rather than pipe into grep: piping masks a signal death of mars
     # under `set -o pipefail` (grep -q's exit status wins), which hid the
-    # loader SIGSEGV in issue #9881. With a variable, errexit surfaces omp's
+    # loader SIGSEGV in issue #9881. With a variable, errexit surfaces mars's
     # real exit status and stderr in the build log.
     smokeOutput="$(HOME="$TMPDIR" "$out/bin/omp" --smoke-test)"
     grep -q "smoke-test: ok" <<<"$smokeOutput"
@@ -334,9 +334,9 @@ stdenv.mkDerivation {
   meta = {
     description = "Terminal-based coding agent with multi-model support";
     homepage = "https://omp.sh";
-    changelog = "https://github.com/can1357/oh-my-pi/releases/tag/v${packageJson.version}";
+    changelog = "https://github.com/MarsAI-org/mars-agent/releases/tag/v${packageJson.version}";
     license = lib.licenses.mit;
-    mainProgram = "omp";
+    mainProgram = "mars";
     platforms = [
       "aarch64-darwin"
       "aarch64-linux"

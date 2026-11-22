@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import type { TUI } from "@oh-my-pi/pi-tui";
-import { BashExecutionComponent } from "@oh-my-pi/pi-tui/chat/bash-execution";
-import { EvalExecutionComponent } from "@oh-my-pi/pi-tui/chat/eval-execution";
-import { getThemeByName, setThemeInstance, type Theme } from "@oh-my-pi/pi-tui/theme";
+import type { TUI } from "@marsai-org/tui";
+import { BashExecutionComponent } from "@marsai-org/tui/chat/bash-execution";
+import { EvalExecutionComponent } from "@marsai-org/tui/chat/eval-execution";
+import { getThemeByName, setThemeInstance, type Theme } from "@marsai-org/tui/theme";
 
 const ui = { requestRender: () => {}, requestComponentRender: () => {} } as unknown as TUI;
 let dark: Theme;

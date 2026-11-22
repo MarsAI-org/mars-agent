@@ -13,9 +13,9 @@
  * revived subagent sends its earlier turns with the reminders they were sent
  * with instead of today's.
  */
-import type { Context, Message, UserMessage } from "@oh-my-pi/pi-ai";
-import { isPerCallContextMessage, markPerCallContextMessage } from "@oh-my-pi/pi-ai/utils/block-symbols";
-import { isRecord, prompt } from "@oh-my-pi/pi-utils";
+import type { Context, Message, UserMessage } from "@marsai-org/ai";
+import { isPerCallContextMessage, markPerCallContextMessage } from "@marsai-org/ai/utils/block-symbols";
+import { isRecord, prompt } from "@marsai-org/utils";
 import dateCwdReminderTemplate from "../prompts/system/date-cwd-reminder.md" with { type: "text" };
 import type { SessionEntry } from "./session-entries";
 

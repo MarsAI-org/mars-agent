@@ -1,9 +1,9 @@
 import { mkdirSync } from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as nodePath from "node:path";
-import { type ApiKey, getOpenRouterHeaders, withAuth } from "@oh-my-pi/pi-ai";
-import { ProviderHttpError } from "@oh-my-pi/pi-ai/error";
-import { hostMatchesUrl } from "@oh-my-pi/pi-catalog/hosts";
+import { type ApiKey, getOpenRouterHeaders, withAuth } from "@marsai-org/ai";
+import { ProviderHttpError } from "@marsai-org/ai/error";
+import { hostMatchesUrl } from "@marsai-org/catalog/hosts";
 import {
 	$env,
 	$flag,
@@ -12,8 +12,8 @@ import {
 	getFastembedCacheDir,
 	logger,
 	withLoopPhase,
-} from "@oh-my-pi/pi-utils";
-import { LRUCache } from "@oh-my-pi/pi-utils/lru";
+} from "@marsai-org/utils";
+import { LRUCache } from "@marsai-org/utils/lru";
 import type { EmbeddingModel } from "fastembed";
 import { loadFastembed, withEmbedSessionBudget } from "./fastembed-runtime";
 import {

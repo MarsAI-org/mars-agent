@@ -2,7 +2,7 @@
  * Prompt-cache text beyond the `cache` marker: the two lines of its hover card
  * (Tern) and the rows of `/session`'s Prompt Cache section.
  */
-import { formatDuration, formatNumber } from "@oh-my-pi/pi-utils";
+import { formatDuration, formatNumber } from "@marsai-org/utils";
 import { sanitizeStatusText } from "../chrome/shared";
 import type { PromptCacheColdReason, PromptCacheStatus, PromptCacheWarming } from "./host";
 

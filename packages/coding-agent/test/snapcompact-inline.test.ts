@@ -1,5 +1,5 @@
 import { describe, expect, it, spyOn } from "bun:test";
-import { Tokenizer } from "@oh-my-pi/pi-agent-core";
+import { Tokenizer } from "@marsai-org/agent-core";
 import type {
 	AssistantMessage,
 	Context,
@@ -8,19 +8,19 @@ import type {
 	Model,
 	TextContent,
 	ToolResultMessage,
-} from "@oh-my-pi/pi-ai";
-import { transformMessages } from "@oh-my-pi/pi-ai/providers/transform-messages";
-import { buildModel } from "@oh-my-pi/pi-catalog/build";
-import { getBundledModel } from "@oh-my-pi/pi-catalog/models";
+} from "@marsai-org/ai";
+import { transformMessages } from "@marsai-org/ai/providers/transform-messages";
+import { buildModel } from "@marsai-org/catalog/build";
+import { getBundledModel } from "@marsai-org/catalog/models";
 import toolResultNote from "../src/prompts/system/snapcompact-toolresult-note.md" with { type: "text" };
 import {
 	estimateInlineSavings,
 	planInlineSwaps,
 	type SnapcompactInlineOptions,
 	SnapcompactInlineTransformer,
-} from "@oh-my-pi/pi-coding-agent/session/snapcompact-inline";
-import type { ReadToolDetails } from "@oh-my-pi/pi-tui/tools/read";
-import * as snapcompact from "@oh-my-pi/snapcompact";
+} from "@marsai-org/coding-agent/session/snapcompact-inline";
+import type { ReadToolDetails } from "@marsai-org/tui/tools/read";
+import * as snapcompact from "@marsai-org/snapcompact";
 import { createAssistantMessage } from "./helpers/agent-session-setup";
 
 /**

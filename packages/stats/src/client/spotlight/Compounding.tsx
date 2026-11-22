@@ -1,4 +1,4 @@
-import { format } from "@oh-my-pi/pi-utils/dates";
+import { format } from "@marsai-org/utils/dates";
 import { useMemo, useState } from "react";
 import { getSpotlightSessionContext } from "../api";
 import { Chart, type ChartSeries, Legend, type SlotMarker } from "../charts";

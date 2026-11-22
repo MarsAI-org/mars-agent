@@ -4,18 +4,18 @@ import * as fsp from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 
-import { listOmpExtensionRoots } from "@oh-my-pi/pi-coding-agent/discovery/omp-extension-roots";
-import { getEnabledPlugins } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/loader";
-import { PluginManager } from "@oh-my-pi/pi-coding-agent/extensibility/plugins/manager";
+import { listOmpExtensionRoots } from "@marsai-org/coding-agent/discovery/omp-extension-roots";
+import { getEnabledPlugins } from "@marsai-org/coding-agent/extensibility/plugins/loader";
+import { PluginManager } from "@marsai-org/coding-agent/extensibility/plugins/manager";
 import {
 	getCachedPluginPath,
 	MarketplaceManager,
 	readInstalledPluginsRegistry,
 	readMarketplacesRegistry,
 	writeMarketplacesRegistry,
-} from "@oh-my-pi/pi-coding-agent/extensibility/plugins/marketplace";
-import * as piUtils from "@oh-my-pi/pi-utils";
-import { removeSyncWithRetries } from "@oh-my-pi/pi-utils";
+} from "@marsai-org/coding-agent/extensibility/plugins/marketplace";
+import * as piUtils from "@marsai-org/utils";
+import { removeSyncWithRetries } from "@marsai-org/utils";
 
 // Minimal marketplace fixture, built once into a temp dir (see beforeAll). It carries only
 // what these tests assert — one plugin entry plus a plugin.json whose version takes precedence

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { findFreeCdpPort } from "@oh-my-pi/pi-coding-agent/tools/browser/attach";
-import { relayCdpClientsOf } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/probe";
-import { type RelayServer, startRelayServer } from "@oh-my-pi/pi-coding-agent/tools/browser/relay/server";
+import { findFreeCdpPort } from "@marsai-org/coding-agent/tools/browser/attach";
+import { relayCdpClientsOf } from "@marsai-org/coding-agent/tools/browser/relay/probe";
+import { type RelayServer, startRelayServer } from "@marsai-org/coding-agent/tools/browser/relay/server";
 
 const EXTENSION_HELLO = {
 	t: "hello",

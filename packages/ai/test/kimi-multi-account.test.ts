@@ -2,11 +2,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@oh-my-pi/pi-ai/auth-storage";
-import { getProviderDefinition } from "@oh-my-pi/pi-ai/registry";
-import * as oauthUtils from "@oh-my-pi/pi-ai/registry/oauth";
-import type { OAuthCredentials } from "@oh-my-pi/pi-ai/registry/oauth/types";
-import type { UsageLimit, UsageProvider, UsageReport } from "@oh-my-pi/pi-ai/usage";
+import { type AuthCredentialStore, AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai/auth-storage";
+import { getProviderDefinition } from "@marsai-org/ai/registry";
+import * as oauthUtils from "@marsai-org/ai/registry/oauth";
+import type { OAuthCredentials } from "@marsai-org/ai/registry/oauth/types";
+import type { UsageLimit, UsageProvider, UsageReport } from "@marsai-org/ai/usage";
 import { removeWithRetries } from "../../utils/src/temp";
 
 const HOUR_MS = 60 * 60 * 1000;

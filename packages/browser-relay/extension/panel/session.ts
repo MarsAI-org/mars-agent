@@ -3,8 +3,8 @@
  * interactive omp as a collab guest, `sessions/rpc.ts` drives a worker-owned `omp --mode rpc` through the native
  * host. The UI renders only this interface and never knows which one it has.
  */
-import type { GuestSnapshot } from "@oh-my-pi/collab-web/src/lib/client";
-import type { CollabUiResponseValue, ImageContent } from "@oh-my-pi/pi-wire";
+import type { GuestSnapshot } from "@marsai-org/collab-web/src/lib/client";
+import type { CollabUiResponseValue, ImageContent } from "@marsai-org/wire";
 import type {
 	ConfiguredThinkingLevel,
 	ModelPickerResult,

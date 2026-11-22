@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ImageContent } from "@oh-my-pi/pi-ai";
-import { resetSettingsForTest, Settings } from "@oh-my-pi/pi-coding-agent/config/settings";
-import type { ShellMinimizerSettings } from "@oh-my-pi/pi-coding-agent/exec/settings";
+import type { ImageContent } from "@marsai-org/ai";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import type { ShellMinimizerSettings } from "@marsai-org/coding-agent/exec/settings";
 import {
 	applyDirenvPreflight,
 	type BashResult,
@@ -12,24 +12,24 @@ import {
 	executeBash,
 	isPersistentShellCdCommand,
 	releaseShellSessions,
-} from "@oh-my-pi/pi-coding-agent/exec/bash-executor";
-import * as direnvModule from "@oh-my-pi/pi-coding-agent/exec/direnv";
-import { evaluateLoopCondition } from "@oh-my-pi/pi-coding-agent/modes/loop-condition";
-import { DEFAULT_MAX_BYTES } from "@oh-my-pi/pi-tui/tools/streaming-output";
+} from "@marsai-org/coding-agent/exec/bash-executor";
+import * as direnvModule from "@marsai-org/coding-agent/exec/direnv";
+import { evaluateLoopCondition } from "@marsai-org/coding-agent/modes/loop-condition";
+import { DEFAULT_MAX_BYTES } from "@marsai-org/tui/tools/streaming-output";
 import {
 	defaultShellVizPreferences,
 	readShellPresentation,
 	shellVisualization,
-} from "@oh-my-pi/pi-tui/tools/shell-viz";
-import * as shellSnapshot from "@oh-my-pi/pi-coding-agent/utils/shell-snapshot";
-import { encodeTerminalImage } from "@oh-my-pi/pi-coding-agent/utils/terminal-graphics";
-import { saveImagesToTemp } from "@oh-my-pi/pi-coding-agent/utils/image-temp";
-import type { Shell, ShellRunResult } from "@oh-my-pi/pi-natives";
-import * as piNatives from "@oh-my-pi/pi-natives";
-import { $which, removeSyncWithRetries } from "@oh-my-pi/pi-utils";
-import { isShellTrace } from "@oh-my-pi/pi-wire";
+} from "@marsai-org/tui/tools/shell-viz";
+import * as shellSnapshot from "@marsai-org/coding-agent/utils/shell-snapshot";
+import { encodeTerminalImage } from "@marsai-org/coding-agent/utils/terminal-graphics";
+import { saveImagesToTemp } from "@marsai-org/coding-agent/utils/image-temp";
+import type { Shell, ShellRunResult } from "@marsai-org/natives";
+import * as piNatives from "@marsai-org/natives";
+import { $which, removeSyncWithRetries } from "@marsai-org/utils";
+import { isShellTrace } from "@marsai-org/wire";
 
-import { cfgBashDirenvLoadTimeoutMs, cfgShellPath } from "@oh-my-pi/pi-coding-agent/exec/settings";
+import { cfgBashDirenvLoadTimeoutMs, cfgShellPath } from "@marsai-org/coding-agent/exec/settings";
 
 // Matches the schema default for `tools.artifactHeadBytes` (20 KB) used by
 // OutputSink when bash-executor pulls settings via resolveOutputSinkHeadBytes.
