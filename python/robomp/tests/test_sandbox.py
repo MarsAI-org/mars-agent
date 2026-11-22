@@ -865,10 +865,27 @@ def test_share_git_metadata_keeps_pool_writable_for_retry_slot(tmp_path: Path, m
     index_file.write_text("index\n", encoding="utf-8")
     index_file.chmod(0o600)
 
-    chowns: list[tuple[Path, int, int]] = []
+    config_file = common_dir / "config"
+    config_file.write_text("[core]\n\trepositoryformatversion = 0\n", encoding="utf-8")
+    config_file.chmod(0o666)
+    hooks_dir = common_dir / "hooks"
+    hooks_dir.mkdir(parents=True)
+    hook_file = hooks_dir / "post-checkout"
+    hook_file.write_text("#!/bin/sh\n", encoding="utf-8")
+    hook_file.chmod(0o777)
+    alternates_dir = common_dir / "objects" / "info"
+    alternates_dir.mkdir(parents=True)
+    alternates_file = alternates_dir / "alternates"
+    alternates_file.write_text("", encoding="utf-8")
+    alternates_file.chmod(0o666)
+
+    fchowns: list[tuple[int, int, int]] = []
     monkeypatch.setattr("robomp.sandbox.platform.system", lambda: "Linux")
     monkeypatch.setattr("robomp.sandbox.os.geteuid", lambda: 0)
-    monkeypatch.setattr("robomp.sandbox.os.chown", lambda path, uid, gid: chowns.append((Path(path), uid, gid)))
+    monkeypatch.setattr(
+        "robomp.sandbox.os.fchown",
+        lambda fd, uid, gid: fchowns.append((os.fstat(fd).st_ino, uid, gid)),
+    )
 
     _share_git_metadata_with_slots(repo_dir, 2002)
 
@@ -879,7 +896,15 @@ def test_share_git_metadata_keeps_pool_writable_for_retry_slot(tmp_path: Path, m
     assert ref_file.stat().st_mode & stat.S_IWGRP
     assert log_file.stat().st_mode & stat.S_IWGRP
     assert index_file.stat().st_mode & stat.S_IWGRP
-    assert (git_dir, -1, 2000) in chowns
+    assert (git_dir.stat().st_ino, -1, 2000) in fchowns
+    # Sensitive pool git metadata must stay root-owned and non-group-writable.
+    assert not (config_file.stat().st_mode & stat.S_IWGRP)
+    assert stat.S_IMODE(config_file.stat().st_mode) == 0o644
+    assert (config_file.stat().st_ino, 0, 0) in fchowns
+    assert not (hooks_dir.stat().st_mode & stat.S_IWGRP)
+    assert stat.S_IMODE(hooks_dir.stat().st_mode) == 0o755
+    assert not (alternates_file.stat().st_mode & stat.S_IWGRP)
+    assert stat.S_IMODE(alternates_file.stat().st_mode) == 0o644
 
 
 def test_ensure_workspace_refreshes_permissions_for_retry_slot_and_session(
@@ -988,13 +1013,13 @@ def test_ensure_workspace_runs_existing_worktree_git_as_slot_after_chown(
 
     def fake_run(cmd: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
         git_calls.append((cmd, kwargs))
-        if cmd[:3] == ["git", "remote", "get-url"]:
+        if "remote" in cmd and "get-url" in cmd:
             return subprocess.CompletedProcess(cmd, 0, f"{upstream_repo}\n", "")
         if cmd[:4] == ["git", "symbolic-ref", "--quiet", "--short"]:
             user = kwargs.get("user")
             events.append(("symbolic-ref", user if isinstance(user, int) else None))
             return subprocess.CompletedProcess(cmd, 0, f"{ws1.branch}\n", "")
-        if cmd[:2] == ["git", "config"]:
+        if "config" in cmd and "user.email" in cmd or ("config" in cmd and "user.name" in cmd):
             user = kwargs.get("user")
             events.append(("config", user if isinstance(user, int) else None))
         return subprocess.CompletedProcess(cmd, 0, "", "")
@@ -1023,8 +1048,9 @@ def test_ensure_workspace_runs_existing_worktree_git_as_slot_after_chown(
     assert events[0] == ("chown", 2002)
     assert ("symbolic-ref", 2002) in events
     assert events.index(("chown", 2002)) < events.index(("symbolic-ref", 2002))
-    assert events.count(("config", 2002)) == 2
-    worktree_git = [kwargs for cmd, kwargs in git_calls if cmd[:2] in (["git", "symbolic-ref"], ["git", "config"])]
+    # Identity config runs as root on the pool so `.git/config` stays root-owned read-only to slots.
+    assert events.count(("config", None)) == 2
+    worktree_git = [kwargs for cmd, kwargs in git_calls if cmd[:2] == ["git", "symbolic-ref"]]
     assert worktree_git
     assert all(kwargs["user"] == 2002 and kwargs["group"] == 2002 for kwargs in worktree_git)
 
@@ -1213,7 +1239,7 @@ def test_remove_workspace_prunes_pool_after_failed_worktree_remove(
         calls.append((list(cmd), k.get("cwd")))
         # The `worktree remove` "times out" (124) and does NOT delete repo_dir,
         # so the code must fall back to rmtree + prune. `prune` succeeds (0).
-        if cmd[:3] == ["git", "worktree", "remove"]:
+        if "worktree" in cmd and "remove" in cmd:
             return subprocess.CompletedProcess(cmd, 124, "", "timed out")
         return subprocess.CompletedProcess(cmd, 0, "", "")
 
@@ -1222,14 +1248,14 @@ def test_remove_workspace_prunes_pool_after_failed_worktree_remove(
     mgr.remove_workspace(repo="o/r", number=7)
 
     cmds = [c for c, _ in calls]
-    # The dangling registration must have been pruned, in the correct pool.
-    assert ["git", "worktree", "prune"] in cmds, (
+    # The dangling registration must have been pruned, in the correct pool, with hardened config flags.
+    assert any(c[-2:] == ["worktree", "prune"] and "core.hooksPath=/dev/null" in c for c in cmds), (
         "remove_workspace did not prune pool metadata after a failed worktree remove"
     )
-    prune_idx = next(i for i, (c, _) in enumerate(calls) if c == ["git", "worktree", "prune"])
+    prune_idx = next(i for i, (c, _) in enumerate(calls) if c[-2:] == ["worktree", "prune"])
     assert calls[prune_idx][1] == pool, "prune did not run in the repo's pool dir"
     # And the remove was attempted first (ordering: remove before prune).
-    remove_idx = next(i for i, (c, _) in enumerate(calls) if c[:3] == ["git", "worktree", "remove"])
+    remove_idx = next(i for i, (c, _) in enumerate(calls) if "worktree" in c and "remove" in c)
     assert remove_idx < prune_idx
     # The real checkout dir was cleaned up.
     assert not repo_dir.exists()
@@ -1254,7 +1280,7 @@ def test_remove_workspace_prunes_when_failed_remove_already_deleted_checkout(
 
     def fake_safe_run(cmd, **k):
         calls.append((list(cmd), k.get("cwd")))
-        if cmd[:3] == ["git", "worktree", "remove"]:
+        if "worktree" in cmd and "remove" in cmd:
             # Simulate git deleting the checkout, then dying before it could
             # unregister the worktree from the pool.
             repo_dir.rmdir()
@@ -1266,10 +1292,10 @@ def test_remove_workspace_prunes_when_failed_remove_already_deleted_checkout(
     mgr.remove_workspace(repo="o/r", number=9)
 
     cmds = [c for c, _ in calls]
-    assert ["git", "worktree", "prune"] in cmds, (
+    assert any(c[-2:] == ["worktree", "prune"] for c in cmds), (
         "prune was skipped after a failed remove that had already deleted the checkout"
     )
-    prune_idx = next(i for i, (c, _) in enumerate(calls) if c == ["git", "worktree", "prune"])
+    prune_idx = next(i for i, (c, _) in enumerate(calls) if c[-2:] == ["worktree", "prune"])
     assert calls[prune_idx][1] == pool, "prune did not run in the repo's pool dir"
 
 
@@ -2220,7 +2246,7 @@ def test_worktree_add_cleans_partial_state_on_failure(tmp_path: Path, monkeypatc
 
     assert exc.value.returncode == 124  # the original add failure is surfaced
     assert not repo_dir.exists()  # partial checkout removed
-    assert ["git", "worktree", "prune"] in pruned  # pool pruned
+    assert any(c[-2:] == ["worktree", "prune"] and "core.hooksPath=/dev/null" in c for c in pruned)  # pool pruned
 
 
 def test_worktree_add_raises_prune_failure_chained_from_add_error(
@@ -2273,7 +2299,7 @@ def test_ensure_clone_fails_before_fetch_when_origin_probe_times_out(
     )  # type: ignore
 
     def fake_safe_run(cmd: list[str], **k: object) -> subprocess.CompletedProcess[str]:
-        if cmd[:4] == ["git", "remote", "get-url", "origin"]:
+        if cmd[-3:] == ["remote", "get-url", "origin"]:
             return subprocess.CompletedProcess(cmd, 124, "", "timed out")
         return subprocess.CompletedProcess(cmd, 0, "", "")
 
@@ -2303,11 +2329,11 @@ def test_remove_workspace_raises_when_prune_times_out(tmp_path: Path, monkeypatc
 
     def fake_safe_run(cmd: list[str], **k: object) -> subprocess.CompletedProcess[str]:
         calls.append(list(cmd))
-        if cmd[:3] == ["git", "worktree", "remove"]:
+        if "worktree" in cmd and "remove" in cmd:
             # Distinct code (1, NOT 124) so the assertion below proves the raised
             # error came from PRUNE, not from the remove failure.
             return subprocess.CompletedProcess(cmd, 1, "", "remove failed")
-        if cmd[:3] == ["git", "worktree", "prune"]:
+        if cmd[-2:] == ["worktree", "prune"]:
             return subprocess.CompletedProcess(cmd, 124, "", "prune timed out")
         return subprocess.CompletedProcess(cmd, 0, "", "")
 
@@ -2316,7 +2342,7 @@ def test_remove_workspace_raises_when_prune_times_out(tmp_path: Path, monkeypatc
     with pytest.raises(GitCommandError) as exc:
         mgr.remove_workspace(repo="o/r", number=31)
     # Prune actually ran, and the surfaced error is prune's (124) — not remove's (1).
-    assert ["git", "worktree", "prune"] in calls, "prune did not run after a failed remove"
+    assert any(c[-2:] == ["worktree", "prune"] for c in calls), "prune did not run after a failed remove"
     assert exc.value.returncode == 124
 
 
@@ -2348,10 +2374,10 @@ def test_remove_workspace_prunes_when_checkout_already_gone_on_entry(
 
     # No `git worktree remove` (nothing to remove), but prune MUST run to clear
     # any dangling registration for the missing path.
-    assert ["git", "worktree", "prune"] in calls, (
+    assert any(c[-2:] == ["worktree", "prune"] for c in calls), (
         "prune was skipped for a checkout already gone on entry — dangling registration would persist"
     )
-    assert not any(c[:3] == ["git", "worktree", "remove"] for c in calls)
+    assert not any("worktree" in c and "remove" in c for c in calls)
     assert not ws_root.exists()  # ws_root still cleaned up
 
 
@@ -2484,3 +2510,82 @@ def test_reclaim_all_caches_sweeps_workspaces_not_pool(tmp_path: Path) -> None:
         assert not list(ws_root.glob(".trash-*"))
     assert pool_marker.exists(), "sweep must never touch the shared clone pool"
     assert mgr.reclaim_all_caches() == 0
+
+
+def test_share_git_metadata_refuses_escaped_gitdir_and_symlinks(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-1 regression: crafted `.git` gitdir/commondir or symlinks must never chown/chmod outside pool."""
+    outside_dir = tmp_path / "outside"
+    outside_dir.mkdir()
+    outside_secret = outside_dir / "secret"
+    outside_secret.write_text("root-only\n", encoding="utf-8")
+    outside_secret.chmod(0o600)
+
+    ws_repo = tmp_path / "workspaces" / "octo__widget__99" / "repo"
+    ws_repo.mkdir(parents=True)
+    pool_git = tmp_path / "workspaces" / "_pool" / "octo__widget" / ".git"
+    (pool_git / "worktrees" / "repo").mkdir(parents=True)
+
+    fchowns: list[int] = []
+    monkeypatch.setattr("robomp.sandbox.platform.system", lambda: "Linux")
+    monkeypatch.setattr("robomp.sandbox.os.geteuid", lambda: 0)
+    monkeypatch.setattr("robomp.sandbox.os.fchown", lambda fd, uid, gid: fchowns.append(os.fstat(fd).st_ino))
+
+    # 1. gitdir pointing outside the pool root.
+    (ws_repo / ".git").write_text(f"gitdir: {outside_dir}\n", encoding="utf-8")
+    _share_git_metadata_with_slots(ws_repo, 2001)
+    assert fchowns == []
+    assert stat.S_IMODE(outside_secret.stat().st_mode) == 0o600
+
+    # 2. valid gitdir, but commondir escaping outside the pool root.
+    wt_dir = pool_git / "worktrees" / "repo"
+    (ws_repo / ".git").write_text(f"gitdir: {wt_dir}\n", encoding="utf-8")
+    (wt_dir / "commondir").write_text(str(outside_dir) + "\n", encoding="utf-8")
+    _share_git_metadata_with_slots(ws_repo, 2001)
+    assert fchowns == []
+    assert stat.S_IMODE(outside_secret.stat().st_mode) == 0o600
+
+    # 3. symlinked `.git` marker.
+    (ws_repo / ".git").unlink()
+    (ws_repo / ".git").symlink_to(outside_dir)
+    _share_git_metadata_with_slots(ws_repo, 2001)
+    assert fchowns == []
+
+
+def test_git_env_for_repo_scrubs_all_orchestrator_secrets(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-4 regression: `_git_env_for_repo` strips every orchestrator secret env var."""
+    from robomp.git_ops import SCRUBBED_SECRET_ENV_KEYS
+    from robomp.sandbox import _git_env_for_repo
+
+    for key in SCRUBBED_SECRET_ENV_KEYS:
+        monkeypatch.setenv(key, f"secret-{key}")
+
+    env = _git_env_for_repo(tmp_path / "repo")
+    for key in SCRUBBED_SECRET_ENV_KEYS:
+        assert key not in env
+
+
+def test_local_git_transport_passes_scoped_auth_url_when_token_set(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-4 regression: LocalGitTransport passes auth_url when a token is configured."""
+    from robomp.sandbox import LocalGitTransport
+
+    captured: list[dict[str, object]] = []
+    monkeypatch.setattr("robomp.sandbox.git_fetch_prune", lambda _p, **kw: captured.append(kw))
+    monkeypatch.setattr("robomp.sandbox.git_clone", lambda _p, **kw: captured.append(kw))
+
+    transport = LocalGitTransport(token="ghp_test")
+    transport.clone_pool(
+        repo="octo/widget",
+        clone_url="https://github.com/octo/widget.git",
+        default_branch="main",
+        target=tmp_path / "pool",
+    )
+    transport.fetch_pool(repo="octo/widget", pool_dir=tmp_path / "pool")
+
+    assert captured[0]["auth_url"] == "https://github.com/octo/widget.git"
+    assert captured[1]["auth_url"] == "https://github.com/octo/widget.git"

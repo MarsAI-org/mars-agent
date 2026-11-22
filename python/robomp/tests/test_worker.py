@@ -8,6 +8,7 @@ whether the workspace's omp session directory already holds a JSONL transcript.
 from __future__ import annotations
 
 import asyncio
+import os
 import stat
 from collections.abc import Callable
 from functools import partial
@@ -1116,3 +1117,60 @@ async def test_release_task_reminds_until_terminal_tool_runs(
     assert fake.kwargs["append_system_prompt"] == "SYS RELEASE"
     assert fake.kwargs["model"] in settings.release_model_pool
     assert fake.prompts == ["kickoff", *(["retag or abort"] * settings.task_completion_max_reminders)]
+
+
+def test_ensure_agent_run_dir_skips_symlinks_without_following(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-2 regression: `_ensure_agent_run_dir` must never follow symlinks when chown/chmodding."""
+    agent_home = tmp_path / "agent-home"
+    run_dir = agent_home / ".mars" / "run"
+    run_dir.mkdir(parents=True)
+
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    outside_file = outside / "target.txt"
+    outside_file.write_text("root-only\n", encoding="utf-8")
+    outside_file.chmod(0o600)
+
+    (run_dir / "link-file").symlink_to(outside_file)
+    (run_dir / "link-dir").symlink_to(outside)
+    regular_file = run_dir / "real.sock"
+    regular_file.write_text("ok\n", encoding="utf-8")
+    regular_file.chmod(0o600)
+
+    fchowns: list[int] = []
+    monkeypatch.setattr(worker, "_AGENT_HOME", agent_home)
+    monkeypatch.setattr("robomp.worker.os.geteuid", lambda: 0)
+    monkeypatch.setattr("robomp.worker.grp.getgrnam", lambda _name: SimpleNamespace(gr_gid=2000))
+    monkeypatch.setattr(
+        "robomp.worker.os.fchown",
+        lambda fd, _uid, _gid: fchowns.append(os.fstat(fd).st_ino),
+    )
+
+    worker._ensure_agent_run_dir()
+
+    assert outside_file.stat().st_ino not in fchowns
+    assert outside.stat().st_ino not in fchowns
+    assert stat.S_IMODE(outside_file.stat().st_mode) == 0o600
+    assert regular_file.stat().st_ino in fchowns
+    assert stat.S_IMODE(regular_file.stat().st_mode) == 0o660
+
+
+def test_capture_natives_cache_skips_pr_review_workspace(
+    tmp_path: Path, settings: Settings, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-5 regression: untrusted PR review workspaces must never capture into the shared cache."""
+    cache = _RecordingNativesCache()
+    inputs = _make_capture_inputs(tmp_path, settings, cache=cache, with_native_artifacts=True)
+    inputs.workspace.branch = "review/pr-42"  # type: ignore[misc]
+    monkeypatch.setattr(worker, "natives_compute_key", lambda _repo_dir: "cafef00d")
+
+    worker._capture_natives_cache(inputs)
+    assert cache.capture_calls == []
+
+
+def test_scrubbed_env_keys_include_gh_token_and_git_http_auth() -> None:
+    """P-4 regression: centralized secret env scrubbing covers GH_TOKEN and ROBOMP_GIT_HTTP_AUTH."""
+    assert "GH_TOKEN" in worker._SCRUBBED_ENV_KEYS
+    assert "ROBOMP_GIT_HTTP_AUTH" in worker._SCRUBBED_ENV_KEYS

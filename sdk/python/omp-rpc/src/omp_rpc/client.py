@@ -9,9 +9,10 @@ import signal
 import subprocess
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Generic, Mapping, Sequence, TypeVar, cast
+from typing import IO, Any, Callable, Generic, Iterator, Mapping, Sequence, TypeVar, cast
 
 from ._wire import (
     _TODO_STATUS_VALUES,
@@ -65,9 +66,63 @@ _DEFAULT_ERROR_HISTORY_LIMIT = 128
 _MAX_RPC_FRAME_BYTES = 1024 * 1024
 _MAX_RPC_REASSEMBLED_BYTES = 64 * 1024 * 1024
 _RPC_CHUNK_PAYLOAD_BYTES = 256 * 1024
+_MAX_STDERR_LINE_BYTES = 64 * 1024
+_MAX_HOST_TOOL_DISPATCH_NAMES = 1024
+_MAX_HOST_DISPATCH_WORKERS = 16
+_LINE_READ_CHUNK_CHARS = 65_536
 _RPC_MESSAGES_PAGE_BUSY_ERROR = "Cannot page messages while the session is changing"
 _RPC_MESSAGES_PAGE_STALE_ERROR = "RPC message cursor is stale"
 _RPC_MESSAGES_PAGE_FALLBACK_CODES = frozenset({"session_busy", "stale_cursor"})
+
+
+def _iter_bounded_lines(
+    stream: IO[str],
+    *,
+    max_bytes: int,
+    chunk_chars: int = _LINE_READ_CHUNK_CHARS,
+    raise_on_overflow: bool = True,
+) -> Iterator[str]:
+    """Yield newline-delimited lines from ``stream`` while capping buffered bytes per line.
+
+    Reads in bounded chunks via ``stream.readline(chunk_chars)`` so a child
+    emitting an unbounded stream without ``\\n`` cannot exhaust host memory.
+    """
+    buf: list[str] = []
+    buf_bytes = 0
+    discarding = False
+    while True:
+        chunk = stream.readline(chunk_chars)
+        if not chunk:
+            if not discarding and buf:
+                yield "".join(buf)
+            break
+        ended_line = chunk.endswith("\n")
+        if discarding:
+            if ended_line:
+                discarding = False
+            continue
+        chunk_bytes = len(chunk.encode("utf-8"))
+        if buf_bytes + chunk_bytes > max_bytes:
+            if raise_on_overflow:
+                raise RpcError(
+                    f"RPC frame exceeds maximum line size of {max_bytes} bytes"
+                )
+            remaining = max(0, max_bytes - buf_bytes)
+            prefix = "".join(buf)
+            if remaining > 0:
+                prefix += chunk.encode("utf-8")[:remaining].decode("utf-8", errors="ignore")
+            yield f"{prefix}...[truncated]\n"
+            buf.clear()
+            buf_bytes = 0
+            if not ended_line:
+                discarding = True
+            continue
+        buf.append(chunk)
+        buf_bytes += chunk_bytes
+        if ended_line:
+            yield "".join(buf)
+            buf.clear()
+            buf_bytes = 0
 
 
 @dataclass(slots=True)
@@ -524,6 +579,7 @@ class RpcClient(WireClient):
         self._survivors: list[tuple[subprocess.Popen[str], int | None]] = []
         self._stdout_thread: threading.Thread | None = None
         self._stderr_thread: threading.Thread | None = None
+        self._host_executor: ThreadPoolExecutor | None = None
         self._ready = threading.Event()
         self._write_lock = threading.Lock()
         self._state_lock = threading.Lock()
@@ -601,7 +657,6 @@ class RpcClient(WireClient):
 
         self._ready.clear()
         self._stopping = False
-        self._closed_error = None
         self._ready_received = False
         self._ready_event = None
         self._protocol_version = 1
@@ -614,10 +669,17 @@ class RpcClient(WireClient):
         self._session_settled_count = 0
         self._ui_requests = queue.Queue()
         with self._state_lock:
+            self._closed_error = None
             self._stderr_chunks.clear()
-        with self._state_lock:
             self._protocol_errors.clear()
             self._listener_errors.clear()
+            self._pending_host_tool_calls.clear()
+            self._host_tool_dispatch_names.clear()
+            self._pending_host_uri_requests.clear()
+        self._host_executor = ThreadPoolExecutor(
+            max_workers=_MAX_HOST_DISPATCH_WORKERS,
+            thread_name_prefix="omp-rpc-host",
+        )
 
         process = subprocess.Popen(
             list(self._build_command()),
@@ -710,14 +772,18 @@ class RpcClient(WireClient):
             return self._reap_survivors()
 
         self._stopping = True
-        for pending_call in self._pending_host_tool_calls.values():
-            pending_call.cancel_event.set()
-        for pending_uri in self._pending_host_uri_requests.values():
-            pending_uri.cancel_event.set()
-
         pgid = self._pgid
         reaped = False
+        terminated = False
         try:
+            with self._state_lock:
+                pending_calls = list(self._pending_host_tool_calls.values())
+                pending_uris = list(self._pending_host_uri_requests.values())
+            for pending_call in pending_calls:
+                pending_call.cancel_event.set()
+            for pending_uri in pending_uris:
+                pending_uri.cancel_event.set()
+
             if process.stdin is not None:
                 try:
                     process.stdin.close()
@@ -728,16 +794,12 @@ class RpcClient(WireClient):
                     pass
 
             reaped = _terminate_process_group(process, pgid)
+            terminated = True
         finally:
-            if process.stdout is not None:
+            if not terminated:
                 try:
-                    process.stdout.close()
-                except OSError:
-                    pass
-            if process.stderr is not None:
-                try:
-                    process.stderr.close()
-                except OSError:
+                    reaped = _terminate_process_group(process, pgid)
+                except Exception:
                     pass
             # Mark the client closed so any thread blocked in a lifecycle
             # wait raises `RpcProcessExitError` instead of
@@ -748,9 +810,35 @@ class RpcClient(WireClient):
             # closes the gap. It is idempotent: a second call (e.g. from the
             # reader's exception path) returns early.
             self._mark_closed(RpcProcessExitError("RPC process stopped"))
-            self._pending_host_tool_calls.clear()
-            self._host_tool_dispatch_names.clear()
-            self._pending_host_uri_requests.clear()
+            with self._state_lock:
+                self._pending_host_tool_calls.clear()
+                self._host_tool_dispatch_names.clear()
+                self._pending_host_uri_requests.clear()
+            # Join reader threads BEFORE closing stdout/stderr so we do not
+            # race stream.close() against an active TextIOWrapper read().
+            current = threading.current_thread()
+            stdout_thread = self._stdout_thread
+            stderr_thread = self._stderr_thread
+            if stdout_thread is not None and stdout_thread is not current:
+                stdout_thread.join(timeout=1.0)
+            if stderr_thread is not None and stderr_thread is not current:
+                stderr_thread.join(timeout=1.0)
+            self._stdout_thread = None
+            self._stderr_thread = None
+            if process.stdout is not None and (stdout_thread is None or not stdout_thread.is_alive()):
+                try:
+                    process.stdout.close()
+                except (OSError, ValueError, RuntimeError):
+                    pass
+            if process.stderr is not None and (stderr_thread is None or not stderr_thread.is_alive()):
+                try:
+                    process.stderr.close()
+                except (OSError, ValueError, RuntimeError):
+                    pass
+            executor = self._host_executor
+            self._host_executor = None
+            if executor is not None:
+                executor.shutdown(wait=False, cancel_futures=True)
             self._process = None
             self._pgid = None
             if not reaped:
@@ -758,12 +846,6 @@ class RpcClient(WireClient):
                 # re-kill it. Without this the child becomes unobservable and the
                 # second stop() (from the `with` exit / cancel hook) is a no-op.
                 self._survivors.append((process, pgid))
-            if self._stdout_thread is not None:
-                self._stdout_thread.join(timeout=1.0)
-            if self._stderr_thread is not None:
-                self._stderr_thread.join(timeout=1.0)
-            self._stdout_thread = None
-            self._stderr_thread = None
         # Survivors retained before a restart are re-attempted too, so `True`
         # means no child this client spawned remains. The one just retained was
         # already escalated above; re-signalling it would only double the wait.
@@ -1448,6 +1530,8 @@ class RpcClient(WireClient):
 
         response_queue: queue.Queue[JsonObject | BaseException] = queue.Queue(maxsize=1)
         with self._state_lock:
+            if self._closed_error is not None:
+                raise self._closed_error
             self._pending[request_id] = _PendingRequest(
                 command=command_type, response_queue=response_queue
             )
@@ -1514,12 +1598,23 @@ class RpcClient(WireClient):
         tool_call_id = payload.get("toolCallId")
         if not isinstance(tool_call_id, str):
             return
-        if payload.get("type") == "tool_execution_end":
-            tool_name = self._host_tool_dispatch_names.pop(tool_call_id, None)
-        else:
-            tool_name = self._host_tool_dispatch_names.get(tool_call_id)
+        with self._state_lock:
+            if payload.get("type") == "tool_execution_end":
+                tool_name = self._host_tool_dispatch_names.pop(tool_call_id, None)
+            else:
+                tool_name = self._host_tool_dispatch_names.get(tool_call_id)
         if tool_name is not None:
             payload["toolName"] = tool_name
+
+    def _submit_host_task(self, fn: Callable[[], None]) -> bool:
+        executor = self._host_executor
+        if executor is None:
+            return False
+        try:
+            executor.submit(fn)
+        except RuntimeError:
+            return False
+        return True
 
     def _handle_host_tool_call(self, payload: JsonObject) -> None:
         request_id = payload.get("id")
@@ -1534,8 +1629,14 @@ class RpcClient(WireClient):
             return
         # Remember the dispatch so tool_execution_* events for this call id can
         # be renamed from the transport tool to the host tool that ran; see
-        # _normalize_host_tool_event.
-        self._host_tool_dispatch_names[tool_call_id] = tool_name
+        # _normalize_host_tool_event. Bound the map so orphaned ids cannot grow
+        # without limit.
+        with self._state_lock:
+            self._host_tool_dispatch_names.pop(tool_call_id, None)
+            self._host_tool_dispatch_names[tool_call_id] = tool_name
+            while len(self._host_tool_dispatch_names) > _MAX_HOST_TOOL_DISPATCH_NAMES:
+                oldest = next(iter(self._host_tool_dispatch_names))
+                del self._host_tool_dispatch_names[oldest]
         if not isinstance(raw_arguments, Mapping):
             self._send_notification(
                 {
@@ -1583,7 +1684,8 @@ class RpcClient(WireClient):
             return
 
         pending_call = _PendingHostToolCall(cancel_event=threading.Event())
-        self._pending_host_tool_calls[request_id] = pending_call
+        with self._state_lock:
+            self._pending_host_tool_calls[request_id] = pending_call
 
         def run_tool() -> None:
             try:
@@ -1630,17 +1732,19 @@ class RpcClient(WireClient):
                     }
                 )
             finally:
-                self._pending_host_tool_calls.pop(request_id, None)
+                with self._state_lock:
+                    self._pending_host_tool_calls.pop(request_id, None)
 
-        threading.Thread(
-            target=run_tool, name=f"omp-rpc-host-tool:{tool_name}", daemon=True
-        ).start()
+        if not self._submit_host_task(run_tool):
+            with self._state_lock:
+                self._pending_host_tool_calls.pop(request_id, None)
 
     def _handle_host_tool_cancel(self, payload: JsonObject) -> None:
         target_id = payload.get("targetId")
         if not isinstance(target_id, str):
             return
-        pending_call = self._pending_host_tool_calls.get(target_id)
+        with self._state_lock:
+            pending_call = self._pending_host_tool_calls.get(target_id)
         if pending_call is not None:
             pending_call.cancel_event.set()
 
@@ -1696,7 +1800,8 @@ class RpcClient(WireClient):
             return
 
         pending = _PendingHostUriRequest(cancel_event=threading.Event())
-        self._pending_host_uri_requests[request_id] = pending
+        with self._state_lock:
+            self._pending_host_uri_requests[request_id] = pending
 
         def run() -> None:
             try:
@@ -1732,17 +1837,19 @@ class RpcClient(WireClient):
                     return
                 self._send_host_uri_error(request_id, str(exc))
             finally:
-                self._pending_host_uri_requests.pop(request_id, None)
+                with self._state_lock:
+                    self._pending_host_uri_requests.pop(request_id, None)
 
-        threading.Thread(
-            target=run, name=f"omp-rpc-host-uri:{scheme}:{operation}", daemon=True
-        ).start()
+        if not self._submit_host_task(run):
+            with self._state_lock:
+                self._pending_host_uri_requests.pop(request_id, None)
 
     def _handle_host_uri_cancel(self, payload: JsonObject) -> None:
         target_id = payload.get("targetId")
         if not isinstance(target_id, str):
             return
-        pending = self._pending_host_uri_requests.get(target_id)
+        with self._state_lock:
+            pending = self._pending_host_uri_requests.get(target_id)
         if pending is not None:
             pending.cancel_event.set()
 
@@ -1907,11 +2014,19 @@ class RpcClient(WireClient):
 
         line_number = 0
         try:
-            for line in process.stdout:
+            for line in _iter_bounded_lines(
+                process.stdout,
+                max_bytes=_MAX_RPC_FRAME_BYTES + 2,
+                raise_on_overflow=True,
+            ):
                 line_number += 1
                 stripped = line.strip()
                 if not stripped:
                     continue
+                if len(stripped.encode("utf-8")) > _MAX_RPC_FRAME_BYTES:
+                    raise RpcError(
+                        f"RPC frame on line {line_number} exceeds maximum size of {_MAX_RPC_FRAME_BYTES} bytes"
+                    )
 
                 try:
                     raw_payload = json.loads(stripped)
@@ -2031,7 +2146,11 @@ class RpcClient(WireClient):
         if process is None or process.stderr is None:
             return
         try:
-            for chunk in process.stderr:
+            for chunk in _iter_bounded_lines(
+                process.stderr,
+                max_bytes=_MAX_STDERR_LINE_BYTES,
+                raise_on_overflow=False,
+            ):
                 with self._state_lock:
                     self._stderr_chunks.append(chunk)
         except Exception as exc:
@@ -2039,11 +2158,15 @@ class RpcClient(WireClient):
                 self._mark_closed(RpcError(f"Failed to read RPC stderr: {exc}"))
 
     def _mark_closed(self, error: BaseException) -> None:
-        if self._closed_error is not None:
-            return
-        self._closed_error = error
+        with self._state_lock:
+            if self._closed_error is not None:
+                return
+            self._closed_error = error
+            pending = [item.response_queue for item in self._pending.values()]
+            self._pending.clear()
         self._ready.set()
-        self._fail_pending(error)
+        for response_queue in pending:
+            response_queue.put(error)
         with self._event_condition:
             self._event_condition.notify_all()
 

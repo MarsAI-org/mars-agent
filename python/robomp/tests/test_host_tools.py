@@ -584,11 +584,13 @@ def test_repro_record_advances_needs_info_when_cleanup_transport_fails(db: Datab
 
 
 def test_repro_record_chowns_to_slot_when_root(db: Database, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    chowns: list[tuple[Path, int, int]] = []
+    import os
+
+    fchowns: list[tuple[int, int, int]] = []
     monkeypatch.setattr(host_tools, "_slot_permissions_active", lambda slot_uid: slot_uid is not None)
     monkeypatch.setattr(
-        "robomp.host_tools.os.chown",
-        lambda path, uid, gid: chowns.append((Path(path), uid, gid)),
+        "robomp.host_tools.os.fchown",
+        lambda fd, uid, gid: fchowns.append((os.fstat(fd).st_ino, uid, gid)),
         raising=False,
     )
 
@@ -607,7 +609,7 @@ def test_repro_record_chowns_to_slot_when_root(db: Database, tmp_path: Path, mon
         assert result == "recorded"
         files = list(bindings.workspace.repro_dir.iterdir())
         assert len(files) == 1
-        assert chowns == [(files[0], 2001, 2001)]
+        assert (files[0].stat().st_ino, 2001, 2001) in fchowns
     finally:
         _stop_loop(loop, t)
 
@@ -4947,3 +4949,59 @@ def test_release_status_and_job_log_are_scoped_to_expected_sha(
         f"head_sha={expected_sha}&per_page=100",
     )
     assert log_tail.splitlines() == log_lines[-1000:]
+
+
+def test_repro_record_refuses_symlinked_dir_and_target(
+    db: Database, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-3 regression: root file write + fchown must never follow symlinks on parent dirs or target files."""
+    outside_dir = tmp_path / "outside"
+    outside_dir.mkdir()
+    outside_file = outside_dir / "victim.txt"
+    outside_file.write_text("ORIGINAL", encoding="utf-8")
+
+    # 1. Symlinked context/repro directory.
+    bindings, loop, t = _bindings(db, tmp_path / "case1", httpx.MockTransport(lambda r: httpx.Response(500)))
+    try:
+        repro_dir = bindings.workspace.repro_dir
+        if repro_dir.exists():
+            repro_dir.rmdir()
+        repro_dir.symlink_to(outside_dir)
+        tool = next(x for x in build(bindings) if x.name == "repro_record")
+        with pytest.raises(RpcCommandError, match="refusing unsafe write"):
+            tool.execute(
+                {"title": "boom", "command": "cmd", "output": "out", "exit_code": 1},
+                _ctx(),
+            )
+        assert list(outside_dir.iterdir()) == [outside_file]
+    finally:
+        _stop_loop(loop, t)
+
+    # 2. Symlinked target file inside real context/repro directory.
+    bindings2, loop2, t2 = _bindings(db, tmp_path / "case2", httpx.MockTransport(lambda r: httpx.Response(500)))
+    monkeypatch.setattr("robomp.host_tools.time.time", lambda: 1700000000.0)
+    try:
+        bindings2.workspace.repro_dir.mkdir(parents=True, exist_ok=True)
+        (bindings2.workspace.repro_dir / "1700000000-boom.md").symlink_to(outside_file)
+        tool2 = next(x for x in build(bindings2) if x.name == "repro_record")
+        with pytest.raises(RpcCommandError, match="refusing unsafe write"):
+            tool2.execute(
+                {"title": "boom", "command": "cmd", "output": "out", "exit_code": 1},
+                _ctx(),
+            )
+        assert outside_file.read_text(encoding="utf-8") == "ORIGINAL"
+    finally:
+        _stop_loop(loop2, t2)
+
+
+def test_safe_write_workspace_file_refuses_symlinked_artifacts_pr_json(tmp_path: Path) -> None:
+    """P-3 regression: `_safe_write_workspace_file` refuses symlinked `artifacts/pr.json`."""
+    ws_root = tmp_path / "ws"
+    (ws_root / "artifacts").mkdir(parents=True)
+    outside_file = tmp_path / "outside.json"
+    outside_file.write_text("KEEP", encoding="utf-8")
+    (ws_root / "artifacts" / "pr.json").symlink_to(outside_file)
+
+    with pytest.raises(OSError):
+        host_tools._safe_write_workspace_file(ws_root, Path("artifacts/pr.json"), '{"pr":1}', slot_uid=None)
+    assert outside_file.read_text(encoding="utf-8") == "KEEP"

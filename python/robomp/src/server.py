@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import hmac
 import logging
 import time
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
@@ -535,6 +536,11 @@ def create_app(settings: Settings | None = None, *, pool_factory: _PoolFactory =
             log.info("duplicate", extra={"event": x_github_event, "delivery": x_github_delivery})
         return JSONResponse({"delivery": x_github_delivery, "state": "queued"}, status_code=202)
 
+    def _verify_replay_token(expected: str, provided: str | None) -> bool:
+        if not isinstance(provided, str):
+            return False
+        return hmac.compare_digest(expected.encode("utf-8"), provided.encode("utf-8"))
+
     @app.post("/replay")
     async def replay(
         request: Request,
@@ -545,7 +551,7 @@ def create_app(settings: Settings | None = None, *, pool_factory: _PoolFactory =
         cfg: Settings = bag["settings"]
         if cfg.replay_token is None:
             raise HTTPException(404, "replay disabled")
-        if x_robomp_token != cfg.replay_token.get_secret_value():
+        if not _verify_replay_token(cfg.replay_token.get_secret_value(), x_robomp_token):
             raise HTTPException(401, "invalid replay token")
         db: Database = bag["db"]
         row = db.get_event(delivery_id)
@@ -559,7 +565,7 @@ def create_app(settings: Settings | None = None, *, pool_factory: _PoolFactory =
     def _require_trigger_token(cfg: Settings, token: str | None) -> None:
         if cfg.replay_token is None:
             raise HTTPException(404, "trigger disabled (set ROBOMP_REPLAY_TOKEN to enable)")
-        if token != cfg.replay_token.get_secret_value():
+        if not _verify_replay_token(cfg.replay_token.get_secret_value(), token):
             raise HTTPException(401, "invalid replay token")
 
     @app.get("/api/github/issues")
@@ -789,8 +795,7 @@ def create_app(settings: Settings | None = None, *, pool_factory: _PoolFactory =
     @app.get("/", response_class=HTMLResponse)
     async def index(request: Request) -> HTMLResponse:
         cfg: Settings = request.app.state.bag["settings"]
-        token = cfg.replay_token.get_secret_value() if cfg.replay_token else None
-        return HTMLResponse(render_index(token))
+        return HTMLResponse(render_index(cfg.replay_token is not None))
 
     @app.get("/api/status")
     async def api_status(request: Request) -> dict[str, Any]:

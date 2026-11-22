@@ -112,20 +112,18 @@ def reset_index_cache() -> None:
     _load_index_template.cache_clear()
 
 
-def render_index(replay_token: str | None) -> str:
-    """Render the dashboard HTML with the server's replay token baked in.
+def render_index(replay_enabled: bool | str | None = False) -> str:
+    """Render the dashboard HTML with non-secret UI capability flags.
 
-    The token lands inside a `<script type="application/json">` block that the
-    page parses at startup and attaches to every privileged fetch. The user
-    never sees or types it; the only credential to manage is the env var on
-    the server itself.
+    Never embeds ``ROBOMP_REPLAY_TOKEN`` in unauthenticated HTML; only surfaces
+    whether replay/trigger endpoints are enabled on the server so the SPA can
+    present or hide operator controls while prompting/reading the token from
+    browser session state.
     """
     config = {
-        "replayEnabled": bool(replay_token),
-        "replayToken": replay_token or "",
+        "replayEnabled": bool(replay_enabled),
     }
-    # `</` would otherwise let an attacker-controlled token break out of the
-    # script element; escape it the standard way.
+    # Escape `</` so the JSON blob can never break out of the script element.
     payload = json.dumps(config, separators=(",", ":")).replace("</", "<\\/")
     return _load_index_template().replace(_CONFIG_SENTINEL, payload)
 

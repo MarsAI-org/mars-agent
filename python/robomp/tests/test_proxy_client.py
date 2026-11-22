@@ -669,7 +669,7 @@ async def test_error_decode_github_422() -> None:
 def test_proxy_git_transport_push_happy(proxy_settings: Settings, upstream_repo: Path) -> None:
     branch = "farm/abc/feat"
     _, head = _stage_workspace(proxy_settings, upstream_repo, "octo/widget", 1, branch)
-    app = create_proxy_app(proxy_settings)
+    app = create_proxy_app(proxy_settings, allow_local_remotes=True)
     app.state.settings = proxy_settings
     _attach_gh(app, lambda _: httpx.Response(500, json={"message": "should not be hit"}))
 
@@ -693,7 +693,7 @@ def test_proxy_git_transport_push_happy(proxy_settings: Settings, upstream_repo:
 def test_proxy_git_transport_push_head_drift(proxy_settings: Settings, upstream_repo: Path) -> None:
     branch = "farm/abc/drift"
     _, _ = _stage_workspace(proxy_settings, upstream_repo, "octo/widget", 1, branch)
-    app = create_proxy_app(proxy_settings)
+    app = create_proxy_app(proxy_settings, allow_local_remotes=True)
     app.state.settings = proxy_settings
     _attach_gh(app, lambda _: httpx.Response(500, json={"message": "should not be hit"}))
 

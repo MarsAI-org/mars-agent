@@ -28,8 +28,10 @@ from fastapi.responses import JSONResponse
 
 from robomp.config import Settings
 from robomp.git_ops import (
+    SCRUBBED_SECRET_ENV_KEYS,
     GitCommandError,
     HeadDriftError,
+    scrub_secret_env,
 )
 from robomp.git_ops import (
     clone as git_clone,
@@ -111,7 +113,7 @@ def _require_str(value: Any, field: str) -> str:
 
 
 def _require_int(value: Any, field: str) -> int:
-    if not isinstance(value, int):
+    if isinstance(value, bool) or not isinstance(value, int):
         raise HTTPException(400, f"missing/invalid '{field}'")
     return value
 
@@ -211,12 +213,31 @@ def _pool_dir(cfg: Settings, repo: str) -> Path:
     return Path(cfg.workspace_root) / "_pool" / repo.replace("/", "__")
 
 
+_WORKSPACE_KEY_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*__[A-Za-z0-9._-]+__[A-Za-z0-9._-]+$")
+
+
 def _workspace_repo_dir(cfg: Settings, workspace_key: str) -> Path:
     # Defense-in-depth: workspace_key is constructed by `sandbox.workspace_key`
-    # as `<repo_with_underscores>__<number>`. Reject anything outside that shape.
-    if "/" in workspace_key or workspace_key.startswith(".") or ".." in workspace_key:
+    # as `<repo_with_underscores>__<number_or_release>`. Reject traversal,
+    # backslashes, `_pool`, symlinks, and anything resolving outside root.
+    if (
+        "/" in workspace_key
+        or "\\" in workspace_key
+        or ".." in workspace_key
+        or workspace_key.startswith((".", "_pool"))
+        or not _WORKSPACE_KEY_RE.fullmatch(workspace_key)
+    ):
         raise HTTPException(400, f"invalid workspace_key {workspace_key!r}")
-    return Path(cfg.workspace_root) / workspace_key / "repo"
+    root = Path(cfg.workspace_root).resolve()
+    ws_dir = Path(cfg.workspace_root) / workspace_key
+    repo_dir = ws_dir / "repo"
+    if ws_dir.is_symlink() or repo_dir.is_symlink():
+        raise HTTPException(400, f"invalid workspace_key {workspace_key!r}")
+    resolved = repo_dir.resolve()
+    pool_root = (root / "_pool").resolve()
+    if not resolved.is_relative_to(root) or resolved.is_relative_to(pool_root):
+        raise HTTPException(400, f"invalid workspace_key {workspace_key!r}")
+    return repo_dir
 
 
 def _resolve_token(cfg: Settings) -> str:
@@ -236,16 +257,10 @@ _ORIGIN_READ_TIMEOUT_SECONDS = 5.0
 
 
 _REMOTE_HELPER_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*::")
+_SCP_STYLE_REMOTE_RE = re.compile(r"^[^/\s]+:")
 _FORBIDDEN_URL_BYTES_RE = re.compile(r"[\x00-\x1f\x7f]|%(?:00|0a|0d)", re.IGNORECASE)
 _GITHUB_REPO_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9._-]+$")
-_GIT_PROBE_SCRUBBED_ENV_KEYS = (
-    "ROBOMP_GIT_HTTP_AUTH",
-    "GITHUB_TOKEN",
-    "GH_TOKEN",
-    "GITHUB_WEBHOOK_SECRET",
-    "ROBOMP_REPLAY_TOKEN",
-    "ROBOMP_GH_PROXY_HMAC_KEY",
-)
+_GIT_PROBE_SCRUBBED_ENV_KEYS = SCRUBBED_SECRET_ENV_KEYS
 
 
 @dataclass(slots=True, frozen=True)
@@ -266,9 +281,7 @@ def _github_url_for_repo(repo: str) -> str:
 
 
 def _git_probe_env(repo_dir: Path) -> dict[str, str]:
-    env = {**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_ASKPASS": "", "SSH_ASKPASS": ""}
-    for key in _GIT_PROBE_SCRUBBED_ENV_KEYS:
-        env.pop(key, None)
+    env = scrub_secret_env({**os.environ, "GIT_TERMINAL_PROMPT": "0", "GIT_ASKPASS": "", "SSH_ASKPASS": ""})
     env.update(_safe_directory_env(repo_dir))
     return env
 
@@ -336,7 +349,13 @@ def _normalized_github_https_url(url: str, expected_repo: str) -> str:
     return _github_url_for_repo(expected_repo)
 
 
-def _remote_auth_for_url(url: str, expected_repo: str, token: str) -> _RemoteAuth:
+def _remote_auth_for_url(
+    url: str,
+    expected_repo: str,
+    token: str,
+    *,
+    allow_local_remotes: bool = False,
+) -> _RemoteAuth:
     raw = url.strip()
     if not raw or raw != url:
         raise HTTPException(400, "remote url must not be empty or padded")
@@ -346,16 +365,28 @@ def _remote_auth_for_url(url: str, expected_repo: str, token: str) -> _RemoteAut
         raise HTTPException(400, "remote url must not start with '-'")
     if _REMOTE_HELPER_RE.match(raw):
         raise HTTPException(400, "git remote helper transports are disabled")
-    scheme = (urlparse(raw).scheme or "").lower()
-    if scheme in ("http", "https"):
+    parsed = urlparse(raw)
+    scheme = (parsed.scheme or "").lower()
+    if scheme == "https":
         normalized = _normalized_github_https_url(raw, expected_repo)
         return _RemoteAuth(url=normalized, token=token, auth_url=normalized)
-    return _RemoteAuth(url=raw, token=None, auth_url=None)
+    if allow_local_remotes and (
+        (scheme == "" and not _SCP_STYLE_REMOTE_RE.match(raw))
+        or (scheme == "file" and parsed.netloc in ("", "localhost"))
+    ):
+        return _RemoteAuth(url=raw, token=None, auth_url=None)
+    raise HTTPException(400, f"remote url must be https://github.com/{expected_repo}[.git]")
 
 
-def _clone_remote_auth(clone_url: str, expected_repo: str, token: str) -> _RemoteAuth:
+def _clone_remote_auth(
+    clone_url: str,
+    expected_repo: str,
+    token: str,
+    *,
+    allow_local_remotes: bool = False,
+) -> _RemoteAuth:
     try:
-        return _remote_auth_for_url(clone_url, expected_repo, token)
+        return _remote_auth_for_url(clone_url, expected_repo, token, allow_local_remotes=allow_local_remotes)
     except HTTPException:
         log.warning(
             "gh-proxy: refusing clone — clone_url is not permitted",
@@ -371,10 +402,11 @@ def _origin_remote_auth(
     *,
     push: bool = False,
     slot_uid: int | None = None,
+    allow_local_remotes: bool = False,
 ) -> _RemoteAuth:
     url = _read_single_remote_url(repo_dir, expected_repo, push=push, slot_uid=slot_uid)
     try:
-        return _remote_auth_for_url(url, expected_repo, token)
+        return _remote_auth_for_url(url, expected_repo, token, allow_local_remotes=allow_local_remotes)
     except HTTPException:
         log.warning(
             "gh-proxy: refusing git op — origin url is not permitted",
@@ -383,7 +415,7 @@ def _origin_remote_auth(
         raise
 
 
-def create_proxy_app(settings: Settings) -> FastAPI:
+def create_proxy_app(settings: Settings, *, allow_local_remotes: bool = False) -> FastAPI:
     """Build the gh-proxy FastAPI app bound to `settings`."""
 
     @asynccontextmanager
@@ -832,7 +864,12 @@ def create_proxy_app(settings: Settings) -> FastAPI:
         repo = _require_str(data.get("repo"), "repo")
         clone_url = _require_str(data.get("clone_url"), "clone_url")
         default_branch = _require_str(data.get("default_branch"), "default_branch")
-        remote = _clone_remote_auth(clone_url, repo, _resolve_token(settings))
+        remote = _clone_remote_auth(
+            clone_url,
+            repo,
+            _resolve_token(settings),
+            allow_local_remotes=allow_local_remotes,
+        )
         target = _pool_dir(settings, repo)
         try:
             await _run_git_op(
@@ -852,7 +889,13 @@ def create_proxy_app(settings: Settings) -> FastAPI:
         data = await _json_body(request)
         repo = _require_str(data.get("repo"), "repo")
         target = _pool_dir(settings, repo)
-        remote = await asyncio.to_thread(_origin_remote_auth, target, repo, _resolve_token(settings))
+        remote = await asyncio.to_thread(
+            _origin_remote_auth,
+            target,
+            repo,
+            _resolve_token(settings),
+            allow_local_remotes=allow_local_remotes,
+        )
         try:
             await _run_git_op(
                 git_fetch_prune,
@@ -871,7 +914,13 @@ def create_proxy_app(settings: Settings) -> FastAPI:
         repo = _require_str(data.get("repo"), "repo")
         ref = _require_fetch_ref(data.get("ref"))
         target = _pool_dir(settings, repo)
-        remote = await asyncio.to_thread(_origin_remote_auth, target, repo, _resolve_token(settings))
+        remote = await asyncio.to_thread(
+            _origin_remote_auth,
+            target,
+            repo,
+            _resolve_token(settings),
+            allow_local_remotes=allow_local_remotes,
+        )
         # fetch_ref is intentionally best-effort; never surfaces a 5xx.
         await _run_git_op(
             git_fetch_ref,
@@ -889,7 +938,13 @@ def create_proxy_app(settings: Settings) -> FastAPI:
         repo = _require_str(data.get("repo"), "repo")
         pr_number = _require_int(data.get("pr_number"), "pr_number")
         target = _pool_dir(settings, repo)
-        remote = await asyncio.to_thread(_origin_remote_auth, target, repo, _resolve_token(settings))
+        remote = await asyncio.to_thread(
+            _origin_remote_auth,
+            target,
+            repo,
+            _resolve_token(settings),
+            allow_local_remotes=allow_local_remotes,
+        )
         try:
             await _run_git_op(
                 git_fetch_pr_head,
@@ -925,6 +980,7 @@ def create_proxy_app(settings: Settings) -> FastAPI:
             _resolve_token(settings),
             push=True,
             slot_uid=slot_uid,
+            allow_local_remotes=allow_local_remotes,
         )
         try:
             result = await _run_git_op(
@@ -966,6 +1022,7 @@ def create_proxy_app(settings: Settings) -> FastAPI:
             _resolve_token(settings),
             push=True,
             slot_uid=slot_uid,
+            allow_local_remotes=allow_local_remotes,
         )
         try:
             result = await _run_git_op(

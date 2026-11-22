@@ -151,8 +151,13 @@ def _signed(
     return {HEADER_TIMESTAMP: timestamp, HEADER_SIGNATURE: sig}
 
 
-def _build_app(cfg: Settings, gh_handler: Callable[[httpx.Request], httpx.Response] | None = None):
-    app = create_proxy_app(cfg)
+def _build_app(
+    cfg: Settings,
+    gh_handler: Callable[[httpx.Request], httpx.Response] | None = None,
+    *,
+    allow_local_remotes: bool = False,
+):
+    app = create_proxy_app(cfg, allow_local_remotes=allow_local_remotes)
     transport = httpx.MockTransport(gh_handler) if gh_handler is not None else None
     app.state.github = GitHubClient(_TOKEN, transport=transport)
     app.state.settings = cfg
@@ -728,7 +733,7 @@ async def test_github_error_passthrough_422(proxy_settings: Settings) -> None:
 
 
 async def test_git_clone_creates_pool_dir(proxy_settings: Settings, upstream_repo: Path) -> None:
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     body = b'{"repo":"octo/widget","clone_url":"' + str(upstream_repo).encode() + b'","default_branch":"main"}'
     async with await _async_client(app) as client:
         resp = await client.post(
@@ -780,7 +785,7 @@ async def test_git_fetch_repairs_missing_alternate_and_bad_ref(proxy_settings: S
     alternates = pool_dir / ".git" / "objects" / "info" / "alternates"
     alternates.write_text(str(Path(proxy_settings.workspace_root) / "missing-objects") + "\n", encoding="utf-8")
 
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     body = b'{"repo":"octo/widget"}'
     async with await _async_client(app) as client:
         resp = await client.post(
@@ -828,7 +833,7 @@ async def test_git_push_happy_path(proxy_settings: Settings, upstream_repo: Path
     branch = "farm/abc/feature"
     _, head = _stage_workspace(proxy_settings, upstream_repo, "octo/widget", 1, branch)
     # Rewire origin to the bare upstream so the proxy's push lands there.
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     body = (
         b'{"repo":"octo/widget","workspace_key":"octo__widget__1","branch":"'
         + branch.encode()
@@ -869,7 +874,7 @@ async def test_git_push_passes_slot_uid_to_git_push(
         return PushResult(head=head, branch=branch)
 
     monkeypatch.setattr("robomp.proxy.server.git_push", fake_git_push)
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     body = (
         b'{"repo":"octo/widget","workspace_key":"octo__widget__1","branch":"'
         + branch.encode()
@@ -913,7 +918,7 @@ async def test_git_push_rejects_invalid_slot_uid(proxy_settings: Settings, slot_
 async def test_git_push_head_drift(proxy_settings: Settings, upstream_repo: Path) -> None:
     branch = "farm/abc/drift"
     _, _ = _stage_workspace(proxy_settings, upstream_repo, "octo/widget", 1, branch)
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     fake_head = "0" * 40
     body = (
         b'{"repo":"octo/widget","workspace_key":"octo__widget__1","branch":"'
@@ -1403,7 +1408,7 @@ async def test_git_fetch_ref_allows_slashy_branch_name(proxy_settings: Settings,
     fetch_ref is best-effort, so a clean ref against the staged pool returns 200
     even though that branch isn't on the local upstream."""
     _stage_pool(proxy_settings, upstream_repo)
-    app = _build_app(proxy_settings)
+    app = _build_app(proxy_settings, allow_local_remotes=True)
     body = json.dumps({"repo": "octo/widget", "ref": "contrib/fix-parser"}).encode()
     async with await _async_client(app) as client:
         resp = await client.post(
@@ -1412,3 +1417,61 @@ async def test_git_fetch_ref_allows_slashy_branch_name(proxy_settings: Settings,
             headers={**_signed("POST", "/gh/v1/git/fetch_ref", body), "Content-Type": "application/json"},
         )
     assert resp.status_code == 200, resp.text
+
+
+# ============================================================================
+# P-8 — gh-proxy input validation hardening
+# ============================================================================
+
+
+async def test_require_int_rejects_booleans(proxy_settings: Settings) -> None:
+    app = _build_app(proxy_settings)
+    body = json.dumps({"repo": "octo/widget", "number": True, "body": "hello"}).encode()
+    async with await _async_client(app) as client:
+        resp = await client.post(
+            "/gh/v1/post_comment",
+            content=body,
+            headers={**_signed("POST", "/gh/v1/post_comment", body), "Content-Type": "application/json"},
+        )
+    assert resp.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "bad_key",
+    [
+        "_pool",
+        "octo__widget__1\\..\\_pool",
+        "octo__widget__..",
+        "octo__widget__1/../../etc",
+    ],
+)
+def test_workspace_repo_dir_rejects_traversal_and_pool(proxy_settings: Settings, bad_key: str) -> None:
+    from fastapi import HTTPException
+
+    from robomp.proxy.server import _workspace_repo_dir
+
+    with pytest.raises(HTTPException) as exc:
+        _workspace_repo_dir(proxy_settings, bad_key)
+    assert exc.value.status_code == 400
+
+
+@pytest.mark.parametrize(
+    "non_https_url",
+    [
+        "ssh://git@github.com/octo/widget.git",
+        "file:///tmp/evil.git",
+        "/tmp/local/repo.git",
+        "git@github.com:octo/widget.git",
+        "git://github.com/octo/widget.git",
+    ],
+)
+async def test_git_clone_rejects_non_https_urls_by_default(proxy_settings: Settings, non_https_url: str) -> None:
+    app = _build_app(proxy_settings)
+    body = json.dumps({"repo": "octo/widget", "clone_url": non_https_url, "default_branch": "main"}).encode()
+    async with await _async_client(app) as client:
+        resp = await client.post(
+            "/gh/v1/git/clone",
+            content=body,
+            headers={**_signed("POST", "/gh/v1/git/clone", body), "Content-Type": "application/json"},
+        )
+    assert resp.status_code == 400, resp.text

@@ -34,6 +34,18 @@ for i in $(seq 1 "$max_slots"); do
 done
 
 if [ "$is_proxy_role" -eq 1 ]; then
+    if [ "$(id -u)" -eq 0 ]; then
+        proxy_user="gh-proxy"
+        proxy_id=2999
+        /usr/sbin/groupadd -f -g "$proxy_id" "$proxy_user"
+        id -u "$proxy_user" >/dev/null 2>&1 || /usr/sbin/useradd -u "$proxy_id" -g "$proxy_user" -G omp -M -N -s /usr/sbin/nologin "$proxy_user"
+        slot_groups="omp"
+        for i in $(seq 1 "$max_slots"); do
+            slot_groups="${slot_groups},omp-$i"
+        done
+        /usr/sbin/usermod -g "$proxy_user" -G "$slot_groups" "$proxy_user"
+        exec setpriv --reuid="$proxy_id" --regid="$proxy_id" --init-groups --inh-caps=-all --no-new-privs -- "$@"
+    fi
     exec "$@"
 fi
 

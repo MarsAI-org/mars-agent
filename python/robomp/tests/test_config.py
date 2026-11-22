@@ -195,3 +195,8 @@ def test_task_timeout_hard_grace_env_parses(monkeypatch: pytest.MonkeyPatch, env
     reset_settings_cache()
     cfg = Settings()  # type: ignore[call-arg]
     assert cfg.task_timeout_hard_grace_seconds == 12.5
+
+
+def test_default_omp_command_is_mars(env: dict[str, str]) -> None:
+    cfg = Settings()  # type: ignore[call-arg]
+    assert cfg.omp_command == "mars"

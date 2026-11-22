@@ -43,11 +43,19 @@ _TOKEN_SAFE_CONFIG = [
     "credential.helper=",
     "core.askPass=",
     "core.hooksPath=/dev/null",
+    "core.alternateRefsCommand=",
+    "core.fsmonitor=false",
+    "core.sshCommand=false",
+    "core.gitProxy=",
+    "gc.auto=0",
+    "maintenance.auto=false",
     "http.proxy=",
+    "http.cookieFile=",
     "http.sslVerify=true",
     "http.extraHeader=",
+    "remote.origin.proxy=",
 ]
-_GIT_SUBPROCESS_SCRUBBED_ENV_KEYS = (
+SCRUBBED_SECRET_ENV_KEYS: tuple[str, ...] = (
     AUTH_ENV_VAR,
     "GITHUB_TOKEN",
     "GH_TOKEN",
@@ -55,12 +63,26 @@ _GIT_SUBPROCESS_SCRUBBED_ENV_KEYS = (
     "ROBOMP_REPLAY_TOKEN",
     "ROBOMP_GH_PROXY_HMAC_KEY",
 )
+_GIT_SUBPROCESS_SCRUBBED_ENV_KEYS = SCRUBBED_SECRET_ENV_KEYS
+
+
+def scrub_secret_env(env: dict[str, str], *, mask_empty: bool = False) -> dict[str, str]:
+    """Scrub all orchestrator secret env vars from ``env`` in place and return it.
+
+    Pass ``mask_empty=True`` when callers merge the returned dict on top of
+    ``os.environ`` (e.g. ``RpcClient`` extra env) and need explicit empty-string
+    overrides rather than key deletion.
+    """
+    for key in SCRUBBED_SECRET_ENV_KEYS:
+        if mask_empty:
+            env[key] = ""
+        else:
+            env.pop(key, None)
+    return env
 
 
 def _git_subprocess_env() -> dict[str, str]:
-    env = dict(os.environ)
-    for key in _GIT_SUBPROCESS_SCRUBBED_ENV_KEYS:
-        env.pop(key, None)
+    env = scrub_secret_env(dict(os.environ))
     env["GIT_TERMINAL_PROMPT"] = "0"
     env["GIT_ASKPASS"] = ""
     env["SSH_ASKPASS"] = ""
@@ -237,13 +259,12 @@ def _run_git(
     cmd: list[str] = ["git", "-c", "protocol.ext.allow=never"]
     if token:
         env[AUTH_ENV_VAR] = _basic_auth_header(token)
-        if auth_url is not None:
-            env["GIT_ALLOW_PROTOCOL"] = _TOKEN_ALLOWED_PROTOCOLS
-            env["GIT_CONFIG_NOSYSTEM"] = "1"
-            env["GIT_CONFIG_SYSTEM"] = os.devnull
-            env["GIT_CONFIG_GLOBAL"] = os.devnull
-            for item in [*_TOKEN_SAFE_CONFIG, *_token_url_safe_config(auth_url)]:
-                cmd.extend(["-c", item])
+        env["GIT_ALLOW_PROTOCOL"] = _TOKEN_ALLOWED_PROTOCOLS
+        env["GIT_CONFIG_NOSYSTEM"] = "1"
+        env["GIT_CONFIG_SYSTEM"] = os.devnull
+        env["GIT_CONFIG_GLOBAL"] = os.devnull
+        for item in [*_TOKEN_SAFE_CONFIG, *_token_url_safe_config(auth_url)]:
+            cmd.extend(["-c", item])
         cmd.extend(["--config-env", f"{_http_extra_header_key(auth_url)}={AUTH_ENV_VAR}"])
     cmd.extend(args)
     log.debug("git", extra={"cmd": _redacted_cmd(cmd), "cwd": str(cwd) if cwd else None})
@@ -1024,6 +1045,7 @@ __all__ = [
     "GitCommandError",
     "HeadDriftError",
     "PushResult",
+    "SCRUBBED_SECRET_ENV_KEYS",
     "clone",
     "fetch_pr_head",
     "fetch_prune",
@@ -1033,4 +1055,5 @@ __all__ = [
     "push_release",
     "redact_credentials",
     "rev_parse_head",
+    "scrub_secret_env",
 ]

@@ -17,6 +17,7 @@ import grp
 import logging
 import os
 import shutil
+import stat
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -35,11 +36,11 @@ from robomp import host_tools, persona, pragmas
 from robomp.cancellation import register_cancel_hook, unregister_cancel_hook
 from robomp.config import Settings
 from robomp.db import Database, issue_key
-from robomp.git_ops import DirtyState, inspect_dirty_state
+from robomp.git_ops import SCRUBBED_SECRET_ENV_KEYS, DirtyState, inspect_dirty_state
 from robomp.github_backend import GitHubBackend
 from robomp.github_client import CommentInfo, IssueInfo, PullRequestInfo, RepoInfo
 from robomp.host_tools import AbortController, ReleaseToolContext, ToolBindings, _git_identity_env
-from robomp.natives_cache import NativesCache
+from robomp.natives_cache import NativesCache, is_workspace_clean_for_capture
 from robomp.natives_cache import compute_key as natives_compute_key
 from robomp.sandbox import GitTransport, Workspace, _prepare_slot_runtime_env, _safe_directory_env
 
@@ -125,14 +126,7 @@ def _resolve_pragma_overrides(
     return model_override, thinking_override
 
 
-_SCRUBBED_ENV_KEYS: tuple[str, ...] = (
-    # Secrets that MUST NOT reach the agent subprocess; an agent with the
-    # `bash` tool could otherwise `printenv` them out of roboomp's env.
-    "GITHUB_TOKEN",
-    "GITHUB_WEBHOOK_SECRET",
-    "ROBOMP_REPLAY_TOKEN",
-    "ROBOMP_GH_PROXY_HMAC_KEY",
-)
+_SCRUBBED_ENV_KEYS: tuple[str, ...] = SCRUBBED_SECRET_ENV_KEYS
 
 _AGENT_HOME = Path("/srv/agent-home")
 _AGENT_HOME_STAGE = Path("/srv/agent-home-stage")
@@ -196,6 +190,36 @@ def _stage_agent_home() -> None:
                 log.warning("Failed to normalize agent home file %s: %s", path, exc)
 
 
+def _chown_chmod_nofollow(path: Path, *, gid: int, mode: int, expect_dir: bool) -> bool:
+    """Apply group ownership and mode via an ``O_NOFOLLOW`` file descriptor.
+
+    Refuses symlinks and special files (FIFOs, sockets, devices) so walking a
+    slot-writable directory as root cannot be redirected outside the tree.
+    Returns True if the target was opened and updated, False if skipped.
+    """
+    flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0)
+    if expect_dir and hasattr(os, "O_DIRECTORY"):
+        flags |= os.O_DIRECTORY
+    try:
+        fd = os.open(path, flags)
+    except OSError:
+        return False
+    try:
+        st = os.fstat(fd)
+        if expect_dir:
+            if not stat.S_ISDIR(st.st_mode):
+                return False
+        elif not stat.S_ISREG(st.st_mode):
+            return False
+        os.fchown(fd, -1, gid)
+        os.fchmod(fd, mode)
+        return True
+    except OSError:
+        return False
+    finally:
+        os.close(fd)
+
+
 def _ensure_agent_run_dir() -> None:
     """Keep ``~/.mars/run`` writable by every sandbox slot.
 
@@ -207,21 +231,26 @@ def _ensure_agent_run_dir() -> None:
     """
     if os.geteuid() != 0:
         return
-    run_dir = _AGENT_HOME / ".mars" / "run"
+    mars_dir = _AGENT_HOME / ".mars"
+    run_dir = mars_dir / "run"
     try:
         gid = grp.getgrnam("omp").gr_gid
     except KeyError:
         return
     try:
+        for ancestor in (_AGENT_HOME, mars_dir, run_dir):
+            if ancestor.is_symlink():
+                log.warning("Refusing symlink in agent run dir path: %s", ancestor)
+                return
         run_dir.mkdir(parents=True, exist_ok=True)
-        for root, _dirs, files in os.walk(run_dir):
+        for root, dirs, files in os.walk(run_dir, followlinks=False):
             root_path = Path(root)
-            os.chown(root_path, -1, gid)
-            root_path.chmod(0o2770)
+            if not _chown_chmod_nofollow(root_path, gid=gid, mode=0o2770, expect_dir=True):
+                dirs[:] = []
+                continue
+            dirs[:] = [d for d in dirs if not (root_path / d).is_symlink()]
             for name in files:
-                file_path = root_path / name
-                os.chown(file_path, -1, gid)
-                file_path.chmod(0o660)
+                _chown_chmod_nofollow(root_path / name, gid=gid, mode=0o660, expect_dir=False)
     except OSError as exc:
         log.warning("Failed to prepare agent run dir %s: %s", run_dir, exc)
 
@@ -856,7 +885,8 @@ async def run_task(
         # with the source state and would poison the cache.
         raise
     else:
-        await asyncio.to_thread(_capture_natives_cache, inputs)
+        if not review_mode:
+            await asyncio.to_thread(_capture_natives_cache, inputs)
         return result
 
 
@@ -869,8 +899,20 @@ def _capture_natives_cache(inputs: TaskInputs) -> None:
     if cache is None:
         return
     workspace = inputs.workspace
+    if workspace.branch.startswith("review/pr-"):
+        return
     native_dir = workspace.repo_dir / "packages" / "natives" / "native"
-    if not native_dir.exists():
+    if native_dir.is_symlink() or not native_dir.is_dir():
+        return
+    if (workspace.repo_dir / ".git").exists() and not is_workspace_clean_for_capture(workspace.repo_dir):
+        log.info(
+            "natives_cache",
+            extra={
+                "action": "skip_dirty",
+                "workspace": workspace.workspace_key,
+                "repo": workspace.repo_full_name,
+            },
+        )
         return
     try:
         key = natives_compute_key(workspace.repo_dir)

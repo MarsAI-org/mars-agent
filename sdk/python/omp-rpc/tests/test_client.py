@@ -2513,5 +2513,91 @@ class RetainsSurvivorTests(unittest.TestCase):
             os.kill(grandchild_pid, 0)
 
 
+class HardeningRegressionTests(unittest.TestCase):
+    """P-7 regression tests for bounded reads, lock safety, and closed-state races."""
+
+    def test_oversized_stdout_frame_rejected_without_unbounded_read(self) -> None:
+        from omp_rpc.client import _MAX_RPC_FRAME_BYTES
+
+        server = textwrap.dedent(
+            f"""
+            import json, sys
+            print(json.dumps({{"type": "ready"}}), flush=True)
+            sys.stdout.write("x" * ({_MAX_RPC_FRAME_BYTES} + 4096))
+            sys.stdout.write("\\n")
+            sys.stdout.flush()
+            """
+        )
+        client = RpcClient(
+            command=[sys.executable, "-u", "-c", server],
+            startup_timeout=5.0,
+            request_timeout=2.0,
+        )
+        client.start()
+        try:
+            with self.assertRaises(RpcError):
+                client.get_state()
+        finally:
+            client.stop()
+
+    def test_oversized_stderr_line_is_truncated_without_crashing(self) -> None:
+        from omp_rpc.client import _MAX_STDERR_LINE_BYTES
+
+        server = textwrap.dedent(
+            f"""
+            import json, sys
+            sys.stderr.write("E" * ({_MAX_STDERR_LINE_BYTES} + 8192) + "\\n")
+            sys.stderr.flush()
+            print(json.dumps({{"type": "ready"}}), flush=True)
+            for line in sys.stdin:
+                req = json.loads(line)
+                print(json.dumps({{"type": "response", "id": req["id"], "command": req["type"], "success": True, "data": {{}}}}), flush=True)
+            """
+        )
+        with RpcClient(
+            command=[sys.executable, "-u", "-c", server],
+            startup_timeout=5.0,
+            request_timeout=5.0,
+        ) as client:
+            client._request("ping")
+            deadline = time.monotonic() + 2.0
+            while "...[truncated]" not in client.stderr and time.monotonic() < deadline:
+                time.sleep(0.02)
+            self.assertIn("...[truncated]", client.stderr)
+            self.assertLess(len(client.stderr), _MAX_STDERR_LINE_BYTES + 256)
+
+    def test_request_data_checks_closed_error_under_lock(self) -> None:
+        from omp_rpc import RpcProcessExitError
+
+        with RpcClient(
+            command=[sys.executable, "-u", "-c", FAKE_SERVER],
+            startup_timeout=5.0,
+            request_timeout=5.0,
+        ) as client:
+            client._mark_closed(RpcProcessExitError("already closed"))
+            with self.assertRaises(RpcProcessExitError):
+                client._request_data("get_state", "req_race", {})
+            self.assertEqual(client._pending, {})
+
+    def test_host_tool_dispatch_names_map_is_bounded(self) -> None:
+        from omp_rpc.client import _MAX_HOST_TOOL_DISPATCH_NAMES
+
+        client = RpcClient(command=[sys.executable, "-c", "pass"])
+        # `_handle_host_tool_call` populates `_host_tool_dispatch_names` before returning on unknown tool.
+        client._send_notification = lambda _payload: None  # type: ignore[method-assign]
+        for idx in range(_MAX_HOST_TOOL_DISPATCH_NAMES + 50):
+            client._handle_host_tool_call(
+                {
+                    "id": f"r-{idx}",
+                    "toolName": "missing_tool",
+                    "toolCallId": f"call-{idx}",
+                    "arguments": {},
+                }
+            )
+        self.assertLessEqual(len(client._host_tool_dispatch_names), _MAX_HOST_TOOL_DISPATCH_NAMES)
+        self.assertNotIn("call-0", client._host_tool_dispatch_names)
+        self.assertIn(f"call-{_MAX_HOST_TOOL_DISPATCH_NAMES + 49}", client._host_tool_dispatch_names)
+
+
 if __name__ == "__main__":
     unittest.main()

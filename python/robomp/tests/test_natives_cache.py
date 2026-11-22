@@ -415,3 +415,43 @@ def test_atomic_link_replaces_existing_target(tmp_path: Path) -> None:
     _atomic_link(src, dst)
     assert dst.read_bytes() == b"new"
     assert dst.stat().st_ino == src.stat().st_ino
+
+
+def test_capture_refuses_symlinks_and_stores_node_readonly(tmp_path: Path) -> None:
+    """P-5 regression: capture refuses symlinked inputs and stores `.node` read-only (0o444)."""
+    import stat as stat_mod
+
+    cache = _cache(tmp_path)
+    secret = tmp_path / "secret.txt"
+    secret.write_text("do-not-exfiltrate\n", encoding="utf-8")
+
+    # 1. Symlinked .node file must be rejected.
+    src_repo = _seed_repo(tmp_path / "sym" / "repo")
+    native_dir = _populate_built_artifacts(src_repo)
+    node_path = native_dir / "pi_natives.linux-arm64.node"
+    node_path.unlink()
+    node_path.symlink_to(secret)
+    key = compute_key(src_repo, target="linux-arm64")
+    assert cache.capture(REPO, key, native_dir) is None
+    assert cache.lookup(REPO, key) is None
+
+    # 2. Clean regular files capture with `.node` stored mode 0o444.
+    node_path.unlink()
+    node_path.write_bytes(b"\x7fELF-clean")
+    stored = cache.capture(REPO, key, native_dir)
+    assert stored is not None
+    cached_node = stored / "pi_natives.linux-arm64.node"
+    assert stat_mod.S_IMODE(cached_node.stat().st_mode) == 0o444
+
+
+def test_capture_refuses_dirty_cache_key_inputs(tmp_path: Path) -> None:
+    """P-5 regression: uncommitted edits to cache-key inputs must not poison the clean HEAD entry."""
+    cache = _cache(tmp_path)
+    src_repo = _seed_repo(tmp_path / "dirty" / "repo")
+    native_dir = _populate_built_artifacts(src_repo)
+    key = compute_key(src_repo, target="linux-arm64")
+
+    # Mutate a cache-key input without committing.
+    (src_repo / "crates" / "pi-natives" / "src.rs").write_text("// dirty uncommitted edit\n", encoding="utf-8")
+    assert cache.capture(REPO, key, native_dir) is None
+    assert cache.lookup(REPO, key) is None

@@ -188,3 +188,37 @@ def test_push_release_rejects_non_fast_forward_without_moving_tag(tmp_path: Path
         push_release(work, branch="main", tag="v1.2.3", expected_head=local_head, token=None)
     assert _git(tmp_path, "--git-dir", str(origin), "rev-parse", "refs/heads/main") == remote_head
     assert _git(tmp_path, "--git-dir", str(origin), "rev-parse", "refs/tags/v1.2.3") == old_head
+
+
+def test_run_git_hardens_unconditionally_when_token_present_without_auth_url(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """P-4 regression: `_TOKEN_SAFE_CONFIG` and `GIT_ALLOW_PROTOCOL=https` apply even if `auth_url` is None."""
+    from robomp.git_ops import _run_git
+
+    captured: dict[str, object] = {}
+
+    def fake_run(cmd: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        captured["cmd"] = cmd
+        captured["env"] = kwargs["env"]
+        return subprocess.CompletedProcess(cmd, 0, "", "")
+
+    monkeypatch.setattr("robomp.git_ops.subprocess.run", fake_run)
+    _run_git(["fetch", "origin"], cwd=tmp_path, token="ghp_secret", auth_url=None)
+
+    cmd = captured["cmd"]
+    env = captured["env"]
+    assert isinstance(cmd, list)
+    assert isinstance(env, dict)
+    assert env["GIT_ALLOW_PROTOCOL"] == "https"
+    for expected in (
+        "core.alternateRefsCommand=",
+        "core.fsmonitor=false",
+        "gc.auto=0",
+        "maintenance.auto=false",
+        "core.sshCommand=false",
+        "core.gitProxy=",
+        "remote.origin.proxy=",
+        "http.cookieFile=",
+    ):
+        assert expected in cmd, expected

@@ -409,9 +409,11 @@ def test_natives_cache_shares_artifacts_across_slot_workspaces(
     assert stored is not None
     cached_node = stored / "pi_natives.linux-arm64.node"
     cached_companion = stored / "index.d.ts"
-    # Cache root is setgid `omp`; new files inherit gid `omp` so any slot
-    # with `extra_groups=[omp]` can read them.
-    assert cached_node.stat().st_gid == _SHARED_OMP_GID
+    # Cached `.node` files are stored read-only (0o444) and owned by root:root
+    # so any slot can read the hardlink without mutating the shared cache inode.
+    assert cached_node.stat().st_uid == 0
+    assert cached_node.stat().st_gid == 0
+    assert (cached_node.stat().st_mode & 0o777) == 0o444
     assert cached_companion.stat().st_gid == _SHARED_OMP_GID
 
     # --- Workspace 2: a different slot UID gets auto-populated on ensure. ---

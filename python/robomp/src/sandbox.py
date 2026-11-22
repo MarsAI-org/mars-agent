@@ -48,7 +48,7 @@ import signal
 import stat
 import subprocess
 import threading
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
@@ -57,6 +57,7 @@ from robomp.git_ops import (
     GitCommandError,
     PushResult,
     redact_credentials,
+    scrub_secret_env,
 )
 from robomp.git_ops import (
     clone as git_clone,
@@ -130,10 +131,43 @@ def _safe_directory_env(repo_dir: Path) -> dict[str, str]:
     }
 
 
+_SAFE_ROOT_GIT_CONFIG_ARGS: tuple[str, ...] = (
+    "-c",
+    "core.hooksPath=/dev/null",
+    "-c",
+    "core.fsmonitor=false",
+    "-c",
+    "core.alternateRefsCommand=",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "maintenance.auto=false",
+)
+
+
+def _root_git_cmd(cmd: list[str]) -> list[str]:
+    """Inject safe config flags into root-run git commands against shared pool repos."""
+    if cmd and cmd[0] == "git":
+        return ["git", *_SAFE_ROOT_GIT_CONFIG_ARGS, *cmd[1:]]
+    return list(cmd)
+
+
 def _git_env_for_repo(repo_dir: Path) -> dict[str, str]:
-    env = os.environ.copy()
+    env = scrub_secret_env(os.environ.copy())
     env.update(_safe_directory_env(repo_dir))
     env["GIT_TERMINAL_PROMPT"] = "0"
+    env["GIT_ASKPASS"] = ""
+    env["SSH_ASKPASS"] = ""
+    return env
+
+
+def _root_git_env(repo_dir: Path | None = None) -> dict[str, str]:
+    env = scrub_secret_env(os.environ.copy())
+    if repo_dir is not None:
+        env.update(_safe_directory_env(repo_dir))
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    env["GIT_ASKPASS"] = ""
+    env["SSH_ASKPASS"] = ""
     return env
 
 
@@ -284,21 +318,30 @@ class LocalGitTransport:
     def __init__(self, token: str | None) -> None:
         self._token = token
 
+    def _auth_url(self, repo: str, clone_url: str | None = None) -> str | None:
+        if not self._token:
+            return None
+        if clone_url and clone_url.startswith("https://"):
+            return clone_url
+        return f"https://github.com/{repo}.git"
+
     def clone_pool(self, *, repo: str, clone_url: str, default_branch: str, target: Path) -> None:
-        del repo  # unused; URL identifies the remote
-        git_clone(target, clone_url=clone_url, default_branch=default_branch, token=self._token)
+        git_clone(
+            target,
+            clone_url=clone_url,
+            default_branch=default_branch,
+            token=self._token,
+            auth_url=self._auth_url(repo, clone_url),
+        )
 
     def fetch_pool(self, *, repo: str, pool_dir: Path) -> None:
-        del repo
-        git_fetch_prune(pool_dir, token=self._token)
+        git_fetch_prune(pool_dir, token=self._token, auth_url=self._auth_url(repo))
 
     def fetch_base_ref(self, *, repo: str, pool_dir: Path, ref: str) -> None:
-        del repo
-        git_fetch_ref(pool_dir, ref, token=self._token)
+        git_fetch_ref(pool_dir, ref, token=self._token, auth_url=self._auth_url(repo))
 
     def fetch_pr_head(self, *, repo: str, pool_dir: Path, pr_number: int) -> None:
-        del repo
-        git_fetch_pr_head(pool_dir, pr_number, token=self._token)
+        git_fetch_pr_head(pool_dir, pr_number, token=self._token, auth_url=self._auth_url(repo))
 
     def push_branch(
         self,
@@ -310,8 +353,15 @@ class LocalGitTransport:
         expected_head: str,
         slot_uid: int | None = None,
     ) -> PushResult:
-        del repo, workspace_key
-        return git_push(repo_dir, branch=branch, expected_head=expected_head, token=self._token, slot_uid=slot_uid)
+        del workspace_key
+        return git_push(
+            repo_dir,
+            branch=branch,
+            expected_head=expected_head,
+            token=self._token,
+            auth_url=self._auth_url(repo),
+            slot_uid=slot_uid,
+        )
 
     def push_release(
         self,
@@ -324,13 +374,14 @@ class LocalGitTransport:
         expected_head: str,
         slot_uid: int | None = None,
     ) -> PushResult:
-        del repo, workspace_key
+        del workspace_key
         return git_push_release(
             repo_dir,
             branch=branch,
             tag=tag,
             expected_head=expected_head,
             token=self._token,
+            auth_url=self._auth_url(repo),
             slot_uid=slot_uid,
         )
 
@@ -375,12 +426,14 @@ def _run(
     *,
     cwd: Path | None = None,
     timeout: float | None = _DEFAULT_SANDBOX_SUBPROCESS_TIMEOUT,
+    env: Mapping[str, str] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     """Legacy raising helper (still used by a sandbox test). Forwards to subprocess.run."""
     try:
         proc = subprocess.run(
             cmd,
             cwd=str(cwd) if cwd else None,
+            env=dict(env) if env is not None else None,
             check=False,
             capture_output=True,
             text=True,
@@ -405,11 +458,12 @@ def _worktree_add(add_cmd: list[str], *, pool: Path, repo_dir: Path) -> None:
     timeout), raise that instead — chained from the add error — since a
     dangling registration left behind is exactly what poisons the retry.
     """
+    pool_env = _root_git_env(pool)
     try:
-        _run(add_cmd, cwd=pool)
+        _run(_root_git_cmd(add_cmd), cwd=pool, env=pool_env)
     except GitCommandError as add_err:
         shutil.rmtree(repo_dir, ignore_errors=True)
-        pruned = _safe_run(["git", "worktree", "prune"], cwd=pool)
+        pruned = _safe_run(_root_git_cmd(["git", "worktree", "prune"]), cwd=pool, env=pool_env)
         if pruned.returncode != 0:
             raise GitCommandError(
                 ["git", "worktree", "prune"], pruned.returncode, pruned.stdout, pruned.stderr
@@ -590,55 +644,237 @@ def _provision_runtime_dirs(ws_root: Path) -> None:
 
 
 def _grant_group_bits(path: Path, *, gid: int, bits: int) -> None:
+    flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(path, flags)
+    except OSError:
+        return
+    try:
+        st = os.fstat(fd)
+        if not (stat.S_ISREG(st.st_mode) or stat.S_ISDIR(st.st_mode)):
+            return
+        os.fchown(fd, -1, gid)
+        os.fchmod(fd, stat.S_IMODE(st.st_mode) | bits)
+    except OSError:
+        return
+    finally:
+        os.close(fd)
+
+
+def _harden_root_readonly(path: Path, *, dir_mode: int = 0o755, file_mode: int = 0o644) -> None:
+    """Keep sensitive pool git metadata root-owned and non-group-writable."""
+    flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0)
+    try:
+        fd = os.open(path, flags)
+    except OSError:
+        return
+    try:
+        st = os.fstat(fd)
+        if stat.S_ISREG(st.st_mode):
+            os.fchown(fd, 0, 0)
+            os.fchmod(fd, file_mode)
+            return
+        if not stat.S_ISDIR(st.st_mode):
+            return
+        os.fchown(fd, 0, 0)
+        os.fchmod(fd, dir_mode)
+    except OSError:
+        return
+    finally:
+        os.close(fd)
+
+    for root, dirs, files in os.walk(path, followlinks=False):
+        root_path = Path(root)
+        dirs[:] = [d for d in dirs if not (root_path / d).is_symlink()]
+        for dirname in dirs:
+            _harden_root_readonly(root_path / dirname, dir_mode=dir_mode, file_mode=file_mode)
+        for filename in files:
+            _harden_root_readonly(root_path / filename, dir_mode=dir_mode, file_mode=file_mode)
+
+
+def _grant_tree(
+    path: Path,
+    *,
+    gid: int,
+    files_group_writable: bool,
+    skip_rel_paths: frozenset[Path] = frozenset(),
+) -> None:
     try:
         st = path.lstat()
-    except FileNotFoundError:
+    except OSError:
         return
     if stat.S_ISLNK(st.st_mode):
         return
-    os.chown(path, -1, gid)
-    path.chmod(stat.S_IMODE(st.st_mode) | bits)
-
-
-def _grant_tree(path: Path, *, gid: int, files_group_writable: bool) -> None:
-    if not path.exists():
-        return
-    if path.is_file():
+    if stat.S_ISREG(st.st_mode):
         bits = stat.S_IRGRP | (stat.S_IWGRP if files_group_writable else 0)
         _grant_group_bits(path, gid=gid, bits=bits)
         return
+    if not stat.S_ISDIR(st.st_mode):
+        return
     for root, dirs, files in os.walk(path, followlinks=False):
         root_path = Path(root)
+        rel_root = root_path.relative_to(path)
+        if rel_root in skip_rel_paths:
+            dirs[:] = []
+            continue
         _grant_group_bits(root_path, gid=gid, bits=stat.S_IRWXG | stat.S_ISGID)
+        kept_dirs: list[str] = []
         for dirname in dirs:
-            _grant_group_bits(root_path / dirname, gid=gid, bits=stat.S_IRWXG | stat.S_ISGID)
+            child = root_path / dirname
+            rel_child = child.relative_to(path)
+            if child.is_symlink() or rel_child in skip_rel_paths:
+                continue
+            kept_dirs.append(dirname)
+            _grant_group_bits(child, gid=gid, bits=stat.S_IRWXG | stat.S_ISGID)
+        dirs[:] = kept_dirs
         file_bits = stat.S_IRGRP | (stat.S_IWGRP if files_group_writable else 0)
         for filename in files:
-            _grant_group_bits(root_path / filename, gid=gid, bits=file_bits)
+            child = root_path / filename
+            if child.is_symlink() or child.relative_to(path) in skip_rel_paths:
+                continue
+            _grant_group_bits(child, gid=gid, bits=file_bits)
 
 
-def _resolve_worktree_git_dirs(repo_dir: Path) -> tuple[Path, Path] | None:
-    marker = repo_dir / ".git"
-    if marker.is_dir():
-        return marker, marker
+def _read_regular_file_nofollow(path: Path) -> str | None:
+    flags = os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0)
     try:
-        text = marker.read_text(encoding="utf-8").strip()
+        fd = os.open(path, flags)
     except OSError:
         return None
+    try:
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode):
+            return None
+        with os.fdopen(fd, "r", encoding="utf-8") as fh:
+            fd = -1
+            return fh.read()
+    except OSError:
+        return None
+    finally:
+        if fd != -1:
+            os.close(fd)
+
+
+def _has_symlink_between(base: Path, target: Path) -> bool:
+    """Return True if ``target`` or any ancestor down from ``base`` is a symlink."""
+    try:
+        rel = target.relative_to(base)
+    except ValueError:
+        return True
+    current = base
+    if current.is_symlink():
+        return True
+    for part in rel.parts:
+        current = current / part
+        if current.is_symlink():
+            return True
+    return False
+
+
+def _expected_pool_git_root(repo_dir: Path) -> Path | None:
+    """Derive the expected ``_pool/<repo>/.git`` root from a workspace ``repo_dir``."""
+    if repo_dir.name != "repo":
+        return None
+    ws_root = repo_dir.parent
+    if "__" not in ws_root.name:
+        return None
+    repo_slug, _suffix = ws_root.name.rsplit("__", 1)
+    if not repo_slug or "/" in repo_slug or "\\" in repo_slug or repo_slug in (".", "..", "_pool"):
+        return None
+    return ws_root.parent / "_pool" / repo_slug / ".git"
+
+
+def _resolve_worktree_git_dirs(
+    repo_dir: Path,
+    *,
+    expected_pool_git_root: Path | None = None,
+) -> tuple[Path, Path] | None:
+    if repo_dir.is_symlink():
+        log.warning("refusing symlinked repo_dir when resolving git dirs: %s", repo_dir)
+        return None
+    raw_pool_git_root = (
+        expected_pool_git_root if expected_pool_git_root is not None else _expected_pool_git_root(repo_dir)
+    )
+    if raw_pool_git_root is None or raw_pool_git_root.is_symlink():
+        return None
+    try:
+        pool_git_st = raw_pool_git_root.lstat()
+    except OSError:
+        return None
+    if not stat.S_ISDIR(pool_git_st.st_mode):
+        return None
+    pool_git_root = raw_pool_git_root.resolve()
+
+    marker = repo_dir / ".git"
+    try:
+        marker_st = marker.lstat()
+    except OSError:
+        return None
+    if stat.S_ISLNK(marker_st.st_mode):
+        log.warning("refusing symlinked .git marker: %s", marker)
+        return None
+    if stat.S_ISDIR(marker_st.st_mode):
+        resolved_marker = marker.resolve()
+        if resolved_marker != pool_git_root:
+            log.warning("refusing .git directory outside expected pool root: %s", resolved_marker)
+            return None
+        return resolved_marker, resolved_marker
+
+    text = _read_regular_file_nofollow(marker)
+    if text is None:
+        return None
+    text = text.strip()
     prefix = "gitdir:"
     if not text.startswith(prefix):
         return None
     raw_git_dir = text[len(prefix) :].strip()
-    git_dir = Path(raw_git_dir)
-    if not git_dir.is_absolute():
-        git_dir = (repo_dir / git_dir).resolve()
+    if not raw_git_dir:
+        return None
+    git_dir_candidate = Path(raw_git_dir)
+    if not git_dir_candidate.is_absolute():
+        git_dir_candidate = repo_dir / git_dir_candidate
     try:
-        raw_common_dir = (git_dir / "commondir").read_text(encoding="utf-8").strip()
+        git_dir_lstat = git_dir_candidate.lstat()
     except OSError:
+        return None
+    if stat.S_ISLNK(git_dir_lstat.st_mode) or not stat.S_ISDIR(git_dir_lstat.st_mode):
+        log.warning("refusing non-directory or symlinked gitdir: %s", git_dir_candidate)
+        return None
+    git_dir = git_dir_candidate.resolve()
+    if not git_dir.is_relative_to(pool_git_root) or _has_symlink_between(pool_git_root, git_dir):
+        log.warning("refusing gitdir outside expected pool root: %s (expected %s)", git_dir, pool_git_root)
+        return None
+
+    commondir_path = git_dir / "commondir"
+    try:
+        commondir_lstat = commondir_path.lstat()
+    except FileNotFoundError:
         return git_dir, git_dir
-    common_dir = Path(raw_common_dir)
-    if not common_dir.is_absolute():
-        common_dir = (git_dir / common_dir).resolve()
+    except OSError:
+        return None
+    if stat.S_ISLNK(commondir_lstat.st_mode):
+        log.warning("refusing symlinked commondir file: %s", commondir_path)
+        return None
+    raw_common_dir_text = _read_regular_file_nofollow(commondir_path)
+    if raw_common_dir_text is None:
+        return None
+    raw_common_dir = raw_common_dir_text.strip()
+    if not raw_common_dir:
+        return None
+    common_dir_candidate = Path(raw_common_dir)
+    if not common_dir_candidate.is_absolute():
+        common_dir_candidate = git_dir / common_dir_candidate
+    try:
+        common_dir_lstat = common_dir_candidate.lstat()
+    except OSError:
+        return None
+    if stat.S_ISLNK(common_dir_lstat.st_mode) or not stat.S_ISDIR(common_dir_lstat.st_mode):
+        log.warning("refusing non-directory or symlinked commondir: %s", common_dir_candidate)
+        return None
+    common_dir = common_dir_candidate.resolve()
+    if not common_dir.is_relative_to(pool_git_root) or _has_symlink_between(pool_git_root, common_dir):
+        log.warning("refusing commondir outside expected pool root: %s (expected %s)", common_dir, pool_git_root)
+        return None
     return git_dir, common_dir
 
 
@@ -648,7 +884,9 @@ def _share_git_metadata_with_slots(repo_dir: Path, slot_uid: int | None) -> None
     The worktree checkout itself is slot-private, but `.git` in a Git worktree
     points back into the shared clone pool. A retry may run as a different
     `omp-N` user, so the pool-side worktree gitdir, refs, reflogs, and object
-    directories must stay writable through the shared `omp` group.
+    directories must stay writable through the shared `omp` group. Sensitive
+    control files (`.git/config`, `.git/hooks`, `.git/objects/info/alternates`)
+    stay root-owned and read-only to slots.
     """
     if not _slot_permissions_active(slot_uid):
         return
@@ -659,15 +897,22 @@ def _share_git_metadata_with_slots(repo_dir: Path, slot_uid: int | None) -> None
     gid = _SHARED_OMP_GID
     _grant_tree(git_dir, gid=gid, files_group_writable=True)
     _grant_group_bits(common_dir, gid=gid, bits=stat.S_IRWXG | stat.S_ISGID)
+    _grant_tree(
+        common_dir / "objects",
+        gid=gid,
+        files_group_writable=False,
+        skip_rel_paths=frozenset({Path("info")}),
+    )
     for rel, files_group_writable in (
-        ("objects", False),
         ("refs", True),
         ("logs", True),
         ("worktrees", True),
     ):
         _grant_tree(common_dir / rel, gid=gid, files_group_writable=files_group_writable)
-    for rel in ("config", "packed-refs", "HEAD", "FETCH_HEAD", "ORIG_HEAD"):
+    for rel in ("packed-refs", "HEAD", "FETCH_HEAD", "ORIG_HEAD"):
         _grant_tree(common_dir / rel, gid=gid, files_group_writable=True)
+    for rel in ("config", "hooks", "objects/info"):
+        _harden_root_readonly(common_dir / rel)
 
 
 def _chown_workspace(ws_root: Path, slot_uid: int | None) -> None:
@@ -858,7 +1103,7 @@ class SandboxManager:
         first so we don't spam logs on first-time clones). A timed-out probe
         (124) is indeterminate and raises instead — see below.
         """
-        probe = _safe_run(["git", "remote", "get-url", "origin"], cwd=repo_dir)
+        probe = _safe_run(_root_git_cmd(["git", "remote", "get-url", "origin"]), cwd=repo_dir, env=_root_git_env(repo_dir))
         if probe.returncode == 124:
             # A timed-out probe is indeterminate: we cannot tell whether origin
             # embeds a legacy credential that must be rewritten before fetch.
@@ -869,7 +1114,7 @@ class SandboxManager:
             return
         if probe.stdout.strip() == clone_url:
             return
-        _safe_run(["git", "remote", "set-url", "origin", clone_url], cwd=repo_dir)
+        _safe_run(_root_git_cmd(["git", "remote", "set-url", "origin", clone_url]), cwd=repo_dir, env=_root_git_env(repo_dir))
 
     # ---- per-issue workspace ----
     def workspace_root(self, repo: str, number: int | str) -> Path:
@@ -940,8 +1185,9 @@ class SandboxManager:
                     # head branch we need to amend; starting from default would silently
                     # lose the PR's current commits if the local pool branch is absent.
                     self.transport.fetch_base_ref(repo=repo, pool_dir=pool, ref=existing_branch or default_branch)
+                    pool_env = _root_git_env(pool)
                     probe = ["git", "rev-parse", "--verify", f"refs/heads/{branch}"]
-                    check = _safe_run(probe, cwd=pool)
+                    check = _safe_run(_root_git_cmd(probe), cwd=pool, env=pool_env)
                     if check.returncode == 124:
                         # A timed-out probe is indeterminate, not "branch absent".
                         # Falling through would create the worktree from the wrong
@@ -957,7 +1203,7 @@ class SandboxManager:
                         start_point = f"origin/{default_branch}"
                         if existing_branch:
                             remote_probe = ["git", "rev-parse", "--verify", f"refs/remotes/origin/{existing_branch}"]
-                            remote = _safe_run(remote_probe, cwd=pool)
+                            remote = _safe_run(_root_git_cmd(remote_probe), cwd=pool, env=pool_env)
                             if remote.returncode == 124:
                                 # Same: an indeterminate probe must not silently fall
                                 # back to origin/default and lose the PR's commits.
@@ -995,12 +1241,11 @@ class SandboxManager:
                 _share_git_metadata_with_slots(repo_dir, slot_uid)
                 _provision_runtime_dirs(ws_root)
                 _chown_workspace(ws_root, slot_uid)
-            if slot_git_env is None:
-                slot_git_env = _git_env_for_repo(repo_dir)
-            # Identity is set on the worktree's shared config; idempotent. Run as
-            # the slot after the chown so git never trips over safe.directory.
+            # Identity is set on the pool's shared config as the orchestrator
+            # (root) so `.git/config` stays root-owned and read-only to slots.
+            pool_env = _root_git_env(pool)
             for command in (["git", "config", "user.email", author_email], ["git", "config", "user.name", author_name]):
-                proc = _safe_run(command, cwd=repo_dir, env=slot_git_env, **slot_git_kwargs)
+                proc = _safe_run(_root_git_cmd(command), cwd=pool, env=pool_env)
                 if proc.returncode != 0:
                     raise GitCommandError(command, proc.returncode, proc.stdout, proc.stderr)
             _share_git_metadata_with_slots(repo_dir, slot_uid)
@@ -1050,8 +1295,9 @@ class SandboxManager:
             for path in (ws_root, session_dir, context_dir, context_dir / "repro", artifacts_dir):
                 path.mkdir(parents=True, exist_ok=True)
 
+            pool_env = _root_git_env(pool)
             detach = ["git", "checkout", "--detach"]
-            detached = _safe_run(detach, cwd=pool)
+            detached = _safe_run(_root_git_cmd(detach), cwd=pool, env=pool_env)
             if detached.returncode != 0:
                 raise GitCommandError(detach, detached.returncode, detached.stdout, detached.stderr)
 
@@ -1079,11 +1325,13 @@ class SandboxManager:
                 ["git", "checkout", "-B", default_branch, f"origin/{default_branch}"],
                 ["git", "reset", "--hard", f"origin/{default_branch}"],
                 ["git", "clean", "-fd"],
-                ["git", "config", "user.email", author_email],
-                ["git", "config", "user.name", author_name],
             )
             for command in commands:
                 proc = _safe_run(command, cwd=repo_dir, env=slot_git_env, **slot_git_kwargs)
+                if proc.returncode != 0:
+                    raise GitCommandError(command, proc.returncode, proc.stdout, proc.stderr)
+            for command in (["git", "config", "user.email", author_email], ["git", "config", "user.name", author_name]):
+                proc = _safe_run(_root_git_cmd(command), cwd=pool, env=pool_env)
                 if proc.returncode != 0:
                     raise GitCommandError(command, proc.returncode, proc.stdout, proc.stderr)
             _share_git_metadata_with_slots(repo_dir, slot_uid)
@@ -1166,7 +1414,7 @@ class SandboxManager:
         temp + rename.
         """
         try:
-            os.chown(native_dir, slot_uid, slot_uid)
+            os.chown(native_dir, slot_uid, slot_uid, follow_symlinks=False)
         except OSError as exc:
             log.warning("natives_cache chown dir failed", extra={"err": str(exc)})
             return
@@ -1196,9 +1444,14 @@ class SandboxManager:
             # here, and `git worktree prune` in it would error. Mirror
             # `ensure_clone`'s own `.git`/`HEAD` validity check.
             if (pool / ".git").exists() or (pool / "HEAD").exists():
+                pool_env = _root_git_env(pool)
                 needs_prune = False
                 if repo_dir.exists():
-                    removed = _safe_run(["git", "worktree", "remove", "--force", str(repo_dir)], cwd=pool)
+                    removed = _safe_run(
+                        _root_git_cmd(["git", "worktree", "remove", "--force", str(repo_dir)]),
+                        cwd=pool,
+                        env=pool_env,
+                    )
                     if removed.returncode != 0:
                         shutil.rmtree(repo_dir, ignore_errors=True)
                         needs_prune = True
@@ -1209,7 +1462,7 @@ class SandboxManager:
                     # a plain repeat close prunes nothing.
                     needs_prune = True
                 if needs_prune:
-                    pruned = _safe_run(["git", "worktree", "prune"], cwd=pool)
+                    pruned = _safe_run(_root_git_cmd(["git", "worktree", "prune"]), cwd=pool, env=pool_env)
                     if pruned.returncode != 0:
                         # Prune is the step that clears the dangling registration.
                         # If it fails (incl. a 124 timeout), report it so the

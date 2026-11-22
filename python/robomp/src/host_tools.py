@@ -11,6 +11,7 @@ import json
 import logging
 import os
 import re
+import stat
 import subprocess
 import time
 from collections.abc import Callable, Mapping
@@ -24,7 +25,7 @@ from omp_rpc import HostTool, HostToolContext, RpcCommandError, host_tool
 from robomp import persona
 from robomp.config import Settings
 from robomp.db import Database, IssueState, issue_key
-from robomp.git_ops import GitCommandError, HeadDriftError
+from robomp.git_ops import SCRUBBED_SECRET_ENV_KEYS, GitCommandError, HeadDriftError, scrub_secret_env
 from robomp.github_backend import GitHubBackend
 from robomp.github_client import GitHubError, IssueInfo, PullRequestFileInfo, RepoInfo
 from robomp.issue_index import parse_search_query
@@ -47,12 +48,7 @@ _PRE_PR_CHECK_COMMAND = ("bun", "check")
 _PRE_PR_TEST_COMMAND = ("bun", "run", "test")
 _BUN_INSTALL_COMMAND = ("bun", "install", "--frozen-lockfile", "--ignore-scripts")
 _BUN_INSTALL_TIMEOUT_SECONDS = 300.0
-_REPO_COMMAND_SCRUBBED_ENV_KEYS: tuple[str, ...] = (
-    "GITHUB_TOKEN",
-    "GITHUB_WEBHOOK_SECRET",
-    "ROBOMP_REPLAY_TOKEN",
-    "ROBOMP_GH_PROXY_HMAC_KEY",
-)
+_REPO_COMMAND_SCRUBBED_ENV_KEYS: tuple[str, ...] = SCRUBBED_SECRET_ENV_KEYS
 _NEEDS_INFO_LABEL = "needs-info"
 _AGENT_HOME = Path("/srv/agent-home")
 _PRE_PR_FIX_TIMEOUT_SECONDS = 600.0
@@ -248,9 +244,7 @@ def _repo_command_env(bindings: ToolBindings) -> dict[str, str]:
     exact same HOME/XDG/TMP/Bun cache paths as the agent process; otherwise
     host-side pre-publish gates validate a different machine than the agent saw.
     """
-    env = os.environ.copy()
-    for key in _REPO_COMMAND_SCRUBBED_ENV_KEYS:
-        env[key] = ""
+    env = scrub_secret_env(os.environ.copy(), mask_empty=True)
     if _AGENT_HOME.is_dir():
         env["HOME"] = str(_AGENT_HOME)
     env.update(_prepare_slot_runtime_env(bindings.workspace, bindings.slot_uid))
@@ -1329,20 +1323,27 @@ def _build_open_pr(bindings: ToolBindings) -> HostTool[Any, Any]:
         bindings.db.set_issue_pr(bindings.issue_key, pr.number)
         bindings.db.set_issue_state(bindings.issue_key, "opened")
         needs_info_label_cleared = _remove_needs_info_label(bindings) if was_needs_info else False
-        artifact = bindings.workspace.artifacts_dir / "pr.json"
-        artifact.write_text(
-            json.dumps(
-                {
-                    "repo": pr.repo,
-                    "number": pr.number,
-                    "url": pr.html_url,
-                    "head": pr.head_ref,
-                    "base": pr.base_ref,
-                },
-                indent=2,
-            ),
-            encoding="utf-8",
+        pr_json_content = json.dumps(
+            {
+                "repo": pr.repo,
+                "number": pr.number,
+                "url": pr.html_url,
+                "head": pr.head_ref,
+                "base": pr.base_ref,
+            },
+            indent=2,
         )
+        try:
+            rel_artifact = (bindings.workspace.artifacts_dir / "pr.json").relative_to(bindings.workspace.root)
+            _safe_write_workspace_file(
+                bindings.workspace.root,
+                rel_artifact,
+                pr_json_content,
+                slot_uid=bindings.slot_uid,
+            )
+        except OSError as exc:
+            _audit(bindings, "gh_open_pr", args, error=f"failed to write pr.json safely: {exc}")
+            _raise_command(f"refusing unsafe write to artifacts/pr.json: {exc}")
         result: dict[str, Any] = {"pr_number": pr.number, "url": pr.html_url}
         if needs_info_label_cleared:
             result["cleared_needs_info"] = True
@@ -1375,6 +1376,76 @@ def _build_open_pr(bindings: ToolBindings) -> HostTool[Any, Any]:
         },
         execute=execute,
     )
+
+
+def _safe_write_workspace_file(
+    workspace_root: Path,
+    rel_path: Path,
+    content: str,
+    *,
+    slot_uid: int | None,
+) -> Path:
+    """Safely write a UTF-8 text file inside ``workspace_root`` without following symlinks.
+
+    Traverses every parent component from ``workspace_root`` using ``dir_fd`` with
+    ``O_DIRECTORY | O_NOFOLLOW``, opens the target file with ``O_WRONLY | O_CREAT | O_NOFOLLOW``,
+    verifies it is a regular file before truncating/writing via the fd, and hands
+    ownership to ``slot_uid`` via ``os.fchown`` when slot isolation is active.
+    """
+    if rel_path.is_absolute() or ".." in rel_path.parts or not rel_path.name:
+        raise ValueError(f"invalid relative workspace path: {rel_path}")
+    dir_flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    parent_fd = os.open(workspace_root, dir_flags)
+    try:
+        for part in rel_path.parent.parts:
+            if part in ("", "."):
+                continue
+            created = False
+            try:
+                os.mkdir(part, 0o770, dir_fd=parent_fd)
+                created = True
+            except FileExistsError:
+                pass
+            next_fd = os.open(part, dir_flags, dir_fd=parent_fd)
+            try:
+                if created and _slot_permissions_active(slot_uid):
+                    assert slot_uid is not None
+                    os.fchown(next_fd, slot_uid, slot_uid)
+            except BaseException:
+                os.close(next_fd)
+                raise
+            os.close(parent_fd)
+            parent_fd = next_fd
+
+        file_flags = (
+            os.O_WRONLY
+            | os.O_CREAT
+            | os.O_NOFOLLOW
+            | getattr(os, "O_NONBLOCK", 0)
+            | getattr(os, "O_CLOEXEC", 0)
+        )
+        file_fd = os.open(rel_path.name, file_flags, 0o660, dir_fd=parent_fd)
+        try:
+            st = os.fstat(file_fd)
+            if not stat.S_ISREG(st.st_mode):
+                raise OSError(f"refusing to write non-regular file: {rel_path}")
+            os.ftruncate(file_fd, 0)
+            data = content.encode("utf-8")
+            view = memoryview(data)
+            written = 0
+            while written < len(data):
+                n = os.write(file_fd, view[written:])
+                if n <= 0:
+                    raise OSError(f"short write to {rel_path}")
+                written += n
+            if _slot_permissions_active(slot_uid):
+                assert slot_uid is not None
+                os.fchown(file_fd, slot_uid, slot_uid)
+        finally:
+            os.close(file_fd)
+    finally:
+        os.close(parent_fd)
+    return workspace_root / rel_path
 
 
 # ---------- gh_request_review ----------
@@ -1443,23 +1514,29 @@ def _build_repro_record(bindings: ToolBindings) -> HostTool[Any, Any]:
             _raise_command("repro_record requires 'output' (may be empty string).")
         if not isinstance(exit_code, int):
             _raise_command("repro_record requires an integer 'exit_code'.")
-        bindings.workspace.repro_dir.mkdir(parents=True, exist_ok=True)
         slug = "".join(c if c.isalnum() else "-" for c in title.lower()).strip("-")[:48] or "repro"
         ts = int(time.time())
         target = bindings.workspace.repro_dir / f"{ts}-{slug}.md"
-        target.write_text(
+        transcript = (
             f"# {title}\n\n"
             f"- exit_code: {exit_code}\n"
             f"- command:\n\n```\n{command}\n```\n\n"
-            f"## Output\n\n```\n{output}\n```\n",
-            encoding="utf-8",
+            f"## Output\n\n```\n{output}\n```\n"
         )
         # Single-ownership invariant: workspace files belong to the active
-        # slot. The orchestrator (root) wrote this file directly, so hand it
-        # over before the audit row lands so the agent can edit/delete it.
-        if _slot_permissions_active(bindings.slot_uid):
-            assert bindings.slot_uid is not None
-            os.chown(target, bindings.slot_uid, bindings.slot_uid)
+        # slot. Write via O_NOFOLLOW + dir_fd and hand ownership over via
+        # os.fchown on the open descriptor so symlinks cannot hijack root I/O.
+        try:
+            rel_target = target.relative_to(bindings.workspace.root)
+            _safe_write_workspace_file(
+                bindings.workspace.root,
+                rel_target,
+                transcript,
+                slot_uid=bindings.slot_uid,
+            )
+        except OSError as exc:
+            _audit(bindings, "repro_record", args, error=f"failed to write repro transcript safely: {exc}")
+            _raise_command(f"refusing unsafe write to repro transcript: {exc}")
         result: dict[str, Any] = {"path": str(target.relative_to(bindings.workspace.root))}
         if _advance_needs_info(bindings, "reproducing"):
             result["cleared_needs_info"] = True
