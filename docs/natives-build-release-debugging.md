@@ -27,7 +27,7 @@ Build side:
 Package side (unchanged runtime/packaging):
 
 - `packages/natives/scripts/build-bindings.ts` — host Cargo/N-API build and typedef regeneration
-- `packages/natives/scripts/embed-native.ts`, `gen-enums.ts`, `gen-npm-packages.ts`
+- `packages/natives/scripts/embed-native.ts`, `gen-enums.ts`
 - `packages/natives/package.json`
 - `packages/natives/native/index.js`, `native/loader-state.js`
 

@@ -6,9 +6,6 @@
   "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
   "license": "MIT",
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MarsAI-org/mars-agent.git",
@@ -40,7 +37,6 @@
     "test": "bun test --parallel",
     "fix": "oxlint --fix --fix-suggestions . && bun run fmt",
     "fmt": "oxfmt --no-error-on-unmatched-pattern 'src/**/*.{ts,tsx}' '{test,bench,examples,scripts}/**/*.ts' '*.ts'",
-    "gen:npm": "bun scripts/gen-npm-packages.ts",
     "bench": "bun bench/grep.ts",
     "bench:text": "bun bench/text.ts"
   },

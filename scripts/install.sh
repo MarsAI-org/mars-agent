@@ -5,14 +5,14 @@ set -e
 # Usage: curl -fsSL https://getmars.eu.cc/install | sh
 #
 # Options:
-#   --source       Install via bun (installs bun if needed)
+#   --source       Build and install from GitHub source (requires git, bun, and Rust/cargo)
 #   --binary       Always install prebuilt binary
 #   --ref <ref>    Install specific tag/commit/branch
 #   -r <ref>       Shorthand for --ref
 
 REPO="MarsAI-org/mars-agent"
-PACKAGE="@marsai-org/coding-agent"
 INSTALL_DIR="${MARS_INSTALL_DIR:-${PI_INSTALL_DIR:-$HOME/.local/bin}}"
+SOURCE_DIR="${MARS_SOURCE_DIR:-$HOME/.mars/src}"
 MIN_BUN_VERSION="1.3.14"
 
 # Parse arguments
@@ -227,47 +227,59 @@ has_git_lfs() {
     command -v git-lfs >/dev/null 2>&1
 }
 
-# Install via bun
+# Check if cargo (Rust toolchain) is available
+has_cargo() {
+    command -v cargo >/dev/null 2>&1
+}
+
+# Build and install from GitHub source
 install_via_bun() {
-    echo "Installing via bun..."
+    echo "Installing from source..."
+    if ! has_git; then
+        echo "git is required when installing from source"
+        exit 1
+    fi
+    if ! has_cargo; then
+        echo "Rust (cargo) is required to build Mars from source. Install it from https://rustup.rs"
+        exit 1
+    fi
+
+    mkdir -p "$(dirname "$SOURCE_DIR")"
+    TMP_DIR="$(mktemp -d "$(dirname "$SOURCE_DIR")/.mars-src.XXXXXX")"
+    trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
+
     if [ -n "$REF" ]; then
-        if ! has_git; then
-            echo "git is required for --ref when installing from source"
-            exit 1
-        fi
-
-        TMP_DIR="$(mktemp -d)"
-        trap 'rm -rf "$TMP_DIR"' EXIT HUP INT TERM
-
         if git clone --depth 1 --branch "$REF" "https://github.com/${REPO}.git" "$TMP_DIR" >/dev/null 2>&1; then
             :
         else
             git clone "https://github.com/${REPO}.git" "$TMP_DIR"
             (cd "$TMP_DIR" && git checkout "$REF")
         fi
-
-        # Pull LFS files
-        if has_git_lfs; then
-            (cd "$TMP_DIR" && git lfs pull)
-        fi
-
-        if [ ! -d "$TMP_DIR/packages/coding-agent" ]; then
-            echo "Expected package at ${TMP_DIR}/packages/coding-agent"
-            exit 1
-        fi
-
-        bun install -g "$TMP_DIR/packages/coding-agent" || {
-            echo "Failed to install from source"
-            exit 1
-        }
     else
-        bun install -g "$PACKAGE" || {
-            echo "Failed to install $PACKAGE"
-            exit 1
-        }
+        git clone --depth 1 "https://github.com/${REPO}.git" "$TMP_DIR"
     fi
+
+    # Pull LFS files
+    if has_git_lfs; then
+        (cd "$TMP_DIR" && git lfs pull)
+    fi
+
+    if [ ! -d "$TMP_DIR/packages/coding-agent" ]; then
+        echo "Expected package at ${TMP_DIR}/packages/coding-agent"
+        exit 1
+    fi
+
+    rm -rf "$SOURCE_DIR"
+    mv "$TMP_DIR" "$SOURCE_DIR"
+    trap - EXIT HUP INT TERM
+
+    (cd "$SOURCE_DIR" && bun run setup) || {
+        echo "Failed to build and install from source"
+        exit 1
+    }
+
     echo ""
-    echo "✓ Installed mars via bun"
+    echo "✓ Installed mars from source (${SOURCE_DIR})"
     echo "Run 'mars' to get started!"
 }
 
@@ -372,6 +384,11 @@ install_binary() {
             echo "Download failed for ${BINARY}; ${INSTALL_DIR}/mars was left untouched."
             exit 1
         fi
+        DOWNLOADED_SIZE=$(wc -c < "$STAGED" 2>/dev/null | tr -d ' ')
+        case "$DOWNLOADED_SIZE" in
+            ''|*[!0-9]*) ;;
+            *) echo "Downloaded ${BINARY} ($(numfmt_bytes "$DOWNLOADED_SIZE"))" ;;
+        esac
     fi
 
     echo "Verifying checksum..."

@@ -2,11 +2,9 @@
 
 Stateful agent with tool execution and event streaming. Built on `@marsai-org/ai`.
 
-## Installation
+## Workspace Usage
 
-```bash
-npm install @marsai-org/agent-core
-```
+`@marsai-org/agent-core` is an internal monorepo workspace package. Clone the repository and run `bun setup` from the workspace root.
 
 ## Quick Start
 

@@ -87,11 +87,9 @@ Unified LLM API with automatic model discovery, provider configuration, token an
 - **Antigravity** (requires OAuth, see below)
 - **Any OpenAI-compatible API**: LM Studio, custom proxies, etc.
 
-## Installation
+## Workspace Usage
 
-```bash
-npm install @marsai-org/ai
-```
+`@marsai-org/ai` is an internal monorepo workspace package. Clone the repository and run `bun setup` from the workspace root.
 
 ## Quick Start
 

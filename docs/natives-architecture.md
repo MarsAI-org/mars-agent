@@ -20,7 +20,6 @@
 - `packages/natives/scripts/build-bindings.ts`
 - `packages/natives/scripts/embed-native.ts`
 - `packages/natives/scripts/gen-enums.ts`
-- `packages/natives/scripts/gen-npm-packages.ts`
 - `scripts/bazel-natives.ts`
 - `crates/pi-natives/src/lib.rs` and its modules
 
@@ -65,7 +64,7 @@ Filename fallback is:
 - baseline x64: `-baseline.node`, then unsuffixed `.node`;
 - non-x64: unsuffixed `.node` only.
 
-The published core package contains loader JS, declarations, and metadata but no `.node` files. Release publishing generates `@marsai-org/natives-<platform>-<arch>` optional-dependency leaf packages and injects them at the same version into the core manifest. `LEAF_TARGETS` in `gen-npm-packages.ts` is the authoritative publish target list.
+Release builds embed the platform `.node` addons directly into standalone compiled binaries (`scripts/ci-release-build-binaries.ts` + `packages/natives/scripts/embed-native.ts`) for GitHub Releases.
 
 ### Candidate ownership and order
 

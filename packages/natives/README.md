@@ -66,8 +66,7 @@ bun run check
 
 ## Architecture
 
-`@marsai-org/natives` publishes a small core package plus generated
-platform-specific optional dependency packages:
+`@marsai-org/natives` combines the Rust N-API crate with a JS loader and embedded-addon staging for standalone compiled binaries:
 
 ```
 crates/pi-natives/       # Rust source (workspace member)
@@ -81,14 +80,6 @@ native/                  # Core loader files and local/CI native build outputs
   pi_natives.<platform>-<arch>-modern.node   # x64 modern ISA (local/CI artifact)
   pi_natives.<platform>-<arch>-baseline.node # x64 baseline ISA (local/CI artifact)
   pi_natives.<platform>-<arch>.node          # non-x64 build artifact
-npm/<platform>-<arch>/   # Generated at publish time, not committed
-  package.json           # @marsai-org/natives-<platform>-<arch>
-  *.node                 # Only that platform's addon binary or x64 ISA variants
 ```
 
-The published core package contains only the JS loader, declarations, README,
-and `package.json`. Release publishing generates one leaf package per supported
-`os`/`cpu` pair and injects those leaves into the core manifest as pinned
-`optionalDependencies`, so package managers install only the host platform's
-native addon. x64 leaves include every built ISA variant, and the loader keeps
-choosing between `baseline` and `modern` at runtime.
+Release binaries embed the matching platform's `.node` addons (including x64 `baseline` and `modern` ISA variants) at compile time, and the loader extracts and selects the right variant at runtime.

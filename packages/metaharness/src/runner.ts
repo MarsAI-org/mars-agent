@@ -67,7 +67,7 @@ export interface Config {
 	settings: Record<string, unknown>;
 
 	agent: string;
-	install: "source" | "local" | "published";
+	install: "source" | "local";
 	version: string | null;
 	tarball: string | null;
 	binaryArm64: string | null;
@@ -150,10 +150,10 @@ Commands:
 Model / agent:
   -m, --model <provider/model>   Model (repeatable). Default anthropic/claude-sonnet-4-6
       --agent <name>             mars (default) | oracle | nop | any harbor agent
-      --install <source|local|published> mars install mode (default: source).
+      --install <source|local>   mars install mode (default: source).
                                  source = mount /work/pi read-only + prebuilt linux deps tree; TS changes
-                                 apply per-trial with no rebuild. local = pack a tarball. published = npm.
-      --version <v>              mars version for published install (default: latest)
+                                 apply per-trial with no rebuild. local = pack a tarball.
+      --version <v>              mars version label (optional override)
       --thinking <level>         off|minimal|low|medium|high|xhigh|max
 
       --tarball <path>           Reuse a prebuilt mars tarball (implies --install local, --no-build)
@@ -232,8 +232,8 @@ export function parseArgs(argv: string[]): Config {
 				break;
 			case "--install": {
 				const v = take(arg);
-				if (v !== "source" && v !== "local" && v !== "published") {
-					throw new Error("--install must be source|local|published");
+				if (v !== "source" && v !== "local") {
+					throw new Error("--install must be source|local");
 				}
 				cfg.install = v;
 				break;

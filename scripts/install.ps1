@@ -25,13 +25,17 @@ if ($PSVersionTable.PSVersion -lt [version]"5.1") {
 }
 
 $Repo = "MarsAI-org/mars-agent"
-$Package = "@marsai-org/coding-agent"
 $InstallDir = if ($env:MARS_INSTALL_DIR) {
     $env:MARS_INSTALL_DIR
 } elseif ($env:PI_INSTALL_DIR) {
     $env:PI_INSTALL_DIR
 } else {
     "$env:LOCALAPPDATA\mars"
+}
+$SourceDir = if ($env:MARS_SOURCE_DIR) {
+    $env:MARS_SOURCE_DIR
+} else {
+    Join-Path $env:USERPROFILE ".mars\src"
 }
 # Windows PowerShell 5.1 (.NET Framework) does not reliably resolve
 # [System.Runtime.InteropServices.RuntimeInformation] without an
@@ -246,20 +250,38 @@ function Install-Bun {
     Assert-BunVersion $MinimumBunVersion
 }
 
+function Test-CargoInstalled {
+    try {
+        $null = Get-Command cargo -ErrorAction Stop
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 function Install-ViaBun {
-    Write-Host "Installing via bun..."
-    if ($Ref) {
-        if (-not (Test-GitInstalled)) {
-            throw "git is required for -Ref when installing from source"
-        }
+    Write-Host "Installing from source..."
+    if (-not (Test-GitInstalled)) {
+        throw "git is required when installing from source"
+    }
+    if (-not (Test-CargoInstalled)) {
+        throw "Rust (cargo) is required to build Mars from source. Install it from https://rustup.rs"
+    }
 
-        $tmpRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("mars-install-" + [System.Guid]::NewGuid().ToString("N"))
-        New-Item -ItemType Directory -Force -Path $tmpRoot | Out-Null
+    $sourceParent = Split-Path -Parent $SourceDir
+    if ($sourceParent -and -not (Test-Path $sourceParent)) {
+        New-Item -ItemType Directory -Force -Path $sourceParent | Out-Null
+    }
+    $tmpRoot = Join-Path $sourceParent (".mars-src-" + [System.Guid]::NewGuid().ToString("N"))
 
-        try {
-            $repoUrl = "https://github.com/$Repo.git"
+    try {
+        $repoUrl = "https://github.com/$Repo.git"
+        if ($Ref) {
             Invoke-Native { git clone --depth 1 --branch $Ref $repoUrl $tmpRoot 2>&1 | Out-Null }
             if ($LASTEXITCODE -ne 0) {
+                if (Test-Path $tmpRoot) {
+                    Remove-Item -Recurse -Force $tmpRoot -ErrorAction SilentlyContinue
+                }
                 Invoke-Native { git clone $repoUrl $tmpRoot 2>&1 | Out-Null }
                 if ($LASTEXITCODE -ne 0) {
                     throw "Failed to clone $repoUrl"
@@ -274,38 +296,50 @@ function Install-ViaBun {
                     Pop-Location
                 }
             }
-
-            # Pull LFS files
-            if (Test-GitLfsInstalled) {
-                Push-Location $tmpRoot
-                try {
-                    Invoke-Native { git lfs pull 2>&1 | Out-Null }
-                } finally {
-                    Pop-Location
-                }
-            }
-
-            $packagePath = Join-Path $tmpRoot "packages\coding-agent"
-            if (-not (Test-Path $packagePath)) {
-                throw "Expected package at $packagePath"
-            }
-
-            Invoke-Native { bun install -g $packagePath }
+        } else {
+            Invoke-Native { git clone --depth 1 $repoUrl $tmpRoot 2>&1 | Out-Null }
             if ($LASTEXITCODE -ne 0) {
-                throw "Failed to install from $packagePath via bun"
+                throw "Failed to clone $repoUrl"
+            }
+        }
+
+        # Pull LFS files
+        if (Test-GitLfsInstalled) {
+            Push-Location $tmpRoot
+            try {
+                Invoke-Native { git lfs pull 2>&1 | Out-Null }
+            } finally {
+                Pop-Location
+            }
+        }
+
+        $packagePath = Join-Path $tmpRoot "packages\coding-agent"
+        if (-not (Test-Path $packagePath)) {
+            throw "Expected package at $packagePath"
+        }
+
+        if (Test-Path $SourceDir) {
+            Remove-Item -Recurse -Force $SourceDir
+        }
+        Move-Item -LiteralPath $tmpRoot -Destination $SourceDir
+
+        Push-Location $SourceDir
+        try {
+            Invoke-Native { bun run setup }
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to build and install from source at $SourceDir"
             }
         } finally {
-            Remove-Item -Recurse -Force $tmpRoot -ErrorAction SilentlyContinue
+            Pop-Location
         }
-    } else {
-        Invoke-Native { bun install -g $Package }
-        if ($LASTEXITCODE -ne 0) {
-            throw "Failed to install $Package via bun"
+    } finally {
+        if (Test-Path $tmpRoot) {
+            Remove-Item -Recurse -Force $tmpRoot -ErrorAction SilentlyContinue
         }
     }
 
     Write-Host ""
-    Write-Host "[OK] Installed mars via bun" -ForegroundColor Green
+    Write-Host "[OK] Installed mars from source ($SourceDir)" -ForegroundColor Green
 
     Configure-BashShell
 
@@ -382,7 +416,7 @@ function Install-Binary {
         $VerifyProblem = $null
         try {
             $ChecksumsText = Invoke-RestMethod -Uri $ChecksumUrl -Headers $headers -TimeoutSec 30
-            $Match = $ChecksumsText -split "`r?`n" | Where-Object { $_ -match "\s+\*?([\\/].*[\\/])?$([regex]::Escape($BinaryName))$" } | Select-Object -First 1
+            $Match = $ChecksumsText -split "`r?`n" | Where-Object { $_ -match "\s+\*?(?:.*[\\/])?$([regex]::Escape($BinaryName))$" } | Select-Object -First 1
             if ($Match) {
                 $ExpectedSha = ($Match -split "\s+")[0].Trim().ToLowerInvariant()
             } else {

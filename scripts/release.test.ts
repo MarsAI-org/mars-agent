@@ -22,8 +22,7 @@ describe("validateExplicitVersion", () => {
 	});
 
 	test("rejects prerelease suffixes (not supported by this release path)", () => {
-		// Prereleases would be published as npm `latest` because the downstream
-		// publish runs `npm publish` with no `--tag`.
+		// Prereleases use the dedicated `canary` bump mode rather than explicit versions.
 		expect(validateExplicitVersion("17.2.8-rc.1")).toBe(null);
 		expect(validateExplicitVersion("v17.2.8-beta")).toBe(null);
 		expect(validateExplicitVersion("1.0.0-alpha")).toBe(null);

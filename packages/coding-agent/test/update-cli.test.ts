@@ -6,36 +6,24 @@ import * as path from "node:path";
 import * as pluginCli from "@marsai-org/coding-agent/cli/plugin-cli";
 import * as updateCli from "@marsai-org/coding-agent/cli/update-cli";
 import {
-	buildBunInstallArgs,
 	buildMiseForceInstallArgs,
 	buildMiseUpdateEnv,
 	buildMiseUpgradeArgs,
-	buildNpmInstallArgs,
-	buildRenameCleanupPackages,
 	downloadVerifiedBinary,
 	homebrewUpdateRefusal,
 	type InstalledVersionVerification,
 	isMuslLinuxForTest,
-	type ManagerUpdateSteps,
-	migrateRenamedInstall,
 	parseReportedVersion,
 	parseUpdateArgs,
-	pruneBunInstallCache,
-	type ReleaseInfo,
-	type RenameMigrationSteps,
 	replaceBinaryForUpdate,
 	resolveBunGlobalNodeModulesDirFromLocations,
-	resolveReleaseBinaryAsset,
-	selectFallbackBinaryAsset,
-	resolveReleaseDist,
-	resolveReleaseRename,
 	resolveGitHubTokenForTest,
+	resolveReleaseBinaryAsset,
 	resolveUpdateMethodForTest,
 	resolveUpdateTargetFromPath,
-	shouldForceBinaryUpdate,
+	selectFallbackBinaryAsset,
 	sweepStaleUpdateArtifacts,
 	updateViaBinaryAt,
-	updateViaManager,
 	updateViaShimTakeover,
 } from "@marsai-org/coding-agent/cli/update-cli";
 import Update from "@marsai-org/coding-agent/commands/update";
@@ -63,18 +51,6 @@ function withPlatform<T>(platform: NodeJS.Platform, fn: () => T): T {
 	Object.defineProperty(process, "platform", { ...platformDescriptor, value: platform });
 	try {
 		return fn();
-	} finally {
-		Object.defineProperty(process, "platform", platformDescriptor);
-	}
-}
-
-/** Async {@link withPlatform}: keeps the override until the returned promise settles. */
-async function withPlatformAsync<T>(platform: NodeJS.Platform, fn: () => Promise<T>): Promise<T> {
-	const platformDescriptor = Object.getOwnPropertyDescriptor(process, "platform");
-	if (!platformDescriptor) throw new Error("process.platform descriptor missing");
-	Object.defineProperty(process, "platform", { ...platformDescriptor, value: platform });
-	try {
-		return await fn();
 	} finally {
 		Object.defineProperty(process, "platform", platformDescriptor);
 	}
@@ -237,90 +213,37 @@ describe("update-cli install target detection", () => {
 		expect(method).toBe("nix");
 	});
 
-	it("uses bun update when prioritized mars is inside bun global bin", () => {
-		const method = resolveUpdateMethodForTest("/Users/test/.bun/bin/mars", "/Users/test/.bun/bin");
-
-		expect(method).toBe("bun");
-	});
-
-	it("uses npm update when prioritized mars is inside an npm global bin", () => {
-		const method = resolveUpdateMethodForTest("/Users/test/.npm-global/bin/mars", undefined, {
-			npmBinDir: "/Users/test/.npm-global/bin",
-		});
-
-		expect(method).toBe("npm");
-	});
-
-	it("uses npm update for Windows npm command shims even when no package-manager bin dirs were detected", () => {
+	it("uses shim takeover for Windows script launchers", () => {
 		const method = resolveUpdateMethodForTest("C:\\Users\\test\\AppData\\Roaming\\npm\\omp.cmd", undefined);
 
-		expect(method).toBe("npm");
+		expect(method).toBe("shim");
 	});
 
-	it("uses binary update when a plain file in the npm global bin dir is the standalone binary, not an npm symlink", () => {
-		// Regression: with `npm prefix -g` pointed at the installer's default
-		// (~/.local), directory containment alone misclassified the standalone
-		// binary as npm-managed, so `npm install -g` failed with EEXIST refusing
-		// to overwrite the existing executable. POSIX layout: on Windows an
-		// extensionless launcher is npm's sh shim (covered by the win32 cases).
-		const method = withPlatform("linux", () =>
+	it("uses binary update for plain files in bun or npm global bin dirs", () => {
+		const npmMethod = withPlatform("linux", () =>
 			resolveUpdateMethodForTest("/home/u/.local/bin/mars", undefined, {
 				npmBinDir: "/home/u/.local/bin",
 				ompIsRegularFile: true,
 			}),
 		);
-
-		expect(method).toBe("binary");
-	});
-
-	it("uses binary update when a plain file in the bun global bin dir is the standalone binary", () => {
-		const method = withPlatform("linux", () =>
+		const bunMethod = withPlatform("linux", () =>
 			resolveUpdateMethodForTest("/home/u/.local/bin/mars", "/home/u/.local/bin", {
 				ompIsRegularFile: true,
 			}),
 		);
 
-		expect(method).toBe("binary");
+		expect(npmMethod).toBe("binary");
+		expect(bunMethod).toBe("binary");
 	});
 
-	it("keeps bun update for regular-file entries in the bun global bin dir on Windows, where bun writes .exe shims", () => {
-		// On Windows a bun-managed global install is a regular-file .exe
-		// launcher, not a symlink, so the standalone-binary override cannot key
-		// off file type — it keys off bun's `<name>.bunx` metadata sidecar, which
-		// only a bun-managed launcher has. Paths use forward slashes so the
-		// lexical containment check works on the POSIX host running this suite.
+	it("uses binary update for Windows .exe binaries in bun global bin dir", () => {
 		const method = withPlatform("win32", () =>
-			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/omp.exe", "C:/Users/test/.bun/bin", {
-				ompIsRegularFile: true,
-				bunShimMarker: true,
-			}),
-		);
-
-		expect(method).toBe("bun");
-	});
-
-	it("uses binary update for a Windows .exe in the bun global bin dir once bun's metadata sidecar is gone", () => {
-		// Regression: a binary-only release replaces bun's launcher with the
-		// standalone binary. Classifying that by directory alone sent the next
-		// update back through `bun install -g`, which cannot overwrite the
-		// running .exe — bun tolerates that EBUSY — so the install stayed pinned
-		// to the old version with no way forward.
-		const method = withPlatform("win32", () =>
-			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/omp.exe", "C:/Users/test/.bun/bin", {
+			resolveUpdateMethodForTest("C:/Users/test/.bun/bin/mars.exe", "C:/Users/test/.bun/bin", {
 				ompIsRegularFile: true,
 			}),
 		);
 
 		expect(method).toBe("binary");
-	});
-
-	it("still uses npm update when the npm global bin entry is a package-manager symlink, not a plain file", () => {
-		const method = resolveUpdateMethodForTest("/home/u/.local/bin/mars", undefined, {
-			npmBinDir: "/home/u/.local/bin",
-			ompIsRegularFile: false,
-		});
-
-		expect(method).toBe("npm");
 	});
 
 	it("updates the standalone binary behind a foreign npm-bin alias without replacing the alias", async () => {
@@ -333,7 +256,6 @@ describe("update-cli install target detection", () => {
 		await fs.symlink(standalonePath, aliasPath);
 
 		const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
-			allowPackageManagers: true,
 			npmBinDir,
 		});
 
@@ -346,30 +268,6 @@ describe("update-cli install target detection", () => {
 		expect(await fs.readlink(aliasPath)).toBe(standalonePath);
 	});
 
-	it("keeps an npm-linked checkout under npm management instead of overwriting its resolved script", async () => {
-		const dir = await makeTempDir();
-		const npmPrefix = path.join(dir, ".npm-global");
-		const { binDir: npmBinDir, nodeModulesDir } = npmGlobalLayout(npmPrefix);
-		const packagePath = path.join(nodeModulesDir, "@oh-my-pi", "pi-coding-agent");
-		const checkoutPath = path.join(dir, "checkout");
-		const checkoutCli = path.join(checkoutPath, "dist", "cli.js");
-		const aliasPath = path.join(npmBinDir, "mars");
-		await fs.mkdir(npmBinDir, { recursive: true });
-		await fs.mkdir(path.dirname(packagePath), { recursive: true });
-		await Bun.write(checkoutCli, "linked checkout");
-		await fs.symlink(checkoutPath, packagePath, "junction");
-		await fs.symlink(path.relative(npmBinDir, path.join(packagePath, "dist", "cli.js")), aliasPath);
-
-		const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
-			allowPackageManagers: true,
-			npmBinDir,
-		});
-
-		expect(await fs.realpath(aliasPath)).toBe(checkoutCli);
-		expect(target).toEqual({ method: "npm", path: aliasPath });
-		expect(await Bun.file(checkoutCli).text()).toBe("linked checkout");
-	});
-
 	it("treats a Bun-bin alias into ~/.bun/custom as foreign", async () => {
 		const dir = await makeTempDir();
 		const bunDir = path.join(dir, ".bun");
@@ -380,9 +278,7 @@ describe("update-cli install target detection", () => {
 		await Bun.write(standalonePath, "binary");
 		await fs.symlink(path.relative(bunBinDir, standalonePath), aliasPath);
 
-		const target = resolveUpdateTargetFromPath(aliasPath, bunBinDir, {
-			allowPackageManagers: true,
-		});
+		const target = resolveUpdateTargetFromPath(aliasPath, bunBinDir);
 
 		expect(target).toEqual({
 			method: "binary",
@@ -392,12 +288,7 @@ describe("update-cli install target detection", () => {
 		});
 	});
 
-	it("resolves a foreign symlink to its real binary on a binary-only release instead of clobbering the launcher", async () => {
-		// Admin shared-install layout: a non-manager symlink in PATH points into
-		// a shared install dir. On a binary-only release the target must still be
-		// the resolved binary, not the launcher — otherwise the update writes
-		// beside a root-owned symlink (EACCES) or replaces it with a split-brain
-		// copy that shadows the shared install (#8732).
+	it("resolves a foreign symlink to its real binary instead of clobbering the launcher", async () => {
 		const dir = await makeTempDir();
 		const sharedBinDir = path.join(dir, "opt", "mars", "bin");
 		const standalonePath = path.join(sharedBinDir, "mars");
@@ -408,9 +299,7 @@ describe("update-cli install target detection", () => {
 		await Bun.write(standalonePath, "binary");
 		await fs.symlink(standalonePath, launcherPath);
 
-		const target = resolveUpdateTargetFromPath(launcherPath, undefined, {
-			allowPackageManagers: false,
-		});
+		const target = resolveUpdateTargetFromPath(launcherPath, undefined);
 
 		expect(target).toEqual({
 			method: "binary",
@@ -433,9 +322,7 @@ describe("update-cli install target detection", () => {
 			await fs.symlink("launch", aliasPath);
 			const fetchImpl = vi.fn(async () => new Response());
 
-			const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
-				allowPackageManagers: true,
-			});
+			const target = resolveUpdateTargetFromPath(aliasPath, undefined);
 			if (target.method !== "binary") throw new Error("Expected binary update target");
 
 			await expect(
@@ -460,9 +347,7 @@ describe("update-cli install target detection", () => {
 			await fs.chmod(foreignPath, 0o755);
 			await fs.symlink(foreignPath, aliasPath);
 			const fetchImpl = vi.fn(async () => new Response());
-			const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
-				allowPackageManagers: true,
-			});
+			const target = resolveUpdateTargetFromPath(aliasPath, undefined);
 			if (target.method !== "binary") throw new Error("Expected binary update target");
 
 			await expect(
@@ -476,14 +361,11 @@ describe("update-cli install target detection", () => {
 		},
 	);
 
-	it("takes over a package-manager launcher in place on a binary-only release", async () => {
-		// A bun/npm-managed launcher symlinks into the manager's node_modules.
-		// A forced binary release cannot route through the manager, so the
-		// launcher is deliberately replaced in place, keeping the PATH entry live.
+	it("takes over a legacy npm package-manager launcher in place", async () => {
 		const dir = await makeTempDir();
 		const npmPrefix = path.join(dir, ".npm-global");
 		const { binDir: npmBinDir, nodeModulesDir } = npmGlobalLayout(npmPrefix);
-		const managedBinary = path.join(nodeModulesDir, "@oh-my-pi", "pi-coding-agent", "mars");
+		const managedBinary = path.join(nodeModulesDir, "@marsai-org", "coding-agent", "mars");
 		const aliasPath = path.join(npmBinDir, "mars");
 		await fs.mkdir(npmBinDir, { recursive: true });
 		await fs.mkdir(path.dirname(managedBinary), { recursive: true });
@@ -491,7 +373,6 @@ describe("update-cli install target detection", () => {
 		await fs.symlink(managedBinary, aliasPath);
 
 		const target = resolveUpdateTargetFromPath(aliasPath, undefined, {
-			allowPackageManagers: false,
 			npmBinDir,
 		});
 
@@ -503,11 +384,11 @@ describe("update-cli install target detection", () => {
 		});
 	});
 
-	it("keeps a split-root Bun-linked checkout under Bun management instead of overwriting its script", async () => {
+	it("takes over a split-root legacy Bun launcher in place without touching its linked checkout", async () => {
 		const dir = await makeTempDir();
 		const bunBinDir = path.join(dir, "bun-bin");
 		const bunGlobalDir = path.join(dir, "bun-global");
-		const packagePath = path.join(bunGlobalDir, "node_modules", "@oh-my-pi", "pi-coding-agent");
+		const packagePath = path.join(bunGlobalDir, "node_modules", "@marsai-org", "coding-agent");
 		const checkoutPath = path.join(dir, "checkout");
 		const checkoutCli = path.join(checkoutPath, "dist", "cli.js");
 		const aliasPath = path.join(bunBinDir, "mars");
@@ -518,12 +399,16 @@ describe("update-cli install target detection", () => {
 		await fs.symlink(path.relative(bunBinDir, path.join(packagePath, "dist", "cli.js")), aliasPath);
 
 		const target = resolveUpdateTargetFromPath(aliasPath, bunBinDir, {
-			allowPackageManagers: true,
 			bunGlobalDir,
 		});
 
 		expect(await fs.realpath(aliasPath)).toBe(checkoutCli);
-		expect(target).toEqual({ method: "bun", path: aliasPath });
+		expect(target).toEqual({
+			method: "binary",
+			path: aliasPath,
+			replacesSymlink: true,
+			validateExistingTarget: false,
+		});
 		expect(await Bun.file(checkoutCli).text()).toBe("linked checkout");
 	});
 
@@ -577,11 +462,12 @@ describe("update-cli install target detection", () => {
 });
 
 describe("update-cli package manager commands", () => {
-	it("refuses Homebrew self-update and names the supported install channels", () => {
+	it("refuses Homebrew self-update and names the official installer", () => {
 		const message = homebrewUpdateRefusal();
 
 		expect(message).toContain("not distributed through Homebrew");
-		expect(message).toContain("bun install -g @marsai-org/coding-agent");
+		expect(message).toContain("https://getmars.eu.cc/install");
+		expect(message).not.toContain("bun install -g");
 		// Regression: the updater must never reference the upstream tap, which
 		// would install oh-my-pi over Mars.
 		expect(message).not.toContain("can1357");
@@ -664,226 +550,6 @@ describe("update-cli package manager commands", () => {
 		}
 	});
 
-	it("pins npm package installs to the official registry and the checked native package versions", () => {
-		const args = buildNpmInstallArgs("16.3.15", "win32-x64");
-
-		expect(args.slice(0, 2)).toEqual(["install", "-g"]);
-		expect(args).toContain("--registry=https://registry.npmjs.org/");
-		expect(args).toContain("@marsai-org/coding-agent@16.3.15");
-		expect(args).toContain("@marsai-org/natives@16.3.15");
-		expect(args).toContain("@marsai-org/natives-win32-x64@16.3.15");
-	});
-});
-
-describe("update-cli npm rename contract", () => {
-	it("parses a well-formed omp.rename pointer and rejects malformed ones", () => {
-		expect(resolveReleaseRename({ mars: { rename: { package: "@new/mars", natives: "@new/natives" } } })).toEqual({
-			pkg: "@new/mars",
-			natives: "@new/natives",
-		});
-		expect(resolveReleaseRename({ mars: { rename: { package: "@new/mars" } } })).toEqual({
-			pkg: "@new/mars",
-			natives: undefined,
-		});
-		expect(resolveReleaseRename({ mars: { rename: { package: "" } } })).toBeUndefined();
-		expect(resolveReleaseRename({ mars: { rename: "@new/mars" } })).toBeUndefined();
-		expect(resolveReleaseRename({ mars: {} })).toBeUndefined();
-		expect(resolveReleaseRename(undefined)).toBeUndefined();
-	});
-
-	it("refuses a rename pointer that targets upstream oh-my-pi packages", () => {
-		// Regression: a manifest must never be able to redirect the updater at
-		// the upstream project, which would install oh-my-pi over Mars.
-		for (const pkg of ["@oh-my-pi/pi-coding-agent", "oh-my-pi", "omp"]) {
-			expect(() => resolveReleaseRename({ mars: { rename: { package: pkg } } })).toThrow(
-				"Refusing to migrate mars to upstream package",
-			);
-		}
-	});
-
-	it("installs renamed package names in lock-step, with no old-name leftovers in the argv", () => {
-		const packages = { pkg: "@new/mars", natives: "@new/natives" };
-
-		const bunArgs = buildBunInstallArgs("17.0.0", "linux-x64", packages);
-		expect(bunArgs).toContain("@new/mars@17.0.0");
-		expect(bunArgs).toContain("@new/natives@17.0.0");
-		expect(bunArgs).toContain("@new/natives-linux-x64@17.0.0");
-		expect(bunArgs.some(arg => arg.startsWith("@oh-my-pi/"))).toBe(false);
-
-		expect(buildNpmInstallArgs("17.0.0", "linux-x64", packages)).toContain("@new/mars@17.0.0");
-	});
-
-	it("adds --force to npm argv only for rename migrations so the old package's bin can be clobbered", () => {
-		const packages = { pkg: "@new/mars", natives: "@new/natives" };
-		expect(buildNpmInstallArgs("17.0.0", "linux-x64", packages, { force: true })).toContain("--force");
-		expect(buildNpmInstallArgs("16.3.15", "win32-x64")).not.toContain("--force");
-	});
-
-	it("removes the old agent package and its natives companions when both names moved", () => {
-		const packages = { pkg: "@new/mars", natives: "@new/natives" };
-		expect(buildRenameCleanupPackages(packages, "darwin-arm64")).toEqual([
-			"@marsai-org/coding-agent",
-			"@marsai-org/natives",
-			"@marsai-org/natives-darwin-arm64",
-		]);
-		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual([
-			"@marsai-org/coding-agent",
-			"@marsai-org/natives",
-		]);
-	});
-
-	it("keeps the natives packages on an agent-only rename so cleanup cannot strip the addon the new install pinned", () => {
-		const packages = { pkg: "@new/mars", natives: "@marsai-org/natives" };
-		expect(buildRenameCleanupPackages(packages, "darwin-arm64")).toEqual(["@marsai-org/coding-agent"]);
-		expect(buildRenameCleanupPackages(packages, "linux-arm")).toEqual(["@marsai-org/coding-agent"]);
-	});
-});
-
-describe("migrateRenamedInstall transaction", () => {
-	const release: ReleaseInfo = {
-		tag: "v999.1.0",
-		version: "999.1.0",
-		packages: { pkg: "@new/mars", natives: "@new/natives" },
-		registry: "https://registry.npmjs.org/",
-	};
-
-	function scriptedSteps(script: { install: number[]; removeOld?: number; verify: boolean[] }): {
-		steps: RenameMigrationSteps;
-		calls: string[];
-	} {
-		const calls: string[] = [];
-		let installs = 0;
-		let verifies = 0;
-		return {
-			calls,
-			steps: {
-				async install() {
-					calls.push("install");
-					return script.install[installs++] ?? 0;
-				},
-				async removeOld() {
-					calls.push("removeOld");
-					return script.removeOld ?? 0;
-				},
-				async verify() {
-					calls.push("verify");
-					return script.verify[verifies++]
-						? { ok: true, actual: "999.1.0", path: "/bin/mars" }
-						: { ok: false, path: "/bin/mars" };
-				},
-			},
-		};
-	}
-
-	it("never touches the old install when the new install fails", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: [1], verify: [] });
-
-		await expect(migrateRenamedInstall(release, steps)).rejects.toThrow("left untouched");
-		expect(calls).toEqual(["install"]);
-	});
-
-	it("installs the new package before removing the old one and verifies the result", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: [0], verify: [true] });
-
-		await migrateRenamedInstall(release, steps);
-		expect(calls).toEqual(["install", "removeOld", "verify"]);
-	});
-
-	it("restores the bin link by reinstalling when old-package removal breaks verification", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: [0, 0], verify: [false, true] });
-
-		await migrateRenamedInstall(release, steps);
-		expect(calls).toEqual(["install", "removeOld", "verify", "install", "verify"]);
-	});
-
-	it("treats old-package removal failure as a warning when the new install verifies", async () => {
-		const logs: string[] = [];
-		vi.spyOn(console, "log").mockImplementation(message => {
-			logs.push(String(message));
-		});
-		const { steps, calls } = scriptedSteps({ install: [0], removeOld: 1, verify: [true] });
-
-		await migrateRenamedInstall(release, steps);
-		expect(calls).toEqual(["install", "removeOld", "verify"]);
-		expect(logs.some(line => line.includes("could not remove the old"))).toBe(true);
-	});
-
-	it("aborts with a recovery hint when verification still fails after the restore install", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: [0, 0], verify: [false, false] });
-
-		await withPlatformAsync("linux", async () => {
-			await expect(migrateRenamedInstall(release, steps)).rejects.toThrow(
-				"curl -fsSL https://getmars.eu.cc/install",
-			);
-		});
-		expect(calls).toEqual(["install", "removeOld", "verify", "install", "verify"]);
-	});
-
-	it("uses the platform-aware PowerShell reinstall hint on Windows", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const platformDescriptor = Object.getOwnPropertyDescriptor(process, "platform");
-		if (!platformDescriptor) throw new Error("process.platform descriptor missing");
-		Object.defineProperty(process, "platform", { ...platformDescriptor, value: "win32" });
-		try {
-			const { steps } = scriptedSteps({ install: [0, 0], verify: [false, false] });
-			const promise = migrateRenamedInstall(release, steps);
-			await expect(promise).rejects.toThrow("irm https://getmars.eu.cc/install.ps1");
-			await expect(promise).rejects.not.toThrow("| sh");
-		} finally {
-			Object.defineProperty(process, "platform", platformDescriptor);
-		}
-	});
-});
-
-describe("update-cli bun install command", () => {
-	it("pins the official npm registry and bypasses the manifest cache so a stale mirror or snapshot cannot mask a freshly published version", () => {
-		// Regression: mars queries https://registry.npmjs.org/<pkg>/latest directly.
-		// The install MUST hit the same registry, otherwise:
-		//   - a lagging mirror (corp proxy, Taobao, …) rejects the version with
-		//     `No version matching "X" (but package exists)`,
-		//   - or bun's local manifest snapshot does the same when the user's bun
-		//     is already pointed at the official registry but its cache predates
-		//     the release.
-		// See https://github.com/can1357/oh-my-pi/issues/1686.
-		const args = buildBunInstallArgs("15.7.6", "linux-x64");
-		expect(args.slice(0, 5)).toEqual([
-			"install",
-			"-g",
-			"--no-cache",
-			"--registry=https://registry.npmjs.org/",
-			"@marsai-org/coding-agent@15.7.6",
-		]);
-	});
-
-	it("pins the native addon core and the platform-specific leaf to the same version so the loader sentinel cannot drift on supported tags", () => {
-		// Regression: bun install -g <pkg>@<v> would update only the top-level
-		// package, leaving @marsai-org/natives and @marsai-org/natives-<tag>
-		// at their previous version. The next launch then loaded a stale .node
-		// file and aborted at validateLoadedBindings with `The .node file on
-		// disk is from a different release than this loader`. See
-		// https://github.com/can1357/oh-my-pi/issues/1824.
-		for (const tag of ["linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64", "win32-x64", "win32-arm64"]) {
-			const args = buildBunInstallArgs("15.9.0", tag);
-			expect(args).toContain("@marsai-org/natives@15.9.0");
-			expect(args).toContain(`@marsai-org/natives-${tag}@15.9.0`);
-		}
-	});
-
-	it("omits the leaf on unsupported platform tags so an EBADPLATFORM swap does not mask the underlying `no matching version` error", () => {
-		// Defensive: an unsupported tag (e.g. linux-arm32) still installs the
-		// core natives package — which will fail at module load if the platform
-		// truly is unsupported — but we never request a leaf the release
-		// pipeline doesn't publish, otherwise bun aborts with EBADPLATFORM
-		// and hides the real diagnostic from `loadNative`'s aggregated error.
-		const args = buildBunInstallArgs("15.9.0", "linux-arm");
-		expect(args).toContain("@marsai-org/natives@15.9.0");
-		expect(args.some(arg => arg.startsWith("@marsai-org/natives-"))).toBe(false);
-	});
-
 	it("derives global node_modules from supported Bun locations with the explicit global directory taking precedence", () => {
 		expect(
 			resolveBunGlobalNodeModulesDirFromLocations({
@@ -901,117 +567,6 @@ describe("update-cli bun install command", () => {
 				globalBinDir: path.join("root", "bun-bin"),
 			}),
 		).toBe(path.join("root", "bun-global", "node_modules"));
-	});
-});
-
-describe("update-cli bun cache pruning", () => {
-	it("keeps only the newest cached version for filtered global install packages", async () => {
-		const dir = await makeTempDir();
-		await Bun.write(path.join(dir, "react", "18.3.1@@@1"), "");
-		await Bun.write(path.join(dir, "react", "19.2.6@@@1"), "");
-		await Bun.write(
-			path.join(dir, "react@18.3.1@@@1", "package.json"),
-			JSON.stringify({ name: "react", version: "18.3.1" }),
-		);
-		await Bun.write(
-			path.join(dir, "react@19.2.6@@@1", "package.json"),
-			JSON.stringify({ name: "react", version: "19.2.6" }),
-		);
-		await Bun.write(path.join(dir, "@marsai-org", "utils", "15.7.6@@@1"), "");
-		await Bun.write(path.join(dir, "@marsai-org", "utils", "15.8.0@@@1"), "");
-		await Bun.write(
-			path.join(dir, "@marsai-org", "utils@15.7.6@@@1", "package.json"),
-			JSON.stringify({ name: "@marsai-org/utils", version: "15.7.6" }),
-		);
-		await Bun.write(
-			path.join(dir, "@marsai-org", "utils@15.8.0@@@1", "package.json"),
-			JSON.stringify({ name: "@marsai-org/utils", version: "15.8.0" }),
-		);
-		await Bun.write(path.join(dir, "chalk", "4.1.2@@@1"), "");
-		await Bun.write(path.join(dir, "chalk", "5.6.2@@@1"), "");
-		await Bun.write(
-			path.join(dir, "chalk@4.1.2@@@1", "package.json"),
-			JSON.stringify({ name: "chalk", version: "4.1.2" }),
-		);
-		await Bun.write(
-			path.join(dir, "chalk@5.6.2@@@1", "package.json"),
-			JSON.stringify({ name: "chalk", version: "5.6.2" }),
-		);
-
-		const result = await pruneBunInstallCache(dir, new Set(["react", "@marsai-org/utils"]));
-
-		expect(result).toEqual({ scannedPackages: 2, removedEntries: 4 });
-		expect(await Bun.file(path.join(dir, "react", "18.3.1@@@1")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "react@18.3.1@@@1", "package.json")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "react", "19.2.6@@@1")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "react@19.2.6@@@1", "package.json")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "@marsai-org", "utils", "15.7.6@@@1")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "@marsai-org", "utils@15.7.6@@@1", "package.json")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "@marsai-org", "utils", "15.8.0@@@1")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "@marsai-org", "utils@15.8.0@@@1", "package.json")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "chalk", "4.1.2@@@1")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "chalk@4.1.2@@@1", "package.json")).exists()).toBe(true);
-	});
-
-	it("keeps current registry-qualified marker entries with their materialized package", async () => {
-		const dir = await makeTempDir();
-		await Bun.write(path.join(dir, "pkg", "1.0.0@@registry.npmjs.org@@@1"), "");
-		await Bun.write(
-			path.join(dir, "pkg@1.0.0@@registry.npmjs.org@@@1", "package.json"),
-			JSON.stringify({ name: "pkg", version: "1.0.0" }),
-		);
-
-		const result = await pruneBunInstallCache(dir, new Set(["pkg"]));
-
-		expect(result).toEqual({ scannedPackages: 1, removedEntries: 0 });
-		expect(await Bun.file(path.join(dir, "pkg", "1.0.0@@registry.npmjs.org@@@1")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "pkg@1.0.0@@registry.npmjs.org@@@1", "package.json")).exists()).toBe(true);
-	});
-
-	it("treats a stable release as newer than a matching prerelease", async () => {
-		const dir = await makeTempDir();
-		await Bun.write(path.join(dir, "pkg", "1.0.0-beta.1@@@1"), "");
-		await Bun.write(path.join(dir, "pkg", "1.0.0@@@1"), "");
-		await Bun.write(
-			path.join(dir, "pkg@1.0.0-beta.1@@@1", "package.json"),
-			JSON.stringify({ name: "pkg", version: "1.0.0-beta.1" }),
-		);
-		await Bun.write(
-			path.join(dir, "pkg@1.0.0@@@1", "package.json"),
-			JSON.stringify({ name: "pkg", version: "1.0.0" }),
-		);
-
-		const result = await pruneBunInstallCache(dir);
-
-		expect(result).toEqual({ scannedPackages: 1, removedEntries: 2 });
-		expect(await Bun.file(path.join(dir, "pkg", "1.0.0-beta.1@@@1")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "pkg@1.0.0-beta.1@@@1", "package.json")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "pkg", "1.0.0@@@1")).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, "pkg@1.0.0@@@1", "package.json")).exists()).toBe(true);
-	});
-
-	it("compares numeric version segments without precision loss", async () => {
-		const dir = await makeTempDir();
-		const older = "1.0.99999999999999999999";
-		const newer = "1.0.100000000000000000000";
-		await Bun.write(path.join(dir, "pkg", `${older}@@@1`), "");
-		await Bun.write(path.join(dir, "pkg", `${newer}@@@1`), "");
-		await Bun.write(
-			path.join(dir, `pkg@${older}@@@1`, "package.json"),
-			JSON.stringify({ name: "pkg", version: older }),
-		);
-		await Bun.write(
-			path.join(dir, `pkg@${newer}@@@1`, "package.json"),
-			JSON.stringify({ name: "pkg", version: newer }),
-		);
-
-		const result = await pruneBunInstallCache(dir, new Set(["pkg"]));
-
-		expect(result).toEqual({ scannedPackages: 1, removedEntries: 2 });
-		expect(await Bun.file(path.join(dir, "pkg", `${older}@@@1`)).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, `pkg@${older}@@@1`, "package.json")).exists()).toBe(false);
-		expect(await Bun.file(path.join(dir, "pkg", `${newer}@@@1`)).exists()).toBe(true);
-		expect(await Bun.file(path.join(dir, `pkg@${newer}@@@1`, "package.json")).exists()).toBe(true);
 	});
 });
 
@@ -1313,7 +868,7 @@ describe("update-cli release binary integrity", () => {
 		expect(await Bun.file(targetPath).text()).toBe(published);
 	});
 
-	it("names the missing tag and the npm mismatch when no published release can replace it", async () => {
+	it("names the missing tag when no published release can replace it", async () => {
 		const dir = await makeTempDir();
 		const targetPath = path.join(dir, binaryName);
 		const fetchImpl = async (input: string | URL | Request): Promise<Response> => {
@@ -1330,7 +885,7 @@ describe("update-cli release binary integrity", () => {
 
 		await expect(
 			updateViaBinaryAt(targetPath, "999.9.9", { binaryName, fetchImpl, githubToken: "test-token" }),
-		).rejects.toThrow("npm advertises 999.9.9 but GitHub release v999.9.9 is not published");
+		).rejects.toThrow("GitHub release v999.9.9 is not published");
 		expect(await Bun.file(targetPath).exists()).toBe(false);
 	});
 
@@ -1555,41 +1110,6 @@ describe.skipIf(process.platform !== "darwin")("update-cli macOS live backup ima
 			live.kill();
 			await live.exited;
 		}
-	});
-});
-
-describe("update-cli binary-only release gating", () => {
-	it("honors an explicit omp.dist field from the registry manifest", () => {
-		expect(resolveReleaseDist({ mars: { dist: "binary" } })).toBe("binary");
-		expect(resolveReleaseDist({ mars: { dist: "npm" } })).toBe("npm");
-	});
-
-	it("treats unknown dist values as binary-only", () => {
-		expect(resolveReleaseDist({ mars: { dist: "cargo" } })).toBe("binary");
-	});
-
-	it("returns undefined when the manifest carries no dist field", () => {
-		expect(resolveReleaseDist({ version: "1.2.3" })).toBeUndefined();
-		expect(resolveReleaseDist({ mars: {} })).toBeUndefined();
-		expect(resolveReleaseDist(undefined)).toBeUndefined();
-	});
-
-	it("forces binary updates when dist is binary regardless of version", () => {
-		expect(shouldForceBinaryUpdate({ version: "1.2.3", dist: "binary" }, "1.2.2")).toBe(true);
-	});
-
-	it("allows package-manager updates across majors when dist is explicitly npm", () => {
-		expect(shouldForceBinaryUpdate({ version: "2.0.0", dist: "npm" }, "1.9.0")).toBe(false);
-	});
-
-	it("forces binary updates on a major bump without a dist field", () => {
-		expect(shouldForceBinaryUpdate({ version: "2.0.0" }, "1.9.0")).toBe(true);
-		expect(shouldForceBinaryUpdate({ version: "2.0.0-rc.1" }, "1.9.0")).toBe(true);
-	});
-
-	it("keeps package-manager updates within the same major and on downgrades", () => {
-		expect(shouldForceBinaryUpdate({ version: "1.10.0" }, "1.9.0")).toBe(false);
-		expect(shouldForceBinaryUpdate({ version: "1.0.0" }, "2.0.0")).toBe(false);
 	});
 });
 
@@ -1948,196 +1468,7 @@ describe("update-cli concurrent binary updates", () => {
 	});
 });
 
-describe("update-cli manager update recovery", () => {
-	const release: ReleaseInfo = {
-		tag: "v18.0.1",
-		version: "18.0.1",
-		packages: { pkg: "@marsai-org/coding-agent", natives: "@marsai-org/natives" },
-		registry: "https://registry.npmjs.org/",
-	};
-	const launcherPath = "C:/Users/test/AppData/Roaming/npm/omp.cmd";
-
-	function scriptedSteps(script: {
-		install: InstalledVersionVerification | Error | undefined;
-		verify?: InstalledVersionVerification;
-		repair?: Error;
-	}): { steps: ManagerUpdateSteps; calls: string[] } {
-		const calls: string[] = [];
-		return {
-			calls,
-			steps: {
-				manager: "npm",
-				async install() {
-					calls.push("install");
-					if (script.install instanceof Error) throw script.install;
-					return script.install;
-				},
-				async verify() {
-					calls.push("verify");
-					return script.verify ?? { ok: false };
-				},
-				async repair(target) {
-					calls.push(`repair:${target}`);
-					if (script.repair) throw script.repair;
-				},
-			},
-		};
-	}
-
-	it("takes the launcher over when the manager install left nothing on PATH", async () => {
-		// npm retires the global bin shims before unpacking and restores them
-		// only if its own rollback succeeds; a locked file (the loaded native
-		// addon on Windows) can leave the user with no `mars` at all.
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: new Error("npm install failed with exit code 1") });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install", "verify", `repair:${launcherPath}`]);
-	});
-
-	it("takes the launcher over when it survives but can no longer report a version", async () => {
-		// bun aborts the whole install on the first file it cannot overwrite,
-		// leaving a half-replaced package the launcher cannot run.
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: { ok: false, path: launcherPath } });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install", `repair:${launcherPath}`]);
-	});
-
-	it("takes the launcher over when the manager succeeds but the previous version remains", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: { ok: false, path: launcherPath, actual: "17.4.2" } });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install", `repair:${launcherPath}`]);
-	});
-
-	it("leaves a concurrently installed newer launcher untouched", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: { ok: false, path: launcherPath, actual: "18.0.2" } });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install"]);
-	});
-
-	it("surfaces the install failure without a takeover when the previous launcher still runs", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({
-			install: new Error("npm install failed with exit code 1"),
-			verify: { ok: false, path: launcherPath, actual: "17.4.2" },
-		});
-
-		await expect(updateViaManager(release, launcherPath, steps)).rejects.toThrow("exit code 1");
-		expect(calls).toEqual(["install", "verify"]);
-	});
-
-	it("keeps a verified manager install untouched", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: { ok: true, path: launcherPath, actual: release.version } });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install"]);
-	});
-
-	it("defers to a rename migration that already verified and reported its own result", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps, calls } = scriptedSteps({ install: undefined });
-
-		await updateViaManager(release, launcherPath, steps);
-
-		expect(calls).toEqual(["install"]);
-	});
-
-	it("reports the failed repair with the install failure as its cause", async () => {
-		vi.spyOn(console, "log").mockImplementation(() => {});
-		const { steps } = scriptedSteps({
-			install: new Error("npm install failed with exit code 1"),
-			repair: new Error("no binary asset"),
-		});
-
-		await expect(updateViaManager(release, launcherPath, steps)).rejects.toThrow(
-			"update did not produce a working launcher and binary repair failed: Error: no binary asset",
-		);
-	});
-});
-
-describe("update-cli registry and release reconciliation", () => {
-	function releaseFixture(version: string): ReleaseInfo {
-		return {
-			tag: `v${version}`,
-			version,
-			dist: "npm",
-			packages: { pkg: "@marsai-org/coding-agent", natives: "@marsai-org/natives" },
-			registry: "https://registry.npmjs.org/",
-		};
-	}
-
-	function listingFetch(versions: string[], overrides: Record<string, unknown> = {}) {
-		return async (input: string | URL | Request): Promise<Response> => {
-			const requestUrl = String(input);
-			if (requestUrl.includes("/releases?")) {
-				return new Response(
-					JSON.stringify(
-						versions.map(version => ({
-							tag_name: `v${version}`,
-							draft: false,
-							prerelease: false,
-							assets: [],
-							...overrides,
-						})),
-					),
-				);
-			}
-			throw new Error(`Unexpected request: ${requestUrl}`);
-		};
-	}
-
-	it("ignores a registry version with no published release and reports up to date", async () => {
-		// The live failure: npm advertised 18.8.6 while the newest published
-		// release was v0.1.0, so `mars update` offered a version it could not install.
-		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("18.8.6"), "0.1.0", {
-			fetchImpl: listingFetch(["0.1.0"]),
-			githubToken: "test-token",
-		});
-		expect(resolved.version).toBe("0.1.0");
-		expect(resolved.downgradeFromRegistry).toBe(true);
-	});
-
-	it("offers a registry version that does have a published release", async () => {
-		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.2.0"), "0.1.0", {
-			fetchImpl: listingFetch(["0.1.0", "0.2.0"]),
-			githubToken: "test-token",
-		});
-		expect(resolved.version).toBe("0.2.0");
-		expect(resolved.downgradeFromRegistry).toBe(false);
-	});
-
-	it("falls back to the newest published release when the registry is ahead of it", async () => {
-		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.9.0"), "0.1.0", {
-			fetchImpl: listingFetch(["0.1.0", "0.3.0"]),
-			githubToken: "test-token",
-		});
-		expect(resolved.version).toBe("0.3.0");
-		expect(resolved.downgradeFromRegistry).toBe(true);
-	});
-
-	it("keeps the registry version when the listing cannot be read", async () => {
-		// A listing outage must not turn a real update into a silent no-op.
-		const fetchImpl = async () => new Response(null, { status: 500, statusText: "Server Error" });
-		const resolved = await updateCli.resolveUpdateVersion(releaseFixture("0.2.0"), "0.1.0", {
-			fetchImpl,
-			githubToken: "test-token",
-		});
-		expect(resolved.version).toBe("0.2.0");
-		expect(resolved.downgradeFromRegistry).toBe(false);
-	});
-
+describe("update-cli GitHub release listing", () => {
 	it("reports the newest published release, skipping drafts and prereleases", async () => {
 		const fetchImpl = async (): Promise<Response> =>
 			new Response(

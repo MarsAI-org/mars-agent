@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@marsai-org/coding-agent"><img src="https://img.shields.io/npm/v/@marsai-org/coding-agent?style=flat&colorA=222222&colorB=CB3837" alt="npm version"></a>
+  <a href="https://github.com/MarsAI-org/mars-agent/releases"><img src="https://img.shields.io/github/v/release/MarsAI-org/mars-agent?style=flat&colorA=222222&colorB=E05735" alt="GitHub release"></a>
   <a href="https://github.com/MarsAI-org/mars-agent/blob/main/packages/coding-agent/CHANGELOG.md"><img src="https://img.shields.io/badge/changelog-keep-E05735?style=flat&colorA=222222" alt="Changelog"></a>
   <a href="https://github.com/MarsAI-org/mars-agent/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/MarsAI-org/mars-agent/ci.yml?style=flat&colorA=222222&colorB=3FB950" alt="CI"></a>
   <a href="https://github.com/MarsAI-org/mars-agent/blob/main/LICENSE"><img src="https://img.shields.io/github/license/MarsAI-org/mars-agent?style=flat&colorA=222222&colorB=58A6FF" alt="License"></a>
@@ -36,17 +36,19 @@ way down.
 
 ## Install
 
-Prebuilt binaries are published to GitHub Releases:
+**macOS & Linux**
 
-- <https://github.com/MarsAI-org/mars-agent/releases>
+```sh
+curl -fsSL https://getmars.eu.cc/install | sh
+```
 
-Download the archive for your platform, extract it, and put the `mars` binary
-somewhere on your `PATH`. Release assets are named
-`mars-<platform>-<arch>` (for example `mars-darwin-arm64`, `mars-linux-x64`),
-covering `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`, `win32-x64`,
-and `win32-arm64`.
+**Windows (PowerShell)**
 
-The installer script in this repository wraps the same releases:
+```powershell
+irm https://getmars.eu.cc/install.ps1 | iex
+```
+
+Raw GitHub mirror URLs for the same scripts:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.sh | sh
@@ -56,15 +58,18 @@ curl -fsSL https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/
 irm https://raw.githubusercontent.com/MarsAI-org/mars-agent/main/scripts/install.ps1 | iex
 ```
 
+Both installers download the matching standalone binary from [GitHub Releases](https://github.com/MarsAI-org/mars-agent/releases), verify it fail-closed against `SHA256SUMS.txt`, run a `--version` smoke check, and install to `~/.local/bin` (POSIX) or `%LOCALAPPDATA%\mars` (Windows):
+
+- `MARS_INSTALL_DIR` — override the installation directory (`PI_INSTALL_DIR` is still honored as a legacy fallback).
+- `MARS_ALLOW_UNVERIFIED=1` — explicit opt-out when `SHA256SUMS.txt` cannot be fetched or no local SHA-256 tool (`sha256sum`/`shasum`) is available. Checksum mismatches always abort.
+
+**GitHub Releases (manual)**
+
+Standalone binaries and `SHA256SUMS.txt` are published directly to [GitHub Releases](https://github.com/MarsAI-org/mars-agent/releases) covering `mars-linux-x64`, `mars-linux-arm64`, `mars-linux-musl-x64`, `mars-linux-musl-arm64`, `mars-darwin-x64`, `mars-darwin-arm64`, `mars-windows-x64.exe`, and `mars-windows-arm64.exe`. Download the binary for your platform, verify its checksum against `SHA256SUMS.txt`, make it executable (on POSIX), and place it on your `PATH` as `mars` (or `mars.exe`).
+
 > **Alpine / musl:** the prebuilt musl binary links `libstdc++`/`libgcc`
 > dynamically, which stock Alpine does not ship. Install them first:
 > `apk add libstdc++ libgcc`.
-
-**Bun (recommended)**
-
-```sh
-bun install -g @marsai-org/coding-agent
-```
 
 **Nix**
 
@@ -99,7 +104,21 @@ configuration can install Mars and own its settings declaratively:
 mise use -g github:MarsAI-org/mars-agent
 ```
 
-macOS · Linux · Windows · bun ≥ 1.3.14
+**Build from source**
+
+Requires `git`, Rust (`cargo`), and Bun ≥ 1.3.14. The installer clones to `~/.mars/src` (override with `MARS_SOURCE_DIR`) and runs `bun run setup`:
+
+```sh
+curl -fsSL https://getmars.eu.cc/install | sh -s -- --source
+```
+
+```powershell
+& ([scriptblock]::Create((irm https://getmars.eu.cc/install.ps1))) -Source
+```
+
+Pass `--ref <tag|branch|commit>` (POSIX) or `-Ref <ref>` (PowerShell) to build a specific ref, or clone the repository and run `bun run setup` locally.
+
+macOS · Linux · Windows — standalone binaries require no runtime; source builds require `git`, Rust, and Bun ≥ 1.3.14.
 
 ### Shell completions
 
@@ -744,11 +763,11 @@ Fresh clones need both workspace dependencies and the local Rust/N-API addon
 before the source CLI can start.
 
 ```sh
-bun setup
-bun dev
+bun run setup
+bun run dev
 ```
 
-`bun setup` installs Bun workspaces and builds `@marsai-org/natives`. Re-run
+`bun run setup` installs Bun workspaces and builds `@marsai-org/natives`. Re-run
 `bun run build:native` after changing Rust crates or `packages/natives`.
 
 Nix users get the pinned Bun and Rust toolchains plus all native build
@@ -756,8 +775,8 @@ dependencies:
 
 ```sh
 nix develop
-bun setup
-bun dev
+bun run setup
+bun run dev
 ```
 
 Build and smoke-test the distributable Nix package with `nix build .#mars`.
@@ -778,7 +797,7 @@ the development shell through Nix, then falls back to the pinned
 For a non-interactive smoke check:
 
 ```sh
-bun dev -- --version
+bun run dev -- --version
 ```
 
 ### Debug Command
@@ -822,6 +841,10 @@ For architecture and contribution guidelines, see
 | **[pi-voice](crates/pi-voice)**                    | Audio capture/playback, Opus codecs, and live WebRTC streaming primitives                           |
 | **[pi-walker](crates/pi-walker)**                  | Parallel ignore-aware filesystem walker with the scan cache shared by grep, glob, and workspace     |
 | **[pi-edit](crates/pi-edit)**                      | Edit engine behind the `edit` tool: line-anchored patch/hashline modes, streaming previews, atomic apply |
+| **[pi-vcs](crates/pi-vcs)**                        | In-process Git (`gitoxide`) and Jujutsu (`jj-lib`) operations behind one interface                  |
+| **[pi-diff](crates/pi-diff)**                      | jsdiff-compatible diff primitives, Myers core, and line/word/patch helpers                          |
+| **[pi-vfs](crates/pi-vfs)**                        | Injectable async virtual filesystem shared by the embedded shell and its coreutils                  |
+| **[pi-predict](crates/pi-predict)**                | Word-completion engines behind the prompt composer                                                  |
 | **[brush-core](crates/vendor/brush-core)**         | Vendored fork of [brush-shell](https://github.com/reubeno/brush) for embedded bash execution        |
 | **[pi-builtins](crates/pi-builtins)**              | Bash builtins (cd, echo, test, printf, read, export, …) plus 67 in-process command-line utilities |
 
@@ -852,9 +875,9 @@ See [CREDITS.md](CREDITS.md) for upstream attribution.
 
 _made for terminals that stay open_
 
+- [Website](https://getmars.eu.cc)
 - [GitHub](https://github.com/MarsAI-org/mars-agent)
 - [Changelog](https://github.com/MarsAI-org/mars-agent/blob/main/packages/coding-agent/CHANGELOG.md)
-- [npm](https://www.npmjs.com/package/@marsai-org/coding-agent)
 - [Releases](https://github.com/MarsAI-org/mars-agent/releases)
 
 ## Credits

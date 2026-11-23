@@ -17,31 +17,23 @@ async function run(command: string[], cwd?: string): Promise<void> {
 	if (exitCode !== 0) throw new Error(`${command.join(" ")} exited with code ${exitCode}`);
 }
 /**
- * Refresh cross-target `pi_natives.linux-<arch>*.node` files in
- * `packages/natives/native/` from the published npm leaf package.
+ * Ensure cross-target `pi_natives.linux-<arch>*.node` files exist in
+ * `packages/natives/native/` before embedding them into guest binaries.
  *
  * The binary build embeds whatever `.node` files sit in that directory; on a
- * non-linux host they are stale local cross-builds that can fail `dlopen`
- * inside task guests (undefined libstdc++ symbols). The matching published
- * leaf is the artifact real installs load, so it is the ground truth for
- * embedding; an unpublished working-tree version fails instead of risking
- * loader/API skew.
+ * non-linux host those addons must be cross-built locally (e.g. via
+ * `bun scripts/bazel-natives.ts`).
  */
-async function refreshCrossNatives(arches: GuestArch[], version: string): Promise<void> {
+async function ensureCrossNatives(arches: GuestArch[]): Promise<void> {
+	const entries = await fs.readdir(NATIVES_DIR).catch(() => [] as string[]);
 	for (const arch of arches) {
 		if (process.platform === "linux" && process.arch === arch) continue;
-		const pkg = `natives-linux-${arch}`;
-		const response = await fetch(`https://registry.npmjs.org/@marsai-org/${pkg}/-/${pkg}-${version}.tgz`);
-		if (!response.ok) throw new Error(`Fetching @marsai-org/${pkg}@${version} failed: HTTP ${response.status}`);
-		const archive = new Bun.Archive(await response.arrayBuffer());
-		let extracted = 0;
-		for (const [entry, file] of await archive.files()) {
-			const name = path.posix.basename(entry);
-			if (!name.startsWith(`pi_natives.linux-${arch}`) || !name.endsWith(".node")) continue;
-			await Bun.write(path.join(NATIVES_DIR, name), file);
-			extracted++;
+		const hasAddon = entries.some(name => name.startsWith(`pi_natives.linux-${arch}`) && name.endsWith(".node"));
+		if (!hasAddon) {
+			throw new Error(
+				`Missing local native addon pi_natives.linux-${arch}*.node in ${NATIVES_DIR}. Build it first with \`bun scripts/bazel-natives.ts\`.`,
+			);
 		}
-		if (extracted === 0) throw new Error(`@marsai-org/${pkg}@${version} tarball contained no .node files`);
 	}
 }
 
@@ -68,7 +60,7 @@ export async function prepareAgentBinaries(opts: {
 
 	if (missing.length > 0) {
 		await fs.mkdir(opts.cacheDir, { recursive: true });
-		await refreshCrossNatives(missing, manifest.version);
+		await ensureCrossNatives(missing);
 		const targets = missing.map(arch => `linux-${arch}`).join(",");
 		await run(["bun", "scripts/ci-release-build-binaries.ts", "--targets", targets], REPO_ROOT);
 		for (const arch of missing) {

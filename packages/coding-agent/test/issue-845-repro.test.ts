@@ -2,22 +2,18 @@ import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { resolveUpdateMethodForTest } from "@marsai-org/coding-agent/cli/update-cli";
+import { resolveUpdateTargetFromPath } from "@marsai-org/coding-agent/cli/update-cli";
 import { removeSyncWithRetries } from "@marsai-org/utils";
 
 // Issue #845: on Windows with Bun installed via Scoop, ~/.bun is a junction
 // to scoop\persist\Oven-sh.Bun\.bun. `bun pm bin -g` and the mars path that
 // $which finds may end up referring to the same directory through different
 // path strings (one through the junction, one through the real target).
-// `isPathInDirectory` did purely lexical comparison via path.resolve, which
-// does not follow filesystem links, so it misclassified Bun-installed mars
-// as "binary" and tried to swap omp.exe in place – which fails on Windows
-// because Bun has the file open (EPERM on unlink of .bak).
-//
-// We reproduce the realpath-resolution bug with a symlink (works on macOS /
-// Linux; the bug is realpath, not junction-specific).
+// `isPathInDirectory` must follow filesystem links so a legacy bun symlink
+// reached through a symlinked bin dir is recognized for in-place takeover
+// instead of being treated as a foreign symlink.
 
-describe("issue-845: resolveUpdateMethod follows symlinks/junctions", () => {
+describe("issue-845: resolveUpdateTargetFromPath follows symlinks/junctions", () => {
 	let tmpRoot: string;
 	let realBinDir: string;
 	let linkedBinDir: string;
@@ -25,9 +21,22 @@ describe("issue-845: resolveUpdateMethod follows symlinks/junctions", () => {
 
 	beforeAll(() => {
 		tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "mars-issue-845-"));
-		realBinDir = path.join(tmpRoot, "real", "bin");
+		const realInstallRoot = path.join(tmpRoot, "real");
+		realBinDir = path.join(realInstallRoot, "bin");
+		const managedCli = path.join(
+			realInstallRoot,
+			"install",
+			"global",
+			"node_modules",
+			"@marsai-org",
+			"coding-agent",
+			"dist",
+			"cli.js",
+		);
 		fs.mkdirSync(realBinDir, { recursive: true });
-		fs.writeFileSync(path.join(realBinDir, "mars"), "#!/bin/sh\n", { mode: 0o755 });
+		fs.mkdirSync(path.dirname(managedCli), { recursive: true });
+		fs.writeFileSync(managedCli, "#!/usr/bin/env bun\n", { mode: 0o755 });
+		fs.symlinkSync(managedCli, path.join(realBinDir, "mars"));
 
 		linkedBinDir = path.join(tmpRoot, "link-bin");
 		fs.symlinkSync(realBinDir, linkedBinDir, "dir");
@@ -38,16 +47,24 @@ describe("issue-845: resolveUpdateMethod follows symlinks/junctions", () => {
 		removeSyncWithRetries(tmpRoot);
 	});
 
-	it("classifies mars reached through a symlinked bin dir as bun-managed", () => {
-		// $which resolves through the symlink, `bun pm bin -g` returns the real path
-		// (or vice versa). Either direction must be recognized.
-		const method = resolveUpdateMethodForTest(ompPathViaLink, realBinDir);
-		expect(method).toBe("bun");
+	it("takes over a legacy bun launcher reached through a symlinked bin dir", () => {
+		const target = resolveUpdateTargetFromPath(ompPathViaLink, realBinDir);
+		expect(target).toEqual({
+			method: "binary",
+			path: ompPathViaLink,
+			replacesSymlink: true,
+			validateExistingTarget: false,
+		});
 	});
 
-	it("classifies mars at the real bin dir as bun-managed when bunBinDir is symlinked", () => {
+	it("takes over a legacy bun launcher at the real bin dir when bunBinDir is symlinked", () => {
 		const ompAtReal = path.join(realBinDir, "mars");
-		const method = resolveUpdateMethodForTest(ompAtReal, linkedBinDir);
-		expect(method).toBe("bun");
+		const target = resolveUpdateTargetFromPath(ompAtReal, linkedBinDir);
+		expect(target).toEqual({
+			method: "binary",
+			path: ompAtReal,
+			replacesSymlink: true,
+			validateExistingTarget: false,
+		});
 	});
 });

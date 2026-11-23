@@ -344,10 +344,11 @@ class OmpLocal(BaseInstalledAgent):
                 ),
             )
             self._bun = f"{self._home}/.bun/bin/bun"
-            if self._install_mode == "published":
-                self._cli = await self._install_published(environment)
-            else:
-                self._cli = await self._install_local(environment)
+            if self._install_mode != "local":
+                raise RuntimeError(
+                    f"Unsupported MARS_BENCH_INSTALL={self._install_mode!r}; use 'source', 'local', or --binary"
+                )
+            self._cli = await self._install_local(environment)
 
         # 3) Auth + model config under $HOME/.mars/agent.
         if self._gateway_on:
@@ -407,16 +408,9 @@ class OmpLocal(BaseInstalledAgent):
                 f"tar xzf {_TARBALL_DST} -C {shlex.quote(app)} --strip-components=1; "
                 f"cd {shlex.quote(app)}; "
                 # Bundle inlines workspace TS; only externalized deps are needed.
-                # Skip heavy optionals (transformers/sherpa) but add the native addon.
-                "bun install --production --omit=optional; "
-                "arch=$(uname -m); "
-                'case "$arch" in aarch64|arm64) na=arm64 ;; x86_64|amd64) na=x64 ;; '
-                '*) echo "unsupported arch $arch" >&2; exit 4 ;; esac; '
-                # Native leaf MUST match the bundle version exactly (loader/API skew
-                # otherwise). Read it straight from the packed package.json.
-                'ver=$(bun -e "process.stdout.write(require(\\"./package.json\\").version)"); '
-                'echo "pinning native @marsai-org/natives-linux-$na@$ver"; '
-                'bun add --production "@marsai-org/natives-linux-$na@$ver"'
+                # Skip heavy optionals (transformers/sherpa). Native addons must
+                # be provided via --binary or source mode (no npmjs leaves).
+                "bun install --production --omit=optional"
             ),
             timeout_sec=900,
         )
@@ -450,21 +444,6 @@ class OmpLocal(BaseInstalledAgent):
         )
         self._cli = dst
         return dst
-
-    async def _install_published(self, environment: BaseEnvironment) -> str:
-        app = f"{self._home}/.mars-bench/app"
-        spec = f"@marsai-org/coding-agent@{self._pkg_version}"
-        await self.exec_as_agent(
-            environment,
-            command=self._wrap(
-                "set -e; "
-                f"mkdir -p {shlex.quote(app)}; cd {shlex.quote(app)}; "
-                'printf "{}" > package.json; '
-                f"bun add {shlex.quote(spec)}"
-            ),
-            timeout_sec=900,
-        )
-        return f"{app}/node_modules/@marsai-org/coding-agent/dist/cli.js"
 
     async def _write_models_yaml(self, environment: BaseEnvironment) -> None:
         if self._models_yaml_path and os.path.isfile(self._models_yaml_path):

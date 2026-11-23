@@ -135,7 +135,7 @@ omitted from the benchmark prompt. Override infrastructure with
 | `--agent-arg <arg>` | — | Extra arg forwarded verbatim to the in-container mars CLI (repeatable) |
 | `--env <KEY[=VALUE]>` | — | Forward env into the mars container (repeatable); `KEY` alone forwards the host value |
 | `--binary <path>` | — | Prebuilt mars binary (repeat for arm64+x64) |
-| `--install <source\|local\|published>` | `source` | `source` = repo bind-mount, `local` = tarball pack, `published` = npm `@marsai-org/coding-agent` |
+| `--install <source\|local>` | `source` | `source` = repo bind-mount, `local` = tarball pack |
 | `--environment <docker\|apple-container>` | `docker` | `apple-container` runs trials via Apple's `container` CLI (no Docker); source/deps mounts go through `harbor --mounts` and the gateway is auto-forwarded from `192.168.64.1:4000` to the loopback-bound gateway |
 | `--gateway-url <url>` | `http://host.docker.internal:4000` | `http://192.168.64.1:4000` under `--environment apple-container` |
 | `--no-gateway` | off | Pass host provider keys into containers instead |

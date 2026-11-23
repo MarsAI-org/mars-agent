@@ -1,8 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "bun:test";
-import { fixedNpmRegistry } from "../../src/cli/npm-registry";
 import { getLatestRelease, runUpdateCommand } from "../../src/cli/update-cli";
-
-const npmjs = fixedNpmRegistry();
 
 type FetchInput = string | URL | Request;
 type FetchInit = RequestInit | BunFetchRequestInit;
@@ -12,13 +9,13 @@ describe("runUpdateCommand fetch cancellation", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("checks release metadata with a timeout signal", async () => {
+	it("checks GitHub release metadata with a timeout signal", async () => {
 		let requestSignal: AbortSignal | undefined;
 		vi.spyOn(console, "log").mockImplementation(() => {});
 		const fetchStub = Object.assign(
 			async (_input: FetchInput, init?: FetchInit) => {
 				requestSignal = init?.signal ?? undefined;
-				return Response.json({ version: "999.0.0" });
+				return Response.json([{ tag_name: "v999.0.0", draft: false, prerelease: false, assets: [] }]);
 			},
 			{ preconnect: globalThis.fetch.preconnect },
 		);
@@ -30,262 +27,48 @@ describe("runUpdateCommand fetch cancellation", () => {
 	});
 });
 
-describe("getLatestRelease rename pointers", () => {
+describe("getLatestRelease GitHub releases", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 
-	function stubRegistry(manifests: Record<string, unknown>): string[] {
+	it("selects the newest stable published release and skips drafts and prereleases", async () => {
 		const urls: string[] = [];
-		const fetchStub = Object.assign(
-			async (input: FetchInput) => {
-				const url = String(input);
-				urls.push(url);
-				const decoded = decodeURIComponent(url);
-				let manifest: unknown;
-				for (const pkg in manifests) {
-					if (decoded.includes(pkg)) {
-						manifest = manifests[pkg];
-						break;
-					}
-				}
-				if (!manifest) return new Response(null, { status: 404, statusText: "Not Found" });
-				return Response.json(manifest);
-			},
-			{ preconnect: globalThis.fetch.preconnect },
-		);
-		vi.spyOn(globalThis, "fetch").mockImplementation(fetchStub);
-		return urls;
-	}
+		const fetchStub = async (input: FetchInput) => {
+			urls.push(String(input));
+			return Response.json([
+				{ tag_name: "v0.9.0", draft: true, prerelease: false, assets: [] },
+				{ tag_name: "v0.8.0-canary.1", draft: false, prerelease: true, assets: [] },
+				{ tag_name: "v0.4.0", draft: false, prerelease: false, assets: [] },
+				{ tag_name: "v0.3.1", draft: false, prerelease: false, assets: [] },
+			]);
+		};
 
-	it("follows omp.rename to the new package and resolves version, dist, and names from its manifest", async () => {
-		const urls = stubRegistry({
-			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
-			"@marsai-org/coding-agent": {
-				version: "999.0.0",
-				mars: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
-			},
-		});
+		const release = await getLatestRelease({ fetchImpl: fetchStub, githubToken: "test-token" });
 
-		const release = await getLatestRelease({ registries: npmjs });
-
-		expect(release.version).toBe("999.1.0");
-		expect(release.dist).toBe("npm");
-		expect(release.packages).toEqual({ pkg: "@new/mars", natives: "@new/natives" });
-		expect(urls).toEqual([
-			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
-			"https://registry.npmjs.org/@new%2fmars/latest",
-		]);
-	});
-	it("fetches the canary dist-tag when checking the canary channel", async () => {
-		const urls = stubRegistry({
-			"@marsai-org/coding-agent": { version: "999.0.0-canary.1" },
-		});
-
-		await getLatestRelease({ channel: "canary", registries: npmjs });
-
-		expect(urls).toEqual(["https://registry.npmjs.org/@marsai-org%2fcoding-agent/canary"]);
+		expect(release).toEqual({ tag: "v0.4.0", version: "0.4.0" });
+		expect(urls).toEqual(["https://api.github.com/repos/MarsAI-org/mars-agent/releases?per_page=30"]);
 	});
 
-	it("still follows a pre-rebrand omp.rename pointer", async () => {
-		const urls = stubRegistry({
-			"@new/mars": { version: "999.1.0", mars: { dist: "npm" } },
-			"@marsai-org/coding-agent": {
-				version: "999.0.0",
-				omp: { dist: "binary", rename: { package: "@new/mars", natives: "@new/natives" } },
-			},
-		});
+	it("selects prereleases when checking the canary channel", async () => {
+		const fetchStub = async () =>
+			Response.json([
+				{ tag_name: "v0.5.0-canary.2", draft: false, prerelease: true, assets: [] },
+				{ tag_name: "v0.4.0", draft: false, prerelease: false, assets: [] },
+			]);
 
-		const release = await getLatestRelease({ registries: npmjs });
+		const release = await getLatestRelease({ channel: "canary", fetchImpl: fetchStub, githubToken: "test-token" });
 
-		expect(release.version).toBe("999.1.0");
-		expect(release.packages).toEqual({ pkg: "@new/mars", natives: "@new/natives" });
-		expect(urls).toEqual([
-			"https://registry.npmjs.org/@marsai-org%2fcoding-agent/latest",
-			"https://registry.npmjs.org/@new%2fmars/latest",
-		]);
+		expect(release).toEqual({ tag: "v0.5.0-canary.2", version: "0.5.0-canary.2" });
 	});
 
-	it("ignores a rename pointer that cycles back to an already-visited package", async () => {
-		const urls = stubRegistry({
-			"@marsai-org/coding-agent": {
-				version: "999.0.0",
-				mars: { rename: { package: "@marsai-org/coding-agent" } },
-			},
-		});
+	it("reports when no canary release has been published yet", async () => {
+		const fetchStub = async () =>
+			Response.json([{ tag_name: "v0.4.0", draft: false, prerelease: false, assets: [] }]);
 
-		const release = await getLatestRelease({ registries: npmjs });
-
-		expect(urls).toHaveLength(1);
-		expect(release.version).toBe("999.0.0");
-		expect(release.packages).toEqual({ pkg: "@marsai-org/coding-agent", natives: "@marsai-org/natives" });
-	});
-});
-
-describe("getLatestRelease configured registry", () => {
-	afterEach(() => {
-		vi.restoreAllMocks();
-	});
-
-	const feed = () => ({
-		url: "https://npm.corp.example/api/npm/feed/",
-		source: "/home/u/.npmrc",
-		authorization: "Bearer s3cret",
-	});
-
-	it("queries the configured feed with its credentials and reports it for the install pin", async () => {
-		const requests: { url: string; authorization: string | null }[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput, init?: FetchInit) => {
-					requests.push({ url: String(input), authorization: new Headers(init?.headers).get("authorization") });
-					return Response.json({ version: "999.0.0" });
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		const release = await getLatestRelease({ registries: feed });
-
-		expect(requests).toEqual([
-			{
-				url: "https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest",
-				authorization: "Bearer s3cret",
-			},
-		]);
-		expect(release.registry).toBe("https://npm.corp.example/api/npm/feed/");
-	});
-
-	it("falls back to the full packument when the feed does not serve the dist-tag shortcut", async () => {
-		const urls: string[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) => {
-					const url = String(input);
-					urls.push(url);
-					if (url.endsWith("/latest")) return new Response(null, { status: 404, statusText: "Not Found" });
-					return Response.json({
-						"dist-tags": { latest: "999.2.0" },
-						versions: { "999.2.0": { version: "999.2.0", mars: { dist: "binary" } } },
-					});
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		const release = await getLatestRelease({ registries: feed });
-
-		expect(urls).toEqual([
-			"https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest",
-			"https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent",
-		]);
-		expect(release.version).toBe("999.2.0");
-		expect(release.dist).toBe("binary");
-	});
-
-	it("resolves the tagged version when the feed answers the dist-tag shortcut with the full packument", async () => {
-		const urls: string[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) => {
-					urls.push(String(input));
-					return Response.json({
-						"dist-tags": { latest: "999.3.0" },
-						versions: { "999.3.0": { version: "999.3.0", mars: { dist: "binary" } } },
-					});
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		const release = await getLatestRelease({ registries: feed });
-
-		expect(urls).toEqual(["https://npm.corp.example/api/npm/feed/@marsai-org%2fcoding-agent/latest"]);
-		expect(release.version).toBe("999.3.0");
-		expect(release.dist).toBe("binary");
-	});
-
-	it("falls back to the full packument when the shortcut returns 200 without a version", async () => {
-		const urls: string[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) => {
-					const url = String(input);
-					urls.push(url);
-					if (url.endsWith("/latest")) return Response.json({ success: false, error: "not found" });
-					return Response.json({
-						"dist-tags": { latest: "999.4.0" },
-						versions: { "999.4.0": { version: "999.4.0" } },
-					});
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		const release = await getLatestRelease({ registries: feed });
-
-		expect(urls).toHaveLength(2);
-		expect(release.version).toBe("999.4.0");
-	});
-
-	it("falls back to the full packument when the shortcut returns 200 with a non-JSON body", async () => {
-		const urls: string[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) => {
-					const url = String(input);
-					urls.push(url);
-					if (url.endsWith("/latest")) return new Response("<html>Nexus</html>", { status: 200 });
-					return Response.json({
-						"dist-tags": { latest: "999.5.0" },
-						versions: { "999.5.0": { version: "999.5.0" } },
-					});
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		const release = await getLatestRelease({ registries: feed });
-
-		expect(urls).toHaveLength(2);
-		expect(release.version).toBe("999.5.0");
-	});
-
-	it("surfaces a body-read failure on the shortcut instead of retrying the packument", async () => {
-		const urls: string[] = [];
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) => {
-					urls.push(String(input));
-					const body = new ReadableStream({
-						start(controller) {
-							controller.error(new Error("connection reset mid-body"));
-						},
-					});
-					return new Response(body, { status: 200 });
-				},
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		await expect(getLatestRelease({ registries: feed })).rejects.toThrow("connection reset mid-body");
-		expect(urls).toHaveLength(1);
-	});
-
-	it("reports a missing canary dist-tag on the feed as no canary release", async () => {
-		vi.spyOn(globalThis, "fetch").mockImplementation(
-			Object.assign(
-				async (input: FetchInput) =>
-					String(input).endsWith("/canary")
-						? new Response(null, { status: 404, statusText: "Not Found" })
-						: Response.json({ "dist-tags": { latest: "1.0.0" }, versions: { "1.0.0": { version: "1.0.0" } } }),
-				{ preconnect: globalThis.fetch.preconnect },
-			),
-		);
-
-		await expect(getLatestRelease({ channel: "canary", registries: feed })).rejects.toThrow(
-			"No canary release has been published",
-		);
+		await expect(
+			getLatestRelease({ channel: "canary", fetchImpl: fetchStub, githubToken: "test-token" }),
+		).rejects.toThrow("No canary release has been published");
 	});
 });
 
@@ -295,27 +78,21 @@ describe("getLatestRelease proxy errors", () => {
 	});
 
 	it("translates Bun's UnsupportedProxyProtocol fetch failure into an actionable CLI message", async () => {
-		const fetchStub = Object.assign(
-			async () => {
-				throw new Error(
-					'UnsupportedProxyProtocol fetching "https://registry.npmjs.org/@marsai-org/coding-agent/latest". ' +
-						"For more information, pass `verbose: true` in the second argument to fetch()",
-				);
-			},
-			{ preconnect: globalThis.fetch.preconnect },
-		);
-		vi.spyOn(globalThis, "fetch").mockImplementation(fetchStub);
+		const fetchStub = async () => {
+			throw new Error(
+				'UnsupportedProxyProtocol fetching "https://api.github.com/repos/MarsAI-org/mars-agent/releases?per_page=30". ' +
+					"For more information, pass `verbose: true` in the second argument to fetch()",
+			);
+		};
 
-		const err = await getLatestRelease({ timeoutMs: 5000, registries: npmjs }).then(
+		const err = await getLatestRelease({ timeoutMs: 5000, fetchImpl: fetchStub, githubToken: "test-token" }).then(
 			() => null,
 			(e: unknown) => e as Error,
 		);
 
 		expect(err).toBeInstanceOf(Error);
-		// The raw fetch() instruction the CLI user cannot act on must not leak through.
 		expect(err?.message).not.toContain("verbose: true");
 		expect(err?.message).not.toContain("fetch()");
-		// Instead the user gets actionable guidance about supported proxy schemes.
 		expect(err?.message).toMatch(/SOCKS/i);
 		expect(err?.message).toMatch(/https?:\/\//i);
 	});
