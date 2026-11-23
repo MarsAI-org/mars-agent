@@ -26,6 +26,7 @@ import {
 	logger,
 	MAIN_CONFIG_FILENAMES,
 	procmgr,
+	resolveEnvAlias,
 } from "@marsai-org/utils";
 import { withFileLock } from "@marsai-org/utils/file-lock";
 import { isLightTheme } from "@marsai-org/tui/theme/theme";
@@ -671,7 +672,8 @@ export class Settings {
 		this.#cwd = path.normalize(options.cwd ?? getProjectDir());
 		this.#agentDir = path.normalize(options.agentDir ?? getAgentDir());
 		this.#configPath = options.inMemory ? null : path.join(this.#agentDir, MAIN_CONFIG_FILENAMES[0]);
-		const configFiles = process.env.PI_CONFIG_FILES?.split(path.delimiter).filter(Boolean) ?? [];
+		const configFilesEnv = resolveEnvAlias("MARS_CONFIG_FILES", ["OMP_CONFIG_FILES", "PI_CONFIG_FILES"]);
+		const configFiles = configFilesEnv?.split(path.delimiter).filter(Boolean) ?? [];
 		if (options.configFiles) configFiles.push(...options.configFiles);
 		this.#configFiles = configFiles.map(file => path.resolve(this.#cwd, expandTilde(file)));
 		this.#persist = !options.inMemory && options.readOnly !== true;

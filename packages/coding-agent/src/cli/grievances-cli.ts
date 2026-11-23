@@ -1,6 +1,7 @@
 /**
  * CLI handler for `mars grievances` — view, clean, and manually push reported tool issues.
  */
+import { APP_NAME } from "@marsai-org/utils";
 import chalk from "@marsai-org/utils/chalk";
 import { Settings } from "../config/settings";
 import { flushGrievances, openAutoQaDb } from "../tools/report-tool-issue";
@@ -244,7 +245,7 @@ export async function pushGrievances(options: PushGrievancesOptions): Promise<vo
 		if (result.skipped) {
 			console.log(
 				chalk.yellow(
-					"Push skipped — no endpoint configured. Set `dev.autoqaPush.endpoint` or `PI_AUTO_QA_PUSH_URL`.",
+					"Push skipped — no endpoint configured. Set `dev.autoqaPush.endpoint` or `MARS_AUTO_QA_PUSH_URL`.",
 				),
 			);
 			return;
@@ -257,7 +258,7 @@ export async function pushGrievances(options: PushGrievancesOptions): Promise<vo
 		if (rejected > 0) {
 			console.log(
 				chalk.yellow(
-					`${rejected} grievance${rejected === 1 ? " was" : "s were"} refused by the server and marked rejected (see \`mars grievances list\`).`,
+					`${rejected} grievance${rejected === 1 ? " was" : "s were"} refused by the server and marked rejected (see \`${APP_NAME} grievances list\`).`,
 				),
 			);
 		}

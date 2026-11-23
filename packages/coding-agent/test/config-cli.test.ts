@@ -396,4 +396,26 @@ describe("config CLI schema coverage", () => {
 			type: "enum",
 		});
 	});
+	it("prefers MARS_CONFIG_FILES over legacy PI_CONFIG_FILES", async () => {
+		if (!testAgentDir) throw new Error("Test agent directory was not initialized");
+		const marsOverlayPath = path.join(testAgentDir.path(), "mars-overlay.yml");
+		const piOverlayPath = path.join(testAgentDir.path(), "pi-overlay.yml");
+		await Promise.all([
+			Bun.write(marsOverlayPath, "defaultThinkingLevel: low\n"),
+			Bun.write(piOverlayPath, "defaultThinkingLevel: max\n"),
+		]);
+		const { exitCode, output, error } = await runCliProcess(["config", "get", "defaultThinkingLevel", "--json"], {
+			MARS_CODING_AGENT_DIR: testAgentDir.path(),
+			MARS_CONFIG_FILES: marsOverlayPath,
+			PI_CONFIG_FILES: piOverlayPath,
+		});
+
+		expect(exitCode).toBe(0);
+		expect(error).toBe("");
+		expect(JSON.parse(output)).toMatchObject({
+			key: "defaultThinkingLevel",
+			value: "low",
+			type: "enum",
+		});
+	});
 });

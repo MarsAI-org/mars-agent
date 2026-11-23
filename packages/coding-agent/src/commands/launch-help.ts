@@ -1,5 +1,5 @@
 import { Args, type CommandMetadata, Flags } from "@marsai-org/utils/cli";
-import { APP_NAME } from "@marsai-org/utils/dirs";
+import { APP_NAME, CONFIG_DIR_NAME } from "@marsai-org/utils/dirs";
 import { formatKeyHint } from "@marsai-org/tui/key-hint-format";
 import { CLI_THINKING_LEVELS } from "@marsai-org/tui/thinking";
 import { SERVICE_TIER_OPENAI_VALUES } from "../config/service-tier";
@@ -48,7 +48,7 @@ export const launchHelp = {
 		alias: Flags.string({ description: "Create a shell shortcut for the selected profile and exit" }),
 		cwd: Flags.string({ description: "Directory to start in (overrides the launch cwd)" }),
 		mode: Flags.string({
-			description: "Output mode: text (default), json, rpc, or rpc-ui",
+			description: "Output mode: text (default), json, rpc, rpc-ui, or acp",
 			options: ["text", "json", "rpc", "acp", "rpc-ui"],
 		}),
 		config: Flags.string({
@@ -127,6 +127,6 @@ export const launchHelp = {
 		`# Create a shell shortcut for a work profile\n  ${APP_NAME} --profile work --alias mars-work`,
 		`# Use different model (fuzzy matching)\n  ${APP_NAME} --model opus "Help me refactor this code"`,
 		`# Limit model cycling to specific models\n  ${APP_NAME} --models claude-sonnet,claude-haiku,gpt-4o`,
-		`# Export a session file to HTML\n  ${APP_NAME} --export ~/.mars/agent/sessions/--path--/session.jsonl`,
+		`# Export a session file to HTML\n  ${APP_NAME} --export ~/${CONFIG_DIR_NAME}/agent/sessions/--path--/session.jsonl`,
 	],
 } satisfies CommandMetadata;

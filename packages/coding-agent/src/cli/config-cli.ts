@@ -425,7 +425,7 @@ function shadowingSource(setting: AnySetting): { json: Record<string, string>; m
 		case "overlay":
 			return {
 				json: { overriddenBy: provenance },
-				message: "A --config / PI_CONFIG_FILES overlay overrides this value for this process.",
+				message: "A --config / MARS_CONFIG_FILES overlay overrides this value for this process.",
 			};
 		case "runtime":
 			return {
@@ -502,8 +502,8 @@ ${chalk.bold("Options:")}
 
 ${chalk.bold("Examples:")}
   ${APP_NAME} config list
-  ${APP_NAME} config get theme
-  ${APP_NAME} config set theme catppuccin-mocha
+  ${APP_NAME} config get theme.dark
+  ${APP_NAME} config set theme.dark dark-catppuccin
   ${APP_NAME} config set compaction.enabled false
   ${APP_NAME} config set defaultThinkingLevel medium
   ${APP_NAME} config set providers.endpoints.openai https://my-proxy/v1

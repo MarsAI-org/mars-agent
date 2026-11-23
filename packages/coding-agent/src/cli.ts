@@ -26,7 +26,7 @@ import {
 	setProfile,
 	VERSION,
 } from "@marsai-org/utils/dirs";
-import { readCompatEnv } from "@marsai-org/utils/env-compat";
+import { noteInternalEnvWrite, readCompatEnv, resolveEnvAlias } from "@marsai-org/utils/env-compat";
 
 import { declareWorkerHostEntry, installWorkerInbox, isWorkerHostSelector } from "@marsai-org/utils/worker-host";
 import { extractProfileFlags } from "./cli/profile-bootstrap";
@@ -437,6 +437,11 @@ let runningCommand: string | undefined;
 
 /** Run the CLI with the given argv (no `process.argv` prefix). */
 export async function runCli(argv: string[]): Promise<void> {
+	const walkWorkers = resolveEnvAlias("MARS_WALK_WORKERS", ["OMP_WALK_WORKERS", "PI_WALK_WORKERS"]);
+	if (walkWorkers !== undefined && process.env.PI_WALK_WORKERS !== walkWorkers) {
+		noteInternalEnvWrite("PI_WALK_WORKERS", walkWorkers);
+		process.env.PI_WALK_WORKERS = walkWorkers;
+	}
 	let resolvedArgv = argv;
 	try {
 		const extracted = extractProfileFlags(resolvedArgv);

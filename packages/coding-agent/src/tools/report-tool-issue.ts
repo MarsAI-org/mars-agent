@@ -36,7 +36,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import type { AgentToolResult } from "@marsai-org/agent-core";
 import type { FetchImpl } from "@marsai-org/ai";
-import { $env, $flag, getAutoQaDbPath, getInstallId, logger, VERSION } from "@marsai-org/utils";
+import { $env, $flag, getAutoQaDbPath, getInstallId, logger, resolveEnvAlias, VERSION } from "@marsai-org/utils";
 import type { Settings } from "..";
 import type { ToolSession } from "./index";
 import { ToolError } from "@marsai-org/tui/tools/tool-errors";
@@ -363,8 +363,8 @@ export function __resetAutoQaFlushStateForTests(): void {
 	lastFailureAt = 0;
 }
 
-function envOverrideString(name: string): string | undefined {
-	const value = $env[name];
+function envOverrideString(canonical: string, legacy: readonly string[]): string | undefined {
+	const value = resolveEnvAlias(canonical, legacy, { env: $env });
 	if (typeof value !== "string") return undefined;
 	const trimmed = value.trim();
 	return trimmed.length > 0 ? trimmed : undefined;
@@ -383,11 +383,13 @@ function resolvePushConfig(settings: Settings | undefined, bypassConsent: boolea
 	}
 
 	const endpoint =
-		envOverrideString("PI_AUTO_QA_PUSH_URL") ?? (settings ? cfgDevAutoqaPushEndpoint.get(settings) : undefined);
+		envOverrideString("MARS_AUTO_QA_PUSH_URL", ["OMP_AUTO_QA_PUSH_URL", "PI_AUTO_QA_PUSH_URL"]) ??
+		(settings ? cfgDevAutoqaPushEndpoint.get(settings) : undefined);
 	if (!endpoint || endpoint.trim().length === 0) return null;
 
 	const token =
-		envOverrideString("PI_AUTO_QA_PUSH_TOKEN") ?? (settings ? cfgDevAutoqaPushToken.get(settings) : undefined);
+		envOverrideString("MARS_AUTO_QA_PUSH_TOKEN", ["OMP_AUTO_QA_PUSH_TOKEN", "PI_AUTO_QA_PUSH_TOKEN"]) ??
+		(settings ? cfgDevAutoqaPushToken.get(settings) : undefined);
 	return { endpoint: endpoint.trim(), token: token && token.length > 0 ? token : undefined };
 }
 

@@ -1127,8 +1127,8 @@ ${chalk.bold("Commands:")}
   config <cmd> <pkg> [key] [val] Manage plugin settings
   enable <pkg>                   Enable a disabled plugin
   disable <pkg>                  Disable plugin without uninstalling
-  marketplace <cmd>            Manage marketplace sources (add, remove, update, list)
-  discover [marketplace]        Browse available marketplace plugins
+  marketplace <cmd>              Manage marketplace sources (add, remove, update, list)
+  discover [marketplace]         Browse available marketplace plugins
 
 ${chalk.bold("Feature Syntax:")}
   pkg                Install with default features

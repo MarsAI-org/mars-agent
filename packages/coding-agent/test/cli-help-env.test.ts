@@ -1,4 +1,5 @@
 import { describe, expect, it } from "bun:test";
+import { syncWalkWorkersEnv } from "@marsai-org/coding-agent/cli/grep-cli";
 import { getExtraHelpText } from "@marsai-org/coding-agent/cli/help-extra";
 
 const stripAnsi = (text: string): string => text.replace(/\u001B\[[0-9;]*m/g, "");
@@ -29,5 +30,30 @@ describe("--help environment variable section", () => {
 		expect(help).toContain("Legacy PI_* names");
 		expect(help).toContain("deprecated");
 		expect(help.match(/PI_CODING_AGENT_DIR/g)).toHaveLength(1);
+	});
+
+	it("aligns every environment variable separator column and links to the hosted docs", () => {
+		const envSection = help.slice(0, help.indexOf("Available Tools"));
+		const dashColumns = envSection
+			.split("\n")
+			.filter(line => /^ {2}[A-Z][A-Z0-9_]+ +- /.test(line))
+			.map(line => line.indexOf(" - "));
+		expect(dashColumns.length).toBeGreaterThan(30);
+		expect(new Set(dashColumns).size).toBe(1);
+		expect(envSection).toContain("https://github.com/MarsAI-org/mars-agent/blob/main/docs/environment-variables.md");
+	});
+});
+
+describe("syncWalkWorkersEnv", () => {
+	it("propagates MARS_WALK_WORKERS into PI_WALK_WORKERS and prefers MARS over legacy names", () => {
+		const env: Record<string, string | undefined> = { MARS_WALK_WORKERS: "2", PI_WALK_WORKERS: "8" };
+		expect(syncWalkWorkersEnv(env)).toBe("2");
+		expect(env.PI_WALK_WORKERS).toBe("2");
+	});
+
+	it("falls back to PI_WALK_WORKERS when MARS_WALK_WORKERS is unset", () => {
+		const env: Record<string, string | undefined> = { PI_WALK_WORKERS: "6" };
+		expect(syncWalkWorkersEnv(env)).toBe("6");
+		expect(env.PI_WALK_WORKERS).toBe("6");
 	});
 });

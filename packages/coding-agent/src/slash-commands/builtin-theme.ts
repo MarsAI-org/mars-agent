@@ -4,7 +4,7 @@ import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec, SubcommandDef } from "./types";
 
 /**
- * Preview or switch the active colour theme.
+ * Preview or switch the active color theme.
  *
  * `/theme` lists available themes.
  * `/theme preview <name>` loads the theme, shows a compact swatch block,
@@ -41,7 +41,7 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 	{
 		name: "theme",
 		icon: "settings",
-		description: "Preview or switch the colour theme",
+		description: "Preview or switch the color theme",
 		subcommands,
 		inlineHint: "[preview|set|list] [name]",
 		allowArgs: true,

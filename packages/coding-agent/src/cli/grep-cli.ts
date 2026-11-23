@@ -5,7 +5,7 @@
  */
 import * as path from "node:path";
 import { GrepOutputMode, grep } from "@marsai-org/natives";
-import { APP_NAME } from "@marsai-org/utils";
+import { APP_NAME, noteInternalEnvWrite, resolveEnvAlias } from "@marsai-org/utils";
 import chalk from "@marsai-org/utils/chalk";
 import { expandPath } from "../tools/path-utils";
 
@@ -68,7 +68,22 @@ export function parseGrepArgs(args: string[]): GrepCommandArgs | undefined {
 	return result;
 }
 
+/**
+ * Propagate `MARS_WALK_WORKERS` (with `OMP_WALK_WORKERS` / `PI_WALK_WORKERS`
+ * fallbacks) into `PI_WALK_WORKERS` so the native Rust walker reads the
+ * canonical Mars env variable.
+ */
+export function syncWalkWorkersEnv(env: Record<string, string | undefined> = process.env): string | undefined {
+	const resolved = resolveEnvAlias("MARS_WALK_WORKERS", ["OMP_WALK_WORKERS", "PI_WALK_WORKERS"], { env });
+	if (resolved !== undefined && env.PI_WALK_WORKERS !== resolved) {
+		noteInternalEnvWrite("PI_WALK_WORKERS", resolved);
+		env.PI_WALK_WORKERS = resolved;
+	}
+	return resolved;
+}
+
 export async function runGrepCommand(cmd: GrepCommandArgs): Promise<void> {
+	syncWalkWorkersEnv();
 	if (!cmd.pattern) {
 		console.error(chalk.red("Error: Pattern is required"));
 		process.exit(1);
@@ -151,7 +166,7 @@ ${chalk.bold("Options:")}
   --no-gitignore        Include files excluded by .gitignore
 
 ${chalk.bold("Environment:")}
-  PI_WALK_WORKERS=N    Set filesystem walker workers (default 4, 0 = auto)
+  MARS_WALK_WORKERS=N   Set filesystem walker workers (default 4, 0 = auto)
 
 ${chalk.bold("Examples:")}
   ${APP_NAME} grep "import" src/

@@ -230,6 +230,40 @@ describe("flushGrievances", () => {
 		expect(selectPushedIds(db)).toEqual([1]);
 	});
 
+	it("prefers MARS_AUTO_QA_PUSH_URL over legacy PI_AUTO_QA_PUSH_URL and falls back when unset", async () => {
+		insertGrievance(db, "glob", "override test");
+		const prevMarsUrl = Bun.env.MARS_AUTO_QA_PUSH_URL;
+		const prevPiUrl = Bun.env.PI_AUTO_QA_PUSH_URL;
+		let capturedUrl = "";
+		const fetchSpy = vi.fn(async (input: string | URL | Request) => {
+			capturedUrl = String(input);
+			return new Response("", { status: 200 });
+		});
+
+		try {
+			Bun.env.MARS_AUTO_QA_PUSH_URL = "https://mars.example.com/grievances";
+			Bun.env.PI_AUTO_QA_PUSH_URL = "https://legacy.example.com/grievances";
+			const res = await flushGrievances(db, pushSettings({ "dev.autoqaPush.endpoint": "" }), {
+				fetch: mockFetch(fetchSpy),
+			});
+			expect(res).toEqual({ pushed: 1, ok: true });
+			expect(capturedUrl).toBe("https://mars.example.com/grievances");
+
+			insertGrievance(db, "read", "fallback test");
+			delete Bun.env.MARS_AUTO_QA_PUSH_URL;
+			const fallbackRes = await flushGrievances(db, pushSettings({ "dev.autoqaPush.endpoint": "" }), {
+				fetch: mockFetch(fetchSpy),
+			});
+			expect(fallbackRes).toEqual({ pushed: 1, ok: true });
+			expect(capturedUrl).toBe("https://legacy.example.com/grievances");
+		} finally {
+			if (prevMarsUrl === undefined) delete Bun.env.MARS_AUTO_QA_PUSH_URL;
+			else Bun.env.MARS_AUTO_QA_PUSH_URL = prevMarsUrl;
+			if (prevPiUrl === undefined) delete Bun.env.PI_AUTO_QA_PUSH_URL;
+			else Bun.env.PI_AUTO_QA_PUSH_URL = prevPiUrl;
+		}
+	});
+
 	it("leaves rows unpushed on 5xx and surfaces the server error", async () => {
 		insertGrievance(db, "glob", "boom");
 		const fetchSpy = vi.fn(async () => new Response("nope", { status: 500 }));

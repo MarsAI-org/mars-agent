@@ -2471,6 +2471,6 @@ ${chalk.bold("Examples:")}
   ${APP_NAME} update --check      Check if updates are available
   ${APP_NAME} update --force      Force reinstall
   ${APP_NAME} update -l           Update installed plugins
-  ${APP_NAME} update --canary    Switch to the canary channel and update
+  ${APP_NAME} update --canary     Switch to the canary channel and update
 `);
 }

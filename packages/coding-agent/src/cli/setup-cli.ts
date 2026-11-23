@@ -236,6 +236,11 @@ function buildSpeechComponents(settings: Settings, registry: ModelRegistry): Spe
 	];
 }
 
+function statusGlyph(kind: "success" | "error"): string {
+	if (typeof theme !== "undefined") return theme.status[kind];
+	return kind === "success" ? "✔" : "✘";
+}
+
 /**
  * Unified `mars setup speech` flow. Drives every {@link SpeechComponent} through
  * one path: report (`--json`/`--check`) or install (interactive pick + ensure
@@ -267,7 +272,7 @@ async function handleSpeechSetup(flags: { json?: boolean; check?: boolean }): Pr
 		for (const component of components) {
 			const ready = await component.isReady();
 			if (!ready) allReady = false;
-			const mark = ready ? chalk.green("[ok]") : chalk.yellow("[missing]");
+			const mark = ready ? chalk.green(statusGlyph("success")) : chalk.red(statusGlyph("error"));
 			console.log(`  ${mark} ${component.name}: ${await component.status()}`);
 		}
 		if (!allReady) process.exit(1);
