@@ -734,14 +734,18 @@ export class Composer implements TerminalFrameProvider, NativeSurfaceProvider {
 				// Merging the header into the ledger is the resume shape: only a
 				// container holding a settled backlog should take it. Otherwise the
 				// header retires alone and the transcript follows as it grows.
-				const headerCapacity = Math.max(0, rows - chromeRows - renderedHeader.length);
+				// Because the header is leaving the viewport in this same batch,
+				// the live transcript tail gets the full post-retirement capacity
+				// (`rows - chromeRows`) rather than subtracting the retiring header.
+				const postHeaderCapacity = Math.max(0, rows - chromeRows);
 				const transcriptBatch = this.#historyFlush
 					? transcript.peekFlushBatch(width)
 					: this.#freshTranscript && transcript.hasSettledBacklog()
-						? (transcript.peekResumeBatch(width, headerCapacity) ??
-							transcript.peekFinalizedBatch(width, headerCapacity))
+						? (transcript.peekResumeBatch(width, postHeaderCapacity) ??
+							transcript.peekFinalizedBatch(width, postHeaderCapacity))
 						: undefined;
 				if (transcriptBatch !== undefined) {
+					this.#freshTranscript = false;
 					const headerRows = [...renderedHeader, ""];
 					this.#offeredHistory = {
 						id: this.#nextHistoryId++,

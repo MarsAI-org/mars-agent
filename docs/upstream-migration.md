@@ -65,6 +65,13 @@ afterwards because they are only correct as part of a larger upstream change
 Steps 1–4 take minutes; step 5 is the actual work and is why this has not been
 attempted as a drive-by change on `main`.
 
+## Periodic sync check
+
+`.github/workflows/upstream-sync-check.yml` runs weekly (Monday 06:00 UTC) and on manual
+`workflow_dispatch` to fetch `can1357/oh-my-pi`, measure drift against `main`, list clean
+cherry-pickable commits touching only locally-untouched files, and publish a summary (plus an
+optional tracking digest issue) without mutating `main`.
+
 ## Verification used for the ported commits
 
 - `bun check` — oxlint, formatting, and every package's `check:types`.

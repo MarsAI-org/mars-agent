@@ -166,22 +166,12 @@ re-check with final artwork, not a text edit.**
 
 ---
 
-## 4. Decisions needed (not taken here)
+## 4. Cleanup status
 
-1. **`assets/hero.png` and `assets/icon.svg` are now dead.** Nothing in the
-   repo references either. They are upstream brand art (the Pi symbol and its
-   hero) and were deliberately **not deleted** by this change. Delete both, or
-   keep `hero.png` as a historical reference? If kept, they must stay out of
-   any Mars-named path.
-2. **Orphaned screenshots** — `assets/models.webp`, `assets/discovery.webp`,
-   `assets/perplexity.webp`, `assets/slash.webp` have no referencing file.
-   Delete, or re-introduce them in the README?
-3. **Brand color palette.** Every placeholder here is neutral gray. The final
-   mark needs one primary accent color plus a dark-bg variant, and the WebP
-   screenshots should be re-checked against it (a dark README hero with orange
-   accents is the existing visual language).
-4. **Mars mark shape.** `assets/icon.svg`'s old symbol was the Pi character
-   with a plug connector. A Mars mark should be planned as a distinct shape,
-   not a recolor.
-5. **Social preview host.** Setting the repo social card requires a decided
-   Mars domain for `og:image` resolution (see `HANDOFF.md` open TODO #2).
+1. **`assets/hero.png`** (legacy upstream hero), orphaned screenshots (`assets/models.webp`,
+   `assets/discovery.webp`, `assets/perplexity.webp`, `assets/slash.webp`), and unused upstream
+   `python/robomp/assets/icon.{png,jpg}` have been removed.
+2. **Mars brand suite** (`assets/mars-logo.png`, `assets/mars-logo.svg`, `assets/mars-mark.png`,
+   `assets/icon.svg`, `packages/collab-web/public/*`, and `MarsAI-org/mars-site` assets including
+   `og-image.png`) is shipped and active.
+3. **TUI splash & welcome artwork** uses the Mars planet & wordmark suite (`packages/tui`).

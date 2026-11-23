@@ -1353,6 +1353,7 @@ export class WorkerCore {
 	#observedElements = new Map<number, ObservedElement>();
 	#elementCounter = 0;
 	#active: ActiveRun | null = null;
+	#activeMainFrameNavigations = 0;
 	#runtime: JsRuntime | null = null;
 	#unsub: () => void;
 	#isolated: boolean;
@@ -1785,6 +1786,7 @@ export class WorkerCore {
 		} catch (error) {
 			failure = { error };
 		} finally {
+			const hadActiveNavigation = this.#activeMainFrameNavigations > 0;
 			runAc.abort(postmortem.markExpectedCleanupError(new ToolAbortError("Browser run ended")));
 			await Bun.sleep(0);
 			// Detach first: the stop below fails the cancelled requests, and run handlers that see
@@ -1794,7 +1796,12 @@ export class WorkerCore {
 			// page later and holds up any interception restore below. Stopping is gated on
 			// that navigation because Page.stopLoading also cancels every fetch and subresource
 			// load in flight. A run that merely ended keeps an unawaited goto going.
-			if (ac.signal.aborted && this.#network?.hasPendingMainFrameNavigation()) await this.#stopLoading();
+			// Check both an in-flight `tab.goto()` call and CDP-observed pending navigations so
+			// cancelling right after the HTTP request hits the server cannot race ahead of CDP's
+			// `Network.requestWillBeSent` event.
+			if (ac.signal.aborted && (hadActiveNavigation || this.#network?.hasPendingMainFrameNavigation())) {
+				await this.#stopLoading();
+			}
 			try {
 				await runPage?.restoreInterception();
 			} catch (error) {
@@ -2051,6 +2058,7 @@ export class WorkerCore {
 			goto: (url, opts) =>
 				op(`tab.goto(${JSON.stringify(url)})`, INF, async sig => {
 					this.#clearElementCache();
+					this.#activeMainFrameNavigations += 1;
 					try {
 						// Default to "load" because dev servers with HMR/WS never reach networkidle.
 						// budgetBound (not the full cell) so a hung navigation fails named and
@@ -2068,6 +2076,8 @@ export class WorkerCore {
 							);
 						}
 						throw err;
+					} finally {
+						this.#activeMainFrameNavigations = Math.max(0, this.#activeMainFrameNavigations - 1);
 					}
 				}),
 			observe: opts => op("tab.observe()", quickOpMs, sig => this.#collectObservation({ ...opts, signal: sig })),
