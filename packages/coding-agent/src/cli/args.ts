@@ -2,7 +2,7 @@
  * CLI argument parsing and help display
  */
 import * as path from "node:path";
-import { $env, APP_NAME } from "@marsai-org/utils";
+import { APP_NAME, readCompatEnv } from "@marsai-org/utils";
 import chalk from "@marsai-org/utils/chalk";
 import type { ServiceTierOpenAISettingValue } from "../config/service-tier";
 import { CLI_THINKING_LEVELS, type ConfiguredThinkingLevel, parseCliThinkingLevel } from "@marsai-org/tui/thinking";
@@ -211,7 +211,7 @@ export function parseArgs(inputArgs: string[], extensionFlags?: Map<string, { ty
 		unknownFlags: new Map(),
 		unrecognizedFlags: [],
 		invalidFlagValues: [],
-		sessionDir: $env.PI_CODING_AGENT_SESSION_DIR || undefined,
+		sessionDir: readCompatEnv("MARS_CODING_AGENT_SESSION_DIR") || undefined,
 	};
 
 	// `--` ends option parsing (POSIX end-of-options). Everything after it is

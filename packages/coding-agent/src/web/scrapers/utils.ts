@@ -192,6 +192,7 @@ export async function fetchBinary(url: string, timeout: number = 20, signal?: Ab
 		});
 
 		if (!response.ok) {
+			await response.body?.cancel().catch(() => {});
 			return { ok: false, error: `HTTP ${response.status}` };
 		}
 
@@ -201,6 +202,7 @@ export async function fetchBinary(url: string, timeout: number = 20, signal?: Ab
 		if (contentLength) {
 			const size = Number.parseInt(contentLength, 10);
 			if (Number.isFinite(size) && size > MAX_BYTES) {
+				await response.body?.cancel().catch(() => {});
 				return { ok: false, error: `content-length ${size} exceeds ${MAX_BYTES}` };
 			}
 			// Content-Length describes the encoded body; only trust it for identity encoding.

@@ -737,6 +737,9 @@ async function runCheck(flags: AuthGatewayCommandArgs["flags"]): Promise<void> {
 				: {}),
 		});
 
+		const failed = results.filter(row => row.ok === false).length;
+		const chatFailed = flags.strict ? results.filter(row => row.completion?.ok === false).length : 0;
+
 		if (flags.json) {
 			process.stdout.write(
 				`${JSON.stringify({ broker: brokerConfig.url, strict: flags.strict === true, credentials: results }, null, 2)}\n`,
@@ -777,10 +780,8 @@ async function runCheck(flags: AuthGatewayCommandArgs["flags"]): Promise<void> {
 					);
 				}
 			}
-			const failed = results.filter(row => row.ok === false).length;
 			const unverifiable = results.filter(row => row.ok === null).length;
 			const passing = results.filter(row => row.ok === true).length;
-			const chatFailed = flags.strict ? results.filter(row => row.completion?.ok === false).length : 0;
 			const summaryParts = [
 				chalk.green(`${passing} ok`),
 				chalk.red(`${failed} failed`),
@@ -789,8 +790,8 @@ async function runCheck(flags: AuthGatewayCommandArgs["flags"]): Promise<void> {
 			if (flags.strict) summaryParts.push(chalk.red(`${chatFailed} chat-failed`));
 			summaryParts.push(`${results.length} total`);
 			process.stdout.write(`\n${summaryParts.join(", ")}\n`);
-			if (failed > 0 || chatFailed > 0) process.exitCode = 1;
 		}
+		if (failed > 0 || chatFailed > 0) process.exitCode = 1;
 	} finally {
 		storage.close();
 	}

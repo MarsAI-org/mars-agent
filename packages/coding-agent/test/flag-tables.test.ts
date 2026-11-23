@@ -65,17 +65,26 @@ describe("--external-thinking", () => {
 	});
 });
 describe("--session-dir", () => {
-	it("uses PI_CODING_AGENT_SESSION_DIR unless the CLI flag overrides it", () => {
-		const previous = Bun.env.PI_CODING_AGENT_SESSION_DIR;
-		Bun.env.PI_CODING_AGENT_SESSION_DIR = "/env/sessions";
+	it("uses MARS_CODING_AGENT_SESSION_DIR, falls back to PI_CODING_AGENT_SESSION_DIR, and lets CLI override both", () => {
+		const prevMars = Bun.env.MARS_CODING_AGENT_SESSION_DIR;
+		const prevPi = Bun.env.PI_CODING_AGENT_SESSION_DIR;
+		delete Bun.env.MARS_CODING_AGENT_SESSION_DIR;
+		Bun.env.PI_CODING_AGENT_SESSION_DIR = "/env/pi-sessions";
 		try {
-			expect(parseArgs([]).sessionDir).toBe("/env/sessions");
+			expect(parseArgs([]).sessionDir).toBe("/env/pi-sessions");
+			Bun.env.MARS_CODING_AGENT_SESSION_DIR = "/env/mars-sessions";
+			expect(parseArgs([]).sessionDir).toBe("/env/mars-sessions");
 			expect(parseArgs(["--session-dir", "/cli/sessions"]).sessionDir).toBe("/cli/sessions");
 		} finally {
-			if (previous === undefined) {
+			if (prevMars === undefined) {
+				delete Bun.env.MARS_CODING_AGENT_SESSION_DIR;
+			} else {
+				Bun.env.MARS_CODING_AGENT_SESSION_DIR = prevMars;
+			}
+			if (prevPi === undefined) {
 				delete Bun.env.PI_CODING_AGENT_SESSION_DIR;
 			} else {
-				Bun.env.PI_CODING_AGENT_SESSION_DIR = previous;
+				Bun.env.PI_CODING_AGENT_SESSION_DIR = prevPi;
 			}
 		}
 	});

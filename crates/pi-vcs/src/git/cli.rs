@@ -202,15 +202,17 @@ pub(crate) async fn run(cwd: &Path, args: &[String], options: &RunOptions) -> Re
 	apply_env(&mut cmd);
 	let mut child = cmd.spawn().map_err(|err| spawn_error(cwd, err))?;
 
-	if let Some(stdin) = &options.stdin
-		&& let Some(mut pipe) = child.stdin.take()
-	{
-		use tokio::io::AsyncWriteExt;
-		// A child that exits early (e.g. usage error) closes the pipe;
-		// that is its answer, not ours to fail on.
-		let _ = pipe.write_all(stdin).await;
-		let _ = pipe.shutdown().await;
-	}
+	let stdin_task = options.stdin.as_ref().and_then(|stdin| {
+		let mut pipe = child.stdin.take()?;
+		let payload = stdin.clone();
+		Some(tokio::spawn(async move {
+			use tokio::io::AsyncWriteExt;
+			// A child that exits early (e.g. usage error) closes the pipe;
+			// that is its answer, not ours to fail on.
+			let _ = pipe.write_all(&payload).await;
+			let _ = pipe.shutdown().await;
+		}))
+	});
 
 	let stdout = child.stdout.take().expect("stdout piped");
 	let stderr = child.stderr.take().expect("stderr piped");
@@ -221,8 +223,19 @@ pub(crate) async fn run(cwd: &Path, args: &[String], options: &RunOptions) -> Re
 	let cancel = options.cancel.clone().unwrap_or_default();
 	let exit = tokio::select! {
 		status = tokio::time::timeout(timeout, child.wait()) => match status {
-			Ok(status) => status.map_err(Error::Io)?,
+			Ok(Ok(status)) => status,
+			Ok(Err(err)) => {
+				if let Some(task) = stdin_task {
+					task.abort();
+				}
+				stdout_task.abort();
+				stderr_task.abort();
+				return Err(Error::Io(err));
+			},
 			Err(_elapsed) => {
+				if let Some(task) = stdin_task {
+					task.abort();
+				}
 				terminate(&mut child).await;
 				stdout_task.abort();
 				stderr_task.abort();
@@ -230,12 +243,18 @@ pub(crate) async fn run(cwd: &Path, args: &[String], options: &RunOptions) -> Re
 			},
 		},
 		() = cancel.cancelled() => {
+			if let Some(task) = stdin_task {
+				task.abort();
+			}
 			terminate(&mut child).await;
 			stdout_task.abort();
 			stderr_task.abort();
 			return Err(Error::Canceled);
 		},
 	};
+	if let Some(task) = stdin_task {
+		task.abort();
+	}
 
 	let stdout = stdout_task
 		.await
@@ -780,5 +799,81 @@ mod tests {
 		.await;
 		assert!(failed.is_err(), "clone from nonexistent path should fail");
 		assert!(sentinel.exists(), "existing target_dir must survive failed clone");
+	}
+
+	#[tokio::test]
+	async fn large_stdin_with_concurrent_stdout_does_not_deadlock() {
+		let dir = tempfile::tempdir().expect("tempdir");
+		let init = std::process::Command::new("git")
+			.args(["init", "-q", "-b", "main"])
+			.current_dir(dir.path())
+			.status()
+			.expect("spawn git init");
+		assert!(init.success(), "git init failed");
+
+		// Exceed OS pipe buffers (typically 64 KiB on Linux) on both stdin and
+		// stdout simultaneously; sequential stdin writes before spawning
+		// stdout_task deadlock here.
+		let payload = "0123456789abcdef\n".repeat(32 * 1024);
+		let out = run(
+			dir.path(),
+			&["-c".to_owned(), "alias.echo=!cat".to_owned(), "echo".to_owned()],
+			&RunOptions {
+				read_only: true,
+				timeout:   Some(Duration::from_secs(10)),
+				stdin:     Some(payload.as_bytes().to_vec()),
+				cancel:    None,
+			},
+		)
+		.await
+		.expect("concurrent stdin/stdout must not deadlock");
+		assert_eq!(out.exit_code, 0, "stderr: {}", out.stderr);
+		assert_eq!(out.stdout, payload);
+	}
+
+	#[tokio::test]
+	async fn timeout_and_cancel_interrupt_blocked_stdin_write() {
+		let dir = tempfile::tempdir().expect("tempdir");
+		let init = std::process::Command::new("git")
+			.args(["init", "-q", "-b", "main"])
+			.current_dir(dir.path())
+			.status()
+			.expect("spawn git init");
+		assert!(init.success(), "git init failed");
+
+		// Larger than OS pipe buffer so stdin writing blocks when the child does
+		// not read stdin.
+		let large_stdin = vec![b'x'; 512 * 1024];
+		let args = vec!["-c".to_owned(), "alias.stall=!exec sleep 30".to_owned(), "stall".to_owned()];
+
+		let timed_out = run(dir.path(), &args, &RunOptions {
+			read_only: true,
+			timeout:   Some(Duration::from_millis(150)),
+			stdin:     Some(large_stdin.clone()),
+			cancel:    None,
+		})
+		.await;
+		assert!(
+			matches!(timed_out, Err(Error::CliTimeout { .. })),
+			"expected CliTimeout when child blocks stdin write, got: {timed_out:?}"
+		);
+
+		let cancel = CancellationToken::new();
+		let cancel_trigger = cancel.clone();
+		tokio::spawn(async move {
+			tokio::time::sleep(Duration::from_millis(100)).await;
+			cancel_trigger.cancel();
+		});
+		let canceled = run(dir.path(), &args, &RunOptions {
+			read_only: true,
+			timeout:   Some(Duration::from_secs(30)),
+			stdin:     Some(large_stdin),
+			cancel:    Some(cancel),
+		})
+		.await;
+		assert!(
+			matches!(canceled, Err(Error::Canceled)),
+			"expected Canceled when token fires during blocked stdin write, got: {canceled:?}"
+		);
 	}
 }

@@ -175,4 +175,51 @@ describe("browser relay discovery endpoint", () => {
 		const response = await fetch(`http://127.0.0.1:${relay.port}/json/version`);
 		expect(response.status).toBe(503);
 	});
+
+	it("rejects DNS hostnames on /json, /json/list, and /json/version to block DNS rebinding", async () => {
+		const port = await startReadyRelay();
+
+		for (const endpoint of ["/json", "/json/list", "/json/version"]) {
+			const blocked = await rawGet(
+				port,
+				`GET ${endpoint} HTTP/1.1\r\nHost: attacker.evil:${port}\r\nConnection: close\r\n\r\n`,
+			);
+			expect(blocked).toContain("403");
+		}
+
+		for (const endpoint of ["/json", "/json/list"]) {
+			const okLocalhost = await rawGet(
+				port,
+				`GET ${endpoint} HTTP/1.1\r\nHost: localhost:${port}\r\nConnection: close\r\n\r\n`,
+			);
+			expect(okLocalhost).toContain("200");
+		}
+	});
+
+	it("survives a throwing ws.ping() during keepalive without crashing the relay", async () => {
+		const port = await findFreeCdpPort();
+		let pingErrors = 0;
+		relay = startRelayServer({
+			port,
+			keepaliveMs: 15,
+			log(message) {
+				if (message === "keepalive ping failed") pingErrors++;
+			},
+		});
+		const originalExtConnected = relay.bridge.extConnected.bind(relay.bridge);
+		relay.bridge.extConnected = ws => {
+			(ws as unknown as { ping: () => void }).ping = () => {
+				throw new Error("broken socket");
+			};
+			originalExtConnected(ws);
+		};
+
+		extension = await connectExtension(port);
+		await waitForDiscovery(port);
+		await Bun.sleep(45);
+
+		expect(pingErrors).toBeGreaterThanOrEqual(1);
+		const response = await fetch(`http://127.0.0.1:${port}/json/version`);
+		expect(response.status).toBe(200);
+	});
 });

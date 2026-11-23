@@ -222,18 +222,19 @@ export class HttpTransport implements MCPTransport {
 		const connection = this.#sseConnection;
 		const startupTimeoutMs = resolveSSEConnectTimeoutMs(this.config.timeout);
 		const fetchPromise = this.#fetch({ method: "GET", signal: connection.signal }, generated);
-		const timeoutPromise =
-			startupTimeoutMs > 0
-				? new Promise<null>(resolve => {
-						setTimeout(() => {
-							if (!startupFinished) {
-								timedOut = true;
-								connection.abort();
-							}
-							resolve(null);
-						}, startupTimeoutMs);
-					})
-				: null;
+		let startupTimer: Timer | undefined;
+		let timeoutPromise: Promise<null> | null = null;
+		if (startupTimeoutMs > 0) {
+			const { promise, resolve } = Promise.withResolvers<null>();
+			timeoutPromise = promise;
+			startupTimer = setTimeout(() => {
+				if (!startupFinished) {
+					timedOut = true;
+					connection.abort();
+				}
+				resolve(null);
+			}, startupTimeoutMs);
+		}
 		try {
 			response = timeoutPromise === null ? await fetchPromise : await Promise.race([fetchPromise, timeoutPromise]);
 		} catch (error) {
@@ -244,6 +245,7 @@ export class HttpTransport implements MCPTransport {
 			return;
 		} finally {
 			startupFinished = true;
+			if (startupTimer !== undefined) clearTimeout(startupTimer);
 		}
 		if (response === null) {
 			if (this.#sseConnection === connection) this.#sseConnection = null;
@@ -752,8 +754,8 @@ export class HttpTransport implements MCPTransport {
 				await resp.body?.cancel();
 				const newHeaders = await this.onAuthError();
 				if (newHeaders) {
-					this.config.headers ??= {};
-					Object.assign(this.config.headers, newHeaders);
+					// Persist refreshed headers without mutating the caller's config object
+					this.config = { ...this.config, headers: newHeaders };
 					operation.clear();
 					const retryOperation = createMCPTimeout(timeout, this.#operationSignal());
 					try {

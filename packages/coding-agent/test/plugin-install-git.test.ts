@@ -92,10 +92,8 @@ describe("PluginManager.install with git sources", () => {
 		);
 
 		vi.spyOn(Bun, "spawn").mockImplementation(((cmd: string[]) => {
-			// Verify the manager forwards the spec verbatim to bun install.
-			expect(cmd[0]).toBe("bun");
-			expect(cmd[1]).toBe("install");
-			expect(cmd[2]).toBe("github:foo/bar");
+			// Verify the manager forwards the spec verbatim to bun install after `--`.
+			expect(cmd).toEqual(["bun", "install", "--", "github:foo/bar"]);
 
 			// Simulate the on-disk side effects bun install produces for a git
 			// source: a new dep keyed by the package's own `name` field, plus
@@ -145,9 +143,7 @@ describe("PluginManager.install with git sources", () => {
 		);
 
 		vi.spyOn(Bun, "spawn").mockImplementation(((cmd: string[]) => {
-			expect(cmd[0]).toBe("bun");
-			expect(cmd[1]).toBe("install");
-			expect(cmd[2]).toBe("https://gitlab.com/group/sub/project#v1.0.0");
+			expect(cmd).toEqual(["bun", "install", "--", "https://gitlab.com/group/sub/project#v1.0.0"]);
 
 			const prepare = (async () => {
 				await Bun.write(
@@ -241,7 +237,7 @@ describe("PluginManager.install with git sources", () => {
 			// The follow-up call: simulate bun resolving the upstream HEAD to a
 			// newer commit and bumping the on-disk version. The manager should
 			// read the new version from package.json after this step returns.
-			expect(cmd).toEqual(["bun", "update", "stale-plugin"]);
+			expect(cmd).toEqual(["bun", "update", "--", "stale-plugin"]);
 			const prepare = (async () => {
 				await Bun.write(
 					path.join(seedDir, "package.json"),
@@ -261,9 +257,9 @@ describe("PluginManager.install with git sources", () => {
 
 		expect(result.version).toBe("0.1.6");
 		expect(spawnedCommands).toEqual([
-			["bun", "install", "github:foo/bar"],
+			["bun", "install", "--", "github:foo/bar"],
 			["bun", "pm", "cache"],
-			["bun", "update", "stale-plugin"],
+			["bun", "update", "--", "stale-plugin"],
 		]);
 	});
 
@@ -291,7 +287,7 @@ describe("PluginManager.install with git sources", () => {
 		vi.spyOn(Bun, "spawn").mockImplementation(((cmd: string[]) => {
 			spawnedCommands.push([...cmd]);
 			if (cmd[1] === "install") {
-				expect(cmd).toEqual(["bun", "install", "github:foo/bar"]);
+				expect(cmd).toEqual(["bun", "install", "--", "github:foo/bar"]);
 				const prepare = (async () => {
 					const packageJson = await Bun.file(pluginsPkgJson).json();
 					expect(packageJson.dependencies?.["replaced-plugin"]).toBeUndefined();
@@ -331,7 +327,7 @@ describe("PluginManager.install with git sources", () => {
 				} as Subprocess;
 			}
 
-			expect(cmd).toEqual(["bun", "update", "replaced-plugin"]);
+			expect(cmd).toEqual(["bun", "update", "--", "replaced-plugin"]);
 			return {
 				pid: 2,
 				stdout: emptyStream(),
@@ -345,7 +341,7 @@ describe("PluginManager.install with git sources", () => {
 
 		expect(result.name).toBe("replaced-plugin");
 		expect(result.version).toBe("1.1.0");
-		expect(spawnedCommands[0]).toEqual(["bun", "install", "github:foo/bar"]);
+		expect(spawnedCommands[0]).toEqual(["bun", "install", "--", "github:foo/bar"]);
 		const packageJson = await Bun.file(pluginsPkgJson).json();
 		expect(packageJson.dependencies).toEqual({ "replaced-plugin": "github:foo/bar" });
 	});
@@ -391,7 +387,7 @@ describe("PluginManager.install with git sources", () => {
 		const mgr = new PluginManager(tmpRoot);
 		await mgr.install("github:foo/bar");
 
-		expect(spawnedCommands).toEqual([["bun", "install", "github:foo/bar"]]);
+		expect(spawnedCommands).toEqual([["bun", "install", "--", "github:foo/bar"]]);
 	});
 
 	test("drains stdout/stderr concurrently with proc.exited (pipe-buffer deadlock, #4230)", async () => {
@@ -416,7 +412,7 @@ describe("PluginManager.install with git sources", () => {
 		};
 
 		vi.spyOn(Bun, "spawn").mockImplementation(((cmd: string[]) => {
-			expect(cmd).toEqual(["bun", "install", "github:foo/bar"]);
+			expect(cmd).toEqual(["bun", "install", "--", "github:foo/bar"]);
 			const { stream: stdout, drained: stdoutDrained } = makeGatedStream("progress\n");
 			const { stream: stderr, drained: stderrDrained } = makeGatedStream("");
 			const exited = Promise.all([stdoutDrained, stderrDrained]).then(async () => {
@@ -584,9 +580,9 @@ describe("PluginManager.install with git sources", () => {
 		expect(plugin.version).toBe("2.0.0");
 		expect(changed).toBe(true);
 		expect(spawnedCommands).toEqual([
-			["bun", "install", "github:HexRaysSA/ida-mcp#latest"],
+			["bun", "install", "--", "github:HexRaysSA/ida-mcp#latest"],
 			["bun", "pm", "cache"],
-			["bun", "update", "ida-mcp"],
+			["bun", "update", "--", "ida-mcp"],
 		]);
 		const lock = await Bun.file(path.join(tmpRoot, "mars-plugins.lock.json")).json();
 		expect(lock.plugins["ida-mcp"]).toEqual({ version: "2.0.0", enabledFeatures: null, enabled: false });

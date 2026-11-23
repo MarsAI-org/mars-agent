@@ -74,7 +74,7 @@ impl IsolationBackend for OverlayfsBackend {
 mod imp {
 	use std::{
 		collections::BTreeMap,
-		ffi::CString,
+		ffi::{CString, OsStr},
 		fs,
 		os::unix::ffi::OsStrExt,
 		path::{Path, PathBuf},
@@ -145,12 +145,7 @@ mod imp {
 			IsoError::other(format!("create merged dir {}: {err}", merged.display()))
 		})?;
 
-		let opts = format!(
-			"lowerdir={},upperdir={},workdir={}",
-			lower.display(),
-			upper.display(),
-			work.display()
-		);
+		let opts = build_mount_options(&lower, &upper, &work);
 
 		match kernel_mount(&merged, &opts) {
 			Ok(()) => {
@@ -158,7 +153,7 @@ mod imp {
 				Ok(())
 			},
 			Err(err) if err.is_unavailable() => {
-				fuse_mount(&lower, &upper, &work, &merged)?;
+				fuse_mount(&opts, &merged)?;
 				ACTIVE_MOUNTS.lock().insert(merged, MountFlavor::Fuse);
 				Ok(())
 			},
@@ -196,11 +191,31 @@ mod imp {
 		remove_dir_if_exists(&merged, "overlay merged")
 	}
 
-	fn kernel_mount(merged: &Path, opts: &str) -> IsoResult<()> {
+	fn escape_mount_opt_bytes(path: &Path, out: &mut Vec<u8>) {
+		for &b in path.as_os_str().as_bytes() {
+			if matches!(b, b'\\' | b',' | b':') {
+				out.push(b'\\');
+			}
+			out.push(b);
+		}
+	}
+
+	fn build_mount_options(lower: &Path, upper: &Path, work: &Path) -> Vec<u8> {
+		let mut opts = Vec::new();
+		opts.extend_from_slice(b"lowerdir=");
+		escape_mount_opt_bytes(lower, &mut opts);
+		opts.extend_from_slice(b",upperdir=");
+		escape_mount_opt_bytes(upper, &mut opts);
+		opts.extend_from_slice(b",workdir=");
+		escape_mount_opt_bytes(work, &mut opts);
+		opts
+	}
+
+	fn kernel_mount(merged: &Path, opts: &[u8]) -> IsoResult<()> {
 		let target = to_cstring(merged.as_os_str().as_bytes(), "merged")?;
 		let source = CString::new("overlay").expect("static source");
 		let fstype = CString::new("overlay").expect("static fstype");
-		let opts_c = to_cstring(opts.as_bytes(), "overlay options")?;
+		let opts_c = to_cstring(opts, "overlay options")?;
 
 		// SAFETY: all pointers are valid CString-backed and outlive the call.
 		let rc = unsafe {
@@ -248,15 +263,10 @@ mod imp {
 		}
 	}
 
-	fn fuse_mount(lower: &Path, upper: &Path, work: &Path, merged: &Path) -> IsoResult<()> {
-		let opts = format!(
-			"lowerdir={},upperdir={},workdir={}",
-			lower.display(),
-			upper.display(),
-			work.display()
-		);
+	fn fuse_mount(opts: &[u8], merged: &Path) -> IsoResult<()> {
 		let output = Command::new("fuse-overlayfs")
-			.args(["-o", &opts])
+			.arg("-o")
+			.arg(OsStr::from_bytes(opts))
 			.arg(merged)
 			.stdin(Stdio::null())
 			.stdout(Stdio::piped())
@@ -322,5 +332,38 @@ mod imp {
 	fn to_cstring(bytes: &[u8], label: &str) -> IsoResult<CString> {
 		CString::new(bytes)
 			.map_err(|err| IsoError::other(format!("{label} path contains NUL byte: {err}")))
+	}
+
+	#[cfg(test)]
+	mod tests {
+		use std::{ffi::OsStr, os::unix::ffi::OsStrExt, path::Path};
+
+		use super::build_mount_options;
+
+		#[test]
+		fn build_mount_options_escapes_commas_colons_and_backslashes() {
+			let lower = Path::new("/tmp/a,metacopy=on/b:c/d\\e");
+			let upper = Path::new("/tmp/up,1:2\\3/upper");
+			let work = Path::new("/tmp/wk\\,:/work");
+
+			let opts = build_mount_options(lower, upper, work);
+			assert_eq!(
+				std::str::from_utf8(&opts).expect("utf-8 options"),
+				r"lowerdir=/tmp/a\,metacopy=on/b\:c/d\\e,upperdir=/tmp/up\,1\:2\\3/upper,workdir=/tmp/wk\\\,\:/work"
+			);
+		}
+
+		#[test]
+		fn build_mount_options_preserves_plain_and_non_utf8_paths() {
+			let lower = Path::new(OsStr::from_bytes(b"/tmp/dir\xff,a:b\\c"));
+			let upper = Path::new("/tmp/plain/upper");
+			let work = Path::new("/tmp/plain/work");
+
+			let opts = build_mount_options(lower, upper, work);
+			assert_eq!(
+				opts,
+				b"lowerdir=/tmp/dir\xff\\,a\\:b\\\\c,upperdir=/tmp/plain/upper,workdir=/tmp/plain/work"
+			);
+		}
 	}
 }

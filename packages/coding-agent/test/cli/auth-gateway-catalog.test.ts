@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { AuthStorage } from "@marsai-org/ai";
+import * as path from "node:path";
+import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { startAuthBroker } from "@marsai-org/ai/auth-broker";
 import { getBundledModels } from "@marsai-org/catalog/models";
 import { modelKind } from "@marsai-org/catalog/types";
 import { TempDir } from "@marsai-org/utils";
@@ -8,6 +10,7 @@ import {
 	gatewayRoutableModels,
 	gatewayRoutableProviders,
 	indexModelsByRequestId,
+	runAuthGatewayCommand,
 } from "../../src/cli/auth-gateway-cli";
 import { ModelRegistry } from "../../src/config/model-registry";
 import { Settings } from "../../src/config/settings";
@@ -200,5 +203,71 @@ describe("createSerializedRebuilder", () => {
 		gates[0].resolve();
 		await first;
 		expect(calls).toEqual([false]); // no redundant follow-up
+	});
+});
+
+describe("auth-gateway check --json", () => {
+	test("sets process.exitCode = 1 when a credential fails in --json mode", async () => {
+		using tempDir = TempDir.createSync("@omp-auth-gateway-check-");
+		const store = await SqliteAuthCredentialStore.open(path.join(tempDir.path(), "broker.db"));
+		const brokerStorage = new AuthStorage(store, {
+			refreshOAuthCredential: async () => {
+				throw new Error("simulated refresh revocation");
+			},
+			refreshOAuthCredentialMints: true,
+		});
+		await brokerStorage.credentials.reload();
+		await store.upsertAuthCredential("anthropic", {
+			type: "oauth",
+			access: "expired-access",
+			refresh: "revoked-refresh",
+			expires: Date.now() - 60_000,
+			email: "revoked@example.com",
+		});
+		await brokerStorage.credentials.reload();
+
+		const token = "gateway-check-test-token";
+		const handle = startAuthBroker({
+			storage: brokerStorage,
+			bind: "127.0.0.1:0",
+			bearerTokens: [token],
+			disableRefresher: true,
+		});
+
+		const prevUrl = process.env.MARS_AUTH_BROKER_URL;
+		const prevToken = process.env.MARS_AUTH_BROKER_TOKEN;
+		const prevExitCode = process.exitCode;
+		const originalWrite = process.stdout.write.bind(process.stdout);
+		let captured = "";
+
+		process.env.MARS_AUTH_BROKER_URL = handle.url;
+		process.env.MARS_AUTH_BROKER_TOKEN = token;
+		process.exitCode = 0;
+		process.stdout.write = ((chunk: string | Uint8Array): boolean => {
+			captured += typeof chunk === "string" ? chunk : new TextDecoder().decode(chunk);
+			return true;
+		}) as typeof process.stdout.write;
+
+		try {
+			await runAuthGatewayCommand({ action: "check", flags: { json: true } });
+			const parsed = JSON.parse(captured) as {
+				broker: string;
+				strict: boolean;
+				credentials: Array<{ provider: string; ok: boolean | null }>;
+			};
+			expect(parsed.broker).toBe(handle.url);
+			expect(parsed.credentials.some(row => row.provider === "anthropic" && row.ok === false)).toBe(true);
+			expect(process.exitCode).toBe(1);
+		} finally {
+			process.stdout.write = originalWrite;
+			process.exitCode = prevExitCode ?? 0;
+			if (prevUrl === undefined) delete process.env.MARS_AUTH_BROKER_URL;
+			else process.env.MARS_AUTH_BROKER_URL = prevUrl;
+			if (prevToken === undefined) delete process.env.MARS_AUTH_BROKER_TOKEN;
+			else process.env.MARS_AUTH_BROKER_TOKEN = prevToken;
+			await handle.close();
+			brokerStorage.close();
+			store.close();
+		}
 	});
 });

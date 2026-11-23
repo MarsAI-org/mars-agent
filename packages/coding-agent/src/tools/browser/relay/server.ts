@@ -13,6 +13,7 @@
  * Binds loopback only: anything that can reach this port can drive the
  * user's logged-in browser.
  */
+import * as net from "node:net";
 import { VERSION } from "@marsai-org/utils/dirs";
 import { RelayBridge } from "./bridge";
 
@@ -23,6 +24,8 @@ export interface RelayServerOptions {
 	token?: string;
 	/** Group tabs the agent actively drives under one per-window Chrome tab group (default on); `false` disables. */
 	group?: boolean | { title: string; color: string };
+	/** Override the WebSocket keepalive interval (defaults to 30s). */
+	keepaliveMs?: number;
 	log?: (message: string, data?: Record<string, unknown>) => void;
 }
 
@@ -69,6 +72,19 @@ function isWsAuthority(raw: string): boolean {
 	}
 }
 
+/**
+ * True when `rawHost` is `localhost` or an IP literal (IPv4/IPv6).
+ * Rejects DNS domain names to defeat DNS rebinding against `/json*` while
+ * still permitting loopback and remote IP-literal dialing (e.g. Tailscale).
+ */
+function isAllowedJsonHost(rawHost: string): boolean {
+	if (!isWsAuthority(rawHost)) return false;
+	const hostname = new URL(`ws://${rawHost}`).hostname.toLowerCase();
+	if (hostname === "localhost") return true;
+	const bare = hostname.startsWith("[") && hostname.endsWith("]") ? hostname.slice(1, -1) : hostname;
+	return net.isIP(bare) !== 0;
+}
+
 /** Start the relay server on 127.0.0.1. Throws if the port is taken. */
 export function startRelayServer(opts: RelayServerOptions): RelayServer {
 	const log = opts.log ?? (() => {});
@@ -113,6 +129,11 @@ export function startRelayServer(opts: RelayServerOptions): RelayServer {
 			}
 			if (req.method !== "GET") return new Response("Method not allowed", { status: 405 });
 			if (path === "/json/version") {
+				// Reject DNS hostnames (DNS rebinding guard) while keeping fallback
+				// behavior for absent/empty/malformed Host headers.
+				if (rawHost && isWsAuthority(rawHost) && !isAllowedJsonHost(rawHost)) {
+					return new Response("Forbidden", { status: 403 });
+				}
 				if (!bridge.ready) {
 					const disconnectedMs = bridge.extensionGoneForMs;
 					const info: RelayUnavailableInfo = {
@@ -127,6 +148,9 @@ export function startRelayServer(opts: RelayServerOptions): RelayServer {
 				return Response.json(bridge.versionInfo(`ws://${host}/cdp`));
 			}
 			if (path === "/json" || path === "/json/list") {
+				if (rawHost && !isAllowedJsonHost(rawHost)) {
+					return new Response("Forbidden", { status: 403 });
+				}
 				return Response.json(bridge.listTargets());
 			}
 			return new Response("Not found", { status: 404 });
@@ -166,8 +190,15 @@ export function startRelayServer(opts: RelayServerOptions): RelayServer {
 	// Puppeteer connections go silent while the agent is idle; protocol-level
 	// pings count as activity and keep them under the idle timeout.
 	const keepalive = setInterval(() => {
-		for (const ws of sockets) ws.ping();
-	}, WS_KEEPALIVE_MS);
+		for (const ws of sockets) {
+			try {
+				ws.ping();
+			} catch (err) {
+				log("keepalive ping failed", { role: ws.data.role, error: String(err) });
+				sockets.delete(ws);
+			}
+		}
+	}, opts.keepaliveMs ?? WS_KEEPALIVE_MS);
 	keepalive.unref();
 
 	const boundPort = server.port ?? opts.port;

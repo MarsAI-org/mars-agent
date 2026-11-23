@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
-import { type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { AuthBrokerClient, type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
 import { runAuthBrokerCommand } from "@marsai-org/coding-agent/cli/auth-broker-cli";
 import { getAgentDbPath, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
@@ -111,5 +111,61 @@ describe("auth-broker migrate (org-only dedupe)", () => {
 		const persisted = brokerStore!.getOAuth("anthropic");
 		expect(persisted?.refresh).toBe("refresh-rotated");
 		expect(brokerStore!.listAuthCredentials("anthropic")).toHaveLength(1);
+	});
+
+	test("migrate --json emits a single valid JSON object and reports upload failures accurately", async () => {
+		const localStore = await SqliteAuthCredentialStore.open(getAgentDbPath());
+		try {
+			await localStore.upsertAuthCredential("anthropic", { type: "api_key", key: "sk-ant-ok" });
+			await localStore.upsertAuthCredential("openai", { type: "api_key", key: "sk-openai-fail" });
+		} finally {
+			localStore.close();
+		}
+
+		const originalUpload = AuthBrokerClient.prototype.uploadCredential;
+		const uploadSpy = vi
+			.spyOn(AuthBrokerClient.prototype, "uploadCredential")
+			.mockImplementation(async function (this: AuthBrokerClient, provider, credential) {
+				if (provider === "openai") {
+					throw new Error("broker rejected openai key");
+				}
+				return originalUpload.call(this, provider, credential);
+			});
+
+		const originalWrite = process.stdout.write.bind(process.stdout);
+		const prevExitCode = process.exitCode;
+		let captured = "";
+		process.stdout.write = ((chunk: string | Uint8Array): boolean => {
+			captured += typeof chunk === "string" ? chunk : new TextDecoder().decode(chunk);
+			return true;
+		}) as typeof process.stdout.write;
+		try {
+			await runAuthBrokerCommand({
+				action: "migrate",
+				flags: { fromLocal: true, json: true },
+			});
+			const parsed = JSON.parse(captured) as {
+				dryRun: boolean;
+				imported: Array<{ source: string; provider: string; identity: string }>;
+				failed: Array<{ source: string; provider: string; identity: string; error: string }>;
+				plan: Array<{ provider: string }>;
+			};
+			expect(parsed.dryRun).toBe(false);
+			expect(parsed.plan).toHaveLength(2);
+			expect(parsed.imported).toEqual([{ source: "local-sqlite", provider: "anthropic", identity: "(api key)" }]);
+			expect(parsed.failed).toEqual([
+				{
+					source: "local-sqlite",
+					provider: "openai",
+					identity: "(api key)",
+					error: "broker rejected openai key",
+				},
+			]);
+			expect(process.exitCode).toBe(1);
+		} finally {
+			process.stdout.write = originalWrite;
+			process.exitCode = prevExitCode ?? 0;
+			uploadSpy.mockRestore();
+		}
 	});
 });

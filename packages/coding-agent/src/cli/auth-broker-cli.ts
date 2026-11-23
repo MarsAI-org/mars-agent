@@ -231,6 +231,12 @@ async function runLocalLogin(rl: readline.Interface, provider: string): Promise<
 }
 
 async function runRemoteLogin(provider: string, via: string, dryRun: boolean): Promise<void> {
+	const trimmedVia = via.trim();
+	if (!trimmedVia || trimmedVia.startsWith("-")) {
+		throw new Error(
+			`Invalid --via destination '${via}': an SSH destination must not be empty or begin with '-' (argument-injection guard)`,
+		);
+	}
 	const port = CALLBACK_PORTS[provider];
 	if (port === undefined) {
 		throw new Error(
@@ -242,7 +248,8 @@ async function runRemoteLogin(provider: string, via: string, dryRun: boolean): P
 		`${port}:127.0.0.1:${port}`,
 		"-o",
 		"ExitOnForwardFailure=yes",
-		via,
+		"--",
+		trimmedVia,
 		`${APP_NAME} auth-broker login ${provider}`,
 	];
 	if (dryRun) {
@@ -451,25 +458,14 @@ async function runImport(flags: AuthBrokerCommandArgs["flags"]): Promise<void> {
 	const resolvedTarget = path.resolve(target.startsWith("~") ? target.replace(/^~/, os.homedir()) : target);
 	const { entries, skipped } = await loadImportPlan(resolvedTarget, flags.provider, flags.includeDisabled === true);
 
-	if (flags.json) {
-		process.stdout.write(
-			`${JSON.stringify({
-				dryRun: flags.dryRun === true,
-				imported: flags.dryRun
-					? []
-					: entries.map(e => ({ provider: e.provider, email: e.email, file: e.sourceFile })),
-				plan: entries.map(e => ({
-					provider: e.provider,
-					email: e.email,
-					accountId: e.accountId,
-					expiresAt: e.expiresAt,
-					disabled: e.disabled,
-					file: e.sourceFile,
-				})),
-				skipped,
-			})}\n`,
-		);
-	}
+	const planJson = entries.map(e => ({
+		provider: e.provider,
+		email: e.email,
+		accountId: e.accountId,
+		expiresAt: e.expiresAt,
+		disabled: e.disabled,
+		file: e.sourceFile,
+	}));
 
 	if (!flags.json) {
 		for (const skip of skipped) {
@@ -478,17 +474,42 @@ async function runImport(flags: AuthBrokerCommandArgs["flags"]): Promise<void> {
 	}
 
 	if (entries.length === 0) {
-		if (!flags.json) process.stdout.write(`No importable credentials in ${resolvedTarget}.\n`);
+		if (flags.json) {
+			process.stdout.write(
+				`${JSON.stringify({
+					dryRun: flags.dryRun === true,
+					imported: [],
+					failed: [],
+					plan: planJson,
+					skipped,
+				})}\n`,
+			);
+		} else {
+			process.stdout.write(`No importable credentials in ${resolvedTarget}.\n`);
+		}
 		return;
 	}
 
 	if (flags.dryRun === true) {
-		if (!flags.json) {
+		if (flags.json) {
+			process.stdout.write(
+				`${JSON.stringify({
+					dryRun: true,
+					imported: [],
+					failed: [],
+					plan: planJson,
+					skipped,
+				})}\n`,
+			);
+		} else {
 			process.stdout.write(`Dry run — would import ${entries.length} credential(s):\n`);
 			for (const entry of entries) process.stdout.write(`  ${describeImportEntry(entry)}\n`);
 		}
 		return;
 	}
+
+	const imported: Array<{ provider: string; email: string | null; file: string }> = [];
+	const failed: Array<{ provider: string; email: string | null; file: string; error: string }> = [];
 
 	const brokerConfig = await resolveAuthBrokerConfig();
 	if (brokerConfig) {
@@ -496,30 +517,51 @@ async function runImport(flags: AuthBrokerCommandArgs["flags"]): Promise<void> {
 		for (const entry of entries) {
 			try {
 				await client.uploadCredential(entry.provider, entry.credential);
+				imported.push({ provider: entry.provider, email: entry.email, file: entry.sourceFile });
 				if (!flags.json) {
 					process.stdout.write(`${chalk.green("uploaded")} ${describeImportEntry(entry)} → ${brokerConfig.url}\n`);
 				}
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
-				if (flags.json) {
-					process.stdout.write(`${JSON.stringify({ error: message, file: entry.sourceFile })}\n`);
-				} else {
+				failed.push({ provider: entry.provider, email: entry.email, file: entry.sourceFile, error: message });
+				if (!flags.json) {
 					process.stdout.write(`${chalk.red("failed")} ${describeImportEntry(entry)}: ${message}\n`);
 				}
 				process.exitCode = 1;
 			}
 		}
-		return;
+	} else {
+		const store = await SqliteAuthCredentialStore.open(getAgentDbPath());
+		try {
+			for (const entry of entries) {
+				try {
+					await store.upsertAuthCredential(entry.provider, entry.credential);
+					imported.push({ provider: entry.provider, email: entry.email, file: entry.sourceFile });
+					if (!flags.json) process.stdout.write(`${chalk.green("imported")} ${describeImportEntry(entry)}\n`);
+				} catch (error) {
+					const message = error instanceof Error ? error.message : String(error);
+					failed.push({ provider: entry.provider, email: entry.email, file: entry.sourceFile, error: message });
+					if (!flags.json) {
+						process.stdout.write(`${chalk.red("failed")} ${describeImportEntry(entry)}: ${message}\n`);
+					}
+					process.exitCode = 1;
+				}
+			}
+		} finally {
+			store.close();
+		}
 	}
 
-	const store = await SqliteAuthCredentialStore.open(getAgentDbPath());
-	try {
-		for (const entry of entries) {
-			await store.upsertAuthCredential(entry.provider, entry.credential);
-			if (!flags.json) process.stdout.write(`${chalk.green("imported")} ${describeImportEntry(entry)}\n`);
-		}
-	} finally {
-		store.close();
+	if (flags.json) {
+		process.stdout.write(
+			`${JSON.stringify({
+				dryRun: false,
+				imported,
+				failed,
+				plan: planJson,
+				skipped,
+			})}\n`,
+		);
 	}
 }
 
@@ -705,15 +747,9 @@ async function runMigrate(flags: AuthBrokerCommandArgs["flags"]): Promise<void> 
 		}
 	}
 
-	if (flags.json) {
-		process.stdout.write(
-			`${JSON.stringify({
-				dryRun: flags.dryRun === true,
-				plan: plan.map(p => ({ source: p.source, provider: p.provider, identity: p.identity })),
-				skipped,
-			})}\n`,
-		);
-	} else {
+	const planJson = plan.map(p => ({ source: p.source, provider: p.provider, identity: p.identity }));
+
+	if (!flags.json) {
 		for (const skip of skipped) {
 			process.stdout.write(
 				`${chalk.yellow("skip")} [${skip.source}] ${skip.provider} ${skip.identity}: ${skip.reason}\n`,
@@ -722,12 +758,34 @@ async function runMigrate(flags: AuthBrokerCommandArgs["flags"]): Promise<void> 
 	}
 
 	if (plan.length === 0) {
-		if (!flags.json) process.stdout.write("Nothing to migrate.\n");
+		if (flags.json) {
+			process.stdout.write(
+				`${JSON.stringify({
+					dryRun: flags.dryRun === true,
+					imported: [],
+					failed: [],
+					plan: planJson,
+					skipped,
+				})}\n`,
+			);
+		} else {
+			process.stdout.write("Nothing to migrate.\n");
+		}
 		return;
 	}
 
 	if (flags.dryRun === true) {
-		if (!flags.json) {
+		if (flags.json) {
+			process.stdout.write(
+				`${JSON.stringify({
+					dryRun: true,
+					imported: [],
+					failed: [],
+					plan: planJson,
+					skipped,
+				})}\n`,
+			);
+		} else {
 			process.stdout.write(`Dry run — would upload ${plan.length} credential(s):\n`);
 			for (const entry of plan) {
 				process.stdout.write(`  [${entry.source}] ${entry.provider} ${entry.identity}\n`);
@@ -736,21 +794,36 @@ async function runMigrate(flags: AuthBrokerCommandArgs["flags"]): Promise<void> 
 		return;
 	}
 
+	const imported: Array<{ source: MigratePlanEntry["source"]; provider: string; identity: string }> = [];
+	const failed: Array<{ source: MigratePlanEntry["source"]; provider: string; identity: string; error: string }> = [];
+
 	for (const entry of plan) {
 		try {
 			await client.uploadCredential(entry.provider, entry.credential);
+			imported.push({ source: entry.source, provider: entry.provider, identity: entry.identity });
 			if (!flags.json) {
 				process.stdout.write(`${chalk.green("uploaded")} [${entry.source}] ${entry.provider} ${entry.identity}\n`);
 			}
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
-			if (flags.json) {
-				process.stdout.write(`${JSON.stringify({ error: message, provider: entry.provider })}\n`);
-			} else {
+			failed.push({ source: entry.source, provider: entry.provider, identity: entry.identity, error: message });
+			if (!flags.json) {
 				process.stdout.write(`${chalk.red("failed")} [${entry.source}] ${entry.provider}: ${message}\n`);
 			}
 			process.exitCode = 1;
 		}
+	}
+
+	if (flags.json) {
+		process.stdout.write(
+			`${JSON.stringify({
+				dryRun: false,
+				imported,
+				failed,
+				plan: planJson,
+				skipped,
+			})}\n`,
+		);
 	}
 }
 

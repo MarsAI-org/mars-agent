@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
-import { AuthStorage, SqliteAuthCredentialStore } from "@marsai-org/ai";
-import { type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
+import { AuthStorage, PROVIDER_REGISTRY, SqliteAuthCredentialStore } from "@marsai-org/ai";
+import { AuthBrokerClient, type AuthBrokerServerHandle, startAuthBroker } from "@marsai-org/ai/auth-broker";
 import { runAuthBrokerCommand } from "@marsai-org/coding-agent/cli/auth-broker-cli";
 import { getAgentDbPath, removeWithRetries, setAgentDir } from "@marsai-org/utils";
 
@@ -309,5 +309,101 @@ describe("auth-broker import (broker-routed)", () => {
 		}
 
 		expect(brokerStore!.listAuthCredentials()).toHaveLength(0);
+	});
+
+	test("import --json emits a single valid JSON document and reports failures accurately", async () => {
+		const okFile = path.join(cliproxyDir, "claude-ok.json");
+		const badFile = path.join(cliproxyDir, "codex-fail.json");
+		await Bun.write(
+			okFile,
+			JSON.stringify({
+				type: "claude",
+				access_token: "ok-access",
+				refresh_token: "ok-refresh",
+				expired: "2099-12-31T23:59:59Z",
+				email: "ok@example.com",
+			}),
+		);
+		await Bun.write(
+			badFile,
+			JSON.stringify({
+				type: "codex",
+				access_token: "bad-access",
+				refresh_token: "bad-refresh",
+				expired: "2099-12-31T23:59:59Z",
+				email: "fail@example.com",
+			}),
+		);
+
+		const originalUpload = AuthBrokerClient.prototype.uploadCredential;
+		const uploadSpy = vi
+			.spyOn(AuthBrokerClient.prototype, "uploadCredential")
+			.mockImplementation(async function (this: AuthBrokerClient, provider, credential) {
+				if (provider === "openai-codex") {
+					throw new Error("simulated upload failure");
+				}
+				return originalUpload.call(this, provider, credential);
+			});
+
+		const prevExitCode = process.exitCode;
+		const restore = silenceStdout();
+		try {
+			await runAuthBrokerCommand({
+				action: "import",
+				flags: { source: cliproxyDir, json: true },
+			});
+			const output = restore();
+			const parsed = JSON.parse(output) as {
+				dryRun: boolean;
+				imported: Array<{ provider: string; email: string | null; file: string }>;
+				failed: Array<{ provider: string; email: string | null; file: string; error: string }>;
+				plan: Array<{ provider: string }>;
+			};
+
+			expect(parsed.dryRun).toBe(false);
+			expect(parsed.plan).toHaveLength(2);
+			expect(parsed.imported).toEqual([{ provider: "anthropic", email: "ok@example.com", file: okFile }]);
+			expect(parsed.failed).toEqual([
+				{
+					provider: "openai-codex",
+					email: "fail@example.com",
+					file: badFile,
+					error: "simulated upload failure",
+				},
+			]);
+			expect(process.exitCode).toBe(1);
+		} finally {
+			process.stdout.write = ORIGINAL_STDOUT_WRITE;
+			process.exitCode = prevExitCode ?? 0;
+			uploadSpy.mockRestore();
+		}
+	});
+});
+
+describe("auth-broker login --via SSH argument-injection guard", () => {
+	afterEach(() => {
+		process.stdout.write = ORIGINAL_STDOUT_WRITE;
+	});
+
+	test("rejects leading-dash --via destinations and inserts `--` before valid destinations", async () => {
+		const providerWithCallback = PROVIDER_REGISTRY.find(p => p.callbackPort != null)?.id;
+		if (!providerWithCallback) throw new Error("Expected at least one OAuth provider with a callbackPort");
+
+		for (const maliciousVia of ["-oProxyCommand=id", " -oProxyCommand=id", "--help", "   "]) {
+			await expect(
+				runAuthBrokerCommand({
+					action: "login",
+					flags: { provider: providerWithCallback, via: maliciousVia, dryRun: true },
+				}),
+			).rejects.toThrow(/argument-injection guard/);
+		}
+
+		const restore = silenceStdout();
+		await runAuthBrokerCommand({
+			action: "login",
+			flags: { provider: providerWithCallback, via: "alice@broker.example", dryRun: true },
+		});
+		const dryRunOutput = restore();
+		expect(dryRunOutput).toContain(" -- alice@broker.example ");
 	});
 });

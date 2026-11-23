@@ -39,14 +39,14 @@ import {
 // Validation
 // =============================================================================
 
-/** Valid npm package name pattern (scoped and unscoped, with optional version) */
-const VALID_PACKAGE_NAME = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*(@[a-z0-9-._^~>=<]+)?$/i;
+/** Valid npm package name pattern (scoped and unscoped, with optional version). Disallows leading `-`. */
+const VALID_PACKAGE_NAME = /^(@[a-z0-9~][a-z0-9._~-]*\/)?[a-z0-9~][a-z0-9._~-]*(@[a-z0-9._^~>=<-]+)?$/i;
 
 /** Characters that are never valid in any plugin install spec — git or npm. */
 const SHELL_METACHARS = /[;&|`$(){}<>\\\n\r\t]/;
 
 /**
- * Validate package name to prevent command injection. npm specs only — git
+ * Validate package name to prevent command and flag injection. npm specs only — git
  * specs (`github:user/repo`, `https://github.com/...`, ...) MUST go through
  * {@link validateGitSpec} instead because they contain characters npm rejects
  * (`:`, `/`, `#`, `+`, `@` in non-version positions).
@@ -54,7 +54,12 @@ const SHELL_METACHARS = /[;&|`$(){}<>\\\n\r\t]/;
 function validatePackageName(name: string): void {
 	// Remove version specifier for validation
 	const baseName = extractPackageName(name);
-	if (!VALID_PACKAGE_NAME.test(baseName)) {
+	if (
+		name.startsWith("-") ||
+		baseName.startsWith("-") ||
+		baseName.includes("..") ||
+		!VALID_PACKAGE_NAME.test(baseName)
+	) {
 		throw new Error(`Invalid package name: ${name}`);
 	}
 	// Extra safety: no shell metacharacters
@@ -66,12 +71,12 @@ function validatePackageName(name: string): void {
 /**
  * Validate a git install spec — accepts `:`, `/`, `#`, `+`, `.`, `-`, `_`,
  * `~`, `@` (which would all fail {@link validatePackageName}) but rejects
- * shell metacharacters so the spec stays safe when forwarded to bun install.
+ * leading `-` and shell metacharacters so the spec stays safe when forwarded to bun install.
  * `Bun.spawn` does not invoke a shell, but defense-in-depth keeps things
  * obvious for future readers.
  */
 function validateGitSpec(spec: string): void {
-	if (SHELL_METACHARS.test(spec)) {
+	if (spec.startsWith("-") || SHELL_METACHARS.test(spec)) {
 		throw new Error(`Invalid characters in plugin source: ${spec}`);
 	}
 }
@@ -554,6 +559,7 @@ export class PluginManager {
 				"install",
 				...(gitSource ? [] : ["--no-cache"]),
 				...(options.force ? ["--force"] : []),
+				"--",
 				packageInstallSpec,
 			];
 			const installProc = Bun.spawn(installArgs, {
@@ -612,7 +618,7 @@ export class PluginManager {
 			// cache from the remote. Rollback is handled by the outer catch.
 			if (gitSource && existingActualName) {
 				await refreshBunGitCache(gitSource, getPluginsDir());
-				const updateProc = Bun.spawn(["bun", "update", actualName], {
+				const updateProc = Bun.spawn(["bun", "update", "--", actualName], {
 					cwd: getPluginsDir(),
 					stdin: "ignore",
 					stdout: "pipe",
@@ -771,7 +777,7 @@ export class PluginManager {
 		validatePackageName(name);
 		await this.#ensurePackageJson();
 
-		const proc = Bun.spawn(["bun", "uninstall", name], {
+		const proc = Bun.spawn(["bun", "uninstall", "--", name], {
 			cwd: getPluginsDir(),
 			stdin: "ignore",
 			stdout: "pipe",
@@ -906,11 +912,19 @@ export class PluginManager {
 
 		await this.#ensurePluginsDir();
 
-		const linkPath = path.join(getPluginsNodeModules(), pkg.name);
+		const nodeModulesDir = path.resolve(getPluginsNodeModules());
+		const nodeModulesPrefix = nodeModulesDir.endsWith(path.sep) ? nodeModulesDir : `${nodeModulesDir}${path.sep}`;
+		const linkPath = path.resolve(nodeModulesDir, pkg.name);
+		if (!linkPath.startsWith(nodeModulesPrefix)) {
+			throw new Error(`Invalid package name: ${pkg.name}`);
+		}
 
 		// Handle scoped packages
 		if (pkg.name.startsWith("@")) {
-			const scopeDir = path.join(getPluginsNodeModules(), pkg.name.split("/")[0]);
+			const scopeDir = path.resolve(nodeModulesDir, pkg.name.split("/")[0]);
+			if (!scopeDir.startsWith(nodeModulesPrefix)) {
+				throw new Error(`Invalid package name: ${pkg.name}`);
+			}
 			await fs.promises.mkdir(scopeDir, { recursive: true });
 		}
 

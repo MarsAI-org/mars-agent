@@ -806,6 +806,7 @@ ${repoGuidance}`,
           name: fnName,
           content: JSON.stringify(result),
         });
+        if (finalResult) break;
       }
     }
 

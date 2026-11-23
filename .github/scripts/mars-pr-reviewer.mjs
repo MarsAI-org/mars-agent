@@ -84,8 +84,8 @@ async function main() {
   console.log(`Gateway: ${LLM_URL} (Model: ${MODEL})`);
   console.log("=========================================");
 
-  if (!PR_NUMBER) {
-    console.error("Missing PR_NUMBER. Exiting.");
+  if (!PR_NUMBER || !/^\d+$/.test(PR_NUMBER)) {
+    console.error("Missing or invalid PR_NUMBER. Exiting.");
     process.exit(1);
   }
   if (!GITHUB_REPOSITORY) {

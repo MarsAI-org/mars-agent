@@ -74,7 +74,7 @@ export async function readRemoteFile(
 	opts: RemoteFileReadOptions,
 ): Promise<RemoteFileReadResult> {
 	const shell = await ensurePosixRemote(target);
-	const command = `head -c ${opts.maxBytes + 1} ${quotePosixArgument(remotePath)}`;
+	const command = `head -c ${opts.maxBytes + 1} -- ${quotePosixArgument(remotePath)}`;
 	const args = await buildRemoteCommand(target, wrapInPosixShell(shell, command));
 	using child = ptree.spawn(["ssh", ...args], {
 		signal: ptree.combineSignals(opts.signal, opts.timeoutMs ?? DEFAULT_TIMEOUT_MS),
@@ -134,12 +134,12 @@ export async function writeRemoteFile(
 	// replacing such a symlink rather than writing through it.
 	const command =
 		`t=${tmp}; trap 'rm -f -- "$t"' 0; ` +
-		`mkdir -p -- "$(dirname "$t")" && ` +
+		`mkdir -p -- "$(dirname -- "$t")" && ` +
 		`cat > "$t" && { ` +
 		`if [ -d ${dest} ]; then echo 'ssh://: destination is a directory' >&2; exit 1; ` +
-		`elif [ -f ${dest} ] && [ ! -L ${dest} ]; then cat "$t" > ${dest} || exit 1; ` +
+		`elif [ -f ${dest} ] && [ ! -L ${dest} ]; then cat -- "$t" > ${dest} || exit 1; ` +
 		`elif [ -e ${dest} ] && [ ! -L ${dest} ]; then echo 'ssh://: destination is a special file (not a regular file)' >&2; exit 1; ` +
-		`else mv "$t" ${dest}; fi; ` +
+		`else mv -- "$t" ${dest}; fi; ` +
 		`}`;
 	const args = await buildRemoteCommand(target, wrapInPosixShell(shell, command), { allowStdin: true });
 	using child = ptree.spawn(["ssh", ...args], {

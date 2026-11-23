@@ -867,4 +867,67 @@ describe("MCP Streamable HTTP GET listener resumption", () => {
 			await transport.close();
 		}
 	});
+
+	it("cancels the SSE startup timeout timer once the GET connects", async () => {
+		const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
+		server = Bun.serve({
+			port: 0,
+			fetch() {
+				return new Response(null, { status: 405 });
+			},
+		});
+		const transport = await connectedTransport(200);
+		try {
+			await transport.startSSEListener();
+			expect(clearTimeoutSpy).toHaveBeenCalled();
+		} finally {
+			clearTimeoutSpy.mockRestore();
+			await transport.close();
+		}
+	});
+
+	it("replaces config headers without mutating caller config on server-response auth retry", async () => {
+		const postAuthHeaders: (string | null)[] = [];
+		const responseDelivered = Promise.withResolvers<void>();
+		let postCount = 0;
+
+		server = Bun.serve({
+			port: 0,
+			fetch(req) {
+				if (req.method === "GET") {
+					return new Response('data: {"jsonrpc":"2.0","id":77,"method":"roots/list","params":{}}\n\n', {
+						headers: { "Content-Type": "text/event-stream" },
+					});
+				}
+				postCount++;
+				postAuthHeaders.push(req.headers.get("authorization"));
+				if (postCount === 1) {
+					return new Response("expired", { status: 401 });
+				}
+				responseDelivered.resolve();
+				return new Response(null, { status: 202 });
+			},
+		});
+
+		const callerHeaders: Record<string, string> = { authorization: "Bearer stale-lower" };
+		const transport = new HttpTransport({
+			type: "http",
+			url: `http://127.0.0.1:${server.port}/mcp`,
+			timeout: GUARD_TIMEOUT_MS,
+			headers: callerHeaders,
+		});
+		transport.onRequest = async () => ({ roots: [] });
+		transport.onAuthError = async () => ({ Authorization: "Bearer fresh-upper" });
+
+		await transport.connect();
+		try {
+			await transport.startSSEListener();
+			await withPendingGuard(responseDelivered.promise, "server response auth retry");
+
+			expect(callerHeaders).toEqual({ authorization: "Bearer stale-lower" });
+			expect(postAuthHeaders).toEqual(["Bearer stale-lower", "Bearer fresh-upper"]);
+		} finally {
+			await transport.close();
+		}
+	});
 });

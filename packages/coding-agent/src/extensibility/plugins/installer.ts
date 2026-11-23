@@ -1,19 +1,20 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { getAgentDir, getProjectDir } from "@marsai-org/utils";
+import { getPluginsDir, getPluginsNodeModules, getProjectDir } from "@marsai-org/utils";
 import { extractPackageName } from "./parser";
 import { type InstalledPlugin, resolvePluginManifest } from "./types";
 
-const PLUGINS_DIR = path.join(getAgentDir(), "plugins");
-
-// Valid npm package name pattern (scoped and unscoped)
-const VALID_PACKAGE_NAME = /^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*(@[a-z0-9-._^~>=<]+)?$/i;
+// Valid npm package name pattern (scoped and unscoped, optional version specifier).
+// Disallows leading `-` (CLI flag injection) and leading `.`/`_` (path traversal).
+const VALID_PACKAGE_NAME = /^(@[a-z0-9~][a-z0-9._~-]*\/)?[a-z0-9~][a-z0-9._~-]*(@[a-z0-9._^~>=<-]+)?$/i;
+// Exact npm package name without version specifier (used for package.json `name` in linkPlugin).
+const VALID_EXACT_PACKAGE_NAME = /^(@[a-z0-9~][a-z0-9._~-]*\/)?[a-z0-9~][a-z0-9._~-]*$/i;
 
 /**
- * Validate package name to prevent command injection
+ * Validate package name to prevent command and flag injection.
  */
 function validatePackageName(name: string): void {
-	if (!VALID_PACKAGE_NAME.test(name)) {
+	if (name.startsWith("-") || name.includes("..") || !VALID_PACKAGE_NAME.test(name)) {
 		throw new Error(`Invalid package name: ${name}`);
 	}
 	// Extra safety: no shell metacharacters
@@ -26,8 +27,8 @@ function validatePackageName(name: string): void {
  * Ensure the plugins directory exists
  */
 async function ensurePluginsDir(): Promise<void> {
-	await fs.mkdir(PLUGINS_DIR, { recursive: true });
-	await fs.mkdir(path.join(PLUGINS_DIR, "node_modules"), { recursive: true });
+	await fs.mkdir(getPluginsDir(), { recursive: true });
+	await fs.mkdir(getPluginsNodeModules(), { recursive: true });
 }
 
 export async function installPlugin(packageName: string): Promise<InstalledPlugin> {
@@ -36,17 +37,19 @@ export async function installPlugin(packageName: string): Promise<InstalledPlugi
 
 	// Ensure plugins directory exists
 	await ensurePluginsDir();
+	const pluginsDir = getPluginsDir();
+	const pluginsNodeModules = getPluginsNodeModules();
 
 	// Initialize package.json if it doesn't exist
-	const pkgJsonPath = path.join(PLUGINS_DIR, "package.json");
+	const pkgJsonPath = path.join(pluginsDir, "package.json");
 	const pkgJson = Bun.file(pkgJsonPath);
 	if (!(await pkgJson.exists())) {
 		await pkgJson.write(JSON.stringify({ name: "mars-plugins", private: true, dependencies: {} }, null, 2));
 	}
 
-	// Run npm install in plugins directory
-	const proc = Bun.spawn(["bun", "install", packageName], {
-		cwd: PLUGINS_DIR,
+	// Run bun install in plugins directory (`--` prevents flag injection)
+	const proc = Bun.spawn(["bun", "install", "--", packageName], {
+		cwd: pluginsDir,
 		stdin: "ignore",
 		stdout: "pipe",
 		stderr: "pipe",
@@ -68,7 +71,7 @@ export async function installPlugin(packageName: string): Promise<InstalledPlugi
 	const actualName = extractPackageName(packageName);
 
 	// Read the installed package's package.json
-	const pkgPath = path.join(PLUGINS_DIR, "node_modules", actualName, "package.json");
+	const pkgPath = path.join(pluginsNodeModules, actualName, "package.json");
 	const pkgFile = Bun.file(pkgPath);
 	if (!(await pkgFile.exists())) {
 		throw new Error(`Package installed but package.json not found at ${pkgPath}`);
@@ -79,7 +82,7 @@ export async function installPlugin(packageName: string): Promise<InstalledPlugi
 	return {
 		name: pkg.name,
 		version: pkg.version,
-		path: path.join(PLUGINS_DIR, "node_modules", actualName),
+		path: path.join(pluginsNodeModules, actualName),
 		manifest: resolvePluginManifest(pkg) ?? { version: pkg.version },
 		enabledFeatures: null,
 		enabled: true,
@@ -92,8 +95,8 @@ export async function uninstallPlugin(name: string): Promise<void> {
 
 	await ensurePluginsDir();
 
-	const proc = Bun.spawn(["bun", "uninstall", name], {
-		cwd: PLUGINS_DIR,
+	const proc = Bun.spawn(["bun", "uninstall", "--", name], {
+		cwd: getPluginsDir(),
 		stdin: "ignore",
 		stdout: "pipe",
 		stderr: "pipe",
@@ -111,7 +114,9 @@ export async function uninstallPlugin(name: string): Promise<void> {
 }
 
 export async function listPlugins(): Promise<InstalledPlugin[]> {
-	const pkgJsonPath = Bun.file(path.join(PLUGINS_DIR, "package.json"));
+	const pluginsDir = getPluginsDir();
+	const pluginsNodeModules = getPluginsNodeModules();
+	const pkgJsonPath = Bun.file(path.join(pluginsDir, "package.json"));
 	if (!(await pkgJsonPath.exists())) {
 		return [];
 	}
@@ -121,7 +126,7 @@ export async function listPlugins(): Promise<InstalledPlugin[]> {
 
 	const plugins: InstalledPlugin[] = [];
 	for (const [name, _version] of Object.entries(deps)) {
-		const pluginPath = path.join(PLUGINS_DIR, "node_modules", name);
+		const pluginPath = path.join(pluginsNodeModules, name);
 		const fpkg = Bun.file(path.join(pluginPath, "package.json"));
 		if (await fpkg.exists()) {
 			const pkg = await fpkg.json();
@@ -141,24 +146,31 @@ export async function listPlugins(): Promise<InstalledPlugin[]> {
 
 export async function linkPlugin(localPath: string): Promise<void> {
 	const cwd = getProjectDir();
+	const normalizedCwd = path.resolve(cwd);
 	const absolutePath = path.resolve(cwd, localPath);
 
 	// Validate that resolved path is within cwd to prevent path traversal
-	const normalizedCwd = path.resolve(cwd);
-	const normalizedPath = path.resolve(absolutePath);
-	if (!normalizedPath.startsWith(`${normalizedCwd}/`) && normalizedPath !== normalizedCwd) {
+	const normalizedCwdPrefix = normalizedCwd.endsWith(path.sep) ? normalizedCwd : `${normalizedCwd}${path.sep}`;
+	if (absolutePath !== normalizedCwd && !absolutePath.startsWith(normalizedCwdPrefix)) {
 		throw new Error(`Invalid path: ${localPath} resolves outside working directory`);
 	}
 
-	// Validate package.json exists
+	// Validate package.json exists before realpath so missing paths report the expected error
 	const pkgFile = Bun.file(path.join(absolutePath, "package.json"));
 	if (!(await pkgFile.exists())) {
 		throw new Error(`package.json not found at ${absolutePath}`);
 	}
 
+	// Re-check containment after resolving symlinks so a symlink inside cwd cannot escape it
+	const [realCwd, realTarget] = await Promise.all([fs.realpath(normalizedCwd), fs.realpath(absolutePath)]);
+	const realCwdPrefix = realCwd.endsWith(path.sep) ? realCwd : `${realCwd}${path.sep}`;
+	if (realTarget !== realCwd && !realTarget.startsWith(realCwdPrefix)) {
+		throw new Error(`Invalid path: ${localPath} resolves outside working directory`);
+	}
+
 	let pkg: { name?: string };
 	try {
-		pkg = await pkgFile.json();
+		pkg = await Bun.file(path.join(realTarget, "package.json")).json();
 	} catch (err) {
 		throw new Error(`Invalid package.json at ${absolutePath}: ${err}`);
 	}
@@ -167,22 +179,32 @@ export async function linkPlugin(localPath: string): Promise<void> {
 		throw new Error("package.json must have a valid name field");
 	}
 
-	// Validate package name to prevent path traversal via pkg.name
-	if (pkg.name.includes("..") || pkg.name.includes("/") || pkg.name.includes("\\")) {
-		// Exception: scoped packages have one slash
-		if (!pkg.name.startsWith("@") || (pkg.name.match(/\//g) || []).length !== 1) {
-			throw new Error(`Invalid package name in package.json: ${pkg.name}`);
-		}
+	// Enforce a strict npm package name (no `..`, no `\`, no leading `-`) to prevent path traversal
+	if (
+		!VALID_EXACT_PACKAGE_NAME.test(pkg.name) ||
+		pkg.name.includes("..") ||
+		pkg.name.includes("\\") ||
+		pkg.name.startsWith("-")
+	) {
+		throw new Error(`Invalid package name in package.json: ${pkg.name}`);
 	}
 
 	await ensurePluginsDir();
 
-	// Create symlink in plugins/node_modules
-	const linkPath = path.join(PLUGINS_DIR, "node_modules", pkg.name);
+	// Resolve and verify containment inside plugins/node_modules before any filesystem mutation
+	const nodeModulesDir = path.resolve(getPluginsNodeModules());
+	const nodeModulesPrefix = nodeModulesDir.endsWith(path.sep) ? nodeModulesDir : `${nodeModulesDir}${path.sep}`;
+	const linkPath = path.resolve(nodeModulesDir, pkg.name);
+	if (!linkPath.startsWith(nodeModulesPrefix)) {
+		throw new Error(`Invalid package name in package.json: ${pkg.name}`);
+	}
 
-	// For scoped packages, ensure the scope directory exists
+	// For scoped packages, ensure the scope directory exists and stays inside node_modules
 	if (pkg.name.startsWith("@")) {
-		const scopeDir = path.join(PLUGINS_DIR, "node_modules", pkg.name.split("/")[0]);
+		const scopeDir = path.resolve(nodeModulesDir, pkg.name.split("/")[0]);
+		if (!scopeDir.startsWith(nodeModulesPrefix)) {
+			throw new Error(`Invalid package name in package.json: ${pkg.name}`);
+		}
 		await fs.mkdir(scopeDir, { recursive: true });
 	}
 
@@ -190,5 +212,5 @@ export async function linkPlugin(localPath: string): Promise<void> {
 	await fs.rm(linkPath, { recursive: true, force: true });
 
 	// Junction on Windows: a plain directory symlink EPERMs outside developer mode.
-	await fs.symlink(absolutePath, linkPath, process.platform === "win32" ? "junction" : "dir");
+	await fs.symlink(realTarget, linkPath, process.platform === "win32" ? "junction" : "dir");
 }

@@ -88,4 +88,31 @@ describe("ssh file-transfer POSIX guard", () => {
 		expect(dispatches[2]).toMatch(/^bash -c '.*if \[ -d /);
 		expect(dispatches[3]).toMatch(/^bash -c '.*LC_ALL=C ls -1Ap /);
 	});
+
+	it("terminates options with `--` for remote paths starting with `-`", async () => {
+		vi.spyOn(connectionManager, "ensureConnection").mockResolvedValue(undefined);
+		vi.spyOn(connectionManager, "ensureHostInfo").mockResolvedValue({
+			version: 4,
+			os: "linux",
+			shell: "bash",
+			transferShell: "sh",
+			compatEnabled: false,
+		});
+		const buildSpy = vi
+			.spyOn(connectionManager, "buildRemoteCommand")
+			.mockRejectedValue(new Error("stop-before-spawn"));
+		const target: SSHConnectionTarget = { name: "dashbox", host: "dashbox" };
+
+		await expect(readRemoteFile(target, "-leading-dash.txt", { maxBytes: 64 })).rejects.toThrow(/stop-before-spawn/);
+		await expect(writeRemoteFile(target, "-leading-dash.txt", new Uint8Array([1, 2]), {})).rejects.toThrow(
+			/stop-before-spawn/,
+		);
+
+		const readCmd = buildSpy.mock.calls[0]?.[1] as string;
+		const writeCmd = buildSpy.mock.calls[1]?.[1] as string;
+		expect(readCmd).toContain("head -c 65 -- ");
+		expect(writeCmd).toContain('dirname -- "$t"');
+		expect(writeCmd).toContain('cat -- "$t" > ');
+		expect(writeCmd).toContain('mv -- "$t" ');
+	});
 });

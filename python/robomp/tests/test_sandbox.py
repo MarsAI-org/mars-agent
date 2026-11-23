@@ -2588,4 +2588,47 @@ def test_local_git_transport_passes_scoped_auth_url_when_token_set(
     transport.fetch_pool(repo="octo/widget", pool_dir=tmp_path / "pool")
 
     assert captured[0]["auth_url"] == "https://github.com/octo/widget.git"
+    assert captured[0]["token"] == "ghp_test"
     assert captured[1]["auth_url"] == "https://github.com/octo/widget.git"
+
+
+@pytest.mark.parametrize(
+    "untrusted_url",
+    [
+        "https://evil.example/octo/widget.git",
+        "https://github.com.evil.example/octo/widget.git",
+        "https://evil.example/github.com/octo/widget.git",
+        "http://github.com/octo/widget.git",
+        "https://user:pass@github.com/octo/widget.git",
+        "https://user@github.com/octo/widget.git",
+        "https://@github.com/octo/widget.git",
+        "https://github.com:8443/octo/widget.git",
+        "https://github.com:443/octo/widget.git",
+        "https://github.com:/octo/widget.git",
+        "https://github.com:invalid/octo/widget.git",
+        "https://github.com/octo/widget.git?foo=bar",
+        "https://github.com/octo/widget.git#frag",
+        "/tmp/local/bare.git",
+        "",
+    ],
+)
+def test_local_git_transport_refuses_pat_for_non_github_or_malformed_clone_url(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, untrusted_url: str
+) -> None:
+    """Bug #12 regression: LocalGitTransport never attaches the GitHub PAT to non-github.com or malformed URLs."""
+    from robomp.sandbox import LocalGitTransport
+
+    captured: list[dict[str, object]] = []
+    monkeypatch.setattr("robomp.sandbox.git_clone", lambda _p, **kw: captured.append(kw))
+
+    transport = LocalGitTransport(token="ghp_secret")
+    assert transport._auth_url("octo/widget", untrusted_url) is None
+
+    transport.clone_pool(
+        repo="octo/widget",
+        clone_url=untrusted_url,
+        default_branch="main",
+        target=tmp_path / "pool",
+    )
+    assert captured[0]["auth_url"] is None
+    assert captured[0]["token"] is None

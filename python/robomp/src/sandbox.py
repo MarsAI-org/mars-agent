@@ -52,6 +52,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import urlparse
 
 from robomp.git_ops import (
     GitCommandError,
@@ -318,20 +319,42 @@ class LocalGitTransport:
     def __init__(self, token: str | None) -> None:
         self._token = token
 
+    @staticmethod
+    def _is_github_https_url(url: str) -> bool:
+        if not url or any(ord(ch) <= 0x20 or ord(ch) == 0x7F for ch in url):
+            return False
+        parsed = urlparse(url)
+        if parsed.scheme.lower() != "https":
+            return False
+        if parsed.username is not None or parsed.password is not None or "@" in parsed.netloc:
+            return False
+        try:
+            port = parsed.port
+        except ValueError:
+            return False
+        if port is not None or ":" in parsed.netloc:
+            return False
+        if (parsed.hostname or "").lower() != "github.com":
+            return False
+        if parsed.params or parsed.query or parsed.fragment:
+            return False
+        return bool(parsed.path.strip("/"))
+
     def _auth_url(self, repo: str, clone_url: str | None = None) -> str | None:
         if not self._token:
             return None
-        if clone_url and clone_url.startswith("https://"):
-            return clone_url
+        if clone_url is not None:
+            return clone_url if self._is_github_https_url(clone_url) else None
         return f"https://github.com/{repo}.git"
 
     def clone_pool(self, *, repo: str, clone_url: str, default_branch: str, target: Path) -> None:
+        auth_url = self._auth_url(repo, clone_url)
         git_clone(
             target,
             clone_url=clone_url,
             default_branch=default_branch,
-            token=self._token,
-            auth_url=self._auth_url(repo, clone_url),
+            token=self._token if auth_url is not None else None,
+            auth_url=auth_url,
         )
 
     def fetch_pool(self, *, repo: str, pool_dir: Path) -> None:
