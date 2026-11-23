@@ -46,8 +46,8 @@ describe("welcome brand artwork", () => {
 		expect(cells.map(cell => render(cell.map(row => row.map(on => (on ? "#" : ".")).join(""))))).toEqual([
 			render(["#.#", "###", "#.#", "#.#", "#.#", "..."]),
 			render([".#.", "#.#", "###", "#.#", "#.#", "..."]),
-			render(["##.", "#.#", "#..", "#..", "#..", "..."]),
-			render([".##", "#..", ".#.", "..#", "##.", "..."]),
+			render(["##.", "#.#", "##.", "#.#", "#.#", "..."]),
+			render([".##", "#..", "##.", "..#", "##.", "..."]),
 		]);
 
 		// Neither the old wordmark nor the old Pi mark may survive anywhere.
@@ -61,7 +61,7 @@ describe("welcome brand artwork", () => {
 		expect(MARS_LOGO).toEqual([
 			"  ▄██████▄  ",
 			" ██████████ ",
-			"████▀██▀▀███",
+			"███▀████▀███",
 			"▀██████████▀",
 			" ▀████████▀ ",
 			"  ▄█▀▀▀▀█▄  ",

@@ -3,8 +3,13 @@
  * border, and the last content row merged into the bottom border
  * (`╰─ text … ─╯`), keeping a one-line prompt at two rows total.
  */
+import { theme } from "../../theme/theme";
 import { padding, truncateToWidth, visibleWidth } from "../../utils";
 import type { ComposerChromeContext, ComposerRowContext, ComposerStyle } from "./types";
+
+function isAsciiChrome(ctx: ComposerRowContext): boolean {
+	return ctx.box.vertical === "|" || (typeof theme !== "undefined" && theme.getSymbolPreset() === "ascii");
+}
 
 export const boxComposerStyle: ComposerStyle = {
 	id: "box",
@@ -25,9 +30,15 @@ export const boxComposerStyle: ComposerStyle = {
 
 	renderTop(ctx: ComposerChromeContext): string {
 		const { box, paddingX, width, borderColor, topBorder } = ctx;
+		if (width <= 0) return "";
+		if (width === 1) return borderColor(box.horizontal);
+		const minChromeWidth = this.sideChromeWidth(paddingX) * 2;
+		if (width < minChromeWidth) {
+			return borderColor(`${box.topLeft}${box.horizontal.repeat(width - 2)}${box.topRight}`);
+		}
 		const topLeft = borderColor(`${box.topLeft}${box.horizontal.repeat(paddingX)}`);
 		const topRight = borderColor(`${box.horizontal.repeat(paddingX)}${box.topRight}`);
-		const topFillWidth = Math.max(0, width - this.sideChromeWidth(paddingX) * 2);
+		const topFillWidth = width - minChromeWidth;
 		if (!topBorder) {
 			return topLeft + borderColor(box.horizontal.repeat(topFillWidth)) + topRight;
 		}
@@ -56,9 +67,12 @@ export const boxComposerStyle: ComposerStyle = {
 			// bytes reach the application. Keep the end-of-input cursor row empty
 			// to its right so insertion cannot shift box chrome onto the next row.
 			const leftBorder = borderColor(`${box.vertical}${padding(paddingX)}`);
-			const bottomBorder = borderColor(
-				`${box.bottomLeft}${box.horizontal.repeat(Math.max(0, width - 2))}${box.bottomRight}`,
-			);
+			const bottomBorder =
+				width <= 0
+					? ""
+					: width === 1
+						? borderColor(box.horizontal)
+						: borderColor(`${box.bottomLeft}${box.horizontal.repeat(width - 2)}${box.bottomRight}`);
 			return [leftBorder + text, bottomBorder];
 		}
 		if (isLastRow) {
@@ -72,8 +86,8 @@ export const boxComposerStyle: ComposerStyle = {
 		}
 		const leftBorder = borderColor(`${box.vertical}${padding(paddingX)}`);
 		// When the scrollbar is active, replace the right border vertical with a
-		// thumb glyph (█) inside the thumb range, keeping the track (│) elsewhere.
-		const rightGlyph = ctx.scrollbarThumb ? "█" : box.vertical;
+		// thumb glyph (█ / # in ASCII) inside the thumb range, keeping the track (│ / |) elsewhere.
+		const rightGlyph = ctx.scrollbarThumb ? (isAsciiChrome(ctx) ? "#" : "█") : box.vertical;
 		const rightBorder = borderColor(`${padding(Math.max(0, rightChromeCells - 1))}${rightGlyph}`);
 		return [leftBorder + text + pad + rightBorder];
 	},

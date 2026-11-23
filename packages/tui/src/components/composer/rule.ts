@@ -3,8 +3,13 @@
  * right status group rides the rule while the left group remains below the
  * editor, preserving the compact status split without a closing rule.
  */
-import { truncateToWidth, visibleWidth } from "../../utils";
+import { theme } from "../../theme/theme";
+import { padding, truncateToWidth, visibleWidth } from "../../utils";
 import type { ComposerChromeContext, ComposerRowContext, ComposerStyle } from "./types";
+
+function isAsciiPreset(): boolean {
+	return typeof theme !== "undefined" && theme.getSymbolPreset() === "ascii";
+}
 
 /** Draw a full-width rule with status content docked at its right edge.
  * Over-wide content is truncated (keeping one rule cell on each side) rather
@@ -31,7 +36,9 @@ export const ruleComposerStyle: ComposerStyle = {
 	statusAttachment: "top-rule-chip",
 	bottomBar: "left",
 	bottomBarGap: true,
-	defaultPromptGutter: "❯ ",
+	get defaultPromptGutter(): string {
+		return isAsciiPreset() ? "> " : "❯ ";
+	},
 
 	defaultPaddingX(): number {
 		return 0;
@@ -46,7 +53,7 @@ export const ruleComposerStyle: ComposerStyle = {
 	},
 
 	renderRow(ctx: ComposerRowContext): string[] {
-		return [ctx.gutter + ctx.text + ctx.pad];
+		return [padding(this.sideChromeWidth(ctx.paddingX)) + ctx.gutter + ctx.text + ctx.pad];
 	},
 
 	renderBottom(): undefined {

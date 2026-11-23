@@ -7,7 +7,7 @@ import { Memo } from "../native/memo";
 import type { DescribeContext, NativeNode, NativeUiEvent } from "../native/node";
 import { actionBar, actionButton } from "../native/overlay";
 import { extractPrintableText, matchesKey, parseKey, parseKittySequence } from "../keys";
-import { padding, truncateToWidth, visibleWidth } from "../utils";
+import { Ellipsis, padding, truncateToWidth, visibleWidth } from "../utils";
 import type { Theme } from "../theme/theme";
 import { formatKeyHint } from "../app-keybindings";
 import { formatStatusIcon, replaceTabs } from "../render/render-utils";
@@ -317,8 +317,18 @@ export class BashInteractiveOverlayComponent implements Component {
 		);
 	}
 	render(width: number): readonly string[] {
-		const safeWidth = Math.max(20, width);
-		const innerWidth = Math.max(1, safeWidth - 2);
+		const safeWidth = Math.max(0, Math.trunc(width));
+		if (safeWidth === 0) return [];
+		if (safeWidth < 3) {
+			return [
+				truncateToWidth(
+					this.#uiTheme.fg("border", this.#uiTheme.boxRound.horizontal.repeat(safeWidth)),
+					safeWidth,
+					Ellipsis.Omit,
+				),
+			];
+		}
+		const innerWidth = safeWidth - 2;
 		const maxContentRows = this.#maxContentRows();
 		this.#syncPtySize(innerWidth, maxContentRows);
 		const statusIcon =

@@ -1,8 +1,8 @@
-import { beforeAll, describe, expect, it } from "bun:test";
+import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import { renderComposerShapePreview } from "../src/overlays/composer-shape-preview";
 import { getComposerShapeOptions, installExtensionComposerShape } from "../src/overlays/composer-shape-registry";
-import { initTheme, setTheme } from "../src/theme/theme";
-import { type ComposerStyle, visibleWidth } from "../src/index";
+import { initTheme, setSymbolPreset, setTheme } from "../src/theme/theme";
+import { BUILTIN_EDITOR_BORDER_STYLES, type ComposerStyle, visibleWidth } from "../src/index";
 
 beforeAll(async () => {
 	await initTheme();
@@ -131,5 +131,46 @@ describe("composer shape preview", () => {
 
 		expect(visibleWidth(statusBand ?? "")).toBe(200);
 		expect(statusBand).toEndWith("STATUS");
+	});
+
+	describe("narrow widths and ASCII preset", () => {
+		afterEach(async () => {
+			await setSymbolPreset("unicode");
+		});
+
+		it("never overflows narrow terminal widths below 24 columns for any built-in shape", async () => {
+			await setTheme("dark");
+			for (const shape of BUILTIN_EDITOR_BORDER_STYLES) {
+				for (const width of [4, 12, 18, 23]) {
+					const lines = renderComposerShapePreview(shape, width);
+					for (const line of lines) {
+						expect(visibleWidth(line)).toBeLessThanOrEqual(width);
+					}
+				}
+			}
+		});
+
+		it("renders ASCII-safe gutters and chrome when the ASCII symbol preset is active", async () => {
+			await setTheme("dark");
+			await setSymbolPreset("ascii");
+			const band = Bun.stripANSI(renderComposerShapePreview("band", 40).join("\n"));
+			expect(band).toContain("+- ");
+			expect(band).not.toContain("╰");
+
+			for (const shape of ["borderless", "claude", "rule"] as const) {
+				const rendered = Bun.stripANSI(renderComposerShapePreview(shape, 40).join("\n"));
+				expect(rendered).toContain("> ");
+				expect(rendered).not.toContain("❯");
+			}
+
+			const field = Bun.stripANSI(renderComposerShapePreview("field", 40).join("\n"));
+			expect(field).toStartWith("| ");
+			expect(field).toEndWith("|");
+			expect(field).not.toMatch(/[▐▌]/);
+
+			const rail = Bun.stripANSI(renderComposerShapePreview("rail", 40).join("\n"));
+			expect(rail).toStartWith("| ");
+			expect(rail).not.toContain("▎");
+		});
 	});
 });

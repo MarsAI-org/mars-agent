@@ -2,6 +2,7 @@ import { getOAuthProviders } from "@marsai-org/ai/oauth";
 import type { OAuthPrompt } from "@marsai-org/ai/oauth/types";
 import { Container, getKeybindings, Spacer, Text, type TUI, wrapTextWithAnsi } from "../index";
 import { theme } from "../theme/theme";
+import { isHyperlinkEnabled, urlHyperlink } from "../render/hyperlink";
 import { urlHyperlinkAlways, WidthAwareText } from "../render/index";
 import { formTheme } from "../chrome/form-theme";
 import { OverlayPanel } from "../chrome/overlay-box";
@@ -49,7 +50,7 @@ export class LoginDialogComponent extends OverlayPanel {
 	) {
 		const providerInfo = getOAuthProviders().find(p => p.id === providerId);
 		const providerName = providerInfo?.name || providerId;
-		super(`Login to ${providerName}`, "omp.overlay.login");
+		super(`Log in to ${providerName}`, "omp.overlay.login");
 		this.#providerName = providerName;
 		this.#tui = tui;
 		this.#onComplete = onComplete;
@@ -119,9 +120,11 @@ export class LoginDialogComponent extends OverlayPanel {
 			),
 		);
 
-		const clickHint = `${formatKeyHint(keyHintPlatform() === "darwin" ? "super" : "ctrl")}+click to open`;
-		const hyperlink = `\x1b]8;;${url}\x07${clickHint}\x1b]8;;\x07`;
-		this.#contentContainer.addChild(new Text(theme.fg("dim", hyperlink), 0, 0));
+		if (isHyperlinkEnabled()) {
+			const modifier = formatKeyHint(keyHintPlatform() === "darwin" ? "super" : "ctrl");
+			const clickHint = /[A-Za-z0-9]/.test(modifier) ? `${modifier}+click to open` : `${modifier} click to open`;
+			this.#contentContainer.addChild(new Text(theme.fg("dim", urlHyperlink(url, clickHint)), 0, 0));
+		}
 
 		if (launchUrl && launchUrl !== url) {
 			this.#contentContainer.addChild(

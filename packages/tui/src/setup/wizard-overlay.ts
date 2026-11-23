@@ -288,10 +288,13 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 	#progressLine(): string {
 		const total = this.scenes.length;
 		if (total <= 0) return "";
+		const ascii = theme.getSymbolPreset() === "ascii";
+		const filled = ascii ? "*" : "●";
+		const empty = ascii ? "o" : "○";
 		const marks = this.scenes.map((_, index) => {
-			if (index < this.#sceneIndex) return theme.fg("muted", "●");
-			if (index === this.#sceneIndex) return theme.fg("accent", "●");
-			return theme.fg("dim", "○");
+			if (index < this.#sceneIndex) return theme.fg("muted", filled);
+			if (index === this.#sceneIndex) return theme.fg("accent", filled);
+			return theme.fg("dim", empty);
 		});
 		return `${marks.join(" ")} ${theme.fg("dim", `${this.#sceneIndex + 1}/${total}`)}`;
 	}
@@ -300,7 +303,7 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 		const scene = this.scenes[this.#sceneIndex];
 		const title = this.#activeScene?.title ?? scene?.title ?? "Setup";
 		const subtitle = this.#activeScene?.subtitle;
-		const contentWidth = Math.max(MIN_CONTENT_WIDTH, width - SCENE_MARGIN_X * 2);
+		const contentWidth = Math.max(1, Math.min(width, Math.max(MIN_CONTENT_WIDTH, width - SCENE_MARGIN_X * 2)));
 		// Short terminals cannot afford the sixth mark row: it would push one menu
 		// item out of the frame. Use the compact mark there.
 		const logo = gradientLogo(height < SHORT_TERMINAL_ROWS ? MARS_LOGO_COMPACT : MARS_LOGO, 0);

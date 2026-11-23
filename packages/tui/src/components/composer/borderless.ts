@@ -4,7 +4,12 @@
  * editors, agents hub). The status bar renders as a plain standalone bottom
  * bar with both segment groups.
  */
+import { theme } from "../../theme/theme";
 import type { ComposerRowContext, ComposerStyle } from "./types";
+
+function isAsciiPreset(): boolean {
+	return typeof theme !== "undefined" && theme.getSymbolPreset() === "ascii";
+}
 
 export const borderlessComposerStyle: ComposerStyle = {
 	id: "borderless",
@@ -13,7 +18,9 @@ export const borderlessComposerStyle: ComposerStyle = {
 	statusAttachment: "none",
 	bottomBar: "full",
 	bottomBarGap: false,
-	defaultPromptGutter: "❯ ",
+	get defaultPromptGutter(): string {
+		return isAsciiPreset() ? "> " : "❯ ";
+	},
 
 	defaultPaddingX(): number {
 		return 0;

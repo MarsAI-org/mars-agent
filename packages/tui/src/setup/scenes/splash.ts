@@ -10,13 +10,30 @@ import { Memo } from "../../native/memo";
 export const SETUP_SPLASH_MS = 2600;
 export const SETUP_TICK_MS = 33;
 
-/** Brand mark at 2x: every glyph doubled horizontally, every row doubled vertically. */
+/**
+ * Brand mark at 2x: expand each half-block glyph semantically into two solid
+ * full-block rows and double horizontally so edges, eyes, and feet stay crisp
+ * instead of forming striped half-block artifacts.
+ */
 const LARGE_LOGO = MARS_LOGO.flatMap(line => {
-	let wide = "";
+	let top = "";
+	let bottom = "";
 	for (const char of line) {
-		wide += char === " " ? "  " : `${char}${char}`;
+		if (char === "█") {
+			top += "██";
+			bottom += "██";
+		} else if (char === "▀") {
+			top += "██";
+			bottom += "  ";
+		} else if (char === "▄") {
+			top += "  ";
+			bottom += "██";
+		} else {
+			top += "  ";
+			bottom += "  ";
+		}
 	}
-	return [wide, wide];
+	return [top, bottom];
 });
 const LOGO_WIDTH = Math.max(...LARGE_LOGO.map(line => visibleWidth(line)));
 const LOGO_HEIGHT = LARGE_LOGO.length;
@@ -34,8 +51,9 @@ function skipHint(): string {
 function starAt(x: number, y: number, frame: number): string {
 	const hash = (x * 73856093) ^ (y * 19349663) ^ (frame * 83492791);
 	const bucket = Math.abs(hash) % 97;
-	if (bucket === 0) return theme.fg("accent", "✦");
-	if (bucket === 1) return theme.fg("muted", "·");
+	const ascii = theme.getSymbolPreset() === "ascii";
+	if (bucket === 0) return theme.fg("accent", ascii ? "*" : "✦");
+	if (bucket === 1) return theme.fg("muted", ascii ? "." : "·");
 	return " ";
 }
 
@@ -62,9 +80,10 @@ function screenGradientT(x: number, y: number, width: number, height: number, ph
 function skyGlyph(x: number, y: number, frame: number): string | null {
 	const hash = (x * 73856093) ^ (y * 19349663) ^ (frame * 83492791);
 	const bucket = Math.abs(hash) % 150;
-	if (bucket === 0) return theme.fg("accent", "✦");
-	if (bucket === 1) return theme.fg("border", "✧");
-	if (bucket === 2) return theme.fg("border", "·");
+	const ascii = theme.getSymbolPreset() === "ascii";
+	if (bucket === 0) return theme.fg("accent", ascii ? "*" : "✦");
+	if (bucket === 1) return theme.fg("border", ascii ? "+" : "✧");
+	if (bucket === 2) return theme.fg("border", ascii ? "." : "·");
 	return null;
 }
 

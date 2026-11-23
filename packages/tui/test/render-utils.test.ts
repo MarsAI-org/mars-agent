@@ -498,6 +498,19 @@ describe("formatErrorMessage (F4 sanitization)", () => {
 	it("replaces tabs in error content with spaces", () => {
 		const out = formatErrorMessage("apply_patch failed:\n@@\n-old\tindented\n+new", theme);
 		expect(out).not.toContain("\t");
+		expect(out).not.toContain("\n");
+		expect(out).not.toContain("\r");
+	});
+
+	it("expands tabs and collapses CRLF before truncating to LINE width", () => {
+		// 60 tabs expand to 180 spaces — if truncated before tab expansion, the
+		// resulting line would expand past TRUNCATE_LENGTHS.LINE.
+		const tabbed = `${"\t".repeat(60)}tail\r\nnext`;
+		const out = Bun.stripANSI(formatErrorMessage(tabbed, theme));
+		expect(out).not.toContain("\t");
+		expect(out).not.toContain("\r");
+		expect(out).not.toContain("\n");
+		expect(Bun.stringWidth(out)).toBeLessThanOrEqual(TRUNCATE_LENGTHS.LINE + 12);
 	});
 
 	it("truncates very long error messages to keep TUI from overflowing", () => {

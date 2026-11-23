@@ -11,6 +11,7 @@ import {
 	type Component,
 	type ComposerChromeContext,
 	type EditorTopBorder,
+	Ellipsis,
 	getComposerStyle,
 	isFilledComposerStyle,
 	padding,
@@ -53,7 +54,7 @@ export function renderComposerShapePreview(
 ): readonly string[] {
 	// No upper cap: the hosting overlay already bounds width by the terminal,
 	// and capping clips the status band the preview exists to show (#12500).
-	const previewWidth = Math.max(24, width);
+	const previewWidth = Math.max(1, width);
 	const style = getComposerStyle(shape);
 	const paddingX = style.defaultPaddingX(undefined);
 	const chromeWidth = style.sideChromeWidth(paddingX);
@@ -116,7 +117,9 @@ export function renderComposerShapePreview(
 			lines.push(bar);
 		}
 	}
-	return lines;
+	return lines.map(line =>
+		visibleWidth(line) > previewWidth ? truncateToWidth(line, previewWidth, Ellipsis.Omit) : line,
+	);
 }
 
 export class ComposerShapePreview implements Component {

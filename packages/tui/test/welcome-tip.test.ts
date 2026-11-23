@@ -68,12 +68,12 @@ describe("renderWelcomeTip", () => {
 		// Regression for #3337: hardcoded #b48cff/#9ccfff plus a manual `\x1b[2m`
 		// dropped the body to ~1.5:1 contrast on any light-theme background.
 		await setTheme("dark");
-		const darkLabelAnsi = theme.getFgAnsi("customMessageLabel");
+		const darkLabelAnsi = theme.getFgAnsi("accent");
 		const darkMutedAnsi = theme.getFgAnsi("muted");
 		const dark = renderWelcomeTip("Welcome aboard friend", 60).join("\n");
 
 		await setTheme("light");
-		const lightLabelAnsi = theme.getFgAnsi("customMessageLabel");
+		const lightLabelAnsi = theme.getFgAnsi("accent");
 		const lightMutedAnsi = theme.getFgAnsi("muted");
 		const light = renderWelcomeTip("Welcome aboard friend", 60).join("\n");
 

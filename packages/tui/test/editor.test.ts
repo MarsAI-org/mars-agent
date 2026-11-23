@@ -3004,5 +3004,25 @@ describe("Editor component", () => {
 				unregister();
 			}
 		});
+
+		it("applies leading padding matching sideChromeWidth on rule style when paddingX is overridden", () => {
+			const editor = new Editor(unicodeTheme);
+			editor.setBorderStyle("rule");
+			editor.setPaddingX(2);
+			editor.setText("hello");
+			const lines = editor.render(20);
+			expect(lines).toHaveLength(2);
+			expect(stripVTControlCharacters(lines[1]!)).toStartWith("  ❯ hello");
+			expect(visibleWidth(lines[1]!)).toBeLessThanOrEqual(20);
+		});
+
+		it("keeps box top border within width when terminal is narrower than side chrome", () => {
+			const editor = new Editor({ ...unicodeTheme, editorPaddingX: 2 });
+			editor.setText("a");
+			for (const width of [1, 2, 3, 4, 5]) {
+				const [topLine] = editor.render(width);
+				expect(visibleWidth(topLine!)).toBeLessThanOrEqual(width);
+			}
+		});
 	});
 });

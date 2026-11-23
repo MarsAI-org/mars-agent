@@ -210,10 +210,12 @@ export class OrchestratorBoardComponent implements Component {
 		const total = this.#panes.length;
 		const done = this.#panes.filter(pane => pane.state === "completed").length;
 		const failed = this.#panes.filter(pane => pane.state === "failed").length;
-		const left = ` ${chalk.bold("orchestrate")} ${chalk.dim("·")} ${truncateToWidth(this.#options.goal, Math.max(10, width - 40))}`;
 		const tally = [`${done}/${total} done`];
 		if (failed > 0) tally.push(chalk.red(`${failed} failed`));
 		const right = chalk.dim(tally.join(" · "));
+		const prefix = ` ${chalk.bold("orchestrate")} ${chalk.dim("·")} `;
+		const goalBudget = Math.max(1, width - Bun.stringWidth(prefix) - Bun.stringWidth(right) - 2);
+		const left = `${prefix}${truncateToWidth(this.#options.goal, goalBudget)}`;
 		const pad = Math.max(1, width - Bun.stringWidth(left) - Bun.stringWidth(right) - 1);
 		return truncateToWidth(`${left}${" ".repeat(pad)}${right}`, width);
 	}
@@ -274,7 +276,9 @@ export class OrchestratorBoardComponent implements Component {
 	 */
 	#paneBox(pane: WorkerPane, paneWidth: number, innerHeight: number, focused: boolean, expanded = false): string[] {
 		const border = focused ? chalk.cyan : chalk.dim;
-		const inner = Math.max(4, paneWidth - 2);
+		if (paneWidth <= 0) return [];
+		if (paneWidth < 2) return [border("│")];
+		const inner = paneWidth - 2;
 		const { glyph, paint } = stateMark(pane.state);
 
 		const title = `${glyph} ${pane.label}`;

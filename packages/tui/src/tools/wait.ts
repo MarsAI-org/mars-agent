@@ -510,7 +510,7 @@ function bodyLines(
 	const quote = theme.fg("dim", theme.md.quoteBorder);
 	const lines = preview.lines.map(
 		line =>
-			`${indent}${quote} ${theme.fg(tone, replaceTabs(truncateToWidth(line.trim(), BODY_LINE_WIDTH, Ellipsis.Unicode)))}`,
+			`${indent}${quote} ${theme.fg(tone, truncateToWidth(replaceTabs(line.trim()), BODY_LINE_WIDTH, Ellipsis.Unicode))}`,
 	);
 	const hidden = preview.hidden;
 	if (hidden > 0) {

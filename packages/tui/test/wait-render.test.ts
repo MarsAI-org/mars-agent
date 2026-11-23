@@ -57,6 +57,29 @@ describe("job renderer task-result preview", () => {
 		expect(output).toContain("file unlocked");
 	});
 
+	it("expands tabs before truncating peer message body lines", () => {
+		const tabbedBody = `prefix${"\t".repeat(50)}end`;
+		const component = waitToolRenderer.renderResult(
+			{
+				content: [{ type: "text", text: "" }],
+				details: {
+					op: "wait",
+					waited: { id: "43", from: "Worker", to: "Main", body: tabbedBody, ts: Date.now() },
+				},
+			},
+			{ expanded: true, isPartial: false },
+			theme,
+		);
+		const lines = component.render(200).map(l => Bun.stripANSI(l));
+		for (const line of lines) {
+			expect(line).not.toContain("\t");
+		}
+		const bodyLine = lines.find(l => l.includes("prefix"));
+		expect(bodyLine).toBeDefined();
+		// Quote border + space + truncated body (max 100 cols).
+		expect(Bun.stringWidth(bodyLine!)).toBeLessThanOrEqual(106);
+	});
+
 	it("previews the envelope body, not the wrapper markup", () => {
 		const summary = prompt.render(taskSummaryTemplate, {
 			agentName: "sonic",

@@ -34,10 +34,6 @@ const CURATED_ITEMS: readonly SelectItem[] = [
 	{ value: "browse", label: "Browse all…", description: "Show every built-in and custom theme" },
 ];
 
-function fillStyledLine(content: string, width: number): string {
-	return content + padding(Math.max(0, width - visibleWidth(content)));
-}
-
 function renderMockStatusLine(width: number): string {
 	const sep = theme.fg("statusLineSep", ` ${theme.sep.pipe} `);
 	const left = [
@@ -52,13 +48,13 @@ function renderMockStatusLine(width: number): string {
 	const innerWidth = Math.max(1, width - 2);
 	const leftWidth = visibleWidth(left);
 	const rightWidth = visibleWidth(right);
-	const gap = padding(Math.max(1, innerWidth - leftWidth - rightWidth - 2));
+	const gap = padding(Math.max(1, innerWidth - leftWidth - rightWidth));
 	return theme.bg("statusLineBg", width > 0 ? padToWidth(` ${left}${gap}${right} `, width) : "");
 }
 
 function renderMockEditor(width: number): string[] {
 	const box = theme.boxRound;
-	const innerWidth = Math.max(1, width - 2);
+	const innerWidth = Math.max(0, width - 2);
 	const horizontal = box.horizontal.repeat(innerWidth);
 	const top = theme.fg("borderAccent", `${box.topLeft}${horizontal}${box.topRight}`);
 	const bottom = theme.fg("borderMuted", `${box.bottomLeft}${horizontal}${box.bottomRight}`);
@@ -70,13 +66,13 @@ function renderMockEditor(width: number): string[] {
 	return [
 		top,
 		`${theme.fg("borderAccent", box.vertical)}${innerWidth > 0 ? padToWidth(prompt, innerWidth) : ""}${theme.fg("borderAccent", box.vertical)}`,
-		`${theme.fg("borderMuted", box.vertical)}${fillStyledLine(hint, innerWidth)}${theme.fg("borderMuted", box.vertical)}`,
+		`${theme.fg("borderMuted", box.vertical)}${innerWidth > 0 ? padToWidth(hint, innerWidth) : ""}${theme.fg("borderMuted", box.vertical)}`,
 		bottom,
 	];
 }
 
 function renderThemePreview(width: number): string[] {
-	const previewWidth = Math.max(24, Math.min(width, 88));
+	const previewWidth = Math.max(1, Math.min(width, 88));
 	return [
 		theme.bold("Preview"),
 		`${theme.fg("success", `${theme.status.success} success`)}  ${theme.fg("warning", `${theme.status.warning} warning`)}  ${theme.fg("error", `${theme.status.error} error`)}  ${theme.fg("accent", "accent")}`,
@@ -170,8 +166,8 @@ class ThemeSceneController implements SetupSceneController {
 	}
 
 	handleInput(data: string): void {
-		const quickIndex = data >= "1" && data <= "9" ? Number(data) - 1 : -1;
-		if (quickIndex >= 0) {
+		if (this.#mode === "curated" && data >= "1" && data <= String(CURATED_ITEMS.length)) {
+			const quickIndex = Number(data) - 1;
 			this.#selectList.setSelectedIndex(quickIndex);
 			this.#previewByIndex(quickIndex);
 			return;

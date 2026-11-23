@@ -218,4 +218,19 @@ describe("grepToolRenderer", () => {
 		expect(collapsedBody.some(line => line.includes("context before"))).toBe(false);
 		expect(collapsedBody.some(line => line.includes("more matches"))).toBe(true);
 	});
+
+	it("replaces tabs in the fallback render path when match/file counts are absent", async () => {
+		const theme = await getThemeByName("dark");
+		expect(theme).toBeDefined();
+		const result = {
+			content: [{ type: "text", text: "src/foo.ts:1:\tindented\tmatch" }],
+			details: {},
+		};
+		const rendered = grepToolRenderer
+			.renderResult(result as never, { expanded: true, isPartial: false }, theme!, { pattern: "match" })
+			.render(120)
+			.join("\n");
+		expect(rendered).not.toContain("\t");
+		expect(Bun.stripANSI(rendered)).toContain("indented");
+	});
 });

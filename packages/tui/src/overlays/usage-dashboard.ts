@@ -650,7 +650,7 @@ export class UsageDashboardComponent implements Component {
 					: aggregateStatus(card.windows);
 		const accountsText = card.accounts > 1 ? theme.fg("dim", `${card.accounts} accts`) : "";
 		const titleBudget = width - 2 - visibleWidth(accountsText) - (accountsText ? 1 : 0);
-		const title = theme.bold(truncateToWidth(card.name, Math.max(4, titleBudget)));
+		const title = theme.bold(truncateToWidth(card.name, Math.max(1, titleBudget)));
 		const titlePad = Math.max(0, width - 2 - visibleWidth(title) - visibleWidth(accountsText));
 		lines.push(`${this.#statusIcon(cardStatus)} ${title}${" ".repeat(titlePad)}${accountsText}`);
 
@@ -843,7 +843,7 @@ export class UsageDashboardComponent implements Component {
 		if (!points) return [theme.fg("dim", "Loading usage history…")];
 
 		const labelWidth = 2;
-		const weeks = Math.max(4, Math.min(53, Math.floor((innerWidth - labelWidth) / 2)));
+		const weeks = Math.max(1, Math.min(53, Math.floor((innerWidth - labelWidth) / 2)));
 		const layout = buildHeatmapLayout(points, weeks);
 		const ramp = this.#heatRamp();
 		const reset = "\x1b[39m";
@@ -903,7 +903,7 @@ export class UsageDashboardComponent implements Component {
 
 	render(width: number): readonly string[] {
 		const height = Math.max(14, process.stdout.rows || 40);
-		const innerWidth = Math.max(20, width - 4);
+		const innerWidth = Math.max(1, width - 4);
 
 		const contentSource = this.#view === "detail" ? this.#detailLines(innerWidth) : this.#overviewLines(innerWidth);
 		// Fixed chrome: top border, blank, content…, divider, hint, bottom border.

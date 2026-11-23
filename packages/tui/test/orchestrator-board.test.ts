@@ -83,7 +83,7 @@ describe("orchestrator board", () => {
 		const board = new OrchestratorBoardComponent(ui as never, { goal: "width" }, host(panes));
 		void board.run();
 
-		for (const width of [40, 80, 120, 200]) {
+		for (const width of [8, 16, 24, 40, 80, 120, 200]) {
 			for (const line of board.render(width)) {
 				expect(Bun.stringWidth(Bun.stripANSI(line))).toBeLessThanOrEqual(width);
 			}

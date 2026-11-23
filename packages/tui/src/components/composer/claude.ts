@@ -5,8 +5,14 @@
  * plain standalone bottom bar that yields its row to the autocomplete menu.
  */
 
+import { theme } from "../../theme/theme";
+import { padding } from "../../utils";
 import { renderTopRule } from "./rule";
 import type { ComposerChromeContext, ComposerRowContext, ComposerStyle } from "./types";
+
+function isAsciiPreset(): boolean {
+	return typeof theme !== "undefined" && theme.getSymbolPreset() === "ascii";
+}
 
 export const claudeComposerStyle: ComposerStyle = {
 	id: "claude",
@@ -15,7 +21,9 @@ export const claudeComposerStyle: ComposerStyle = {
 	statusAttachment: "top-rule-chip",
 	bottomBar: "left",
 	bottomBarGap: false,
-	defaultPromptGutter: "❯ ",
+	get defaultPromptGutter(): string {
+		return isAsciiPreset() ? "> " : "❯ ";
+	},
 
 	defaultPaddingX(): number {
 		return 0;
@@ -30,7 +38,7 @@ export const claudeComposerStyle: ComposerStyle = {
 	},
 
 	renderRow(ctx: ComposerRowContext): string[] {
-		return [ctx.gutter + ctx.text + ctx.pad];
+		return [padding(this.sideChromeWidth(ctx.paddingX)) + ctx.gutter + ctx.text + ctx.pad];
 	},
 
 	renderBottom(ctx: ComposerChromeContext): string {

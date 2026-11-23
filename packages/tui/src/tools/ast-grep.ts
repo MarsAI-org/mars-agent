@@ -10,6 +10,7 @@ import {
 	formatErrorMessage,
 	formatParseErrorsCountLabel,
 	PREVIEW_LIMITS,
+	replaceTabs,
 	toPathList,
 } from "../render/render-utils";
 import { classifyGroupedLines, describeGroupedOutput, groupLineIndicesByBlank } from "./grouped-file-output";
@@ -65,7 +66,7 @@ export const astGrepToolRenderer = {
 
 		const description = args.pat ?? "?";
 		const text = renderStatusLine({ icon: "pending", title: "AST Grep", description, meta }, uiTheme);
-		return new Text(text, 0, 0);
+		return new Text(text, 1, 0);
 	},
 
 	renderResult(
@@ -78,7 +79,7 @@ export const astGrepToolRenderer = {
 
 		if (result.isError) {
 			const errorText = result.content?.find(c => c.type === "text")?.text || "Unknown error";
-			return new Text(formatErrorMessage(errorText, uiTheme), 0, 0);
+			return new Text(formatErrorMessage(errorText, uiTheme), 1, 0);
 		}
 
 		const matchCount = details?.matchCount ?? 0;
@@ -97,7 +98,7 @@ export const astGrepToolRenderer = {
 				lines.push(uiTheme.fg("warning", "Query may be mis-scoped; narrow `path` before concluding absence"));
 				appendParseErrorsBulletList(lines, details.parseErrors, uiTheme, details.parseErrorsTotal);
 			}
-			return new Text(lines.join("\n"), 0, 0);
+			return new Text(lines.join("\n"), 1, 0);
 		}
 
 		const summaryParts = [formatCount("match", matchCount), formatCount("file", fileCount)];
@@ -129,7 +130,8 @@ export const astGrepToolRenderer = {
 		const styleLine = (index: number): string => {
 			const cached = styledLines[index];
 			if (cached !== undefined) return cached;
-			const line = allLines[index]!;
+			const rawLine = allLines[index]!;
+			const line = replaceTabs(rawLine);
 			const ctx = contexts[index]!;
 			let styled: string;
 			if (ctx.kind === "dir") {
@@ -139,7 +141,7 @@ export const astGrepToolRenderer = {
 				const tinted = uiTheme.fg(ctx.depth === 1 ? "accent" : "dim", line);
 				styled = ctx.headerPath ? fileHyperlink(ctx.headerPath, tinted) : tinted;
 			} else {
-				styled = uiTheme.fg(line.startsWith("  meta:") ? "dim" : "toolOutput", line);
+				styled = uiTheme.fg(rawLine.startsWith("  meta:") ? "dim" : "toolOutput", line);
 			}
 			styledLines[index] = styled;
 			return styled;
@@ -188,6 +190,7 @@ export const astGrepToolRenderer = {
 				);
 				return [header, ...matchLines, ...extraLines].map(l => truncateToWidth(l, width, Ellipsis.Omit));
 			},
+			{ paddingX: 1 },
 		);
 	},
 	describeCall(args: AstGrepRenderArgs): NativeToolView {

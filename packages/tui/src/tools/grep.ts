@@ -329,7 +329,7 @@ export const grepToolRenderer = {
 							maxCollapsed: COLLAPSED_TEXT_LIMIT,
 							maxCollapsedLines: COLLAPSED_TEXT_LIMIT,
 							itemType: "item",
-							renderItem: line => uiTheme.fg("toolOutput", line),
+							renderItem: line => uiTheme.fg("toolOutput", replaceTabs(line)),
 						},
 						uiTheme,
 					);

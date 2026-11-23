@@ -49,6 +49,11 @@ export function row(content: string, width: number, color?: ThemeColor): string 
 	return `${paint(box.vertical, color)} ${width > 4 ? padToWidth(content, width - 4) : ""} ${paint(box.vertical, color)}`;
 }
 
+/** Clamp sidebar content width so the 7-column split chrome always fits within `width`. */
+function clampSidebarWidth(width: number, sidebarWidth: number): number {
+	return Math.max(0, Math.min(Math.trunc(sidebarWidth), Math.trunc(width) - 7));
+}
+
 /**
  * Column index (0-based) of the inner divider for a two-column layout whose
  * sidebar content area is `sidebarWidth` columns wide. The layout is
@@ -62,15 +67,24 @@ function splitDividerCol(sidebarWidth: number): number {
 
 /** Body content width for a two-column overlay of total `width`. */
 export function splitBodyWidth(width: number, sidebarWidth: number): number {
-	return Math.max(0, width - sidebarWidth - 7);
+	const safeWidth = Math.max(0, Math.trunc(width));
+	const effSidebar = clampSidebarWidth(safeWidth, sidebarWidth);
+	return Math.max(0, safeWidth - effSidebar - 7);
 }
 
 /** Top border carrying the title, split by a `┬` over the column divider. */
 export function topBorderSplit(width: number, title: string, sidebarWidth: number): string {
+	const safeWidth = Math.max(0, Math.trunc(width));
+	if (safeWidth === 0) return "";
 	const box = theme.boxRound;
-	const dividerCol = splitDividerCol(sidebarWidth);
+	if (safeWidth === 1) return paint(box.horizontal);
+	if (safeWidth < 7) {
+		return paint(box.topLeft + box.horizontal.repeat(safeWidth - 2) + box.topRight);
+	}
+	const effSidebar = clampSidebarWidth(safeWidth, sidebarWidth);
+	const dividerCol = splitDividerCol(effSidebar);
 	const leftLen = Math.max(0, dividerCol - 1);
-	const rightLen = Math.max(0, width - 2 - dividerCol);
+	const rightLen = Math.max(0, safeWidth - 2 - dividerCol);
 	let left: string;
 	if (!title) {
 		left = paint(box.topLeft + box.horizontal.repeat(leftLen));
@@ -87,10 +101,17 @@ export function topBorderSplit(width: number, title: string, sidebarWidth: numbe
 
 /** Section rule that closes the sidebar column with a `┴` over the divider. */
 export function dividerSplit(width: number, sidebarWidth: number): string {
+	const safeWidth = Math.max(0, Math.trunc(width));
+	if (safeWidth === 0) return "";
 	const box = theme.boxRound;
-	const dividerCol = splitDividerCol(sidebarWidth);
+	if (safeWidth === 1) return paint(box.horizontal);
+	if (safeWidth < 7) {
+		return paint(box.teeRight + box.horizontal.repeat(safeWidth - 2) + box.teeLeft);
+	}
+	const effSidebar = clampSidebarWidth(safeWidth, sidebarWidth);
+	const dividerCol = splitDividerCol(effSidebar);
 	const leftLen = Math.max(0, dividerCol - 1);
-	const rightLen = Math.max(0, width - 2 - dividerCol);
+	const rightLen = Math.max(0, safeWidth - 2 - dividerCol);
 	return paint(
 		box.teeRight + box.horizontal.repeat(leftLen) + box.teeUp + box.horizontal.repeat(rightLen) + box.teeLeft,
 	);
@@ -98,10 +119,17 @@ export function dividerSplit(width: number, sidebarWidth: number): string {
 
 /** A two-column content row: `│ sidebar │ body │`, each inset by one column. */
 export function splitRow(sidebar: string, body: string, width: number, sidebarWidth: number): string {
+	const safeWidth = Math.max(0, Math.trunc(width));
+	if (safeWidth === 0) return "";
 	const box = theme.boxRound;
-	const bodyWidth = splitBodyWidth(width, sidebarWidth);
 	const bar = paint(box.vertical);
-	return `${bar} ${sidebarWidth > 0 ? padToWidth(sidebar, sidebarWidth) : ""} ${bar} ${bodyWidth > 0 ? padToWidth(body, bodyWidth) : ""} ${bar}`;
+	if (safeWidth === 1) return bar;
+	if (safeWidth < 7) {
+		return `${bar}${" ".repeat(safeWidth - 2)}${bar}`;
+	}
+	const effSidebar = clampSidebarWidth(safeWidth, sidebarWidth);
+	const bodyWidth = splitBodyWidth(safeWidth, effSidebar);
+	return `${bar} ${effSidebar > 0 ? padToWidth(sidebar, effSidebar) : ""} ${bar} ${bodyWidth > 0 ? padToWidth(body, bodyWidth) : ""} ${bar}`;
 }
 
 const NO_LINES: readonly string[] = [];

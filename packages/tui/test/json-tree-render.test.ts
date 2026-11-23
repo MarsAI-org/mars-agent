@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { INTENT_FIELD } from "@marsai-org/wire";
-import { formatArgsInline } from "@marsai-org/tui/tools/json-tree";
+import { formatArgsInline, formatScalar } from "@marsai-org/tui/tools/json-tree";
 
 describe("formatArgsInline", () => {
 	test("a trailing scalar grows into the available width instead of a fixed cap", () => {
@@ -31,5 +31,13 @@ describe("formatArgsInline", () => {
 	test("hidden meta keys are skipped", () => {
 		const out = formatArgsInline({ [INTENT_FIELD]: "noise", __partialJson: "{}", path: "src/foo.ts" }, 80);
 		expect(out).toBe('path="src/foo.ts"');
+	});
+
+	test("multilineSummary expands tabs before truncating firstLine", () => {
+		const formatted = formatScalar("a\t\t\t\tb\t\t\t\tc\nsecond line", 10, { multilineSummary: true });
+		expect(formatted).not.toContain("\t");
+		// Quoted preview plus ellipsis and line count: inner preview stays within maxLen=10.
+		const inner = formatted.match(/^"([^"]+)"/)?.[1] ?? "";
+		expect(Bun.stringWidth(inner)).toBeLessThanOrEqual(11);
 	});
 });

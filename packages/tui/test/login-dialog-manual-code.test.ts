@@ -1,7 +1,9 @@
-import { beforeAll, describe, expect, it } from "bun:test";
+import { afterEach, beforeAll, describe, expect, it } from "bun:test";
 import type { TUI } from "@marsai-org/tui";
+import { setKeyHintPlatform } from "@marsai-org/tui/app-keybindings";
 import { LoginDialogComponent } from "@marsai-org/tui/overlays/login-dialog";
-import { initTheme } from "@marsai-org/tui/theme";
+import { applyHyperlinkSetting } from "@marsai-org/tui/render/hyperlink";
+import { initTheme, setSymbolPreset } from "@marsai-org/tui/theme";
 
 /** Minimal TUI stub — the dialog only calls requestRender/setFocus. */
 function makeDialog(): LoginDialogComponent {
@@ -68,5 +70,44 @@ describe("LoginDialogComponent manual code input", () => {
 		dialog.pasteText(url);
 		dialog.handleInput("\r");
 		expect(await second).toBe(url);
+	});
+
+	describe("auth link formatting and title wording", () => {
+		afterEach(async () => {
+			applyHyperlinkSetting("auto");
+			setKeyHintPlatform(undefined);
+			await setSymbolPreset("unicode");
+		});
+
+		it("uses 'Log in to' title and formats click hint via urlHyperlink without awkward glyph+click", async () => {
+			applyHyperlinkSetting("always");
+			await setSymbolPreset("unicode");
+			setKeyHintPlatform("darwin");
+
+			const dialog = makeDialog();
+			dialog.showAuth("https://example.com/auth");
+			const raw = dialog.render(80).join("\n");
+			const plain = Bun.stripANSI(raw);
+
+			expect(plain).toContain("Log in to ");
+			expect(plain).not.toContain("Login to ");
+			expect(plain).toContain("⌘ click to open");
+			expect(plain).not.toContain("⌘+click");
+			// Click hint uses ST-terminated OSC 8 from urlHyperlink, not raw BEL.
+			expect(raw).toContain("https://example.com/auth\x1b\\⌘ click to open\x1b]8;;\x1b\\");
+
+			setKeyHintPlatform("linux");
+			dialog.showAuth("https://example.com/auth");
+			const linuxPlain = Bun.stripANSI(dialog.render(80).join("\n"));
+			expect(linuxPlain).toContain("Ctrl+click to open");
+		});
+
+		it("omits click-to-open hint when hyperlinks are disabled", () => {
+			applyHyperlinkSetting("off");
+			const dialog = makeDialog();
+			dialog.showAuth("https://example.com/auth");
+			const plain = Bun.stripANSI(dialog.render(80).join("\n"));
+			expect(plain).not.toContain("click to open");
+		});
 	});
 });

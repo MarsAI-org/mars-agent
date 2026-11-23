@@ -379,8 +379,10 @@ export function formatMeta(meta: string[], theme: Theme): string {
 }
 
 function sanitizeErrorText(message: string | undefined): string {
-	const clean = (message ?? "").replace(/^Error:\s*/, "").trim();
-	return clean ? replaceTabs(truncateToWidth(clean, TRUNCATE_LENGTHS.LINE)) : "Unknown error";
+	const clean = replaceTabs((message ?? "").replace(/^Error:\s*/, ""))
+		.replace(/\r?\n|\r/g, " ")
+		.trim();
+	return clean ? truncateToWidth(clean, TRUNCATE_LENGTHS.LINE) : "Unknown error";
 }
 
 /**

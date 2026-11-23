@@ -90,7 +90,7 @@ describe("WelcomeComponent", () => {
 		// Measure the block's left edge from a row that begins at column 0 of the mark;
 		// the top row is narrower and carries its own padding, so its first glyph is not
 		// the block edge.
-		const bar = rows.find(row => row.includes("████▀██▀▀███")) ?? "";
+		const bar = rows.find(row => row.includes("███▀████▀███")) ?? "";
 		const word = rows.find(row => row.includes("█▄█ ▄▀▄ █▀▄ ▄▀▀")) ?? "";
 		expectCentered(indent(bar), columns - visibleWidth(word));
 

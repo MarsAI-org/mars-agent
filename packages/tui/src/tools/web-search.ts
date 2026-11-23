@@ -200,8 +200,8 @@ export function renderSearchResult(
 					const metaSuffix = metaParts.length > 0 ? ` ${metaParts.join(metaSep)}` : "";
 					// One line per source: the title links to its URL, followed by domain · age.
 					// Reserve room for the box borders, the tree branch, and the meta suffix.
-					const lineBudget = Math.max(24, width - 6);
-					const titleBudget = Math.max(12, lineBudget - Bun.stringWidth(metaSuffix));
+					const lineBudget = Math.max(1, width - 6);
+					const titleBudget = Math.max(1, lineBudget - Bun.stringWidth(metaSuffix));
 					const title = theme.fg("accent", truncateToWidth(titleText, titleBudget));
 					const linkedTitle = url ? urlHyperlink(url, title) : title;
 					return [`${linkedTitle}${metaSuffix}`];

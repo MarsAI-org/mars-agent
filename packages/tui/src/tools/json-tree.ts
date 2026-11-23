@@ -4,7 +4,7 @@
 import { INTENT_FIELD, type TspSpan, type TspTreeNode } from "@marsai-org/wire";
 import { sanitizeText } from "@marsai-org/utils";
 import { TreeView, treeRowPrefix } from "../components/tree-view";
-import { truncateToWidth } from "../render/render-utils";
+import { replaceTabs, truncateToWidth } from "../render/render-utils";
 import type { Theme, ThemeColor } from "../theme/theme";
 import { node, span } from "../native/describe";
 import type { NativeNode } from "../native/node";
@@ -55,7 +55,7 @@ export function formatScalar(value: unknown, maxLen: number, options: InlineForm
 		const text = options.sanitizeText?.(value) ?? value;
 		if (options.multilineSummary) {
 			const lines = text.split("\n");
-			const firstLine = lines[0].trim();
+			const firstLine = replaceTabs(lines[0].trim());
 			if (!firstLine) return `"" (${lines.length} lines)`;
 			const preview = truncateToWidth(firstLine, maxLen);
 			return lines.length > 1 ? `"${preview}…" (${lines.length} lines)` : `"${preview}"`;

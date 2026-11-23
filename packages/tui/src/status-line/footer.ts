@@ -1,7 +1,7 @@
 import { stripVTControlCharacters } from "node:util";
 import { ThinkingLevel } from "@marsai-org/agent-core";
 import * as vcs from "@marsai-org/natives/vcs";
-import { type Component, padding, truncateToWidth, visibleWidth } from "../index";
+import { type Component, Ellipsis, padding, replaceTabs, sliceByColumn, truncateToWidth, visibleWidth } from "../index";
 import { formatNumber, getProjectDir } from "@marsai-org/utils";
 import { theme } from "../theme";
 import type { FooterHost, FooterSession } from "./host";
@@ -196,13 +196,14 @@ export class FooterComponent implements Component {
 		const seg = (key: string, props: TspProps<"seg">): void => {
 			segs.push(node("seg", { role: `omp.footer.${key}`, ...props }, undefined, key));
 		};
-		const pathSpans: TspSpan[] = [span(shortenPath(getProjectDir()), "path dim")];
+		const isAscii = theme.getSymbolPreset() === "ascii";
+		const pathSpans: TspSpan[] = [span(replaceTabs(shortenPath(getProjectDir())), "path dim")];
 		const branch = this.#getCurrentBranch();
-		if (branch) pathSpans.push(span(` (${branch})`, "dim"));
+		if (branch) pathSpans.push(span(` (${replaceTabs(branch)})`, "dim"));
 		seg("path", { side: "left", priority: 6, icon: "folder", spans: pathSpans });
 		const counters: [string, string, number][] = [
-			["input", "↑", input],
-			["output", "↓", output],
+			["input", isAscii ? theme.icon.input : "↑", input],
+			["output", isAscii ? theme.icon.output : "↓", output],
 			["cache-read", "R", cacheRead],
 			["cache-write", "W", cacheWrite],
 		];
@@ -233,7 +234,7 @@ export class FooterComponent implements Component {
 			const level = this.session.isAutoThinking
 				? (this.session.autoResolvedThinkingLevel() ?? `${theme.thinking.autoPending} auto`)
 				: (state.thinkingLevel ?? ThinkingLevel.Off);
-			model += ` • ${level}`;
+			model += `${isAscii ? theme.sep.dot : " • "}${level}`;
 		}
 		seg("model", { side: "right", priority: 5, icon: "model", spans: [span(model, "dim")] });
 		const bar = node("status", { role: "omp.footer" }, segs, "bar");
@@ -281,32 +282,39 @@ export class FooterComponent implements Component {
 		const contextTokens = contextUsage?.tokens ?? 0;
 		const contextPercentValue = contextWindow > 0 ? (contextUsage?.percent ?? 0) : null;
 
+		const isAscii = theme.getSymbolPreset() === "ascii";
+
 		// Replace home directory with ~
-		let pwd = shortenPath(getProjectDir());
+		let pwd = replaceTabs(shortenPath(getProjectDir()));
 
 		// Add git branch if available
 		const branch = this.#getCurrentBranch();
 		if (branch) {
-			pwd = `${pwd} (${branch})`;
+			pwd = `${pwd} (${replaceTabs(branch)})`;
 		}
 
-		// Truncate path if too long to fit width
-		if (pwd.length > width) {
-			const half = Math.floor(width / 2) - 1;
-			if (half > 1) {
-				const start = pwd.slice(0, half);
-				const end = pwd.slice(-(half - 1));
-				pwd = `${start}…${end}`;
+		// Truncate path if too long to fit width (by terminal cells, not UTF-16 code units)
+		const pwdWidth = visibleWidth(pwd);
+		if (pwdWidth > width) {
+			const ellipsis = isAscii ? "..." : "…";
+			const ellipsisWidth = visibleWidth(ellipsis);
+			const available = width - ellipsisWidth;
+			const startWidth = Math.floor(available / 2);
+			const endWidth = available - startWidth;
+			if (startWidth > 0 && endWidth > 0) {
+				const start = sliceByColumn(pwd, 0, startWidth, true);
+				const end = sliceByColumn(pwd, pwdWidth - endWidth, endWidth, true);
+				pwd = `${start}${ellipsis}${end}`;
 			} else {
-				pwd = pwd.slice(0, Math.max(1, width));
+				pwd = truncateToWidth(pwd, Math.max(0, width), Ellipsis.Omit);
 			}
 		}
 
 		// Build stats line
 		const statsParts: string[] = [];
 		for (const [glyph, amount] of [
-			["↑", totalInput],
-			["↓", totalOutput],
+			[isAscii ? theme.icon.input : "↑", totalInput],
+			[isAscii ? theme.icon.output : "↓", totalOutput],
 			["R", totalCacheRead],
 			["W", totalCacheWrite],
 		] as const) {
@@ -347,14 +355,15 @@ export class FooterComponent implements Component {
 		// Add thinking level hint when the current model advertises supported efforts
 		let rightSide = modelName;
 		if (state.model?.thinking) {
+			const sep = isAscii ? theme.sep.dot : " • ";
 			if (this.session.isAutoThinking) {
 				// Pending (no turn classified yet / classifying) shows a symbol-theme
 				// question-box marker; once resolved it shows `<level>`.
 				const resolved = this.session.autoResolvedThinkingLevel();
-				rightSide = `${modelName} • ${resolved ? resolved : `${theme.thinking.autoPending} auto`}`;
+				rightSide = `${modelName}${sep}${resolved ? resolved : `${theme.thinking.autoPending} auto`}`;
 			} else {
 				const thinkingLevel = state.thinkingLevel ?? ThinkingLevel.Off;
-				rightSide = `${modelName} • ${thinkingLevel}`;
+				rightSide = `${modelName}${sep}${thinkingLevel}`;
 			}
 		}
 

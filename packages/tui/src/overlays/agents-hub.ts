@@ -1154,12 +1154,12 @@ export class AgentsHubComponent implements Component {
 			lines.push(truncateToWidth(theme.fg("muted", ` Scope: ${this.#createScope}`), width));
 			lines.push("");
 			lines.push(theme.fg("muted", " whenToUse:"));
-			for (const line of wrapTextWithAnsi(replaceTabs(spec.whenToUse), Math.max(20, width - 2)).slice(0, 6)) {
+			for (const line of wrapTextWithAnsi(replaceTabs(spec.whenToUse), Math.max(1, width - 2)).slice(0, 6)) {
 				lines.push(truncateToWidth(` ${line}`, width));
 			}
 			lines.push("");
 			lines.push(theme.fg("muted", " systemPrompt preview:"));
-			const promptWidth = Math.max(20, width - 4);
+			const promptWidth = Math.max(1, width - 4);
 			const wrapped: string[] = [];
 			for (const raw of spec.systemPrompt.split("\n")) {
 				for (const w of wrapTextWithAnsi(replaceTabs(raw), promptWidth)) wrapped.push(w);
@@ -1182,14 +1182,14 @@ export class AgentsHubComponent implements Component {
 			);
 			lines.push("");
 			if (this.#createInput && !this.#createGenerating) {
-				for (const line of this.#createInput.render(Math.max(20, width - 2))) {
+				for (const line of this.#createInput.render(Math.max(1, width - 2))) {
 					lines.push(truncateToWidth(line, width));
 				}
 			}
 			if (this.#createGenerating) {
 				lines.push(theme.fg("muted", " Generating…"));
 				lines.push("");
-				const contentWidth = Math.max(20, width - 4);
+				const contentWidth = Math.max(1, width - 4);
 				const wrapped: string[] = [];
 				for (const raw of this.#createStreamingText.split("\n")) {
 					for (const w of wrapTextWithAnsi(replaceTabs(raw), contentWidth)) wrapped.push(w);

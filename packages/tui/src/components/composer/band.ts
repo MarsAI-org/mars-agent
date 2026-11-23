@@ -4,8 +4,13 @@
  * soft opening cap — no frame, rules, or corners — above an unboxed prompt
  * anchored by a single curved `╰─ ` cue.
  */
+import { theme } from "../../theme/theme";
 import { truncateToWidth } from "../../utils";
 import type { ComposerChromeContext, ComposerRowContext, ComposerStyle } from "./types";
+
+function isAsciiPreset(): boolean {
+	return typeof theme !== "undefined" && theme.getSymbolPreset() === "ascii";
+}
 
 export const bandComposerStyle: ComposerStyle = {
 	id: "band",
@@ -14,7 +19,9 @@ export const bandComposerStyle: ComposerStyle = {
 	statusAttachment: "top-band",
 	bottomBar: "none",
 	bottomBarGap: false,
-	defaultPromptGutter: "╰─ ",
+	get defaultPromptGutter(): string {
+		return isAsciiPreset() ? "+- " : "╰─ ";
+	},
 
 	defaultPaddingX(): number {
 		return 0;

@@ -160,9 +160,8 @@ export function renderWelcomeTip(tip: string, width: number, phase = 0): string[
 	if (wrapped.length === 0) return [];
 
 	// Pull both colors from the active theme so the line stays readable on light
-	// themes; the previous hardcoded `#b48cff` / `#9ccfff` pastels (plus a manual
-	// `\x1b[2m` dim on the body) dropped to ~1.5:1 contrast on a white background.
-	const styledLabel = theme.fg("customMessageLabel", label);
+	// themes and harmonizes with the Mars brand accent.
+	const styledLabel = theme.fg("accent", label);
 	const lines = wrapped.map((line, index) =>
 		theme.italic(
 			index === 0 && line.startsWith(label)
@@ -410,13 +409,13 @@ export class WelcomeComponent implements Component {
 
 /**
  * Block-grid Mars mark shared by the welcome and setup surfaces: the pixel-art
- * mark from `assets/mars-logo.svg` — the round body, two eyes, and the legs —
- * reduced to a 12×12 half-block grid.
+ * mark from `assets/mars-logo.svg` — the round body, two symmetric eyes, and
+ * the two feet — reduced to a 12×12 half-block grid.
  */
 export const MARS_LOGO = [
 	"  ▄██████▄  ",
 	" ██████████ ",
-	"████▀██▀▀███",
+	"███▀████▀███",
 	"▀██████████▀",
 	" ▀████████▀ ",
 	"  ▄█▀▀▀▀█▄  ",
@@ -424,20 +423,20 @@ export const MARS_LOGO = [
 
 /**
  * Five-row form of {@link MARS_LOGO} for short terminals, where the extra row
- * would push a menu item out of the frame. Same 12-column silhouette, sampled
- * from a 10×10 grid instead of 12×12.
+ * would push a menu item out of the frame. Symmetric 10-column silhouette with
+ * two eyes and two feet, sampled from a 10×10 grid.
  */
-export const MARS_LOGO_COMPACT = ["  ▄█████▄ ", "▄████████▄", "██████▄███", " ▀███████ ", "  ▄█▀▀▀█  "];
+export const MARS_LOGO_COMPACT = ["  ▄████▄  ", "▄████████▄", "██▀████▀██", " ▀██████▀ ", "  ▄█▀▀█▄  "];
 
 /** Columns of {@link MARS_LOGO}. */
 const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
 
 /**
- * The `mars` wordmark in half-blocks, set beside {@link MARS_LOGO} from its
- * second row: the letters sit in the first two rows and the version takes the
- * third.
+ * The `MARS` wordmark in half-blocks, set beside {@link MARS_LOGO} from its
+ * second row: each letter spans 3 columns with 1-column gaps and the version
+ * sits directly beneath.
  */
-const WORDMARK = ["█▄█ ▄▀▄ █▀▄ ▄▀▀", "█ █ █▀█ █    ▀▄", "▀ ▀ ▀ ▀ ▀   ▀▀ "];
+const WORDMARK = ["█▄█ ▄▀▄ █▀▄ ▄▀▀", "█ █ █▀█ █▀▄ ▀▀▄", "▀ ▀ ▀ ▀ ▀ ▀ ▀▀ "];
 
 /** Columns of {@link WORDMARK}. */
 const WORDMARK_WIDTH = Math.max(...WORDMARK.map(row => row.length));
@@ -454,7 +453,10 @@ const TIP_MIN_COLUMNS = 50;
 /** Logo frame `logo` with the wordmark beside it and `version` (styled) under the wordmark. */
 function lockup(logo: readonly string[], version: string): string[] {
 	const beside = ["", ...WORDMARK.map(row => theme.bold(theme.fg("text", row))), version];
-	return logo.map((row, index) => `${row}${padding(LOCKUP_GAP)}${beside[index] ?? ""}`);
+	return logo.map((row, index) => {
+		const right = beside[index];
+		return right ? `${row}${padding(LOCKUP_GAP)}${right}` : row;
+	});
 }
 
 /**
