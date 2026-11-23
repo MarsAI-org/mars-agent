@@ -1,7 +1,8 @@
 /**
  * Typed message contracts:
  * - the kind rides the peer bus as a bracketed prefix and round-trips
- * - the log records delivery status from the transport
+ * - the log records delivery status from the transport (including thrown errors)
+ * - all() returns a defensive shallow copy
  * - broadcast ("all") messages appear in both sides of a between() view
  */
 
@@ -11,7 +12,9 @@ import {
 	InMemoryMessageTransport,
 	OrchestratorMessageLog,
 	parseBusBody,
+	type MessageTransport,
 } from "../../src/orchestrator/message-bus";
+import type { OrchestratorMessage } from "../../src/orchestrator/types";
 
 describe("bus body encoding", () => {
 	test("round-trips a typed message through the peer bus", () => {
@@ -30,11 +33,14 @@ describe("bus body encoding", () => {
 });
 
 describe("OrchestratorMessageLog", () => {
-	test("records the delivery status from the transport", async () => {
+	test("records the delivery status from the transport and returns a defensive copy from all()", async () => {
 		const log = new OrchestratorMessageLog();
 		const transport = new InMemoryMessageTransport();
 		const sent = await log.send({ from: "w1", to: "w2", kind: "status", body: "50% done" }, transport);
 		expect(sent.status).toBe("delivered");
+		const snapshot = log.all() as OrchestratorMessage[];
+		expect(snapshot).toHaveLength(1);
+		snapshot.pop();
 		expect(log.all()).toHaveLength(1);
 	});
 
@@ -44,6 +50,18 @@ describe("OrchestratorMessageLog", () => {
 		transport.failingRecipients.add("w2");
 		const sent = await log.send({ from: "w1", to: "w2", kind: "query", body: "schemas?" }, transport);
 		expect(sent.status).toBe("failed");
+	});
+
+	test("marks the stored record failed when transport.send() throws", async () => {
+		const log = new OrchestratorMessageLog();
+		const throwingTransport: MessageTransport = {
+			async send() {
+				throw new Error("bus disconnected");
+			},
+		};
+		const settled = await log.send({ from: "w1", to: "w2", kind: "alert", body: "ping" }, throwingTransport);
+		expect(settled.status).toBe("failed");
+		expect(log.all()[0]?.status).toBe("failed");
 	});
 
 	test("between() shows direct traffic in both directions plus either side's broadcast", async () => {

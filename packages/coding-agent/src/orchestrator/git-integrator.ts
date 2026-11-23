@@ -5,11 +5,11 @@
  * branches landed:
  *
  * 1. **Merge.** Cherry-pick each worker branch onto the target checkout in plan
- *    order, stopping at the first conflict so a half-applied series never looks
- *    like a clean integration.
- * 2. **Cleanup.** Delete the temporary branches and remove the worker
- *    worktrees, but only for branches whose commits are confirmed on the
- *    target. A branch that failed to land keeps its worktree, because that
+ *    order, stopping at the first unresolvable conflict so a half-applied
+ *    series never looks like a clean integration.
+ * 2. **Cleanup.** Remove the worker worktrees FIRST and then delete the
+ *    temporary branches, but only for branches whose commits are confirmed on
+ *    the target. A branch that failed to land keeps its worktree, because that
  *    checkout is now the only copy of the work.
  *
  * A worker can also hand back a patch instead of a branch (when the branch
@@ -37,6 +37,16 @@ export interface GitIntegratorOptions {
 	readonly cleanup?: boolean;
 	/** Remove each branch's worktree, when one is still registered for it. */
 	readonly removeWorktrees?: boolean;
+	/**
+	 * Optional fallback invoked when cherry-picking `entry` hits a conflict.
+	 * When it returns `{ resolved: true }`, the branch is counted as merged,
+	 * cleaned up, and integration continues with remaining branches.
+	 */
+	readonly resolveConflict?: (
+		entry: PendingIntegration,
+		conflict: string,
+		signal: AbortSignal,
+	) => Promise<{ resolved: boolean; detail?: string }>;
 }
 
 export class GitIntegrator implements Integrator {
@@ -59,39 +69,98 @@ export class GitIntegrator implements Integrator {
 		}
 
 		const repoRoot = await getRepoRoot(this.#options.cwd);
-		const branches = pending.map(entry => ({
-			branchName: entry.branchName,
-			taskId: entry.taskId,
-			...(entry.baseSha === undefined ? {} : { baseSha: entry.baseSha }),
-		}));
+		logger.debug("orchestration integration started", { repoRoot, branches: pending.length });
 
-		logger.debug("orchestration integration started", { repoRoot, branches: branches.length });
-		const result = await mergeTaskBranches(repoRoot, branches);
+		const merged: string[] = [];
+		const failed: string[] = [];
+		let conflictSummary: string | undefined;
+		let cancelledMidway = false;
 
-		// A conflict stops the series: everything after it never ran, so those
-		// branches are reported failed rather than silently dropped.
-		const failed = [...result.failed];
-		if (result.conflict) {
-			logger.warn("orchestration integration hit a conflict", { conflict: result.conflict });
+		for (let i = 0; i < pending.length; i++) {
+			if (signal.aborted) {
+				for (let j = i; j < pending.length; j++) {
+					const remaining = pending[j];
+					if (remaining) failed.push(remaining.branchName);
+				}
+				cancelledMidway = true;
+				break;
+			}
+
+			const entry = pending[i];
+			if (!entry) continue;
+
+			const stepResult = await mergeTaskBranches(repoRoot, [
+				{
+					branchName: entry.branchName,
+					taskId: entry.taskId,
+					...(entry.baseSha === undefined ? {} : { baseSha: entry.baseSha }),
+				},
+			]);
+
+			if (stepResult.conflict === undefined && stepResult.merged.includes(entry.branchName)) {
+				merged.push(entry.branchName);
+				continue;
+			}
+
+			const conflict = stepResult.conflict ?? `${entry.branchName}: merge failed`;
+			logger.warn("orchestration integration hit a conflict", { conflict });
+
+			if (this.#options.resolveConflict && !signal.aborted) {
+				let resolution: { resolved: boolean; detail?: string };
+				try {
+					resolution = await this.#options.resolveConflict(entry, conflict, signal);
+				} catch (error) {
+					resolution = {
+						resolved: false,
+						detail: error instanceof Error ? error.message : String(error),
+					};
+				}
+
+				if (resolution.resolved) {
+					logger.debug("orchestration integration conflict resolved by fallback", {
+						branch: entry.branchName,
+						detail: resolution.detail,
+					});
+					merged.push(entry.branchName);
+					continue;
+				}
+
+				conflictSummary = resolution.detail ? `${conflict} (${resolution.detail})` : conflict;
+			} else {
+				conflictSummary = conflict;
+			}
+
+			// An unresolved conflict stops the series: everything from here on
+			// is reported failed rather than silently dropped.
+			for (let j = i; j < pending.length; j++) {
+				const remaining = pending[j];
+				if (remaining) failed.push(remaining.branchName);
+			}
+			break;
 		}
 
-		if (this.#options.cleanup !== false) {
-			const landed = new Set(result.merged);
-			await cleanupTaskBranches(repoRoot, result.merged);
+		if (this.#options.cleanup !== false && merged.length > 0) {
+			// Remove linked worktrees BEFORE deleting branches: git refuses to
+			// delete a branch while it is still checked out in a linked worktree.
 			if (this.#options.removeWorktrees !== false) {
-				for (const entry of pending) {
-					if (!landed.has(entry.branchName)) continue;
-					await removeWorktreeForBranch(repoRoot, entry.branchName);
+				for (const branchName of merged) {
+					await removeWorktreeForBranch(repoRoot, branchName);
 				}
 			}
+			await cleanupTaskBranches(repoRoot, merged);
 		}
 
+		const summary =
+			conflictSummary !== undefined
+				? `merged ${merged.length}/${pending.length}; conflict: ${conflictSummary}`
+				: cancelledMidway
+					? `merged ${merged.length}/${pending.length}; integration cancelled`
+					: `${merged.length}/${pending.length} branches merged`;
+
 		return {
-			merged: result.merged,
+			merged,
 			failed,
-			...(result.conflict === undefined
-				? { summary: `${result.merged.length}/${pending.length} branches merged` }
-				: { summary: `merged ${result.merged.length}/${pending.length}; conflict: ${result.conflict}` }),
+			summary,
 		};
 	}
 }
@@ -100,8 +169,7 @@ export class GitIntegrator implements Integrator {
  * Remove the linked worktree registered for `branch`, when one exists.
  *
  * Best-effort by design: a worktree that cannot be removed must not fail an
- * integration whose commits already landed. The branch is already deleted by
- * the caller, so a leftover directory is inert rather than misleading.
+ * integration whose commits already landed.
  */
 async function isSafeLinkedWorktreeFallback(
 	worktreePath: string,
@@ -125,7 +193,7 @@ async function isSafeLinkedWorktreeFallback(
 	}
 }
 
-async function removeWorktreeForBranch(repoRoot: string, branch: string): Promise<void> {
+export async function removeWorktreeForBranch(repoRoot: string, branch: string): Promise<void> {
 	const repo = vcs.git(repoRoot);
 	if (!repo) return;
 

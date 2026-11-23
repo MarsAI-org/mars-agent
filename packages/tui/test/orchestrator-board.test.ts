@@ -6,10 +6,12 @@
  * narrow fallback, and key navigation.
  */
 
+import * as os from "node:os";
 import { describe, expect, test } from "bun:test";
 import {
 	OrchestratorBoardComponent,
 	type OrchestratorBoardHost,
+	SwarmBoardComponent,
 	type WorkerPane,
 } from "@marsai-org/tui/apps/orchestrator-board";
 
@@ -187,12 +189,139 @@ describe("orchestrator board", () => {
 		board.handleInput("\t"); // focus beta
 		expect(plain(board.render(60)).join("\n")).toContain("beta");
 
-		// Reorder: the same worker is now first.
+		// Reorder: the same worker is now first, and refresh() pulls the new snapshot.
 		panes = [pane({ workerId: "w2", label: "beta" }), pane({ workerId: "w1", label: "alpha" })];
-		board.handleInput("l");
-		board.handleInput("l");
+		board.refresh();
 
 		expect(plain(board.render(60)).join("\n")).toContain("beta");
+		expect(plain(board.render(60)).join("\n")).not.toContain("alpha");
+		board.dispose();
+	});
+
+	test("c cancels the focused worker and footer advertises cancel hint", async () => {
+		const cancelled: string[] = [];
+		const ui = fakeUi(24);
+		const panes = [pane({ workerId: "w1", label: "alpha" }), pane({ workerId: "w2", label: "beta" })];
+		const board = new OrchestratorBoardComponent(
+			ui as never,
+			{ goal: "cancel-worker", narrow: true },
+			{
+				snapshot: () => panes,
+				stopAll: () => {},
+				cancelWorker: id => {
+					cancelled.push(id);
+				},
+			},
+		);
+		void board.run();
+
+		expect(plain(board.render(80)).join("\n")).toContain("cancel");
+		board.handleInput("\t"); // move focus to w2
+		board.handleInput("c");
+
+		expect(cancelled).toEqual(["w2"]);
+		board.dispose();
+	});
+
+	test("q and escape detach without stopping when detach is provided, while X stops all", async () => {
+		let detached = 0;
+		let stopped = 0;
+		const ui = fakeUi(24);
+		const board1 = new OrchestratorBoardComponent(
+			ui as never,
+			{ goal: "detach-q" },
+			{
+				snapshot: () => [pane({ workerId: "w1" })],
+				stopAll: () => {
+					stopped++;
+				},
+				detach: () => {
+					detached++;
+				},
+			},
+		);
+		const run1 = board1.run();
+		expect(plain(board1.render(100)).join("\n")).toContain("detach");
+		board1.handleInput("q");
+		await run1;
+		expect(detached).toBe(1);
+		expect(stopped).toBe(0);
+
+		const board2 = new OrchestratorBoardComponent(
+			ui as never,
+			{ goal: "detach-esc" },
+			{
+				snapshot: () => [pane({ workerId: "w1" })],
+				stopAll: () => {
+					stopped++;
+				},
+				detach: () => {
+					detached++;
+				},
+			},
+		);
+		const run2 = board2.run();
+		board2.handleInput("\x1b");
+		await run2;
+		expect(detached).toBe(2);
+		expect(stopped).toBe(0);
+
+		const board3 = new OrchestratorBoardComponent(
+			ui as never,
+			{ goal: "stop-X" },
+			{
+				snapshot: () => [pane({ workerId: "w1" })],
+				stopAll: () => {
+					stopped++;
+				},
+				detach: () => {
+					detached++;
+				},
+			},
+		);
+		const run3 = board3.run();
+		board3.handleInput("X");
+		await run3;
+		expect(detached).toBe(2);
+		expect(stopped).toBe(1);
+	});
+
+	test("renders currentTool, retry attempts, swarm branding, and sanitizes tabs/control chars/home paths", async () => {
+		expect(SwarmBoardComponent).toBe(OrchestratorBoardComponent);
+		const home = os.homedir();
+		const ui = fakeUi(28);
+		const panes = [
+			pane({
+				workerId: "w1",
+				label: "front\tend\x07",
+				state: "running",
+				attempts: 2,
+				branchName: "swarm/w1\tbranch",
+				taskTitle: "Fix\tlayout\x1b[31m!",
+				targetFiles: [`${home}/project/src/app.ts`, `${home}/project/src/other.ts`],
+				currentTool: "edit\tsrc/app.ts",
+				error: "minor\twarning\x07",
+				output: [`line\tone\t${home}/secret.ts`, "line\ttwo\x00"],
+			}),
+		];
+		const board = new OrchestratorBoardComponent(
+			ui as never,
+			{ goal: `ship\t${home}/app\x07`, narrow: true },
+			host(panes),
+		);
+		void board.run();
+
+		const rendered = plain(board.render(90));
+		const frame = rendered.join("\n");
+
+		expect(frame).toContain("swarm");
+		expect(frame).toContain("↻2");
+		expect(frame).toContain("⚙ edit");
+		expect(frame).toContain("~/project/src/app.ts +1");
+		expect(frame).not.toContain("\t");
+		expect(frame).not.toContain("\x07");
+		expect(frame).not.toContain("\x00");
+		expect(frame).not.toContain(home);
 		board.dispose();
 	});
 });

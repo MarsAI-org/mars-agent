@@ -243,6 +243,11 @@ export const commands: CommandEntry[] = [
 		help: commandHelp.streamHelp,
 	},
 	{
+		name: "swarm",
+		load: () => import("./commands/swarm").then(m => m.default),
+		help: commandHelp.swarmHelp,
+	},
+	{
 		name: "update",
 		load: () => import("./commands/update").then(m => m.default),
 		help: commandHelp.updateHelp,

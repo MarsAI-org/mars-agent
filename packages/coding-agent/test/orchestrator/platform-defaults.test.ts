@@ -12,11 +12,24 @@ import { OrchestrationEngine, type EngineRunner, type WorkerRunContext } from ".
 import { resolveOrchestratorBudget, resolveOrchestratorLimits } from "../../src/orchestrator/settings";
 import type { OrchestratorPlan, WorkerOutcome, WorkerSpec } from "../../src/orchestrator/types";
 
-class NeverFinishingRunner implements EngineRunner {
+class ControlledRunner implements EngineRunner {
 	readonly starts: string[] = [];
-	async run(_spec: WorkerSpec, task: { id: string }, _context: WorkerRunContext): Promise<WorkerOutcome> {
+
+	async run(_spec: WorkerSpec, task: { id: string }, context: WorkerRunContext): Promise<WorkerOutcome> {
 		this.starts.push(task.id);
-		return new Promise<WorkerOutcome>(() => {});
+		const gate = Promise.withResolvers<WorkerOutcome>();
+		if (context.signal.aborted) {
+			gate.resolve({ exitCode: 1, output: "", error: "aborted" });
+		} else {
+			context.signal.addEventListener(
+				"abort",
+				() => {
+					gate.resolve({ exitCode: 1, output: "", error: "aborted" });
+				},
+				{ once: true },
+			);
+		}
+		return gate.promise;
 	}
 }
 
@@ -34,36 +47,25 @@ function plan(tasks: readonly string[], workers: readonly WorkerSpec[]): Orchest
 }
 
 describe("resolveOrchestratorLimits", () => {
-	test("reads the configured concurrency from settings", () => {
+	test("reads the configured concurrency from settings on desktop", () => {
 		const settings = Settings.isolated({ "orchestrator.maxConcurrency": 8 });
-		// Non-Android hosts keep the configured value unchanged.
-		const expected = process.platform === "android" ? 2 : 8;
-		expect(resolveOrchestratorLimits(settings).concurrency).toBe(expected);
-	});
-
-	test("reports no process cap on non-Android platforms", () => {
-		const settings = Settings.isolated({});
-		if (process.platform === "android") return;
-		expect(resolveOrchestratorLimits(settings).processCap).toBeUndefined();
+		const limits = resolveOrchestratorLimits(settings, { platform: "linux", env: {} });
+		expect(limits).toEqual({ concurrency: 8, processCap: undefined });
 	});
 
 	test("narrows concurrency and sets the process cap in a Termux environment", () => {
-		const previousPrefix = process.env.PREFIX;
-		const previousVersion = process.env.TERMUX_VERSION;
-		process.env.PREFIX = "/data/data/com.termux/files/usr";
-		process.env.TERMUX_VERSION = "0.118.0";
-		try {
-			const limits = resolveOrchestratorLimits(
-				Settings.isolated({ "orchestrator.maxConcurrency": 8, "orchestrator.androidProcessCap": 6 }),
-			);
-			// Mobile default narrows the configured 8 down to 2, and the cap applies.
-			expect(limits).toEqual({ concurrency: 2, processCap: 6 });
-		} finally {
-			if (previousPrefix === undefined) delete process.env.PREFIX;
-			else process.env.PREFIX = previousPrefix;
-			if (previousVersion === undefined) delete process.env.TERMUX_VERSION;
-			else process.env.TERMUX_VERSION = previousVersion;
-		}
+		const limits = resolveOrchestratorLimits(
+			Settings.isolated({ "orchestrator.maxConcurrency": 8, "orchestrator.androidProcessCap": 6 }),
+			{
+				platform: "linux",
+				env: {
+					PREFIX: "/data/data/com.termux/files/usr",
+					TERMUX_VERSION: "0.118.0",
+				},
+			},
+		);
+		// Mobile default narrows the configured 8 down to 2, and the cap applies.
+		expect(limits).toEqual({ concurrency: 2, processCap: 6 });
 	});
 });
 
@@ -96,25 +98,31 @@ describe("resolveOrchestratorBudget", () => {
 
 describe("engine process cap", () => {
 	test("narrows concurrency so the process tree fits the cap", async () => {
-		const runner = new NeverFinishingRunner();
+		const runner = new ControlledRunner();
 		// cap 5 => 1 parent + 2 per worker => 2 workers
 		const engine = new OrchestrationEngine({ runner, concurrency: 8, processCap: 5 });
 		expect(engine.concurrency).toBe(2);
 
-		void engine.run(plan(["a", "b", "c", "d"], [worker("w1"), worker("w2"), worker("w3"), worker("w4")]));
-		await Bun.sleep(20);
+		const runPromise = engine.run(
+			plan(["a", "b", "c", "d"], [worker("w1"), worker("w2"), worker("w3"), worker("w4")]),
+		);
+		while (runner.starts.length < 2) {
+			await Bun.sleep(1);
+		}
 		// Only the capped number of workers may be in flight.
 		expect(runner.starts.length).toBe(2);
 		engine.stopAll("test done");
+		const report = await runPromise;
+		expect(report.stoppedReason).toBe("test done");
 	});
 
 	test("a cap of 1 slot still allows one worker", () => {
-		const engine = new OrchestrationEngine({ runner: new NeverFinishingRunner(), concurrency: 8, processCap: 2 });
+		const engine = new OrchestrationEngine({ runner: new ControlledRunner(), concurrency: 8, processCap: 2 });
 		expect(engine.concurrency).toBe(1);
 	});
 
 	test("no cap leaves the configured concurrency alone", () => {
-		const engine = new OrchestrationEngine({ runner: new NeverFinishingRunner(), concurrency: 3 });
+		const engine = new OrchestrationEngine({ runner: new ControlledRunner(), concurrency: 3 });
 		expect(engine.concurrency).toBe(3);
 		expect(engine.processCap).toBeUndefined();
 	});

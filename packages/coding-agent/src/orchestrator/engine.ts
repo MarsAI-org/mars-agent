@@ -32,7 +32,15 @@ import type {
 	WorkerLifecycleState,
 	WorkerOutcome,
 	WorkerSpec,
+	WorkerUsage,
 } from "./types";
+
+/** Live progress update reported by a running worker. */
+export interface WorkerProgressUpdate {
+	readonly outputLine?: string;
+	readonly usage?: WorkerUsage;
+	readonly branchName?: string;
+}
 
 /** Context handed to a runner for one worker run. */
 export interface WorkerRunContext {
@@ -40,6 +48,12 @@ export interface WorkerRunContext {
 	readonly signal: AbortSignal;
 	/** Leases granted for this run. */
 	readonly leases: readonly FileLease[];
+	/** 1-based execution attempt number for this task (1 on initial run, 2 on first retry, etc.). */
+	readonly attempt: number;
+	/** Diagnostic feedback from a prior failed verification attempt, when retrying. */
+	readonly retryFeedback?: string;
+	/** Live telemetry callback for streaming output, usage, and branch updates. */
+	readonly reportProgress?: (update: WorkerProgressUpdate) => void;
 	/** Send a typed message to a peer worker; the sender id is set by the engine. */
 	readonly sendMessage: (
 		message: Omit<OrchestratorMessage, "id" | "ts" | "status" | "from">,
@@ -101,6 +115,11 @@ export interface OrchestrationEngineOptions {
 	readonly budget?: BudgetLimits;
 	readonly now?: () => number;
 	/**
+	 * Maximum verification-failure retries per task before marking the task failed.
+	 * Defaults to 0 (no automatic retries unless configured).
+	 */
+	readonly maxRetries?: number;
+	/**
 	 * Verifier run against a completed worker's tree before the task may settle
 	 * as completed. Defaults to a no-op verifier, which keeps the pre-verifier
 	 * behaviour for callers that have not configured checks.
@@ -114,6 +133,17 @@ export interface OrchestrationEngineOptions {
 	 */
 	readonly verificationRoot?: string;
 	/**
+	 * Optional branch verification hook. When provided and an isolated worker
+	 * produces `changes.branchName` without a live `worktreePath`, checks run
+	 * against a checkout of `branchName` rather than the untouched parent `cwd`.
+	 */
+	readonly verifyBranch?: (
+		root: string,
+		branchName: string,
+		checks: readonly VerificationCheck[],
+		signal: AbortSignal,
+	) => Promise<VerificationResult>;
+	/**
 	 * Lands worker branches after the plan settles. Omitted means workers ran in
 	 * the shared checkout (or the caller merges on its own), so the engine never
 	 * touches git.
@@ -126,10 +156,12 @@ export interface TaskOutcomeRecord {
 	readonly state: TaskState;
 	readonly workerId?: string;
 	readonly outcome?: WorkerOutcome;
+	/** Number of execution attempts made for this task. */
+	readonly attempts?: number;
 	/**
-	 * Why the run produced no worker outcome (an engine-side throw). Without it
-	 * the record said only `failed`, leaving a caller unable to tell a crashed
-	 * worker from one that was rejected.
+	 * Why the run produced no worker outcome (an engine-side throw or integration
+	 * failure). Without it the record said only `failed`, leaving a caller unable
+	 * to tell a crashed worker from one that was rejected.
 	 */
 	readonly error?: string;
 	/**
@@ -156,6 +188,7 @@ interface SettledRecord {
 	readonly outcome: WorkerOutcome | undefined;
 	readonly error?: string;
 	readonly verification?: VerificationResult;
+	readonly cancelled?: boolean;
 }
 
 interface RunningEntry {
@@ -164,21 +197,49 @@ interface RunningEntry {
 	readonly controller: AbortController;
 }
 
+type WorkerResolution =
+	| { readonly kind: "ready"; readonly spec: WorkerSpec }
+	| { readonly kind: "busy" }
+	| { readonly kind: "none" };
+
+type AbortableVerifier = {
+	verify(root: string, checks: readonly VerificationCheck[], signal?: AbortSignal): Promise<VerificationResult>;
+};
+
+/** Transport used when none is injected: keeps a local record and drops delivery. */
+class LoggingTransport implements MessageTransport {
+	async send(): Promise<{ delivered: boolean; error?: string }> {
+		return { delivered: false, error: "no message transport configured" };
+	}
+}
+
+const DEFAULT_LOGGING_TRANSPORT = new LoggingTransport();
+
 export class OrchestrationEngine {
 	readonly #board = new TaskBoard();
 	readonly #leases: FileLeaseManager;
 	readonly #budget: BudgetGuard;
 	readonly #runner: EngineRunner;
-	readonly #transport: MessageTransport | undefined;
+	readonly #transport: MessageTransport;
 	readonly #messages = new OrchestratorMessageLog();
 	readonly #concurrency: number;
 	readonly #processCap: number | undefined;
+	readonly #maxRetries: number;
 	readonly #verifier: Verifier | undefined;
 	readonly #verificationChecks: readonly VerificationCheck[];
 	readonly #verificationRoot: string;
+	readonly #verifyBranch:
+		| ((
+				root: string,
+				branchName: string,
+				checks: readonly VerificationCheck[],
+				signal: AbortSignal,
+		  ) => Promise<VerificationResult>)
+		| undefined;
 	readonly #integrator: Integrator | undefined;
 	readonly #listeners = new Set<OrchestratorEventListener>();
 	readonly #running = new Map<string, RunningEntry>();
+	readonly #busyWorkers = new Set<string>();
 	readonly #settled: SettledRecord[] = [];
 	/**
 	 * Settlement records by task, retained for the final report.
@@ -191,18 +252,23 @@ export class OrchestrationEngine {
 	readonly #settledRecords = new Map<string, SettledRecord>();
 	/**
 	 * Isolation artifacts per task, kept after `#settled` drains: the integration
-	 * phase runs once at the end, long after each task's settlement record was
-	 * consumed by the scheduler.
+	 * phase runs once at the end (or incrementally before dependent tasks), long
+	 * after each task's settlement record was consumed by the scheduler.
 	 */
 	readonly #changes = new Map<string, { workerId: string; changes: WorkerChanges }>();
+	readonly #integratedTasks = new Set<string>();
+	readonly #retryFeedback = new Map<string, string>();
+	#integrationController: AbortController | undefined;
 	#wake: (() => void) | undefined;
+	#notified = false;
 	#stopped = false;
 	#stoppedReason: string | undefined;
+	#budgetExhaustedEmitted = false;
 	#started = false;
 
 	constructor(options: OrchestrationEngineOptions) {
 		this.#runner = options.runner;
-		this.#transport = options.transport;
+		this.#transport = options.transport ?? DEFAULT_LOGGING_TRANSPORT;
 		const requested = Math.max(1, Math.trunc(options.concurrency ?? 4));
 		// A process cap reserves one slot for the parent host and two processes
 		// per worker (the worker plus one tool child), so it can narrow the
@@ -213,9 +279,11 @@ export class OrchestrationEngine {
 				: Number.POSITIVE_INFINITY;
 		this.#concurrency = Math.max(1, Math.min(requested, capSlots));
 		this.#processCap = options.processCap;
+		this.#maxRetries = Math.max(0, Math.trunc(options.maxRetries ?? 0));
 		this.#verifier = options.verifier;
 		this.#verificationChecks = options.verificationChecks ?? [];
 		this.#verificationRoot = options.verificationRoot ?? process.cwd();
+		this.#verifyBranch = options.verifyBranch;
 		this.#integrator = options.integrator;
 		this.#leases = new FileLeaseManager({ now: options.now });
 		this.#budget = new BudgetGuard({ ...options.budget, now: options.now });
@@ -239,14 +307,39 @@ export class OrchestrationEngine {
 		};
 	}
 
+	/** Dynamically add a task to the board before or during a run. */
+	addTask(task: OrchestratorTask): void {
+		this.#board.addTask(task);
+		if (this.#started && !this.#stopped) {
+			this.#notify();
+		}
+	}
+
+	/**
+	 * Cancel the task currently running on `workerId`, freeing the worker and its
+	 * leases without stopping the entire orchestration plan. Returns true if an
+	 * active task on `workerId` was found and aborted.
+	 */
+	cancelWorker(workerId: string, reason = "worker cancelled"): boolean {
+		for (const entry of this.#running.values()) {
+			if (entry.workerId !== workerId) continue;
+			entry.controller.abort(reason);
+			this.#invokeRunnerCancel(entry.workerId, entry.taskId, reason);
+			this.#notify();
+			return true;
+		}
+		return false;
+	}
+
 	/** Stop the whole run: abort running workers and cancel everything pending. */
 	stopAll(reason: string): void {
 		if (this.#stopped) return;
 		this.#stopped = true;
 		this.#stoppedReason = reason;
+		this.#integrationController?.abort(reason);
 		for (const entry of this.#running.values()) {
 			entry.controller.abort(reason);
-			void this.#runner.cancel?.(entry.workerId, entry.taskId, reason);
+			this.#invokeRunnerCancel(entry.workerId, entry.taskId, reason);
 		}
 		this.#notify();
 	}
@@ -264,16 +357,26 @@ export class OrchestrationEngine {
 	async run(plan: OrchestratorPlan): Promise<EngineReport> {
 		if (this.#started) throw new Error("OrchestrationEngine is single-use");
 		this.#started = true;
-		for (const task of plan.tasks) this.#board.add(task);
+		for (const task of plan.tasks) {
+			if (!this.#board.get(task.id)) {
+				this.#board.addTask(task);
+			}
+		}
 		const boardListener: TaskBoardListener = event => {
-			this.#emit({ type: "task_state", taskId: event.taskId, from: event.from, to: event.to });
+			this.#emit({
+				type: "task_state",
+				taskId: event.taskId,
+				from: event.from,
+				to: event.to,
+				...(event.workerId === undefined ? {} : { workerId: event.workerId }),
+			});
 		};
 		const unsubscribe = this.#board.onChange(boardListener);
 		try {
 			this.#emit({
 				type: "plan_started",
 				planId: plan.id,
-				taskCount: plan.tasks.length,
+				taskCount: this.#board.tasks().length,
 				workerCount: plan.workers.length,
 			});
 			logger.debug("orchestration run started", {
@@ -282,7 +385,9 @@ export class OrchestrationEngine {
 				processCap: this.#processCap,
 			});
 			await this.#schedule(plan);
-			await this.#integrate(plan);
+			if (!this.#stopped) {
+				await this.#integrate(plan);
+			}
 		} finally {
 			unsubscribe();
 		}
@@ -312,7 +417,7 @@ export class OrchestrationEngine {
 			this.#budget.refresh();
 			if (this.#budget.exhausted) {
 				const reason = this.#budget.reason ?? "budget";
-				this.#emit({ type: "budget_exhausted", reason, usage: this.#budget.snapshot() });
+				this.#emitBudgetExhaustedOnce(reason);
 				this.stopAll(reason);
 				this.#cancelPending();
 				await this.#drain();
@@ -326,8 +431,17 @@ export class OrchestrationEngine {
 				if (this.#startTask(plan, task)) startable = true;
 			}
 			this.#drainSettled();
+			if (!this.#stopped) {
+				await this.#integrateForPendingDependents();
+				this.#drainSettled();
+			}
 
 			if (this.#running.size === 0) {
+				this.#drainSettled();
+				if (this.#notified) {
+					this.#notified = false;
+					continue;
+				}
 				const ready = this.#board.ready();
 				// Nothing running: either everything is done, or nothing can ever
 				// start (lease-blocked with no live holder, or dependencies that
@@ -353,17 +467,25 @@ export class OrchestrationEngine {
 			}
 			await this.#waitForSettlement();
 			this.#drainSettled();
+			if (!this.#stopped) {
+				await this.#integrateForPendingDependents();
+				this.#drainSettled();
+			}
 		}
 	}
 
-	/** Try to start one task; returns false when leases could not be acquired. */
+	/** Try to start one task; returns false when leases or worker slot could not be acquired. */
 	#startTask(plan: OrchestratorPlan, task: OrchestratorTask): boolean {
-		const spec = this.#workerFor(plan, task);
-		if (!spec) {
+		const resolution = this.#workerFor(plan, task);
+		if (resolution.kind === "none") {
 			logger.warn("orchestration task has no worker; marking failed", { taskId: task.id });
 			this.#board.transition(task.id, "failed", undefined);
 			return true;
 		}
+		if (resolution.kind === "busy") {
+			return false;
+		}
+		const spec = resolution.spec;
 		const requests = task.targetFiles.map(path => ({ path, mode: "write" as const }));
 		const leaseResult = this.#leases.acquire(spec.id, requests);
 		if (!leaseResult.granted) {
@@ -377,6 +499,7 @@ export class OrchestrationEngine {
 			return false;
 		}
 		const controller = new AbortController();
+		this.#busyWorkers.add(spec.id);
 		this.#board.transition(task.id, "running", spec.id);
 		this.#running.set(task.id, { taskId: task.id, workerId: spec.id, controller });
 		this.#emit({ type: "worker_state", workerId: spec.id, taskId: task.id, state: "spawning" });
@@ -398,40 +521,153 @@ export class OrchestrationEngine {
 		leases: readonly FileLease[],
 	): Promise<void> {
 		this.#emit({ type: "worker_state", workerId: spec.id, taskId: task.id, state: "running" });
+		const attempt = Math.max(1, this.#board.attempts(task.id));
+		const retryFeedback = this.#retryFeedback.get(task.id) ?? task.retryFeedback;
+		const taskWithFeedback: OrchestratorTask = retryFeedback !== undefined ? { ...task, retryFeedback } : task;
 		try {
-			const outcome = await this.#runner.run(spec, task, {
+			const outcome = await this.#runner.run(spec, taskWithFeedback, {
 				signal: controller.signal,
 				leases,
+				attempt,
+				...(retryFeedback === undefined ? {} : { retryFeedback }),
+				reportProgress: update => {
+					if (update.outputLine !== undefined) {
+						this.#emit({
+							type: "worker_output",
+							workerId: spec.id,
+							taskId: task.id,
+							line: update.outputLine,
+						});
+					}
+					if (update.branchName !== undefined) {
+						this.#emit({
+							type: "worker_branch",
+							workerId: spec.id,
+							taskId: task.id,
+							branchName: update.branchName,
+						});
+					}
+					if (update.usage !== undefined) {
+						this.#budget.recordInterimUsage(task.id, update.usage);
+						this.#emit({
+							type: "worker_usage",
+							workerId: spec.id,
+							taskId: task.id,
+							usage: update.usage,
+						});
+						if (this.#budget.exhausted && !this.#stopped) {
+							const reason = this.#budget.reason ?? "budget";
+							this.#emitBudgetExhaustedOnce(reason);
+							this.stopAll(reason);
+						}
+					}
+				},
 				sendMessage: async message => {
-					const record = await this.#messages.send(
-						{ ...message, from: spec.id },
-						this.#transport ?? new LoggingTransport(),
-					);
+					const record = await this.#messages.send({ ...message, from: spec.id }, this.#transport);
 					this.#emit({ type: "message", message: record });
 					return record;
 				},
 			});
-			const verification = await this.#verifyOutcome(task, outcome);
-			if (outcome.changes) this.#changes.set(task.id, { workerId: spec.id, changes: outcome.changes });
+
+			if (outcome.usage) {
+				this.#emit({
+					type: "worker_usage",
+					workerId: spec.id,
+					taskId: task.id,
+					usage: outcome.usage,
+				});
+			}
+			if (outcome.changes?.branchName) {
+				this.#emit({
+					type: "worker_branch",
+					workerId: spec.id,
+					taskId: task.id,
+					branchName: outcome.changes.branchName,
+				});
+			}
+
+			if (controller.signal.aborted) {
+				this.#settled.push({ taskId: task.id, outcome, cancelled: true });
+				this.#emit({
+					type: "worker_state",
+					workerId: spec.id,
+					taskId: task.id,
+					state: "cancelled",
+				});
+				return;
+			}
+
+			const verification = await this.#verifyOutcome(spec, task, outcome, controller.signal);
+			if (controller.signal.aborted) {
+				this.#settled.push({ taskId: task.id, outcome, verification, cancelled: true });
+				this.#emit({
+					type: "worker_state",
+					workerId: spec.id,
+					taskId: task.id,
+					state: "cancelled",
+				});
+				return;
+			}
+
+			const maxRetries = Math.max(0, Math.trunc(task.maxRetries ?? plan.maxRetries ?? this.#maxRetries));
+			if (verification && !verification.ok && attempt <= maxRetries && !this.#stopped && !this.#budget.exhausted) {
+				if (outcome.usage) {
+					this.#budget.charge(outcome.usage, task.id);
+				}
+				this.#budget.refresh();
+				if (!this.#budget.exhausted && !this.#stopped) {
+					const reason = formatVerificationFailureFeedback(verification);
+					this.#retryFeedback.set(task.id, reason);
+					this.#changes.delete(task.id);
+					this.#emit({
+						type: "task_retry",
+						taskId: task.id,
+						workerId: spec.id,
+						attempt,
+						maxRetries,
+						reason,
+					});
+					this.#board.requeueForRetry(task.id);
+					this.#emit({
+						type: "worker_state",
+						workerId: spec.id,
+						taskId: task.id,
+						state: "pending",
+					});
+					return;
+				}
+			}
+
+			if (outcome.changes) {
+				this.#changes.set(task.id, { workerId: spec.id, changes: outcome.changes });
+			}
+			const succeeded = outcome.exitCode === 0 && (!verification || verification.ok);
 			this.#settled.push({ taskId: task.id, outcome, verification });
 			this.#emit({
 				type: "worker_state",
 				workerId: spec.id,
 				taskId: task.id,
-				state: verification && !verification.ok ? "failed" : "completed",
+				state: succeeded ? "completed" : "failed",
 			});
 		} catch (error) {
 			const message = error instanceof Error ? error.message : String(error);
 			logger.debug("orchestration worker failed", { taskId: task.id, workerId: spec.id, message });
-			this.#settled.push({ taskId: task.id, outcome: undefined, error: message });
+			const aborted = controller.signal.aborted;
+			this.#settled.push({
+				taskId: task.id,
+				outcome: undefined,
+				error: message,
+				...(aborted ? { cancelled: true } : {}),
+			});
 			this.#emit({
 				type: "worker_state",
 				workerId: spec.id,
 				taskId: task.id,
-				state: controller.signal.aborted ? "cancelled" : "failed",
+				state: aborted ? "cancelled" : "failed",
 			});
 		} finally {
 			this.#running.delete(task.id);
+			this.#busyWorkers.delete(spec.id);
 			this.#leases.release(spec.id);
 			this.#notify();
 		}
@@ -445,17 +681,36 @@ export class OrchestrationEngine {
 	 * would produce misleading diagnostics. An aborted run is skipped for the
 	 * same reason.
 	 */
-	async #verifyOutcome(task: OrchestratorTask, outcome: WorkerOutcome): Promise<VerificationResult | undefined> {
+	async #verifyOutcome(
+		spec: WorkerSpec,
+		task: OrchestratorTask,
+		outcome: WorkerOutcome,
+		signal: AbortSignal,
+	): Promise<VerificationResult | undefined> {
 		if (!this.#verifier) return undefined;
 		if (this.#verificationChecks.length === 0) return undefined;
-		if (outcome.exitCode !== 0) return undefined;
+		if (outcome.exitCode !== 0 || signal.aborted) return undefined;
 		this.#emit({
 			type: "worker_state",
-			workerId: this.#board.workerOf(task.id) ?? task.id,
+			workerId: spec.id,
 			taskId: task.id,
 			state: "verifying" satisfies WorkerLifecycleState,
 		});
-		const result = await this.#verifier.verify(this.#verificationRoot, this.#verificationChecks);
+
+		const abortableVerifier = this.#verifier as AbortableVerifier;
+		let result: VerificationResult;
+		if (outcome.changes?.worktreePath) {
+			result = await abortableVerifier.verify(outcome.changes.worktreePath, this.#verificationChecks, signal);
+		} else if (outcome.changes?.branchName && this.#verifyBranch) {
+			result = await this.#verifyBranch(
+				this.#verificationRoot,
+				outcome.changes.branchName,
+				this.#verificationChecks,
+				signal,
+			);
+		} else {
+			result = await abortableVerifier.verify(this.#verificationRoot, this.#verificationChecks, signal);
+		}
 		logger.debug("orchestration verification finished", {
 			taskId: task.id,
 			ok: result.ok,
@@ -464,26 +719,78 @@ export class OrchestrationEngine {
 		return result;
 	}
 
-	/** Move settled worker runs onto the board and charge the budget. */
+	/**
+	 * Integrate completed isolated tasks that have downstream pending dependents,
+	 * so dependent tasks see their upstream dependencies' commits already landed.
+	 */
+	async #integrateForPendingDependents(): Promise<void> {
+		if (!this.#integrator || this.#stopped) return;
+		const ordered = this.#board.topologicalOrder();
+		const candidates = ordered.filter(
+			task =>
+				this.#board.state(task.id) === "completed" &&
+				!this.#integratedTasks.has(task.id) &&
+				this.#hasPendingDependents(task.id) &&
+				this.#changes.has(task.id),
+		);
+		if (candidates.length === 0) return;
+		await this.#integrateTasks(candidates);
+	}
+
+	#hasPendingDependents(taskId: string): boolean {
+		for (const candidate of this.#board.tasks()) {
+			const state = this.#board.state(candidate.id);
+			if (state !== "pending" && state !== "blocked") continue;
+			if (candidate.dependencies.includes(taskId)) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Land the branches workers produced.
 	 *
-	 * Runs once, after the plan settles, and only for tasks that actually
-	 * committed something: a worker with no changes has nothing to merge, and a
-	 * failed or cancelled task's tree is incomplete. A failure here demotes the
-	 * task that failed to merge but leaves the others alone — one conflicting
-	 * branch must not discard the work of a sibling that merged cleanly.
+	 * Orders pending branches in topological dependency order and only lands
+	 * tasks that actually committed something: a worker with no changes has
+	 * nothing to merge, and a failed or cancelled task's tree is incomplete. A
+	 * failure here demotes the task that failed to merge and records the error in
+	 * `#settledRecords`, while leaving sibling merges intact.
 	 */
-	async #integrate(plan: OrchestratorPlan): Promise<void> {
+	async #integrate(_plan: OrchestratorPlan): Promise<void> {
+		if (!this.#integrator || this.#stopped) return;
+		await this.#integrateTasks(this.#board.topologicalOrder());
+	}
+
+	async #integrateTasks(tasks: readonly OrchestratorTask[]): Promise<void> {
 		const integrator = this.#integrator;
-		if (!integrator) return;
+		if (!integrator || this.#stopped) return;
 
 		const pending: PendingIntegration[] = [];
-		for (const task of plan.tasks) {
-			const record = this.#board.state(task.id);
-			if (record !== "completed") continue;
+		for (const task of tasks) {
+			if (this.#integratedTasks.has(task.id)) continue;
+			if (this.#board.state(task.id) !== "completed") continue;
 			const isolated = this.#changes.get(task.id);
-			if (!isolated?.changes.branchName) continue;
+			if (!isolated) continue;
+
+			if (!isolated.changes.branchName) {
+				if (isolated.changes.patchPath) {
+					this.#integratedTasks.add(task.id);
+					const detail = isolated.changes.mergeSummary ?? `patch artifact at ${isolated.changes.patchPath}`;
+					this.#changes.set(task.id, {
+						workerId: isolated.workerId,
+						changes: { ...isolated.changes, mergeSummary: detail },
+					});
+					this.#emit({
+						type: "integration_finished",
+						taskId: task.id,
+						workerId: isolated.workerId,
+						merged: true,
+						detail,
+					});
+				}
+				continue;
+			}
+
+			this.#integratedTasks.add(task.id);
 			pending.push({
 				taskId: task.id,
 				workerId: isolated.workerId,
@@ -505,6 +812,10 @@ export class OrchestrationEngine {
 		}
 
 		const controller = new AbortController();
+		this.#integrationController = controller;
+		if (this.#stopped) {
+			controller.abort(this.#stoppedReason ?? "stopped");
+		}
 		let report: IntegrationReport;
 		try {
 			report = await integrator.integrate(pending, controller.signal);
@@ -513,6 +824,7 @@ export class OrchestrationEngine {
 			logger.warn("orchestration integration failed", { message, pending: pending.length });
 			for (const entry of pending) {
 				this.#board.transition(entry.taskId, "failed");
+				this.#recordIntegrationError(entry.taskId, message);
 				this.#emit({
 					type: "integration_finished",
 					taskId: entry.taskId,
@@ -520,8 +832,18 @@ export class OrchestrationEngine {
 					merged: false,
 					detail: message,
 				});
+				this.#emit({
+					type: "worker_state",
+					workerId: entry.workerId,
+					taskId: entry.taskId,
+					state: "failed",
+				});
 			}
 			return;
+		} finally {
+			if (this.#integrationController === controller) {
+				this.#integrationController = undefined;
+			}
 		}
 
 		// `IntegrationReport` names branches, because that is what the integrator
@@ -532,7 +854,11 @@ export class OrchestrationEngine {
 			// A branch that did not land leaves its task failed: the code the task
 			// claimed to write is not on the target, so reporting it completed
 			// would tell the caller work exists that does not.
-			if (!ok) this.#board.transition(entry.taskId, "failed");
+			if (!ok) {
+				const detail = report.summary ?? `failed to integrate branch "${entry.branchName}"`;
+				this.#board.transition(entry.taskId, "failed");
+				this.#recordIntegrationError(entry.taskId, detail);
+			}
 			this.#emit({
 				type: "integration_finished",
 				taskId: entry.taskId,
@@ -549,25 +875,39 @@ export class OrchestrationEngine {
 		}
 	}
 
+	#recordIntegrationError(taskId: string, error: string): void {
+		const existing = this.#settledRecords.get(taskId);
+		this.#settledRecords.set(taskId, {
+			taskId,
+			outcome: existing?.outcome,
+			verification: existing?.verification,
+			cancelled: existing?.cancelled,
+			error,
+		});
+	}
+
 	/** Isolation artifacts recorded for one task, for callers rendering a report. */
 	changesFor(taskId: string): WorkerChanges | undefined {
 		return this.#changes.get(taskId)?.changes;
 	}
 
+	/** Move settled worker runs onto the board and charge the budget. */
 	#drainSettled(): void {
 		while (this.#settled.length > 0) {
 			const settled = this.#settled.shift()!;
 			// Retain before draining: this queue is emptied here, and the final
 			// report reads the map beside it.
 			this.#settledRecords.set(settled.taskId, settled);
-			if (settled.outcome) this.#budget.charge(settled.outcome.usage ?? {});
-			const state: TaskState = settled.error
-				? "failed"
-				: settled.verification && !settled.verification.ok
+			this.#budget.charge(settled.outcome?.usage ?? {}, settled.taskId);
+			const state: TaskState = settled.cancelled
+				? "cancelled"
+				: settled.error
 					? "failed"
-					: settled.outcome && settled.outcome.exitCode === 0
-						? "completed"
-						: "failed";
+					: settled.verification && !settled.verification.ok
+						? "failed"
+						: settled.outcome && settled.outcome.exitCode === 0
+							? "completed"
+							: "failed";
 			this.#board.transition(settled.taskId, state);
 		}
 	}
@@ -594,7 +934,11 @@ export class OrchestrationEngine {
 		for (const task of this.#board.tasks()) {
 			const state = this.#board.state(task.id);
 			if (!state) continue;
-			outcomes.set(task.id, { state, workerId: this.#board.workerOf(task.id) });
+			outcomes.set(task.id, {
+				state,
+				workerId: this.#board.workerOf(task.id),
+				attempts: this.#board.attempts(task.id),
+			});
 		}
 		// Retained per task, not read from the (now empty) drain queue: the report
 		// used to lose the worker's output, error, and verification verdict.
@@ -611,41 +955,115 @@ export class OrchestrationEngine {
 		return outcomes;
 	}
 
-	#workerFor(plan: OrchestratorPlan, task: OrchestratorTask): WorkerSpec | undefined {
+	#workerFor(plan: OrchestratorPlan, task: OrchestratorTask): WorkerResolution {
+		if (plan.workers.length === 0) return { kind: "none" };
 		if (task.agent) {
-			const byId = plan.workers.find(worker => worker.id === task.agent);
-			if (byId) return byId;
-			const byRole = plan.workers.find(worker => worker.roleLabel === task.agent);
-			if (byRole) return byRole;
+			const matches = plan.workers.filter(
+				worker =>
+					worker.id === task.agent ||
+					worker.roleLabel === task.agent ||
+					(worker.agent !== undefined && worker.agent === task.agent),
+			);
+			if (matches.length > 0) {
+				const freeMatch = matches.find(worker => !this.#busyWorkers.has(worker.id));
+				return freeMatch ? { kind: "ready", spec: freeMatch } : { kind: "busy" };
+			}
 		}
-		// Without an explicit agent, prefer a worker that holds no lease, so two
-		// tasks that write the same file land on two different workers and the
-		// lease manager can serialize them instead of letting one worker hold both.
-		const busy = new Set(this.#leases.activeWorkers());
-		const free = plan.workers.find(worker => !busy.has(worker.id));
-		return free ?? plan.workers[0];
+		const free = plan.workers.find(worker => !this.#busyWorkers.has(worker.id));
+		return free ? { kind: "ready", spec: free } : { kind: "busy" };
 	}
 
-	#waitForSettlement(): Promise<void> {
-		return new Promise<void>(resolve => {
-			this.#wake = resolve;
-		});
+	async #waitForSettlement(): Promise<void> {
+		if (this.#notified || this.#settled.length > 0) {
+			this.#notified = false;
+			return;
+		}
+		const { promise, resolve } = Promise.withResolvers<void>();
+		this.#wake = resolve;
+		const remainingMs = this.#budget.remainingWallClockMs();
+		if (remainingMs === undefined) {
+			await promise;
+			this.#notified = false;
+			return;
+		}
+		if (remainingMs <= 0) {
+			this.#wake = undefined;
+			this.#notified = false;
+			return;
+		}
+		const timer = setTimeout(() => {
+			this.#notify();
+		}, remainingMs);
+		timer.unref?.();
+		try {
+			await promise;
+		} finally {
+			clearTimeout(timer);
+			this.#notified = false;
+		}
 	}
 
 	#notify(): void {
 		const wake = this.#wake;
-		this.#wake = undefined;
-		wake?.();
+		if (wake) {
+			this.#wake = undefined;
+			wake();
+		} else {
+			this.#notified = true;
+		}
+	}
+
+	#emitBudgetExhaustedOnce(reason: string): void {
+		if (this.#budgetExhaustedEmitted) return;
+		this.#budgetExhaustedEmitted = true;
+		this.#emit({ type: "budget_exhausted", reason, usage: this.#budget.snapshot() });
+	}
+
+	#invokeRunnerCancel(workerId: string, taskId: string, reason: string): void {
+		try {
+			const maybePromise = this.#runner.cancel?.(workerId, taskId, reason);
+			if (maybePromise && typeof maybePromise.then === "function") {
+				void maybePromise.catch((error: unknown) => {
+					logger.warn("orchestration runner cancel failed", {
+						workerId,
+						taskId,
+						error: error instanceof Error ? error.message : String(error),
+					});
+				});
+			}
+		} catch (error) {
+			logger.warn("orchestration runner cancel threw", {
+				workerId,
+				taskId,
+				error: error instanceof Error ? error.message : String(error),
+			});
+		}
 	}
 
 	#emit(event: OrchestratorEvent): void {
-		for (const listener of this.#listeners) listener(event);
+		for (const listener of this.#listeners) {
+			try {
+				listener(event);
+			} catch (error) {
+				logger.warn("orchestration event listener threw", {
+					eventType: event.type,
+					error: error instanceof Error ? error.message : String(error),
+				});
+			}
+		}
 	}
 }
 
-/** Transport used when none is injected: keeps a local record and drops delivery. */
-class LoggingTransport implements MessageTransport {
-	async send(): Promise<{ delivered: boolean; error?: string }> {
-		return { delivered: false, error: "no message transport configured" };
+function formatVerificationFailureFeedback(verification: VerificationResult): string {
+	const failed = verification.checks.find(check => !check.ok) ?? verification.checks.at(-1);
+	const checkId = failed?.id ?? verification.firstFailure ?? "verification";
+	const rawOutput = failed?.output?.trim();
+	if (rawOutput && rawOutput.length > 0) {
+		const tail = rawOutput.length > 2000 ? rawOutput.slice(-2000) : rawOutput;
+		return `check "${checkId}" failed:\n${tail}`;
 	}
+	if (failed?.failure) {
+		return `check "${checkId}" failed: ${failed.failure}`;
+	}
+	return `check "${checkId}" failed`;
 }

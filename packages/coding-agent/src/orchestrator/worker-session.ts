@@ -20,7 +20,10 @@ export interface WorkerSpawnPlan {
 /** Plan a worker spawn without spawning it. */
 export function planWorkerSpawn(request: WorkerPermissionRequest): WorkerSpawnPlan {
 	const tools = resolveWorkerSpawnTools(request);
-	return { tools, approvalTier: checkWorkerApprovalTier(request.parentApprovalMode, tools) };
+	return {
+		tools,
+		approvalTier: checkWorkerApprovalTier(request.parentApprovalMode, tools, request.userToolPolicies),
+	};
 }
 
 /**
@@ -29,5 +32,8 @@ export function planWorkerSpawn(request: WorkerPermissionRequest): WorkerSpawnPl
  */
 export function requireWorkerSpawn(request: WorkerPermissionRequest): WorkerSpawnPlan {
 	const tools = assertWorkerSpawnAllowed(request);
-	return { tools, approvalTier: checkWorkerApprovalTier(request.parentApprovalMode, tools) };
+	return {
+		tools,
+		approvalTier: checkWorkerApprovalTier(request.parentApprovalMode, tools, request.userToolPolicies),
+	};
 }

@@ -18,6 +18,7 @@ import { grepToolRenderer } from "./grep";
 import { waitToolRenderer } from "./wait";
 import { lspToolRenderer } from "./lsp";
 import { recallToolRenderer, reflectToolRenderer, retainToolRenderer } from "./memory";
+import { orchestrateToolRenderer } from "./orchestrate";
 import { readToolRenderer } from "./read";
 import type { ToolRenderer } from "./renderer";
 import { resolveRenderer } from "./resolve";
@@ -60,6 +61,7 @@ export const toolRenderers: Record<string, ToolRenderer> = {
 	todo: todoToolRenderer,
 	github: githubToolRenderer,
 	goal: goalToolRenderer,
+	orchestrate: orchestrateToolRenderer,
 	web_search: webSearchToolRenderer,
 	vibe_spawn: createVibeToolRenderer("spawn"),
 	vibe_send: createVibeToolRenderer("send"),

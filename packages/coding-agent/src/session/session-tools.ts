@@ -120,6 +120,8 @@ interface SessionToolsOptions {
 	setPendingFullWriteDescription?: (enabled: boolean) => void;
 	/** Registers the hidden `goal` tool when goal mode is enabled at runtime. */
 	ensureGoalRegistered?: () => Promise<boolean>;
+	/** Registers the `orchestrate` tool when orchestrator mode is enabled at runtime. */
+	ensureOrchestrateRegistered?: () => Promise<boolean>;
 	/**
 	 * Re-resolves settings-gated tools against live settings, mutating the shared
 	 * registry; `isBuiltIn` reports this session's built-in provenance.
@@ -420,6 +422,7 @@ export class SessionTools {
 	 */
 	readonly #deviceOnlyWriteTransportAvailable: boolean;
 	#ensureGoalRegistered: SessionToolsOptions["ensureGoalRegistered"];
+	#ensureOrchestrateRegistered: SessionToolsOptions["ensureOrchestrateRegistered"];
 	#reconcileSettingsGatedTools: SessionToolsOptions["reconcileSettingsGatedTools"];
 	#skills: Skill[];
 	#skillWarnings: SkillWarning[];
@@ -462,6 +465,7 @@ export class SessionTools {
 		this.#setDeviceOnlyWrite = options.setDeviceOnlyWrite;
 		this.#setPendingFullWriteDescription = options.setPendingFullWriteDescription;
 		this.#ensureGoalRegistered = options.ensureGoalRegistered;
+		this.#ensureOrchestrateRegistered = options.ensureOrchestrateRegistered;
 		this.#reconcileSettingsGatedTools = options.reconcileSettingsGatedTools;
 		this.#rebuildSystemPrompt = options.rebuildSystemPrompt;
 		this.#getMcpServerInstructions = options.getMcpServerInstructions;
@@ -1112,6 +1116,13 @@ export class SessionTools {
 		if (toolNames.includes("goal") && !this.#toolRegistry.has("goal")) {
 			const goalRegistration = this.#ensureGoalRegistered?.();
 			if (goalRegistration) await untilAborted(signal, goalRegistration);
+		}
+		if (toolNames.includes("orchestrate") && !this.#toolRegistry.has("orchestrate")) {
+			const orchestrateRegistration = this.#ensureOrchestrateRegistered?.();
+			if (orchestrateRegistration) {
+				const registered = (await untilAborted(signal, orchestrateRegistration)) === true;
+				if (registered) this.#builtInToolNames.add("orchestrate");
+			}
 		}
 		const selectedTools = toolNames.flatMap(name => {
 			const tool = this.#toolRegistry.get(name);

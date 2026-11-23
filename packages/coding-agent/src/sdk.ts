@@ -233,6 +233,7 @@ import { AgentOutputManager } from "./task/output-manager";
 import { wrapStreamFnWithProviderConcurrency } from "./task/provider-concurrency";
 import { sessionDelegationBias } from "./task/prompt-policy";
 import { isScoutSpawnable } from "./task/spawn-policy";
+import { canSpawnAtDepth } from "./task/types";
 import type { StructuredSubagentSchemaMode } from "@marsai-org/tui/tools/task";
 import {
 	AUTO_THINKING,
@@ -361,6 +362,7 @@ import { cfgTtsr } from "./export/ttsr-settings";
 import { cfgDisabledProviders, cfgEnabledModels, cfgEnabledProviders, cfgModelRoles } from "./config/model-settings";
 import { cfgEditRecoverInlineEdits } from "./edit/settings";
 import { cfgGoalEnabled } from "./goals/settings";
+import { cfgOrchestratorEnabled } from "./orchestrator/settings";
 import {
 	cfgImagesBlockImages,
 	cfgStartupQuiet,
@@ -384,7 +386,13 @@ import {
 	cfgSnapcompactToolResults,
 	cfgWorkspaceAdditionalDirectories,
 } from "./session/context-settings";
-import { cfgTaskBatch, cfgTaskDisabledAgents, cfgTaskEager, cfgTaskMaxConcurrency } from "./task/settings";
+import {
+	cfgTaskBatch,
+	cfgTaskDisabledAgents,
+	cfgTaskEager,
+	cfgTaskMaxConcurrency,
+	cfgTaskMaxRecursionDepth,
+} from "./task/settings";
 
 /** Agent-level tool-call switches, snapshotted by the agent loop per prompt run. */
 const cfgToolCallSwitches = combine({
@@ -3537,6 +3545,39 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 			return goalRegistration;
 		};
 
+		let orchestrateRegistration: Promise<boolean> | undefined;
+		const ensureOrchestrateRegistered = (): Promise<boolean> => {
+			if (toolRegistry.has("orchestrate")) return Promise.resolve(builtInRegistryToolNames.has("orchestrate"));
+			if (
+				restrictToolNames ||
+				!cfgOrchestratorEnabled.get(settings) ||
+				!canSpawnAtDepth(cfgTaskMaxRecursionDepth.get(settings), toolSession.taskDepth ?? 0)
+			) {
+				return Promise.resolve(false);
+			}
+			orchestrateRegistration ??= (async () => {
+				const orchestrateTool = await logger.time(
+					"createTools:orchestrate:session",
+					BUILTIN_TOOLS.orchestrate,
+					toolSession,
+				);
+				if (!orchestrateTool || toolRegistry.has("orchestrate")) {
+					return builtInRegistryToolNames.has("orchestrate");
+				}
+				const nativeOrchestrate = wrapToolWithMetaNotice(orchestrateTool);
+				toolRegistry.set(
+					orchestrateTool.name,
+					new ExtensionToolWrapper(nativeOrchestrate, extensionRunner) as Tool,
+				);
+				builtInRegistryToolNames.add(orchestrateTool.name);
+				nativeToolsByName.set(orchestrateTool.name, nativeOrchestrate);
+				return true;
+			})().finally(() => {
+				orchestrateRegistration = undefined;
+			});
+			return orchestrateRegistration;
+		};
+
 		// `tools.xdev` flips allocate or release the `xd://` state createTools builds
 		// over the canonical map; the session re-partitions on its next apply. Like
 		// createTools, mounting needs a built-in `write` transport.
@@ -3577,7 +3618,11 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 					removed.push(name);
 					continue;
 				}
-				if (!planned.has(name) || (registered && (isBuiltIn(name) || nativeToolsByName.has(name)))) continue;
+				if (
+					(!planned.has(name) && !(name === "orchestrate" && !restrictToolNames && plan.isAllowed(name))) ||
+					(registered && (isBuiltIn(name) || nativeToolsByName.has(name)))
+				)
+					continue;
 				const tool = await logger.time(`createTools:${name}:settings`, BUILTIN_TOOLS[name], toolSession);
 				if (!tool) continue;
 				const native = wrapToolWithMetaNotice(tool);
@@ -3591,7 +3636,8 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 					? explicitToolNames.has(name) ||
 						SESSION_MANAGED_BUILTIN_TOOL_NAMES.includes(name) ||
 						name === "checkpoint" ||
-						name === "rewind"
+						name === "rewind" ||
+						name === "orchestrate"
 					: native.hidden !== true;
 				added.push({ name, builtIn: true, activate });
 			}
@@ -4626,6 +4672,7 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 				toolSession.pendingFullWriteDescription = enabled ? true : undefined;
 			},
 			ensureGoalRegistered,
+			ensureOrchestrateRegistered,
 			reconcileSettingsGatedTools,
 			getMcpServerInstructions: mcpManager
 				? () => {

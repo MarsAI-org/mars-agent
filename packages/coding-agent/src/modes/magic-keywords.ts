@@ -86,6 +86,15 @@ export const MAGIC_KEYWORDS = [
 		notice: renderOrchestrateNotice,
 	},
 	{
+		id: "swarm",
+		word: "swarm",
+		hue: [150, 280],
+		label: "Swarm Keyword",
+		description: "Let standalone swarm append its hidden multi-agent orchestration notice",
+		requires: ["task"],
+		notice: renderOrchestrateNotice,
+	},
+	{
 		id: "workflow",
 		word: "workflowz",
 		hue: [30, 150],

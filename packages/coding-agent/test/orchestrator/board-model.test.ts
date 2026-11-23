@@ -2,8 +2,9 @@
  * BoardModel folds engine events into pane state.
  *
  * These tests drive it with synthetic events, so they pin the mapping from the
- * engine's vocabulary to what a pane shows — including the cases that used to
- * be invisible (merge phase, isolation branch, failure detail).
+ * engine's vocabulary to what a pane shows — including live output/usage/branch
+ * events, dynamic task assignment metadata, frozen terminal timers, and timer
+ * reset across sequential tasks on the same worker.
  */
 
 import { describe, expect, test } from "bun:test";
@@ -20,6 +21,7 @@ const PLAN: OrchestratorPlan = {
 	tasks: [
 		{ id: "t1", title: "Build UI", description: "d", dependencies: [], targetFiles: ["src/ui.ts"], agent: "w1" },
 		{ id: "t2", title: "Build API", description: "d", dependencies: [], targetFiles: ["src/api.ts"], agent: "w2" },
+		{ id: "t3", title: "Wire Auth", description: "d", dependencies: ["t1"], targetFiles: ["src/auth.ts"] },
 	],
 };
 
@@ -50,7 +52,7 @@ describe("BoardModel", () => {
 		expect(m.snapshot()[0]?.elapsedMs).toBe(3_000);
 	});
 
-	test("the elapsed timer does not restart on a later state change", () => {
+	test("the elapsed timer does not restart on a later non-terminal state change", () => {
 		let clock = 1_000;
 		const m = model(() => clock);
 		m.apply({ type: "worker_state", workerId: "w1", taskId: "t1", state: "running" });
@@ -58,6 +60,58 @@ describe("BoardModel", () => {
 		m.apply({ type: "worker_state", workerId: "w1", taskId: "t1", state: "verifying" });
 		clock = 5_000;
 		expect(m.snapshot()[0]?.elapsedMs).toBe(4_000);
+	});
+
+	test("freezes elapsedMs when a worker reaches a terminal state and resets when it starts a new task", () => {
+		let clock = 1_000;
+		const m = model(() => clock);
+		m.apply({ type: "worker_state", workerId: "w1", taskId: "t1", state: "running" });
+		clock = 3_500;
+		m.apply({ type: "worker_state", workerId: "w1", taskId: "t1", state: "completed" });
+		expect(m.snapshot()[0]?.elapsedMs).toBe(2_500);
+
+		// Clock advances while w1 is completed; elapsedMs must stay frozen at 2500.
+		clock = 9_000;
+		expect(m.snapshot()[0]?.elapsedMs).toBe(2_500);
+
+		// w1 starts a second task t3 at clock=10_000; timer resets and taskTitle/targetFiles update to t3.
+		clock = 10_000;
+		m.apply({ type: "worker_state", workerId: "w1", taskId: "t3", state: "running" });
+		clock = 11_200;
+		const pane = m.snapshot()[0];
+		expect(pane?.taskId).toBe("t3");
+		expect(pane?.taskTitle).toBe("Wire Auth");
+		expect(pane?.targetFiles).toEqual(["src/auth.ts"]);
+		expect(pane?.elapsedMs).toBe(1_200);
+	});
+
+	test("folds worker_output, worker_usage, worker_branch, task_retry, and task_state events", () => {
+		const m = model();
+		m.apply({ type: "task_state", taskId: "t3", from: "pending", to: "running", workerId: "w1" });
+		expect(m.snapshot()[0]?.taskTitle).toBe("Wire Auth");
+		expect(m.snapshot()[0]?.targetFiles).toEqual(["src/auth.ts"]);
+
+		m.apply({ type: "worker_output", workerId: "w1", taskId: "t3", line: "compiling auth.ts" });
+		m.apply({
+			type: "worker_usage",
+			workerId: "w1",
+			taskId: "t3",
+			usage: { inputTokens: 300, outputTokens: 150, requests: 1 },
+		});
+		m.apply({ type: "worker_branch", workerId: "w1", taskId: "t3", branchName: "mars/task/t3" });
+		m.apply({
+			type: "task_retry",
+			taskId: "t3",
+			workerId: "w1",
+			attempt: 1,
+			maxRetries: 2,
+			reason: "check-1 failed",
+		});
+
+		const pane = m.snapshot()[0];
+		expect(pane?.tokens).toBe(450);
+		expect(pane?.branchName).toBe("mars/task/t3");
+		expect(pane?.output).toEqual(["compiling auth.ts", "retry 1/2: check-1 failed"]);
 	});
 
 	test("an integration event moves the pane to merging and records the branch", () => {

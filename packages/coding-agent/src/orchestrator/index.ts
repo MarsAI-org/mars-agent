@@ -7,14 +7,19 @@
  */
 
 export * from "./types";
+export * from "./board-model";
 export * from "./budget";
 export * from "./engine";
+export * from "./git-integrator";
 export * from "./lease-manager";
 export * from "./message-bus";
+export * from "./mode";
 export * from "./native-runner";
 export * from "./permissions";
 export * from "./router";
+export * from "./run-store";
 export * from "./settings";
+export * from "./spec-loader";
 export * from "./task-board";
-export * from "./worker-session";
 export * from "./verifier";
+export * from "./worker-session";

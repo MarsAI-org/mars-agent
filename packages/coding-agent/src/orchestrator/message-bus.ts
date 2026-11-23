@@ -71,7 +71,7 @@ export function parseBusBody(body: string): { kind: OrchestratorMessageKind; bod
 
 /** Typed message log: the authoritative record the UI and replay artifacts read. */
 export class OrchestratorMessageLog {
-	readonly #messages: OrchestratorMessage[] = [];
+	readonly #records: OrchestratorMessage[] = [];
 
 	/** Record a message and deliver it; the stored record gets the real delivery status. */
 	async send(
@@ -84,23 +84,29 @@ export class OrchestratorMessageLog {
 			ts: Date.now(),
 			status: "sent",
 		};
-		this.#messages.push(pending);
-		const receipt = await transport.send(pending);
+		const index = this.#records.push(pending) - 1;
+		let delivered = false;
+		try {
+			const receipt = await transport.send(pending);
+			delivered = receipt.delivered;
+		} catch {
+			delivered = false;
+		}
 		const settled: OrchestratorMessage = {
 			...pending,
-			status: receipt.delivered ? "delivered" : "failed",
+			status: delivered ? "delivered" : "failed",
 		};
-		this.#messages[this.#messages.indexOf(pending)] = settled;
+		this.#records[index] = settled;
 		return settled;
 	}
 
 	all(): readonly OrchestratorMessage[] {
-		return this.#messages;
+		return [...this.#records];
 	}
 
 	/** Messages between two workers, in send order (either direction). */
 	between(a: string, b: string): readonly OrchestratorMessage[] {
-		return this.#messages.filter(message => {
+		return this.#records.filter(message => {
 			const direct = (message.from === a && message.to === b) || (message.from === b && message.to === a);
 			const broadcast = message.to === "all" && (message.from === a || message.from === b);
 			return direct || broadcast;

@@ -5,6 +5,7 @@ import { cfgCompactionExperimentalContextManagement } from "../session/context-s
 import { cfgEvalJs, cfgEvalPy } from "../eval/settings";
 import { cfgIdaAvailable } from "../ida/install";
 import { cfgLspEnabled } from "../lsp/settings";
+import { cfgOrchestratorEnabled } from "../orchestrator/settings";
 import { cfgTaskMaxRecursionDepth } from "../task/settings";
 
 const EMPTY_STRING_ARRAY: string[] = [];
@@ -1035,6 +1036,7 @@ export const cfgBuiltinToolGates = combine({
 	ida: cfgIdaAvailable,
 	launch: cfgLaunchEnabled,
 	lsp: cfgLspEnabled,
+	orchestrator: cfgOrchestratorEnabled,
 	security: cfgSecurityEnabled,
 	taskMaxRecursionDepth: cfgTaskMaxRecursionDepth,
 	todo: cfgTodoEnabled,

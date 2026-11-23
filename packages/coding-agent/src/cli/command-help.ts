@@ -149,6 +149,10 @@ export const streamHelp = {
 	description: "Broadcast local Mars session screens and chat to your public live channel",
 } satisfies CommandMetadata;
 
+export const swarmHelp = {
+	description: "Validate, run, inspect, and resume declarative multi-agent swarm workflows",
+} satisfies CommandMetadata;
+
 export const tinyModelsHelp = {
 	description: "Download tiny local models (session titles, memory, word completion)",
 } satisfies CommandMetadata;

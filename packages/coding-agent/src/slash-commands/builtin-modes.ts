@@ -44,7 +44,17 @@ import { formatSlowModeResetClock } from "../session/anthropic-slow-mode";
 import { cfgExtendedContext } from "../session/context-settings";
 import { cfgGoalEnabled } from "../goals/settings";
 import { cfgPlanEnabled } from "../plan-mode/settings";
-import { applyOrchestratorCommand, describeOrchestratorMode } from "../orchestrator/mode";
+import { OrchestratorBoardComponent, type PaneState, type WorkerPane } from "@marsai-org/tui/apps/orchestrator-board";
+import {
+	applyOrchestratorCommand,
+	describeOrchestratorMode,
+	MAX_ORCHESTRATOR_WORKERS,
+	setOrchestratorMode,
+} from "../orchestrator/mode";
+import { buildResumePlan, getActiveSwarmRun, type PersistedSwarmRun, SwarmRunStore } from "../orchestrator/run-store";
+import { cfgOrchestratorMaxConcurrency } from "../orchestrator/settings";
+import { loadSwarmSpec, specToOrchestratorPlan } from "../orchestrator/spec-loader";
+import type { OrchestratorPlan } from "../orchestrator/types";
 
 export function refreshStatusLine(ctx: InteractiveModeContext): void {
 	ctx.statusLine.invalidate();
@@ -274,6 +284,226 @@ export function formatTokenCount(value: number): string {
 	return value.toLocaleString();
 }
 
+function panesFromPersistedRun(run: PersistedSwarmRun): WorkerPane[] {
+	return run.plan.tasks.map((task, index) => {
+		const record = run.tasks[task.id];
+		const workerId = record?.workerId ?? task.agent ?? `worker-${index + 1}`;
+		const state: PaneState =
+			record?.state === "completed"
+				? "completed"
+				: record?.state === "failed"
+					? "failed"
+					: record?.state === "cancelled"
+						? "cancelled"
+						: record?.state === "running"
+							? "running"
+							: "pending";
+		const output = record?.output
+			? record.output
+					.split(/\r?\n/)
+					.map(line => line.trimEnd())
+					.filter(line => line.length > 0)
+			: undefined;
+		return {
+			workerId,
+			label: workerId,
+			state,
+			taskId: task.id,
+			taskTitle: task.title,
+			targetFiles: task.targetFiles,
+			...(record?.usage?.totalTokens === undefined ? {} : { tokens: record.usage.totalTokens }),
+			...(record?.usage?.wallClockMs === undefined ? {} : { elapsedMs: record.usage.wallClockMs }),
+			...(output === undefined ? {} : { output }),
+			...(record?.branchName === undefined ? {} : { branchName: record.branchName }),
+			...(record?.error === undefined ? {} : { error: record.error }),
+		};
+	});
+}
+
+function formatSwarmPlanPayload(plan: OrchestratorPlan): string {
+	const payload = {
+		goal: plan.goal,
+		tasks: plan.tasks.map(task => ({
+			id: task.id,
+			title: task.title,
+			description: task.description,
+			...(task.dependencies.length > 0 ? { dependencies: [...task.dependencies] } : {}),
+			...(task.targetFiles.length > 0 ? { targetFiles: [...task.targetFiles] } : {}),
+			...(task.agent === undefined ? {} : { agent: task.agent }),
+		})),
+		workers: plan.workers.map(worker => ({
+			id: worker.id,
+			roleLabel: worker.roleLabel,
+			...(worker.agent === undefined ? {} : { agent: worker.agent }),
+			...(worker.model === undefined ? {} : { model: worker.model }),
+			...(worker.requestedTools === undefined ? {} : { tools: [...worker.requestedTools] }),
+			isolated: worker.isolated,
+		})),
+	};
+	return JSON.stringify(payload, null, 2);
+}
+
+async function handleSwarmTuiCommand(
+	command: ParsedSlashCommand,
+	runtime: TuiSlashCommandRuntime,
+): Promise<{ prompt: string } | undefined> {
+	const [verb = "", ...rest] = command.args.trim().split(/\s+/).filter(Boolean);
+	const action = verb.toLowerCase();
+
+	if (action === "board") {
+		const requestedPlanId = rest[0];
+		const liveRun = getActiveSwarmRun(requestedPlanId);
+		let persistedRun: PersistedSwarmRun | null = null;
+
+		if (!liveRun) {
+			const store = new SwarmRunStore();
+			if (requestedPlanId) {
+				persistedRun = await store.loadRun(requestedPlanId);
+			} else {
+				const recent = await store.listRuns(1);
+				if (recent[0]) {
+					persistedRun = await store.loadRun(recent[0].planId);
+				}
+			}
+		}
+
+		if (!liveRun && !persistedRun) {
+			runtime.ctx.showStatus("No active or persisted swarm run to display.");
+			clearSubmittedText(runtime);
+			return;
+		}
+
+		const staticPanes = persistedRun ? panesFromPersistedRun(persistedRun) : [];
+		const goal = liveRun?.goal ?? persistedRun?.goal ?? "Swarm Run";
+
+		const handleRef: { component?: OrchestratorBoardComponent; overlay?: { hide(): void }; closed: boolean } = {
+			closed: false,
+		};
+		const closeOverlay = (): void => {
+			if (handleRef.closed) return;
+			handleRef.closed = true;
+			handleRef.component?.dispose();
+			handleRef.overlay?.hide();
+		};
+
+		const component = new OrchestratorBoardComponent(
+			runtime.ctx.ui,
+			{ goal },
+			{
+				snapshot: () => (liveRun ? liveRun.getSnapshot() : staticPanes),
+				...(liveRun?.cancelWorker ? { cancelWorker: workerId => liveRun.cancelWorker?.(workerId) } : {}),
+				stopAll: () => {
+					liveRun?.stopAll();
+					closeOverlay();
+				},
+				detach: () => {
+					closeOverlay();
+				},
+			},
+		);
+		handleRef.component = component;
+
+		const overlay = runtime.ctx.ui.showOverlay(component, {
+			anchor: "top-left",
+			width: "100%",
+			maxHeight: "100%",
+			margin: 0,
+			fullscreen: true,
+			mouseTracking: false,
+		});
+		handleRef.overlay = overlay;
+		runtime.ctx.ui.setFocus?.(component);
+		void component.run();
+		clearSubmittedText(runtime);
+		return;
+	}
+
+	if (action === "run") {
+		const fileArg = rest.join(" ").trim();
+		if (!fileArg) {
+			runtime.ctx.showStatus("Usage: /swarm run <path.yaml|json>");
+			clearSubmittedText(runtime);
+			return;
+		}
+		const baseCwd =
+			(runtime.ctx.session as { cwd?: string }).cwd ?? runtime.ctx.sessionManager?.getCwd?.() ?? process.cwd();
+		const specPath = path.resolve(baseCwd, fileArg);
+		try {
+			const spec = await loadSwarmSpec(specPath);
+			const plan = specToOrchestratorPlan(spec);
+			const modeResult = await setOrchestratorMode(runtime.ctx.settings, runtime.ctx.session, true);
+			if (!modeResult.enabled) {
+				runtime.ctx.showStatus(modeResult.message);
+				clearSubmittedText(runtime);
+				return;
+			}
+			if (spec.maxConcurrency !== undefined) {
+				cfgOrchestratorMaxConcurrency.set(
+					runtime.ctx.settings,
+					Math.min(MAX_ORCHESTRATOR_WORKERS, Math.max(1, spec.maxConcurrency)),
+				);
+			}
+			runtime.ctx.showStatus(
+				`Loaded swarm spec "${spec.goal}" (${plan.tasks.length} task(s), ${plan.workers.length} worker(s)).`,
+			);
+			clearSubmittedText(runtime);
+			return {
+				prompt: `Execute the validated swarm plan from ${specPath} using the \`orchestrate\` tool:\n\n\`\`\`json\n${formatSwarmPlanPayload(plan)}\n\`\`\``,
+			};
+		} catch (error) {
+			const detail = error instanceof Error ? error.message : String(error);
+			runtime.ctx.showError(`Failed to load swarm spec: ${detail}`);
+			clearSubmittedText(runtime);
+			return;
+		}
+	}
+
+	if (action === "resume") {
+		const planId = rest[0]?.trim();
+		if (!planId) {
+			runtime.ctx.showStatus("Usage: /swarm resume <planId>");
+			clearSubmittedText(runtime);
+			return;
+		}
+		try {
+			const store = new SwarmRunStore();
+			const run = await store.loadRun(planId);
+			if (!run) {
+				runtime.ctx.showError(`Persisted swarm run "${planId}" not found.`);
+				clearSubmittedText(runtime);
+				return;
+			}
+			const resumePlan = buildResumePlan(run);
+			if (!resumePlan) {
+				runtime.ctx.showStatus(`All tasks in swarm run "${planId}" are already completed.`);
+				clearSubmittedText(runtime);
+				return;
+			}
+			const modeResult = await setOrchestratorMode(runtime.ctx.settings, runtime.ctx.session, true);
+			if (!modeResult.enabled) {
+				runtime.ctx.showStatus(modeResult.message);
+				clearSubmittedText(runtime);
+				return;
+			}
+			runtime.ctx.showStatus(`Resuming swarm run "${planId}" (${resumePlan.tasks.length} remaining task(s)).`);
+			clearSubmittedText(runtime);
+			return {
+				prompt: `Resume swarm run "${planId}" by executing its remaining incomplete tasks with the \`orchestrate\` tool:\n\n\`\`\`json\n${formatSwarmPlanPayload(resumePlan)}\n\`\`\``,
+			};
+		} catch (error) {
+			const detail = error instanceof Error ? error.message : String(error);
+			runtime.ctx.showError(`Failed to resume swarm run: ${detail}`);
+			clearSubmittedText(runtime);
+			return;
+		}
+	}
+
+	// The mode owns the toolset swap, so the draft must survive: a user who
+	// typed half a prompt, then toggles the mode, keeps that text.
+	runtime.ctx.showStatus(await applyOrchestratorCommand(runtime.ctx.settings, runtime.ctx.session, command.args));
+	clearSubmittedText(runtime);
+}
+
 export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 	{
 		name: "security",
@@ -412,26 +642,30 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 		},
 	},
 	{
-		name: "orchestrate",
+		name: "swarm",
+		aliases: ["orchestrate"],
 		icon: "action",
-		description: "Toggle orchestrator mode (multi-agent fan-out through the orchestrate tool)",
-		inlineHint: "[on|off|status|mode|workers]",
+		description: "Toggle swarm orchestrator mode, inspect live worker boards, or run declarative swarm specs",
+		inlineHint: "[on|off|status|mode|workers|board|runs|run|resume]",
 		allowArgs: true,
 		subcommands: [
-			{ name: "on", description: "Enable orchestrator mode and expose the orchestrate tool" },
-			{ name: "off", description: "Disable it and drop the orchestrate tool" },
-			{ name: "status", description: "Show the mode, fan-out policy, and worker cap" },
+			{ name: "on", description: "Enable swarm mode and expose the orchestrate tool" },
+			{ name: "off", description: "Disable swarm mode and drop the orchestrate tool" },
+			{ name: "status", description: "Show mode, fan-out policy, worker cap, and active run" },
 			{ name: "mode", description: "Set the fan-out policy", usage: "<auto|single|parallel>" },
 			{ name: "workers", description: "Cap concurrent workers", usage: "<n>" },
+			{ name: "board", description: "Open the live Swarm Board overlay", usage: "[planId]" },
+			{ name: "runs", description: "List recent persisted swarm runs" },
+			{ name: "run", description: "Execute a declarative swarm spec file", usage: "<path.yaml|json>" },
+			{
+				name: "resume",
+				description: "Resume incomplete/failed tasks from a persisted swarm run",
+				usage: "<planId>",
+			},
 		],
 		getTuiAutocompleteDescription: runtime => describeOrchestratorMode(runtime.ctx.settings),
 		handleTui: async (command, runtime) => {
-			// The mode owns the toolset swap, so the draft must survive: a user who
-			// typed half a prompt, then toggles the mode, keeps that text.
-			runtime.ctx.showStatus(
-				await applyOrchestratorCommand(runtime.ctx.settings, runtime.ctx.session, command.args),
-			);
-			clearSubmittedText(runtime);
+			return handleSwarmTuiCommand(command, runtime);
 		},
 	},
 	{

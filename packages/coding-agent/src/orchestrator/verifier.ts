@@ -12,8 +12,10 @@
  * Design reference: ORCHESTRATOR_DESIGN.md, Milestone 3.
  */
 
+import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { ptree } from "@marsai-org/utils";
+import * as vcs from "@marsai-org/natives/vcs";
+import { getWorktreesDir, isEnoent, ptree } from "@marsai-org/utils";
 
 /** One command the verifier runs. */
 export interface VerificationCheck {
@@ -53,33 +55,75 @@ export interface VerificationResult {
 
 /** Runs a check list against a directory. Injected so tests never spawn processes. */
 export interface Verifier {
-	verify(root: string, checks: readonly VerificationCheck[]): Promise<VerificationResult>;
+	verify(root: string, checks: readonly VerificationCheck[], signal?: AbortSignal): Promise<VerificationResult>;
 }
 
 /** Output kept per check; enough to diagnose without flooding the transcript. */
-const OUTPUT_LIMIT = 8_000;
+export const OUTPUT_LIMIT = 8_000;
+
+/** Prefix prepended when check output exceeds `OUTPUT_LIMIT` and is tail-truncated. */
+const TRUNCATED_PREFIX = "[truncated]...\n";
 
 /** Default per-check deadline. */
 const DEFAULT_TIMEOUT_SECONDS = 600;
 
-/** Resolve `check.cwd` and ensure it does not escape `root`. */
-function resolveCheckCwd(root: string, checkCwd: string | undefined): string {
-	const resolvedRoot = path.resolve(root);
-	if (checkCwd === undefined) return resolvedRoot;
-	const resolvedCwd = path.resolve(resolvedRoot, checkCwd);
-	const rel = path.relative(resolvedRoot, resolvedCwd);
+/**
+ * Resolve the canonical real path of `targetPath`, falling back to resolving
+ * the closest existing ancestor when the leaf does not exist yet.
+ */
+async function resolveRealPath(targetPath: string): Promise<string> {
+	const resolved = path.resolve(targetPath);
+	try {
+		return await fs.realpath(resolved);
+	} catch (error) {
+		if (!isEnoent(error)) throw error;
+		const parent = path.dirname(resolved);
+		if (parent === resolved) return resolved;
+		const realParent = await resolveRealPath(parent);
+		return path.join(realParent, path.basename(resolved));
+	}
+}
+
+/**
+ * Resolve `check.cwd` and ensure it does not escape `root`, including through
+ * symlinks inside the verification root.
+ */
+export async function resolveCheckCwd(root: string, checkCwd: string | undefined): Promise<string> {
+	const realRoot = await resolveRealPath(root);
+	if (checkCwd === undefined) return realRoot;
+	const candidate = path.resolve(realRoot, checkCwd);
+	const realCwd = await resolveRealPath(candidate);
+	const rel = path.relative(realRoot, realCwd);
 	if (rel.startsWith("..") || path.isAbsolute(rel)) {
 		throw new Error(`Verification check cwd escapes root: ${checkCwd}`);
 	}
-	return resolvedCwd;
+	return realCwd;
+}
+
+/** Keep the tail of combined output so error summaries at the end survive. */
+function truncateOutput(combined: string): string {
+	if (combined.length <= OUTPUT_LIMIT) return combined;
+	return `${TRUNCATED_PREFIX}${combined.slice(-OUTPUT_LIMIT)}`;
 }
 
 /** Run one shell command, capturing combined output under a deadline. */
-async function runCheck(root: string, check: VerificationCheck): Promise<CheckResult> {
+async function runCheck(root: string, check: VerificationCheck, signal?: AbortSignal): Promise<CheckResult> {
 	const startedAt = Date.now();
+	if (signal?.aborted) {
+		return {
+			id: check.id,
+			command: check.command,
+			ok: false,
+			exitCode: null,
+			output: "",
+			durationMs: 0,
+			failure: "aborted",
+		};
+	}
+
 	let cwd: string;
 	try {
-		cwd = resolveCheckCwd(root, check.cwd);
+		cwd = await resolveCheckCwd(root, check.cwd);
 	} catch (error) {
 		return {
 			id: check.id,
@@ -92,20 +136,34 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
 		};
 	}
 
+	if (signal?.aborted) {
+		return {
+			id: check.id,
+			command: check.command,
+			ok: false,
+			exitCode: null,
+			output: "",
+			durationMs: Date.now() - startedAt,
+			failure: "aborted",
+		};
+	}
+
 	const timeoutMs = (check.timeoutSeconds ?? DEFAULT_TIMEOUT_SECONDS) * 1_000;
 	const isWindows = process.platform === "win32";
 	const cmd = isWindows ? ["cmd", "/c", check.command] : ["sh", "-c", check.command];
 
 	let child: ptree.ChildProcess<"ignore">;
 	try {
+		// Use ptree's default buffered stderr (32KB tail cap) instead of `stderr: "full"`
+		// so noisy checks cannot accumulate unbounded stderr chunks in memory.
 		child = ptree.spawn(cmd, {
 			cwd,
 			env: { ...process.env, ...check.env },
 			stdin: "ignore",
-			stderr: "full",
 			detached: true,
 			subreaper: true,
 			timeout: timeoutMs,
+			signal,
 		});
 	} catch (error) {
 		return {
@@ -120,8 +178,8 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
 	}
 
 	try {
-		const result = await child.wait({ allowNonZero: true, allowAbort: true, stderr: "full" });
-		const combined = `${result.stdout}${result.stderr}`.slice(0, OUTPUT_LIMIT);
+		const result = await child.wait({ allowNonZero: true, allowAbort: true, stderr: "buffer" });
+		const combined = truncateOutput(`${result.stdout}${result.stderr}`);
 		if (result.exitError instanceof ptree.TimeoutError) {
 			return {
 				id: check.id,
@@ -133,7 +191,7 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
 				failure: `timed out after ${timeoutMs / 1000}s`,
 			};
 		}
-		if (result.exitError?.aborted) {
+		if (result.exitError?.aborted || signal?.aborted) {
 			return {
 				id: check.id,
 				command: check.command,
@@ -141,7 +199,7 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
 				exitCode: null,
 				output: combined,
 				durationMs: Date.now() - startedAt,
-				failure: result.exitError.message,
+				failure: signal?.aborted ? "aborted" : (result.exitError?.message ?? "aborted"),
 			};
 		}
 		return {
@@ -160,7 +218,7 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
 			exitCode: null,
 			output: "",
 			durationMs: Date.now() - startedAt,
-			failure: error instanceof Error ? error.message : String(error),
+			failure: signal?.aborted ? "aborted" : error instanceof Error ? error.message : String(error),
 		};
 	}
 }
@@ -173,10 +231,22 @@ async function runCheck(root: string, check: VerificationCheck): Promise<CheckRe
  * worker from burning the whole budget on checks that cannot pass.
  */
 export class ShellVerifier implements Verifier {
-	async verify(root: string, checks: readonly VerificationCheck[]): Promise<VerificationResult> {
+	async verify(root: string, checks: readonly VerificationCheck[], signal?: AbortSignal): Promise<VerificationResult> {
 		const results: CheckResult[] = [];
 		for (const check of checks) {
-			const result = await runCheck(root, check);
+			if (signal?.aborted) {
+				results.push({
+					id: check.id,
+					command: check.command,
+					ok: false,
+					exitCode: null,
+					output: "",
+					durationMs: 0,
+					failure: "aborted",
+				});
+				return { ok: false, checks: results, firstFailure: check.id };
+			}
+			const result = await runCheck(root, check, signal);
 			results.push(result);
 			if (!result.ok) {
 				return { ok: false, checks: results, firstFailure: result.id };
@@ -188,8 +258,50 @@ export class ShellVerifier implements Verifier {
 
 /** Verifier that accepts everything; the default when no checks are configured. */
 export class NoopVerifier implements Verifier {
-	async verify(_root: string, _checks: readonly VerificationCheck[]): Promise<VerificationResult> {
+	async verify(
+		_root: string,
+		_checks: readonly VerificationCheck[],
+		_signal?: AbortSignal,
+	): Promise<VerificationResult> {
 		return { ok: true, checks: [] };
+	}
+}
+
+/**
+ * Run `checks` against `branchName` in an isolated temporary detached worktree.
+ *
+ * Used when a worker's isolated worktree was already cleaned up or when a
+ * branch must be verified without disturbing the primary checkout. The
+ * temporary worktree is always removed before returning.
+ */
+export async function verifyBranchInTempWorktree(
+	repoRoot: string,
+	branchName: string,
+	checks: readonly VerificationCheck[],
+	verifier: Verifier,
+	signal?: AbortSignal,
+): Promise<VerificationResult> {
+	const repo = vcs.git(repoRoot);
+	if (!repo) {
+		throw new Error(`Not a git repository: ${repoRoot}`);
+	}
+
+	const worktreesBase = getWorktreesDir();
+	await fs.mkdir(worktreesBase, { recursive: true });
+	const tempDir = await fs.mkdtemp(path.join(worktreesBase, "verify-"));
+	try {
+		await repo.worktreeAdd(tempDir, branchName, { detach: true, clone: false }, signal);
+		return await verifier.verify(tempDir, checks, signal);
+	} finally {
+		try {
+			const removed = await repo.worktreeRemove(tempDir, true);
+			if (!removed) {
+				await fs.rm(tempDir, { recursive: true, force: true });
+			}
+		} catch {
+			await fs.rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+		}
+		await repo.worktreePrune().catch(() => undefined);
 	}
 }
 

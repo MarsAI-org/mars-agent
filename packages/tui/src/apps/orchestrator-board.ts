@@ -9,13 +9,17 @@
  *
  * Keys: `tab`/`shift+tab` next/previous worker, `1`–`9` jump to a worker,
  * `l` toggle the wide/narrow layout, `enter` expand the focused pane's output,
- * `q`/`esc`/`ctrl+c` quit.
+ * `c` cancel the focused worker (when the host supports it). When the host
+ * provides `detach`, `q`/`esc` close the board and leave the swarm running,
+ * while `X`/`ctrl+c` stop the whole run. Without `detach`, `q`/`esc`/`ctrl+c`
+ * all stop the run.
  */
 
 import { formatDuration } from "@marsai-org/utils";
 import chalk from "@marsai-org/utils/chalk";
 import { formatKeyHint, formatKeyHints } from "../app-keybindings";
 import { matchesKey } from "../keys";
+import { PREVIEW_LIMITS, sanitizeDisplayWarning, shortenPath, TRUNCATE_LENGTHS } from "../render/render-utils";
 import { ProcessTerminal } from "../terminal";
 import { type Component, TUI } from "../tui";
 import { truncateToWidth } from "../utils";
@@ -37,6 +41,8 @@ export interface WorkerPane {
 	readonly workerId: string;
 	/** Role label, e.g. "frontend". Shown as the pane title. */
 	readonly label: string;
+	/** Optional alias for `label` when snapshots pass `roleLabel` directly. */
+	readonly roleLabel?: string;
 	readonly state: PaneState;
 	/** Task currently assigned, when one is running. */
 	readonly taskId?: string;
@@ -52,6 +58,10 @@ export interface WorkerPane {
 	readonly branchName?: string;
 	/** Why the worker failed, when it did. */
 	readonly error?: string;
+	/** Tool the worker is running right now, when known. */
+	readonly currentTool?: string;
+	/** Execution attempts so far; shown as a retry badge above one. */
+	readonly attempts?: number;
 }
 
 export interface OrchestratorBoardOptions {
@@ -71,6 +81,8 @@ export interface OrchestratorBoardHost {
 	cancelWorker?(workerId: string): void;
 	/** Stop the whole run and close the board. */
 	stopAll(): void;
+	/** Close the board but leave the run going. When present, `q`/`esc` detach and only `X`/`ctrl+c` stop. */
+	detach?(): void;
 }
 
 const DEFAULT_TICK_MS = 250;
@@ -79,9 +91,16 @@ const TILE_MIN_COLUMNS = 100;
 /** Most panes to tile at once; beyond this the grid is unreadable. */
 const MAX_TILED_PANES = 6;
 /** Output lines shown in a collapsed pane. */
-const PREVIEW_LINES = 4;
+const PREVIEW_LINES = PREVIEW_LIMITS.COLLAPSED_LINES + 1;
 /** Output lines shown in an expanded pane. */
-const EXPANDED_LINES = 18;
+const EXPANDED_LINES = PREVIEW_LIMITS.EXPANDED_LINES + 6;
+/** Most target files named on a pane's scope line before it collapses to `+N`. */
+const SCOPE_FILES_SHOWN = 1;
+
+/** One display line: control characters, tabs, and home paths neutralized. */
+function cleanLine(value: string | undefined): string {
+	return value === undefined ? "" : sanitizeDisplayWarning(value);
+}
 
 /** Glyph and tone for each state, so a glance reads as a status. */
 function stateMark(state: PaneState): { glyph: string; paint: (text: string) => string } {
@@ -134,9 +153,14 @@ export class OrchestratorBoardComponent implements Component {
 	}
 
 	run(): Promise<void> {
-		this.#refresh();
-		this.#tick = setInterval(() => this.#refresh(), this.#options.tickMs ?? DEFAULT_TICK_MS);
+		this.refresh();
+		this.#tick = setInterval(() => this.refresh(), this.#options.tickMs ?? DEFAULT_TICK_MS);
 		return this.#done.promise;
+	}
+
+	/** Pull a fresh snapshot from the host and repaint. Hosts call this to push an update between ticks. */
+	refresh(): void {
+		this.#refresh();
 	}
 
 	#refresh(): void {
@@ -176,10 +200,26 @@ export class OrchestratorBoardComponent implements Component {
 			this.#ui.requestRender();
 			return;
 		}
-		if (data === "q" || matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) {
+		if (data === "c") {
+			const target = panes[this.#focused];
+			if (target) this.#host.cancelWorker?.(target.workerId);
+			this.#ui.requestRender();
+			return;
+		}
+		if (this.#host.detach) {
+			if (data === "q" || matchesKey(data, "escape")) {
+				this.#host.detach();
+				this.#close();
+				return;
+			}
+			if (data === "X" || matchesKey(data, "ctrl+c")) {
+				this.#host.stopAll();
+				this.#close();
+				return;
+			}
+		} else if (data === "q" || data === "X" || matchesKey(data, "escape") || matchesKey(data, "ctrl+c")) {
 			this.#host.stopAll();
-			this.dispose();
-			this.#done.resolve();
+			this.#close();
 			return;
 		}
 		// Digit jump: 1..9 selects the nth worker.
@@ -190,6 +230,11 @@ export class OrchestratorBoardComponent implements Component {
 				this.#ui.requestRender();
 			}
 		}
+	}
+
+	#close(): void {
+		this.dispose();
+		this.#done.resolve();
 	}
 
 	dispose(): void {
@@ -213,17 +258,19 @@ export class OrchestratorBoardComponent implements Component {
 		const tally = [`${done}/${total} done`];
 		if (failed > 0) tally.push(chalk.red(`${failed} failed`));
 		const right = chalk.dim(tally.join(" · "));
-		const prefix = ` ${chalk.bold("orchestrate")} ${chalk.dim("·")} `;
+		const prefix = ` ${chalk.bold("swarm")} ${chalk.dim("·")} `;
 		const goalBudget = Math.max(1, width - Bun.stringWidth(prefix) - Bun.stringWidth(right) - 2);
-		const left = `${prefix}${truncateToWidth(this.#options.goal, goalBudget)}`;
+		const left = `${prefix}${truncateToWidth(cleanLine(this.#options.goal), goalBudget)}`;
 		const pad = Math.max(1, width - Bun.stringWidth(left) - Bun.stringWidth(right) - 1);
 		return truncateToWidth(`${left}${" ".repeat(pad)}${right}`, width);
 	}
 
 	#footer(width: number): string {
+		const cancel = this.#host.cancelWorker ? ` · ${formatKeyHint("c")} cancel` : "";
+		const leave = this.#host.detach ? `${formatKeyHint("q")} detach · X stop` : `${formatKeyHint("q")} quit`;
 		const hints = this.#wide
-			? `${formatKeyHints(["tab", "enter", "l", "q"])} switch · expand · layout · quit`
-			: `${formatKeyHint("tab")} switch · ${formatKeyHint("q")} quit`;
+			? `${formatKeyHints(["tab", "enter", "l"])} switch · expand · layout${cancel} · ${leave}`
+			: `${formatKeyHint("tab")} switch${cancel} · ${leave}`;
 		return truncateToWidth(chalk.dim(` ${hints}`), width);
 	}
 
@@ -281,8 +328,9 @@ export class OrchestratorBoardComponent implements Component {
 		const inner = paneWidth - 2;
 		const { glyph, paint } = stateMark(pane.state);
 
-		const title = `${glyph} ${pane.label}`;
-		const branch = pane.branchName ? ` ${chalk.dim(pane.branchName)}` : "";
+		const retry = pane.attempts !== undefined && pane.attempts > 1 ? ` ${chalk.yellow(`↻${pane.attempts}`)}` : "";
+		const title = `${glyph} ${cleanLine(pane.label || pane.roleLabel || pane.workerId)}${retry}`;
+		const branch = pane.branchName ? ` ${chalk.dim(cleanLine(pane.branchName))}` : "";
 		const top = border("┌") + this.#fit(`${paint(title)}${branch}`, inner) + border("┐");
 
 		const rows: string[] = [top];
@@ -292,26 +340,33 @@ export class OrchestratorBoardComponent implements Component {
 		if (pane.tokens !== undefined) statusBits.push(chalk.dim(`${compactCount(pane.tokens)} tok`));
 		rows.push(border("│") + this.#fit(` ${statusBits.join(chalk.dim(" · "))}`, inner) + border("│"));
 
-		if (pane.taskTitle ?? pane.taskId) {
-			rows.push(border("│") + this.#fit(chalk.dim(` ${pane.taskTitle ?? pane.taskId}`), inner) + border("│"));
+		const taskLabel = cleanLine(pane.taskTitle ?? pane.taskId);
+		if (taskLabel) {
+			rows.push(border("│") + this.#fit(chalk.dim(` ${taskLabel}`), inner) + border("│"));
 		}
 		if (pane.targetFiles && pane.targetFiles.length > 0) {
-			const files =
-				pane.targetFiles.length === 1
-					? pane.targetFiles[0]
-					: `${pane.targetFiles[0]} +${pane.targetFiles.length - 1}`;
+			const shown = pane.targetFiles
+				.slice(0, SCOPE_FILES_SHOWN)
+				.map(file => cleanLine(shortenPath(file)))
+				.join(", ");
+			const more = pane.targetFiles.length - SCOPE_FILES_SHOWN;
+			const files = more > 0 ? `${shown} +${more}` : shown;
 			rows.push(border("│") + this.#fit(chalk.dim(` ${files}`), inner) + border("│"));
 		}
 
+		if (pane.currentTool && pane.state === "running") {
+			rows.push(border("│") + this.#fit(chalk.cyan(` ⚙ ${cleanLine(pane.currentTool)}`), inner) + border("│"));
+		}
 		if (pane.error) {
-			rows.push(border("│") + this.#fit(chalk.red(` ${pane.error}`), inner) + border("│"));
+			rows.push(border("│") + this.#fit(chalk.red(` ${cleanLine(pane.error)}`), inner) + border("│"));
 		}
 
 		const outputHeight = Math.max(0, innerHeight - rows.length);
 		const limit = expanded ? EXPANDED_LINES : PREVIEW_LINES;
 		const tail = (pane.output ?? []).slice(-Math.min(limit, outputHeight));
 		for (const line of tail) {
-			rows.push(border("│") + this.#fit(chalk.dim(` ${line}`), inner) + border("│"));
+			const text = truncateToWidth(cleanLine(line), TRUNCATE_LENGTHS.LONG);
+			rows.push(border("│") + this.#fit(chalk.dim(` ${text}`), inner) + border("│"));
 		}
 
 		while (rows.length < innerHeight) rows.push(border("│") + " ".repeat(inner) + border("│"));
@@ -352,3 +407,6 @@ export async function runOrchestratorBoard(
 		ui.stop();
 	}
 }
+
+/** Preferred name for the board in swarm-facing code. */
+export { OrchestratorBoardComponent as SwarmBoardComponent };

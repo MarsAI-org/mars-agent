@@ -7,8 +7,8 @@
  * engine is never constructed and behavior is identical to a build without it.
  */
 
+import { isAndroid, type PlatformEnvironment } from "@marsai-org/utils/platform";
 import { register } from "../config/registry";
-import { isAndroid } from "@marsai-org/utils/platform";
 import type { Settings } from "../config/settings";
 import type { VerificationCheck } from "./verifier";
 
@@ -178,6 +178,27 @@ export const cfgOrchestratorMaxWallClockMs = register({
 	},
 });
 
+/** Maximum automatic retries for a task whose output fails verification checks. */
+export const cfgOrchestratorMaxRetries = register({
+	id: "orchestrator.maxRetries",
+	protocolDefault: ["rpc", "acp"],
+	type: "number",
+	default: 1,
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Verification Max Retries",
+		description:
+			"Maximum number of automatic retries when a worker's output fails verification checks; 0 disables retries",
+		options: [
+			{ value: "0", label: "0 (no retries)" },
+			{ value: "1", label: "1 retry" },
+			{ value: "2", label: "2 retries" },
+			{ value: "3", label: "3 retries" },
+		],
+	},
+});
+
 /**
  * Shell commands run against a worker's output before its task may settle as
  * completed. Each entry is one command line, executed through `sh -c` in order,
@@ -203,18 +224,61 @@ export const cfgOrchestratorVerificationChecks = register({
 	},
 });
 
+/** Whether repo-local project settings files are trusted to supply verification shell commands. */
+export const cfgOrchestratorAllowProjectVerificationChecks = register({
+	id: "orchestrator.allowProjectVerificationChecks",
+	type: "boolean",
+	default: false,
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Trust Project Verification Checks",
+		description:
+			"Allow project-level settings files to define verification shell commands. Off restricts verification checks to user/global settings.",
+	},
+});
+
+/** Policy when deterministic branch integration hits a git cherry-pick conflict. */
+export const cfgOrchestratorConflictResolution = register({
+	id: "orchestrator.conflictResolution",
+	protocolDefault: ["rpc", "acp"],
+	type: "enum",
+	values: ["none", "integrator-agent"] as const,
+	default: "integrator-agent",
+	ui: {
+		tab: "tasks",
+		group: "Orchestrator",
+		label: "Conflict Resolution",
+		description:
+			"How branch merge conflicts are handled during isolated worker integration (none aborts on conflict, integrator-agent invokes the integrator subagent)",
+		options: [
+			{
+				value: "integrator-agent",
+				label: "Integrator Agent",
+				description: "Invoke the integrator subagent to resolve cherry-pick conflicts",
+			},
+			{
+				value: "none",
+				label: "None",
+				description: "Stop integration on conflict and leave the branch for manual inspection",
+			},
+		],
+	},
+});
+
 /**
  * Map the configured command lines onto the verifier's check records.
  *
  * A blank entry would run `sh -c ""`, which always succeeds and would quietly
- * inflate the sense of safety, so blanks are dropped rather than accepted.
+ * inflate the sense of safety, so blanks are dropped rather than accepted and
+ * remaining checks are numbered sequentially (`check-1`, `check-2`, ...).
  */
 export function resolveOrchestratorVerificationChecks(settings: Settings): VerificationCheck[] {
 	return cfgOrchestratorVerificationChecks
 		.get(settings)
-		.map((command, index) => ({ command: command.trim(), index }))
-		.filter(entry => entry.command.length > 0)
-		.map(entry => ({ id: `check-${entry.index + 1}`, command: entry.command }));
+		.map(command => command.trim())
+		.filter(command => command.length > 0)
+		.map((command, index) => ({ id: `check-${index + 1}`, command }));
 }
 
 /**
@@ -232,9 +296,12 @@ export interface OrchestratorLimits {
 }
 
 /** Read the configured limits and apply the platform-aware narrowing. */
-export function resolveOrchestratorLimits(settings: Settings): OrchestratorLimits {
+export function resolveOrchestratorLimits(
+	settings: Settings,
+	platformContext?: PlatformEnvironment,
+): OrchestratorLimits {
 	const configured = Math.max(1, Math.trunc(Number(cfgOrchestratorMaxConcurrency.get(settings)) || 1));
-	if (!isAndroid()) return { concurrency: configured, processCap: undefined };
+	if (!isAndroid(platformContext)) return { concurrency: configured, processCap: undefined };
 	return {
 		concurrency: Math.min(configured, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID),
 		processCap: Math.max(1, Math.trunc(Number(cfgOrchestratorAndroidProcessCap.get(settings)) || 1)),
@@ -251,7 +318,9 @@ export function resolveOrchestratorBudget(settings: Settings): {
 	maxWallClockMs: number | undefined;
 } {
 	const positive = (value: unknown): number | undefined => {
-		const n = Math.trunc(Number(value) || 0);
+		const num = Number(value);
+		if (!Number.isFinite(num)) return undefined;
+		const n = Math.trunc(num);
 		return n > 0 ? n : undefined;
 	};
 	return {

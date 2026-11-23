@@ -53,8 +53,12 @@ export interface OrchestratorTask {
 	readonly dependencies: readonly string[];
 	/** Declared write set; the lease manager enforces exclusivity on these paths. */
 	readonly targetFiles: readonly string[];
-	/** Optional agent definition name this task prefers (defaults to the session agent). */
+	/** Optional agent definition name or worker id/role this task prefers. */
 	readonly agent?: string;
+	/** Optional per-task retry limit on verification failure. */
+	readonly maxRetries?: number;
+	/** Diagnostic feedback from a prior failed verification attempt, when retrying. */
+	readonly retryFeedback?: string;
 }
 
 /** A worker the orchestrator may run: identity plus the tools it requests. */
@@ -63,6 +67,8 @@ export interface WorkerSpec {
 	/** Short role label shown in the UI (for example "svc", "helm", "frontend"). */
 	readonly roleLabel: string;
 	readonly backend: WorkerBackendKind;
+	/** Optional agent definition name this worker runs as (defaults to the session agent). */
+	readonly agent?: string;
 	/** Tools the worker requests; intersected with the parent's active tools. */
 	readonly requestedTools?: readonly string[];
 	/** Optional model pattern override for this worker. */
@@ -77,6 +83,8 @@ export interface OrchestratorPlan {
 	readonly goal: string;
 	readonly tasks: readonly OrchestratorTask[];
 	readonly workers: readonly WorkerSpec[];
+	/** Optional verification-failure retry limit for tasks in this plan. */
+	readonly maxRetries?: number;
 }
 
 /** Request for one path lease held by a worker. */
@@ -111,6 +119,7 @@ export interface WorkerUsage {
 	readonly cacheWriteTokens?: number;
 	readonly totalTokens?: number;
 	readonly requests?: number;
+	readonly wallClockMs?: number;
 }
 
 /**
@@ -128,6 +137,8 @@ export interface WorkerChanges {
 	readonly hasChanges: boolean;
 	/** Human summary of what the merge step did, when it ran. */
 	readonly mergeSummary?: string;
+	/** Path to the worker's isolated worktree while still available for verification. */
+	readonly worktreePath?: string;
 }
 
 /** What a worker run reports back to the orchestrator. */
@@ -160,6 +171,32 @@ export type OrchestratorEvent =
 			readonly workerId: string;
 			readonly taskId: string;
 			readonly state: WorkerLifecycleState;
+	  }
+	| {
+			readonly type: "worker_output";
+			readonly workerId: string;
+			readonly taskId: string;
+			readonly line: string;
+	  }
+	| {
+			readonly type: "worker_usage";
+			readonly workerId: string;
+			readonly taskId: string;
+			readonly usage: WorkerUsage;
+	  }
+	| {
+			readonly type: "worker_branch";
+			readonly workerId: string;
+			readonly taskId: string;
+			readonly branchName: string;
+	  }
+	| {
+			readonly type: "task_retry";
+			readonly taskId: string;
+			readonly workerId: string;
+			readonly attempt: number;
+			readonly maxRetries: number;
+			readonly reason: string;
 	  }
 	| { readonly type: "message"; readonly message: OrchestratorMessage }
 	| {
