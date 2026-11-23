@@ -63,12 +63,15 @@ describe("musl release artifacts", () => {
 		await fs.mkdir(binDir);
 		await writeExecutable(binDir, "uname", '#!/bin/sh\n[ "$1" = "-s" ] && echo Linux || echo x86_64\n');
 		await writeExecutable(binDir, "ldd", "#!/bin/sh\necho 'musl libc (x86_64)'\n");
+		const fakeBinary = '#!/bin/sh\necho "mars v1.0.0"\n';
+		const fakeSha256 = new Bun.CryptoHasher("sha256").update(fakeBinary).digest("hex");
 		await writeExecutable(
 			binDir,
 			"curl",
 			`#!/bin/sh
 case "$*" in
   *api.github.com*) echo '{"tag_name":"v1.0.0","mentions_count":0}' ;;
+  *SHA256SUMS.txt*) echo '${fakeSha256}  mars-linux-musl-x64' ;;
   *) while [ "$#" -gt 0 ]; do
        [ "$1" = "-o" ] && { printf '%s\n' '#!/bin/sh' 'echo "mars v1.0.0"' > "$2"; exit 0; }
        shift

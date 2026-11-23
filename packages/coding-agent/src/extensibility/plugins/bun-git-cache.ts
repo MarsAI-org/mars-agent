@@ -2,7 +2,7 @@ import type { Dirent } from "node:fs";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as vcs from "@marsai-org/natives/vcs";
-import { isEnoent, ptree } from "@marsai-org/utils";
+import { isEnoent } from "@marsai-org/utils";
 import type { GitSource } from "./git-url";
 
 const LOCAL_COMMAND_TIMEOUT_MS = 10_000;
@@ -19,30 +19,41 @@ async function runCommand(
 	cwd: string,
 	timeoutMs = LOCAL_COMMAND_TIMEOUT_MS,
 ): Promise<CommandResult> {
-	const result = await ptree.exec(command, {
+	const proc = Bun.spawn(command, {
 		cwd,
 		env: {
 			...process.env,
 			GIT_TERMINAL_PROMPT: "0",
 			GCM_INTERACTIVE: "never",
 		},
-		timeout: timeoutMs,
-		allowNonZero: true,
-		allowAbort: true,
-		stderr: "full",
+		stdin: "ignore",
+		stdout: "pipe",
+		stderr: "pipe",
+		windowsHide: true,
 	});
-	if (result.exitError instanceof ptree.TimeoutError) {
-		return {
+	const { promise: timeoutPromise, resolve: resolveTimeout } = Promise.withResolvers<CommandResult>();
+	const timer = setTimeout(() => {
+		try {
+			proc.kill?.();
+		} catch {
+			// Process may have already exited.
+		}
+		resolveTimeout({
 			exitCode: 124,
-			stdout: result.stdout,
+			stdout: "",
 			stderr: `${command[0] ?? "command"} timed out after ${timeoutMs}ms`,
-		};
+		});
+	}, timeoutMs);
+	try {
+		const completion = Promise.all([
+			proc.exited,
+			new Response(proc.stdout).text(),
+			new Response(proc.stderr).text(),
+		]).then(([exitCode, stdout, stderr]): CommandResult => ({ exitCode, stdout, stderr }));
+		return await Promise.race([completion, timeoutPromise]);
+	} finally {
+		clearTimeout(timer);
 	}
-	return {
-		exitCode: result.exitCode ?? 1,
-		stdout: result.stdout,
-		stderr: result.stderr,
-	};
 }
 
 function normalizeRepositoryUrl(repository: string): string {
