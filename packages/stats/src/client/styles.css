@@ -1,6 +1,6 @@
 /* ==========================================================================
    Mars stats — design system
-   Pure-black chassis, one inset panel, hairline edges, one accent gradient.
+   Mars Obsidian (dark) & Mars Alabaster (light), hairline edges, terracotta/ember accent.
    Page-specific styles live next to their route (`routes/*.css`).
    ========================================================================== */
 
@@ -8,105 +8,111 @@
 [data-theme="dark"] {
 	color-scheme: dark;
 
-	/* Surface ramp: each step rises one notch off the page. */
-	--bg: #000;
-	--panel: #09090a;
-	--card: #0e0e10;
-	--raised: #17171a;
-	--overlay: rgba(14, 14, 16, 0.78);
-	--hover: rgba(255, 255, 255, 0.035);
-	--press: rgba(255, 255, 255, 0.06);
-	--selected: rgba(255, 255, 255, 0.075);
+	/* Surface ramp: Mars Obsidian ground → inset panel → card → raised. */
+	--bg: #161419;
+	--panel: #1b1820;
+	--card: #1e1b23;
+	--raised: #24202b;
+	--overlay: rgba(22, 20, 25, 0.84);
+	--hover: rgba(245, 242, 238, 0.04);
+	--press: rgba(245, 242, 238, 0.07);
+	--selected: rgba(255, 130, 92, 0.11);
 
-	/* Hairlines are alpha so one value reads on every surface step. */
-	--line-1: rgba(255, 255, 255, 0.06);
-	--line-2: rgba(255, 255, 255, 0.09);
-	--line-3: rgba(255, 255, 255, 0.14);
-	--line-4: rgba(255, 255, 255, 0.22);
+	/* Warm obsidian hairlines. */
+	--line-1: rgba(245, 242, 238, 0.07);
+	--line-2: #35303b;
+	--line-3: #534c58;
+	--line-4: rgba(245, 242, 238, 0.24);
 
-	--ink-1: #ededef;
-	--ink-2: #a0a0a8;
-	--ink-3: #6c6c74;
-	--ink-4: #46464c;
-	--ink-inverse: #0a0a0b;
+	--ink-1: #f5f2ee;
+	--ink-2: #c2bab2;
+	--ink-3: #8e857e;
+	--ink-4: #68605c;
+	--ink-inverse: #161419;
 
-	/* Accent: Mars cyan → pink. Solid `--accent` for text/strokes, gradient for hero marks. */
-	--accent-a: #5ad8e6;
-	--accent-b: #ed4abf;
-	--accent: #f068c8;
-	--accent-soft: rgba(237, 74, 191, 0.14);
-	--accent-line: rgba(237, 74, 191, 0.35);
+	/* Accent: Mars Ember Coral → Ember Hover. Solid `--accent` for text/strokes, gradient for marks. */
+	--accent-a: #ff825c;
+	--accent-b: #ffa082;
+	--accent: #ff825c;
+	--accent-fg: #161419;
+	--accent-soft: rgba(214, 74, 39, 0.16);
+	--accent-line: rgba(255, 130, 92, 0.36);
 	--accent-gradient: linear-gradient(100deg, var(--accent-a), var(--accent-b));
-	--focus: #5ad8e6;
+	--focus: #ff825c;
 
 	/* Status. Live (real-time presence) is reserved for the live indicator. */
-	--ok: #3ecf8e;
-	--ok-soft: rgba(62, 207, 142, 0.13);
-	--warn: #f5a524;
-	--warn-soft: rgba(245, 165, 36, 0.13);
-	--bad: #ff6166;
-	--bad-soft: rgba(255, 97, 102, 0.13);
-	--live: #3ecf8e;
+	--ok: #4cc38a;
+	--ok-soft: rgba(76, 195, 138, 0.14);
+	--warn: #e5b567;
+	--warn-soft: rgba(229, 181, 103, 0.14);
+	--bad: #f26b6b;
+	--bad-soft: rgba(242, 107, 107, 0.14);
+	--live: #4cc38a;
 
 	/* Charts. */
-	--chart-grid: rgba(255, 255, 255, 0.055);
-	--chart-axis: #5c5c64;
-	--chart-cursor: rgba(255, 255, 255, 0.05);
-	--chart-primary: #5ad8e6;
-	--chart-secondary: #ed4abf;
+	--chart-grid: rgba(245, 242, 238, 0.06);
+	--chart-axis: #8e857e;
+	--chart-cursor: rgba(245, 242, 238, 0.05);
+	--chart-primary: #ff825c;
+	--chart-secondary: #7ec4b6;
+	--chart-tertiary: #9cb7d4;
+	--chart-quaternary: #cfa8e8;
 
-	--shadow-1: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 1px 2px rgba(0, 0, 0, 0.5);
-	--shadow-2: 0 8px 24px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-	--shadow-3: 0 24px 64px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+	--shadow-1: 0 1px 0 rgba(245, 242, 238, 0.03) inset, 0 1px 2px rgba(0, 0, 0, 0.5);
+	--shadow-2: 0 8px 24px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(245, 242, 238, 0.05) inset;
+	--shadow-3: 0 24px 64px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(245, 242, 238, 0.06) inset;
 }
 
 [data-theme="light"] {
 	color-scheme: light;
 
-	--bg: #f2f2f3;
+	--bg: #faf8f5;
 	--panel: #ffffff;
 	--card: #ffffff;
-	--raised: #f6f6f7;
-	--overlay: rgba(255, 255, 255, 0.8);
-	--hover: rgba(0, 0, 0, 0.03);
-	--press: rgba(0, 0, 0, 0.05);
-	--selected: rgba(0, 0, 0, 0.06);
+	--raised: #f2eee8;
+	--overlay: rgba(250, 248, 245, 0.88);
+	--hover: rgba(22, 20, 25, 0.035);
+	--press: rgba(22, 20, 25, 0.06);
+	--selected: rgba(214, 74, 39, 0.09);
 
-	--line-1: rgba(0, 0, 0, 0.06);
-	--line-2: rgba(0, 0, 0, 0.09);
-	--line-3: rgba(0, 0, 0, 0.14);
-	--line-4: rgba(0, 0, 0, 0.22);
+	--line-1: #e8e2d9;
+	--line-2: #d4cbc0;
+	--line-3: #c2b8ac;
+	--line-4: #9e9388;
 
-	--ink-1: #151518;
-	--ink-2: #5a5a63;
-	--ink-3: #8b8b94;
-	--ink-4: #b9b9c0;
+	--ink-1: #161419;
+	--ink-2: #4a4440;
+	--ink-3: #6b625c;
+	--ink-4: #9a9088;
 	--ink-inverse: #ffffff;
 
-	--accent-a: #1fa9bb;
-	--accent-b: #d42ea3;
-	--accent: #c42596;
-	--accent-soft: rgba(212, 46, 163, 0.1);
-	--accent-line: rgba(212, 46, 163, 0.3);
-	--focus: #1fa9bb;
+	--accent-a: #b43618;
+	--accent-b: #9b3220;
+	--accent: #b43618;
+	--accent-fg: #ffffff;
+	--accent-soft: #fdf0eb;
+	--accent-line: #efc6b7;
+	--focus: #b43618;
 
-	--ok: #12a36b;
-	--ok-soft: rgba(18, 163, 107, 0.11);
-	--warn: #c77c02;
-	--warn-soft: rgba(199, 124, 2, 0.11);
-	--bad: #dc3a40;
-	--bad-soft: rgba(220, 58, 64, 0.1);
-	--live: #12a36b;
+	--ok: #1f7a4c;
+	--ok-soft: rgba(31, 122, 76, 0.11);
+	--warn: #9a580e;
+	--warn-soft: rgba(154, 88, 14, 0.11);
+	--bad: #b83227;
+	--bad-soft: rgba(184, 50, 39, 0.11);
+	--live: #1f7a4c;
 
-	--chart-grid: rgba(0, 0, 0, 0.06);
-	--chart-axis: #9a9aa2;
-	--chart-cursor: rgba(0, 0, 0, 0.04);
-	--chart-primary: #1fa9bb;
-	--chart-secondary: #d42ea3;
+	--chart-grid: rgba(22, 20, 25, 0.07);
+	--chart-axis: #6b625c;
+	--chart-cursor: rgba(22, 20, 25, 0.04);
+	--chart-primary: #b43618;
+	--chart-secondary: #1d666e;
+	--chart-tertiary: #2c5985;
+	--chart-quaternary: #6d457c;
 
-	--shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
-	--shadow-2: 0 8px 24px rgba(0, 0, 0, 0.1);
-	--shadow-3: 0 24px 64px rgba(0, 0, 0, 0.16);
+	--shadow-1: 0 1px 2px rgba(22, 20, 25, 0.05);
+	--shadow-2: 0 8px 24px rgba(22, 20, 25, 0.1);
+	--shadow-3: 0 24px 64px rgba(22, 20, 25, 0.16);
 }
 
 :root {
@@ -953,7 +959,7 @@ kbd {
 .btn[data-variant="accent"] {
 	background: var(--accent-gradient);
 	background-origin: border-box;
-	color: #fff;
+	color: var(--accent-fg);
 	border-color: transparent;
 }
 

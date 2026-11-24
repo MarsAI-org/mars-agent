@@ -46,10 +46,10 @@ const MODEL_LIMIT = 6;
 const DAY_MS = 86_400_000;
 
 const COMPONENTS = [
-	{ key: "costInput", label: "Input", color: "#5b8cff" },
+	{ key: "costInput", label: "Input", color: "var(--chart-tertiary)" },
 	{ key: "costOutput", label: "Output", color: "var(--chart-secondary)" },
 	{ key: "costCacheRead", label: "Cache read", color: "var(--chart-primary)" },
-	{ key: "costCacheWrite", label: "Cache write", color: "#f5b54a" },
+	{ key: "costCacheWrite", label: "Cache write", color: "var(--warn)" },
 ] as const satisfies readonly { key: keyof CostComponents; label: string; color: string }[];
 
 const UTC_DAY = new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", timeZone: "UTC" });

@@ -11,23 +11,20 @@ import {
 	TUI,
 } from "@marsai-org/tui";
 import { formatKeyHint, formatKeyHints } from "@marsai-org/tui/app-keybindings";
-import chalk from "@marsai-org/utils/chalk";
+import { ensureThemeSync, fgOrPlain, type ThemeColor, theme } from "@marsai-org/tui/theme";
 import type { StreamChatMessage, TspSpan } from "@marsai-org/wire";
 import type { NativeNode } from "@marsai-org/tui/native/node";
 import { col, kbd, node, row, span, text } from "@marsai-org/tui/native/describe";
 import type { StreamConsoleEvent, StreamMuxHost } from "./streamer";
 
 const HISTORY_LIMIT = 50;
-const PURPLE = chalk.hex("#a855f7");
-const CHAT_COLORS: readonly ((text: string) => string)[] = [
-	chalk.cyan,
-	chalk.green,
-	chalk.yellow,
-	chalk.blue,
-	chalk.magenta,
-];
-/** Semantic tokens standing in for {@link CHAT_COLORS}, index for index. */
+const CHAT_THEME_COLORS: readonly ThemeColor[] = ["statusLineModel", "success", "warning", "mdLink", "accent"];
+/** Semantic tokens standing in for {@link CHAT_THEME_COLORS}, index for index. */
 const CHAT_TOKENS: readonly string[] = ["info", "success", "warning", "link", "accent"];
+
+function paintBold(color: ThemeColor, value: string): string {
+	return typeof theme === "undefined" ? value : theme.bold(theme.fg(color, value));
+}
 
 interface PaneSummary {
 	id: number;
@@ -191,18 +188,23 @@ class StreamConsoleComponent implements Component, Focusable {
 		const bodyHeight = Math.max(0, height - 4);
 		const status =
 			this.#linkState === "live"
-				? PURPLE.bold("● LIVE")
-				: chalk.dim(`○ ${this.#linkState === "stopped" ? "offline" : this.#linkState}`);
-		const identity = this.#user ? ` ${chalk.dim("·")} streaming as ${PURPLE(`@${safeInline(this.#user)}`)}` : "";
-		const channel = this.#channel ? `#${safeInline(this.#channel)}` : chalk.dim("identifying channel");
-		const header = `${status} ${channel} ${chalk.dim("·")} ${safeInline(this.#title)}${identity}`;
+				? paintBold("accent", "● LIVE")
+				: fgOrPlain("dim", `○ ${this.#linkState === "stopped" ? "offline" : this.#linkState}`);
+		const identity = this.#user
+			? ` ${fgOrPlain("dim", "·")} streaming as ${fgOrPlain("accent", `@${safeInline(this.#user)}`)}`
+			: "";
+		const channel = this.#channel ? `#${safeInline(this.#channel)}` : fgOrPlain("dim", "identifying channel");
+		const header = `${status} ${channel} ${fgOrPlain("dim", "·")} ${safeInline(this.#title)}${identity}`;
 		const paneList =
 			this.#panes.size === 0
 				? "none"
 				: [...this.#panes.values()].map(pane => `${pane.id}:${safeInline(pane.title)}`).join(" ");
-		const viewerUrl = this.#viewerUrl ? safeInline(this.#viewerUrl) : chalk.dim("waiting for stream server");
-		const details = `${viewerUrl} ${chalk.dim("·")} 👁 ${this.#viewers} watching ${chalk.dim("·")} panes: ${paneList}`;
-		const hint = chalk.dim(
+		const viewerUrl = this.#viewerUrl
+			? fgOrPlain("mdLink", safeInline(this.#viewerUrl))
+			: fgOrPlain("dim", "waiting for stream server");
+		const details = `${viewerUrl} ${fgOrPlain("dim", "·")} 👁 ${this.#viewers} watching ${fgOrPlain("dim", "·")} panes: ${paneList}`;
+		const hint = fgOrPlain(
+			"dim",
 			`/title <text> · /quit · ${formatKeyHints(["up", "down"])} history · ${formatKeyHint("ctrl+c")} quit`,
 		);
 
@@ -278,7 +280,7 @@ class StreamConsoleComponent implements Component, Focusable {
 
 	#acceptEvent(event: StreamConsoleEvent): void {
 		this.#revision++;
-		const dim = (line: string): void => this.#log(chalk.dim(line), [span(line, "dim")]);
+		const dim = (line: string): void => this.#log(fgOrPlain("dim", line), [span(line, "dim")]);
 		switch (event.t) {
 			case "link":
 				this.#linkState = event.state;
@@ -310,7 +312,7 @@ class StreamConsoleComponent implements Component, Focusable {
 				dim(`title: ${safeInline(event.title)}`);
 				break;
 			case "error":
-				this.#log(chalk.red(safeInline(event.message)), [span(safeInline(event.message), "error")]);
+				this.#log(fgOrPlain("error", safeInline(event.message)), [span(safeInline(event.message), "error")]);
 				break;
 			case "notice":
 				dim(safeInline(event.message));
@@ -334,10 +336,9 @@ function formatChatEvent(message: StreamChatMessage): string {
 	const time = new Date(message.ts);
 	const timestamp = `${String(time.getHours()).padStart(2, "0")}:${String(time.getMinutes()).padStart(2, "0")}`;
 	const name = safeInline(message.name);
-	const coloredName = message.host
-		? chalk.bold(PURPLE(name))
-		: (CHAT_COLORS[stableNameHash(name) % CHAT_COLORS.length]?.(name) ?? name);
-	return `${chalk.dim(timestamp)} ${coloredName}: ${safeInline(message.text)}`;
+	const chatColor = CHAT_THEME_COLORS[stableNameHash(name) % CHAT_THEME_COLORS.length] ?? "accent";
+	const coloredName = message.host ? paintBold("accent", name) : fgOrPlain(chatColor, name);
+	return `${fgOrPlain("dim", timestamp)} ${coloredName}: ${safeInline(message.text)}`;
 }
 
 /** Native {@link formatChatEvent}: the same line as styled spans. */
@@ -357,6 +358,7 @@ function stableNameHash(name: string): number {
 
 /** Run the fullscreen interactive stream chat console until the stream or user exits. */
 export async function runStreamTui(host: StreamMuxHost, info: StreamTuiInfo): Promise<void> {
+	ensureThemeSync();
 	const ui = new TUI(new ProcessTerminal());
 	const component = new StreamConsoleComponent(ui, host, info);
 	const overlay = ui.showOverlay(component, {

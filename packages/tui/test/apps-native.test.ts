@@ -3,7 +3,7 @@ import { TUI } from "@marsai-org/tui";
 import { CleanseBoardModel } from "../src/apps/cleanse-board";
 import { showGitOverlay } from "../src/apps/git/git-tui";
 import type { ChangedFile, GitTuiModel } from "../src/apps/git/state";
-import { initTheme } from "../src/theme/theme";
+import { initTheme, setTheme, theme } from "../src/theme/theme";
 import { TspHarness } from "./native/tsp-harness";
 import type { PsScope, PsScopeReport } from "../src/apps/ps-data";
 import { type PsTopHost, PsTopComponent } from "../src/apps/ps-top";
@@ -92,6 +92,32 @@ describe("ps-top native", () => {
 			expect(described).toEqual(["web"]);
 			expect(nodes([component.describe()]).some(n => n.p?.role === "omp.ps.info")).toBe(true);
 		} finally {
+			component.dispose();
+		}
+	});
+
+	it("adapts ANSI table selection, header, and status colors to active dark and light themes", async () => {
+		await initTheme(false);
+		const tui = new TUI(new VirtualTerminal(100, 20));
+		const rendered = Promise.withResolvers<void>();
+		spyOn(tui, "requestRender").mockImplementation(() => rendered.resolve());
+		const component = new PsTopComponent(tui, { all: false }, fakeHost([]));
+		void component.run();
+		await rendered.promise;
+		try {
+			await setTheme("dark");
+			const darkAnsi = component.render(100).join("\n");
+			expect(darkAnsi).toContain(theme.getBgAnsi("selectedBg"));
+			expect(darkAnsi).toContain(theme.getFgAnsi("accent"));
+			expect(darkAnsi).toContain(theme.getFgAnsi("success"));
+
+			await setTheme("light");
+			const lightAnsi = component.render(100).join("\n");
+			expect(lightAnsi).toContain(theme.getBgAnsi("selectedBg"));
+			expect(lightAnsi).toContain(theme.getFgAnsi("accent"));
+			expect(lightAnsi).not.toBe(darkAnsi);
+		} finally {
+			await setTheme("dark");
 			component.dispose();
 		}
 	});

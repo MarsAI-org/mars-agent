@@ -105,7 +105,7 @@ function adjustBrightness(color: string, factor: number): string {
 function deriveExportColors(baseColor: string): { pageBg: string; cardBg: string; infoBg: string } {
 	const parsed = parseColor(baseColor);
 	if (!parsed) {
-		return { pageBg: "rgb(24, 24, 30)", cardBg: "rgb(30, 30, 36)", infoBg: "rgb(60, 55, 40)" };
+		return { pageBg: "rgb(22, 20, 25)", cardBg: "rgb(30, 27, 35)", infoBg: "rgb(33, 30, 38)" };
 	}
 
 	const luminance = getLuminance(parsed.r, parsed.g, parsed.b);
@@ -139,7 +139,7 @@ export async function generateThemeVars(
 	const colors = await getResolvedThemeColors(themeName);
 	const lines = Object.entries(colors).map(([key, value]) => `--${key}: ${value};`);
 	const themeExport = await getThemeExportColors(themeName);
-	const derived = deriveExportColors(colors.userMessageBg || "#343541");
+	const derived = deriveExportColors(colors.userMessageBg || "#241a18");
 
 	lines.push(`--body-bg: ${themeExport.pageBg ?? derived.pageBg};`);
 	lines.push(`--container-bg: ${themeExport.cardBg ?? derived.cardBg};`);

@@ -1,6 +1,6 @@
 import * as path from "node:path";
 import { formatDuration } from "@marsai-org/utils";
-import chalk from "@marsai-org/utils/chalk";
+import { fgOrPlain, type ThemeColor, theme } from "../theme";
 import type { DaemonSnapshot, DaemonSpec, DaemonState } from "../tools/daemon";
 
 /** One broker scope: a project runtime dir or a machine-global service dir. */
@@ -62,15 +62,15 @@ export function stateCell(row: PsDaemonRow): string {
 	const { snapshot } = row;
 	let text: string = snapshot.state;
 	if (TERMINAL_STATES[snapshot.state] && snapshot.exitCode !== undefined) text += `(${snapshot.exitCode})`;
-	const paint =
+	const color: ThemeColor =
 		snapshot.state === "ready" || snapshot.state === "running"
-			? chalk.green
+			? "success"
 			: snapshot.state === "failed"
-				? chalk.red
+				? "error"
 				: TERMINAL_STATES[snapshot.state]
-					? chalk.dim
-					: chalk.yellow;
-	return paint(text);
+					? "dim"
+					: "warning";
+	return fgOrPlain(color, text);
 }
 
 /** Display persistence and supervision flags for a process row. */
@@ -106,11 +106,16 @@ export function tableCells(row: PsDaemonRow): string[] {
 
 /** Scope heading, e.g. `project /work/pi — broker pid 1234`. */
 export function scopeHeader(scope: PsScope): string {
-	const label =
+	const target =
 		scope.kind === "global"
-			? `global ${chalk.bold(scope.service ?? path.basename(scope.runtimeDir))}`
-			: `project ${chalk.bold(scope.projectDir ?? path.basename(scope.runtimeDir))}`;
+			? (scope.service ?? path.basename(scope.runtimeDir))
+			: (scope.projectDir ?? path.basename(scope.runtimeDir));
+	const boldTarget = typeof theme === "undefined" ? target : theme.bold(target);
+	const kindLabel = fgOrPlain("muted", scope.kind === "global" ? "global" : "project");
+	const label = `${kindLabel} ${boldTarget}`;
 	const broker =
-		scope.brokerPid !== undefined ? chalk.green(`broker pid ${scope.brokerPid}`) : chalk.dim("broker not running");
-	return `${label} ${chalk.dim("—")} ${broker}`;
+		scope.brokerPid !== undefined
+			? fgOrPlain("success", `broker pid ${scope.brokerPid}`)
+			: fgOrPlain("dim", "broker not running");
+	return `${label} ${fgOrPlain("dim", "—")} ${broker}`;
 }

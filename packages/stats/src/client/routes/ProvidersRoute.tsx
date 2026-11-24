@@ -61,9 +61,9 @@ const BURN_OPTIONS = [
 const TOP_PROVIDERS = 6;
 
 const TOKEN_MIX = [
-	{ key: "input", label: "Uncached input", color: "#5b8cff" },
+	{ key: "input", label: "Uncached input", color: "var(--chart-tertiary)" },
 	{ key: "cacheRead", label: "Cache read", color: "var(--chart-primary)" },
-	{ key: "cacheWrite", label: "Cache write", color: "#f5b54a" },
+	{ key: "cacheWrite", label: "Cache write", color: "var(--warn)" },
 	{ key: "output", label: "Output", color: "var(--chart-secondary)" },
 ] as const;
 

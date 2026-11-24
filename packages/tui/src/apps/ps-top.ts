@@ -19,9 +19,10 @@ import { col, compact, elapsed, keyed, node, row, span, stableKey, text } from "
 import type { NativeNode, NativeUiEvent } from "../native/node";
 import { actionBar, actionButton } from "../native/overlay";
 import { Memo } from "../native/memo";
+import { padToWidth } from "../render/utils";
+import { ensureThemeSync, fgOrPlain, type ThemeColor, theme } from "../theme";
 import { truncateToWidth } from "../utils";
 import { formatDuration } from "@marsai-org/utils";
-import chalk from "@marsai-org/utils/chalk";
 import type { DaemonSnapshot, DaemonSpec } from "../tools/daemon";
 import {
 	collapseCommand,
@@ -51,12 +52,24 @@ type PsTopView = "table" | "info" | "logs";
 
 type PsStatusTone = "success" | "warning" | "error" | "muted";
 
-const STATUS_PAINT: Record<PsStatusTone, (text: string) => string> = {
-	success: chalk.green,
-	warning: chalk.yellow,
-	error: chalk.red,
-	muted: chalk.dim,
+const STATUS_TONE_COLOR: Record<PsStatusTone, ThemeColor> = {
+	success: "success",
+	warning: "warning",
+	error: "error",
+	muted: "dim",
 };
+
+function paintBold(text: string, color?: ThemeColor): string {
+	if (typeof theme === "undefined") return text;
+	return color ? theme.bold(theme.fg(color, text)) : theme.bold(text);
+}
+
+function paintSelectedRow(plain: string, width: number): string {
+	const clipped = truncateToWidth(plain, width);
+	if (typeof theme === "undefined") return clipped;
+	const padded = padToWidth(clipped, width);
+	return theme.bg("selectedBg", theme.bold(theme.fg("accent", padded)));
+}
 
 /** Options accepted by the interactive monitor: scope selection from the list flags. */
 export interface PsTopOptions extends PsTarget {
@@ -96,7 +109,6 @@ export class PsTopComponent implements Component {
 	#refreshTimer: NodeJS.Timeout | undefined;
 	#refreshing = false;
 	#lastRefresh = 0;
-	#status = "";
 	#statusText = "";
 	#statusTone: PsStatusTone = "muted";
 	#statusAt = 0;
@@ -163,7 +175,6 @@ export class PsTopComponent implements Component {
 	}
 
 	#setStatus(tone: PsStatusTone, text: string): void {
-		this.#status = STATUS_PAINT[tone](text);
 		this.#statusText = text;
 		this.#statusTone = tone;
 		this.#statusAt = Date.now();
@@ -229,7 +240,7 @@ export class PsTopComponent implements Component {
 			} catch (error) {
 				if (this.#disposed || this.#view !== "logs") return;
 				this.#logsError = error instanceof Error ? error.message : String(error);
-				this.#logsLines = [chalk.red(this.#logsError)];
+				this.#logsLines = [fgOrPlain("error", this.#logsError)];
 				this.#ui.requestRender();
 			} finally {
 				polling = false;
@@ -639,15 +650,18 @@ export class PsTopComponent implements Component {
 
 	#header(width: number, title: string): string {
 		const age = this.#lastRefresh ? `updated ${formatDuration(Date.now() - this.#lastRefresh)} ago` : "updating…";
-		const left = ` ${chalk.bold("mars ps")} ${chalk.dim("·")} ${title}`;
-		const right = chalk.dim(age);
+		const left = ` ${paintBold("mars ps", "accent")} ${fgOrPlain("dim", "·")} ${title}`;
+		const right = fgOrPlain("dim", age);
 		const pad = Math.max(1, width - Bun.stringWidth(left) - Bun.stringWidth(right) - 1);
 		return truncateToWidth(`${left}${" ".repeat(pad)}${right}`, width);
 	}
 
 	#footer(width: number, hints: string): string[] {
-		const status = Date.now() - this.#statusAt < STATUS_TTL_MS ? this.#status : "";
-		return [truncateToWidth(` ${status}`, width), truncateToWidth(chalk.dim(` ${hints}`), width)];
+		const status =
+			Date.now() - this.#statusAt < STATUS_TTL_MS && this.#statusText
+				? fgOrPlain(STATUS_TONE_COLOR[this.#statusTone], this.#statusText)
+				: "";
+		return [truncateToWidth(` ${status}`, width), truncateToWidth(fgOrPlain("dim", ` ${hints}`), width)];
 	}
 
 	#renderTable(width: number, height: number): string[] {
@@ -656,7 +670,7 @@ export class PsTopComponent implements Component {
 			: this.#target.dir !== undefined || this.#target.global !== undefined
 				? "(target)"
 				: "(current + global)";
-		const scopesLabel = `${this.#flat.length} process${this.#flat.length === 1 ? "" : "es"} in ${this.#reports.length} scope${this.#reports.length === 1 ? "" : "s"} ${chalk.dim(scopeKind)}`;
+		const scopesLabel = `${this.#flat.length} process${this.#flat.length === 1 ? "" : "es"} in ${this.#reports.length} scope${this.#reports.length === 1 ? "" : "s"} ${fgOrPlain("dim", scopeKind)}`;
 		const header = this.#header(width, scopesLabel);
 		const footer = this.#footer(
 			width,
@@ -687,13 +701,13 @@ export class PsTopComponent implements Component {
 		for (const report of this.#reports) {
 			body.push({ text: ` ${scopeHeader(report.scope)}` });
 			if (report.daemons.length === 0) {
-				body.push({ text: chalk.dim("   no processes") });
+				body.push({ text: fgOrPlain("dim", "   no processes") });
 			} else {
-				body.push({ text: chalk.dim(renderRow([...TABLE_HEADER])) });
+				body.push({ text: fgOrPlain("dim", renderRow([...TABLE_HEADER])) });
 				for (const row of report.daemons) {
 					const line = renderRow(tableCells(row));
 					body.push({
-						text: TERMINAL_STATES[row.snapshot.state] ? chalk.dim(line) : line,
+						text: TERMINAL_STATES[row.snapshot.state] ? fgOrPlain("dim", Bun.stripANSI(line)) : line,
 						flat: flatIndex,
 					});
 					flatIndex++;
@@ -701,14 +715,14 @@ export class PsTopComponent implements Component {
 			}
 			body.push({ text: "" });
 		}
-		if (body.length === 0) body.push({ text: chalk.dim(" No daemon broker scopes found.") });
+		if (body.length === 0) body.push({ text: fgOrPlain("dim", " No daemon broker scopes found.") });
 
 		// Keep the selected logical row visible through refreshes and resizes.
 		const selectedLine = body.findIndex(line => line.flat === this.#selected);
 		const display = body.map(entry => {
 			if (entry.flat === this.#selected) {
 				const plain = ` ❯${Bun.stripANSI(entry.text).slice(2)}`;
-				return truncateToWidth(chalk.inverse(plain.padEnd(width)), width);
+				return paintSelectedRow(plain, width);
 			}
 			return truncateToWidth(entry.text, width);
 		});
@@ -729,7 +743,7 @@ export class PsTopComponent implements Component {
 		const body = [""];
 		if (info) {
 			const daemon = info.daemon;
-			body.push(` ${chalk.bold(daemonLabel(daemon))}`);
+			body.push(` ${paintBold(daemonLabel(daemon))}`);
 			body.push("");
 			const rows: KeyValueRow[] = [
 				{ label: "command:", value: collapseCommand(formatCommand(info.spec)) },
@@ -744,7 +758,7 @@ export class PsTopComponent implements Component {
 			body.push(...this.#infoList.render(width));
 			body.push(`   pty: ${info.spec.pty}  persist: ${info.spec.persist}  detached: ${info.spec.detached}`);
 		} else {
-			body.push(chalk.dim(" loading…"));
+			body.push(fgOrPlain("dim", " loading…"));
 		}
 		this.#infoView.setLines(body);
 		this.#infoView.setHeight(height - 1 - footer.length);
@@ -756,7 +770,7 @@ export class PsTopComponent implements Component {
 		const name = entry?.row.snapshot.name ?? "?";
 		const header = this.#header(
 			width,
-			`logs ${chalk.bold(name)}${this.#logsState ? chalk.dim(` · ${this.#logsState}`) : ""}`,
+			`logs ${paintBold(name)}${this.#logsState ? fgOrPlain("dim", ` · ${this.#logsState}`) : ""}`,
 		);
 		const footer = this.#footer(
 			width,
@@ -848,6 +862,7 @@ function describeProcess(scope: PsScope, daemon: PsDaemonRow): NativeNode {
 
 /** Run the fullscreen interactive process monitor until the user quits. */
 export async function runPsTop(options: PsTopOptions, host: PsTopHost): Promise<void> {
+	ensureThemeSync();
 	const ui = new TUI(new ProcessTerminal());
 	const component = new PsTopComponent(ui, options, host);
 	const overlay = ui.showOverlay(component, {

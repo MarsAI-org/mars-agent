@@ -191,31 +191,55 @@ function buildTape(args: TapeArgs): string {
  * never consulted — it is filler to satisfy VHS's theme schema.
  */
 function buildVhsTheme(): string {
-	const background = parseAnsiRgb(theme.getBgAnsi("statusLineBg")) ?? (theme.isLight ? "#ffffff" : "#1a1a1a");
-	const foreground = theme.isLight ? "#1a1a1a" : "#d4d4d4";
-	const selection = theme.isLight ? "#c8d6ff" : "#404862";
+	const isLight = theme.isLight;
+	const background = parseAnsiRgb(theme.getBgAnsi("statusLineBg")) ?? (isLight ? "#faf8f5" : "#161419");
+	const foreground = isLight ? "#161419" : "#f5f2ee";
+	const cursor = isLight ? "#b43618" : "#ff825c";
+	const selection = isLight ? "#ebe3da" : "#2b2732";
+	const ansi = isLight
+		? {
+				black: "#161419",
+				red: "#b83227",
+				green: "#1f7a4c",
+				yellow: "#9a580e",
+				blue: "#2c5985",
+				magenta: "#6d457c",
+				cyan: "#1d666e",
+				white: "#6b625c",
+				brightBlack: "#4a4440",
+				brightRed: "#d64a27",
+				brightGreen: "#28915b",
+				brightYellow: "#b46b14",
+				brightBlue: "#396ea3",
+				brightMagenta: "#845796",
+				brightCyan: "#257e87",
+				brightWhite: "#faf8f5",
+			}
+		: {
+				black: "#161419",
+				red: "#f26b6b",
+				green: "#4cc38a",
+				yellow: "#e5b567",
+				blue: "#9cb7d4",
+				magenta: "#cfa8e8",
+				cyan: "#7ec4b6",
+				white: "#f5f2ee",
+				brightBlack: "#68605c",
+				brightRed: "#ff825c",
+				brightGreen: "#6fd8a5",
+				brightYellow: "#f4d092",
+				brightBlue: "#b5cce6",
+				brightMagenta: "#dfc2f2",
+				brightCyan: "#9bd6ca",
+				brightWhite: "#ffffff",
+			};
 	return JSON.stringify({
 		name: "mars-gallery",
 		background,
 		foreground,
-		cursor: foreground,
+		cursor,
 		selection,
-		black: "#000000",
-		red: "#ff5555",
-		green: "#50fa7b",
-		yellow: "#f1fa8c",
-		blue: "#6272ff",
-		magenta: "#ff79c6",
-		cyan: "#8be9fd",
-		white: "#bfbfbf",
-		brightBlack: "#4d4d4d",
-		brightRed: "#ff6e6e",
-		brightGreen: "#69ff94",
-		brightYellow: "#ffffa5",
-		brightBlue: "#8aa0ff",
-		brightMagenta: "#ff92df",
-		brightCyan: "#a4ffff",
-		brightWhite: "#ffffff",
+		...ansi,
 	});
 }
 

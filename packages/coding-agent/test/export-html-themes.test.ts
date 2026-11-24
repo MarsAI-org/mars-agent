@@ -8,8 +8,10 @@ describe("HTML export themes", () => {
 		expect(styles).toContain(':root, :root[data-theme="dark"] { color-scheme: dark;');
 		expect(styles).toContain(':root[data-theme="light"] { color-scheme: light;');
 		expect(styles).toContain("@media (prefers-color-scheme: light)");
-		expect(styles).toContain("--bg: #0f0b14;");
-		expect(styles).toContain("--bg: oklch(0.985 0.004 307);");
+		expect(styles).toContain("--bg: #161419;");
+		expect(styles).toContain("--bg: #faf8f5;");
+		expect(styles).toContain("--accent: #ff825c;");
+		expect(styles).toContain("--accent: #b43618;");
 	});
 
 	it("bundles independently selected dark and light TUI themes", async () => {

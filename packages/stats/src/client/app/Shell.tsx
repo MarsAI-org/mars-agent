@@ -59,9 +59,9 @@ export function Shell({ section, onSectionChange, range, onRangeChange, children
 					<svg className="topbar-mark" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
 						<defs>
 							<linearGradient id="omp-mark-grad" x1="0" y1="0" x2="1" y2="1">
-								<stop offset="0" stopColor="oklch(0.7 0.24 340)" />
-								<stop offset=".5" stopColor="oklch(0.62 0.21 295)" />
-								<stop offset="1" stopColor="oklch(0.81 0.14 200)" />
+								<stop offset="0" stopColor="#9b3220" />
+								<stop offset=".5" stopColor="#d64a27" />
+								<stop offset="1" stopColor="#ff825c" />
 							</linearGradient>
 						</defs>
 						<path fill="url(#omp-mark-grad)" d="M10 14h44v9H43v33h-9V23h-9v22h-9V23H10z" />

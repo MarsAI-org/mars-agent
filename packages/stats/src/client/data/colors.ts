@@ -4,22 +4,22 @@
  * legible hues and the same key on the same hue across charts of one page.
  */
 
-/** Ten mid-luminance hues that read on both the black and the white chassis. */
+/** Ten mid-luminance hues that clear 3:1 contrast on both Mars Obsidian and Mars Alabaster. */
 export const SERIES_COLORS = [
-	"#5ad8e6", // cyan
-	"#ed4abf", // pink
-	"#9d7bff", // violet
-	"#f5b54a", // amber
-	"#4ade80", // green
-	"#5b8cff", // blue
-	"#ff7a59", // coral
-	"#2dd4bf", // teal
-	"#c3e94f", // lime
-	"#fb7185", // rose
+	"#d64a27", // mars terracotta
+	"#2c7a7b", // deep teal
+	"#c77d1e", // warm ochre
+	"#4e79a7", // slate blue
+	"#3b9c6e", // sage green
+	"#8e5ea2", // muted plum
+	"#e6734c", // ember coral
+	"#5b8c85", // mineral jade
+	"#b85c6b", // terracotta rose
+	"#9e8238", // desert brass
 ];
 
 /** Neutral used for "Other" rollups and unknown buckets. */
-export const OTHER_COLOR = "#6c6c74";
+export const OTHER_COLOR = "#6b625c";
 
 /** Stable identity of a model across providers: `model::provider`. */
 export function modelKey(model: string, provider: string): string {

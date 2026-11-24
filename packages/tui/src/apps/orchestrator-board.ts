@@ -16,11 +16,11 @@
  */
 
 import { formatDuration } from "@marsai-org/utils";
-import chalk from "@marsai-org/utils/chalk";
 import { formatKeyHint, formatKeyHints } from "../app-keybindings";
 import { matchesKey } from "../keys";
 import { PREVIEW_LIMITS, sanitizeDisplayWarning, shortenPath, TRUNCATE_LENGTHS } from "../render/render-utils";
 import { ProcessTerminal } from "../terminal";
+import { ensureThemeSync, fgOrPlain, type ThemeColor, theme } from "../theme";
 import { type Component, TUI } from "../tui";
 import { truncateToWidth } from "../utils";
 
@@ -102,27 +102,57 @@ function cleanLine(value: string | undefined): string {
 	return value === undefined ? "" : sanitizeDisplayWarning(value);
 }
 
+/** Paint `text` with a theme color, degrading to plain text if no theme is active. */
+function paintColor(color: ThemeColor, text: string): string {
+	return fgOrPlain(color, text);
+}
+
+/** Paint bold `text` with a theme color, degrading to plain text if no theme is active. */
+function paintBold(color: ThemeColor, text: string): string {
+	return typeof theme === "undefined" ? text : theme.bold(theme.fg(color, text));
+}
+
+/** Box-drawing glyphs honoring the active symbol preset, with rounded fallback. */
+function boxGlyphs(): {
+	topLeft: string;
+	topRight: string;
+	bottomLeft: string;
+	bottomRight: string;
+	horizontal: string;
+	vertical: string;
+} {
+	if (typeof theme !== "undefined") return theme.boxRound;
+	return {
+		topLeft: "╭",
+		topRight: "╮",
+		bottomLeft: "╰",
+		bottomRight: "╯",
+		horizontal: "─",
+		vertical: "│",
+	};
+}
+
 /** Glyph and tone for each state, so a glance reads as a status. */
 function stateMark(state: PaneState): { glyph: string; paint: (text: string) => string } {
 	switch (state) {
 		case "running":
-			return { glyph: "▶", paint: text => chalk.green(text) };
+			return { glyph: "▶", paint: text => paintColor("accent", text) };
 		case "spawning":
-			return { glyph: "◐", paint: text => chalk.cyan(text) };
+			return { glyph: "◐", paint: text => paintColor("statusLineModel", text) };
 		case "verifying":
-			return { glyph: "◇", paint: text => chalk.cyan(text) };
+			return { glyph: "◇", paint: text => paintColor("warning", text) };
 		case "merging":
-			return { glyph: "⇄", paint: text => chalk.magenta(text) };
+			return { glyph: "⇄", paint: text => paintColor("customMessageLabel", text) };
 		case "completed":
-			return { glyph: "✔", paint: text => chalk.green(text) };
+			return { glyph: "✔", paint: text => paintColor("success", text) };
 		case "failed":
-			return { glyph: "✘", paint: text => chalk.red(text) };
+			return { glyph: "✘", paint: text => paintColor("error", text) };
 		case "cancelled":
-			return { glyph: "⊘", paint: text => chalk.yellow(text) };
+			return { glyph: "⊘", paint: text => paintColor("warning", text) };
 		case "idle":
-			return { glyph: "·", paint: text => chalk.dim(text) };
+			return { glyph: "·", paint: text => paintColor("dim", text) };
 		default:
-			return { glyph: "○", paint: text => chalk.dim(text) };
+			return { glyph: "○", paint: text => paintColor("dim", text) };
 	}
 }
 
@@ -255,10 +285,10 @@ export class OrchestratorBoardComponent implements Component {
 		const total = this.#panes.length;
 		const done = this.#panes.filter(pane => pane.state === "completed").length;
 		const failed = this.#panes.filter(pane => pane.state === "failed").length;
-		const tally = [`${done}/${total} done`];
-		if (failed > 0) tally.push(chalk.red(`${failed} failed`));
-		const right = chalk.dim(tally.join(" · "));
-		const prefix = ` ${chalk.bold("swarm")} ${chalk.dim("·")} `;
+		const tally = [paintColor("muted", `${done}/${total} done`)];
+		if (failed > 0) tally.push(paintColor("error", `${failed} failed`));
+		const right = tally.join(paintColor("dim", " · "));
+		const prefix = ` ${paintBold("accent", "swarm")} ${paintColor("dim", "·")} `;
 		const goalBudget = Math.max(1, width - Bun.stringWidth(prefix) - Bun.stringWidth(right) - 2);
 		const left = `${prefix}${truncateToWidth(cleanLine(this.#options.goal), goalBudget)}`;
 		const pad = Math.max(1, width - Bun.stringWidth(left) - Bun.stringWidth(right) - 1);
@@ -271,7 +301,7 @@ export class OrchestratorBoardComponent implements Component {
 		const hints = this.#wide
 			? `${formatKeyHints(["tab", "enter", "l"])} switch · expand · layout${cancel} · ${leave}`
 			: `${formatKeyHint("tab")} switch${cancel} · ${leave}`;
-		return truncateToWidth(chalk.dim(` ${hints}`), width);
+		return truncateToWidth(paintColor("dim", ` ${hints}`), width);
 	}
 
 	/** Tile panes side by side, at most `MAX_TILED_PANES` per screen. */
@@ -322,27 +352,35 @@ export class OrchestratorBoardComponent implements Component {
 	 * of boxes aligns.
 	 */
 	#paneBox(pane: WorkerPane, paneWidth: number, innerHeight: number, focused: boolean, expanded = false): string[] {
-		const border = focused ? chalk.cyan : chalk.dim;
+		const border = (text: string) => paintColor(focused ? "borderAccent" : "borderMuted", text);
+		const box = boxGlyphs();
 		if (paneWidth <= 0) return [];
-		if (paneWidth < 2) return [border("│")];
+		if (paneWidth < 2) return [border(box.vertical)];
 		const inner = paneWidth - 2;
 		const { glyph, paint } = stateMark(pane.state);
 
-		const retry = pane.attempts !== undefined && pane.attempts > 1 ? ` ${chalk.yellow(`↻${pane.attempts}`)}` : "";
+		const retry =
+			pane.attempts !== undefined && pane.attempts > 1 ? ` ${paintColor("warning", `↻${pane.attempts}`)}` : "";
 		const title = `${glyph} ${cleanLine(pane.label || pane.roleLabel || pane.workerId)}${retry}`;
-		const branch = pane.branchName ? ` ${chalk.dim(cleanLine(pane.branchName))}` : "";
-		const top = border("┌") + this.#fit(`${paint(title)}${branch}`, inner) + border("┐");
+		const branch = pane.branchName ? ` ${paintColor("dim", cleanLine(pane.branchName))}` : "";
+		const top = border(box.topLeft) + this.#fit(`${paint(title)}${branch}`, inner) + border(box.topRight);
 
 		const rows: string[] = [top];
 
 		const statusBits: string[] = [paint(pane.state)];
-		if (pane.elapsedMs !== undefined) statusBits.push(chalk.dim(formatDuration(pane.elapsedMs)));
-		if (pane.tokens !== undefined) statusBits.push(chalk.dim(`${compactCount(pane.tokens)} tok`));
-		rows.push(border("│") + this.#fit(` ${statusBits.join(chalk.dim(" · "))}`, inner) + border("│"));
+		if (pane.elapsedMs !== undefined) statusBits.push(paintColor("dim", formatDuration(pane.elapsedMs)));
+		if (pane.tokens !== undefined) statusBits.push(paintColor("dim", `${compactCount(pane.tokens)} tok`));
+		rows.push(
+			border(box.vertical) +
+				this.#fit(` ${statusBits.join(paintColor("dim", " · "))}`, inner) +
+				border(box.vertical),
+		);
 
 		const taskLabel = cleanLine(pane.taskTitle ?? pane.taskId);
 		if (taskLabel) {
-			rows.push(border("│") + this.#fit(chalk.dim(` ${taskLabel}`), inner) + border("│"));
+			rows.push(
+				border(box.vertical) + this.#fit(paintColor("muted", ` ${taskLabel}`), inner) + border(box.vertical),
+			);
 		}
 		if (pane.targetFiles && pane.targetFiles.length > 0) {
 			const shown = pane.targetFiles
@@ -351,14 +389,22 @@ export class OrchestratorBoardComponent implements Component {
 				.join(", ");
 			const more = pane.targetFiles.length - SCOPE_FILES_SHOWN;
 			const files = more > 0 ? `${shown} +${more}` : shown;
-			rows.push(border("│") + this.#fit(chalk.dim(` ${files}`), inner) + border("│"));
+			rows.push(border(box.vertical) + this.#fit(paintColor("dim", ` ${files}`), inner) + border(box.vertical));
 		}
 
 		if (pane.currentTool && pane.state === "running") {
-			rows.push(border("│") + this.#fit(chalk.cyan(` ⚙ ${cleanLine(pane.currentTool)}`), inner) + border("│"));
+			rows.push(
+				border(box.vertical) +
+					this.#fit(paintColor("accent", ` ⚙ ${cleanLine(pane.currentTool)}`), inner) +
+					border(box.vertical),
+			);
 		}
 		if (pane.error) {
-			rows.push(border("│") + this.#fit(chalk.red(` ${cleanLine(pane.error)}`), inner) + border("│"));
+			rows.push(
+				border(box.vertical) +
+					this.#fit(paintColor("error", ` ${cleanLine(pane.error)}`), inner) +
+					border(box.vertical),
+			);
 		}
 
 		const outputHeight = Math.max(0, innerHeight - rows.length);
@@ -366,11 +412,11 @@ export class OrchestratorBoardComponent implements Component {
 		const tail = (pane.output ?? []).slice(-Math.min(limit, outputHeight));
 		for (const line of tail) {
 			const text = truncateToWidth(cleanLine(line), TRUNCATE_LENGTHS.LONG);
-			rows.push(border("│") + this.#fit(chalk.dim(` ${text}`), inner) + border("│"));
+			rows.push(border(box.vertical) + this.#fit(paintColor("dim", ` ${text}`), inner) + border(box.vertical));
 		}
 
-		while (rows.length < innerHeight) rows.push(border("│") + " ".repeat(inner) + border("│"));
-		rows.push(border("└") + border("─".repeat(inner)) + border("┘"));
+		while (rows.length < innerHeight) rows.push(border(box.vertical) + " ".repeat(inner) + border(box.vertical));
+		rows.push(border(box.bottomLeft) + border(box.horizontal.repeat(inner)) + border(box.bottomRight));
 		return rows;
 	}
 
@@ -387,6 +433,7 @@ export async function runOrchestratorBoard(
 	options: OrchestratorBoardOptions,
 	host: OrchestratorBoardHost,
 ): Promise<void> {
+	ensureThemeSync();
 	const ui = new TUI(new ProcessTerminal());
 	const component = new OrchestratorBoardComponent(ui, options, host);
 	const overlay = ui.showOverlay(component, {

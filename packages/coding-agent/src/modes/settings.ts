@@ -64,7 +64,7 @@ export const cfgGitEnabled = register({
 export const cfgThemeDark = register({
 	id: "theme.dark",
 	type: "string",
-	// `dark` is the Mars brand theme (pixel-art orange on #0d1117). The previous
+	// `dark` is the Mars Obsidian brand theme (terracotta/ember on #161419). The previous
 	// default, `titanium`, is an electric-blue palette: a fresh install opened in
 	// another product's colors and never showed the Mars identity.
 	default: "dark",

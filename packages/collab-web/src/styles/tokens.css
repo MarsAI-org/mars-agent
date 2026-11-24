@@ -1,54 +1,54 @@
-/* Design tokens — pure-black chassis, one inset panel, alpha hairlines, and
- * one Mars accent gradient (cyan → pink). Dark is the default;
- * `[data-theme="light"]` and the prefers-color-scheme fallback flip to light.
+/* Design tokens — Mars Obsidian (dark) and Mars Alabaster (light), hairline edges,
+ * and Mars terracotta/ember accents. Dark is the default; `[data-theme="light"]`
+ * and the prefers-color-scheme fallback flip to light.
  * The ONLY file allowed to contain raw color values. */
 :root {
 	color-scheme: dark;
 
-	/* surface ramp: page → inset panel → card → raised */
-	--bg: #000;
-	--panel: #09090a;
-	--bg-raised: #0e0e10;
-	--bg-inset: #060607;
-	--bg-overlay: #17171a;
-	--glass: rgba(14, 14, 16, 0.78);
-	--hover: rgba(255, 255, 255, 0.035);
-	--selected: rgba(255, 255, 255, 0.075);
+	/* surface ramp: Mars Obsidian ground → inset panel → card → raised */
+	--bg: #161419;
+	--panel: #1b1820;
+	--bg-raised: #1e1b23;
+	--bg-inset: #110f14;
+	--bg-overlay: #24202b;
+	--glass: rgba(22, 20, 25, 0.84);
+	--hover: rgba(245, 242, 238, 0.04);
+	--selected: rgba(255, 130, 92, 0.11);
 
 	/* text */
-	--fg: #ededef;
-	--fg-muted: #a0a0a8;
-	--fg-faint: #6c6c74;
-	--fg-inverse: #0a0a0b;
+	--fg: #f5f2ee;
+	--fg-muted: #c2bab2;
+	--fg-faint: #8e857e;
+	--fg-inverse: #161419;
 
-	/* accent: Mars cyan → pink; solid pink for text and strokes */
-	--accent-a: #5ad8e6;
-	--accent-b: #ed4abf;
-	--accent: #f068c8;
-	--accent-fg: #fff;
-	--accent-muted: rgba(237, 74, 191, 0.14);
+	/* accent: Mars Ember Coral → Ember Hover; high-contrast obsidian ink on accent buttons */
+	--accent-a: #ff825c;
+	--accent-b: #ffa082;
+	--accent: #ff825c;
+	--accent-fg: #161419;
+	--accent-muted: rgba(214, 74, 39, 0.16);
 	--accent-gradient: linear-gradient(100deg, var(--accent-a), var(--accent-b));
-	--ambient-a: rgba(90, 216, 230, 0.07);
-	--ambient-b: rgba(237, 74, 191, 0.06);
+	--ambient-a: rgba(214, 74, 39, 0.08);
+	--ambient-b: rgba(255, 130, 92, 0.05);
 
-	/* Mars mark gradient stops (magenta → iris → cyan) */
-	--mark-a: oklch(0.7 0.24 340);
-	--mark-b: oklch(0.62 0.21 295);
-	--mark-c: oklch(0.81 0.14 200);
+	/* Mars mark gradient stops (Crater → Terracotta → Ember) */
+	--mark-a: #9b3220;
+	--mark-b: #d64a27;
+	--mark-c: #ff825c;
 
 	/* status; green `--live` is reserved for real-time presence */
-	--ok: #3ecf8e;
-	--live: #3ecf8e;
-	--warn: #f5a524;
-	--err: #ff6166;
+	--ok: #4cc38a;
+	--live: #4cc38a;
+	--warn: #e5b567;
+	--err: #f26b6b;
 
-	/* hairlines: alpha so one value reads on every surface step */
-	--border: rgba(255, 255, 255, 0.07);
-	--border-strong: rgba(255, 255, 255, 0.13);
-	--edge-top: rgba(255, 255, 255, 0.14);
-	--edge-bottom: rgba(255, 255, 255, 0.05);
-	--ring: #5ad8e6;
-	--ring-soft: rgba(90, 216, 230, 0.18);
+	/* hairlines: warm obsidian structural dividers */
+	--border: #35303b;
+	--border-strong: #534c58;
+	--edge-top: rgba(245, 242, 238, 0.12);
+	--edge-bottom: rgba(245, 242, 238, 0.04);
+	--ring: #ff825c;
+	--ring-soft: rgba(255, 130, 92, 0.2);
 
 	/* type — system stacks only */
 	--font-ui: "Inter var", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -64,95 +64,97 @@
 	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
 	--shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5);
-	--shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+	--shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(245, 242, 238, 0.06) inset;
 	--rail-mobile-shadow: -12px 0 32px rgba(0, 0, 0, 0.6);
-	--backdrop: rgba(0, 0, 0, 0.55);
+	--backdrop: rgba(12, 10, 15, 0.65);
 }
 
-/* Light theme — explicit override (toggle writes data-theme="light"). */
+/* Light theme (Mars Alabaster) — explicit override (toggle writes data-theme="light"). */
 [data-theme="light"] {
 	color-scheme: light;
 
-	--bg: #f2f2f3;
-	--panel: #fff;
-	--bg-raised: #fff;
-	--bg-inset: #f6f6f7;
-	--bg-overlay: #fff;
-	--glass: rgba(255, 255, 255, 0.82);
-	--hover: rgba(0, 0, 0, 0.03);
-	--selected: rgba(0, 0, 0, 0.06);
+	--bg: #faf8f5;
+	--panel: #ffffff;
+	--bg-raised: #ffffff;
+	--bg-inset: #f2eee8;
+	--bg-overlay: #ffffff;
+	--glass: rgba(250, 248, 245, 0.88);
+	--hover: rgba(22, 20, 25, 0.035);
+	--selected: rgba(214, 74, 39, 0.09);
 
-	--fg: #151518;
-	--fg-muted: #5a5a63;
-	--fg-faint: #8b8b94;
-	--fg-inverse: #fff;
+	--fg: #161419;
+	--fg-muted: #4a4440;
+	--fg-faint: #6b625c;
+	--fg-inverse: #ffffff;
 
-	--accent-a: #1fa9bb;
-	--accent-b: #d42ea3;
-	--accent: #c42596;
-	--accent-muted: rgba(212, 46, 163, 0.1);
-	--ambient-a: rgba(31, 169, 187, 0.06);
-	--ambient-b: rgba(212, 46, 163, 0.05);
+	--accent-a: #b43618;
+	--accent-b: #9b3220;
+	--accent: #b43618;
+	--accent-fg: #ffffff;
+	--accent-muted: #fdf0eb;
+	--ambient-a: rgba(214, 74, 39, 0.06);
+	--ambient-b: rgba(180, 54, 24, 0.04);
 
-	--ok: #12a36b;
-	--live: #12a36b;
-	--warn: #c77c02;
-	--err: #dc3a40;
+	--ok: #1f7a4c;
+	--live: #1f7a4c;
+	--warn: #9a580e;
+	--err: #b83227;
 
-	--border: rgba(0, 0, 0, 0.08);
-	--border-strong: rgba(0, 0, 0, 0.14);
-	--edge-top: rgba(0, 0, 0, 0.1);
-	--edge-bottom: rgba(0, 0, 0, 0.06);
-	--ring: #1fa9bb;
-	--ring-soft: rgba(31, 169, 187, 0.16);
+	--border: #e8e2d9;
+	--border-strong: #d4cbc0;
+	--edge-top: rgba(22, 20, 25, 0.08);
+	--edge-bottom: rgba(22, 20, 25, 0.04);
+	--ring: #b43618;
+	--ring-soft: rgba(180, 54, 24, 0.16);
 
-	--shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-	--shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.16);
-	--rail-mobile-shadow: -12px 0 32px rgba(0, 0, 0, 0.12);
-	--backdrop: rgba(0, 0, 0, 0.25);
+	--shadow-card: 0 1px 2px rgba(22, 20, 25, 0.05);
+	--shadow-overlay: 0 24px 64px rgba(22, 20, 25, 0.16);
+	--rail-mobile-shadow: -12px 0 32px rgba(22, 20, 25, 0.12);
+	--backdrop: rgba(22, 20, 25, 0.28);
 }
 
-/* Light theme — system fallback when no explicit preference is stored. */
+/* Light theme (Mars Alabaster) — system fallback when no explicit preference is stored. */
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme]) {
 		color-scheme: light;
 
-		--bg: #f2f2f3;
-		--panel: #fff;
-		--bg-raised: #fff;
-		--bg-inset: #f6f6f7;
-		--bg-overlay: #fff;
-		--glass: rgba(255, 255, 255, 0.82);
-		--hover: rgba(0, 0, 0, 0.03);
-		--selected: rgba(0, 0, 0, 0.06);
+		--bg: #faf8f5;
+		--panel: #ffffff;
+		--bg-raised: #ffffff;
+		--bg-inset: #f2eee8;
+		--bg-overlay: #ffffff;
+		--glass: rgba(250, 248, 245, 0.88);
+		--hover: rgba(22, 20, 25, 0.035);
+		--selected: rgba(214, 74, 39, 0.09);
 
-		--fg: #151518;
-		--fg-muted: #5a5a63;
-		--fg-faint: #8b8b94;
-		--fg-inverse: #fff;
+		--fg: #161419;
+		--fg-muted: #4a4440;
+		--fg-faint: #6b625c;
+		--fg-inverse: #ffffff;
 
-		--accent-a: #1fa9bb;
-		--accent-b: #d42ea3;
-		--accent: #c42596;
-		--accent-muted: rgba(212, 46, 163, 0.1);
-		--ambient-a: rgba(31, 169, 187, 0.06);
-		--ambient-b: rgba(212, 46, 163, 0.05);
+		--accent-a: #b43618;
+		--accent-b: #9b3220;
+		--accent: #b43618;
+		--accent-fg: #ffffff;
+		--accent-muted: #fdf0eb;
+		--ambient-a: rgba(214, 74, 39, 0.06);
+		--ambient-b: rgba(180, 54, 24, 0.04);
 
-		--ok: #12a36b;
-		--live: #12a36b;
-		--warn: #c77c02;
-		--err: #dc3a40;
+		--ok: #1f7a4c;
+		--live: #1f7a4c;
+		--warn: #9a580e;
+		--err: #b83227;
 
-		--border: rgba(0, 0, 0, 0.08);
-		--border-strong: rgba(0, 0, 0, 0.14);
-		--edge-top: rgba(0, 0, 0, 0.1);
-		--edge-bottom: rgba(0, 0, 0, 0.06);
-		--ring: #1fa9bb;
-		--ring-soft: rgba(31, 169, 187, 0.16);
+		--border: #e8e2d9;
+		--border-strong: #d4cbc0;
+		--edge-top: rgba(22, 20, 25, 0.08);
+		--edge-bottom: rgba(22, 20, 25, 0.04);
+		--ring: #b43618;
+		--ring-soft: rgba(180, 54, 24, 0.16);
 
-		--shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-		--shadow-overlay: 0 24px 64px rgba(0, 0, 0, 0.16);
-		--rail-mobile-shadow: -12px 0 32px rgba(0, 0, 0, 0.12);
-		--backdrop: rgba(0, 0, 0, 0.25);
+		--shadow-card: 0 1px 2px rgba(22, 20, 25, 0.05);
+		--shadow-overlay: 0 24px 64px rgba(22, 20, 25, 0.16);
+		--rail-mobile-shadow: -12px 0 32px rgba(22, 20, 25, 0.12);
+		--backdrop: rgba(22, 20, 25, 0.28);
 	}
 }

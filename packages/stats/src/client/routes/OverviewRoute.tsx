@@ -51,13 +51,13 @@ const AGENT_LABEL: Record<AgentType, string> = { main: "Main agent", subagent: "
 const AGENT_COLOR: Record<AgentType, string> = {
 	main: "var(--chart-primary)",
 	subagent: "var(--chart-secondary)",
-	advisor: "#9d7bff",
+	advisor: "var(--chart-quaternary)",
 };
 
 const TOKEN_MIX = [
-	{ key: "input", label: "Uncached input", color: "#5b8cff" },
+	{ key: "input", label: "Uncached input", color: "var(--chart-tertiary)" },
 	{ key: "cacheRead", label: "Cache read", color: "var(--chart-primary)" },
-	{ key: "cacheWrite", label: "Cache write", color: "#f5b54a" },
+	{ key: "cacheWrite", label: "Cache write", color: "var(--warn)" },
 	{ key: "output", label: "Output", color: "var(--chart-secondary)" },
 ] as const;
 

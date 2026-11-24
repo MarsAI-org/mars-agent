@@ -14,6 +14,7 @@ import {
 	SwarmBoardComponent,
 	type WorkerPane,
 } from "@marsai-org/tui/apps/orchestrator-board";
+import { initTheme, setTheme, theme } from "@marsai-org/tui/theme";
 
 /** Minimal TUI stand-in: the board only calls requestRender and reads terminal.rows. */
 function fakeUi(rows: number) {
@@ -323,5 +324,36 @@ describe("orchestrator board", () => {
 		expect(frame).not.toContain("\x00");
 		expect(frame).not.toContain(home);
 		board.dispose();
+	});
+
+	test("adapts focused/unfocused borders and running highlights to active dark and light themes", async () => {
+		await initTheme(false);
+		const ui = fakeUi(24);
+		const panes = [
+			pane({ workerId: "w1", label: "focused", state: "running", currentTool: "edit" }),
+			pane({ workerId: "w2", label: "idle-peer", state: "idle" }),
+		];
+		const board = new OrchestratorBoardComponent(ui as never, { goal: "theme-sync" }, host(panes));
+		void board.run();
+
+		try {
+			await setTheme("dark");
+			const darkFrame = board.render(120).join("\n");
+			const darkAccent = theme.getFgAnsi("borderAccent");
+			const darkMuted = theme.getFgAnsi("borderMuted");
+			expect(darkFrame).toContain(darkAccent);
+			expect(darkFrame).toContain(darkMuted);
+
+			await setTheme("light");
+			const lightFrame = board.render(120).join("\n");
+			const lightAccent = theme.getFgAnsi("borderAccent");
+			const lightMuted = theme.getFgAnsi("borderMuted");
+			expect(lightFrame).toContain(lightAccent);
+			expect(lightFrame).toContain(lightMuted);
+			expect(lightFrame).not.toBe(darkFrame);
+		} finally {
+			await setTheme("dark");
+			board.dispose();
+		}
 	});
 });
