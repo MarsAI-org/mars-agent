@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-25
+
+### Fixed
+
+- **Pressing `Ctrl+C` during the `mars setup` outro exits immediately.** A second `Ctrl+C` in the outro phase now completes the wizard immediately instead of restarting the outro animation.
+- **Pressing `Enter` on an unknown slash command no longer silently runs a description-only fuzzy match.** Typing an unmatched slash command like `/sessions` and pressing `Enter` without navigating the dropdown now submits `/sessions` verbatim instead of auto-accepting an unrelated command whose description mentions the word.
+
 ## [0.3.2] - 2026-11-24
 
 ### Changed

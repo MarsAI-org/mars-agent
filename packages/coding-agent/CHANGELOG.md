@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-25
+
+### Fixed
+
+- **Swarm workers and the in-session `orchestrate` tool now execute instead of self-blocking in preflight.** `NativeWorkerRunner` previously passed `blockedAgent` equal to the worker's own `agent` name, causing `runStructuredSubagent` to reject every spawn as self-recursion; it also now passes the intersected `plan.tools` explicitly so discovered bundled agents honor worker tool permissions.
+- **Headless `mars swarm run` now wires approval policy, verification checks, agents, retries, and non-mutating CLI overrides.** Added `--approval-mode` and `--auto-approve` flags, forwarded `parentApprovalMode`, `userToolPolicies`, `agents`, spec-level `verificationChecks`, and `maxRetries` into `createNativeOrchestrationEngine`, stopped `--workers`/`--mode` from mutating `~/.mars/agent/config.yml`, and allowed explicitly declared `isolated: true` swarm workers without requiring global `task.isolation.enabled`.
+- **Bare `--resume` (`-r`) in non-interactive mode exits cleanly with code 2.** Passing `-r` without a session ID or path under `-p`, `--mode json|rpc|rpc-ui`, or closed/piped stdin now reports a usage error instead of opening the TUI picker or terminating with `SIGHUP`.
+- **`glob` rejects unknown `pattern` arguments with a clear hint.** Passing `{ path, pattern }` now raises a `ToolError` directing callers to put the glob pattern directly in `path` instead of silently ignoring `pattern`.
+
 ## [0.3.2] - 2026-11-24
 
 ### Added
