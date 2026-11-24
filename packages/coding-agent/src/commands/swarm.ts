@@ -24,11 +24,7 @@ import {
 	type PersistedSwarmRunSummary,
 	SwarmRunStore,
 } from "../orchestrator/run-store";
-import {
-	cfgOrchestratorMaxConcurrency,
-	cfgOrchestratorMode,
-	resolveOrchestratorLimits,
-} from "../orchestrator/settings";
+import { cfgOrchestratorMode, resolveOrchestratorLimits } from "../orchestrator/settings";
 import { loadSwarmSpec, type SwarmSpec, specToOrchestratorPlan } from "../orchestrator/spec-loader";
 import type { OrchestratorPlan } from "../orchestrator/types";
 import { ShellVerifier, type VerificationCheck } from "../orchestrator/verifier";
@@ -36,6 +32,7 @@ import { MAIN_AGENT_ID } from "../registry/agent-registry";
 import { discoverAuthStorage, type ToolSession } from "../sdk";
 import { SessionManager } from "../session/session-manager";
 import { discoverAgents, getAgent } from "../task/discovery";
+import { type ApprovalMode, resolveApprovalFromContext } from "../tools/approval";
 import { BUILTIN_TOOL_NAMES } from "../tools/builtin-names";
 import { validatePlan } from "../tools/orchestrate";
 import { EventBus } from "../utils/event-bus";
@@ -50,6 +47,8 @@ export interface SwarmCliCommandOptions {
 	readonly dryRun?: boolean;
 	readonly workers?: number;
 	readonly mode?: string;
+	readonly approvalMode?: string;
+	readonly autoApprove?: boolean;
 	readonly limit?: number;
 	readonly json?: boolean;
 	readonly store?: SwarmRunStore;
@@ -65,6 +64,7 @@ export interface SwarmCliCommandResult {
 }
 
 const VALID_MODES = new Set<SwarmFanOutMode>(["auto", "single", "parallel"]);
+const VALID_APPROVAL_MODES = new Set<ApprovalMode>(["always-ask", "write", "yolo"]);
 
 function formatPlanOverview(
 	plan: OrchestratorPlan,
@@ -181,6 +181,8 @@ async function executeHeadlessPlan(
 		store: SwarmRunStore;
 		workers?: number;
 		mode?: SwarmFanOutMode;
+		approvalMode?: ApprovalMode;
+		autoApprove?: boolean;
 		verificationChecks?: readonly string[];
 		runner?: EngineRunner;
 		signal?: AbortSignal;
@@ -196,7 +198,7 @@ async function executeHeadlessPlan(
 	if (options.runner) {
 		engine = new OrchestrationEngine({
 			runner: options.runner,
-			concurrency: options.workers ?? 4,
+			concurrency: options.mode === "single" ? 1 : (options.workers ?? 4),
 			maxRetries: plan.maxRetries ?? 1,
 			...(checks.length > 0
 				? { verifier: new ShellVerifier(), verificationChecks: checks, verificationRoot: cwd }
@@ -204,12 +206,6 @@ async function executeHeadlessPlan(
 		});
 	} else {
 		const settings = await Settings.init({ cwd });
-		if (options.workers !== undefined) {
-			cfgOrchestratorMaxConcurrency.set(settings, options.workers);
-		}
-		if (options.mode !== undefined) {
-			cfgOrchestratorMode.set(settings, options.mode);
-		}
 		const authStorage = await discoverAuthStorage(undefined, { settings });
 		const modelRegistry = new ModelRegistry(authStorage);
 		await modelRegistry.refresh();
@@ -243,18 +239,33 @@ async function executeHeadlessPlan(
 			modelRegistry,
 		};
 		const limits = resolveOrchestratorLimits(settings);
+		if (limits.concurrency < 1) {
+			throw new Error("Invalid orchestrator concurrency limit");
+		}
+		const effectiveMode = options.mode ?? cfgOrchestratorMode.get(settings);
+		const effectiveConcurrency = effectiveMode === "single" ? 1 : (options.workers ?? limits.concurrency);
+		const resolvedApproval = resolveApprovalFromContext({
+			autoApprove: options.autoApprove,
+			settings,
+		});
+		const parentApprovalMode: ApprovalMode =
+			options.autoApprove === true ? "yolo" : (options.approvalMode ?? resolvedApproval.approvalMode);
 		engine = createNativeOrchestrationEngine({
 			settings,
 			cwd,
 			agent: defaultAgent,
+			agents,
 			parentActiveTools: [...BUILTIN_TOOL_NAMES].filter(name => name !== "orchestrate"),
+			parentApprovalMode,
+			userToolPolicies: resolvedApproval.userPolicies,
 			taskDepth: 1,
 			parentAgentId: MAIN_AGENT_ID,
+			planId: plan.id,
+			concurrency: effectiveConcurrency,
+			...(plan.maxRetries !== undefined ? { maxRetries: plan.maxRetries } : {}),
+			...(checks.length > 0 ? { verificationChecks: checks } : {}),
 			session: toolSession,
 		});
-		if (limits.concurrency < 1) {
-			throw new Error("Invalid orchestrator concurrency limit");
-		}
 	}
 
 	const onAbort = (): void => engine.stopAll("cancelled by caller");
@@ -300,6 +311,17 @@ export async function runSwarmCliCommand(options: SwarmCliCommandOptions): Promi
 			return { exitCode: 1, output: outLines.join("\n") };
 		}
 		fanOutMode = normalized;
+	}
+
+	let approvalMode: ApprovalMode | undefined;
+	if (options.approvalMode !== undefined) {
+		const normalized = options.approvalMode.toLowerCase() as ApprovalMode;
+		if (!VALID_APPROVAL_MODES.has(normalized)) {
+			const msg = "Error: --approval-mode must be one of: always-ask, write, yolo";
+			emitError(msg);
+			return { exitCode: 1, output: outLines.join("\n") };
+		}
+		approvalMode = normalized;
 	}
 
 	switch (action) {
@@ -424,6 +446,8 @@ export async function runSwarmCliCommand(options: SwarmCliCommandOptions): Promi
 					store,
 					workers: effectiveWorkers,
 					mode: fanOutMode,
+					approvalMode,
+					autoApprove: options.autoApprove,
 					verificationChecks: spec.verificationChecks,
 					runner: options.runner,
 					signal: options.signal,
@@ -479,6 +503,8 @@ export async function runSwarmCliCommand(options: SwarmCliCommandOptions): Promi
 				store,
 				workers: options.workers,
 				mode: fanOutMode,
+				approvalMode,
+				autoApprove: options.autoApprove,
 				runner: options.runner,
 				signal: options.signal,
 			});
@@ -526,6 +552,13 @@ export default class Swarm extends Command {
 			char: "m",
 			description: "Fan-out mode override (auto, single, parallel)",
 		}),
+		"approval-mode": Flags.string({
+			description: "Tool approval mode override for workers (always-ask, write, yolo)",
+		}),
+		"auto-approve": Flags.boolean({
+			description: "Auto-approve all worker tool calls (equivalent to --approval-mode yolo)",
+			default: false,
+		}),
 		limit: Flags.integer({
 			char: "l",
 			description: "Maximum number of persisted runs to list",
@@ -560,6 +593,8 @@ export default class Swarm extends Command {
 			dryRun: flags["dry-run"] ?? false,
 			workers: flags.workers,
 			mode: flags.mode,
+			approvalMode: flags["approval-mode"],
+			autoApprove: flags["auto-approve"] ?? false,
 			limit: flags.limit,
 			json: flags.json ?? false,
 			store,

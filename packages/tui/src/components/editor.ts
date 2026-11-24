@@ -701,6 +701,7 @@ export class Editor implements Component, Focusable {
 		| { line: number; startCol: number; endCol: number; original: string; cursorOffset: number }
 		| undefined;
 	#autocompletePrefix: string = "";
+	#autocompleteNavigated = false;
 	#autocompleteRequestId: number = 0;
 	#autocompletePendingRequest: AutocompleteRequest | undefined;
 	#autocompleteRequestRunning = false;
@@ -1903,6 +1904,7 @@ export class Editor implements Component, Focusable {
 						this.#cancelAutocomplete();
 						this.onAutocompleteUpdate?.();
 					} else {
+						this.#autocompleteNavigated = true;
 						this.#autocompleteList.handleInput(data);
 						this.onAutocompleteUpdate?.();
 						return;
@@ -1948,8 +1950,12 @@ export class Editor implements Component, Focusable {
 					// Check for stale autocomplete state while an async refresh is pending
 					const currentLine = this.#state.lines[this.#state.cursorLine] ?? "";
 					const currentTextBeforeCursor = currentLine.slice(0, this.#state.cursorCol);
-					if (!this.#autocompletePrefixMatchesCursorText(currentTextBeforeCursor, selected)) {
-						// Autocomplete is stale - cancel and fall through to normal submission
+					if (
+						!this.#autocompletePrefixMatchesCursorText(currentTextBeforeCursor, selected) ||
+						(selected && !this.#shouldAutoAcceptSlashCommandOnEnter(currentTextBeforeCursor, selected))
+					) {
+						// Autocomplete is stale, or the top suggestion only fuzzy-matched on
+						// description text without explicit selection — cancel and submit as typed.
 						this.#cancelAutocomplete();
 					} else {
 						if (selected && this.#autocompleteProvider) {
@@ -2130,7 +2136,7 @@ export class Editor implements Component, Focusable {
 					// The collapsed `/skill:` namespace row is not a runnable command; Enter submits
 					// immediately after applying, so only a real command may be completed here.
 					const selected = syncResult?.items.find(item => item.value !== SKILL_NAMESPACE);
-					if (syncResult && selected) {
+					if (syncResult && selected && this.#shouldAutoAcceptSlashCommandOnEnter(textBeforeCursor, selected)) {
 						// Invalidate any pending async autocomplete so its stale results are discarded
 						this.#autocompleteRequestId += 1;
 						// Apply the best match and submit the completed command
@@ -4309,6 +4315,31 @@ export class Editor implements Component, Focusable {
 	}
 
 	/**
+	 * Whether pressing Enter on a submitted slash command should auto-accept the
+	 * highlighted item instead of submitting the user's literal text.
+	 *
+	 * Explicit dropdown navigation (Up/Down/PageUp/PageDown) always opts in.
+	 * Otherwise, auto-accept only when the typed token actually prefix-matches
+	 * the selected command's name/alias (or a skill's bare name/hyphen segment),
+	 * so typing an unknown command like `/sessions` + Enter never silently runs
+	 * an unrelated command whose description happened to mention "sessions".
+	 */
+	#shouldAutoAcceptSlashCommandOnEnter(currentTextBeforeCursor: string, selected: AutocompleteItem): boolean {
+		if (this.#autocompleteNavigated) return true;
+		const slashStart = findLeadingSlashCommandStart(currentTextBeforeCursor);
+		if (slashStart === null) return false;
+		const typed = currentTextBeforeCursor.slice(slashStart + 1).toLowerCase();
+		if (typed.length === 0) return true;
+		const valueLower = selected.value.toLowerCase();
+		if (valueLower.startsWith(typed)) return true;
+		if (valueLower.startsWith(SKILL_NAMESPACE)) {
+			const bareName = valueLower.slice(SKILL_NAMESPACE.length);
+			if (bareName.startsWith(typed) || bareName.includes(`-${typed}`)) return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Whether the current popup selection inserts a file path rather than a
 	 * slash command. Leading-slash prefixes are ambiguous: the provider falls
 	 * through to absolute-path completion when no command matches, and those
@@ -4568,6 +4599,7 @@ export class Editor implements Component, Focusable {
 		this.#autocompleteList = undefined;
 		this.#textAssistReplacement = undefined;
 		this.#autocompletePrefix = "";
+		this.#autocompleteNavigated = false;
 		if (notifyCancel && wasAutocompleting) {
 			this.onAutocompleteCancel?.();
 		}
@@ -4676,6 +4708,7 @@ export class Editor implements Component, Focusable {
 		state: "regular" | "force",
 	): void {
 		this.#autocompletePrefix = suggestions.prefix;
+		this.#autocompleteNavigated = false;
 		this.#autocompleteList = this.#createAutocompleteList(suggestions.prefix, suggestions.items);
 		this.#autocompleteState = state;
 		this.onAutocompleteUpdate?.();

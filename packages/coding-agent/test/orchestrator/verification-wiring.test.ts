@@ -177,4 +177,55 @@ describe("orchestrator verification checks", () => {
 		expect(verifySpy).not.toHaveBeenCalled();
 		expect(report.outcomes.get("t1")?.state).toBe("completed");
 	});
+
+	it("runs explicit option-level verificationChecks and respects option-level maxRetries in createNativeOrchestrationEngine", async () => {
+		const settings = Settings.isolated({});
+		vi.spyOn(structuredSubagentModule, "runStructuredSubagent").mockResolvedValue(makeExecutionResult());
+		const verifySpy = vi.spyOn(ShellVerifier.prototype, "verify").mockResolvedValue({
+			ok: false,
+			firstFailure: "check-1",
+			checks: [
+				{
+					id: "check-1",
+					command: "bun test",
+					ok: false,
+					exitCode: 1,
+					output: "test failed",
+					durationMs: 5,
+				},
+			],
+		});
+
+		const engine = createNativeOrchestrationEngine({
+			settings,
+			cwd: "/tmp/orchestrator-verification",
+			agent: WORKER_AGENT,
+			parentActiveTools: ["read"],
+			parentApprovalMode: "always-ask",
+			session: makeSession(settings),
+			isolateWorkers: false,
+			maxRetries: 2,
+			verificationChecks: [{ id: "check-1", command: "bun test" }],
+		});
+
+		const report = await engine.run({
+			id: "plan-spec-checks",
+			goal: "spec verification override",
+			tasks: [
+				{
+					id: "t1",
+					title: "Task 1",
+					description: "do t1",
+					dependencies: [],
+					targetFiles: [],
+				},
+			],
+			workers: [{ id: "w1", roleLabel: "w1", backend: "native", isolated: false }],
+		});
+
+		// 1 initial attempt + 2 retries = 3 verification runs
+		expect(verifySpy).toHaveBeenCalledTimes(3);
+		expect(report.outcomes.get("t1")?.state).toBe("failed");
+		expect(report.outcomes.get("t1")?.attempts).toBe(3);
+	});
 });

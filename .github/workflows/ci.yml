@@ -963,10 +963,11 @@ jobs:
                - { os: ubuntu-22.04, target_id: linux-musl-x64, binary: mars-linux-musl-x64, alpine: true }
                - { os: ubuntu-24.04-arm, target_id: linux-musl-arm64, binary: mars-linux-musl-arm64, alpine: true }
                - { os: macos-15-intel, target_id: darwin-x64, binary: mars-darwin-x64 }
-               - { os: macos-15, target_id: darwin-arm64, binary: mars-darwin-arm64 }
+               - { os: macos-14, target_id: darwin-arm64, binary: mars-darwin-arm64 }
                - { os: windows-2025, target_id: win32-x64, binary: mars-windows-x64.exe }
                - { os: windows-11-arm, target_id: win32-arm64, binary: mars-windows-arm64.exe }
       runs-on: ${{ matrix.os }}
+      timeout-minutes: 20
       permissions:
          contents: read
       steps:

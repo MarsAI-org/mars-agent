@@ -517,6 +517,48 @@ describe("Editor slash autocomplete acceptance", () => {
 		expect(submitted).toBe("/xyz");
 	});
 
+	it("does not silently accept a description-only fuzzy slash match on Enter unless navigated", async () => {
+		const editor = new Editor(defaultEditorTheme);
+		editor.setAutocompleteProvider(
+			new CombinedAutocompleteProvider(
+				[
+					{ name: "vibe", description: "Toggle vibe mode (direct persistent worker sessions)" },
+					{ name: "model", description: "Switch model for this session" },
+				],
+				"/tmp",
+			),
+		);
+		let submitted = "";
+		editor.onSubmit = text => {
+			submitted = text;
+		};
+
+		// Typing an unknown command `/sessions` matches `/vibe` via its description,
+		// so pressing Enter without navigating must submit `/sessions` verbatim.
+		editor.handleInput("/");
+		await untilAutocompleteShown(editor);
+		for (const char of "sessions") editor.handleInput(char);
+		expect(editor.isShowingAutocomplete()).toBe(true);
+		editor.handleInput("\r");
+		expect(submitted).toBe("/sessions");
+
+		// Fast-typed `/sessions` + Enter before popup opens must also submit `/sessions` verbatim.
+		submitted = "";
+		editor.setText("/sessions");
+		editor.handleInput("\r");
+		expect(submitted).toBe("/sessions");
+
+		// Explicitly navigating the popup (Down then Up) opts into accepting the highlighted item.
+		submitted = "";
+		editor.handleInput("/");
+		await untilAutocompleteShown(editor);
+		for (const char of "sessions") editor.handleInput(char);
+		editor.handleInput("\x1b[B");
+		editor.handleInput("\x1b[A");
+		editor.handleInput("\r");
+		expect(submitted).toBe("/vibe");
+	});
+
 	it("never completes Enter to the bare skill namespace row", () => {
 		const editor = new Editor(defaultEditorTheme);
 		editor.setAutocompleteProvider(

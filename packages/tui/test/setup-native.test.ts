@@ -120,4 +120,27 @@ describe("setup surfaces under native rendering", () => {
 			wizard.dispose();
 		}
 	});
+
+	it("exits immediately when Ctrl+C is pressed again during outro instead of restarting outro", async () => {
+		const ui = fakeUi();
+		const scene: SetupScene = {
+			id: "probe",
+			title: "Probe scene",
+			minVersion: 1,
+			mount: () => ({ title: "Probe scene", render: () => [] }),
+		};
+		const wizard = new SetupWizardComponent(ui.host as SetupHost, [scene]);
+		const done = wizard.run();
+		try {
+			advance(SETUP_SPLASH_MS);
+			// First Ctrl+C transitions to outro
+			wizard.handleInput("\x03");
+			expect(nodes([wizard.describe()]).some(n => n.p?.actions?.click === "continue")).toBe(true);
+			// Second Ctrl+C during outro exits immediately without waiting for outro deadline
+			wizard.handleInput("\x03");
+			await done;
+		} finally {
+			wizard.dispose();
+		}
+	});
 });

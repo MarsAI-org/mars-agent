@@ -123,7 +123,11 @@ export class SetupWizardComponent implements Component, OverlayFocusOwner {
 			return;
 		}
 		if (matchesKey(data, "ctrl+c")) {
-			this.#beginOutro();
+			if (this.#phase === "outro") {
+				this.#complete();
+			} else {
+				this.#beginOutro();
+			}
 			return;
 		}
 		if (this.#phase === "splash") {

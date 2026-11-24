@@ -167,10 +167,12 @@ describe("NativeWorkerRunner", () => {
 		expect(seenRequests[2]?.identity).toEqual({ id: "worker-1-task-b", label: "svc" });
 
 		expect(seenRequests[0]?.keepAlive).toBe(false);
+		expect(seenRequests[0]?.blockedAgent).toBeUndefined();
 		expect(seenRequests[0]?.isolation).toEqual({
 			requested: true,
 			merge: "branch",
 			apply: false,
+			allowWithoutSetting: true,
 		});
 		expect(first.changes).toMatchObject({
 			branchName: "mars/task/worker-1-task-a",
@@ -347,5 +349,36 @@ describe("NativeWorkerRunner", () => {
 			totalTokens: 780,
 			requests: 4,
 		});
+	});
+
+	test("passes real resolveEffectiveSubagentPolicy preflight without self-blocking or requiring task.isolation.enabled", async () => {
+		const session = makeSession("*");
+		const capturedPolicies: structuredSubagentModule.EffectiveSubagentPolicy[] = [];
+		vi.spyOn(structuredSubagentModule, "runStructuredSubagent").mockImplementation(async request => {
+			// Exercise the real unmocked preflight policy guard (recursion prevention + isolation gate).
+			const policy = await structuredSubagentModule.resolveEffectiveSubagentPolicy(request);
+			capturedPolicies.push(policy);
+			return makeSubagentResult({ id: request.identity?.id ?? "w1-t1" });
+		});
+
+		const runner = new NativeWorkerRunner({
+			settings: session.settings,
+			cwd: session.cwd,
+			agent: BASE_AGENT,
+			agents: [BASE_AGENT, SCOUT_AGENT],
+			parentActiveTools: ["read", "grep", "edit", "write"],
+			parentApprovalMode: "yolo",
+			taskDepth: 1,
+			session,
+		});
+
+		const outcome = await runner.run(makeSpec({ isolated: true }), makeTask("t1"), makeContext());
+
+		expect(outcome.exitCode).toBe(0);
+		expect(outcome.error).toBeUndefined();
+		expect(capturedPolicies).toHaveLength(1);
+		expect(capturedPolicies[0]?.agentName).toBe("task");
+		expect(capturedPolicies[0]?.isIsolated).toBe(true);
+		expect(capturedPolicies[0]?.effectiveAgent.tools).not.toContain("orchestrate");
 	});
 });

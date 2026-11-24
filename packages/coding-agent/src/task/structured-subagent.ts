@@ -92,6 +92,8 @@ export interface StructuredSubagentIsolationControls {
 	requested?: boolean;
 	merge?: "patch" | "branch";
 	apply?: boolean;
+	/** Allow explicit isolation even when `task.isolation.enabled` is false (used by orchestrator workers). */
+	allowWithoutSetting?: boolean;
 }
 
 /** Identity and presentation metadata supplied by the calling surface. */
@@ -144,6 +146,8 @@ export interface StructuredSubagentRequest {
 	enableIrc?: boolean;
 	/** `0` disables executor wall-clock timeout. Undefined inherits settings. */
 	maxRuntimeMs?: number;
+	/** Optional explicit tool allowlist override (e.g. orchestrator worker permission intersection). */
+	tools?: readonly string[];
 	/** Kernel-defined tools explicitly exposed to this child. */
 	customTools?: CustomTool[];
 	/** Workpool items accepted by the child yield tool during this turn. */
@@ -361,7 +365,11 @@ export async function resolveEffectiveSubagentPolicy(
 		);
 	}
 
-	const effectiveAgent = planMode ? createPlanModeAgent(agent) : agent;
+	const baseEffectiveAgent = planMode ? createPlanModeAgent(agent) : agent;
+	const effectiveAgent =
+		!planMode && request.tools !== undefined
+			? { ...baseEffectiveAgent, tools: [...request.tools] }
+			: baseEffectiveAgent;
 	const schema = resolveSchema(request, effectiveAgent);
 	if (schema.source === "caller" || (schema.source !== "none" && schema.mode === "strict")) {
 		const { error } = buildOutputValidator(schema.schema);
@@ -401,7 +409,7 @@ export async function resolveEffectiveSubagentPolicy(
 	const { patterns: modelOverride, role: modelRole } = resolveAgentModelSelection(modelResolution);
 	const isolationEnabled = cfgTaskIsolationEnabled.get(request.session.settings);
 	const isIsolated = request.isolation?.requested === true;
-	if (isIsolated && !isolationEnabled) {
+	if (isIsolated && !isolationEnabled && request.isolation?.allowWithoutSetting !== true) {
 		throw new StructuredSubagentError(
 			"preflight",
 			"Subagent isolated execution requires task.isolation.enabled; it is currently false.",

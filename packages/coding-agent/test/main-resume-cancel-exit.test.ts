@@ -14,10 +14,14 @@ import { describe, expect, it, vi } from "bun:test";
 import { scaledTimeout } from "./test-timeout";
 import * as path from "node:path";
 import { parseArgs } from "@marsai-org/coding-agent/cli/args";
+import { CliUsageError } from "@marsai-org/coding-agent/cli/usage-error";
 import { Settings } from "@marsai-org/coding-agent/config/settings";
 import { runRootCommand } from "@marsai-org/coding-agent/main";
 import { AuthStorage } from "@marsai-org/coding-agent/session/auth-storage";
-import { TempDir } from "@marsai-org/utils";
+import { stopThemeWatcher } from "@marsai-org/tui/theme";
+import { setInteractiveHost, TempDir } from "@marsai-org/utils";
+
+const cliEntry = path.resolve(import.meta.dir, "../src/cli.ts");
 
 class ProcessExitSignal extends Error {
 	constructor(readonly code: number) {
@@ -56,16 +60,17 @@ describe("runRootCommand — startup --resume picker cancellation", () => {
 			const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
 			const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
 
-			// --print keeps initTheme non-interactive so no global appearance/SIGWINCH
-			// listeners leak into the rest of the suite; the picker branch is gated on
-			// `resume === true`, not on interactivity, so it still runs.
-			const parsed = parseArgs(["--resume", "--print"]);
+			const parsed = parseArgs(["--resume"]);
 			parsed.noExtensions = true;
 			parsed.noSkills = true;
 			parsed.noRules = true;
 			parsed.noTools = true;
 			parsed.noLsp = true;
 			parsed.sessionDir = sessionDir;
+
+			const previousHost = setInteractiveHost(false);
+			const originalIsTTY = process.stdin.isTTY;
+			Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
 
 			const exitCodes: number[] = [];
 			vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
@@ -77,7 +82,7 @@ describe("runRootCommand — startup --resume picker cancellation", () => {
 			let pickerCalled = false;
 			let thrown: unknown;
 			try {
-				await runRootCommand(parsed, ["--resume", "--print"], {
+				await runRootCommand(parsed, ["--resume"], {
 					discoverAuthStorage: async () => authStorage,
 					settings,
 					selectSession: async () => {
@@ -88,7 +93,10 @@ describe("runRootCommand — startup --resume picker cancellation", () => {
 			} catch (err) {
 				thrown = err;
 			} finally {
+				stopThemeWatcher();
 				vi.restoreAllMocks();
+				Object.defineProperty(process.stdin, "isTTY", { value: originalIsTTY, configurable: true });
+				setInteractiveHost(previousHost);
 				authStorage.close();
 			}
 
@@ -97,6 +105,110 @@ describe("runRootCommand — startup --resume picker cancellation", () => {
 			// Exactly one clean exit — proves the cancel branch terminates instead of
 			// falling through to session creation or returning into a hang.
 			expect(exitCodes).toEqual([0]);
+		},
+		scaledTimeout(15000),
+	);
+});
+
+describe("runRootCommand — bare --resume in non-interactive mode", () => {
+	it.each([
+		{ label: "--print", rawArgs: ["--resume", "--print", "hi"] },
+		{ label: "--mode json", rawArgs: ["--resume", "--mode", "json", "hi"] },
+		{ label: "--mode rpc", rawArgs: ["--resume", "--mode", "rpc"] },
+	])(
+		"rejects bare --resume under $label with CliUsageError without opening the picker",
+		async ({ rawArgs }) => {
+			using tempDir = TempDir.createSync("@mars-resume-noninteractive-");
+			const sessionDir = tempDir.path();
+			await Bun.write(
+				path.join(sessionDir, "existing.jsonl"),
+				`${JSON.stringify({ type: "session", id: "existing-session", cwd: sessionDir, timestamp: new Date().toISOString() })}\n`,
+			);
+
+			const authStorage = await AuthStorage.create(path.join(sessionDir, "auth.db"));
+			const settings = Settings.isolated({ "marketplace.autoUpdate": "off" });
+
+			const args = [...rawArgs];
+			const parsed = parseArgs(args);
+			parsed.noExtensions = true;
+			parsed.noSkills = true;
+			parsed.noRules = true;
+			parsed.noTools = true;
+			parsed.noLsp = true;
+			parsed.sessionDir = sessionDir;
+
+			const previousHost = setInteractiveHost(false);
+			const originalIsTTY = process.stdin.isTTY;
+			Object.defineProperty(process.stdin, "isTTY", { value: true, configurable: true });
+
+			let pickerCalled = false;
+			let thrown: unknown;
+			try {
+				await runRootCommand(parsed, args, {
+					discoverAuthStorage: async () => authStorage,
+					settings,
+					selectSession: async () => {
+						pickerCalled = true;
+						return null;
+					},
+				});
+			} catch (err) {
+				thrown = err;
+			} finally {
+				stopThemeWatcher();
+				vi.restoreAllMocks();
+				Object.defineProperty(process.stdin, "isTTY", { value: originalIsTTY, configurable: true });
+				setInteractiveHost(previousHost);
+				authStorage.close();
+			}
+
+			expect(pickerCalled).toBe(false);
+			expect(thrown).toBeInstanceOf(CliUsageError);
+			expect((thrown as Error).message).toContain(
+				"--resume without a session ID or path requires an interactive terminal",
+			);
+		},
+		scaledTimeout(15000),
+	);
+
+	it.each([
+		{ label: "`-r -p` with closed stdin", extraArgs: ["-r", "-p", "hi"], stdin: "ignore" as const },
+		{ label: "`-r` with piped stdin (autoPrint)", extraArgs: ["-r"], stdin: new Blob(["hi\n"]) },
+	])(
+		"exits with code 2 and a clear stderr error on CLI subprocess $label",
+		async ({ extraArgs, stdin }) => {
+			using tempDir = TempDir.createSync("@mars-resume-cli-");
+			const sessionDir = path.join(tempDir.path(), "sessions");
+			const agentDir = path.join(tempDir.path(), "agent");
+			await Bun.write(
+				path.join(sessionDir, "existing.jsonl"),
+				`${JSON.stringify({ type: "session", id: "existing-session", cwd: tempDir.path(), timestamp: new Date().toISOString() })}\n`,
+			);
+
+			const proc = Bun.spawn(
+				[
+					process.execPath,
+					cliEntry,
+					"--session-dir",
+					sessionDir,
+					"--no-extensions",
+					"--no-skills",
+					"--no-rules",
+					"--no-tools",
+					"--no-lsp",
+					...extraArgs,
+				],
+				{
+					cwd: tempDir.path(),
+					env: { ...process.env, MARS_CODING_AGENT_DIR: agentDir },
+					stdin,
+					stdout: "pipe",
+					stderr: "pipe",
+				},
+			);
+			const [exitCode, stderr] = await Promise.all([proc.exited, new Response(proc.stderr).text()]);
+			expect(exitCode).toBe(2);
+			expect(stderr).toContain("--resume without a session ID or path requires an interactive terminal");
 		},
 		scaledTimeout(15000),
 	);

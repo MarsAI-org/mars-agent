@@ -148,6 +148,39 @@ describe("structured subagent primitive", () => {
 		expect(policy.modelOverride).toEqual(["b/y"]);
 	});
 
+	it("gates ad-hoc isolation on task.isolation.enabled but allows orchestrator allowWithoutSetting override", async () => {
+		mockDiscovery();
+		const disabledSession = session({ isolationEnabled: false });
+		await expect(
+			resolveEffectiveSubagentPolicy(
+				request({
+					session: disabledSession,
+					isolation: { requested: true, merge: "branch", apply: false },
+				}),
+			),
+		).rejects.toThrow("Subagent isolated execution requires task.isolation.enabled; it is currently false.");
+
+		const policy = await resolveEffectiveSubagentPolicy(
+			request({
+				session: disabledSession,
+				isolation: { requested: true, merge: "branch", apply: false, allowWithoutSetting: true },
+			}),
+		);
+		expect(policy.isIsolated).toBe(true);
+		expect(policy.mergeMode).toBe("branch");
+		expect(policy.applyChanges).toBe(false);
+
+		// Plan mode still blocks isolation regardless of allowWithoutSetting.
+		await expect(
+			resolveEffectiveSubagentPolicy(
+				request({
+					session: session({ isolationEnabled: false, planMode: true }),
+					isolation: { requested: true, allowWithoutSetting: true },
+				}),
+			),
+		).rejects.toThrow("Subagent isolation, apply, and merge controls are unavailable in plan mode.");
+	});
+
 	it("rescans agents when a plugin provider is disabled while an earlier discovery is in flight", async () => {
 		const previouslyDisabled = getDisabledProviders();
 		enableProvider("mars-plugins");

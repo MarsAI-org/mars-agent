@@ -2123,6 +2123,12 @@ export async function runRootCommand(
 		// and the deferred persistence check below (after extension flag ownership is
 		// resolved) rejects a native --resume, so the picker must not run first.
 		if (parsedArgs.resume === true && !parsedArgs.fork && !parsedArgs.noSession) {
+			if (!isInteractive) {
+				stopStartupWatchdog();
+				throw new CliUsageError(
+					"--resume without a session ID or path requires an interactive terminal (not --print, --mode, or non-TTY stdin). Pass a session ID or path (`mars --resume <id>`), or use `--continue`.",
+				);
+			}
 			const folderSessions = await logger.time(
 				"SessionManager.listForPicker",
 				SessionManager.listForPicker,

@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import * as path from "node:path";
 import { FileType } from "@marsai-org/natives";
 import type { AgentToolResult } from "@marsai-org/agent-core";
+import { validateToolArguments } from "@marsai-org/ai";
 import { Settings } from "../../src/config/settings";
 import type { ToolSession } from "../../src/tools";
 import { GlobTool } from "../../src/tools/glob";
@@ -430,5 +431,57 @@ describe("GlobTool custom backend contract", () => {
 		expect(text).toContain("file-19.ts");
 		expect(text).not.toContain("file-06.ts");
 		expect(detailsOf(result).fileCount).toBe(7);
+	});
+
+	test("rejects unknown `pattern` parameter instead of silently scanning all files", async () => {
+		let scanCalled = false;
+		const tool = new GlobTool(createSession(), {
+			operations: {
+				exists: () => true,
+				glob: () => {
+					scanCalled = true;
+					return ["README.md", "src/math.ts"];
+				},
+			},
+		});
+
+		const validated = validateToolArguments(tool, {
+			type: "toolCall",
+			id: "glob-unknown-pattern",
+			name: "glob",
+			arguments: { path: ".", pattern: "**/*.ts" },
+		}) as typeof tool.parameters.infer;
+
+		let thrown: unknown;
+		try {
+			await tool.execute("glob-unknown-pattern", validated);
+		} catch (error) {
+			thrown = error;
+		}
+
+		expect(scanCalled).toBe(false);
+		expect(thrown).toBeInstanceOf(ToolError);
+		expect((thrown as Error).message).toContain("Unknown parameter(s) for glob: `pattern`");
+		expect((thrown as Error).message).toContain("Put the glob pattern directly in `path`");
+	});
+
+	test("rejects other unknown parameters with the list of valid parameters", async () => {
+		const tool = new GlobTool(createSession(), {
+			operations: {
+				exists: () => true,
+				glob: () => [],
+			},
+		});
+
+		const validated = validateToolArguments(tool, {
+			type: "toolCall",
+			id: "glob-unknown-other",
+			name: "glob",
+			arguments: { path: ".", recursive: true },
+		}) as typeof tool.parameters.infer;
+
+		await expect(tool.execute("glob-unknown-other", validated)).rejects.toThrow(
+			"Unknown parameter(s) for glob: `recursive`. Valid parameters: `path`, `hidden`, `gitignore`, `limit`.",
+		);
 	});
 });

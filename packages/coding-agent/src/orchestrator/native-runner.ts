@@ -36,11 +36,12 @@ import {
 	cfgOrchestratorConflictResolution,
 	cfgOrchestratorMaxRetries,
 	cfgOrchestratorVerificationChecks,
+	ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID,
 	resolveOrchestratorBudget,
 	resolveOrchestratorLimits,
 	resolveOrchestratorVerificationChecks,
 } from "./settings";
-import { ShellVerifier, verifyBranchInTempWorktree } from "./verifier";
+import { ShellVerifier, type VerificationCheck, verifyBranchInTempWorktree } from "./verifier";
 import { requireWorkerSpawn } from "./worker-session";
 import type { OrchestratorTask, WorkerChanges, WorkerOutcome, WorkerSpec, WorkerUsage } from "./types";
 
@@ -69,8 +70,12 @@ export interface NativeWorkerRunnerOptions {
 	readonly parentToolCallId?: string;
 	/** Whether finished worker sessions remain alive in AgentLifecycleManager. Defaults to false. */
 	readonly persistentWorkers?: boolean;
-	/** Optional concurrency override (e.g. from router fan-out decision). */
+	/** Optional concurrency override (e.g. from router fan-out decision or CLI `--workers`). */
 	readonly concurrency?: number;
+	/** Optional retry cap override (e.g. from declarative swarm spec `maxRetries`). */
+	readonly maxRetries?: number;
+	/** Optional verification checks override (e.g. from declarative swarm spec `verificationChecks`). */
+	readonly verificationChecks?: readonly VerificationCheck[];
 	/** Optional peer message transport override. */
 	readonly transport?: MessageTransport;
 	/**
@@ -265,13 +270,17 @@ export class NativeWorkerRunner implements EngineRunner {
 				session,
 				invocationKind: "task",
 				assignment,
-				// Resolve to the restricted definition registered above.
+				// Resolve to the restricted definition registered above and pass `tools`
+				// explicitly so discovered agents (which take precedence over sessionAgents)
+				// still honor the intersected permission plan.
 				agent: restrictedAgent.name,
+				tools: [...plan.tools],
 				...(modelOverride ? { model: modelOverride } : {}),
 				identity: { id: subagentId, label: spec.roleLabel },
-				// The plan already arbitrates ordering through dependencies and file
-				// leases, so a worker never needs to recurse into another orchestrator.
-				blockedAgent: baseAgent.name,
+				// Orchestrator recursion is already prevented by stripping `"orchestrate"`
+				// from `parentActiveTools` and advancing `taskDepth`; passing `blockedAgent: baseAgent.name`
+				// here would collide with `agent: restrictedAgent.name` in `assertDepthAndSpawnAllowed`
+				// and unconditionally reject every worker spawn.
 				keepAlive: this.#options.persistentWorkers ?? false,
 				...(this.#options.parentToolCallId !== undefined
 					? { parentToolCallId: this.#options.parentToolCallId }
@@ -282,6 +291,7 @@ export class NativeWorkerRunner implements EngineRunner {
 								requested: true,
 								merge: this.#options.mergeMode ?? "branch",
 								apply: false,
+								allowWithoutSetting: true,
 							},
 						}
 					: {}),
@@ -394,8 +404,8 @@ function buildIntegratorConflictResolver(
 				invocationKind: "task",
 				assignment: assignmentLines.join("\n"),
 				agent: restrictedIntegrator.name,
+				tools: [...plan.tools],
 				identity: { id: buildSubagentId("integrator", entry.taskId, 1), label: "integrator" },
-				blockedAgent: options.agent.name,
 				keepAlive: false,
 				maxRuntimeMs: 300_000,
 				...(options.parentToolCallId !== undefined ? { parentToolCallId: options.parentToolCallId } : {}),
@@ -427,19 +437,25 @@ function buildIntegratorConflictResolver(
  */
 export function createNativeOrchestrationEngine(options: NativeWorkerRunnerOptions): OrchestrationEngine {
 	const limits = resolveOrchestratorLimits(options.settings);
+	const requestedConcurrency =
+		options.concurrency !== undefined ? Math.max(1, Math.trunc(options.concurrency)) : limits.concurrency;
 	const concurrency =
-		options.concurrency !== undefined
-			? Math.max(1, Math.min(Math.trunc(options.concurrency), limits.concurrency))
-			: limits.concurrency;
+		limits.processCap !== undefined
+			? Math.min(requestedConcurrency, ORCHESTRATOR_DEFAULT_CONCURRENCY_ANDROID)
+			: requestedConcurrency;
 	const runner = new NativeWorkerRunner(options);
 	const anyIsolated = options.forceIsolation === true || options.isolateWorkers !== false;
 
 	const allowProjectChecks = cfgOrchestratorAllowProjectVerificationChecks.get(options.settings);
 	const checksProvenance = options.settings.getProvenance?.(cfgOrchestratorVerificationChecks);
-	const verificationChecks =
+	const settingsVerificationChecks =
 		!allowProjectChecks && checksProvenance === "project"
 			? []
 			: resolveOrchestratorVerificationChecks(options.settings);
+	const verificationChecks =
+		options.verificationChecks && options.verificationChecks.length > 0
+			? [...options.verificationChecks]
+			: settingsVerificationChecks;
 	const verifier = verificationChecks.length > 0 ? new ShellVerifier() : undefined;
 
 	const conflictPolicy = cfgOrchestratorConflictResolution.get(options.settings);
@@ -453,7 +469,7 @@ export function createNativeOrchestrationEngine(options: NativeWorkerRunnerOptio
 		runner,
 		concurrency,
 		processCap: limits.processCap,
-		maxRetries: cfgOrchestratorMaxRetries.get(options.settings),
+		maxRetries: options.maxRetries ?? cfgOrchestratorMaxRetries.get(options.settings),
 		budget: resolveOrchestratorBudget(options.settings),
 		...(transport ? { transport } : {}),
 		...(anyIsolated

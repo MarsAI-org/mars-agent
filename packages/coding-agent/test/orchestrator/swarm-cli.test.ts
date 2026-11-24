@@ -1,10 +1,15 @@
-import { describe, expect, it } from "bun:test";
+import { describe, expect, it, vi } from "bun:test";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
 import { runSwarmCliCommand } from "@marsai-org/coding-agent/commands/swarm";
+import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
+import { OrchestrationEngine } from "@marsai-org/coding-agent/orchestrator/engine";
+import * as nativeRunnerModule from "@marsai-org/coding-agent/orchestrator/native-runner";
 import { SwarmRunStore } from "@marsai-org/coding-agent/orchestrator/run-store";
+import { cfgOrchestratorMaxConcurrency, cfgOrchestratorMode } from "@marsai-org/coding-agent/orchestrator/settings";
 import type { OrchestratorPlan } from "@marsai-org/coding-agent/orchestrator/types";
+import { cfgToolsApprovalMode } from "@marsai-org/coding-agent/tools/settings";
 
 const SAMPLE_YAML_SPEC = `
 name: sample-feature
@@ -208,6 +213,71 @@ describe("mars swarm headless CLI", () => {
 			expect(resumeDryRun.output).not.toContain("step-1: Step 1");
 			expect(resumeDryRun.output).not.toContain("deps=[step-1]");
 		} finally {
+			await fs.rm(tempDir, { recursive: true, force: true });
+		}
+	});
+
+	it("rejects invalid --approval-mode and wires approval, checks, agents, retries, and non-mutating worker/mode overrides", async () => {
+		const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "mars-swarm-cli-wiring-"));
+		try {
+			const specFile = path.join(tempDir, "swarm.yaml");
+			await Bun.write(specFile, `${SAMPLE_YAML_SPEC}maxRetries: 3\nverificationChecks:\n  - "bun run check"\n`);
+
+			const invalidApproval = await runSwarmCliCommand({
+				action: "run",
+				target: specFile,
+				cwd: tempDir,
+				dryRun: true,
+				approvalMode: "bogus",
+			});
+			expect(invalidApproval.exitCode).toBe(1);
+			expect(invalidApproval.output).toContain("--approval-mode must be one of: always-ask, write, yolo");
+
+			const settings = Settings.isolated({});
+			cfgToolsApprovalMode.set(settings, "write");
+			cfgOrchestratorMaxConcurrency.set(settings, 4);
+			cfgOrchestratorMode.set(settings, "auto");
+			const setConcurrencySpy = vi.spyOn(cfgOrchestratorMaxConcurrency, "set");
+			const setModeSpy = vi.spyOn(cfgOrchestratorMode, "set");
+			vi.spyOn(Settings, "init").mockResolvedValue(settings);
+
+			let capturedOptions: nativeRunnerModule.NativeWorkerRunnerOptions | undefined;
+			vi.spyOn(nativeRunnerModule, "createNativeOrchestrationEngine").mockImplementation(options => {
+				capturedOptions = options;
+				return new OrchestrationEngine({
+					runner: {
+						run: async () => ({ exitCode: 0, output: "ok" }),
+					},
+					concurrency: options.concurrency ?? 1,
+				});
+			});
+
+			const store = new SwarmRunStore({ baseDir: path.join(tempDir, "swarms") });
+			const runResult = await runSwarmCliCommand({
+				action: "run",
+				target: specFile,
+				cwd: tempDir,
+				workers: 6,
+				mode: "parallel",
+				autoApprove: true,
+				store,
+			});
+
+			expect(runResult.exitCode).toBe(0);
+			expect(capturedOptions).toBeDefined();
+			expect(capturedOptions?.parentApprovalMode).toBe("yolo");
+			expect(capturedOptions?.concurrency).toBe(6);
+			expect(capturedOptions?.maxRetries).toBe(3);
+			expect(capturedOptions?.agents?.length).toBeGreaterThan(0);
+			expect(capturedOptions?.verificationChecks).toEqual([{ id: "check-1", command: "bun run check" }]);
+			// CLI --workers / --mode must never mutate persisted user settings.
+			expect(setConcurrencySpy).not.toHaveBeenCalled();
+			expect(setModeSpy).not.toHaveBeenCalled();
+			expect(cfgOrchestratorMaxConcurrency.get(settings)).toBe(4);
+			expect(cfgOrchestratorMode.get(settings)).toBe("auto");
+		} finally {
+			vi.restoreAllMocks();
+			resetSettingsForTest();
 			await fs.rm(tempDir, { recursive: true, force: true });
 		}
 	});

@@ -40,6 +40,8 @@ const findSchema = type({
 
 export type GlobToolInput = typeof findSchema.infer;
 
+const KNOWN_GLOB_PARAMS = new Set(["path", "hidden", "gitignore", "limit"]);
+
 const DEFAULT_LIMIT = 200;
 const MAX_LIMIT = 200;
 const DEFAULT_GLOB_TIMEOUT_MS = 5000;
@@ -167,6 +169,17 @@ export class GlobTool implements AgentTool<typeof findSchema, GlobToolDetails> {
 		onUpdate?: AgentToolUpdateCallback<GlobToolDetails>,
 		_context?: AgentToolContext,
 	): Promise<AgentToolResult<GlobToolDetails>> {
+		const unknownKeys = Object.entries(params)
+			.filter(([key, value]) => !KNOWN_GLOB_PARAMS.has(key) && value !== undefined)
+			.map(([key]) => key);
+		if (unknownKeys.length > 0) {
+			const quoted = unknownKeys.map(key => `\`${key}\``).join(", ");
+			const hint = unknownKeys.includes("pattern")
+				? ' Put the glob pattern directly in `path` instead (e.g. `path: "src/**/*.ts"`).'
+				: " Valid parameters: `path`, `hidden`, `gitignore`, `limit`.";
+			throw new ToolError(`Unknown parameter(s) for glob: ${quoted}.${hint}`);
+		}
+
 		const { path: pathInput, limit, hidden, gitignore } = params;
 
 		throwIfAborted(signal);

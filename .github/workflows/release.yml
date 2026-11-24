@@ -82,7 +82,7 @@ jobs:
           - os: macos-15-intel
             target_id: darwin-x64
             cargo_profile: ci
-          - os: macos-15
+          - os: macos-14
             target_id: darwin-arm64
             cargo_profile: ci
           - os: windows-2025
@@ -130,7 +130,7 @@ jobs:
             target_id: darwin-x64
             native_id: darwin-x64
             binary_name: mars-darwin-x64
-          - os: macos-15
+          - os: macos-14
             target_id: darwin-arm64
             native_id: darwin-arm64
             binary_name: mars-darwin-arm64
@@ -179,7 +179,7 @@ jobs:
           - os: macos-15-intel
             target_id: darwin-x64
             binary_name: mars-darwin-x64
-          - os: macos-15
+          - os: macos-14
             target_id: darwin-arm64
             binary_name: mars-darwin-arm64
           - os: windows-2025
