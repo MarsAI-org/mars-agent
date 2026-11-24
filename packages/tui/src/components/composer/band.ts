@@ -44,7 +44,7 @@ export const bandComposerStyle: ComposerStyle = {
 	},
 
 	renderRow(ctx: ComposerRowContext): string[] {
-		return [(ctx.gutter ? ctx.borderColor(ctx.gutter) : "") + ctx.text + ctx.pad];
+		return [(ctx.gutter ? ctx.accentColor(ctx.gutter) : "") + ctx.text + ctx.pad];
 	},
 
 	renderBottom(): undefined {

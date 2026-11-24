@@ -334,8 +334,8 @@ export function getSelectListTheme(): SelectListTheme {
 		};
 	}
 	return {
-		selectedPrefix: (text: string) => theme.fg("accent", text),
-		selectedText: (text: string) => theme.fg("accent", text),
+		selectedPrefix: (text: string) => theme.bold(theme.fg("accent", text)),
+		selectedText: (text: string) => theme.bold(theme.fg("accent", text)),
 		description: (text: string) => theme.fg("muted", text),
 		scrollInfo: (text: string) => theme.fg("muted", text),
 		noMatch: (text: string) => theme.fg("muted", text),
@@ -403,9 +403,13 @@ export function getSettingsListTheme(): SettingsListTheme {
 	}
 	return {
 		label: (text: string, selected: boolean, changed: boolean) =>
-			changed ? theme.fg("statusLineGitDirty", text) : selected ? theme.fg("accent", text) : text,
+			changed ? theme.fg("statusLineGitDirty", text) : selected ? theme.bold(theme.fg("accent", text)) : text,
 		value: (text: string, selected: boolean, changed: boolean) =>
-			changed ? theme.fg("statusLineGitDirty", text) : selected ? theme.fg("accent", text) : theme.fg("muted", text),
+			changed
+				? theme.fg("statusLineGitDirty", text)
+				: selected
+					? theme.bold(theme.fg("accent", text))
+					: theme.fg("muted", text),
 		description: (text: string) => theme.fg("dim", text),
 		warning: (text: string) => theme.fg("warning", text),
 		warningMark: theme.status.warning,

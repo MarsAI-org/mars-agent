@@ -26,9 +26,9 @@ import type { SetupScene, SetupSceneController, SetupSceneHost } from "./types";
 type ThemeMode = "curated" | "all";
 
 const CURATED_ITEMS: readonly SelectItem[] = [
-	{ value: "auto", label: "Match terminal", description: "Mars in dark terminals, Light in light terminals" },
-	{ value: "theme:dark", label: "Mars", description: "Default dark theme" },
-	{ value: "theme:light", label: "Light", description: "Default light theme" },
+	{ value: "auto", label: "Match terminal", description: "Mars Obsidian in dark terminals, Mars Alabaster in light" },
+	{ value: "theme:dark", label: "Mars", description: "Mars Obsidian dark theme (default)" },
+	{ value: "theme:light", label: "Light", description: "Mars Alabaster light theme" },
 	{ value: "colorblind", label: "Colorblind colors", description: "Adjust red/green contrast" },
 	{ value: "ansi", label: "ANSI-safe", description: "ASCII glyphs with the dark terminal theme" },
 	{ value: "browse", label: "Browse all…", description: "Show every built-in and custom theme" },
@@ -71,11 +71,25 @@ function renderMockEditor(width: number): string[] {
 	];
 }
 
+function renderMockSurfaceRow(width: number): string {
+	const userPill = theme.bg(
+		"userMessageBg",
+		` ${theme.fg("accent", theme.symbol("user.prompt"))} ${theme.fgOnBg("userMessageText", "userMessageBg", "user prompt")} `,
+	);
+	const toolPill = theme.bg(
+		"toolSuccessBg",
+		` ${theme.fg("success", theme.status.success)} ${theme.fg("muted", "tool output")} `,
+	);
+	const line = `${userPill}  ${toolPill}`;
+	return width > 0 ? padToWidth(line, width) : "";
+}
+
 function renderThemePreview(width: number): string[] {
 	const previewWidth = Math.max(1, Math.min(width, 88));
 	return [
 		theme.bold("Preview"),
 		`${theme.fg("success", `${theme.status.success} success`)}  ${theme.fg("warning", `${theme.status.warning} warning`)}  ${theme.fg("error", `${theme.status.error} error`)}  ${theme.fg("accent", "accent")}`,
+		renderMockSurfaceRow(previewWidth),
 		"",
 		theme.fg("muted", "Status line"),
 		renderMockStatusLine(previewWidth),

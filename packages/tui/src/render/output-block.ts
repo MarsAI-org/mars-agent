@@ -78,7 +78,8 @@ export function renderOutputBlock(options: OutputBlockOptions, theme: Theme): st
 	const v = theme.boxRound.vertical;
 	const cap = h.repeat(3);
 	const lineWidth = Math.max(0, width);
-	// Border colors: running/pending use accent, success uses dim (gray), error/warning keep their colors
+	// Border colors: running/pending use borderAccent (terracotta), settled blocks use
+	// borderMuted for architectural hairline unity with message frames and overlays.
 	const borderColor: ThemeColor =
 		options.borderColor ??
 		(state === "error"
@@ -86,8 +87,8 @@ export function renderOutputBlock(options: OutputBlockOptions, theme: Theme): st
 			: state === "warning"
 				? "warning"
 				: state === "running" || state === "pending"
-					? "accent"
-					: "dim");
+					? "borderAccent"
+					: "borderMuted");
 	const border = (text: string) => theme.fg(borderColor, text);
 	const bgFn = (() => {
 		if (!state || !applyBg) return undefined;

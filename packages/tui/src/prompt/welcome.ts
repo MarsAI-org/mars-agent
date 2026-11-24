@@ -63,9 +63,9 @@ export function pickWeightedTip(tips: readonly string[], r: number): string {
 
 type ColorEncoding = "ansi-16m" | "ansi-256";
 
-/** Paint each glyph of {@link NEW_TAG_TEXT} on a moving HSL rainbow. `phase`
- *  rotates the hue offset cyclically; successive renders with increasing phase
- *  shimmer, while a fixed phase yields a still rainbow. */
+/** Paint each glyph of {@link NEW_TAG_TEXT} on a moving Mars ember ramp. `phase`
+ *  shifts the highlight cyclically along terracotta → ember → solar gold so
+ *  successive renders shimmer while staying anchored to the brand palette. */
 function renderNewTag(phase: number, encoding: ColorEncoding): string {
 	const bold = "\x1b[1m";
 	const reset = "\x1b[0m";
@@ -74,8 +74,10 @@ function renderNewTag(phase: number, encoding: ColorEncoding): string {
 	let out = bold;
 	let prev = "";
 	for (let i = 0; i < chars.length; i++) {
-		const hue = Math.round(((i / chars.length + wrapped) % 1) * 360);
-		const color = Bun.color(`hsl(${hue}, 95%, 60%)`, encoding) ?? "";
+		const wave = 0.5 + 0.5 * Math.sin(((i / chars.length + wrapped) % 1) * Math.PI * 2);
+		const hue = Math.round(12 + wave * 20);
+		const lightness = Math.round((theme.isLight ? 40 : 58) + wave * (theme.isLight ? 12 : 20));
+		const color = Bun.color(`hsl(${hue}, 88%, ${lightness}%)`, encoding) ?? "";
 		if (color !== prev) {
 			out += color;
 			prev = color;
@@ -482,20 +484,20 @@ export function logoNode(lines: readonly string[], shimmer: boolean): NativeNode
 }
 
 /**
- * Multi-stop palette for the diagonal gradient: the Mars ember ramp, from the
- * deep shadow of the mark through the brand orange to the glow on its rim.
- * The previous palette was magenta → violet → cyan, which painted the orange
- * brand mark in another product's colors.
+ * Multi-stop palette for the diagonal gradient: the Mars brand ramp from
+ * `mars-mark.svg`, moving from Mars Crater through Mars Deep and Mars Orange
+ * to Ember Coral and Ember Hover.
  */
 const GRADIENT_STOPS: ReadonlyArray<readonly [number, number, number]> = [
-	[152, 48, 24], // marsDeep   #983018
-	[214, 74, 40], // marsEmber  #d64a28
-	[249, 115, 22], // marsOrange #f97316
-	[255, 171, 115], // marsGlow   #ffab73
+	[155, 50, 32], // marsCrater #9b3220
+	[180, 54, 24], // marsDeep   #b43618
+	[214, 74, 39], // marsOrange #d64a27
+	[255, 130, 92], // marsEmber  #ff825c
+	[255, 160, 130], // emberHover #ffa082
 ];
 
-/** 256-color ramp fallback when truecolor isn't available: the same ember ramp. */
-const GRADIENT_RAMP_256 = [88, 130, 166, 202, 208, 214, 216];
+/** 256-color ramp fallback when truecolor isn't available: crater → terracotta → ember coral. */
+const GRADIENT_RAMP_256 = [88, 130, 166, 202, 209, 216];
 
 /** Half-width of the shine highlight band, expressed in gradient-t units. */
 const SHINE_HALF_WIDTH = 0.18;
