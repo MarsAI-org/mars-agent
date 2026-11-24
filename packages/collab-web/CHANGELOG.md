@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-24
+
 ### Changed
 
+- **Aligned the collab web client with Mars Obsidian and Mars Alabaster.** Migrated design tokens, brand mark gradient stops, standalone tool cards, and manifest theme colors from legacy cyan/pink accents to the unified Mars palette.
 - **Tool cards shorten home paths the same way the header does.** The tool renderers carried their own `shortenPath`, so a long path in a tool card stayed whole while the header elided it. Both now use one helper.
 
 ## [18.8.0] - 2026-10-07

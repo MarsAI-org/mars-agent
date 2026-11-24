@@ -1,6 +1,6 @@
 {
 	"name": "@marsai-org/catalog",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Model catalog for Mars: bundled model database, provider discovery descriptors, model identity, classification, and equivalence",
 	"keywords": [
 		"ai",
@@ -14,7 +14,10 @@
 		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MarsAI-org/mars-agent.git",

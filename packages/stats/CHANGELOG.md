@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-24
+
+### Changed
+
+- **Aligned `mars-stats` with Mars Obsidian and Mars Alabaster.** Updated dark/light dashboard surfaces, brand mark gradient, accent buttons, and categorical chart series colors to match the unified Mars palette.
+
 ### Fixed
 
 - The Frustration page's per-model table counts every answered message again; since agent notices began landing before replies, about half went uncounted ([#19114](https://github.com/can1357/oh-my-pi/pull/19114) by [@will-bogusz](https://github.com/will-bogusz))

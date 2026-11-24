@@ -1,6 +1,6 @@
 {
 	"name": "@marsai-org/coding-agent",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Coding agent CLI with read, bash, edit, write tools and session management",
 	"keywords": [
 		"agent",
@@ -15,7 +15,10 @@
 		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"contributors": [
 		"Mario Zechner"
 	],

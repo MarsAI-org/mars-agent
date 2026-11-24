@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-24
+
+### Changed
+
+- **Refreshed default Mars Obsidian (`dark`) and Mars Alabaster (`light`) themes and TUI chrome.** Updated default palettes, welcome/splash/outro Mars gradients, active selection bolding, unified hairline tool-card borders, accented band composer prompt cue, and theme setup preview.
+- **Migrated `/swarm board` and `mars ps` to active theme tokens.** Replaced hardcoded ANSI/chalk colors in `orchestrator-board`, `ps-top`, and `ps-data` so both apps adapt seamlessly across dark, light, and custom themes.
+
+### Fixed
+
+- **Raised `mdCodeBlockBorder` contrast in Mars Obsidian and Mars Alabaster.** Code-fence header lines now clear WCAG AA contrast against both dark and light page backgrounds.
+
 ## [0.3.1] - 2026-10-25
 
 ### Fixed

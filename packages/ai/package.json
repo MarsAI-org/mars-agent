@@ -1,6 +1,6 @@
 {
 	"name": "@marsai-org/ai",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Unified LLM API with automatic model discovery and provider configuration",
 	"keywords": [
 		"ai",
@@ -16,7 +16,10 @@
 		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"contributors": [
 		"Mario Zechner"
 	],

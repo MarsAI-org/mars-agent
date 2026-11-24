@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-24
+
+### Added
+
+- **Modernized multi-agent `/swarm` engine and headless `mars swarm` CLI.** Added the `/swarm` slash command (with `/orchestrate` alias), live Swarm Board overlay (`/swarm board`), declarative YAML/JSON spec loader, persistent run resume under `~/.mars/swarms/`, verification retries, and isolated branch verification.
+
+### Changed
+
+- **Unified Mars Obsidian and Mars Alabaster palettes across TUI and web exports.** Refreshed HTML session exports (`/export`), `mars stream` console, and gallery captures to match the Mars Obsidian (dark) and Mars Alabaster (light) visual language.
+
 ### Fixed
 
 - **An unrecognised `tools.approvalMode` no longer means "approve everything".** A value outside `always-ask`/`write`/`yolo` fell back to `yolo`, the most permissive tier, so a mangled or merged settings file silently turned approvals off; it now falls back to `always-ask` and logs a warning.

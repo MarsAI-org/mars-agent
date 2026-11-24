@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-24
+
 ### Changed
 
 - Telemetry warnings that previously printed straight to stderr are now written to the Mars log file, so they no longer disrupt an active terminal UI.

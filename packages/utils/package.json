@@ -1,6 +1,6 @@
 {
 	"name": "@marsai-org/utils",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Shared utilities for Mars packages",
 	"keywords": [
 		"cli",
@@ -13,7 +13,10 @@
 		"url": "https://github.com/MarsAI-org/mars-agent/issues"
 	},
 	"license": "MIT",
-	"author": { "name": "Stencil Labs, Inc.", "url": "https://stencil.so" },
+	"author": {
+		"name": "Stencil Labs, Inc.",
+		"url": "https://stencil.so"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/MarsAI-org/mars-agent.git",
