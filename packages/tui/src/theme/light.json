@@ -57,7 +57,7 @@
 		"mdLinkUrl": "stone",
 		"mdCode": "marsCrater",
 		"mdCodeBlock": "marsCrater",
-		"mdCodeBlockBorder": "frameBorder",
+		"mdCodeBlockBorder": "stone",
 		"mdQuote": "body",
 		"mdQuoteBorder": "mutedBorder",
 		"mdHr": "mutedBorder",

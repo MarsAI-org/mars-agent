@@ -59,7 +59,7 @@
 		"mdLinkUrl": "dimStone",
 		"mdCode": "marsGlow",
 		"mdCodeBlock": "marsGlow",
-		"mdCodeBlockBorder": "frameBorder",
+		"mdCodeBlockBorder": "dimStone",
 		"mdQuote": "mutedStone",
 		"mdQuoteBorder": "mutedBorder",
 		"mdHr": "mutedBorder",
