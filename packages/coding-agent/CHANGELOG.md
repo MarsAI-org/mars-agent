@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.3.4] - 2026-11-25
+
 ### Changed
 
 - **Wired `display.density` (`comfortable` | `compact`) into settings and live interactive mode, and added `/theme` name autocomplete.** Users can now toggle layout density live and autocomplete installed themes after `/theme set` and `/theme preview`.

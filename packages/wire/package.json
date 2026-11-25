@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "@marsai-org/wire",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Shared wire protocol types for Mars packages",
   "homepage": "https://github.com/MarsAI-org/mars-agent#readme",
   "author": {
