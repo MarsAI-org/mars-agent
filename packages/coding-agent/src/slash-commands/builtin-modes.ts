@@ -45,6 +45,7 @@ import { cfgExtendedContext } from "../session/context-settings";
 import { cfgGoalEnabled } from "../goals/settings";
 import { cfgPlanEnabled } from "../plan-mode/settings";
 import { OrchestratorBoardComponent, type PaneState, type WorkerPane } from "@marsai-org/tui/apps/orchestrator-board";
+import { SwarmBoardComponent } from "@marsai-org/tui/apps/swarm-board";
 import {
 	applyOrchestratorCommand,
 	describeOrchestratorMode,
@@ -55,6 +56,7 @@ import { buildResumePlan, getActiveSwarmRun, type PersistedSwarmRun, SwarmRunSto
 import { cfgOrchestratorMaxConcurrency } from "../orchestrator/settings";
 import { loadSwarmSpec, specToOrchestratorPlan } from "../orchestrator/spec-loader";
 import type { OrchestratorPlan } from "../orchestrator/types";
+import { getActiveSwarmSession, SWARM_OPEN_BOARD_HINT } from "../swarm/runtime";
 
 export function refreshStatusLine(ctx: InteractiveModeContext): void {
 	ctx.statusLine.invalidate();
@@ -343,15 +345,137 @@ function formatSwarmPlanPayload(plan: OrchestratorPlan): string {
 	return JSON.stringify(payload, null, 2);
 }
 
+const SWARM_MANAGEMENT_VERBS = new Set([
+	"",
+	"on",
+	"enable",
+	"start",
+	"off",
+	"disable",
+	"stop",
+	"status",
+	"mode",
+	"workers",
+	"board",
+	"runs",
+	"list",
+	"run",
+	"resume",
+]);
+
 async function handleSwarmTuiCommand(
 	command: ParsedSlashCommand,
 	runtime: TuiSlashCommandRuntime,
 ): Promise<{ prompt: string } | undefined> {
-	const [verb = "", ...rest] = command.args.trim().split(/\s+/).filter(Boolean);
+	const trimmedArgs = command.args.trim();
+	const [verb = "", ...rest] = trimmedArgs.split(/\s+/).filter(Boolean);
 	const action = verb.toLowerCase();
+
+	// Free-text `/swarm <prompt>`: activate live Swarm Coordinator Mode (read-only + 4 swarm tools)
+	// and immediately submit `<prompt>` so the coordinator spawns workers without any YAML file.
+	if (command.name === "swarm" && action && !SWARM_MANAGEMENT_VERBS.has(action)) {
+		if (!runtime.ctx.enterSwarmCoordinatorMode) {
+			runtime.ctx.showStatus(
+				await applyOrchestratorCommand(runtime.ctx.settings, runtime.ctx.session, command.args),
+			);
+			clearSubmittedText(runtime);
+			return;
+		}
+		try {
+			await runtime.ctx.enterSwarmCoordinatorMode();
+			runtime.ctx.showStatus(`Swarm Coordinator mode active. ${SWARM_OPEN_BOARD_HINT}`);
+			clearSubmittedText(runtime);
+			return { prompt: trimmedArgs };
+		} catch (error) {
+			const detail = error instanceof Error ? error.message : String(error);
+			runtime.ctx.showError(`Failed to start swarm mode: ${detail}`);
+			clearSubmittedText(runtime);
+			return;
+		}
+	}
+
+	if (command.name === "swarm" && (action === "on" || action === "enable" || action === "start")) {
+		if (runtime.ctx.enterSwarmCoordinatorMode) {
+			try {
+				await runtime.ctx.enterSwarmCoordinatorMode();
+				runtime.ctx.showStatus(
+					`Swarm Coordinator mode on (read-only + swarm tools). Send a prompt to delegate work. ${SWARM_OPEN_BOARD_HINT}`,
+				);
+				clearSubmittedText(runtime);
+				return;
+			} catch (error) {
+				const detail = error instanceof Error ? error.message : String(error);
+				runtime.ctx.showError(`Failed to enable swarm mode: ${detail}`);
+				clearSubmittedText(runtime);
+				return;
+			}
+		}
+	}
+
+	if (action === "off" || action === "disable" || action === "stop") {
+		const liveSwarm = getActiveSwarmSession();
+		if (liveSwarm && runtime.ctx.exitSwarmCoordinatorMode) {
+			await runtime.ctx.exitSwarmCoordinatorMode();
+			runtime.ctx.showStatus("Swarm Coordinator mode off. Restored original toolset.");
+			clearSubmittedText(runtime);
+			return;
+		}
+	}
+
+	if (action === "status" || action === "") {
+		const liveSwarm = getActiveSwarmSession();
+		if (liveSwarm) {
+			runtime.ctx.showStatus(liveSwarm.formatStatusText());
+			clearSubmittedText(runtime);
+			return;
+		}
+	}
 
 	if (action === "board") {
 		const requestedPlanId = rest[0];
+		const liveSwarm = getActiveSwarmSession();
+		if (liveSwarm && (!requestedPlanId || requestedPlanId === liveSwarm.swarmId)) {
+			if (runtime.ctx.openSwarmBoard?.()) {
+				clearSubmittedText(runtime);
+				return;
+			}
+			const handleRef: { component?: SwarmBoardComponent; overlay?: { hide(): void }; closed: boolean } = {
+				closed: false,
+			};
+			const closeOverlay = (): void => {
+				if (handleRef.closed) return;
+				handleRef.closed = true;
+				handleRef.component?.dispose();
+				handleRef.overlay?.hide();
+			};
+			const component = new SwarmBoardComponent(runtime.ctx.ui, {
+				snapshot: () => liveSwarm.snapshot(),
+				killWorker: name => {
+					void liveSwarm.killWorker(name);
+				},
+				stopAll: () => {
+					void liveSwarm.stopAllWorkers();
+				},
+				detach: () => {
+					closeOverlay();
+				},
+			});
+			handleRef.component = component;
+			const overlay = runtime.ctx.ui.showOverlay(component, {
+				anchor: "top-left",
+				width: "100%",
+				maxHeight: "100%",
+				margin: 0,
+				fullscreen: true,
+				mouseTracking: false,
+			});
+			handleRef.overlay = overlay;
+			runtime.ctx.ui.setFocus?.(component);
+			void component.run();
+			clearSubmittedText(runtime);
+			return;
+		}
+
 		const liveRun = getActiveSwarmRun(requestedPlanId);
 		let persistedRun: PersistedSwarmRun | null = null;
 
@@ -645,17 +769,17 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 		name: "swarm",
 		aliases: ["orchestrate"],
 		icon: "action",
-		description: "Toggle swarm orchestrator mode, inspect live worker boards, or run declarative swarm specs",
-		inlineHint: "[on|off|status|mode|workers|board|runs|run|resume]",
+		description: "Launch a live multi-agent swarm (`/swarm <prompt>`), open the live board (`Alt+S`), or manage runs",
+		inlineHint: "[<prompt> | on|off|status|board|mode|workers|runs|run|resume]",
 		allowArgs: true,
 		subcommands: [
-			{ name: "on", description: "Enable swarm mode and expose the orchestrate tool" },
-			{ name: "off", description: "Disable swarm mode and drop the orchestrate tool" },
-			{ name: "status", description: "Show mode, fan-out policy, worker cap, and active run" },
-			{ name: "mode", description: "Set the fan-out policy", usage: "<auto|single|parallel>" },
-			{ name: "workers", description: "Cap concurrent workers", usage: "<n>" },
-			{ name: "board", description: "Open the live Swarm Board overlay", usage: "[planId]" },
-			{ name: "runs", description: "List recent persisted swarm runs" },
+			{ name: "on", description: "Enable Swarm Coordinator mode (read-only + swarm tools)" },
+			{ name: "off", description: "Exit Swarm mode, dispose workers, and restore tools" },
+			{ name: "status", description: "Show live swarm roster/board status or orchestrator status" },
+			{ name: "board", description: "Open the live Swarm Board overlay (Alt+S)", usage: "[planId]" },
+			{ name: "mode", description: "Set the orchestrator fan-out policy", usage: "<auto|single|parallel>" },
+			{ name: "workers", description: "Cap concurrent orchestrator workers", usage: "<n>" },
+			{ name: "runs", description: "List recent persisted declarative swarm runs" },
 			{ name: "run", description: "Execute a declarative swarm spec file", usage: "<path.yaml|json>" },
 			{
 				name: "resume",
@@ -663,7 +787,15 @@ export const BUILTIN_MODE_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 				usage: "<planId>",
 			},
 		],
-		getTuiAutocompleteDescription: runtime => describeOrchestratorMode(runtime.ctx.settings),
+		getTuiAutocompleteDescription: runtime => {
+			const liveSwarm = getActiveSwarmSession();
+			if (liveSwarm) {
+				const snap = liveSwarm.snapshot();
+				const workers = snap.members.filter(m => m.role === "worker" && m.state !== "killed").length;
+				return `Swarm: ${snap.title} (${workers} worker${workers === 1 ? "" : "s"}, #${liveSwarm.board.head})`;
+			}
+			return describeOrchestratorMode(runtime.ctx.settings);
+		},
 		handleTui: async (command, runtime) => {
 			return handleSwarmTuiCommand(command, runtime);
 		},

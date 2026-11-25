@@ -2553,9 +2553,7 @@ def test_share_git_metadata_refuses_escaped_gitdir_and_symlinks(
     assert fchowns == []
 
 
-def test_git_env_for_repo_scrubs_all_orchestrator_secrets(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_git_env_for_repo_scrubs_all_orchestrator_secrets(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """P-4 regression: `_git_env_for_repo` strips every orchestrator secret env var."""
     from robomp.git_ops import SCRUBBED_SECRET_ENV_KEYS
     from robomp.sandbox import _git_env_for_repo

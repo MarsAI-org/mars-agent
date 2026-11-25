@@ -94,4 +94,40 @@ describe("FooterComponent jj label sanitization", () => {
 			component.dispose();
 		}
 	});
+
+	it("sanitizes control characters from the git branch name and renders throughput when active", () => {
+		const root = "/repo/footer-git-sanitize";
+		const gitRepo = {
+			headSync: () => ({
+				kind: "ref" as const,
+				branch: `feat/${String.fromCharCode(7)}instrument\tpanel`,
+				refName: "refs/heads/feat/instrument",
+			}),
+		};
+		const repo = {
+			kind: () => "git",
+			asGit: () => gitRepo as never,
+			asJj: () => null,
+			root: () => root,
+			watchTarget: () => `${root}/.git/HEAD`,
+			label: async () => null,
+		} as unknown as VcsRepo;
+		vi.spyOn(vcs, "repoForDisplay").mockReturnValue(repo);
+		vi.spyOn(vcs, "watch").mockImplementation((() => () => {}) as unknown as typeof vcs.watch);
+
+		const session = makeSession();
+		session.getTokensPerSecond = () => 48.6;
+		const component = new FooterComponent(session, statusLineHost);
+		try {
+			const lines = component.render(100);
+			const content = lines.join("\n");
+			expect(content).toContain("(feat/");
+			expect(content).toContain("panel)");
+			expect(content).not.toContain(String.fromCharCode(7));
+			expect(content).not.toContain("\t");
+			expect(content).toContain("48.6 tok/s");
+		} finally {
+			component.dispose();
+		}
+	});
 });

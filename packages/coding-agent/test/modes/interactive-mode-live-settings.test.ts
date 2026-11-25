@@ -11,10 +11,12 @@ import * as theme from "@marsai-org/tui/theme";
 import { TempDir } from "@marsai-org/utils";
 
 import {
+	cfgDisplayDensity,
 	cfgStatusLineContextLine,
 	cfgStatusLineLeftSegments,
 	cfgSymbolPreset,
 } from "@marsai-org/coding-agent/modes/settings";
+import { chatTranscriptDisplayPreferences } from "@marsai-org/tui/chat/display-preferences";
 import { cfgHideThinkingBlock } from "@marsai-org/coding-agent/session/settings";
 
 describe("InteractiveMode live settings", () => {
@@ -73,6 +75,18 @@ describe("InteractiveMode live settings", () => {
 		expect(effective.leftSegments).toEqual(["time", "model"]);
 		expect(effective.contextLine).toBe("off");
 		expect(mode.hideThinkingBlock).toBe(true);
+	});
+
+	it("applies display.density changes live to transcript and chrome preferences", async () => {
+		expect(chatTranscriptDisplayPreferences.density).toBe("comfortable");
+
+		cfgDisplayDensity.set(session.settings, "compact");
+		await Promise.resolve();
+		expect(chatTranscriptDisplayPreferences.density).toBe("compact");
+
+		cfgDisplayDensity.set(session.settings, "comfortable");
+		await Promise.resolve();
+		expect(chatTranscriptDisplayPreferences.density).toBe("comfortable");
 	});
 
 	it("keeps an explicitly configured unicode status bar after Glyph Protocol confirmation", async () => {

@@ -18,11 +18,11 @@ from unittest import mock
 from omp_rpc import (
     AgentEndEvent,
     AskAnswer,
-    HostTool,
-    HostToolCompletedEvent,
     AvailableCommandsUpdateEvent,
     GoalResult,
     HandoffResult,
+    HostTool,
+    HostToolCompletedEvent,
     LivePhaseEvent,
     OpenSessionResult,
     PromptResultEvent,
@@ -35,13 +35,11 @@ from omp_rpc import (
     SubagentLifecycleEvent,
     host_tool,
 )
-
 from omp_rpc.client import (
-    _RpcFrameDecoder,
     _process_group_id,
+    _RpcFrameDecoder,
     _terminate_process_group,
 )
-
 
 FAKE_SERVER = textwrap.dedent(
     """
@@ -1157,7 +1155,9 @@ class RpcClientTests(unittest.TestCase):
             client.send_ui_answers(
                 request.id,
                 [
-                    AskAnswer(id=questions[0].id, selected_options=(), custom_input="DuckDB"),
+                    AskAnswer(
+                        id=questions[0].id, selected_options=(), custom_input="DuckDB"
+                    ),
                     AskAnswer(id=questions[1].id, selected_options=("Auth", "Search")),
                 ],
             )
@@ -1220,7 +1220,13 @@ class RpcClientTests(unittest.TestCase):
     def test_set_todos_accepts_blocked_tasks(self) -> None:
         with self.make_client() as client:
             phases = client.set_todos(
-                [{"content": "Ship", "status": "blocked", "blocker": "waiting on review"}]
+                [
+                    {
+                        "content": "Ship",
+                        "status": "blocked",
+                        "blocker": "waiting on review",
+                    }
+                ]
             )
         task = phases[0].tasks[0]
         self.assertEqual((task.status, task.blocker), ("blocked", "waiting on review"))
@@ -1234,7 +1240,9 @@ class RpcClientTests(unittest.TestCase):
     def test_goal_create_sends_snake_case_budget_and_updates_state(self) -> None:
         with self.make_client() as client:
             self.assertEqual(client.goal("get"), GoalResult(goal=None, state=None))
-            result = client.goal("create", objective="Ship the parser", token_budget=5000)
+            result = client.goal(
+                "create", objective="Ship the parser", token_budget=5000
+            )
             state = client.get_state()
 
         assert result.goal is not None
@@ -1250,15 +1258,27 @@ class RpcClientTests(unittest.TestCase):
             client.steer("same")
             client.follow_up("same")
             client.follow_up("keep")
-            self.assertIs(client.remove_queued_message("same", "steering").removed, True)
+            self.assertIs(
+                client.remove_queued_message("same", "steering").removed, True
+            )
             self.assertEqual(client.get_state().queued_message_count, 3)
-            self.assertIs(client.remove_queued_message("same", "steering").removed, True)
-            self.assertIs(client.remove_queued_message("same", "steering").removed, False)
+            self.assertIs(
+                client.remove_queued_message("same", "steering").removed, True
+            )
+            self.assertIs(
+                client.remove_queued_message("same", "steering").removed, False
+            )
             self.assertEqual(client.get_state().queued_message_count, 2)
-            self.assertIs(client.remove_queued_message("same", "followUp").removed, True)
-            self.assertIs(client.remove_queued_message("missing", "followUp").removed, False)
+            self.assertIs(
+                client.remove_queued_message("same", "followUp").removed, True
+            )
+            self.assertIs(
+                client.remove_queued_message("missing", "followUp").removed, False
+            )
             self.assertEqual(client.get_state().queued_message_count, 1)
-            self.assertIs(client.remove_queued_message("keep", "followUp").removed, True)
+            self.assertIs(
+                client.remove_queued_message("keep", "followUp").removed, True
+            )
 
     def test_queue_update_event_matches_get_state_and_removal_invariant(self) -> None:
         updates: list[QueueUpdateEvent] = []
@@ -1271,7 +1291,10 @@ class RpcClientTests(unittest.TestCase):
             # the reader thread dispatches frames in order: the get_state round trip
             # guarantees both updates have reached the listener before asserting.
             state = client.get_state()
-            self.assertEqual([event.follow_up for event in updates], [("first",), ("first", "second")])
+            self.assertEqual(
+                [event.follow_up for event in updates],
+                [("first",), ("first", "second")],
+            )
             self.assertEqual(updates[-1].steering, ())
             self.assertEqual(state.queued_messages.follow_up, updates[-1].follow_up)
             self.assertEqual(state.queued_messages.steering, updates[-1].steering)
@@ -1280,7 +1303,9 @@ class RpcClientTests(unittest.TestCase):
             # passed back verbatim to remove_queued_message with its queue,
             # removes that message.
             for text in state.queued_messages.follow_up:
-                self.assertIs(client.remove_queued_message(text, "followUp").removed, True)
+                self.assertIs(
+                    client.remove_queued_message(text, "followUp").removed, True
+                )
 
             self.assertEqual(client.get_state().queued_messages.follow_up, ())
             self.assertEqual(updates[-1].follow_up, ())
@@ -1298,23 +1323,23 @@ class RpcClientTests(unittest.TestCase):
             self.assertEqual(client.get_state().queued_message_count, 1)
 
     def test_remove_queued_message_rejects_missing_result(self) -> None:
-        server = FAKE_SERVER.replace('{"removed": removed}', '{}')
-        with self.make_client(server) as client:
-            with self.assertRaises(ValueError):
-                client.remove_queued_message("missing", "steering")
+        server = FAKE_SERVER.replace('{"removed": removed}', "{}")
+        with self.make_client(server) as client, self.assertRaises(ValueError):
+            client.remove_queued_message("missing", "steering")
 
     def test_remove_queued_message_rejects_nonboolean_result(self) -> None:
         server = FAKE_SERVER.replace('{"removed": removed}', '{"removed": "false"}')
-        with self.make_client(server) as client:
-            with self.assertRaises(ValueError):
-                client.remove_queued_message("missing", "steering")
+        with self.make_client(server) as client, self.assertRaises(ValueError):
+            client.remove_queued_message("missing", "steering")
 
     def test_promote_queued_message_moves_one_follow_up_into_steering(self) -> None:
         with self.make_client() as client:
             client.follow_up("same")
             client.follow_up("same")
             self.assertIs(client.promote_queued_message("same").promoted, True)
-            self.assertIs(client.remove_queued_message("same", "steering").removed, True)
+            self.assertIs(
+                client.remove_queued_message("same", "steering").removed, True
+            )
             self.assertIs(client.promote_queued_message("same").promoted, True)
             self.assertIs(client.promote_queued_message("same").promoted, False)
             self.assertIs(client.promote_queued_message("missing").promoted, False)
@@ -1336,9 +1361,11 @@ class RpcClientTests(unittest.TestCase):
         for payload in ("{}", '{"promoted": "false"}'):
             with self.subTest(payload=payload):
                 server = FAKE_SERVER.replace('{"promoted": promoted}', payload)
-                with self.make_client(server) as client:
-                    with self.assertRaises(ValueError):
-                        client.promote_queued_message("missing")
+                with (
+                    self.make_client(server) as client,
+                    self.assertRaises(ValueError),
+                ):
+                    client.promote_queued_message("missing")
 
     def test_protocol_v2_decoder_accepts_exact_logical_boundary(self) -> None:
         frame = {
@@ -1454,7 +1481,9 @@ class RpcClientTests(unittest.TestCase):
         self.assertEqual(turn.result.status, "completed")
         self.assertTrue(turn.result.agent_invoked)
         self.assertNotEqual(turn.result.id, "req_earlier")
-        self.assertEqual([result.id for result in results], ["req_earlier", turn.result.id])
+        self.assertEqual(
+            [result.id for result in results], ["req_earlier", turn.result.id]
+        )
 
     def test_prompt_and_wait_returns_immediately_for_local_prompt(self) -> None:
         with self.make_client() as client:
@@ -1497,7 +1526,9 @@ class RpcClientTests(unittest.TestCase):
             ),
         )
 
-    def test_session_commands_preserve_restore_failure_and_bind_replacement_model(self) -> None:
+    def test_session_commands_preserve_restore_failure_and_bind_replacement_model(
+        self,
+    ) -> None:
         for command in ("open_session", "switch_session"):
             for code in (None, "model_unavailable"):
                 with self.subTest(command=command, code=code):
@@ -1510,20 +1541,32 @@ class RpcClientTests(unittest.TestCase):
                     with self.make_client(server) as client:
                         target = Path("/tmp/unavailable-session")
                         before = client.get_state()
-                        change = client.open_session if command == "open_session" else client.switch_session
+                        change = (
+                            client.open_session
+                            if command == "open_session"
+                            else client.switch_session
+                        )
                         with self.assertRaises(RpcCommandError) as ctx:
                             change(target)
                         self.assertEqual(ctx.exception.command, command)
-                        self.assertEqual(ctx.exception.error, "Could not restore model local/missing-model")
+                        self.assertEqual(
+                            ctx.exception.error,
+                            "Could not restore model local/missing-model",
+                        )
                         self.assertEqual(ctx.exception.code, code)
                         self.assertEqual(client.get_state(), before)
 
-                        result = change(target, provider="local", model_id="renamed-model")
+                        result = change(
+                            target, provider="local", model_id="renamed-model"
+                        )
                         self.assertFalse(result.cancelled)
                         state = client.get_state()
                         self.assertIsNotNone(state.model)
                         assert state.model is not None
-                        self.assertEqual((state.model.provider, state.model.id), ("local", "renamed-model"))
+                        self.assertEqual(
+                            (state.model.provider, state.model.id),
+                            ("local", "renamed-model"),
+                        )
 
     def test_wait_for_settled_outlasts_prompt_yield_until_background_work_drains(
         self,
@@ -1683,7 +1726,9 @@ class RpcClientTests(unittest.TestCase):
         """
         completed: list[HostToolCompletedEvent] = []
         with self.make_client(
-            custom_tools=(self._echo_host_tool(lambda args, _ctx: f"host:{args['message']}"),)
+            custom_tools=(
+                self._echo_host_tool(lambda args, _ctx: f"host:{args['message']}"),
+            )
         ) as client:
             client.on_host_tool_completed(completed.append)
             turn = client.prompt_and_wait("needs eval host tool", timeout=2.0)
@@ -1696,7 +1741,11 @@ class RpcClientTests(unittest.TestCase):
         self.assertEqual(end_names, ["eval"])
         self.assertEqual(
             completed,
-            [HostToolCompletedEvent(tool_name="echo_host", tool_call_id="js-echo_host-1")],
+            [
+                HostToolCompletedEvent(
+                    tool_name="echo_host", tool_call_id="js-echo_host-1"
+                )
+            ],
         )
 
     def test_raising_host_tool_does_not_report_completion(self) -> None:
@@ -1984,9 +2033,7 @@ class RpcClientTests(unittest.TestCase):
             client.on_unknown_notification(
                 lambda event: unknown_errors.append(event.parse_error)
             )
-            with self.assertRaisesRegex(
-                RpcError, "Failed to parse terminal agent_end"
-            ):
+            with self.assertRaisesRegex(RpcError, "Failed to parse terminal agent_end"):
                 client.prompt_and_wait("malformed terminal", timeout=1.0)
 
         self.assertEqual(len(unknown_errors), 1)
@@ -2019,9 +2066,7 @@ class RpcClientTests(unittest.TestCase):
                             "slow", timeout=2.0
                         ).require_assistant_text()
                     )
-                except (
-                    BaseException
-                ) as exc:  # pragma: no cover - defensive thread capture
+                except BaseException as exc:  # noqa: BLE001  # pragma: no cover - defensive thread capture
                     errors.append(exc)
 
             thread = threading.Thread(target=run_prompt)
@@ -2060,9 +2105,11 @@ class RpcClientTests(unittest.TestCase):
         self.assertEqual(messages[0]["content"][0]["text"], "pong")
 
     def test_id_less_error_responses_are_correlated(self) -> None:
-        with self.make_client(server=IDLESS_ERROR_SERVER) as client:
-            with self.assertRaises(RpcCommandError) as ctx:
-                client.request_raw("unknown")
+        with (
+            self.make_client(server=IDLESS_ERROR_SERVER) as client,
+            self.assertRaises(RpcCommandError) as ctx,
+        ):
+            client.request_raw("unknown")
 
         self.assertEqual(ctx.exception.command, "unknown")
         self.assertEqual(ctx.exception.error, "unsupported: unknown")
@@ -2131,9 +2178,11 @@ class RpcClientTests(unittest.TestCase):
         self.assertIn("Frame: 'not-json'", str(ctx.exception))
 
     def test_event_history_limit_reports_overflow(self) -> None:
-        with self.make_client(max_event_history=2) as client:
-            with self.assertRaises(RpcError) as ctx:
-                client.prompt_and_wait("say hello", timeout=2.0)
+        with (
+            self.make_client(max_event_history=2) as client,
+            self.assertRaises(RpcError) as ctx,
+        ):
+            client.prompt_and_wait("say hello", timeout=2.0)
 
         self.assertIn("max_event_history", str(ctx.exception))
 
@@ -2194,7 +2243,7 @@ class StopUnblocksPromptAndWaitTests(unittest.TestCase):
                     # 30s is more than enough to let stop() race in; if the
                     # bug regresses, the worker hangs the full 30s.
                     client.prompt_and_wait("hang", timeout=30.0)
-                except BaseException as exc:
+                except BaseException as exc:  # noqa: BLE001
                     errors.append(exc)
 
             thread = threading.Thread(target=run_prompt)
@@ -2594,9 +2643,14 @@ class HardeningRegressionTests(unittest.TestCase):
                     "arguments": {},
                 }
             )
-        self.assertLessEqual(len(client._host_tool_dispatch_names), _MAX_HOST_TOOL_DISPATCH_NAMES)
+        self.assertLessEqual(
+            len(client._host_tool_dispatch_names), _MAX_HOST_TOOL_DISPATCH_NAMES
+        )
         self.assertNotIn("call-0", client._host_tool_dispatch_names)
-        self.assertIn(f"call-{_MAX_HOST_TOOL_DISPATCH_NAMES + 49}", client._host_tool_dispatch_names)
+        self.assertIn(
+            f"call-{_MAX_HOST_TOOL_DISPATCH_NAMES + 49}",
+            client._host_tool_dispatch_names,
+        )
 
 
 if __name__ == "__main__":

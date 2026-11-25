@@ -10,6 +10,31 @@ const TRANSPORT_FETCH = Symbol("omp.transportFetch");
 
 type TransportFetch = FetchImpl & { [TRANSPORT_FETCH]?: true };
 
+let cachedExtraCa: string | undefined;
+let cachedMergedCaInit: string[] | undefined;
+
+function applyExtraCa(init: RequestInit | undefined, extraCa: string): RequestInit {
+	const existingTls = (init as { tls?: { ca?: unknown } } | undefined)?.tls;
+	if (existingTls?.ca !== undefined) {
+		return withExtraCaInit(init, extraCa);
+	}
+	if (cachedExtraCa !== extraCa || cachedMergedCaInit === undefined) {
+		const built = withExtraCaInit(undefined, extraCa) as { tls?: { ca?: string[] } };
+		cachedExtraCa = extraCa;
+		cachedMergedCaInit = built.tls?.ca;
+	}
+	if (cachedMergedCaInit === undefined) {
+		return withExtraCaInit(init, extraCa);
+	}
+	return {
+		...init,
+		tls: {
+			...existingTls,
+			ca: cachedMergedCaInit,
+		},
+	} as RequestInit;
+}
+
 /**
  * The one fetch every inference request goes through. Per call it applies, in
  * order: the inference User-Agent default, `NODE_EXTRA_CA_CERTS`, the
@@ -32,7 +57,7 @@ export function transportFetch(model: Model<Api>, fetchImpl: FetchImpl | undefin
 	const fetch: TransportFetch = async (input, init) => {
 		init = withInferenceUserAgent(input, init);
 		const extraCa = resolveExtraCa();
-		if (extraCa) init = withExtraCaInit(init, extraCa);
+		if (extraCa) init = applyExtraCa(init, extraCa);
 		if (proxyUrl) init = withProxyInit(input, init, proxyUrl);
 		if (!isRequestDebugEnabled()) return base(input, init);
 		const session = await createFetchRequestDebugSession(input, init);

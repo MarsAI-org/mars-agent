@@ -1,8 +1,8 @@
-import { applyBackgroundToLine, padding, visibleWidth } from "../utils";
+import { applyBackgroundToLine, padding, replaceTabs, visibleWidth } from "../utils";
 import { type Component, Container } from "../tui";
 import { Disclosure } from "../components/disclosure";
 import { Markdown } from "../components/markdown";
-import { formatBytes } from "@marsai-org/utils";
+import { formatBytes, sanitizeText } from "@marsai-org/utils";
 import type { ImageContent } from "@marsai-org/ai";
 import type { TspSpan } from "@marsai-org/wire";
 import { ensureThemeSync, getMarkdownTheme, theme } from "../theme";
@@ -475,7 +475,9 @@ function syntheticInputLabel(text: string): string {
 		const line = raw.trim();
 		if (!line) continue;
 		const heading = /^#{1,6}\s+(.*)$/.exec(line);
-		return heading ? heading[1]!.trim() || "Synthetic input" : "Synthetic input";
+		if (!heading) return "Synthetic input";
+		const cleaned = replaceTabs(sanitizeText(heading[1]!)).trim();
+		return cleaned || "Synthetic input";
 	}
 	return "Synthetic input";
 }

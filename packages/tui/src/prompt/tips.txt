@@ -6,10 +6,10 @@ Start your prompt with `$ ` to run Python — `$$ ` runs it without adding the o
 You can /btw to ask a side question
 Use /tan to fork the current conversation into a background agent
 With default keybindings, {key:ctrl+d} deletes the character under the cursor instead of quitting your draft — see /hotkeys for your exit key
-Find out which model you emotionally abuse the most with `mars stats`
+Inspect token spend, cache hit rates, and model usage in the local dashboard with `mars stats`
 Try task isolation to create CoW worktrees
-Need a cheap nested model call? Use `completion(x...)`. Have a big batch of tasks? Ask clanker to use it!
-Spaghetti code? Try complaining with /omfg
+Need a fast nested model call in eval? Use `completion(x...)` to process batch tasks in parallel
+Use `/plan` to architect complex changes step-by-step, or `/review` to audit diffs before committing
 Did you know? Each kitty/tmux/cmux/zellij/wezterm split keeps its own session — `mars -c` resumes the right one
 Drop the word `ultrathink` in your message for harder multi-step reasoning — watch it glow rainbow as you type
 Use `/swarm` or say `swarm` (or `orchestrate`) in your message to drive a multi-phase task with parallel subagents — watch it glow as you type
@@ -25,7 +25,7 @@ Press {key:ctrl+r} to search your prompt history and reuse a past message
 Pair up live: `/collab` shares your session through an end-to-end encrypted relay link — a teammate runs `/join <link>` to watch tool calls stream and prompt the agent from their own Mars
 Press {tap:left} to drill into a running or finished agent and inspect its tool calls and transcript
 Hit a Codex rate limit? `/usage reset` spends a saved reset credit to immediately restore your quota
-No native tool_calling? Inference provider botches parsing them? `PI_DIALECT=glm|kimi|anthropic…` rolls it locally for them!
+Toggle `/fast` for low-latency responses, or press `?` on an empty prompt to view keyboard shortcuts
 Turn on `/advisor` to attach a second model that reviews every turn and quietly injects advice
 Try starting your prompt with a ->, and writing a list (1. Do X, 2. Do Y)
 Press {key:shift+tab} to cycle through reasoning effort levels

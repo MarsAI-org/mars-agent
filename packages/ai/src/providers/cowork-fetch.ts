@@ -1,5 +1,6 @@
 import type { IncomingMessage } from "node:http";
 import * as https from "node:https";
+import * as net from "node:net";
 import * as stream from "node:stream";
 import * as tls from "node:tls";
 import * as zlib from "node:zlib";
@@ -81,11 +82,14 @@ function buildOrderedHeaders(
 }
 
 function resolveTlsOptions(url: URL, options: CoworkTlsOptions | undefined): tls.ConnectionOptions {
+	const rawServerName = options?.serverName ?? url.hostname;
+	const strippedServerName =
+		rawServerName.startsWith("[") && rawServerName.endsWith("]") ? rawServerName.slice(1, -1) : rawServerName;
 	const resolved: tls.ConnectionOptions = {
 		ALPNProtocols: ["http/1.1"],
 		ciphers: options?.ciphers ?? tls.DEFAULT_CIPHERS,
 		rejectUnauthorized: options?.rejectUnauthorized ?? true,
-		servername: options?.serverName ?? url.hostname,
+		...(net.isIP(strippedServerName) === 0 ? { servername: rawServerName } : {}),
 	};
 	if (options?.ca !== undefined) resolved.ca = options.ca;
 	if (options?.cert !== undefined) resolved.cert = options.cert;

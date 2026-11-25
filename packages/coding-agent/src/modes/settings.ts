@@ -689,6 +689,31 @@ export const cfgDisplayShowTurnTime = register({
 	},
 });
 
+export const cfgDisplayDensity = register({
+	id: "display.density",
+	type: "enum",
+	values: ["comfortable", "compact"] as const,
+	default: "comfortable",
+	ui: {
+		tab: "appearance",
+		group: "Display",
+		label: "Layout Density",
+		description: "Spacing of the welcome banner, message dividers, and footer chrome",
+		options: [
+			{
+				value: "comfortable",
+				label: "Comfortable",
+				description: "Standard Mars welcome, divider padding, and footer rows",
+			},
+			{
+				value: "compact",
+				label: "Compact",
+				description: "Tighter 5-row welcome, single-line footer, and compact dividers",
+			},
+		],
+	},
+});
+
 export const cfgDisplayCacheMissMarker = register({
 	id: "display.cacheMissMarker",
 	type: "boolean",
@@ -708,6 +733,7 @@ effect(
 		cacheMissMarker: cfgDisplayCacheMissMarker,
 		showTokenUsage: cfgDisplayShowTokenUsage,
 		showTurnTime: cfgDisplayShowTurnTime,
+		density: cfgDisplayDensity,
 	}),
 	setChatTranscriptDisplayPreferences,
 );

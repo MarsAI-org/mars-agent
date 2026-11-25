@@ -1299,10 +1299,15 @@ export class ToolExecutionComponent extends Container {
 		);
 		if (this.#allocation === 1) {
 			const glyph = this.#spinnerFrame === undefined ? "•" : (theme.spinnerFrames[this.#spinnerFrame] ?? "•");
-			const styledGlyph = theme.fg(this.#spinnerFrame === undefined ? "dim" : "muted", glyph);
+			const styledGlyph = theme.fg(this.#spinnerFrame === undefined ? "dim" : "accent", glyph);
 			return [truncateToWidth(`${styledGlyph} ${text}`, width)];
 		}
-		return [truncateToWidth(`${theme.fg("dim", "╭─")} ${text}`, width), theme.fg("dim", "╰")];
+		const cornerTone = this.#isRunning() ? "accent" : "dim";
+		const topPrefix = `${theme.boxRound.topLeft}${theme.boxRound.horizontal}`;
+		return [
+			truncateToWidth(`${theme.fg(cornerTone, topPrefix)} ${text}`, width),
+			theme.fg(cornerTone, theme.boxRound.bottomLeft),
+		];
 	}
 
 	#activitySummary(): ToolActivitySummary {

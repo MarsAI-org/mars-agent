@@ -69,6 +69,8 @@ export interface FooterSession {
 	state: Pick<StatusLineSession["state"], "model" | "thinkingLevel">;
 	isAutoThinking: boolean;
 	autoResolvedThinkingLevel(): string | undefined;
+	isFastModeActive?(): boolean;
+	getTokensPerSecond?(): number | null;
 	getContextUsage: StatusLineSession["getContextUsage"];
 	modelRegistry: Pick<StatusLineSession["modelRegistry"], "isUsingOAuth">;
 	sessionManager: { getEntries(): readonly { type: string; message?: AgentMessage }[] };

@@ -9,10 +9,18 @@ import signal
 import subprocess
 import threading
 import time
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import IO, Any, Callable, Generic, Iterator, Mapping, Sequence, TypeVar, cast
+from typing import (
+    IO,
+    Any,
+    Generic,
+    Self,
+    TypeVar,
+    cast,
+)
 
 from ._wire import (
     _TODO_STATUS_VALUES,
@@ -110,7 +118,9 @@ def _iter_bounded_lines(
             remaining = max(0, max_bytes - buf_bytes)
             prefix = "".join(buf)
             if remaining > 0:
-                prefix += chunk.encode("utf-8")[:remaining].decode("utf-8", errors="ignore")
+                prefix += chunk.encode("utf-8")[:remaining].decode(
+                    "utf-8", errors="ignore"
+                )
             yield f"{prefix}...[truncated]\n"
             buf.clear()
             buf_bytes = 0
@@ -415,7 +425,6 @@ class HostToolCompletedEvent:
     tool_call_id: str
 
 
-
 @dataclass(slots=True, frozen=True)
 class PromptTurn:
     events: tuple[RpcAgentEvent, ...]
@@ -626,7 +635,7 @@ class RpcClient(WireClient):
         self._listener_error_listeners: list[ListenerErrorListener] = []
         self._host_tool_completed_listeners: list[HostToolCompletedListener] = []
 
-    def __enter__(self) -> RpcClient:
+    def __enter__(self) -> Self:
         return self.start()
 
     def __exit__(self, _exc_type: object, _exc: object, _tb: object) -> None:
@@ -787,7 +796,7 @@ class RpcClient(WireClient):
             if process.stdin is not None:
                 try:
                     process.stdin.close()
-                except Exception:
+                except Exception:  # noqa: S110, BLE001
                     # Never let a stdin-close failure skip the kill below: the
                     # finally block clears `_process`, so an escaped exception
                     # would drop the handle to a still-running child.
@@ -799,7 +808,7 @@ class RpcClient(WireClient):
             if not terminated:
                 try:
                     reaped = _terminate_process_group(process, pgid)
-                except Exception:
+                except Exception:  # noqa: S110, BLE001
                     pass
             # Mark the client closed so any thread blocked in a lifecycle
             # wait raises `RpcProcessExitError` instead of
@@ -825,12 +834,16 @@ class RpcClient(WireClient):
                 stderr_thread.join(timeout=1.0)
             self._stdout_thread = None
             self._stderr_thread = None
-            if process.stdout is not None and (stdout_thread is None or not stdout_thread.is_alive()):
+            if process.stdout is not None and (
+                stdout_thread is None or not stdout_thread.is_alive()
+            ):
                 try:
                     process.stdout.close()
                 except (OSError, ValueError, RuntimeError):
                     pass
-            if process.stderr is not None and (stderr_thread is None or not stderr_thread.is_alive()):
+            if process.stderr is not None and (
+                stderr_thread is None or not stderr_thread.is_alive()
+            ):
                 try:
                     process.stderr.close()
                 except (OSError, ValueError, RuntimeError):
@@ -888,9 +901,13 @@ class RpcClient(WireClient):
                     pass
         return all(process is exclude for process, _ in self._survivors)
 
-    def on_host_tool_completed(self, listener: HostToolCompletedListener) -> Callable[[], None]:
+    def on_host_tool_completed(
+        self, listener: HostToolCompletedListener
+    ) -> Callable[[], None]:
         self._host_tool_completed_listeners.append(listener)
-        return lambda: self._remove_listener(self._host_tool_completed_listeners, listener)
+        return lambda: self._remove_listener(
+            self._host_tool_completed_listeners, listener
+        )
 
     def on_event(self, listener: AgentEventListener) -> Callable[[], None]:
         self._event_listeners.append(listener)
@@ -959,7 +976,7 @@ class RpcClient(WireClient):
             if on_request is not None:
                 try:
                     on_request(request)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001
                     self._record_listener_error(
                         ListenerErrorEvent(
                             listener_kind="headless_ui_request",
@@ -1049,7 +1066,10 @@ class RpcClient(WireClient):
         phases = self._normalize_todo_phases(todos)
         data = self._command("set_todos", {"phases": phases})
         return required(
-            expect_object(data, "set_todos"), "todoPhases", array(parse_todo_phase), "set_todos"
+            expect_object(data, "set_todos"),
+            "todoPhases",
+            array(parse_todo_phase),
+            "set_todos",
         )
 
     def clear_todos(self) -> tuple[TodoPhase, ...]:
@@ -1123,7 +1143,10 @@ class RpcClient(WireClient):
             definitions.append(definition)
         data = self._command("set_host_tools", {"tools": definitions})
         return required(
-            expect_object(data, "set_host_tools"), "toolNames", array(decode_str), "set_host_tools"
+            expect_object(data, "set_host_tools"),
+            "toolNames",
+            array(decode_str),
+            "set_host_tools",
         )
 
     def set_host_uris(self, host_uris: Sequence[HostUri[Any]]) -> tuple[str, ...]:
@@ -1706,7 +1729,9 @@ class RpcClient(WireClient):
                     "host_tool_completed",
                     tool_name,
                     self._host_tool_completed_listeners,
-                    HostToolCompletedEvent(tool_name=tool_name, tool_call_id=tool_call_id),
+                    HostToolCompletedEvent(
+                        tool_name=tool_name, tool_call_id=tool_call_id
+                    ),
                 )
                 if pending_call.cancel_event.is_set():
                     return
@@ -1717,7 +1742,7 @@ class RpcClient(WireClient):
                         "result": result,
                     }
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 if pending_call.cancel_event.is_set():
                     return
                 self._send_notification(
@@ -1832,7 +1857,7 @@ class RpcClient(WireClient):
                     self._send_notification(
                         {"type": "host_uri_result", "id": request_id}
                     )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 if pending.cancel_event.is_set():
                     return
                 self._send_host_uri_error(request_id, str(exc))
@@ -1874,7 +1899,9 @@ class RpcClient(WireClient):
                 item["details"] = details
             if isinstance(notes, str):
                 item["notes"] = [notes]
-            elif isinstance(notes, (list, tuple)) and all(isinstance(n, str) for n in notes):
+            elif isinstance(notes, (list, tuple)) and all(
+                isinstance(n, str) for n in notes
+            ):
                 item["notes"] = list(cast(Sequence[str], notes))
             return item
 
@@ -1885,7 +1912,9 @@ class RpcClient(WireClient):
             if isinstance(seed, TodoItem):
                 if seed.status not in _TODO_STATUS_VALUES:
                     raise RpcError(f"Unsupported todo status: {seed.status}")
-                return wire_item(seed.content, seed.status, seed.blocker, seed.details, seed.notes)
+                return wire_item(
+                    seed.content, seed.status, seed.blocker, seed.details, seed.notes
+                )
 
             content = seed.get("content")
             if not isinstance(content, str) or not content.strip():
@@ -1899,7 +1928,11 @@ class RpcClient(WireClient):
             else:
                 status = "pending"
             return wire_item(
-                content, status, seed.get("blocker"), seed.get("details"), seed.get("notes")
+                content,
+                status,
+                seed.get("blocker"),
+                seed.get("details"),
+                seed.get("notes"),
             )
 
         def is_phase_seed(seed: TodoSeed | TodoPhaseSeed) -> bool:
@@ -2120,7 +2153,7 @@ class RpcClient(WireClient):
                     self._typed_listeners.get(notification.type, []),
                     notification,
                 )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             self._mark_closed(exc)
         else:
             if not self._stopping:
@@ -2153,7 +2186,7 @@ class RpcClient(WireClient):
             ):
                 with self._state_lock:
                     self._stderr_chunks.append(chunk)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             if not self._stopping:
                 self._mark_closed(RpcError(f"Failed to read RPC stderr: {exc}"))
 
@@ -2262,7 +2295,7 @@ class RpcClient(WireClient):
         for listener in list(self._listener_error_listeners):
             try:
                 listener(event)
-            except Exception:
+            except Exception:  # noqa: S112, BLE001
                 continue
 
     def _dispatch_listeners(
@@ -2275,7 +2308,7 @@ class RpcClient(WireClient):
         for listener in list(listeners):
             try:
                 listener(payload)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 self._record_listener_error(
                     ListenerErrorEvent(
                         listener_kind=listener_kind,

@@ -91,6 +91,8 @@ import light_zenith from "./light-zenith.json" with { type: "json" };
 import limestone from "./limestone.json" with { type: "json" };
 import mahogany from "./mahogany.json" with { type: "json" };
 import marble from "./marble.json" with { type: "json" };
+import mars_alabaster from "./mars-alabaster.json" with { type: "json" };
+import mars_obsidian from "./mars-obsidian.json" with { type: "json" };
 import obsidian from "./obsidian.json" with { type: "json" };
 import onyx from "./onyx.json" with { type: "json" };
 import pearl from "./pearl.json" with { type: "json" };
@@ -193,6 +195,8 @@ export const defaultThemes = {
 	limestone: limestone,
 	mahogany: mahogany,
 	marble: marble,
+	"mars-alabaster": mars_alabaster,
+	"mars-obsidian": mars_obsidian,
 	obsidian: obsidian,
 	onyx: onyx,
 	pearl: pearl,

@@ -10,6 +10,7 @@ import type { CollabHost } from "../collab/host";
 import type { KeybindingsManager } from "@marsai-org/tui/app-keybindings";
 import type { TrackSegment } from "@marsai-org/tui/chrome/segment-track";
 import type { Settings } from "../config/settings";
+import type { SwarmSessionRuntime } from "../swarm/runtime";
 import type {
 	AutocompleteProviderFactory,
 	ExtensionCustomOptions,
@@ -600,6 +601,9 @@ export interface InteractiveModeContext {
 		initialPrompt?: string,
 		input?: Pick<SubmittedUserInput, "images" | "imageLinks">,
 	): Promise<boolean>;
+	enterSwarmCoordinatorMode?(title?: string): Promise<SwarmSessionRuntime>;
+	exitSwarmCoordinatorMode?(): Promise<void>;
+	openSwarmBoard?(): boolean;
 	handleGoalModeCommand(rest?: string, input?: Pick<SubmittedUserInput, "images" | "imageLinks">): Promise<boolean>;
 	handleGuidedGoalCommand(rest?: string, input?: Pick<SubmittedUserInput, "images" | "imageLinks">): Promise<boolean>;
 	/** True while `/guided-goal` is interviewing the user and no goal record exists yet. */

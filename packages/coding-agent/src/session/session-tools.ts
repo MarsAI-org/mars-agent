@@ -310,6 +310,7 @@ export class SessionTools {
 	#createVibeTools: (() => AgentTool[]) | undefined;
 	#createThinkTool: SessionToolsOptions["createThinkTool"];
 	#installedVibeToolNames = new Set<string>();
+	#installedSwarmToolNames = new Set<string>();
 	#builtInToolNames: Set<string>;
 	#rpcHostToolNames = new Set<string>();
 	#mcpManagerToolNames = new Set<string>();
@@ -854,6 +855,39 @@ export class SessionTools {
 			this.#builtInToolNames.delete(name);
 		}
 		this.#installedVibeToolNames.clear();
+	}
+
+	/** Installs and activates ephemeral live-swarm tools alongside `baseToolNames`. */
+	activateSwarmTools(tools: AgentTool[], baseToolNames: string[]): Promise<void> {
+		return this.runToolRegistryMutation(async () => {
+			this.#uninstallSwarmTools();
+			const swarmToolNames = tools.map(tool => tool.name);
+			if (new Set(swarmToolNames).size !== swarmToolNames.length) {
+				throw new Error("Swarm tool names must be unique.");
+			}
+			for (const tool of tools) {
+				this.#toolRegistry.set(tool.name, this.#wrapRuntimeTool(tool));
+				this.#builtInToolNames.add(tool.name);
+				this.#installedSwarmToolNames.add(tool.name);
+			}
+			await this.#applyActiveToolsByName([...new Set([...baseToolNames, ...swarmToolNames])]);
+		});
+	}
+
+	/** Uninstalls live-swarm tools and restores `nextToolNames`. */
+	deactivateSwarmTools(nextToolNames: string[]): Promise<void> {
+		return this.runToolRegistryMutation(async () => {
+			this.#uninstallSwarmTools();
+			await this.#applyActiveToolsByName(nextToolNames);
+		});
+	}
+
+	#uninstallSwarmTools(): void {
+		for (const name of this.#installedSwarmToolNames) {
+			this.#toolRegistry.delete(name);
+			this.#builtInToolNames.delete(name);
+		}
+		this.#installedSwarmToolNames.clear();
 	}
 
 	#getEditModeSession() {

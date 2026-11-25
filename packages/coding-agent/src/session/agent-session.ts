@@ -197,6 +197,7 @@ import sessionStopBlockedPrompt from "../prompts/system/session-stop-blocked.md"
 import sideChannelNoToolsReminder from "../prompts/system/side-channel-no-tools.md" with { type: "text" };
 import titleForkPrompt from "../prompts/system/title-fork.md" with { type: "text" };
 import skillfulNoticePrompt from "../prompts/system/skillful-notice.md" with { type: "text" };
+import swarmCoordinatorPrompt from "../prompts/system/swarm-coordinator.md" with { type: "text" };
 import vibeModeActivePrompt from "../prompts/system/vibe-mode-active.md" with { type: "text" };
 import {
 	deobfuscateAssistantContent,
@@ -803,6 +804,7 @@ export class AgentSession implements SettingsScope {
 	#experimentalContextNotesReminder: { prompt: string; generation: number } | undefined;
 	#planModeState: PlanModeState | undefined;
 	#vibeModeState: VibeModeState | undefined;
+	#swarmCoordinatorState: { enabled: boolean; swarmId: string } | undefined;
 	#goalModeState: GoalModeState | undefined;
 	#goalRuntime: GoalRuntime;
 	readonly #advisors: SessionAdvisors;
@@ -937,6 +939,7 @@ export class AgentSession implements SettingsScope {
 
 	// Model registry for API key resolution
 	#modelRegistry: ModelRegistry;
+	#seededApiKey: { provider: string; modelId: string; baseUrl: string; sessionId: string; apiKey: string } | undefined;
 	/** Creation-time permission for switchSession to keep the current model when a target's saved model is unrestorable. */
 	readonly #allowSessionModelFallback: boolean;
 	#usageFallbackConfirmer: UsageFallbackConfirmer | undefined;
@@ -6264,6 +6267,24 @@ export class AgentSession implements SettingsScope {
 		return this.#tools.removeVibeToolsPreservingActive();
 	}
 
+	/** Installs and activates ephemeral live-swarm tools alongside `baseToolNames`. */
+	activateSwarmTools(tools: AgentTool[], baseToolNames: string[]): Promise<void> {
+		return this.#tools.activateSwarmTools(tools, baseToolNames);
+	}
+
+	/** Uninstalls live-swarm tools and activates the replacement set. */
+	deactivateSwarmTools(nextToolNames: string[]): Promise<void> {
+		return this.#tools.deactivateSwarmTools(nextToolNames);
+	}
+
+	getSwarmCoordinatorState(): { enabled: boolean; swarmId: string } | undefined {
+		return this.#swarmCoordinatorState;
+	}
+
+	setSwarmCoordinatorState(state: { enabled: boolean; swarmId: string } | undefined): void {
+		this.#swarmCoordinatorState = state;
+	}
+
 	#resolveActiveEditMode(): EditMode {
 		return this.#tools.resolveActiveEditMode();
 	}
@@ -7003,6 +7024,18 @@ export class AgentSession implements SettingsScope {
 			content: prompt.render(vibeModeActivePrompt, {
 				todoAvailable: this.getActiveToolNames().includes("todo"),
 			}),
+			display: false,
+			attribution: "agent",
+			timestamp: Date.now(),
+		};
+	}
+
+	#buildSwarmCoordinatorMessage(): CustomMessage | null {
+		if (!this.#swarmCoordinatorState?.enabled) return null;
+		return {
+			role: "custom",
+			customType: "swarm-coordinator-context",
+			content: prompt.render(swarmCoordinatorPrompt),
 			display: false,
 			attribution: "agent",
 			timestamp: Date.now(),
@@ -7753,6 +7786,15 @@ export class AgentSession implements SettingsScope {
 						`Use /login, set an API key environment variable, or create ${getAgentDbPath()}`,
 				);
 			}
+			// Seed the just-validated key so `agent.prompt()`'s `effectiveGetApiKey`
+			// skips a duplicate credential resolution cascade on the initial request.
+			this.#seededApiKey = {
+				provider: this.model.provider,
+				modelId: this.model.id,
+				baseUrl: this.model.baseUrl,
+				sessionId: this.sessionId,
+				apiKey,
+			};
 
 			// Recover a previously failed/incomplete assistant turn before sending.
 			// Successful historical turns take the cheaper pre-prompt threshold path
@@ -7786,6 +7828,10 @@ export class AgentSession implements SettingsScope {
 			const vibeModeMessage = this.#buildVibeModeMessage();
 			if (vibeModeMessage) {
 				messages.push(vibeModeMessage);
+			}
+			const swarmCoordinatorMessage = this.#buildSwarmCoordinatorMessage();
+			if (swarmCoordinatorMessage) {
+				messages.push(swarmCoordinatorMessage);
 			}
 			if (options?.prependMessages) {
 				messages.push(...options.prependMessages);
@@ -13410,5 +13456,25 @@ export class AgentSession implements SettingsScope {
 	 */
 	consumeActiveFallbackCreditRedemption(targetModel?: Model): AnthropicFallbackCreditHandle | undefined {
 		return this.#recovery.consumeActiveFallbackCreditRedemption(targetModel);
+	}
+
+	/**
+	 * Consume a single-use API key seeded by `#promptWithMessage` validation for
+	 * `targetModel` so the immediate `agent.prompt()` call avoids re-running the
+	 * full credential resolution cascade.
+	 */
+	consumeSeededApiKey(targetModel: Model): string | undefined {
+		const seeded = this.#seededApiKey;
+		this.#seededApiKey = undefined;
+		if (
+			!seeded ||
+			seeded.provider !== targetModel.provider ||
+			seeded.modelId !== targetModel.id ||
+			seeded.baseUrl !== targetModel.baseUrl ||
+			seeded.sessionId !== this.sessionId
+		) {
+			return undefined;
+		}
+		return seeded.apiKey;
 	}
 }

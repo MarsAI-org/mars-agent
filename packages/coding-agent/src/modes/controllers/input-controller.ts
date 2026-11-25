@@ -42,6 +42,7 @@ import manualContinuePrompt from "../../prompts/system/manual-continue.md" with 
 import { AgentRegistry } from "../../registry/agent-registry";
 import type { RestoredQueuedMessage } from "../../session/agent-session-types";
 import { USER_INTERRUPT_LABEL } from "../../session/messages";
+import { getActiveSwarmSession } from "../../swarm/runtime";
 import { PINNED_HUD_TOGGLE_ID } from "@marsai-org/tui/prompt/composer";
 import { pickRecentFocusableAgentId } from "./session-focus-controller";
 import { executeBuiltinSlashCommand, lookupBuiltinSlashCommand } from "../../slash-commands/builtin-registry";
@@ -416,6 +417,11 @@ export class InputController {
 						return undefined;
 					this.ctx.resetDisplayAfterAppearanceRefresh();
 					return { consume: true };
+				}
+				if (matchesKey(data, "alt+s") && !this.ctx.ui.hasOverlay() && getActiveSwarmSession()) {
+					if (this.ctx.openSwarmBoard?.()) {
+						return { consume: true };
+					}
 				}
 				return undefined;
 			});

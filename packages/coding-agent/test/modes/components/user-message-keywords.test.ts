@@ -5,7 +5,7 @@ import type { AgentMessage } from "@marsai-org/agent-core";
 import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/settings";
 import { MAGIC_KEYWORDS } from "@marsai-org/coding-agent/modes/magic-keywords";
 import { CustomEditor } from "@marsai-org/tui/prompt/custom-editor";
-import { UserMessageComponent } from "@marsai-org/tui/chat/user-message";
+import { CollapsedSyntheticMessageComponent, UserMessageComponent } from "@marsai-org/tui/chat/user-message";
 import { chipLabel, modelChipStyle, modelMentionChipLabel } from "@marsai-org/tui/prompt/composer-attachments";
 import { imageReferenceHyperlink } from "@marsai-org/tui/prompt/image-references";
 import { setMagicKeywords } from "@marsai-org/tui/prompt/magic-keywords";
@@ -203,5 +203,12 @@ describe("UserMessageComponent magic-keyword highlighting", () => {
 		expect(Bun.stripANSI(raw)).toContain("[Image #1, 800x600]");
 		expect(raw).toContain("\x1b]8;id=");
 		expect(raw).toContain(imageUri);
+	});
+
+	it("sanitizes tabs and terminal escape sequences in collapsed synthetic message summary headings", () => {
+		const component = new CollapsedSyntheticMessageComponent("# Session\t\x1b[31mupdate\x1b[0m\nbody row");
+		const line = Bun.stripANSI(component.render(80).join("\n"));
+		expect(line).not.toContain("\t");
+		expect(line).toContain("Session   update");
 	});
 });

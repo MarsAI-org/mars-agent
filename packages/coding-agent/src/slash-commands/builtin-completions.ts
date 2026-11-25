@@ -13,6 +13,7 @@ import {
 	type ModelMentionCandidateSource,
 } from "@marsai-org/tui/prompt/model-mention-autocomplete";
 import { getConfiguredThinkingLevelMetadata } from "@marsai-org/tui/thinking";
+import { getAvailableThemes, getCurrentThemeName } from "@marsai-org/tui/theme";
 import { expandTilde } from "../tools/path-utils";
 import type { SubcommandDef, TuiSlashCommandRuntime } from "./types";
 
@@ -31,6 +32,35 @@ export function buildArgumentCompletions(subcommands: SubcommandDef[]): (prefix:
 				label: s.name,
 				description: s.description,
 				hint: s.usage,
+			}));
+		return matches.length > 0 ? matches : null;
+	};
+}
+
+/**
+ * Build getArgumentCompletions for `/theme`: completes subcommands (`preview`,
+ * `set`, `list`) first, then installed theme names after `preview ` or `set `.
+ */
+export function buildThemeArgumentCompletions(
+	subcommands: SubcommandDef[],
+): (prefix: string) => AutocompleteItem[] | null | Promise<AutocompleteItem[] | null> {
+	const completeSubcommands = buildArgumentCompletions(subcommands);
+	return async (argumentPrefix: string) => {
+		if (!argumentPrefix.includes(" ")) {
+			return completeSubcommands(argumentPrefix);
+		}
+		const match = /^(preview|set)\s+(\S*)$/i.exec(argumentPrefix);
+		if (!match) return null;
+		const subcommand = match[1]!.toLowerCase();
+		const prefix = match[2]!.toLowerCase();
+		const current = getCurrentThemeName();
+		const themes = await getAvailableThemes();
+		const matches = themes
+			.filter(name => name.toLowerCase().startsWith(prefix))
+			.map(name => ({
+				value: `${subcommand} ${name}`,
+				label: name,
+				description: name === current ? "Current theme" : undefined,
 			}));
 		return matches.length > 0 ? matches : null;
 	};

@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from "bun:test";
 import { EventController } from "@marsai-org/coding-agent/modes/controllers/event-controller";
-import { initTheme } from "@marsai-org/tui/theme";
+import { TodoReminderComponent } from "@marsai-org/tui/chat/todo-reminder";
+import { initTheme, theme } from "@marsai-org/tui/theme";
 import type { AgentSessionEvent } from "@marsai-org/coding-agent/session/agent-session";
 import { createInteractiveModeContext } from "./helpers/interactive-mode-context";
 
@@ -89,5 +90,22 @@ describe("EventController todo reminder", () => {
 			},
 		} as Extract<AgentSessionEvent, { type: "message_end" }>);
 		expect(ctx.setTodos).not.toHaveBeenCalled();
+	});
+
+	it("distinguishes in_progress, blocked, and pending items and sanitizes tabs in TodoReminderComponent", () => {
+		const component = new TodoReminderComponent(
+			[
+				{ content: "active\ttask", status: "in_progress" },
+				{ content: "blocked task", status: "blocked", blocker: "waiting\ton API" },
+				{ content: "queued task", status: "pending" },
+			],
+			1,
+			3,
+		);
+		const plain = Bun.stripANSI(component.render(100).join("\n"));
+		expect(plain).not.toContain("\t");
+		expect(plain).toContain(`${theme.status.running} active   task`);
+		expect(plain).toContain(`${theme.status.warning} blocked task (waiting   on API)`);
+		expect(plain).toContain(`${theme.checkbox.unchecked} queued task`);
 	});
 });

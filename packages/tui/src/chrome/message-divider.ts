@@ -1,4 +1,5 @@
 import type { Component } from "../tui";
+import { chatTranscriptDisplayPreferences, type LayoutDensity } from "../chat/display-preferences";
 import { getThemeEpoch, type ThemeColor, theme } from "../theme";
 import { truncateToWidth } from "../utils";
 import { node, span, text } from "../native/describe";
@@ -30,7 +31,7 @@ export interface MessageDividerOptions {
  */
 export class MessageDividerComponent implements Component {
 	readonly #options: MessageDividerOptions;
-	#cache: { width: number; lines: readonly string[] } | undefined;
+	#cache: { width: number; density: LayoutDensity; lines: readonly string[] } | undefined;
 	readonly #native = new Memo();
 
 	constructor(options: MessageDividerOptions) {
@@ -63,9 +64,11 @@ export class MessageDividerComponent implements Component {
 
 	render(width: number): readonly string[] {
 		width = Math.max(1, width);
-		if (this.#cache?.width === width) return this.#cache.lines;
-		const lines = Object.freeze(["", this.#renderDivider(width), ""]);
-		this.#cache = { width, lines };
+		const density = chatTranscriptDisplayPreferences.density;
+		if (this.#cache?.width === width && this.#cache.density === density) return this.#cache.lines;
+		const dividerLine = this.#renderDivider(width);
+		const lines = Object.freeze(density === "compact" ? [dividerLine] : ["", dividerLine, ""]);
+		this.#cache = { width, density, lines };
 		return lines;
 	}
 

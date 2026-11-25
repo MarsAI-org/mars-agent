@@ -1,4 +1,11 @@
-import { getAvailableThemes, isLightTheme, setTheme, type Theme } from "@marsai-org/tui/theme";
+import {
+	getAvailableThemes,
+	getCurrentThemeName,
+	getThemeByName,
+	isLightTheme,
+	setTheme,
+	type Theme,
+} from "@marsai-org/tui/theme";
 import { cfgThemeDark, cfgThemeLight } from "../modes/settings";
 import { commandConsumed, errorMessage, usage } from "./helpers/parse";
 import type { SlashCommandSpec, SubcommandDef } from "./types";
@@ -59,7 +66,6 @@ export const BUILTIN_THEME_SLASH_COMMANDS: ReadonlyArray<SlashCommandSpec> = [
 					return usage(`Unknown theme "${name}". Available: ${available.join(", ")}`, runtime);
 				}
 
-				const { getCurrentThemeName, getThemeByName } = await import("@marsai-org/tui/theme");
 				// Preview is a temporary swap, so the theme to come back to is
 				// whatever was live before it — not a hardcoded `dark`. A user on
 				// `dark-gruvbox` was being thrown back to the default palette.

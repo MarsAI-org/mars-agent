@@ -29,7 +29,6 @@ version = "0.3.3"
 edition = "2024"
 license = "MIT"
 authors = ["Stencil Labs, Inc."]
-homepage = "https://github.com/MarsAI-org/mars-agent"
 repository = "https://github.com/MarsAI-org/mars-agent"
 
 [patch.crates-io]

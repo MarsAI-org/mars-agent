@@ -11,6 +11,7 @@ import {
 	buildModelSelectorCompletions,
 	buildStaticInlineHint,
 	buildSubcommandInlineHint,
+	buildThemeArgumentCompletions,
 } from "./builtin-completions";
 import { BUILTIN_CONTROL_SLASH_COMMANDS } from "./builtin-control";
 import { BUILTIN_LIFECYCLE_SLASH_COMMANDS } from "./builtin-lifecycle";
@@ -19,7 +20,7 @@ import { BUILTIN_MODE_SLASH_COMMANDS } from "./builtin-modes";
 import { BUILTIN_SESSION_SLASH_COMMANDS } from "./builtin-session";
 import { BUILTIN_SKILLS_SLASH_COMMANDS } from "./builtin-skills";
 import { BUILTIN_THEME_SLASH_COMMANDS } from "./builtin-theme";
-import { parseSlashCommand } from "./helpers/parse";
+import { commandConsumed, parseSlashCommand } from "./helpers/parse";
 import type {
 	BuiltinSlashCommand,
 	ParsedSlashCommand,
@@ -40,6 +41,91 @@ export interface TuiBuiltinSlashCommand extends BuiltinSlashCommand {
 	getAutocompleteDescription?: () => string | undefined;
 }
 
+const BUILTIN_SLASH_COMMAND_GROUPS: ReadonlyArray<{
+	readonly title: string;
+	readonly commands: ReadonlyArray<SlashCommandSpec>;
+}> = [
+	{ title: "Modes & Models", commands: BUILTIN_MODE_SLASH_COMMANDS },
+	{ title: "Collaboration & Export", commands: BUILTIN_COLLABORATION_SLASH_COMMANDS },
+	{ title: "Session & Diagnostics", commands: BUILTIN_SESSION_SLASH_COMMANDS },
+	{ title: "Lifecycle & Workspace", commands: BUILTIN_LIFECYCLE_SLASH_COMMANDS },
+	{ title: "Plugins & Marketplace", commands: BUILTIN_MARKETPLACE_SLASH_COMMANDS },
+	{ title: "Skills", commands: BUILTIN_SKILLS_SLASH_COMMANDS },
+	{ title: "Appearance", commands: BUILTIN_THEME_SLASH_COMMANDS },
+	{ title: "Control", commands: BUILTIN_CONTROL_SLASH_COMMANDS },
+];
+
+/** Format a command's help block (or the full categorized reference when `query` is empty). */
+export function formatBuiltinSlashCommandHelp(query = ""): string {
+	const cleaned = query.trim().replace(/^\//, "").toLowerCase();
+	if (cleaned) {
+		const spec = BUILTIN_SLASH_COMMAND_LOOKUP.get(cleaned);
+		if (!spec) {
+			const matches = BUILTIN_SLASH_COMMAND_REGISTRY.filter(
+				cmd =>
+					cmd.name.includes(cleaned) ||
+					cmd.description.toLowerCase().includes(cleaned) ||
+					(cmd.aliases?.some(alias => alias.includes(cleaned)) ?? false),
+			);
+			if (matches.length === 0) {
+				return `Unknown slash command "/${cleaned}". Run /help to list all built-in commands.`;
+			}
+			const lines = [`Commands matching "${cleaned}":`];
+			for (const cmd of matches) {
+				const hint = cmd.inlineHint ? ` ${cmd.inlineHint}` : "";
+				lines.push(`  /${cmd.name}${hint} — ${cmd.description}`);
+			}
+			return lines.join("\n");
+		}
+		const hint = spec.inlineHint
+			? ` ${spec.inlineHint}`
+			: spec.subcommands && spec.subcommands.length > 0
+				? ` <${spec.subcommands.map(sub => sub.name).join("|")}>`
+				: "";
+		const lines = [`/${spec.name}${hint}`, `  ${spec.description}`];
+		if (spec.aliases && spec.aliases.length > 0) {
+			lines.push(`  Aliases: ${spec.aliases.map(alias => `/${alias}`).join(", ")}`);
+		}
+		if (spec.subcommands && spec.subcommands.length > 0) {
+			lines.push("", "  Subcommands:");
+			for (const sub of spec.subcommands) {
+				const usage = sub.usage ? ` ${sub.usage}` : "";
+				lines.push(`    ${sub.name}${usage} — ${sub.description}`);
+			}
+		}
+		return lines.join("\n");
+	}
+
+	const sections: string[] = ["Mars Slash Commands (use /help <command> for details, /hotkeys for shortcuts):"];
+	for (const group of BUILTIN_SLASH_COMMAND_GROUPS) {
+		sections.push("", `${group.title}:`);
+		for (const cmd of group.commands) {
+			const aliases = cmd.aliases && cmd.aliases.length > 0 ? ` (${cmd.aliases.map(a => `/${a}`).join(", ")})` : "";
+			const hint = cmd.inlineHint ? ` ${cmd.inlineHint}` : "";
+			sections.push(`  /${cmd.name}${hint}${aliases} — ${cmd.description}`);
+		}
+	}
+	return sections.join("\n");
+}
+
+const HELP_SLASH_COMMAND: SlashCommandSpec = {
+	name: "help",
+	aliases: ["commands"],
+	icon: "question",
+	description: "Show built-in slash commands or detailed usage for a command",
+	acpDescription: "List built-in slash commands or inspect one command",
+	inlineHint: "[command]",
+	allowArgs: true,
+	handle: async (command, runtime) => {
+		await runtime.output(formatBuiltinSlashCommandHelp(command.args));
+		return commandConsumed();
+	},
+	handleTui: (command, runtime) => {
+		runtime.ctx.showStatus(formatBuiltinSlashCommandHelp(command.args));
+		clearSubmittedText(runtime);
+	},
+};
+
 const BUILTIN_SLASH_COMMAND_REGISTRY: ReadonlyArray<SlashCommandSpec> = [
 	...BUILTIN_MODE_SLASH_COMMANDS,
 	...BUILTIN_COLLABORATION_SLASH_COMMANDS,
@@ -49,6 +135,7 @@ const BUILTIN_SLASH_COMMAND_REGISTRY: ReadonlyArray<SlashCommandSpec> = [
 	...BUILTIN_SKILLS_SLASH_COMMANDS,
 	...BUILTIN_THEME_SLASH_COMMANDS,
 	...BUILTIN_CONTROL_SLASH_COMMANDS,
+	HELP_SLASH_COMMAND,
 ];
 
 const BUILTIN_SLASH_COMMAND_LOOKUP = new Map<string, SlashCommandSpec>();
@@ -93,15 +180,41 @@ function materializeTuiBuiltinSlashCommand(
 		} else if (runtime && cmd.name === "effort") {
 			materialized.getArgumentCompletions = buildEffortArgumentCompletions(runtime);
 			materialized.getInlineHint = buildEffortInlineHint(runtime);
+		} else if (cmd.name === "theme") {
+			materialized.getArgumentCompletions = buildThemeArgumentCompletions(subcommands);
+			materialized.getInlineHint = buildSubcommandInlineHint(subcommands);
 		} else {
 			materialized.getArgumentCompletions = buildArgumentCompletions(subcommands);
 			materialized.getInlineHint = buildSubcommandInlineHint(subcommands);
 		}
-	} else if (cmd.name === "move") {
+	} else if (cmd.name === "move" || cmd.name === "add-dir") {
 		materialized.getArgumentCompletions = buildDirectoryArgumentCompletions();
 		if (cmd.inlineHint) materialized.getInlineHint = buildStaticInlineHint(cmd.inlineHint);
 	} else if (cmd.name === "switch" && runtime) {
 		materialized.getArgumentCompletions = buildModelSelectorCompletions(runtime);
+		if (cmd.inlineHint) materialized.getInlineHint = buildStaticInlineHint(cmd.inlineHint);
+	} else if (cmd.name === "force" && runtime) {
+		materialized.getArgumentCompletions = (argumentPrefix: string) => {
+			if (argumentPrefix.includes(" ")) return null;
+			const lower = argumentPrefix.toLowerCase();
+			const tools = runtime.ctx.session.getActiveToolNames();
+			const matches = tools
+				.filter(name => name.toLowerCase().startsWith(lower))
+				.map(name => ({ value: `${name} `, label: name }));
+			return matches.length > 0 ? matches : null;
+		};
+		if (cmd.inlineHint) materialized.getInlineHint = buildStaticInlineHint(cmd.inlineHint);
+	} else if (cmd.name === "help") {
+		materialized.getArgumentCompletions = (argumentPrefix: string) => {
+			if (argumentPrefix.includes(" ")) return null;
+			const lower = argumentPrefix.trim().replace(/^\//, "").toLowerCase();
+			const matches = BUILTIN_SLASH_COMMAND_REGISTRY.filter(c => c.name.startsWith(lower)).map(c => ({
+				value: `${c.name} `,
+				label: c.name,
+				description: c.description,
+			}));
+			return matches.length > 0 ? matches : null;
+		};
 		if (cmd.inlineHint) materialized.getInlineHint = buildStaticInlineHint(cmd.inlineHint);
 	} else if (cmd.inlineHint) {
 		materialized.getInlineHint = buildStaticInlineHint(cmd.inlineHint);

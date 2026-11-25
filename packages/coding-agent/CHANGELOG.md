@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Wired `display.density` (`comfortable` | `compact`) into settings and live interactive mode, and added `/theme` name autocomplete.** Users can now toggle layout density live and autocomplete installed themes after `/theme set` and `/theme preview`.
+- **Eliminated duplicate pre-request API key resolution on prompt dispatch.** `#promptWithMessage` now seeds the validated key into `seedApiKeyResolver` for the immediate `agent.prompt()` call, and `SwarmSessionRuntime` fixes model resolution, `n` validation, batch rollback, >50-post `pendingWake`, and session-switch cleanup.
+
+### Fixed
+
+- **Fixed `pi-walker` `same_file_system` (`find -x` / `-xdev`) on overlayfs, root-bypass in `pi-vcs` permission tests, and Mars mark SVG in `stats`.** Also resolved Python `ruff` lint/format issues and `cargo::redundant_homepage` manifest warnings.
+
 ## [0.3.3] - 2026-11-25
 
 ### Fixed

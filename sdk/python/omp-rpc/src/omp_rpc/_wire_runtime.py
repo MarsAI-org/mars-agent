@@ -7,8 +7,9 @@ about specific protocol types.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
-from typing import Callable, Mapping, TypeAlias, TypeVar, cast
+from typing import TypeAlias, TypeVar, cast
 
 JsonPrimitive: TypeAlias = str | int | float | bool | None
 JsonValue: TypeAlias = JsonPrimitive | list["JsonValue"] | dict[str, "JsonValue"]
@@ -94,7 +95,9 @@ def array(item: Decoder[T]) -> Decoder[tuple[T, ...]]:
     def decode(value: object, path: str) -> tuple[T, ...]:
         if not isinstance(value, list):
             raise ValueError(f"{path} must be a list")
-        return tuple(item(element, f"{path}[{index}]") for index, element in enumerate(value))
+        return tuple(
+            item(element, f"{path}[{index}]") for index, element in enumerate(value)
+        )
 
     return decode
 
@@ -119,7 +122,9 @@ def scalar_or_array(item: Decoder[T]) -> Decoder[tuple[T, ...]]:
     as_array = array(item)
 
     def decode(value: object, path: str) -> tuple[T, ...]:
-        return as_array(value, path) if isinstance(value, list) else (item(value, path),)
+        return (
+            as_array(value, path) if isinstance(value, list) else (item(value, path),)
+        )
 
     return decode
 
@@ -143,18 +148,24 @@ def or_unknown(decode: Decoder[T]) -> Decoder[T | UnknownNotification]:
         try:
             return decode(value, path)
         except (TypeError, ValueError) as exc:
-            return UnknownNotification(decode_json_object(value, path), parse_error=str(exc))
+            return UnknownNotification(
+                decode_json_object(value, path), parse_error=str(exc)
+            )
 
     return lenient
 
 
-def required(payload: Mapping[str, object], key: str, decode: Decoder[T], path: str) -> T:
+def required(
+    payload: Mapping[str, object], key: str, decode: Decoder[T], path: str
+) -> T:
     if key not in payload:
         raise ValueError(f"{path}.{key} is required")
     return decode(payload[key], f"{path}.{key}")
 
 
-def optional(payload: Mapping[str, object], key: str, decode: Decoder[T], path: str) -> T | None:
+def optional(
+    payload: Mapping[str, object], key: str, decode: Decoder[T], path: str
+) -> T | None:
     value = payload.get(key)
     return None if value is None else decode(value, f"{path}.{key}")
 

@@ -1119,9 +1119,7 @@ async def test_release_task_reminds_until_terminal_tool_runs(
     assert fake.prompts == ["kickoff", *(["retag or abort"] * settings.task_completion_max_reminders)]
 
 
-def test_ensure_agent_run_dir_skips_symlinks_without_following(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_ensure_agent_run_dir_skips_symlinks_without_following(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     """P-2 regression: `_ensure_agent_run_dir` must never follow symlinks when chown/chmodding."""
     agent_home = tmp_path / "agent-home"
     run_dir = agent_home / ".mars" / "run"

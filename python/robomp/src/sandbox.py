@@ -1126,7 +1126,9 @@ class SandboxManager:
         first so we don't spam logs on first-time clones). A timed-out probe
         (124) is indeterminate and raises instead — see below.
         """
-        probe = _safe_run(_root_git_cmd(["git", "remote", "get-url", "origin"]), cwd=repo_dir, env=_root_git_env(repo_dir))
+        probe = _safe_run(
+            _root_git_cmd(["git", "remote", "get-url", "origin"]), cwd=repo_dir, env=_root_git_env(repo_dir)
+        )
         if probe.returncode == 124:
             # A timed-out probe is indeterminate: we cannot tell whether origin
             # embeds a legacy credential that must be rewritten before fetch.
@@ -1137,7 +1139,9 @@ class SandboxManager:
             return
         if probe.stdout.strip() == clone_url:
             return
-        _safe_run(_root_git_cmd(["git", "remote", "set-url", "origin", clone_url]), cwd=repo_dir, env=_root_git_env(repo_dir))
+        _safe_run(
+            _root_git_cmd(["git", "remote", "set-url", "origin", clone_url]), cwd=repo_dir, env=_root_git_env(repo_dir)
+        )
 
     # ---- per-issue workspace ----
     def workspace_root(self, repo: str, number: int | str) -> Path:

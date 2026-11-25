@@ -15,9 +15,9 @@ from omp_rpc import (
     MessageEndEvent,
     MessageStartEvent,
     MessageUpdateEvent,
+    NoticeEvent,
     PromptError,
     PromptResultEvent,
-    NoticeEvent,
     SessionSettledEvent,
     SessionState,
     SubagentEvent,
@@ -30,7 +30,6 @@ from omp_rpc import (
     parse_notification,
     parse_session_state,
 )
-
 
 GOAL = {
     "id": "goal-1",
@@ -93,7 +92,10 @@ class ProtocolParsingTests(unittest.TestCase):
         questions = request.questions or ()
         self.assertEqual(
             questions[0].options,
-            (AskOption(label="Postgres", description="server"), AskOption(label="SQLite")),
+            (
+                AskOption(label="Postgres", description="server"),
+                AskOption(label="SQLite"),
+            ),
         )
         self.assertEqual(
             [(q.id, q.multi, q.recommended) for q in questions],
@@ -105,7 +107,11 @@ class ProtocolParsingTests(unittest.TestCase):
         # `remote` compaction action, fail to parse).
         cases = [
             (
-                {"type": "auto_compaction_start", "reason": "overflow", "action": "remote"},
+                {
+                    "type": "auto_compaction_start",
+                    "reason": "overflow",
+                    "action": "remote",
+                },
                 AutoCompactionStartEvent,
                 lambda e: e.action,
                 "remote",
@@ -117,7 +123,12 @@ class ProtocolParsingTests(unittest.TestCase):
                 ("paused", None),
             ),
             (
-                {"type": "notice", "level": "warning", "message": "disk full", "source": "session"},
+                {
+                    "type": "notice",
+                    "level": "warning",
+                    "message": "disk full",
+                    "source": "session",
+                },
                 NoticeEvent,
                 lambda e: (e.level, e.source),
                 ("warning", "session"),
@@ -137,13 +148,23 @@ class ProtocolParsingTests(unittest.TestCase):
                 ("miss", 3, "refresh missed the cache"),
             ),
             (
-                {"type": "thinking_level_changed", "thinkingLevel": "high", "configured": "auto", "resolved": "high"},
+                {
+                    "type": "thinking_level_changed",
+                    "thinkingLevel": "high",
+                    "configured": "auto",
+                    "resolved": "high",
+                },
                 ThinkingLevelChangedEvent,
                 lambda e: (e.thinking_level, e.configured, e.resolved),
                 ("high", "auto", "high"),
             ),
             (
-                {"type": "tool_stream_update", "toolCallId": "t1", "toolName": "bash", "update": {"chunk": "ok"}},
+                {
+                    "type": "tool_stream_update",
+                    "toolCallId": "t1",
+                    "toolName": "bash",
+                    "update": {"chunk": "ok"},
+                },
                 ToolStreamUpdateEvent,
                 lambda e: (e.tool_call_id, e.update),
                 ("t1", {"chunk": "ok"}),
@@ -151,7 +172,13 @@ class ProtocolParsingTests(unittest.TestCase):
             (
                 {
                     "type": "irc_message",
-                    "message": {"role": "custom", "customType": "irc", "content": "hi", "display": True, "timestamp": 1},
+                    "message": {
+                        "role": "custom",
+                        "customType": "irc",
+                        "content": "hi",
+                        "display": True,
+                        "timestamp": 1,
+                    },
                 },
                 IrcMessageEvent,
                 lambda e: e.message["customType"],
@@ -194,7 +221,13 @@ class ProtocolParsingTests(unittest.TestCase):
     def test_parse_live_frames(self) -> None:
         self.assertEqual(
             parse_notification(
-                {"type": "live_transcript", "role": "user", "turn": 3, "text": "hello", "final": False}
+                {
+                    "type": "live_transcript",
+                    "role": "user",
+                    "turn": 3,
+                    "text": "hello",
+                    "final": False,
+                }
             ),
             LiveTranscriptEvent(role="user", turn=3, text="hello", final=False),
         )
@@ -253,9 +286,7 @@ class ProtocolParsingTests(unittest.TestCase):
 
         self.assertIsInstance(events[0], MessageStartEvent)
         self.assertIsInstance(events[2], MessageEndEvent)
-        self.assertEqual(
-            [getattr(event, "message_id") for event in events], ["m-7"] * 3
-        )
+        self.assertEqual([event.message_id for event in events], ["m-7"] * 3)
         legacy = parse_notification({"type": "message_end", "message": assistant})
         assert isinstance(legacy, MessageEndEvent)
         self.assertIsNone(legacy.message_id)
@@ -456,9 +487,11 @@ class ProtocolParsingTests(unittest.TestCase):
             ({"stage": "unknown"}, "stage"),
         )
         for slow_mode, field in invalid:
-            with self.subTest(slow_mode=slow_mode):
-                with self.assertRaisesRegex(ValueError, field):
-                    parse_session_state({**base, "usageLimit": slow_mode})
+            with (
+                self.subTest(slow_mode=slow_mode),
+                self.assertRaisesRegex(ValueError, field),
+            ):
+                parse_session_state({**base, "usageLimit": slow_mode})
 
     def test_parse_session_state_defaults_missing_fast_mode_and_throughput(
         self,

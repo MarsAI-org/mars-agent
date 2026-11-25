@@ -43,6 +43,14 @@ import {
 	wrapTextWithAnsi,
 } from "@marsai-org/tui";
 import type { TerminalAppearanceRequestToken } from "@marsai-org/tui/terminal";
+import { SwarmBoardComponent } from "@marsai-org/tui/apps/swarm-board";
+import {
+	getActiveSwarmSession,
+	setActiveSwarmSession,
+	SWARM_COORDINATOR_READ_ONLY_TOOLS,
+	SwarmSessionRuntime,
+} from "../swarm/runtime";
+import { createSwarmCoordinatorTools } from "../swarm/tools";
 import type { DescribeContext, NativeChild, NativeNode, NativeUiEvent } from "@marsai-org/tui/native/node";
 import { col, kbd, node, row, span, text } from "@marsai-org/tui/native/describe";
 import { sameItems } from "@marsai-org/tui/native/memo";
@@ -340,6 +348,7 @@ import {
 	cfgComposerTokenRate,
 	cfgDisplayCacheMissMarker,
 	cfgDisplayCollapseCompacted,
+	cfgDisplayDensity,
 	cfgDisplayHideToolActivity,
 	cfgDisplayPinnedAgents,
 	cfgDisplayShowTokenUsage,
@@ -438,6 +447,7 @@ const cfgLiveUiSettings = combine({
 	expandThinkingBlocks: cfgExpandThinkingBlocks,
 	"display.cacheMissMarker": cfgDisplayCacheMissMarker,
 	"display.collapseCompacted": cfgDisplayCollapseCompacted,
+	"display.density": cfgDisplayDensity,
 	"display.showTokenUsage": cfgDisplayShowTokenUsage,
 	"display.showTurnTime": cfgDisplayShowTurnTime,
 	"tui.renderMermaid": cfgTuiRenderMermaid,
@@ -1209,6 +1219,8 @@ export class InteractiveMode implements InteractiveModeContext {
 	goalModeEnabled = false;
 	goalModePaused = false;
 	vibeModeEnabled = false;
+	#swarmSession: SwarmSessionRuntime | undefined;
+	#swarmPreviousTools: string[] | undefined;
 	planModePlanFilePath: string | undefined = undefined;
 	loopModeEnabled = false;
 	loopModePaused = false;
@@ -3562,6 +3574,10 @@ export class InteractiveMode implements InteractiveModeContext {
 			this.ui.invalidate();
 			resetDisplay = true;
 		}
+		if (any("display.density")) {
+			this.ui.invalidate();
+			this.ui.requestRender();
+		}
 		if (any("tui.tight")) {
 			setTuiTight(cfgTuiTight.get(this.settings));
 			this.ui.invalidate();
@@ -4751,6 +4767,9 @@ export class InteractiveMode implements InteractiveModeContext {
 		vibeScopeAlreadySuspended?: boolean;
 		restorePlanModel?: boolean;
 	}): Promise<void> {
+		if (this.#swarmSession && !this.#swarmSession.isDisposed) {
+			await this.exitSwarmCoordinatorMode();
+		}
 		if (this.planModeEnabled || this.planModePaused) {
 			const previousModel = this.#planModePreviousModelState;
 			this.session.setPlanModeState(undefined);
@@ -6073,6 +6092,96 @@ export class InteractiveMode implements InteractiveModeContext {
 		);
 	}
 
+	async enterSwarmCoordinatorMode(title?: string): Promise<SwarmSessionRuntime> {
+		if (this.#swarmSession && !this.#swarmSession.isDisposed) {
+			if (title?.trim()) {
+				this.#swarmSession.setTitle(title);
+			}
+			return this.#swarmSession;
+		}
+		const previousTools = this.session.getEnabledToolNames();
+		const cwd = this.sessionManager.getCwd();
+		const runtime = new SwarmSessionRuntime({
+			title: title?.trim() || "Live Swarm",
+			cwd,
+			settings: this.settings,
+			authStorage: this.session.modelRegistry.authStorage,
+			modelRegistry: this.session.modelRegistry,
+			coordinatorModel: this.session.model,
+		});
+		const readOnlyBaseTools = SWARM_COORDINATOR_READ_ONLY_TOOLS.filter(name => this.session.hasBuiltInTool(name));
+		const swarmTools = createSwarmCoordinatorTools(runtime);
+		await this.session.activateSwarmTools(swarmTools, readOnlyBaseTools);
+		this.#swarmPreviousTools = previousTools;
+		this.#swarmSession = runtime;
+		setActiveSwarmSession(runtime);
+		this.session.setSwarmCoordinatorState({ enabled: true, swarmId: runtime.swarmId });
+		this.lastAssistantUsage = undefined;
+		this.statusLine.invalidate();
+		this.ui.requestRender();
+		return runtime;
+	}
+
+	async exitSwarmCoordinatorMode(): Promise<void> {
+		const runtime = this.#swarmSession ?? getActiveSwarmSession();
+		const previousTools = this.#swarmPreviousTools;
+		this.#swarmSession = undefined;
+		this.#swarmPreviousTools = undefined;
+		await this.session.runModeExitTeardown(async () => {
+			if (this.session.isStreaming) {
+				await this.session.abort();
+			}
+			if (runtime) {
+				await runtime.dispose();
+			}
+			await this.session.deactivateSwarmTools(previousTools ?? this.session.getEnabledToolNames());
+			this.session.setSwarmCoordinatorState(undefined);
+		});
+		this.lastAssistantUsage = undefined;
+		this.statusLine.invalidate();
+		this.ui.requestRender();
+	}
+
+	openSwarmBoard(): boolean {
+		const runtime =
+			this.#swarmSession && !this.#swarmSession.isDisposed ? this.#swarmSession : getActiveSwarmSession();
+		if (!runtime) return false;
+		const handleRef: { component?: SwarmBoardComponent; overlay?: OverlayHandle; closed: boolean } = {
+			closed: false,
+		};
+		const closeOverlay = (): void => {
+			if (handleRef.closed) return;
+			handleRef.closed = true;
+			handleRef.component?.dispose();
+			handleRef.overlay?.hide();
+		};
+		const component = new SwarmBoardComponent(this.ui, {
+			snapshot: () => runtime.snapshot(),
+			killWorker: name => {
+				void runtime.killWorker(name);
+			},
+			stopAll: () => {
+				void runtime.stopAllWorkers();
+			},
+			detach: () => {
+				closeOverlay();
+			},
+		});
+		handleRef.component = component;
+		const overlay = this.ui.showOverlay(component, {
+			anchor: "top-left",
+			width: "100%",
+			maxHeight: "100%",
+			margin: 0,
+			fullscreen: true,
+			mouseTracking: false,
+		});
+		handleRef.overlay = overlay;
+		this.ui.setFocus(component);
+		void component.run();
+		return true;
+	}
+
 	async #handleGoalBudgetCommand(rawBudget: string): Promise<void> {
 		const state = this.session.getGoalModeState();
 		if (!this.goalModeEnabled || !state?.enabled) {
@@ -6833,6 +6942,10 @@ export class InteractiveMode implements InteractiveModeContext {
 			return;
 		}
 		this.#beginClose();
+		if (this.#swarmSession && !this.#swarmSession.isDisposed) {
+			await this.#swarmSession.dispose();
+			this.#swarmSession = undefined;
+		}
 		const worktreePlan = await this.#planOwnedWorktreeExit();
 		try {
 			await this.#teardown();

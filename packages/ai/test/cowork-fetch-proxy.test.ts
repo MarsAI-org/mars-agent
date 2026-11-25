@@ -54,7 +54,15 @@ describe("coworkFetch proxy handling", () => {
 	it("keeps unproxied https requests on the cowork transport", async () => {
 		// Unreachable loopback port: reaching the node:https path fails to connect
 		// instead of delegating, which is what proves the request stayed here.
-		await expect(coworkFetch("https://127.0.0.1:1/v1/messages", { headers: { accept: "*/*" } })).rejects.toThrow();
+		let caught: unknown;
+		try {
+			await coworkFetch("https://127.0.0.1:1/v1/messages", { headers: { accept: "*/*" } });
+		} catch (error) {
+			caught = error;
+		}
+		expect(caught).toBeDefined();
+		// IP-literal hosts must omit TLS SNI servername instead of throwing TypeError.
+		expect(caught).not.toBeInstanceOf(TypeError);
 		expect(calls).toHaveLength(0);
 	});
 });

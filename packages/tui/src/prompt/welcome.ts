@@ -1,6 +1,7 @@
 import { APP_NAME } from "@marsai-org/utils/dirs";
 import type { TspSpan } from "@marsai-org/wire";
 import { formatDoubleTap, formatKeyHint, formatKeyHints, type KeyName } from "../app-keybindings";
+import { chatTranscriptDisplayPreferences, type LayoutDensity } from "../chat/display-preferences";
 import { editorKey } from "../chrome/keybinding-hints";
 import { getKeybindings, type Keybinding } from "../keybindings";
 import { card, col, keyed, node, row, span, text } from "../native/describe";
@@ -8,11 +9,39 @@ import type { DescribeContext, NativeChild, NativeNode } from "../native/node";
 import { compactText, plainText } from "../native/spans";
 import { isNativeRendering } from "../native/state";
 import { isHyperlinkEnabled, urlHyperlink, urlLinkSpan } from "../render/hyperlink";
+import { shortenPath } from "../render/render-utils";
 import { TERMINAL } from "../terminal-capabilities";
 import { theme } from "../theme/theme";
 import type { Component } from "../tui";
-import { padding, replaceTabs, visibleWidth, wrapTextWithAnsi } from "../utils";
+import { padding, replaceTabs, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "../utils";
 import tipsText from "./tips.txt" with { type: "text" };
+
+/** Quick-start command entry displayed in the Mars hardware telemetry block. */
+export interface WelcomeQuickCommand {
+	readonly command: string;
+	readonly label?: string;
+}
+
+/** Optional Mars Editorial Instrument telemetry readout for {@link WelcomeComponent}. */
+export interface WelcomeTelemetryOptions {
+	readonly model?: string;
+	readonly provider?: string;
+	readonly workspace?: string;
+	readonly lspCount?: number;
+	readonly mcpCount?: number;
+	readonly toolCount?: number;
+	readonly quickCommands?: boolean | readonly WelcomeQuickCommand[];
+	readonly showSpecRule?: boolean;
+	readonly density?: LayoutDensity;
+}
+
+/** Default quick-start commands surfaced in the Mars welcome specification sheet. */
+export const DEFAULT_WELCOME_QUICK_COMMANDS: readonly WelcomeQuickCommand[] = [
+	{ command: "/plan", label: "architect" },
+	{ command: "/review", label: "audit" },
+	{ command: "/fast", label: "speed" },
+	{ command: "?", label: "shortcuts" },
+];
 
 /** Leading marker for a tip that pitches Tern: shown only while no TSP surface
  *  is live, since a live one means the user is already in Tern. */
@@ -211,10 +240,40 @@ export class WelcomeComponent implements Component {
 	// returning a stable array reference keeps the whole frame prefix stable.
 	// Bypassed while the intro animation runs (every frame differs).
 	#cachedWidth = -1;
+	#cachedDensity: LayoutDensity | undefined;
 	#cachedLines: string[] | undefined;
-	#native: { tip: string | undefined; node: NativeNode } | undefined;
+	#native: { tip: string | undefined; telemetryKey: string; node: NativeNode } | undefined;
+	#telemetry: WelcomeTelemetryOptions | undefined;
+	#density: LayoutDensity | undefined;
 
-	constructor(private version: string) {}
+	constructor(
+		private version: string,
+		telemetry?: WelcomeTelemetryOptions,
+	) {
+		this.#telemetry = telemetry;
+		this.#density = telemetry?.density;
+	}
+
+	get telemetry(): WelcomeTelemetryOptions | undefined {
+		return this.#telemetry;
+	}
+
+	setTelemetry(telemetry: WelcomeTelemetryOptions | undefined): void {
+		this.#telemetry = telemetry;
+		if (telemetry?.density !== undefined) this.#density = telemetry.density;
+		this.invalidate();
+	}
+
+	setDensity(density: LayoutDensity | undefined): void {
+		if (this.#density === density) return;
+		this.#density = density;
+		this.invalidate();
+	}
+
+	#effectiveDensity(): LayoutDensity {
+		return this.#density ?? this.#telemetry?.density ?? chatTranscriptDisplayPreferences.density;
+	}
+
 	get tip(): string | undefined {
 		this.#nagRoll ??= Math.random();
 		this.#tipRoll ??= Math.random();
@@ -239,7 +298,10 @@ export class WelcomeComponent implements Component {
 	 */
 	describe(_cx: DescribeContext): NativeNode {
 		const tip = this.tip;
-		if (this.#native && this.#native.tip === tip) return this.#native.node;
+		const telemetryKey = JSON.stringify(this.#telemetry ?? null);
+		if (this.#native && this.#native.tip === tip && this.#native.telemetryKey === telemetryKey) {
+			return this.#native.node;
+		}
 		// Brand lines are short and fixed; never wrap or truncate them.
 		const art = (spans: readonly TspSpan[], role: string): NativeNode =>
 			keyed(text(spans, { wrap: "none", role }), role);
@@ -273,6 +335,20 @@ export class WelcomeComponent implements Component {
 			"lockup",
 		);
 		const body: NativeChild[] = [lockupRow];
+		if (this.#telemetry) {
+			const telemetrySpans = describeWelcomeTelemetrySpans(this.#telemetry);
+			if (telemetrySpans.length > 0) {
+				body.push(
+					keyed(text(compactText(telemetrySpans), { wrap: "word", role: "omp.welcome.telemetry" }), "telemetry"),
+				);
+			}
+			const commandSpans = describeWelcomeCommandSpans(this.#telemetry);
+			if (commandSpans.length > 0) {
+				body.push(
+					keyed(text(compactText(commandSpans), { wrap: "word", role: "omp.welcome.commands" }), "commands"),
+				);
+			}
+		}
 		if (tip) {
 			const isNew = NEW_TIP_MARKER.test(tip);
 			const tipText = compactText(tipSpans(expandTipKeys(isNew ? tip.replace(NEW_TIP_MARKER, "") : tip)));
@@ -285,7 +361,7 @@ export class WelcomeComponent implements Component {
 		}
 		// No head row or chevron: the card is the hero; the version sits under the wordmark.
 		const described = card({ role: "omp.welcome" }, body);
-		this.#native = { tip, node: described };
+		this.#native = { tip, telemetryKey, node: described };
 		return described;
 	}
 
@@ -357,31 +433,46 @@ export class WelcomeComponent implements Component {
 
 	render(termWidth: number): readonly string[] {
 		const animating = this.#animStart != null;
-		if (!animating && this.#cachedLines && this.#cachedWidth === termWidth) {
+		const density = this.#effectiveDensity();
+		if (!animating && this.#cachedLines && this.#cachedWidth === termWidth && this.#cachedDensity === density) {
 			return this.#cachedLines;
 		}
-		const lines = this.#renderLines(termWidth);
+		const lines = this.#renderLines(termWidth, density);
 		if (animating) {
 			this.#cachedLines = undefined;
 			this.#cachedWidth = -1;
+			this.#cachedDensity = undefined;
 		} else {
 			this.#cachedLines = lines;
 			this.#cachedWidth = termWidth;
+			this.#cachedDensity = density;
 		}
 		return lines;
 	}
 
-	#renderLines(termWidth: number): string[] {
+	#renderLines(termWidth: number, density: LayoutDensity): string[] {
 		// Content keeps a column clear on each side; everything centers in the full width.
 		const room = termWidth - 2;
 		if (room < 4) return [];
-		const logo = this.#currentLogoFrame();
+		const compact = density === "compact";
+		const logo = this.#currentLogoFrame(compact);
+		const logoWidth = compact ? COMPACT_LOGO_WIDTH : LOGO_WIDTH;
 		const version = theme.fg("dim", `v${this.version}`);
-		const lockupWidth = LOGO_WIDTH + LOCKUP_GAP + Math.max(WORDMARK_WIDTH, visibleWidth(version));
-		const art = room >= lockupWidth ? lockup(logo, version) : room >= LOGO_WIDTH ? logo : [];
+		const lockupWidth = logoWidth + LOCKUP_GAP + Math.max(WORDMARK_WIDTH, visibleWidth(version));
+		const art = room >= lockupWidth ? lockup(logo, version) : room >= logoWidth ? logo : [];
 		const lines = centerBlock(art, termWidth);
+		if (this.#telemetry) {
+			const telemetryLines = renderWelcomeTelemetry(this.#telemetry, room);
+			if (telemetryLines.length > 0) {
+				if (!compact) lines.push("");
+				lines.push(...telemetryLines.flatMap(line => centerBlock([line], termWidth)));
+			}
+		}
 		const tip = termWidth >= TIP_MIN_COLUMNS ? this.#renderTip(room) : [];
-		if (tip.length > 0) lines.push("", ...tip.flatMap(line => centerBlock([line], termWidth)));
+		if (tip.length > 0) {
+			if (!compact) lines.push("");
+			lines.push(...tip.flatMap(line => centerBlock([line], termWidth)));
+		}
 		return lines;
 	}
 
@@ -401,11 +492,12 @@ export class WelcomeComponent implements Component {
 	}
 
 	/** Pick the logo frame for the current intro phase, or the resting frame. */
-	#currentLogoFrame(): readonly string[] {
-		if (this.#animStart == null) return REST_FRAME;
+	#currentLogoFrame(compact = false): readonly string[] {
+		const restFrame = compact ? REST_FRAME_COMPACT : REST_FRAME;
+		if (this.#animStart == null) return restFrame;
 		const elapsed = performance.now() - this.#animStart;
-		if (elapsed >= INTRO_MS) return REST_FRAME;
-		return introLogoFrame(elapsed / INTRO_MS);
+		if (elapsed >= INTRO_MS) return restFrame;
+		return introLogoFrame(elapsed / INTRO_MS, compact ? MARS_LOGO_COMPACT : MARS_LOGO);
 	}
 }
 
@@ -430,8 +522,9 @@ export const MARS_LOGO = [
  */
 export const MARS_LOGO_COMPACT = ["  ▄████▄  ", "▄████████▄", "██▀████▀██", " ▀██████▀ ", "  ▄█▀▀█▄  "];
 
-/** Columns of {@link MARS_LOGO}. */
+/** Columns of {@link MARS_LOGO} and {@link MARS_LOGO_COMPACT}. */
 const LOGO_WIDTH = Math.max(...MARS_LOGO.map(row => row.length));
+const COMPACT_LOGO_WIDTH = Math.max(...MARS_LOGO_COMPACT.map(row => row.length));
 
 /**
  * The `MARS` wordmark in half-blocks, set beside {@link MARS_LOGO} from its
@@ -459,6 +552,173 @@ function lockup(logo: readonly string[], version: string): string[] {
 		const right = beside[index];
 		return right ? `${row}${padding(LOCKUP_GAP)}${right}` : row;
 	});
+}
+
+function sanitizeTelemetryToken(value: string): string {
+	return replaceTabs(value.replace(/[\r\n]+/g, " ")).trim();
+}
+
+function resolveQuickCommands(quickCommands: WelcomeTelemetryOptions["quickCommands"]): readonly WelcomeQuickCommand[] {
+	if (quickCommands === false) return [];
+	if (Array.isArray(quickCommands)) return quickCommands;
+	if (quickCommands === true) return DEFAULT_WELCOME_QUICK_COMMANDS;
+	return [];
+}
+
+function describeWelcomeTelemetrySpans(telemetry: WelcomeTelemetryOptions): TspSpan[] {
+	const parts: TspSpan[][] = [];
+	if (telemetry.model) {
+		const modelText = sanitizeTelemetryToken(telemetry.model);
+		if (modelText) {
+			const group: TspSpan[] = [span(modelText, "accent")];
+			if (telemetry.provider) {
+				const providerText = sanitizeTelemetryToken(telemetry.provider);
+				if (providerText) group.push(span(` (${providerText})`, "dim"));
+			}
+			parts.push(group);
+		}
+	}
+	if (telemetry.workspace) {
+		const wsText = sanitizeTelemetryToken(shortenPath(telemetry.workspace));
+		if (wsText) parts.push([span(wsText, "muted")]);
+	}
+	if (telemetry.lspCount !== undefined) {
+		parts.push([span(`${telemetry.lspCount}`, "strong"), span(" LSP", "dim")]);
+	}
+	if (telemetry.mcpCount !== undefined) {
+		parts.push([span(`${telemetry.mcpCount}`, "strong"), span(" MCP", "dim")]);
+	}
+	if (telemetry.toolCount !== undefined) {
+		const noun = telemetry.toolCount === 1 ? " tool" : " tools";
+		parts.push([span(`${telemetry.toolCount}`, "strong"), span(noun, "dim")]);
+	}
+	const out: TspSpan[] = [];
+	for (const part of parts) {
+		if (out.length > 0) out.push(span(theme.sep.dot, "dim"));
+		out.push(...part);
+	}
+	return out;
+}
+
+function describeWelcomeCommandSpans(telemetry: WelcomeTelemetryOptions): TspSpan[] {
+	const commands = resolveQuickCommands(telemetry.quickCommands);
+	const out: TspSpan[] = [];
+	for (const entry of commands) {
+		const cmd = sanitizeTelemetryToken(entry.command);
+		if (!cmd) continue;
+		if (out.length > 0) out.push(span(theme.sep.dot, "dim"));
+		out.push(span(cmd, "accent mono"));
+		if (entry.label) {
+			const label = sanitizeTelemetryToken(entry.label);
+			if (label) out.push(span(` ${label}`, "dim"));
+		}
+	}
+	return out;
+}
+
+/**
+ * Render the Mars "Editorial Instrument" specification rule, telemetry readout
+ * (model, workspace, LSP/MCP/tools counts), and quick-start command hints within
+ * `width` columns. Adapts responsively from wide single-row bars to stacked
+ * narrow-terminal rows.
+ */
+export function renderWelcomeTelemetry(telemetry: WelcomeTelemetryOptions, width: number): string[] {
+	if (width < 12) return [];
+
+	const dot = theme.fg("dim", theme.sep.dot);
+	const primaryParts: string[] = [];
+	if (telemetry.model) {
+		const modelName = sanitizeTelemetryToken(telemetry.model);
+		if (modelName) {
+			const providerSuffix = telemetry.provider
+				? (() => {
+						const prov = sanitizeTelemetryToken(telemetry.provider);
+						return prov ? theme.fg("dim", ` (${prov})`) : "";
+					})()
+				: "";
+			primaryParts.push(`${theme.fg("accent", modelName)}${providerSuffix}`);
+		}
+	}
+	if (telemetry.workspace) {
+		const ws = sanitizeTelemetryToken(shortenPath(telemetry.workspace));
+		if (ws) primaryParts.push(theme.fg("muted", ws));
+	}
+
+	const countParts: string[] = [];
+	if (telemetry.lspCount !== undefined) {
+		countParts.push(`${theme.fg("text", String(telemetry.lspCount))} ${theme.fg("dim", "LSP")}`);
+	}
+	if (telemetry.mcpCount !== undefined) {
+		countParts.push(`${theme.fg("text", String(telemetry.mcpCount))} ${theme.fg("dim", "MCP")}`);
+	}
+	if (telemetry.toolCount !== undefined) {
+		const unit = telemetry.toolCount === 1 ? "tool" : "tools";
+		countParts.push(`${theme.fg("text", String(telemetry.toolCount))} ${theme.fg("dim", unit)}`);
+	}
+
+	const commands = resolveQuickCommands(telemetry.quickCommands);
+	const hasContent = primaryParts.length > 0 || countParts.length > 0 || commands.length > 0;
+	if (!hasContent && !telemetry.showSpecRule) return [];
+
+	const lines: string[] = [];
+
+	// Editorial specification rule: hairline with a centered Mars glyph.
+	if (telemetry.showSpecRule !== false && width >= 20) {
+		const ruleSpan = Math.min(width, TIP_MEASURE, 48);
+		const glyph = theme.icon.mars || "◆";
+		const glyphWidth = visibleWidth(glyph);
+		const wing = Math.max(2, Math.floor((ruleSpan - glyphWidth - 2) / 2));
+		const bar = theme.fg("borderMuted", theme.boxRound.horizontal.repeat(wing));
+		lines.push(truncateToWidth(`${bar} ${theme.fg("accent", glyph)} ${bar}`, width));
+	}
+
+	const allTelemetry = [...primaryParts, ...countParts];
+	if (allTelemetry.length > 0) {
+		const combined = allTelemetry.join(dot);
+		if (visibleWidth(combined) <= width) {
+			lines.push(combined);
+		} else {
+			if (primaryParts.length > 0) {
+				const primaryLine = primaryParts.join(dot);
+				if (visibleWidth(primaryLine) <= width) {
+					lines.push(primaryLine);
+				} else {
+					for (const part of primaryParts) {
+						lines.push(truncateToWidth(part, width));
+					}
+				}
+			}
+			if (countParts.length > 0) {
+				lines.push(truncateToWidth(countParts.join(dot), width));
+			}
+		}
+	}
+
+	if (commands.length > 0 && width >= 16) {
+		const fullCommands: string[] = [];
+		const compactCommands: string[] = [];
+		for (const item of commands) {
+			const cmd = sanitizeTelemetryToken(item.command);
+			if (!cmd) continue;
+			const styledCmd = theme.fg("accent", cmd);
+			compactCommands.push(styledCmd);
+			const label = item.label ? sanitizeTelemetryToken(item.label) : "";
+			fullCommands.push(label ? `${styledCmd} ${theme.fg("dim", label)}` : styledCmd);
+		}
+		if (fullCommands.length > 0) {
+			const fullLine = fullCommands.join(dot);
+			const compactLine = compactCommands.join(dot);
+			if (visibleWidth(fullLine) <= width) {
+				lines.push(fullLine);
+			} else if (visibleWidth(compactLine) <= width) {
+				lines.push(compactLine);
+			} else {
+				lines.push(truncateToWidth(compactLine, width));
+			}
+		}
+	}
+
+	return lines;
 }
 
 /**
@@ -602,16 +862,17 @@ const INTRO_SHINE_TRAVERSALS = 3;
  * fades with the same ease-out curve so the highlight is gone by the resting
  * frame.
  */
-function introLogoFrame(progress: number): string[] {
+function introLogoFrame(progress: number, logo: readonly string[] = MARS_LOGO): string[] {
 	const eased = 1 - (1 - progress) ** 3;
 	const phase = ((((1 - eased) * INTRO_SWEEPS) % 1) + 1) % 1;
 	const shinePos = (((progress * INTRO_SHINE_TRAVERSALS) % 1) + 1) % 1;
 	const shineStrength = (1 - eased) ** 1.5;
-	return gradientLogo(MARS_LOGO, phase, {
+	return gradientLogo(logo, phase, {
 		strength: shineStrength,
 		pos: shinePos,
 	});
 }
 
-/** Resting gradient frame, cached for re-renders outside of the intro. */
+/** Resting gradient frames, cached for re-renders outside of the intro. */
 const REST_FRAME = gradientLogo(MARS_LOGO, 0);
+const REST_FRAME_COMPACT = gradientLogo(MARS_LOGO_COMPACT, 0);

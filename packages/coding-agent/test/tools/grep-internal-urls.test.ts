@@ -518,11 +518,12 @@ describe("GrepTool internal URL resolution", () => {
 	it("reports a glob in a skill:// name through the nameless skill root's error", async () => {
 		await registerSkillDirectory();
 
-		for (const tool of [new GlobTool(createSession()), new GrepTool(createSession())]) {
-			await expect(tool.execute("id-glob", { pattern: "needle", path: "skill://*/SKILL.md" })).rejects.toThrow(
-				"skill:// URL requires a skill name",
-			);
-		}
+		await expect(new GlobTool(createSession()).execute("id-glob", { path: "skill://*/SKILL.md" })).rejects.toThrow(
+			"skill:// URL requires a skill name",
+		);
+		await expect(
+			new GrepTool(createSession()).execute("id-glob", { pattern: "needle", path: "skill://*/SKILL.md" }),
+		).rejects.toThrow("skill:// URL requires a skill name");
 	});
 
 	it("greps a local:// directory, naming hits by URL with anchors on the backing file", async () => {

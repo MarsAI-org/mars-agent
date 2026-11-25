@@ -14,6 +14,7 @@ import {
 	formatExpandHint,
 	formatParseErrors,
 	formatFeedModelBadge,
+	formatStatusIcon,
 	PREVIEW_LIMITS,
 	resolveImageOptions,
 	setInlineImageMaxColumns,
@@ -676,5 +677,18 @@ describe("sanitizeDisplayWarnings", () => {
 		const displayed = sanitizeDisplayWarnings(["warning ".repeat(TRUNCATE_LENGTHS.LONG)]);
 
 		expect(Bun.stringWidth(displayed[0])).toBeLessThanOrEqual(TRUNCATE_LENGTHS.LONG);
+	});
+});
+
+describe("formatStatusIcon", () => {
+	beforeAll(async () => {
+		await initTheme();
+	});
+
+	it("styles live running spinner frames with the theme accent color", () => {
+		const rawGlyph = theme.spinnerFrames[0]!;
+		const rendered = formatStatusIcon("running", theme, 0);
+		expect(rendered).toBe(theme.fg("accent", rawGlyph));
+		expect(Bun.stripANSI(rendered)).toBe(rawGlyph);
 	});
 });

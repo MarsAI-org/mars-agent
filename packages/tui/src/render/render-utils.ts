@@ -291,7 +291,7 @@ export function formatStatusIcon(status: ToolUIStatus, theme: Theme, spinnerFram
 		case "running":
 			if (spinnerFrame !== undefined) {
 				const frames = theme.spinnerFrames;
-				return frames[spinnerFrame % frames.length];
+				return theme.fg("accent", frames[spinnerFrame % frames.length]!);
 			}
 			return theme.styledSymbol("status.running", "accent");
 		case "aborted":

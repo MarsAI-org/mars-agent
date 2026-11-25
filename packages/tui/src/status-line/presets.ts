@@ -3,12 +3,12 @@ import type { PresetDef, StatusLinePreset } from "./types";
 
 export const STATUS_LINE_PRESETS: Record<StatusLinePreset, PresetDef> = {
 	default: {
-		leftSegments: ["pi", "vim", "model", "mode", "collab", "stream", "path", "git", "pr", "context_pct", "cost"],
-		rightSegments: ["session_name"],
+		leftSegments: ["pi", "vim", "model", "mode", "collab", "stream", "path", "git", "subagents"],
+		rightSegments: ["session_name", "cost", "context_pct"],
 		separator: "powerline-thin",
 		segmentOptions: {
 			model: { showThinkingLevel: true },
-			path: { abbreviate: true, maxLength: 40, stripWorkPrefix: true },
+			path: { abbreviate: true, maxLength: 36, stripWorkPrefix: true },
 			git: { showBranch: true, showStaged: true, showUnstaged: true, showUntracked: true },
 		},
 	},

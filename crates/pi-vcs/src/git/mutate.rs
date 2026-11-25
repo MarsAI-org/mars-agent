@@ -2639,6 +2639,12 @@ mod tests {
 	fn detach_git_dir_does_not_mutate_when_index_snapshot_fails() {
 		use std::os::unix::fs::PermissionsExt;
 
+		// Root bypasses mode 0o000 read checks on Unix, so PermissionDenied
+		// cannot be provoked. SAFETY: geteuid has no preconditions.
+		if unsafe { libc::geteuid() } == 0 {
+			return;
+		}
+
 		let (temp, repo) = fixture();
 		let linked = temp.path().join("../linked-unreadable-index");
 		let _ = fs::remove_dir_all(&linked);

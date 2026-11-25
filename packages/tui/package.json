@@ -94,6 +94,10 @@
       "types": "./src/status-line/index.ts",
       "import": "./src/status-line/index.ts"
     },
+    "./apps/swarm-board": {
+      "types": "./src/apps/swarm-board.ts",
+      "import": "./src/apps/swarm-board.ts"
+    },
     "./*": {
       "types": "./src/*.ts",
       "import": "./src/*.ts"

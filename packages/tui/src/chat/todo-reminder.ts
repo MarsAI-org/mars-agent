@@ -1,10 +1,24 @@
 import { Text } from "../components/text";
 import { Container } from "../tui";
 import { MessageNoticeComponent } from "../chrome/message-notice";
+import { replaceTabs } from "../render/render-utils";
+import { sanitizeText } from "@marsai-org/utils";
 import { theme } from "../theme";
 import { type TodoItem, todoChecklistPhases } from "../tools/todo";
 import { node, span, withHidden } from "../native/describe";
 import type { DescribeContext, NativeNode } from "../native/node";
+
+function formatTodoReminderLine(todo: TodoItem): string {
+	const content = replaceTabs(sanitizeText(todo.content));
+	const blocker = todo.blocker ? ` (${replaceTabs(sanitizeText(todo.blocker))})` : "";
+	if (todo.status === "in_progress") {
+		return `  ${theme.styledSymbol("status.running", "accent")} ${content}`;
+	}
+	if (todo.status === "blocked") {
+		return `  ${theme.styledSymbol("status.warning", "warning")} ${content}${blocker}`;
+	}
+	return `  ${theme.checkbox.unchecked} ${content}`;
+}
 
 /**
  * Component that renders a todo completion reminder notification, committed into
@@ -26,7 +40,7 @@ export class TodoReminderComponent extends Container {
 		const header = `${count} incomplete ${count === 1 ? "todo" : "todos"} - reminder ${attempt}/${maxAttempts}`;
 		this.#notice = new MessageNoticeComponent({
 			presentation: () => {
-				const todoList = todos.map(todo => `  ${theme.checkbox.unchecked} ${todo.content}`).join("\n");
+				const todoList = todos.map(formatTodoReminderLine).join("\n");
 				return { icon: theme.icon.warning, header, body: new Text(theme.italic(todoList), 0, 0) };
 			},
 			nativePresentation: () => ({
@@ -36,7 +50,15 @@ export class TodoReminderComponent extends Container {
 						"list",
 						{},
 						todos.map((todo, index) =>
-							node("item", { label: [span(todo.content, "em")], tone: "pending" }, [], `t${index}`),
+							node(
+								"item",
+								{
+									label: [span(replaceTabs(sanitizeText(todo.content)), "em")],
+									tone: todo.status === "blocked" ? "warning" : "pending",
+								},
+								[],
+								`t${index}`,
+							),
 						),
 					),
 				],

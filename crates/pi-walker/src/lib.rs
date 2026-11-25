@@ -3088,14 +3088,15 @@ impl<H> WalkContext<'_, H> {
 			return Ok(false);
 		}
 
-		if !is_effective_path_on_root_file_system(
-			self.fs,
-			&self.absolute_path,
-			next_depth,
-			self.options.follow_links,
-			self.root_device,
-			followed_metadata.as_ref(),
-		) {
+		if is_dir
+			&& !is_effective_path_on_root_file_system(
+				self.fs,
+				&self.absolute_path,
+				next_depth,
+				self.options.follow_links,
+				self.root_device,
+				followed_metadata.as_ref(),
+			) {
 			return Ok(false);
 		}
 

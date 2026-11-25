@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Polished default Mars TUI identity, `LayoutDensity` (`compact` | `comfortable`) support, and `SwarmBoard` responsiveness.** Updated `STATUS_LINE_PRESETS.default`, added `LayoutDensity` to `WelcomeComponent`, `FooterComponent`, `MessageDividerComponent`, and `SwarmBoardComponent`, added O(1) footer usage prefix memoization, and labeled signature Mars themes in `ThemeSelectorComponent`.
+
+### Fixed
+
+- **Fixed `SwarmBoard` tiny-width clamping, `ascii` symbol preset, and spinner preset wrapping.** Also aligned `provider-error-expand` and `ask-dialog` tests with the updated UI behavior.
+
 ## [0.3.3] - 2026-11-25
 
 ### Fixed

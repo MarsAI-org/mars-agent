@@ -2,7 +2,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { ThinkingLevel } from "@marsai-org/agent-core";
 import { getTimeBasedPricingPeriod } from "@marsai-org/catalog/models";
-import { SPINNER_ADVANCE_MS, TERMINAL } from "../index";
+import { replaceTabs, SPINNER_ADVANCE_MS, TERMINAL } from "../index";
 import {
 	formatDuration,
 	formatNumber,
@@ -578,7 +578,7 @@ const pathSegment: StatusLineSegment = {
 		// worktree dir only when it diverges from the branch.
 		if (stripPrefix && ctx.worktree) {
 			const { projectName, worktreeName } = ctx.worktree;
-			const label = ctx.git.branch === worktreeName ? projectName : `${projectName}/${worktreeName}`;
+			const label = replaceTabs(ctx.git.branch === worktreeName ? projectName : `${projectName}/${worktreeName}`);
 			const text = fileHyperlink(getProjectDir(), clampPathLength(label, opts.maxLength ?? 40));
 			const content = withIcon(theme.icon.worktree, text);
 			return { content: theme.fg("statusLinePath", content), visible: true };
@@ -587,12 +587,12 @@ const pathSegment: StatusLineSegment = {
 		const projectDir = ctx.activeRepo?.cwd ?? getProjectDir();
 		const { scratch, displayPath } = getProjectDirDisplay(projectDir);
 		let pwd = stripPrefix ? displayPath : projectDir;
-		const repoSuffix = ctx.activeRepo ? ` ↳ ${ctx.activeRepo.relativeRepoRoot}` : "";
+		const repoSuffix = ctx.activeRepo ? ` ↳ ${replaceTabs(ctx.activeRepo.relativeRepoRoot)}` : "";
 		if (opts.abbreviate !== false) {
 			pwd = shortenPath(pwd);
 		}
 
-		pwd = clampPathLength(pwd, opts.maxLength ?? 40);
+		pwd = clampPathLength(replaceTabs(pwd), opts.maxLength ?? 40);
 
 		const showScratchIcon = scratch && stripPrefix;
 		const icon = showScratchIcon ? theme.icon.scratchFolder : theme.icon.folder;
@@ -1014,9 +1014,11 @@ const cacheHitSegment: StatusLineSegment = {
 		const rate = (cacheRead / total) * 100;
 		const rateStr = rate.toFixed(2);
 
-		const parts: string[] = [theme.icon.cache];
-		parts.push(theme.fg("statusLineSpend", `${rateStr}%`));
-		return { content: parts.join(" "), visible: true };
+		const content = formatMetric({
+			leading: theme.icon.cache || undefined,
+			value: `${rateStr}%`,
+		});
+		return { content: theme.fg("statusLineSpend", content ?? ""), visible: true };
 	},
 	describe(ctx) {
 		const { cacheRead, cacheWrite, input } = ctx.usageStats;

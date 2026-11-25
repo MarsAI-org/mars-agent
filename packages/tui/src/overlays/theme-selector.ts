@@ -42,11 +42,22 @@ export class ThemeSelectorComponent extends OverlayPanel {
 		this.#onPreview = onPreview;
 
 		// Create select items from provided themes
-		const themeItems: SelectItem[] = themes.map(name => ({
-			value: name,
-			label: name,
-			description: name === currentTheme ? "(current)" : undefined,
-		}));
+		const themeItems: SelectItem[] = themes.map(name => {
+			const marsTag = name === "mars-obsidian" ? "Mars dark" : name === "mars-alabaster" ? "Mars light" : undefined;
+			const description =
+				name === currentTheme
+					? marsTag
+						? `(current · ${marsTag})`
+						: "(current)"
+					: marsTag
+						? `(${marsTag})`
+						: undefined;
+			return {
+				value: name,
+				label: name,
+				description,
+			};
+		});
 
 		// Create selector
 		this.#selectList = new SelectList(themeItems, 10, getSelectListTheme());

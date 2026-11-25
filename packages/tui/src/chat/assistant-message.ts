@@ -1430,11 +1430,12 @@ export class AssistantMessageComponent extends Container {
 	 */
 	#appendErrorBlock(message: string): void {
 		const maxRows = this.#errorExpanded ? Number.POSITIVE_INFINITY : MAX_TRANSCRIPT_ERROR_ROWS;
+		const icon = theme.styledSymbol("status.error", "error");
 		this.#contentContainer.addChild(
 			new WidthAwareText(
 				contentWidth =>
 					formatErrorBlock(message, contentWidth, maxRows, (line, index) =>
-						theme.fg("error", index === 0 ? `Error: ${line}` : line),
+						index === 0 ? `${icon} ${theme.fg("error", `Error: ${line}`)}` : theme.fg("error", line),
 					),
 				1,
 				0,

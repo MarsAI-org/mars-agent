@@ -11,7 +11,7 @@ from ._extension_ui import (
     PASSIVE_EXTENSION_UI_METHODS,
     VALUE_EXTENSION_UI_METHODS,
 )
-from ._wire import *  # noqa: F403 - generated surface, bounded by `_wire.__all__`
+from ._wire import *
 from ._wire_runtime import JsonObject, JsonPrimitive, JsonValue, UnknownNotification
 from .client import (
     AgentEventListener,
@@ -57,8 +57,13 @@ from .protocol import (
 )
 
 __all__ = [
+    "INTERACTIVE_EXTENSION_UI_METHODS",
+    "PASSIVE_EXTENSION_UI_METHODS",
+    "VALUE_EXTENSION_UI_METHODS",
     "AgentEventListener",
     "HostTool",
+    "HostToolCompletedEvent",
+    "HostToolCompletedListener",
     "HostToolContext",
     "HostToolResultPayload",
     "HostToolResultValue",
@@ -69,16 +74,12 @@ __all__ = [
     "HostUriReadResult",
     "HostUriReadValue",
     "HostUriWriteHandler",
-    "INTERACTIVE_EXTENSION_UI_METHODS",
     "JsonObject",
     "JsonPrimitive",
     "JsonValue",
-    "HostToolCompletedEvent",
-    "HostToolCompletedListener",
     "ListenerErrorEvent",
     "ListenerErrorListener",
     "NotificationListener",
-    "PASSIVE_EXTENSION_UI_METHODS",
     "PromptTurn",
     "ProtocolErrorListener",
     "RpcClient",
@@ -90,7 +91,6 @@ __all__ = [
     "RpcTimeoutError",
     "UiRequestListener",
     "UnknownNotification",
-    "VALUE_EXTENSION_UI_METHODS",
     "assistant_text",
     "assistant_text_with_thinking",
     "host_tool",

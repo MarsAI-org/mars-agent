@@ -5,6 +5,7 @@ import * as path from "node:path";
 import { generateThemeVars } from "@marsai-org/coding-agent/export/html";
 import { defaultThemes } from "@marsai-org/tui/theme/defaults";
 import { createTheme, getBuiltinThemes } from "@marsai-org/tui/theme/loader";
+import { validateThemeJson } from "@marsai-org/tui/theme/schema-validation";
 import {
 	getEditorTheme,
 	getResolvedThemeColors,
@@ -170,10 +171,56 @@ describe("isLightTheme (standalone)", () => {
 		["limestone", true],
 		["porcelain", true],
 		["light", true],
+		["alabaster", true],
+		["mars-alabaster", true],
 		["dark", false],
+		["obsidian", false],
+		["mars-obsidian", false],
+		["dark-terminal", false],
 		["dark-catppuccin", false],
 	])("classifies %s as isLight=%s", (name, expected) => {
 		expect(isLightTheme(name)).toBe(expected);
+	});
+});
+
+describe("Mars Editorial Instrument brand palette contract", () => {
+	it("loads Mars Obsidian and Mars Alabaster presets with full schema validation and thinkingMax ladder", () => {
+		const builtins = getBuiltinThemes();
+
+		for (const name of [
+			"dark",
+			"light",
+			"obsidian",
+			"alabaster",
+			"mars-obsidian",
+			"mars-alabaster",
+			"dark-terminal",
+		]) {
+			const json = builtins[name];
+			expect(json, `${name} built-in theme`).toBeDefined();
+			expect(() => validateThemeJson(json)).not.toThrow();
+		}
+
+		const dark = createTheme(builtins.dark!, { mode: "truecolor" });
+		const light = createTheme(builtins.light!, { mode: "truecolor" });
+		const marsObsidian = createTheme(builtins["mars-obsidian"]!, { mode: "truecolor" });
+		const marsAlabaster = createTheme(builtins["mars-alabaster"]!, { mode: "truecolor" });
+
+		// Brand accents & borders
+		expect(dark.getColorHex("accent")).toBe("#ff825c");
+		expect(dark.getColorHex("borderAccent")).toBe("#d64a27");
+		expect(marsObsidian.getColorHex("accent")).toBe("#ff825c");
+		expect(light.getColorHex("accent")).toBe("#b43618");
+		expect(light.getColorHex("borderAccent")).toBe("#d64a27");
+		expect(marsAlabaster.getColorHex("accent")).toBe("#b43618");
+
+		// Logo-Rooted Accent Rule: no competing purple on customMessageLabel
+		expect(dark.getColorHex("customMessageLabel")).toBe("#ffa082");
+		expect(light.getColorHex("customMessageLabel")).toBe("#b43618");
+
+		// Distinct thinkingMax step above thinkingXhigh
+		expect(dark.getThinkingBorderColor("max")("│")).not.toBe(dark.getThinkingBorderColor("xhigh")("│"));
+		expect(light.getThinkingBorderColor("max")("│")).not.toBe(light.getThinkingBorderColor("xhigh")("│"));
 	});
 });
 

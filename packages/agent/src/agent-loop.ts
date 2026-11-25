@@ -1301,9 +1301,11 @@ async function runLoopBody(
 					endAgentStream(stream, newMessages, telemetry, stepCounter.count);
 					return;
 				}
-				// Yield at the top of each iteration to prevent busy-wait when
-				// the agent loop is executing tool calls back-to-back.
-				await yieldIfDue();
+				// Yield between turns to prevent busy-wait when executing tool calls
+				// back-to-back, without delaying the initial model request.
+				if (stepCounter.count > 0) {
+					await yieldIfDue();
+				}
 				// Park at the turn boundary while the process-wide pause gate is
 				// engaged (host /pause). An external abort releases the park so a
 				// cancelled run still unwinds while everything else stays frozen.
@@ -2189,6 +2191,7 @@ async function streamAssistantResponse(
 
 			try {
 				while (true) {
+					const waitStart = Date.now();
 					let next: IteratorResult<AssistantMessageEvent>;
 					if (abortRacePromise) {
 						const result = await Promise.race([responseIterator.next(), abortRacePromise]);
@@ -2199,6 +2202,7 @@ async function streamAssistantResponse(
 					} else {
 						next = await responseIterator.next();
 					}
+					const waitedForIo = Date.now() - waitStart >= 2;
 					if (next.done) {
 						providerStreamSettled = true;
 						break;
@@ -2299,9 +2303,11 @@ async function streamAssistantResponse(
 						return await finishAbortedStream();
 					}
 
-					// Yield to the event loop periodically to prevent busy-wait
-					// when the LLM is streaming chunks faster than the loop can rest.
-					await yieldIfDue();
+					// Yield to the event loop only when chunks arrive synchronously/in-burst
+					// without waiting on I/O, so network-paced streams don't pay a 20ms sleep.
+					if (!waitedForIo) {
+						await yieldIfDue();
+					}
 
 					if (event.type === "toolcall_start") {
 						const block = event.partial.content[event.contentIndex];

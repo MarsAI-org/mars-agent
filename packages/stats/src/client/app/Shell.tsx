@@ -58,13 +58,13 @@ export function Shell({ section, onSectionChange, range, onRangeChange, children
 				<div className="topbar-brand">
 					<svg className="topbar-mark" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
 						<defs>
-							<linearGradient id="omp-mark-grad" x1="0" y1="0" x2="1" y2="1">
+							<linearGradient id="mars-mark-grad" x1="0" y1="0" x2="1" y2="1">
 								<stop offset="0" stopColor="#9b3220" />
 								<stop offset=".5" stopColor="#d64a27" />
 								<stop offset="1" stopColor="#ff825c" />
 							</linearGradient>
 						</defs>
-						<path fill="url(#omp-mark-grad)" d="M10 14h44v9H43v33h-9V23h-9v22h-9V23H10z" />
+						<path fill="url(#mars-mark-grad)" d="M12 14h8l12 18 12-18h8v36h-8V26l-12 18-12-18v24h-8z" />
 					</svg>
 					<span>Mars</span>
 					<span className="topbar-slash">/</span>

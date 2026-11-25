@@ -24,7 +24,7 @@ import type {
 	ServiceTierByFamily,
 	SimpleStreamOptions,
 } from "@marsai-org/ai";
-import { resolveApiKeyOnce } from "@marsai-org/ai/auth-retry";
+import { resolveApiKeyOnce, seedApiKeyResolver } from "@marsai-org/ai/auth-retry";
 import type { DiscoverAuthStorageOptions } from "@marsai-org/ai/auth-broker/discover";
 import type { Dialect } from "@marsai-org/ai/dialect";
 import { prewarmOpenAICodexResponses } from "@marsai-org/ai/providers/openai-codex-responses";
@@ -2181,7 +2181,12 @@ async function createAgentSessionScoped(options: CreateAgentSessionOptions): Pro
 
 	let agent: Agent;
 	const effectiveGetApiKey =
-		options.getApiKey ?? (requestModel => modelRegistry.resolver(requestModel, agent.sessionId));
+		options.getApiKey ??
+		((requestModel: Model) => {
+			const baseResolver = modelRegistry.resolver(requestModel, agent.sessionId);
+			const seeded = session?.consumeSeededApiKey(requestModel);
+			return seeded ? seedApiKeyResolver(seeded, baseResolver) : baseResolver;
+		});
 	let session!: AgentSession;
 	let hasSession = false;
 	let hasRegistered = false;

@@ -35,3 +35,10 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 omp_rpc = ["py.typed"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/omp_rpc/_wire.py" = ["ALL"]
+"src/omp_rpc/_wire_runtime.py" = ["TRY004"]
+
+[tool.ruff.format]
+exclude = ["src/omp_rpc/_wire.py"]

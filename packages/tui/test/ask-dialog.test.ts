@@ -1399,7 +1399,8 @@ describe("AskDialogComponent", () => {
 		expect(component.render(80).length).toBeLessThanOrEqual(cap);
 		// Wrapping can split a few phrases across lines; require a clearly
 		// larger header rather than an exact copy count.
-		expect(expandedCount).toBeGreaterThanOrEqual(15);
+		const minExpanded = cap >= 22 ? 15 : Math.max(8, cap - 6);
+		expect(expandedCount).toBeGreaterThanOrEqual(minExpanded);
 
 		component.handleInput("\x0f");
 		const recollapsed = render(component);

@@ -69,6 +69,19 @@ describe("theme selector picker", () => {
 		selector.handleNativeEvent(act("close"));
 		expect(log).toEqual(["preview:nord", "select:nord", "cancel"]);
 	});
+
+	it("labels signature Mars themes in the classic list", () => {
+		const selector = new ThemeSelectorComponent(
+			"mars-obsidian",
+			["mars-obsidian", "mars-alabaster", "nord"],
+			() => {},
+			() => {},
+			() => {},
+		);
+		const rendered = Bun.stripANSI(selector.render(80).join("\n"));
+		expect(rendered).toContain("(current · Mars dark)");
+		expect(rendered).toContain("(Mars light)");
+	});
 });
 
 describe("thinking selector picker", () => {

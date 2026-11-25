@@ -1418,11 +1418,7 @@ def _safe_write_workspace_file(
             parent_fd = next_fd
 
         file_flags = (
-            os.O_WRONLY
-            | os.O_CREAT
-            | os.O_NOFOLLOW
-            | getattr(os, "O_NONBLOCK", 0)
-            | getattr(os, "O_CLOEXEC", 0)
+            os.O_WRONLY | os.O_CREAT | os.O_NOFOLLOW | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_CLOEXEC", 0)
         )
         file_fd = os.open(rel_path.name, file_flags, 0o660, dir_fd=parent_fd)
         try:

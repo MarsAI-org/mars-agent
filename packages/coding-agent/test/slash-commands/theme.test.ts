@@ -3,6 +3,7 @@ import { resetSettingsForTest, Settings } from "@marsai-org/coding-agent/config/
 import { cfgThemeDark } from "@marsai-org/coding-agent/modes/settings";
 import type { InteractiveModeContext } from "@marsai-org/coding-agent/modes/types";
 import {
+	BUILTIN_SLASH_COMMANDS,
 	type BuiltinSlashCommandRuntime,
 	executeBuiltinSlashCommand,
 } from "@marsai-org/coding-agent/slash-commands/builtin-registry";
@@ -48,5 +49,19 @@ describe("/theme slash command", () => {
 		await executeBuiltinSlashCommand("/theme set definitely-not-a-theme", harness.runtime);
 
 		expect(cfgThemeDark.get(harness.settings)).toBe(before);
+	});
+
+	it("autocompletes installed theme names after /theme set and /theme preview", async () => {
+		await initTheme(false);
+		const themeCmd = BUILTIN_SLASH_COMMANDS.find(cmd => cmd.name === "theme");
+		expect(themeCmd?.getArgumentCompletions).toBeDefined();
+
+		const subcommands = await themeCmd?.getArgumentCompletions?.("s");
+		expect(subcommands?.some(item => item.label === "set")).toBe(true);
+
+		const marsThemes = await themeCmd?.getArgumentCompletions?.("set mars-");
+		expect(marsThemes?.map(item => item.value)).toEqual(
+			expect.arrayContaining(["set mars-obsidian", "set mars-alabaster"]),
+		);
 	});
 });

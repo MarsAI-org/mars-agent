@@ -1,5 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "bun:test";
-import { pickWeightedTip, WelcomeComponent } from "@marsai-org/tui/prompt/welcome";
+import * as os from "node:os";
+import * as path from "node:path";
+import { pickWeightedTip, renderWelcomeTelemetry, WelcomeComponent } from "@marsai-org/tui/prompt/welcome";
 import { initTheme, theme } from "@marsai-org/tui/theme";
 import { visibleWidth } from "@marsai-org/tui";
 
@@ -121,5 +123,69 @@ describe("WelcomeComponent", () => {
 		expect(narrow).toContain("  ▄██████▄  ");
 		expect(narrow).not.toContain("█▄█ ▄▀▄ █▀▄ ▄▀▀");
 		expect(narrow).not.toContain("v1.0.0");
+	});
+
+	it("renders Mars editorial telemetry and quick commands responsively across wide and narrow terminals", () => {
+		const homeWorkspace = path.join(os.homedir(), "work\tspace", "mars-project");
+		const welcome = new WelcomeComponent("2.1.0", {
+			model: "claude-sonnet-4-5",
+			provider: "anthropic",
+			workspace: homeWorkspace,
+			lspCount: 3,
+			mcpCount: 2,
+			toolCount: 34,
+			quickCommands: true,
+		});
+
+		const wideRows = welcome.render(100);
+		const widePlain = wideRows.map(row => Bun.stripANSI(row)).join("\n");
+		expect(widePlain).toContain("claude-sonnet-4-5 (anthropic)");
+		expect(widePlain).toContain("~/work   space/mars-project");
+		expect(widePlain).not.toContain("\t");
+		expect(widePlain).toContain("3 LSP");
+		expect(widePlain).toContain("2 MCP");
+		expect(widePlain).toContain("34 tools");
+		expect(widePlain).toContain("/plan architect");
+		expect(widePlain).toContain("/review audit");
+		expect(widePlain).toContain("/fast speed");
+		expect(widePlain).toContain("? shortcuts");
+		for (const row of wideRows) {
+			expect(visibleWidth(row)).toBeLessThanOrEqual(100);
+		}
+
+		// Narrow width stacks telemetry and falls back to compact command pills without overflowing.
+		for (const narrowCols of [44, 30, 20]) {
+			const narrowLines = renderWelcomeTelemetry(welcome.telemetry!, narrowCols);
+			for (const line of narrowLines) {
+				expect(line).not.toContain("\t");
+				expect(visibleWidth(line)).toBeLessThanOrEqual(narrowCols);
+			}
+		}
+
+		// Native card includes telemetry and quick-command nodes when telemetry is configured.
+		const nativeCard = welcome.describe({} as never);
+		expect(
+			nativeCard.c?.some(child => typeof child === "object" && "key" in child && child.key === "telemetry"),
+		).toBe(true);
+		expect(nativeCard.c?.some(child => typeof child === "object" && "key" in child && child.key === "commands")).toBe(
+			true,
+		);
+	});
+
+	it("supports compact layout density to reduce vertical height on dense terminals", () => {
+		const comfortable = new WelcomeComponent("2.1.0", {
+			model: "claude-sonnet-4-5",
+			quickCommands: true,
+			density: "comfortable",
+		});
+		const compact = new WelcomeComponent("2.1.0", {
+			model: "claude-sonnet-4-5",
+			quickCommands: true,
+			density: "compact",
+		});
+		const comfortableRows = comfortable.render(100);
+		const compactRows = compact.render(100);
+		expect(compactRows.length).toBeLessThan(comfortableRows.length);
+		expect(Bun.stripANSI(compactRows.join("\n"))).toContain("claude-sonnet-4-5");
 	});
 });

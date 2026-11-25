@@ -8,6 +8,8 @@ import { initTheme, setSymbolPreset, theme } from "../src/theme/theme";
 import { astGrepToolRenderer } from "../src/tools/ast-grep";
 import { BashInteractiveOverlayComponent } from "../src/tools/bash-interactive";
 import { renderSearchResult } from "../src/tools/web-search";
+import { setChatTranscriptDisplayPreferences } from "../src/chat/display-preferences";
+import { MessageDividerComponent } from "../src/chrome/message-divider";
 import { visibleWidth } from "../src/utils";
 
 beforeAll(async () => {
@@ -67,6 +69,67 @@ describe("FooterComponent cell-width truncation and ASCII symbols", () => {
 		expect(stats).toContain("claude-test - high");
 		expect(stats).not.toMatch(/[↑↓•]/);
 		footer.dispose();
+	});
+
+	it("updates cumulative usage accurately across appended, mutated-last, and rewound entries", () => {
+		const entries: Array<{ type: string; message?: Record<string, unknown> }> = [
+			{
+				type: "message",
+				message: {
+					role: "assistant",
+					usage: { input: 1000, output: 200, cacheRead: 0, cacheWrite: 0, cost: { total: 0.01 } },
+				},
+			},
+		];
+		const session = {
+			state: { model: { id: "claude-test", contextWindow: 100_000, thinking: false }, thinkingLevel: "off" },
+			isAutoThinking: false,
+			autoResolvedThinkingLevel: () => undefined,
+			getContextUsage: () => ({ tokens: 10_000, contextWindow: 100_000, percent: 10 }),
+			modelRegistry: { isUsingOAuth: () => false },
+			sessionManager: { getEntries: () => entries },
+		} as unknown as ConstructorParameters<typeof FooterComponent>[0];
+		const host = { gitEnabled: () => false } as unknown as ConstructorParameters<typeof FooterComponent>[1];
+		const footer = new FooterComponent(session, host);
+
+		// Initial render: 1K in, 200 out
+		expect(Bun.stripANSI(footer.render(120)[1]!)).toContain("↑1K ↓200");
+
+		// Mutate last entry in-place (streaming)
+		(entries[0]!.message!.usage as Record<string, unknown>).output = 500;
+		expect(Bun.stripANSI(footer.render(120)[1]!)).toContain("↑1K ↓500");
+
+		// Append new entry
+		entries.push({
+			type: "message",
+			message: {
+				role: "assistant",
+				usage: { input: 500, output: 100, cacheRead: 0, cacheWrite: 0, cost: { total: 0.01 } },
+			},
+		});
+		expect(Bun.stripANSI(footer.render(120)[1]!)).toContain("↑1.5K ↓600");
+
+		// Rewind (shrink entries)
+		entries.pop();
+		expect(Bun.stripANSI(footer.render(120)[1]!)).toContain("↑1K ↓500");
+
+		// Compact density collapses pwd + stats onto one row when it fits
+		footer.setDensity("compact");
+		const compactLines = footer.render(160);
+		expect(compactLines.length).toBe(1);
+		expect(visibleWidth(compactLines[0]!)).toBeLessThanOrEqual(160);
+		footer.dispose();
+	});
+
+	it("MessageDividerComponent omits blank padding rows in compact density", () => {
+		const divider = new MessageDividerComponent({ label: () => "Model: claude", labelColor: "accent" });
+		setChatTranscriptDisplayPreferences({ density: "comfortable" });
+		expect(divider.render(60).length).toBe(3);
+
+		setChatTranscriptDisplayPreferences({ density: "compact" });
+		expect(divider.render(60).length).toBe(1);
+
+		setChatTranscriptDisplayPreferences({ density: "comfortable" });
 	});
 });
 

@@ -1,6 +1,7 @@
 import { stripVTControlCharacters } from "node:util";
-import { ThinkingLevel } from "@marsai-org/agent-core";
+import { type AgentMessage, ThinkingLevel } from "@marsai-org/agent-core";
 import * as vcs from "@marsai-org/natives/vcs";
+import { chatTranscriptDisplayPreferences, type LayoutDensity } from "../chat/display-preferences";
 import { type Component, Ellipsis, padding, replaceTabs, sliceByColumn, truncateToWidth, visibleWidth } from "../index";
 import { formatNumber, getProjectDir } from "@marsai-org/utils";
 import { theme } from "../theme";
@@ -19,6 +20,22 @@ import type { TspProps, TspSpan } from "@marsai-org/wire";
 import type { NativeNode } from "../native/node";
 import { col, node, span } from "../native/describe";
 
+interface UsageTotals {
+	totalInput: number;
+	totalOutput: number;
+	totalCacheRead: number;
+	totalCacheWrite: number;
+	totalCost: number;
+	totalPremiumRequests: number;
+}
+
+interface UsagePrefixMemo {
+	entriesRef: readonly { type: string; message?: AgentMessage }[];
+	prefixLength: number;
+	firstEntry: { type: string; message?: AgentMessage } | undefined;
+	totals: UsageTotals;
+}
+
 /**
  * Footer component that shows pwd, token stats, and context usage
  */
@@ -32,11 +49,17 @@ export class FooterComponent implements Component {
 	#autoCompactEnabled: boolean = true;
 	#extensionStatuses: Map<string, string> = new Map();
 	#nativeMemo: { node: NativeNode; fingerprint: string } | undefined;
+	#usagePrefixMemo: UsagePrefixMemo | undefined;
+	#density: LayoutDensity | undefined;
 
 	constructor(
 		private readonly session: FooterSession,
 		private readonly host: FooterHost,
 	) {}
+
+	setDensity(density: LayoutDensity | undefined): void {
+		this.#density = density;
+	}
 
 	setAutoCompactEnabled(enabled: boolean): void {
 		this.#autoCompactEnabled = enabled;
@@ -159,12 +182,13 @@ export class FooterComponent implements Component {
 				return null;
 			}
 		})();
-		this.#cachedBranch =
+		const rawBranch =
 			headState === null
 				? null
 				: headState.kind === "ref"
 					? (headState.branch ?? headState.refName ?? "HEAD")
 					: "detached";
+		this.#cachedBranch = typeof rawBranch === "string" ? sanitizeStatusText(rawBranch) : rawBranch;
 		return this.#cachedBranch;
 	}
 
@@ -213,6 +237,14 @@ export class FooterComponent implements Component {
 		const usingSubscription = state.model ? this.session.modelRegistry.isUsingOAuth(state.model) : false;
 		const billing = formatBillingSummary({ cost, usingSubscription, premiumRequests, fractionDigits: 3 }, theme);
 		if (billing) seg("cost", { side: "left", priority: 3, spans: [span(billing, "dim")] });
+		const tokensPerSecond = this.session.getTokensPerSecond?.() ?? null;
+		if (tokensPerSecond && tokensPerSecond > 0) {
+			seg("rate", {
+				side: "left",
+				priority: 2,
+				spans: [span(`${tokensPerSecond.toFixed(1)} tok/s`, "dim")],
+			});
+		}
 		const contextUsage = this.session.getContextUsage();
 		const contextWindow = contextUsage?.contextWindow ?? state.model?.contextWindow ?? 0;
 		const contextPercent = contextWindow > 0 ? (contextUsage?.percent ?? 0) : null;
@@ -253,27 +285,71 @@ export class FooterComponent implements Component {
 		return built;
 	}
 
+	#computeUsageTotals(): UsageTotals {
+		const entries = this.session.sessionManager.getEntries();
+		const prefixLen = Math.max(0, entries.length - 1);
+		const firstEntry = entries[0];
+		const memo = this.#usagePrefixMemo;
+
+		let totals: UsageTotals;
+		let startIdx = 0;
+		if (
+			memo !== undefined &&
+			memo.firstEntry === firstEntry &&
+			memo.prefixLength <= prefixLen &&
+			(memo.entriesRef === entries || memo.prefixLength > 0)
+		) {
+			totals = { ...memo.totals };
+			startIdx = memo.prefixLength;
+		} else {
+			totals = {
+				totalInput: 0,
+				totalOutput: 0,
+				totalCacheRead: 0,
+				totalCacheWrite: 0,
+				totalCost: 0,
+				totalPremiumRequests: 0,
+			};
+		}
+
+		for (let i = startIdx; i < prefixLen; i++) {
+			const entry = entries[i];
+			if (entry?.type === "message" && entry.message?.role === "assistant") {
+				totals.totalInput += entry.message.usage.input;
+				totals.totalOutput += entry.message.usage.output;
+				totals.totalCacheRead += entry.message.usage.cacheRead;
+				totals.totalCacheWrite += entry.message.usage.cacheWrite;
+				totals.totalCost += entry.message.usage.cost.total;
+				totals.totalPremiumRequests += entry.message.usage.premiumRequests ?? 0;
+			}
+		}
+
+		this.#usagePrefixMemo = {
+			entriesRef: entries,
+			prefixLength: prefixLen,
+			firstEntry,
+			totals: { ...totals },
+		};
+
+		const lastEntry = entries[prefixLen];
+		if (lastEntry?.type === "message" && lastEntry.message?.role === "assistant") {
+			totals.totalInput += lastEntry.message.usage.input;
+			totals.totalOutput += lastEntry.message.usage.output;
+			totals.totalCacheRead += lastEntry.message.usage.cacheRead;
+			totals.totalCacheWrite += lastEntry.message.usage.cacheWrite;
+			totals.totalCost += lastEntry.message.usage.cost.total;
+			totals.totalPremiumRequests += lastEntry.message.usage.premiumRequests ?? 0;
+		}
+
+		return totals;
+	}
+
 	render(width: number): readonly string[] {
 		const state = this.session.state;
 
 		// Calculate cumulative usage from ALL session entries (not just post-compaction messages)
-		let totalInput = 0;
-		let totalOutput = 0;
-		let totalCacheRead = 0;
-		let totalCacheWrite = 0;
-		let totalCost = 0;
-		let totalPremiumRequests = 0;
-
-		for (const entry of this.session.sessionManager.getEntries()) {
-			if (entry.type === "message" && entry.message?.role === "assistant") {
-				totalInput += entry.message.usage.input;
-				totalOutput += entry.message.usage.output;
-				totalCacheRead += entry.message.usage.cacheRead;
-				totalCacheWrite += entry.message.usage.cacheWrite;
-				totalCost += entry.message.usage.cost.total;
-				totalPremiumRequests += entry.message.usage.premiumRequests ?? 0;
-			}
-		}
+		const { totalInput, totalOutput, totalCacheRead, totalCacheWrite, totalCost, totalPremiumRequests } =
+			this.#computeUsageTotals();
 
 		// Calculate context usage from session (handles compaction correctly).
 		// After compaction, tokens are unknown until the next LLM response.
@@ -334,6 +410,14 @@ export class FooterComponent implements Component {
 			theme,
 		);
 		if (billing) statsParts.push(billing);
+		const tokensPerSecond = this.session.getTokensPerSecond?.() ?? null;
+		if (tokensPerSecond && tokensPerSecond > 0) {
+			const rateMetric = formatMetric({
+				leading: isAscii ? undefined : theme.icon.throughput || undefined,
+				value: `${tokensPerSecond.toFixed(1)} tok/s`,
+			});
+			if (rateMetric) statsParts.push(rateMetric);
+		}
 		// Colorize context percentage based on usage
 		let contextPercentStr: string;
 		const autoIndicator = this.#autoCompactEnabled && autoIcon ? ` ${autoIcon}` : "";
@@ -350,20 +434,21 @@ export class FooterComponent implements Component {
 		let statsLeft = statsParts.join(" ");
 
 		// Add model name on the right side, plus thinking level if model supports it
-		const modelName = state.model?.id || "no-model";
+		const modelName = sanitizeStatusText(state.model?.id || "no-model");
+		const fastSuffix = !isAscii && this.session.isFastModeActive?.() && theme.icon.fast ? ` ${theme.icon.fast}` : "";
 
 		// Add thinking level hint when the current model advertises supported efforts
-		let rightSide = modelName;
+		let rightSide = `${modelName}${fastSuffix}`;
 		if (state.model?.thinking) {
 			const sep = isAscii ? theme.sep.dot : " • ";
 			if (this.session.isAutoThinking) {
 				// Pending (no turn classified yet / classifying) shows a symbol-theme
 				// question-box marker; once resolved it shows `<level>`.
 				const resolved = this.session.autoResolvedThinkingLevel();
-				rightSide = `${modelName}${sep}${resolved ? resolved : `${theme.thinking.autoPending} auto`}`;
+				rightSide = `${modelName}${fastSuffix}${sep}${resolved ? resolved : `${theme.thinking.autoPending} auto`}`;
 			} else {
 				const thinkingLevel = state.thinkingLevel ?? ThinkingLevel.Off;
-				rightSide = `${modelName}${sep}${thinkingLevel}`;
+				rightSide = `${modelName}${fastSuffix}${sep}${thinkingLevel}`;
 			}
 		}
 
@@ -407,8 +492,23 @@ export class FooterComponent implements Component {
 		const dimStatsLeft = theme.fg("dim", statsLeft);
 		const remainder = statsLine.slice(statsLeft.length); // padding + rightSide
 		const dimRemainder = theme.fg("dim", remainder);
+		const statsRow = dimStatsLeft + dimRemainder;
 
-		const lines = [theme.fg("dim", pwd), dimStatsLeft + dimRemainder];
+		const density = this.#density ?? chatTranscriptDisplayPreferences.density;
+		let lines: string[];
+		if (density === "compact") {
+			const sep = isAscii ? " | " : theme.sep.dot;
+			const combinedLeft = `${pwd}${sep}${statsLeft}`;
+			const combinedLeftWidth = visibleWidth(combinedLeft);
+			if (combinedLeftWidth + minPadding + rightSideWidth <= width) {
+				const pad = padding(width - combinedLeftWidth - rightSideWidth);
+				lines = [`${theme.fg("dim", `${pwd}${sep}`)}${dimStatsLeft}${theme.fg("dim", `${pad}${rightSide}`)}`];
+			} else {
+				lines = [theme.fg("dim", pwd), statsRow];
+			}
+		} else {
+			lines = [theme.fg("dim", pwd), statsRow];
+		}
 
 		// Add extension statuses on a single line, sorted by key alphabetically
 		if (this.#extensionStatuses.size > 0) {

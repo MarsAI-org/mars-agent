@@ -60,6 +60,13 @@ function isHeaderRecord(headers: RequestInit["headers"]): headers is Record<stri
 	return headers !== undefined && !(headers instanceof Headers) && !Array.isArray(headers);
 }
 
+function hasHeaderCaseInsensitive(headers: Record<string, string>, lowerName: string): boolean {
+	for (const existingName in headers) {
+		if (existingName.toLowerCase() === lowerName) return true;
+	}
+	return false;
+}
+
 /**
  * Return `init` with mars's process-wide inference User-Agent default applied.
  * Any explicit header, including Anthropic and Codex OAuth fingerprints,
@@ -75,9 +82,10 @@ export function withInferenceUserAgent(
 ): RequestInit | undefined {
 	const sourceHeaders = init?.headers ?? (input instanceof Request ? input.headers : undefined);
 	if (isHeaderRecord(sourceHeaders)) {
-		const headers = { ...sourceHeaders };
-		setHeaderIfAbsent(headers, "User-Agent", USER_AGENT);
-		return { ...init, headers };
+		if (hasHeaderCaseInsensitive(sourceHeaders, "user-agent")) {
+			return init;
+		}
+		return { ...init, headers: { ...sourceHeaders, "User-Agent": USER_AGENT } };
 	}
 	const headers = new Headers(sourceHeaders);
 	if (headers.has("User-Agent")) return init;
